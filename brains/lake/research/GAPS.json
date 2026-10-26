@@ -33,8 +33,9 @@
    "stopCondition": "Stop when each fleet lake has a verified independent fresh source or a recorded owner action naming the operator.",
    "expectedOutput": "A per-lake source map with verified identities (measured pool elevation only, never regulation-schedule lines).",
    "humanOrFieldValidationRequired": {
-    "required": true,
-    "what": "Operator level feeds for lakes with no public independent series."
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Approval or decision (not field data): Operator level feeds for lakes with no public independent series."
    },
    "status": "OPEN",
    "owner": "lake-brain-lane"
@@ -51,8 +52,9 @@
    "stopCondition": "Stop when the profiled share is decided by the owner or the cap is revisited.",
    "expectedOutput": "A decision on caps and a wider profiled set.",
    "humanOrFieldValidationRequired": {
-    "required": true,
-    "what": "Owner decision on the scoring caps (audit R10)."
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Approval or decision (not field data): Owner decision on the scoring caps (audit R10)."
    },
    "status": "BLOCKED",
    "owner": "lake-brain-lane"

@@ -34,7 +34,8 @@
    "stopCondition": "Stop when both files agree and a test pins it.",
    "expectedOutput": "One declared requirement per input.",
    "humanOrFieldValidationRequired": {
-    "required": false
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE"
    },
    "status": "OPEN",
    "owner": "sector-intelligence-lane"
@@ -51,7 +52,8 @@
    "stopCondition": "Stop when the recorded list is empty.",
    "expectedOutput": "Declared consumes for every used input.",
    "humanOrFieldValidationRequired": {
-    "required": false
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE"
    },
    "status": "OPEN",
    "owner": "sector-intelligence-lane"

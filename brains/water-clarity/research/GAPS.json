@@ -53,6 +53,7 @@
    "expectedOutput": "A published gauge observation time per lake, or a recorded decision to keep it UNKNOWN.",
    "humanOrFieldValidationRequired": {
     "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
     "what": "None: an engineering/ownership decision."
    },
    "status": "OPEN",

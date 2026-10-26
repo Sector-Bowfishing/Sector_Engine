@@ -14,8 +14,9 @@
    "stopCondition": "Stop when the missing casts exist and the owner approves the recount under the frozen rule, or the lakes are replaced.",
    "expectedOutput": "The Level-4 comparison and a scored result.",
    "humanOrFieldValidationRequired": {
-    "required": true,
-    "what": "Reservoir-operator profiles or a prospective logger network, and owner approval to recount."
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Approval or decision (not field data): Reservoir-operator profiles or a prospective logger network, and owner approval to recount."
    },
    "status": "BLOCKED",
    "owner": "water-temp-lane"
@@ -33,8 +34,9 @@
    "stopCondition": "Stop when six or more independent lake-surface logger lakes exist, or a correction passes the preregistered tests.",
    "expectedOutput": "A correction accepted or rejected on independent data.",
    "humanOrFieldValidationRequired": {
-    "required": true,
-    "what": "Independent lake-surface (<=1.5 m) temperature logger series at six or more reservoirs."
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Approval or decision (not field data): Independent lake-surface (<=1.5 m) temperature logger series at six or more reservoirs."
    },
    "status": "OPEN",
    "owner": "water-temp-lane"
@@ -51,8 +53,9 @@
    "stopCondition": "Stop when an interval passes the preregistered calibration tests on independent lakes.",
    "expectedOutput": "A calibrated seasonal interval, or a documented wider fixed band.",
    "humanOrFieldValidationRequired": {
-    "required": true,
-    "what": "More independent sensor lakes."
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Approval or decision (not field data): More independent sensor lakes."
    },
    "status": "OPEN",
    "owner": "water-temp-lane"

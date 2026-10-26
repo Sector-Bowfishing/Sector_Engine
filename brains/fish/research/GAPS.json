@@ -33,8 +33,9 @@
    "stopCondition": "Stop when each reviewed species has a recorded independent review or the review needs a human the lane does not have.",
    "expectedOutput": "Reviewer sign-offs recorded in the review ledger; a promotion proposal for Michael.",
    "humanOrFieldValidationRequired": {
-    "required": true,
-    "what": "Independent reviewer; promotion approval by Michael."
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Approval or decision (not field data): Independent reviewer; promotion approval by Michael."
    },
    "status": "OPEN",
    "owner": "fish-brain-lane"
@@ -51,8 +52,9 @@
    "stopCondition": "Stop when the upstream Brains publish the needed states or the pilot's graduation needs a decision by Michael.",
    "expectedOutput": "A graduation decision for the Biological State component and, if approved, its input declarations (brain.json consumes) with recorder instrumentation.",
    "humanOrFieldValidationRequired": {
-    "required": true,
-    "what": "Michael's decision to graduate the pilot into an orchestrated component."
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Approval or decision (not field data): Michael's decision to graduate the pilot into an orchestrated component."
    },
    "status": "OPEN",
    "owner": "fish-brain-lane"

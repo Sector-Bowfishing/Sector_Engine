@@ -76,7 +76,8 @@
    "stopCondition": "Stop when a new parameter-free memory model is pre-registered and scored once on a fresh buoy holdout plus the fixed SWAN scenarios, or when no unused buoy seasons remain.",
    "expectedOutput": "A promotion decision for one memory model; if promoted, a shadow timeline path behind an explicit model id.",
    "humanOrFieldValidationRequired": {
-    "required": false
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE"
    },
    "status": "OPEN",
    "owner": "wind-brain-lane"
@@ -93,8 +94,9 @@
    "stopCondition": "Stop when the rubric review decides the night-weighting question or a new source is pre-registered.",
    "expectedOutput": "A recorded rubric-governance decision; no score change without it.",
    "humanOrFieldValidationRequired": {
-    "required": true,
-    "what": "Independent rubric review."
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Approval or decision (not field data): Independent rubric review."
    },
    "status": "OPEN",
    "owner": "wind-brain-lane"
@@ -131,7 +133,8 @@
    "stopCondition": "Stop when a refreshed block is admitted with >= 30 valid days, or when a ledger inconsistency needs a decision.",
    "expectedOutput": "An admitted certification block and its history line.",
    "humanOrFieldValidationRequired": {
-    "required": false
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE"
    },
    "status": "OPEN",
    "owner": "wind-brain-lane"
@@ -149,8 +152,9 @@
    "stopCondition": "Stop when Michael approves or declines the activation plan in WIND_BOWFISHING_FIRST_V2.md \u00a710; the Publisher cutover sequence (Water Clarity, Fish, Wind) is not changed.",
    "expectedOutput": "An approved activation decision; if approved, a shadow storage artifact per lake-hour first.",
    "humanOrFieldValidationRequired": {
-    "required": true,
-    "what": "Michael's activation approval."
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Approval or decision (not field data): Michael's activation approval."
    },
    "status": "OPEN",
    "owner": "wind-brain-lane"

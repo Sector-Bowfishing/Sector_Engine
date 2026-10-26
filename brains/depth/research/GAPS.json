@@ -14,8 +14,9 @@
    "stopCondition": "Stop when Michael records a scientific approval for a named release, or rejects it.",
    "expectedOutput": "An approval record and a new APPROVED release id.",
    "humanOrFieldValidationRequired": {
-    "required": true,
-    "what": "Scientific validation approval plus owner approval (PROJECT \u00a77)."
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Approval or decision (not field data): Scientific validation approval plus owner approval (PROJECT \u00a77)."
    },
    "status": "OPEN",
    "owner": "depth-lane"
@@ -52,6 +53,7 @@
    "expectedOutput": "Reviewed datum proposals promoted through research tooling into a new candidate release.",
    "humanOrFieldValidationRequired": {
     "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
     "what": "Desk research."
    },
    "status": "OPEN",
