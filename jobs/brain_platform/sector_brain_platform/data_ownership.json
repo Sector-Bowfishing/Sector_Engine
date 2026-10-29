@@ -1,0 +1,455 @@
+{
+ "schema": "sector-data-ownership-mirror-v1",
+ "note": "Engine-side mirror of the Cortex data-ownership columns (families: pattern, domain, status, writer, targetWriter) and of the nine target Brains. Cortex is the authority and is never edited from here; tests compare this mirror with Cortex when it is present (CORTEX_HOME). Refresh with `python3 -m sector_brain_platform.data_ownership --sync <cortex projects/sector/shared/data>`.",
+ "cortexVersionAtSync": "3.1.0",
+ "registryAsOf": "2026-10-23",
+ "families": [
+  {
+   "id": "fam.brains",
+   "pattern": "/brains/{brainId}",
+   "domain": "operational",
+   "scope": "per-brain",
+   "status": "CANONICAL",
+   "writer": "@owning-brain",
+   "targetWriter": "platform.publisher-live"
+  },
+  {
+   "id": "fam.brains-wind-scores",
+   "pattern": "/brains/wind/scores",
+   "domain": "score",
+   "scope": "per-brain",
+   "status": "LEGACY",
+   "writer": "brain.wind",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.validation-wind-scores",
+   "pattern": "/validation/wind/scores",
+   "domain": "score",
+   "scope": "per-brain",
+   "status": "LEGACY",
+   "writer": "brain.wind",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.validation",
+   "pattern": "/validation/{brainId}",
+   "domain": "research",
+   "scope": "per-brain",
+   "status": "CANONICAL",
+   "writer": "@owning-brain",
+   "targetWriter": "platform.publisher-live"
+  },
+  {
+   "id": "fam.activity",
+   "pattern": "/activity/{eventId}",
+   "domain": "operational",
+   "scope": "per-brain",
+   "status": "CANONICAL",
+   "writer": "@owning-brain",
+   "targetWriter": "platform.publisher-live"
+  },
+  {
+   "id": "fam.health-brains",
+   "pattern": "/health/brains/{brainId}",
+   "domain": "health-control-jobs",
+   "scope": "per-brain",
+   "status": "CANONICAL",
+   "writer": "@owning-brain",
+   "targetWriter": "platform.orchestrator"
+  },
+  {
+   "id": "fam.health-jobs",
+   "pattern": "/health/jobs/{jobId}",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "@owning-brain",
+   "targetWriter": "platform.orchestrator"
+  },
+  {
+   "id": "fam.health-sources",
+   "pattern": "/health/sources/{sourceId}",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "@owning-brain",
+   "targetWriter": "platform.orchestrator"
+  },
+  {
+   "id": "fam.sources",
+   "pattern": "/sources/{sourceId}",
+   "domain": "operational",
+   "scope": "global",
+   "status": "NOT_VERIFIED",
+   "writer": "NOT_VERIFIED",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.scores",
+   "pattern": "/scores/{brainId}",
+   "domain": "score",
+   "scope": "per-brain",
+   "status": "CANONICAL",
+   "writer": "platform.scorer",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.engine-score-alias",
+   "pattern": "/engine/score",
+   "domain": "score",
+   "scope": "global",
+   "status": "LEGACY",
+   "writer": "platform.scorer",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.control-overview",
+   "pattern": "/control/overview",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.control-orchestrator-v1",
+   "pattern": "/control/orchestratorV1",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.control-orchestrator",
+   "pattern": "/control/orchestrator",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.control-health-v1",
+   "pattern": "/control/healthV1",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.control-fleet",
+   "pattern": "/control/fleet/{lakeKey}",
+   "domain": "health-control-jobs",
+   "scope": "per-lake",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.control-beta",
+   "pattern": "/control/beta",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.control-engineering-status",
+   "pattern": "/control/engineeringStatusV1",
+   "domain": "certification",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.control-shadow-lane",
+   "pattern": "/control/shadowLaneV1/{brainId}",
+   "domain": "health-control-jobs",
+   "scope": "per-brain",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.control-execution-control",
+   "pattern": "/control/executionControlV1",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "@external-admin",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.jobs",
+   "pattern": "/jobs/{jobId}",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.species",
+   "pattern": "/species/{speciesId}",
+   "domain": "domain-output",
+   "scope": "per-species",
+   "status": "CANONICAL",
+   "writer": "brain.biological-state",
+   "targetWriter": "platform.publisher-live"
+  },
+  {
+   "id": "fam.lakefleet",
+   "pattern": "/lakeFleet/{lakeKey}",
+   "domain": "domain-output",
+   "scope": "per-lake",
+   "status": "CANONICAL",
+   "writer": "@slot-brain",
+   "targetWriter": "platform.publisher-live"
+  },
+  {
+   "id": "fam.lakefleet-last-updated",
+   "pattern": "/lakeFleet/{lakeKey}/lastUpdatedAt",
+   "domain": "domain-output",
+   "scope": "per-lake",
+   "status": "LEGACY",
+   "writer": "@none",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.snapshots",
+   "pattern": "/snapshots/{lakeKey}/latest",
+   "domain": "domain-output",
+   "scope": "per-lake",
+   "status": "CANONICAL",
+   "writer": "@slot-brain",
+   "targetWriter": "platform.publisher-live"
+  },
+  {
+   "id": "fam.snapshots-generatedat",
+   "pattern": "/snapshots/{lakeKey}/latest/generatedAt",
+   "domain": "domain-output",
+   "scope": "per-lake",
+   "status": "LEGACY",
+   "writer": "@none",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.snapshots-snapshotversion",
+   "pattern": "/snapshots/{lakeKey}/latest/snapshotVersion",
+   "domain": "domain-output",
+   "scope": "per-lake",
+   "status": "LEGACY",
+   "writer": "@none",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.lake-brain-node",
+   "pattern": "/lakes/{lakeKey}/brain",
+   "domain": "domain-output",
+   "scope": "per-lake",
+   "status": "CANONICAL",
+   "writer": "brain.lake-brain",
+   "targetWriter": "platform.publisher-live"
+  },
+  {
+   "id": "fam.lake-states",
+   "pattern": "/lakes/{lakeKey}/states",
+   "domain": "domain-output",
+   "scope": "per-lake",
+   "status": "CANONICAL",
+   "writer": "@slot-brain",
+   "targetWriter": "platform.publisher-live"
+  },
+  {
+   "id": "fam.lake-profiles",
+   "pattern": "/lakes/{lakeKey}/profiles",
+   "domain": "domain-output",
+   "scope": "per-lake",
+   "status": "CANONICAL",
+   "writer": "@slot-brain",
+   "targetWriter": "platform.publisher-live"
+  },
+  {
+   "id": "fam.lake-validation",
+   "pattern": "/lakes/{lakeKey}/validation",
+   "domain": "domain-output",
+   "scope": "per-lake",
+   "status": "CANONICAL",
+   "writer": "@slot-brain",
+   "targetWriter": "platform.publisher-live"
+  },
+  {
+   "id": "fam.lake-species-presence",
+   "pattern": "/lakes/{lakeKey}/speciesPresence",
+   "domain": "domain-output",
+   "scope": "per-lake",
+   "status": "CANONICAL",
+   "writer": "brain.lake-brain",
+   "targetWriter": "platform.publisher-live"
+  },
+  {
+   "id": "fam.access-ops-users",
+   "pattern": "/access/opsUsers/{uid}",
+   "domain": "identity",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "@external-admin",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.access-private-research",
+   "pattern": "/access/privateResearchUsers/{uid}",
+   "domain": "identity",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "@external-admin",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.ops-preferences",
+   "pattern": "/opsPreferences/{uid}",
+   "domain": "identity",
+   "scope": "global",
+   "status": "NOT_VERIFIED",
+   "writer": "external.sector-ops",
+   "targetWriter": null
+  }
+ ],
+ "targetBrains": [
+  {
+   "id": "fish-knowledge",
+   "name": "Fish Brain",
+   "deployedAs": "biological-state",
+   "authorizedInputs": []
+  },
+  {
+   "id": "wind",
+   "name": "Wind Brain",
+   "deployedAs": "wind",
+   "authorizedInputs": []
+  },
+  {
+   "id": "water-clarity",
+   "name": "Water Clarity Brain",
+   "deployedAs": "water-clarity",
+   "authorizedInputs": [
+    "wind",
+    "lake-brain"
+   ]
+  },
+  {
+   "id": "lake-brain",
+   "name": "Lake Brain",
+   "deployedAs": "lake-brain",
+   "authorizedInputs": []
+  },
+  {
+   "id": "water-temp",
+   "name": "Water Temperature Brain",
+   "deployedAs": "water-temp",
+   "authorizedInputs": [
+    "lake-brain"
+   ]
+  },
+  {
+   "id": "depth",
+   "name": "Depth Brain",
+   "deployedAs": "depth",
+   "authorizedInputs": [
+    "lake-brain"
+   ]
+  },
+  {
+   "id": "vegetation",
+   "name": "Vegetation Brain",
+   "deployedAs": "vegetation",
+   "authorizedInputs": [
+    "lake-brain",
+    "depth",
+    "water-temp",
+    "water-clarity"
+   ]
+  },
+  {
+   "id": "fish-behavior",
+   "name": "Biological Brain",
+   "deployedAs": "biological-state",
+   "authorizedInputs": [
+    "fish-knowledge",
+    "wind",
+    "water-clarity",
+    "lake-brain",
+    "water-temp",
+    "depth",
+    "vegetation"
+   ]
+  },
+  {
+   "id": "sector-intelligence",
+   "name": "Sector Intelligence Brain",
+   "deployedAs": "sector-intelligence",
+   "authorizedInputs": [
+    "fish-knowledge",
+    "wind",
+    "water-clarity",
+    "lake-brain",
+    "water-temp",
+    "depth",
+    "vegetation",
+    "fish-behavior"
+   ]
+  }
+ ],
+ "legacyIdentities": [
+  {
+   "id": "biological-state",
+   "status": "LEGACY_COMBINED",
+   "currentMeaning": "The deployed Fish package (brains/fish/) that combines species knowledge and dynamic biological-state computation",
+   "splitsInto": [
+    "fish-knowledge",
+    "fish-behavior"
+   ],
+   "rule": "Frozen: keeps its current deployed meaning and production data until an approved migration (BA-MIG). It is never reassigned to a single target Brain and never reused for a new meaning after retirement.",
+   "productionKeys": [
+    "/brains/biological-state",
+    "/scores/biological-state",
+    "/species/{speciesId} (writer brain.biological-state)"
+   ]
+  },
+  {
+   "id": "biological-brain",
+   "status": "LEGACY_ALIAS",
+   "currentMeaning": "Legacy folder and job name for biological-state",
+   "splitsInto": [
+    "fish-knowledge",
+    "fish-behavior"
+   ],
+   "rule": "Alias only; never a canonical ID."
+  },
+  {
+   "id": "biological",
+   "status": "LEGACY_ALIAS",
+   "currentMeaning": "Legacy alias of biological-state",
+   "splitsInto": [
+    "fish-knowledge",
+    "fish-behavior"
+   ],
+   "rule": "Alias only; never a canonical ID."
+  },
+  {
+   "id": "fish",
+   "status": "LEGACY_ALIAS",
+   "currentMeaning": "Directory and UI name of the combined package",
+   "splitsInto": [
+    "fish-knowledge",
+    "fish-behavior"
+   ],
+   "rule": "Alias only; never a canonical ID. /brains/fish must still never exist (fnd.15)."
+  }
+ ]
+}
