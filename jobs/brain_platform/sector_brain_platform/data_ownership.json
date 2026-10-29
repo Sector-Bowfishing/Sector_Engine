@@ -318,6 +318,33 @@
    "status": "NOT_VERIFIED",
    "writer": "external.sector-ops",
    "targetWriter": null
+  },
+  {
+   "id": "fam.health-engine",
+   "pattern": "/health/engine",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "NOT_VERIFIED",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.health-rtdb",
+   "pattern": "/health/rtdb",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "NOT_VERIFIED",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.control-publication",
+   "pattern": "/control/publicationV1/{brainId}",
+   "domain": "health-control-jobs",
+   "scope": "per-brain",
+   "status": "NOT_VERIFIED",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
   }
  ],
  "targetBrains": [

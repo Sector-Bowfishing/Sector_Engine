@@ -247,3 +247,28 @@ def orchestrator_view(store) -> ScopedObjectStore:
     """The Orchestrator: read artifacts (to verify and reconcile them) and the Publisher's history (to confirm outcomes); write ONLY its own coordination records under
     exports/orchestrator/. It can create nothing under artifacts/ or publishes/ and cannot move a head."""
     return ScopedObjectStore(store, read=("artifacts/", "publishes/", "exports/orchestrator/"), create=("exports/orchestrator/",), overwrite=("exports/orchestrator/",))
+
+
+class OverlayObjectStore:
+    """Reads fall through to `base`; every write lands in an in-memory overlay and NEVER reaches `base`. The Orchestrator's SHADOW evaluation uses it so that an evaluation can
+    read artifacts and the live Publisher's history but leaves no record, head or baseline anywhere persistent (the Orchestrator identity may not write publishes/ at all)."""
+
+    def __init__(self, base):
+        self._base, self._mem = base, MemoryObjectStore()
+
+    def put(self, key, data, *, if_generation_match=None):
+        cur = self.generation(key)
+        if if_generation_match is not None and if_generation_match != cur:
+            raise PreconditionFailed(f"{key}: generation is {cur}, expected {if_generation_match}")
+        self._mem._objs.setdefault(check_key(key), []).append(bytes(data))
+        return cur + 1
+
+    def get(self, key, generation=None):
+        got = self._mem.get(key, generation) if self._mem.generation(key) else None
+        return got if got is not None else (self._base.get(key, generation) if generation is None or not self._mem.generation(key) else None)
+
+    def generation(self, key):
+        return self._mem.generation(key) or self._base.generation(key)
+
+    def list(self, prefix):
+        return sorted(set(self._mem.list(prefix)) | set(self._base.list(prefix)))

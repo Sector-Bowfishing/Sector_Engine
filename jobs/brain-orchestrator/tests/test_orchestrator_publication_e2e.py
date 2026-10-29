@@ -42,7 +42,7 @@ def stack(world, monkeypatch, tmp_path):
     setup, calls = world
     rig = Rig(brains=("wind",))
     arm = {"live": None, "stores": 0}
-    monkeypatch.setattr(OR, "build_publication_store", lambda d: rig.store if d else None)
+    monkeypatch.setattr(OR, "build_publication_store", lambda d, b=None: rig.store if (d or b) else None)
     monkeypatch.setattr(OR, "build_live_publisher", lambda store: arm["live"])
     paths = {"ledger": str(tmp_path / "ledger.json"), "cut": str(tmp_path / "cutover.json"), "out": str(tmp_path / "pub.json")}
     argv = ["--coordinate-publication", "--artifact-store-dir", "x", "--publication-ledger", paths["ledger"], "--publication-cutover", paths["cut"], "--emit-publication-state", paths["out"]]
@@ -103,7 +103,10 @@ def test_approved_central_brain_is_published_once_through_the_publisher_in_the_r
 
 # 4. a cutover without an approval reference, for a legacy/alias identity, or while the Publisher is unarmed changes nothing -------------------------------------
 @pytest.mark.parametrize("entry,problem", [({"wind": {"state": "CENTRAL"}}, "CUTOVER_NOT_APPROVED"),
-                                           ({"biological-state": {"state": "CENTRAL", "approvalRef": "x"}}, "CUTOVER_LEGACY_COMBINED_ACK"),
+                                           ({"biological-state": {"state": "CENTRAL", "approvalRef": "x"}}, "CUTOVER_LEGACY_COMBINED_FROZEN"),
+                                           ({"biological-state": {"state": "CENTRAL", "approvalRef": "x", "legacyCombinedAck": True}}, "CUTOVER_LEGACY_COMBINED_FROZEN"),
+                                           ({"fish-knowledge": {"state": "CENTRAL", "approvalRef": "x"}}, "CUTOVER_DEFERRED"),
+                                           ({"fish-behavior": {"state": "CENTRAL", "approvalRef": "x"}}, "CUTOVER_DEFERRED"),
                                            ({"depth": {"state": "CENTRAL", "approvalRef": "x"}}, "CUTOVER_BLOCKED"),
                                            ({"vegetation": {"state": "CENTRAL", "approvalRef": "x"}}, "CUTOVER_BLOCKED"),
                                            ({"wind": {"state": "CENTRAL", "approvalRef": "x"}}, "CUTOVER_ORDER"),
@@ -312,11 +315,63 @@ def test_cutover_document_enforces_the_recorded_order(tmp_path):
         json.dump({"schema": PS.CUTOVER_SCHEMA, "brains": brains}, open(p, "w"))
         return PS.load_cutover(str(p))
     ok = {"state": "CENTRAL", "approvalRef": "a"}
-    cut, problems = load({"water-clarity": ok, "biological-state": {**ok, "legacyCombinedAck": True}, "wind": ok})
-    assert sorted(cut) == ["biological-state", "water-clarity", "wind"] and problems == []                    # the recorded order, in full
-    cut, problems = load({"water-clarity": ok, "wind": ok})                                                  # skips the second step
+    cut, problems = load({"water-clarity": ok, "wind": ok, "water-temp": ok})
+    assert sorted(cut) == ["water-clarity", "water-temp", "wind"] and problems == []                         # the recorded order, in full
+    cut, problems = load({"water-clarity": ok, "water-temp": ok})                                            # skips wind
     assert sorted(cut) == ["water-clarity"] and problems[0]["kind"] == "CUTOVER_ORDER"
     cut, problems = load({"wind": {**ok, "orderReviewRef": "review/1"}})                                    # an explicit order review is the only way to change it
     assert sorted(cut) == ["wind"] and problems == []
     cut, problems = load({"wind": {"state": "DIRECT_WRITE"}, "depth": {"state": "DIRECT_WRITE"}})            # DIRECT_WRITE is always allowed (rollback)
     assert problems == [] and all(e["state"] == "DIRECT_WRITE" for e in cut.values())
+
+
+# 14. operational health stays with the Orchestrator and is derived from what the Publisher published ---------------------------------------------------------------------
+def test_health_mirror_derives_only_from_published_data_and_writes_only_orchestrator_paths(stack, monkeypatch):
+    from sector_brain_platform import health_mirror as HM
+    src = HM._clarity_source_ids()[0]
+    ref = stack.rig.ref(wind_artifact(n=1))
+    stack.rig.reconcile(ref)
+    stack.arm["live"] = stack.rig.live
+    stack.cutover(wind={"state": "CENTRAL", "approvalRef": "approval/test/wind", "orderReviewRef": "review/test"})
+    monkeypatch.setitem(HM.SPECS, "wind", {"registryChildren": ("status", "staleLakeCount"), "sources": lambda: (src,)})
+    t = quiet()
+    t["brains"]["wind"].update({"status": "HEALTHY", "staleLakeCount": 2})
+    t["sources"] = {src: {"health": "OK", "lastFetchAt": "2026-10-29T00:00:00Z", "failures24h": 0}}
+    db = stack.setup(t, cloud())
+    assert OR.main(stack.argv) == 0
+    assert db.tree["health"]["brains"]["wind"]["status"] == "HEALTHY" and db.tree["health"]["brains"]["wind"]["staleLakeCount"] == 2
+    assert db.tree["health"]["sources"][src] == {"status": "OK", "lastFetchAt": "2026-10-29T00:00:00Z", "failures24h": 0}
+    assert db.pub if False else stack.pub(db)["healthMirror"]["wind"]["written"] is True
+    for w in db.writes:
+        for k in w:
+            assert DO.platform_path_role(k) == DO.ORCHESTRATOR, k
+    n = len(db.writes)
+    assert OR.main(stack.argv) == 0
+    assert stack.pub(db)["healthMirror"]["wind"]["changed"] == 0                  # nothing to change the second time: no rewrite
+
+
+def test_health_mirror_never_runs_for_a_brain_that_was_not_published(stack, monkeypatch):
+    from sector_brain_platform import health_mirror as HM
+    monkeypatch.setitem(HM.SPECS, "wind", {"registryChildren": ("status",), "sources": None})
+    stack.rig.ref(wind_artifact(n=1))
+    db = stack.setup(quiet(), cloud())
+    assert OR.main(stack.argv) == 0                                                    # pre-cutover: the legacy writer still owns what it writes today
+    assert stack.pub(db)["healthMirror"] == {} and "wind" not in (db.tree.get("health") or {}).get("sources", {})
+
+
+# 15. the bucket store and the dry run -----------------------------------------------------------------------------------------------------------------------------------
+def test_bucket_store_is_built_only_from_the_configured_bucket_and_never_without_it(monkeypatch):
+    from sector_brain_platform.object_bucket import GcsRestObjectStore
+    assert OR.build_publication_store(None, None) is None
+    monkeypatch.setattr(OR, "TokenProvider", lambda *a, **k: object())
+    s = OR.build_publication_store(None, "some-bucket")
+    assert isinstance(s, GcsRestObjectStore) and s.bucket == "some-bucket"
+
+
+def test_a_dry_run_cycle_writes_nothing_to_the_artifact_store(stack):
+    stack.rig.ref(wind_artifact(n=1))
+    before = sorted(stack.rig.store.list(""))  if hasattr(stack.rig.store, "list") else None
+    db = stack.setup(quiet(), cloud())
+    assert OR.main(["--dry-run"] + stack.argv) == 0
+    assert sorted(stack.rig.store.list("exports/")) == [] and sorted(stack.rig.store.list("publishes/")) == []
+    assert db.writes == []                                                              # and no database write either

@@ -333,7 +333,10 @@ CLARITY_REGISTRY_CHILDREN = {
     "status": ("schedule", "enabled", "health", "status", "statusReasons", "supportedLakeCount", "readinessCounts", "staleLakeCount", "staleAfterHours",
                "satelliteFreshDays", "lastSuccessfulRun", "lastError", "deploymentVersion", "breakdowns", "runsPerMinute", "updatedAt"),
 }
-CLARITY_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount")        # /health/brains/water-clarity: domain health FACTS only; process/execution fields are Orchestrator-owned
+#: Cortex 3.1 (FD-15, owner decision 2026-10-29): the Publisher writes NO /health/* path for Water Clarity. /health/brains/water-clarity/{status,staleLakeCount} and
+#: /health/sources/{id} are Orchestrator-owned operational health; the Orchestrator derives them from the Publisher-published /brains/water-clarity/status and /sources/{id}
+#: (sector_brain_platform.health_mirror). The tuple stays only so existing imports and the builder's classification keep working; it authorises nothing.
+CLARITY_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount")
 CLARITY_SLOT_ERROR_CHILDREN = ("stale", "lastError", "lastErrorAt")  # children of /lakeFleet/{k}/slots/waterClarity written when the Engine missed a lake (the last good slot is kept)
 
 #: Clarity's volatile contract. Minimal on purpose (same rule as Wind): only fields that are run-clock or fetch-clock values and carry no change of domain meaning.
@@ -377,13 +380,12 @@ def clarity_specs() -> list[SchemaSpec]:
         (PathFamily(f"/brains/{CLARITY}/{{child}}", {"child": one_of(c for group in CLARITY_REGISTRY_CHILDREN.values() for c in group)},
                     note="approved CHILDREN only (CLARITY_REGISTRY_CHILDREN); never the whole node, never publication/certification"),
          PathFamily(f"/validation/{CLARITY}"),
-         PathFamily(f"/health/brains/{CLARITY}/{{child}}", {"child": one_of(CLARITY_HEALTH_DOMAIN_CHILDREN)}, note="domain health facts only; execution/job health is Orchestrator-owned"),
          PathFamily("/activity/{event}", {"event": contains(f"-{CLARITY}-")}, note="own domain events only; retention/pruning is a platform concern")),
         delete_families=(PathFamily(f"/brains/{CLARITY}/lastError"),), delete_reasons=("OPTIONAL_CHILD_CLEARED",),
         volatile=CLARITY_VOLATILE_CONTRACT_V1)
     sources = SchemaSpec(
         "clarity-source-registry-v1", CLARITY,
-        (PathFamily("/sources/{id}", {"id": one_of(_clarity_sources())}), PathFamily("/health/sources/{id}", {"id": one_of(_clarity_sources())})),
+        (PathFamily("/sources/{id}", {"id": one_of(_clarity_sources())}),),
         volatile=CLARITY_VOLATILE_CONTRACT_V1)
     return [lake_state, registry, sources]
 

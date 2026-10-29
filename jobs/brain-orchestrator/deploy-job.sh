@@ -23,6 +23,11 @@ CRON="${CRON:-50 * * * *}"
 # Wind three measurements (wind-specialist-capability-v2, adopted 2026-10-19): OFF unless the deploy is approved with WIND_MEASUREMENTS=on.
 WIND_MEASUREMENTS="${WIND_MEASUREMENTS:-off}"
 [[ "$WIND_MEASUREMENTS" == "on" || "$WIND_MEASUREMENTS" == "off" ]] || { echo "WIND_MEASUREMENTS must be on or off"; exit 1; }
+# Publication coordination (Cortex PL-19). OFF unless the deploy is approved with PUBLICATION_COORDINATION=on. Observation only: it reads sealed artifacts and keeps its own records under
+# exports/orchestrator/ of the private artifact bucket; the live Publisher is never constructed by this job; every Brain stays on its direct writer unless a cutover document says otherwise.
+PUBLICATION_COORDINATION="${PUBLICATION_COORDINATION:-off}"
+[[ "$PUBLICATION_COORDINATION" == "on" || "$PUBLICATION_COORDINATION" == "off" ]] || { echo "PUBLICATION_COORDINATION must be on or off"; exit 1; }
+PUBLICATION_ARTIFACT_BUCKET="${PUBLICATION_ARTIFACT_BUCKET:-sector-9393c-brain-artifacts}"
 RTDB_URL="${RTDB_URL:-https://sector-brain.firebaseio.com}"
 ENGINE_URL="${ENGINE_URL:-https://sector-engine-e43utajroa-uc.a.run.app}"
 LAKE_BRAIN_ARCHIVE="${LAKE_BRAIN_ARCHIVE:-gs://sector-lake-brain}"
@@ -120,7 +125,7 @@ run gcloud run jobs deploy "$JOB" --source . \
   --project "$PROJECT_ID" --region "$REGION" --service-account "$SA" \
   --tasks 1 --max-retries 0 --cpu 1 --memory 512Mi --task-timeout 30m \
   --labels "commit=$COMMIT" \
-  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=$RTDB_URL,ENGINE_URL=$ENGINE_URL,LAKE_BRAIN_ARCHIVE=$LAKE_BRAIN_ARCHIVE,BIOLOGY_BUCKET=$BIOLOGY_BUCKET,DEPLOYMENT_VERSION=brain-orchestrator@$COMMIT,ORCHESTRATOR_SCOPE=pilots,WATER_TEMP_SCOPE=pilots,WIND_MEASUREMENTS=$WIND_MEASUREMENTS"
+  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=$RTDB_URL,ENGINE_URL=$ENGINE_URL,LAKE_BRAIN_ARCHIVE=$LAKE_BRAIN_ARCHIVE,BIOLOGY_BUCKET=$BIOLOGY_BUCKET,DEPLOYMENT_VERSION=brain-orchestrator@$COMMIT,ORCHESTRATOR_SCOPE=pilots,WATER_TEMP_SCOPE=pilots,WIND_MEASUREMENTS=$WIND_MEASUREMENTS,PUBLICATION_COORDINATION=$PUBLICATION_COORDINATION,PUBLICATION_ARTIFACT_BUCKET=$PUBLICATION_ARTIFACT_BUCKET"
 run gcloud run jobs add-iam-policy-binding "$JOB" --project "$PROJECT_ID" --region "$REGION" --member "serviceAccount:$SA" --role roles/run.invoker
 
 echo "▶ schedule $JOB ($CRON UTC): definition only, always left PAUSED"

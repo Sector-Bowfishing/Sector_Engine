@@ -156,10 +156,6 @@
           "status": "CANONICAL"
         },
         {
-          "pattern": "/health/brains/water-clarity/{child}",
-          "status": "CANONICAL"
-        },
-        {
           "pattern": "/activity/{event}",
           "status": "CANONICAL"
         }
@@ -182,10 +178,6 @@
       "families": [
         {
           "pattern": "/sources/{id}",
-          "status": "CANONICAL"
-        },
-        {
-          "pattern": "/health/sources/{id}",
           "status": "CANONICAL"
         }
       ],

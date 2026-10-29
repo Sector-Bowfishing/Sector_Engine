@@ -54,10 +54,12 @@ def load_cutover(path: str | None) -> tuple[dict, list]:
             problems.append({"kind": "CUTOVER_NOT_APPROVED", "brainId": bid, "why": "CENTRAL needs an approvalRef"})
         elif bid in blocked:
             problems.append({"kind": "CUTOVER_BLOCKED", "brainId": bid, "why": blocked[bid]})
+        elif kind == "LEGACY_COMBINED":
+            problems.append({"kind": "CUTOVER_LEGACY_COMBINED_FROZEN", "brainId": bid, "why": "biological-state stays on its direct writer until the approved Fish/Biological split (BA-04); it is never published as a combined unit"})
+        elif bid in [x["brainId"] for x in order.get("deferred") or []] or (kind == "TARGET" and DO.recognize(bid).get("deployedAs") == "biological-state"):
+            problems.append({"kind": "CUTOVER_DEFERRED", "brainId": bid, "why": "fish-knowledge / fish-behavior can only cut over after the approved M01-M03 split"})
         elif bid not in steps:
             problems.append({"kind": "CUTOVER_NOT_IN_ORDER", "brainId": bid, "why": "not in the authoritative cutover order"})
-        elif kind == "LEGACY_COMBINED" and not e.get("legacyCombinedAck"):
-            problems.append({"kind": "CUTOVER_LEGACY_COMBINED_ACK", "brainId": bid, "why": "biological-state publishes as the legacy combined unit only with legacyCombinedAck: true; the Fish/Biological split is a separate migration (BA-04)"})
         else:
             out[bid] = {"state": "CENTRAL", "approvalRef": e["approvalRef"], "orderReviewRef": e.get("orderReviewRef")}
     for bid in sorted(b for b, e in out.items() if e["state"] == "CENTRAL" and not e.get("orderReviewRef")):       # PL-10: the recorded order holds unless explicitly reviewed
@@ -68,14 +70,15 @@ def load_cutover(path: str | None) -> tuple[dict, list]:
     return out, problems
 
 
-def run_stage(*, store, ledger_path: str | None, executions: list, shadow=None, live=None, cutover_path: str | None = None, paused_reason: str | None = None, clock=None) -> dict:
+def run_stage(*, store, ledger_path: str | None, executions: list, shadow=None, live=None, cutover_path: str | None = None, paused_reason: str | None = None, clock=None, dry_run: bool = False) -> dict:
     """One publication pass. Returns {summary, reconcile, resume, cutover, outputChanged, armed} for the cycle record. Raises nothing the cycle needs to handle for a single bad artifact:
     those become ledger records."""
     cut, problems = load_cutover(cutover_path)
     central = sorted(b for b, e in cut.items() if e["state"] == "CENTRAL")
     kw = {"clock": clock} if clock else {}
     # a ledger file when one is named (local review); otherwise the durable ledger in the private store, written through the Orchestrator's own least-privilege view
-    ledger = PublicationLedger(ledger_path) if ledger_path else StoreLedger(orchestrator_view(store))
+    # a dry run writes NOTHING anywhere: its ledger is in memory (seeded from nothing), so it neither reads another run's state nor persists its own
+    ledger = PublicationLedger(None) if dry_run else (PublicationLedger(ledger_path) if ledger_path else StoreLedger(orchestrator_view(store)))
     co = PublicationCoordinator(ledger, orchestrator_view(store), shadow=shadow, live=live, cutover=central, hold_reason=paused_reason, **kw)
     rec = co.reconcile(executions)
     changes = {}
