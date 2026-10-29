@@ -14,11 +14,13 @@ def test_order_is_complete_unique_dependency_respecting_and_blocks_shadow_only_b
     ids = [x["brainId"] for x in o["order"]]
     blocked = [x["brainId"] for x in o["blocked"]]
     assert len(ids) == len(set(ids)) and not set(ids) & set(blocked)
-    assert set(ids) | set(blocked) == set(default_registry().brains)                    # every registered Brain is either ordered or blocked, none forgotten
-    assert ids[:3] == ["water-clarity", "biological-state", "wind"]                         # PL-10 as recorded in Cortex
+    legacy = o["legacyDirectWriter"]["brainId"]
+    assert set(ids) | set(blocked) | {legacy} == set(default_registry().brains)         # every registered Brain is ordered, blocked or the retained legacy writer; none forgotten
+    assert legacy == "biological-state" and legacy not in ids and o["legacyDirectWriter"]["status"] == "LEGACY_COMBINED"
+    assert ids[:2] == ["water-clarity", "wind"]                                            # PL-10 with the Fish step performed by the post-split target Brains
+    assert [d["brainId"] for d in o["deferred"]] == ["fish-knowledge", "fish-behavior"]
     assert blocked == ["depth", "vegetation"]
     assert [x["step"] for x in o["order"]] == list(range(1, len(ids) + 1))
-    assert next(x for x in o["order"] if x["brainId"] == "biological-state")["legacyCombined"] is True
     # Cutover order is the order in which the WRITER changes (risk and readiness); it is not the execution order. A consumer may change writer before its input Brain does,
     # because the input stays available from the input Brain's still-working direct writer. The execution order is data_ownership.execution_order() and is tested separately.
     assert o["rules"] and any("earlier step" in r for r in o["rules"])

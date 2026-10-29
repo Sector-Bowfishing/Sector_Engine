@@ -54,10 +54,12 @@ def load_cutover(path: str | None) -> tuple[dict, list]:
             problems.append({"kind": "CUTOVER_NOT_APPROVED", "brainId": bid, "why": "CENTRAL needs an approvalRef"})
         elif bid in blocked:
             problems.append({"kind": "CUTOVER_BLOCKED", "brainId": bid, "why": blocked[bid]})
+        elif kind == "LEGACY_COMBINED":
+            problems.append({"kind": "CUTOVER_LEGACY_COMBINED_FROZEN", "brainId": bid, "why": "biological-state stays on its direct writer until the approved Fish/Biological split (BA-04); it is never published as a combined unit"})
+        elif bid in [x["brainId"] for x in order.get("deferred") or []] or (kind == "TARGET" and DO.recognize(bid).get("deployedAs") == "biological-state"):
+            problems.append({"kind": "CUTOVER_DEFERRED", "brainId": bid, "why": "fish-knowledge / fish-behavior can only cut over after the approved M01-M03 split"})
         elif bid not in steps:
             problems.append({"kind": "CUTOVER_NOT_IN_ORDER", "brainId": bid, "why": "not in the authoritative cutover order"})
-        elif kind == "LEGACY_COMBINED" and not e.get("legacyCombinedAck"):
-            problems.append({"kind": "CUTOVER_LEGACY_COMBINED_ACK", "brainId": bid, "why": "biological-state publishes as the legacy combined unit only with legacyCombinedAck: true; the Fish/Biological split is a separate migration (BA-04)"})
         else:
             out[bid] = {"state": "CENTRAL", "approvalRef": e["approvalRef"], "orderReviewRef": e.get("orderReviewRef")}
     for bid in sorted(b for b, e in out.items() if e["state"] == "CENTRAL" and not e.get("orderReviewRef")):       # PL-10: the recorded order holds unless explicitly reviewed

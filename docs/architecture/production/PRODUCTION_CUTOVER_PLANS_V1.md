@@ -1,13 +1,15 @@
 # PRODUCTION CUTOVER PLANS V1 (Wind, Fish, Water Clarity)
 
 **Nothing here is authorised.** Each plan is a draft runbook skeleton; each live step needs Michael's explicit approval for that exact step. Common prerequisites for ALL plans: Publisher LIVE V1 built and merged (P1-P6, P12, P2 adapter), baseline reconciled from a PRIVATE read-only live capture (P4), write-security gate designed and approved, `PRODUCTION_EXIT_GATE_V1` runbook staged, deployed-image lineage verified (shared-orchestrator rule), pre-cutover RTDB export and previous image digest recorded privately, scorer publication trigger (S1) landed.
-Recommended order: **Water Clarity -> Fish -> Wind.**
+Authoritative order (machine-readable, enforced: `jobs/brain_platform/sector_brain_platform/cutover_order.json`): **Water Clarity -> Wind -> Water Temp -> Lake -> Sector Intelligence**; the **Fish** step of PL-10 is performed by the target Brains `fish-knowledge` then `fish-behavior` AFTER the approved M01-M03 split. The legacy combined `biological-state` is NEVER published as a combined unit: it stays on its direct writer, unchanged, and no Fish/Biological production data is changed by any cutover before the split. (Corrected 2026-10-29 from the earlier 'Water Clarity -> Fish -> Wind', which treated the combined package as the Fish Brain.) Depth and Vegetation are BLOCKED.
+
+**Health ownership (Cortex 3.1, owner decision 2026-10-29):** the Publisher never writes `/health/*`. Wherever a plan below lists `/health/brains/...` or `/health/sources/...` in a Publisher write set, that is superseded: the Orchestrator derives those from the published `/brains/{id}/...` and `/sources/{id}` (`health_mirror.py`).
 
 ## Water Clarity (pilot)
 | Item | Plan |
 |---|---|
 | BEFORE | `run.py` (C1, manual) writes batches then whole-node `/brains/water-clarity` and `/health/brains/water-clarity`, `/health/jobs/..`; Publisher SHADOW; score 8.0 FROZEN; jobs paused |
-| write owner | Publisher (after cutover) for the approved `/brains/water-clarity/{child}`, `/health/brains/water-clarity/{status,staleLakeCount}`, lake/fleet/snapshot families in its registration; Orchestrator for process health/`/jobs`; scorer for `/scores` |
+| write owner | Publisher (after cutover) for the approved `/brains/water-clarity/{child}`, `/validation/water-clarity`, `/sources/{id}`, lake/fleet/snapshot families in its registration (NO `/health/*`: Orchestrator-derived); Orchestrator for process health/`/jobs`; scorer for `/scores` |
 | dry run | `run.py` builds the sealed bundle (already done in memory); evaluate against live read (GET only); equivalence diff plan vs live; zero unexplained diffs; check artifact size vs `max_bytes` for the 621-lake fleet (split by scope or manifest-last) |
 | artifact | `clarity-publication-v1`, one run = one artifact |
 | expected write set | child-level only; `publication` in the same atomic update; typed DELETE for `lastError`; no whole-node keys |
@@ -19,7 +21,7 @@ Recommended order: **Water Clarity -> Fish -> Wind.**
 | rollback | republish the pre-cutover artifact through the P5 path, or restore from the pre-cutover export; rehearse first in a non-prod database (X13). GCS C2-C4 untouched |
 | post-cutover guard | invariant 10 + AST pin (zero write sites) + `cutover_guard` + `/brains/water-clarity` whole-node key rejected by Publisher path ownership; IAM narrowing + denial test (X16) is a later separately approved step |
 
-## Fish
+## Fish (DEFERRED: not part of any current cutover; applies to `fish-knowledge`/`fish-behavior` after the split, never to the combined package)
 | Item | Plan |
 |---|---|
 | BEFORE | orchestrator in-process `run.py --write` (single `rtdb.update`, 33 Fish-owned paths for the 2026-10-17.1 release); live release 2026-10-17.1, Fish score 5.1; Publisher SHADOW |

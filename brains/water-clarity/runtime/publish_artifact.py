@@ -53,8 +53,9 @@ _ORDER = (SCHEMA_LAKE, SCHEMA_REGISTRY, SCHEMA_SOURCES)
 NOT_AUTHORED = (
     (re.compile(rf"/lakeFleet/{_LAKE}/lakeId"), "lakefleet-lakeid", "PLATFORM_OWNED", "STOP_WRITING", "Platform Lake Registry (lake identity)"),
     (re.compile(rf"/snapshots/{_LAKE}/latest/lakeId"), "snapshot-lakeid", "PLATFORM_OWNED", "STOP_WRITING", "Platform Lake Registry (lake identity)"),
+    (re.compile(r"/health/sources/.+"), "health-sources", "PLATFORM_OWNED", "ORCHESTRATOR_DERIVED", "Orchestrator (derived from the published /sources/{id})"),
+    (re.compile(rf"/health/brains/{CLARITY}(/.+)?"), "health-brains", "PLATFORM_OWNED", "ORCHESTRATOR_DERIVED", "Orchestrator (derived from the published /brains/water-clarity/status)"),
     (re.compile(r"/health/jobs/.+"), "health-jobs", "PLATFORM_OWNED", "ORCHESTRATOR_DERIVED", "Orchestrator (/jobs + execution ledger)"),
-    (re.compile(rf"/health/brains/{CLARITY}/.+"), "health-brains-process", "LEGACY_READER_DEPENDENCY", "ORCHESTRATOR_DERIVED", "Orchestrator (execution / deployment state)"),
     (re.compile(r"/activity/.+"), "activity-retention", "PLATFORM_OWNED", "STOP_WRITING", "Platform maintenance (bounded-ring retention); a Brain never edits activity after the fact"),
 )
 

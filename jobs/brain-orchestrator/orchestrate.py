@@ -48,7 +48,7 @@ from sector_brain_platform import brain_operations as BOPS                      
 from sector_brain_platform import execution_control as EC                                                            # noqa: E402
 from sector_brain_platform import engineering_status_publication as ESP                                                # noqa: E402
 from sector_brain_platform import shadow_lane as SL                                                                   # noqa: E402
-from sector_brain_platform import data_ownership as DO, publication_stage as PS                                       # noqa: E402
+from sector_brain_platform import data_ownership as DO, publication_stage as PS, health_mirror as HM                                       # noqa: E402
 sys.path.insert(0, HERE)
 import control_plane as CP                                                                                            # noqa: E402
 
@@ -518,6 +518,9 @@ def main(argv=None) -> int:
                                            live=build_live_publisher(pstore), cutover_path=a.publication_cutover,
                                            paused_reason=None if auto_ok else "EXECUTION_PAUSED")
                 publication["state"] = "COORDINATED"
+                # operational health of a CENTRAL Brain is the Orchestrator's, derived only from what the Publisher published (never written by the Publisher or the Brain)
+                central_published = [b for b in publication["cutover"]["central"] if (publication["summary"]["brains"].get(b) or {}).get("published")]
+                publication["healthMirror"] = HM.stage(db, central_published, write and not a.control_only)
                 for r in exec_records:                                       # evidence replaces UNKNOWN; the scoring trigger below is unchanged
                     ch = (publication["outputChanged"].get(r["executionId"]) or {}).get("outputChanged")
                     if ch and r.get("outputChanged", "UNKNOWN") == "UNKNOWN":
@@ -639,7 +642,7 @@ def main(argv=None) -> int:
               "lastSeen": {**(state.get("lastSeen") or {}), **{b: v for b, v in seen.items() if v}} if write else state.get("lastSeen"),
               "jobsSynced": len(records), "jobsChanged": n_changed, "scores": scores, "executionControl": EC.summary(ctl)}
     if publication is not None:
-        record["publication"] = {k: publication[k] for k in ("state", "reason", "armed", "cutover", "summary") if k in publication}
+        record["publication"] = {k: publication[k] for k in ("state", "reason", "armed", "cutover", "summary", "healthMirror") if k in publication}
     if write and not a.control_only:
         live.update({"control/orchestrator": record})
     print(json.dumps({k: record[k] for k in ("mode", "durationMs", "jobsChanged", "scores")}, indent=None))

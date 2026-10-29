@@ -284,7 +284,7 @@ def test_legacy_write_set_classification_is_complete(legacy_updates):
     classes = {d["classification"] for d in r.dropped}
     assert classes <= {"PLATFORM_OWNED", "DERIVED_COMPATIBILITY_PROJECTION", "LEGACY_READER_DEPENDENCY"}
     rows = {d["row"] for d in r.dropped}
-    assert {"lakefleet-lakeid", "snapshot-lakeid", "health-jobs", "health-brains-process", "clarity-snapshot-copy-v1", "clarity-snapshot-brainversion-v1"} <= rows
+    assert {"lakefleet-lakeid", "snapshot-lakeid", "health-jobs", "health-brains", "health-sources", "clarity-snapshot-copy-v1", "clarity-snapshot-brainversion-v1"} <= rows
     path = os.path.join(REPO, "docs", "architecture", "certification", "water-clarity", "CLARITY_DIRECT_WRITE_AUDIT.md")
     audit = open(path, encoding="utf-8").read()
     for row in rows | {"rtdb.update", "GCS_WRITE_SEMANTICS_PLATFORM_DEBT"}:
