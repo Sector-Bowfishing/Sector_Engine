@@ -1,0 +1,584 @@
+diff --git a/projects/sector/shared/data/DATA_CONTRACTS.md b/projects/sector/shared/data/DATA_CONTRACTS.md
+index 8bdaa7f..20988ba 100644
+--- a/projects/sector/shared/data/DATA_CONTRACTS.md
++++ b/projects/sector/shared/data/DATA_CONTRACTS.md
+@@ -4,54 +4,57 @@
+ 
+ Authoritative registry for [firebase-data.md](../standards/firebase-data.md) and [core/security.md](../../../../core/security.md). Writer and reader IDs are navigation-snapshot node IDs. Tokens: `@owning-brain` (own stable-ID key), `@slot-brain` (own slot of a shared per-lake record), `@external-admin` (written outside the system), `@none` (orphaned; nobody may write). Production facts are dated observations from the cited application reports; Cortex did not re-run them. **Lane** (IO-06): every family is INTERNAL unless an approved customer release registers a CUSTOMER-lane family; customer components read only CUSTOMER lanes.
+ 
+-Integrity: `190a1d21fef2…` · Evidence: `discovery`, `blueprint`, `engine-audit`, `engine-proposal`, `engine-ops-handoff`, `ops-hotfix`, `ops-presence-rules`, `ops-production`, `engine-internal-activation`, `engine-ops-status`, `owner-scheduling-mission`
++Integrity: `88bcfbbea25a…` · Evidence: `discovery`, `blueprint`, `engine-audit`, `engine-proposal`, `engine-ops-handoff`, `ops-hotfix`, `ops-presence-rules`, `ops-production`, `engine-internal-activation`, `engine-ops-status`, `owner-scheduling-mission`
+ 
+ ## Ownership matrix (path families)
+ 
+ | Family | Pattern | Domain | Status | Lane | Writer | Target writer (FD-15) | Readers | Class | Effective client read (deployed) | Freshness | Label |
+ |---|---|---|---|---|---|---|---|---|---|---|---|
+-| `fam.brains` | `/brains/{brainId}` | operational | CANONICAL | INTERNAL | `@owning-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME → current: /control/overview.brains[*] | VERIFIED_IMPLEMENTATION |
+-| `fam.brains-wind-scores` | `/brains/wind/scores` | score | LEGACY | INTERNAL | `brain.wind` | same | — | INTERNAL | OPS_ALLOWLIST | VERSION | PRODUCTION_OBSERVATION, 2026-10-21 |
+-| `fam.validation-wind-scores` | `/validation/wind/scores` | score | LEGACY | INTERNAL | `brain.wind` | same | — | INTERNAL | NOT RECORDED | VERSION | VERIFIED_IMPLEMENTATION |
+-| `fam.validation` | `/validation/{brainId}` | research | CANONICAL | INTERNAL | `@owning-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | NOT RECORDED | WRITE_TIME | PRODUCTION_OBSERVATION, 2026-10-21 |
+-| `fam.activity` | `/activity/{eventId}` | operational | CANONICAL | INTERNAL | `@owning-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | NOT RECORDED | NOT_APPLICABLE | PRODUCTION_OBSERVATION, 2026-10-21 |
+-| `fam.health-brains` | `/health/brains/{brainId}` | health-control-jobs | CANONICAL | INTERNAL | `@owning-brain` | `platform.orchestrator` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence` | INTERNAL | NOT RECORDED | WRITE_TIME → current: /control/overview.brains[*] healthCurrent/healthAt/stale | PRODUCTION_OBSERVATION, 2026-10-21 |
+-| `fam.health-jobs` | `/health/jobs/{jobId}` | health-control-jobs | CANONICAL | INTERNAL | `@owning-brain` | `platform.orchestrator` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | NOT RECORDED | WRITE_TIME | VERIFIED_IMPLEMENTATION |
+-| `fam.health-sources` | `/health/sources/{sourceId}` | health-control-jobs | CANONICAL | INTERNAL | `@owning-brain` | `platform.orchestrator` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | NOT RECORDED | WRITE_TIME | VERIFIED_IMPLEMENTATION |
+-| `fam.sources` | `/sources/{sourceId}` | operational | NOT_VERIFIED | INTERNAL | `NOT_VERIFIED` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | NOT RECORDED | NOT_VERIFIED | VERIFIED_IMPLEMENTATION |
+-| `fam.scores` | `/scores/{brainId}` | score | CANONICAL | INTERNAL | `platform.scorer` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | OPS_ALLOWLIST | VERSION | VERIFIED_IMPLEMENTATION |
+-| `fam.engine-score-alias` | `/engine/score` | score | LEGACY | INTERNAL | `platform.scorer` | same | — | INTERNAL | NOT RECORDED | VERSION | PRODUCTION_OBSERVATION, 2026-10-21 |
+-| `fam.control-overview` | `/control/overview` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | OPS_ALLOWLIST | POLICY_AGE | VERIFIED_IMPLEMENTATION |
+-| `fam.control-orchestrator-v1` | `/control/orchestratorV1` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | VERIFIED_IMPLEMENTATION |
+-| `fam.control-orchestrator` | `/control/orchestrator` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | VERIFIED_IMPLEMENTATION |
+-| `fam.control-health-v1` | `/control/healthV1` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | VERIFIED_IMPLEMENTATION |
+-| `fam.control-fleet` | `/control/fleet/{lakeKey}` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | OPS_ALLOWLIST | POLICY_AGE | VERIFIED_IMPLEMENTATION |
+-| `fam.control-beta` | `/control/beta` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | VERIFIED_IMPLEMENTATION |
+-| `fam.control-engineering-status` | `/control/engineeringStatusV1` | certification | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops` | INTERNAL | OPS_ALLOWLIST | VERSION | VERIFIED_IMPLEMENTATION |
+-| `fam.control-shadow-lane` | `/control/shadowLaneV1/{brainId}` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | PRODUCTION_OBSERVATION, 2026-10-22 |
+-| `fam.control-execution-control` | `/control/executionControlV1` | health-control-jobs | CANONICAL | INTERNAL | `@external-admin` | same | `platform.orchestrator`, `external.sector-ops` | INTERNAL | OPS_ALLOWLIST | NOT_APPLICABLE | PLANNED |
+-| `fam.jobs` | `/jobs/{jobId}` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | NOT RECORDED | WRITE_TIME | VERIFIED_IMPLEMENTATION |
+-| `fam.species` | `/species/{speciesId}` | domain-output | CANONICAL | INTERNAL | `brain.biological-state` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence` | INTERNAL | NOT RECORDED | VERSION | PRODUCTION_OBSERVATION, 2026-10-21 |
+-| `fam.lakefleet` | `/lakeFleet/{lakeKey}` | domain-output | CANONICAL | INTERNAL | `@slot-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | NOT RECORDED | WRITE_TIME → current: /control/fleet/{k} stale + staleSlots (FLAG\|AGE), staleRule | VERIFIED_IMPLEMENTATION |
+-| `fam.lakefleet-last-updated` | `/lakeFleet/{lakeKey}/lastUpdatedAt` | domain-output | LEGACY | INTERNAL | `@none` | same | — | INTERNAL | NOT RECORDED | NOT_APPLICABLE | PRODUCTION_OBSERVATION, 2026-10-21 |
+-| `fam.snapshots` | `/snapshots/{lakeKey}/latest` | domain-output | CANONICAL | INTERNAL | `@slot-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence`, `brain.biological-state` | INTERNAL | NOT RECORDED | WRITE_TIME → current: /control/fleet/{k} stale + staleSlots (FLAG\|AGE), staleRule | VERIFIED_IMPLEMENTATION |
+-| `fam.snapshots-generatedat` | `/snapshots/{lakeKey}/latest/generatedAt` | domain-output | LEGACY | INTERNAL | `@none` | same | — | INTERNAL | NOT RECORDED | NOT_APPLICABLE | PRODUCTION_OBSERVATION, 2026-10-21 |
+-| `fam.snapshots-snapshotversion` | `/snapshots/{lakeKey}/latest/snapshotVersion` | domain-output | LEGACY | INTERNAL | `@none` | same | — | INTERNAL | NOT RECORDED | NOT_APPLICABLE | PRODUCTION_OBSERVATION, 2026-10-21 |
+-| `fam.lake-brain-node` | `/lakes/{lakeKey}/brain` | domain-output | CANONICAL | INTERNAL | `brain.lake-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | VERIFIED_IMPLEMENTATION |
+-| `fam.lake-states` | `/lakes/{lakeKey}/states` | domain-output | CANONICAL | INTERNAL | `@slot-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME → current: /control/fleet/{k} stale + staleSlots (FLAG\|AGE), staleRule | VERIFIED_IMPLEMENTATION |
+-| `fam.lake-profiles` | `/lakes/{lakeKey}/profiles` | domain-output | CANONICAL | INTERNAL | `@slot-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | VERIFIED_IMPLEMENTATION |
+-| `fam.lake-validation` | `/lakes/{lakeKey}/validation` | domain-output | CANONICAL | INTERNAL | `@slot-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | VERIFIED_IMPLEMENTATION |
+-| `fam.lake-species-presence` | `/lakes/{lakeKey}/speciesPresence` | domain-output | CANONICAL | INTERNAL | `brain.lake-brain` | `platform.publisher-live` | `brain.sector-intelligence` | PRIVATE | PRIVATE_RESEARCH_ALLOWLIST | WRITE_TIME | PRODUCTION_OBSERVATION, 2026-10-22 |
++| `fam.brains` | `/brains/{brainId}` | operational | CANONICAL | INTERNAL | `@owning-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence`, `framework.architecture-gates`, `framework.cert-kit-v1`, `platform.brain-platform-library`, `platform.orchestrator`, `platform.scorer` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME → current: /control/overview.brains[*] | VERIFIED_IMPLEMENTATION |
++| `fam.brains-wind-scores` | `/brains/wind/scores` | score | LEGACY | INTERNAL | `brain.wind` | same | `platform.brain-platform-library` | INTERNAL | OPS_ALLOWLIST | VERSION | PRODUCTION_OBSERVATION, 2026-10-21 |
++| `fam.validation-wind-scores` | `/validation/wind/scores` | score | LEGACY | INTERNAL | `brain.wind` | same | `platform.brain-platform-library` | INTERNAL | NOT RECORDED | VERSION | VERIFIED_IMPLEMENTATION |
++| `fam.validation` | `/validation/{brainId}` | research | CANONICAL | INTERNAL | `@owning-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `platform.brain-platform-library`, `platform.orchestrator`, `platform.scorer` | INTERNAL | NOT RECORDED | WRITE_TIME | PRODUCTION_OBSERVATION, 2026-10-21 |
++| `fam.activity` | `/activity/{eventId}` | operational | CANONICAL | INTERNAL | `@owning-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `platform.brain-platform-library` | INTERNAL | NOT RECORDED | NOT_APPLICABLE | PRODUCTION_OBSERVATION, 2026-10-21 |
++| `fam.health-brains` | `/health/brains/{brainId}` | health-control-jobs | CANONICAL | INTERNAL | `@owning-brain` | `platform.orchestrator` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence`, `platform.brain-platform-library`, `platform.orchestrator` | INTERNAL | NOT RECORDED | WRITE_TIME → current: /control/overview.brains[*] healthCurrent/healthAt/stale | PRODUCTION_OBSERVATION, 2026-10-21 |
++| `fam.health-jobs` | `/health/jobs/{jobId}` | health-control-jobs | CANONICAL | INTERNAL | `@owning-brain` | `platform.orchestrator` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `framework.cert-kit-v1`, `platform.brain-platform-library` | INTERNAL | NOT RECORDED | WRITE_TIME | VERIFIED_IMPLEMENTATION |
++| `fam.health-sources` | `/health/sources/{sourceId}` | health-control-jobs | CANONICAL | INTERNAL | `@owning-brain` | `platform.orchestrator` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `platform.brain-platform-library` | INTERNAL | NOT RECORDED | WRITE_TIME | VERIFIED_IMPLEMENTATION |
++| `fam.sources` | `/sources/{sourceId}` | operational | NOT_VERIFIED | INTERNAL | `NOT_VERIFIED` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `platform.brain-platform-library`, `platform.orchestrator` | INTERNAL | NOT RECORDED | NOT_VERIFIED | VERIFIED_IMPLEMENTATION |
++| `fam.scores` | `/scores/{brainId}` | score | CANONICAL | INTERNAL | `platform.scorer` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `framework.brain-factory`, `framework.cert-kit-v1`, `platform.brain-platform-library`, `platform.orchestrator` | INTERNAL | OPS_ALLOWLIST | VERSION | VERIFIED_IMPLEMENTATION |
++| `fam.engine-score-alias` | `/engine/score` | score | LEGACY | INTERNAL | `platform.scorer` | same | `framework.cert-kit-v1`, `platform.brain-platform-library`, `platform.publisher-live`, `security.rtdb-target-rules` | INTERNAL | NOT RECORDED | VERSION | PRODUCTION_OBSERVATION, 2026-10-21 |
++| `fam.control-overview` | `/control/overview` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `platform.brain-platform-library` | INTERNAL | OPS_ALLOWLIST | POLICY_AGE | VERIFIED_IMPLEMENTATION |
++| `fam.control-orchestrator-v1` | `/control/orchestratorV1` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `framework.cert-kit-v1`, `platform.brain-platform-library` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | VERIFIED_IMPLEMENTATION |
++| `fam.control-orchestrator` | `/control/orchestrator` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `platform.brain-platform-library` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | VERIFIED_IMPLEMENTATION |
++| `fam.control-health-v1` | `/control/healthV1` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `framework.cert-kit-v1`, `platform.brain-platform-library` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | VERIFIED_IMPLEMENTATION |
++| `fam.control-fleet` | `/control/fleet/{lakeKey}` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `platform.brain-platform-library` | INTERNAL | OPS_ALLOWLIST | POLICY_AGE | VERIFIED_IMPLEMENTATION |
++| `fam.control-beta` | `/control/beta` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `platform.brain-platform-library` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | VERIFIED_IMPLEMENTATION |
++| `fam.control-engineering-status` | `/control/engineeringStatusV1` | certification | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.brain-platform-library` | INTERNAL | OPS_ALLOWLIST | VERSION | VERIFIED_IMPLEMENTATION |
++| `fam.control-shadow-lane` | `/control/shadowLaneV1/{brainId}` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.brain-platform-library` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | PRODUCTION_OBSERVATION, 2026-10-22 |
++| `fam.control-execution-control` | `/control/executionControlV1` | health-control-jobs | CANONICAL | INTERNAL | `@external-admin` | same | `platform.orchestrator`, `external.sector-ops`, `platform.brain-platform-library` | INTERNAL | OPS_ALLOWLIST | NOT_APPLICABLE | PLANNED |
++| `fam.jobs` | `/jobs/{jobId}` | health-control-jobs | CANONICAL | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `framework.cert-kit-v1`, `platform.brain-platform-library` | INTERNAL | NOT RECORDED | WRITE_TIME | VERIFIED_IMPLEMENTATION |
++| `fam.species` | `/species/{speciesId}` | domain-output | CANONICAL | INTERNAL | `brain.biological-state` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence`, `platform.brain-platform-library` | INTERNAL | NOT RECORDED | VERSION | PRODUCTION_OBSERVATION, 2026-10-21 |
++| `fam.lakefleet` | `/lakeFleet/{lakeKey}` | domain-output | CANONICAL | INTERNAL | `@slot-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `platform.brain-platform-library`, `platform.orchestrator` | INTERNAL | NOT RECORDED | WRITE_TIME → current: /control/fleet/{k} stale + staleSlots (FLAG\|AGE), staleRule | VERIFIED_IMPLEMENTATION |
++| `fam.lakefleet-last-updated` | `/lakeFleet/{lakeKey}/lastUpdatedAt` | domain-output | LEGACY | INTERNAL | `@none` | same | `platform.brain-platform-library` | INTERNAL | NOT RECORDED | NOT_APPLICABLE | PRODUCTION_OBSERVATION, 2026-10-21 |
++| `fam.snapshots` | `/snapshots/{lakeKey}/latest` | domain-output | CANONICAL | INTERNAL | `@slot-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence`, `brain.biological-state`, `platform.brain-platform-library`, `platform.orchestrator` | INTERNAL | NOT RECORDED | WRITE_TIME → current: /control/fleet/{k} stale + staleSlots (FLAG\|AGE), staleRule | VERIFIED_IMPLEMENTATION |
++| `fam.snapshots-generatedat` | `/snapshots/{lakeKey}/latest/generatedAt` | domain-output | LEGACY | INTERNAL | `@none` | same | `platform.brain-platform-library` | INTERNAL | NOT RECORDED | NOT_APPLICABLE | PRODUCTION_OBSERVATION, 2026-10-21 |
++| `fam.snapshots-snapshotversion` | `/snapshots/{lakeKey}/latest/snapshotVersion` | domain-output | LEGACY | INTERNAL | `@none` | same | `platform.brain-platform-library` | INTERNAL | NOT RECORDED | NOT_APPLICABLE | PRODUCTION_OBSERVATION, 2026-10-21 |
++| `fam.lake-brain-node` | `/lakes/{lakeKey}/brain` | domain-output | CANONICAL | INTERNAL | `brain.lake-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence`, `platform.brain-platform-library` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | VERIFIED_IMPLEMENTATION |
++| `fam.lake-states` | `/lakes/{lakeKey}/states` | domain-output | CANONICAL | INTERNAL | `@slot-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence`, `framework.architecture-gates`, `platform.brain-platform-library` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME → current: /control/fleet/{k} stale + staleSlots (FLAG\|AGE), staleRule | VERIFIED_IMPLEMENTATION |
++| `fam.lake-profiles` | `/lakes/{lakeKey}/profiles` | domain-output | CANONICAL | INTERNAL | `@slot-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence`, `platform.brain-platform-library` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | VERIFIED_IMPLEMENTATION |
++| `fam.lake-validation` | `/lakes/{lakeKey}/validation` | domain-output | CANONICAL | INTERNAL | `@slot-brain` | `platform.publisher-live` | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component`, `brain.sector-intelligence`, `platform.brain-platform-library`, `platform.orchestrator` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | VERIFIED_IMPLEMENTATION |
++| `fam.lake-species-presence` | `/lakes/{lakeKey}/speciesPresence` | domain-output | CANONICAL | INTERNAL | `brain.lake-brain` | `platform.publisher-live` | `brain.sector-intelligence`, `platform.brain-platform-library`, `platform.publisher-shadow` | PRIVATE | PRIVATE_RESEARCH_ALLOWLIST | WRITE_TIME | PRODUCTION_OBSERVATION, 2026-10-22 |
+ | `fam.access-ops-users` | `/access/opsUsers/{uid}` | identity | CANONICAL | INTERNAL | `@external-admin` | same | `external.sector-ops` | RESTRICTED | NOT RECORDED | NOT_APPLICABLE | VERIFIED_IMPLEMENTATION |
+ | `fam.access-private-research` | `/access/privateResearchUsers/{uid}` | identity | CANONICAL | INTERNAL | `@external-admin` | same | `external.sector-ops` | RESTRICTED | OWN_RECORD | NOT_APPLICABLE | PRODUCTION_OBSERVATION, 2026-10-22 |
+-| `fam.ops-preferences` | `/opsPreferences/{uid}` | identity | NOT_VERIFIED | INTERNAL | `external.sector-ops` | same | `external.sector-ops` | INTERNAL | NOT RECORDED | NOT_APPLICABLE | NOT_VERIFIED |
++| `fam.ops-preferences` | `/opsPreferences/{uid}` | identity | NOT_VERIFIED | INTERNAL | `external.sector-ops` | same | `external.sector-ops`, `platform.brain-platform-library` | INTERNAL | NOT RECORDED | NOT_APPLICABLE | NOT_VERIFIED |
++| `fam.health-engine` | `/health/engine` | health-control-jobs | NOT_VERIFIED | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | NOT RECORDED | WRITE_TIME | PLANNED |
++| `fam.health-rtdb` | `/health/rtdb` | health-control-jobs | NOT_VERIFIED | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | NOT RECORDED | WRITE_TIME | PLANNED |
++| `fam.control-publication` | `/control/publicationV1/{brainId}` | health-control-jobs | NOT_VERIFIED | INTERNAL | `platform.orchestrator` | same | `external.sector-ops`, `platform.publisher-shadow`, `verification.cross-component` | INTERNAL | OPS_ALLOWLIST | WRITE_TIME | PLANNED |
+ 
+ Family notes:
+ 
+ - `fam.brains` — Seven Brain records exist in production (2026-10-21 export + live); Fish at /brains/biological-state, no alias. Vegetation absent = INACTIVE_EXPECTED. /brains/fish and /brains/biological-brain must never exist.
+ - `fam.brains-wind-scores` — Frozen validation evidence (3.1 / BWIS 5.4, frozen 2026-10-12) rewritten hourly; labelled FROZEN_VALIDATION_EVIDENCE, authoritative:false, authoritativeScorePath:/scores/wind in code (PR #41). Ops stopped reading it (deployed 2026-10-22). Retirement: mig.01.
+ - `fam.validation-wind-scores` — Second copy of the frozen Wind evidence; retired with mig.01.
+-- `fam.activity` — Event keys embed the Brain ID.
++- `fam.activity` — Event keys embed the Brain ID. Platform-authored events (score.changed, run.*) carry a platform event id and are owned by platform.orchestrator (the scorer emits score.changed inside the Orchestrator cycle); Brain events embed the Brain id and are owned by that Brain. platform-authored
+ - `fam.health-brains` — Status recorded at the Brain's last execution. Never current health (FD-07); paused Brains keep their last value.
+ - `fam.health-jobs` — Brain-written; disposition ORCHESTRATOR_DERIVED (declared legacyDirectWrites).
+ - `fam.health-sources` — Writer = the source's owning Brain.
+@@ -80,6 +83,9 @@ Family notes:
+ - `fam.access-ops-users` — Ops allowlist; admin-written; never exported into records.
+ - `fam.access-private-research` — Private-research allowlist used by the deployed rules; users may read only their own flag. EMPTY by design (2026-10-22); populating it is gated and needs a verified requirement.
+ - `fam.ops-preferences` — User preference data (not Brain data). Own-record writability under the 2026-10-22 rules is NOT_VERIFIED (the production report states every .write is false).
++- `fam.health-engine` — Engine service health observed and written by the Orchestrator (operational health, not Brain intelligence). Status stays NOT_VERIFIED until an evidence source documents the path (the registry requires grounded evidence for CANONICAL).
++- `fam.health-rtdb` — Database connectivity health observed and written by the Orchestrator. Status stays NOT_VERIFIED until an evidence source documents the path (the registry requires grounded evidence for CANONICAL).
++- `fam.control-publication` — PL-19 publication coordination: per Brain the last runs, artifact ids/digests, publication outcome (PUBLISHED/SKIPPED/REJECTED/FAILED) and reason. Operational record owned by the Orchestrator; never Brain intelligence, never written by a Brain or the Publisher. Status stays NOT_VERIFIED until an evidence source documents the path (the registry requires grounded evidence for CANONICAL).
+ 
+ ## Client access rules
+ 
+diff --git a/projects/sector/shared/data/firebase-data-contracts.json b/projects/sector/shared/data/firebase-data-contracts.json
+index 814cfdc..f03fa8b 100644
+--- a/projects/sector/shared/data/firebase-data-contracts.json
++++ b/projects/sector/shared/data/firebase-data-contracts.json
+@@ -91,7 +91,12 @@
+         "external.sector-ops",
+         "platform.publisher-shadow",
+         "verification.cross-component",
+-        "brain.sector-intelligence"
++        "brain.sector-intelligence",
++        "framework.architecture-gates",
++        "framework.cert-kit-v1",
++        "platform.brain-platform-library",
++        "platform.orchestrator",
++        "platform.scorer"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -133,7 +138,9 @@
+       "scope": "per-brain",
+       "status": "LEGACY",
+       "writer": "brain.wind",
+-      "readers": [],
++      "readers": [
++        "platform.brain-platform-library"
++      ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+       "freshnessModel": {
+@@ -170,7 +177,9 @@
+       "scope": "per-brain",
+       "status": "LEGACY",
+       "writer": "brain.wind",
+-      "readers": [],
++      "readers": [
++        "platform.brain-platform-library"
++      ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+       "freshnessModel": {
+@@ -206,7 +215,10 @@
+       "readers": [
+         "external.sector-ops",
+         "platform.publisher-shadow",
+-        "verification.cross-component"
++        "verification.cross-component",
++        "platform.brain-platform-library",
++        "platform.orchestrator",
++        "platform.scorer"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -244,7 +256,8 @@
+       "readers": [
+         "external.sector-ops",
+         "platform.publisher-shadow",
+-        "verification.cross-component"
++        "verification.cross-component",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -272,7 +285,7 @@
+           "section": "4.3"
+         }
+       ],
+-      "notes": "Event keys embed the Brain ID.",
++      "notes": "Event keys embed the Brain ID. Platform-authored events (score.changed, run.*) carry a platform event id and are owned by platform.orchestrator (the scorer emits score.changed inside the Orchestrator cycle); Brain events embed the Brain id and are owned by that Brain. platform-authored",
+       "observedAt": "2026-10-21",
+       "lane": "INTERNAL"
+     },
+@@ -288,7 +301,9 @@
+         "external.sector-ops",
+         "platform.publisher-shadow",
+         "verification.cross-component",
+-        "brain.sector-intelligence"
++        "brain.sector-intelligence",
++        "platform.brain-platform-library",
++        "platform.orchestrator"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -336,7 +351,9 @@
+       "readers": [
+         "external.sector-ops",
+         "platform.publisher-shadow",
+-        "verification.cross-component"
++        "verification.cross-component",
++        "framework.cert-kit-v1",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -369,7 +386,8 @@
+       "readers": [
+         "external.sector-ops",
+         "platform.publisher-shadow",
+-        "verification.cross-component"
++        "verification.cross-component",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -401,7 +419,9 @@
+       "readers": [
+         "external.sector-ops",
+         "platform.publisher-shadow",
+-        "verification.cross-component"
++        "verification.cross-component",
++        "platform.brain-platform-library",
++        "platform.orchestrator"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -437,7 +457,11 @@
+       "readers": [
+         "external.sector-ops",
+         "platform.publisher-shadow",
+-        "verification.cross-component"
++        "verification.cross-component",
++        "framework.brain-factory",
++        "framework.cert-kit-v1",
++        "platform.brain-platform-library",
++        "platform.orchestrator"
+       ],
+       "schemaRef": "per-score scoreVersion; /scores/wind measurements{} separate capability, BWIS, confidence, readiness, certification (FD-09 compliant)",
+       "freshness": "NOT_VERIFIED",
+@@ -480,7 +504,12 @@
+       "scope": "global",
+       "status": "LEGACY",
+       "writer": "platform.scorer",
+-      "readers": [],
++      "readers": [
++        "framework.cert-kit-v1",
++        "platform.brain-platform-library",
++        "platform.publisher-live",
++        "security.rtdb-target-rules"
++      ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+       "freshnessModel": {
+@@ -520,7 +549,8 @@
+       "readers": [
+         "external.sector-ops",
+         "platform.publisher-shadow",
+-        "verification.cross-component"
++        "verification.cross-component",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -560,7 +590,9 @@
+       "readers": [
+         "external.sector-ops",
+         "platform.publisher-shadow",
+-        "verification.cross-component"
++        "verification.cross-component",
++        "framework.cert-kit-v1",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -599,7 +631,8 @@
+       "readers": [
+         "external.sector-ops",
+         "platform.publisher-shadow",
+-        "verification.cross-component"
++        "verification.cross-component",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -639,7 +672,9 @@
+       "readers": [
+         "external.sector-ops",
+         "platform.publisher-shadow",
+-        "verification.cross-component"
++        "verification.cross-component",
++        "framework.cert-kit-v1",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -679,7 +714,8 @@
+       "readers": [
+         "external.sector-ops",
+         "platform.publisher-shadow",
+-        "verification.cross-component"
++        "verification.cross-component",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -719,7 +755,8 @@
+       "readers": [
+         "external.sector-ops",
+         "platform.publisher-shadow",
+-        "verification.cross-component"
++        "verification.cross-component",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -756,7 +793,8 @@
+       "status": "CANONICAL",
+       "writer": "platform.orchestrator",
+       "readers": [
+-        "external.sector-ops"
++        "external.sector-ops",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "engineering-status-ops-v1 (Engine contracts/schemas); sanitized Ops projection only",
+       "freshness": "NOT_VERIFIED",
+@@ -798,7 +836,8 @@
+       "status": "CANONICAL",
+       "writer": "platform.orchestrator",
+       "readers": [
+-        "external.sector-ops"
++        "external.sector-ops",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "brain-shadow-lane-v1 (Engine sector_brain_platform/shadow_lane.py)",
+       "freshness": "Per run: one summary per INTERNAL-mode shadow run; expected interval 24 h (depth), 168 h (vegetation)",
+@@ -840,7 +879,8 @@
+       "writer": "@external-admin",
+       "readers": [
+         "platform.orchestrator",
+-        "external.sector-ops"
++        "external.sector-ops",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "execution-control-v1 (defined by the Engine owner CLI; Cortex description in brain-operations.json executionControl)",
+       "freshness": "On change only: written when the owner changes the global state, a Brain's enablement or a limit; read at the start of every Orchestrator cycle",
+@@ -876,7 +916,9 @@
+       "readers": [
+         "external.sector-ops",
+         "platform.publisher-shadow",
+-        "verification.cross-component"
++        "verification.cross-component",
++        "framework.cert-kit-v1",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -919,7 +961,8 @@
+         "external.sector-ops",
+         "platform.publisher-shadow",
+         "verification.cross-component",
+-        "brain.sector-intelligence"
++        "brain.sector-intelligence",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -962,7 +1005,9 @@
+       "readers": [
+         "external.sector-ops",
+         "platform.publisher-shadow",
+-        "verification.cross-component"
++        "verification.cross-component",
++        "platform.brain-platform-library",
++        "platform.orchestrator"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -999,7 +1044,9 @@
+       "scope": "per-lake",
+       "status": "LEGACY",
+       "writer": "@none",
+-      "readers": [],
++      "readers": [
++        "platform.brain-platform-library"
++      ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+       "freshnessModel": {
+@@ -1042,7 +1089,9 @@
+         "platform.publisher-shadow",
+         "verification.cross-component",
+         "brain.sector-intelligence",
+-        "brain.biological-state"
++        "brain.biological-state",
++        "platform.brain-platform-library",
++        "platform.orchestrator"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -1080,7 +1129,9 @@
+       "scope": "per-lake",
+       "status": "LEGACY",
+       "writer": "@none",
+-      "readers": [],
++      "readers": [
++        "platform.brain-platform-library"
++      ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+       "freshnessModel": {
+@@ -1113,7 +1164,9 @@
+       "scope": "per-lake",
+       "status": "LEGACY",
+       "writer": "@none",
+-      "readers": [],
++      "readers": [
++        "platform.brain-platform-library"
++      ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+       "freshnessModel": {
+@@ -1151,7 +1204,8 @@
+         "external.sector-ops",
+         "platform.publisher-shadow",
+         "verification.cross-component",
+-        "brain.sector-intelligence"
++        "brain.sector-intelligence",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -1194,7 +1248,9 @@
+         "external.sector-ops",
+         "platform.publisher-shadow",
+         "verification.cross-component",
+-        "brain.sector-intelligence"
++        "brain.sector-intelligence",
++        "framework.architecture-gates",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -1232,7 +1288,8 @@
+         "external.sector-ops",
+         "platform.publisher-shadow",
+         "verification.cross-component",
+-        "brain.sector-intelligence"
++        "brain.sector-intelligence",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -1266,7 +1323,9 @@
+         "external.sector-ops",
+         "platform.publisher-shadow",
+         "verification.cross-component",
+-        "brain.sector-intelligence"
++        "brain.sector-intelligence",
++        "platform.brain-platform-library",
++        "platform.orchestrator"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -1297,7 +1356,9 @@
+       "writer": "brain.lake-brain",
+       "targetWriter": "platform.publisher-live",
+       "readers": [
+-        "brain.sector-intelligence"
++        "brain.sector-intelligence",
++        "platform.brain-platform-library",
++        "platform.publisher-shadow"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -1417,7 +1478,8 @@
+       "status": "NOT_VERIFIED",
+       "writer": "external.sector-ops",
+       "readers": [
+-        "external.sector-ops"
++        "external.sector-ops",
++        "platform.brain-platform-library"
+       ],
+       "schemaRef": "NOT_VERIFIED",
+       "freshness": "NOT_VERIFIED",
+@@ -1438,6 +1500,96 @@
+       ],
+       "notes": "User preference data (not Brain data). Own-record writability under the 2026-10-22 rules is NOT_VERIFIED (the production report states every .write is false).",
+       "lane": "INTERNAL"
++    },
++    {
++      "id": "fam.health-engine",
++      "pattern": "/health/engine",
++      "domain": "health-control-jobs",
++      "scope": "global",
++      "status": "NOT_VERIFIED",
++      "writer": "platform.orchestrator",
++      "readers": [
++        "external.sector-ops",
++        "platform.publisher-shadow",
++        "verification.cross-component"
++      ],
++      "schemaRef": "NOT_VERIFIED",
++      "freshness": "NOT_VERIFIED",
++      "freshnessModel": {
++        "kind": "WRITE_TIME"
++      },
++      "retention": "NOT_VERIFIED",
++      "classification": "INTERNAL",
++      "label": "PLANNED",
++      "evidencePaths": [],
++      "evidence": [
++        {
++          "source": "engine-audit",
++          "section": "3"
++        }
++      ],
++      "notes": "Engine service health observed and written by the Orchestrator (operational health, not Brain intelligence). Status stays NOT_VERIFIED until an evidence source documents the path (the registry requires grounded evidence for CANONICAL).",
++      "lane": "INTERNAL"
++    },
++    {
++      "id": "fam.health-rtdb",
++      "pattern": "/health/rtdb",
++      "domain": "health-control-jobs",
++      "scope": "global",
++      "status": "NOT_VERIFIED",
++      "writer": "platform.orchestrator",
++      "readers": [
++        "external.sector-ops",
++        "platform.publisher-shadow",
++        "verification.cross-component"
++      ],
++      "schemaRef": "NOT_VERIFIED",
++      "freshness": "NOT_VERIFIED",
++      "freshnessModel": {
++        "kind": "WRITE_TIME"
++      },
++      "retention": "NOT_VERIFIED",
++      "classification": "INTERNAL",
++      "label": "PLANNED",
++      "evidencePaths": [],
++      "evidence": [
++        {
++          "source": "engine-audit",
++          "section": "3"
++        }
++      ],
++      "notes": "Database connectivity health observed and written by the Orchestrator. Status stays NOT_VERIFIED until an evidence source documents the path (the registry requires grounded evidence for CANONICAL).",
++      "lane": "INTERNAL"
++    },
++    {
++      "id": "fam.control-publication",
++      "pattern": "/control/publicationV1/{brainId}",
++      "domain": "health-control-jobs",
++      "scope": "per-brain",
++      "status": "NOT_VERIFIED",
++      "writer": "platform.orchestrator",
++      "readers": [
++        "external.sector-ops",
++        "platform.publisher-shadow",
++        "verification.cross-component"
++      ],
++      "schemaRef": "NOT_VERIFIED",
++      "freshness": "NOT_VERIFIED",
++      "freshnessModel": {
++        "kind": "WRITE_TIME"
++      },
++      "retention": "NOT_VERIFIED",
++      "classification": "INTERNAL",
++      "label": "PLANNED",
++      "evidencePaths": [],
++      "evidence": [
++        {
++          "source": "engine-audit",
++          "section": "3"
++        }
++      ],
++      "notes": "PL-19 publication coordination: per Brain the last runs, artifact ids/digests, publication outcome (PUBLISHED/SKIPPED/REJECTED/FAILED) and reason. Operational record owned by the Orchestrator; never Brain intelligence, never written by a Brain or the Publisher. Status stays NOT_VERIFIED until an evidence source documents the path (the registry requires grounded evidence for CANONICAL).",
++      "lane": "INTERNAL"
+     }
+   ],
+   "artifactStores": [
+@@ -3328,6 +3480,6 @@
+   "integrity": {
+     "algorithm": "sha256",
+     "canonicalization": "json-sort-keys-compact-utf8-excluding-integrity",
+-    "contentSha256": "190a1d21fef2ecb6e77efc56a958bd4378c2c7b1d7665529883b5c90bafc6e63"
++    "contentSha256": "88bcfbbea25a0fef70754373eed2a8c5e194072a14baf19c380ebfc277f2385a"
+   }
+ }

@@ -21,7 +21,7 @@ import datetime as dt
 import json
 import os
 
-from .publisher.canonical import sha256_ref
+from .publisher.canonical import canonical_bytes, sha256_ref
 from .publisher.refs import ArtifactRef, artifact_location
 from .publisher.model import Rejected
 from . import data_ownership as DO
@@ -84,11 +84,12 @@ def _blank(brain_id: str, run_id: str, artifact_id: str | None, now: str) -> dic
 
 class PublicationCoordinator:
     def __init__(self, ledger: PublicationLedger, store, *, shadow=None, live=None, cutover=(), clock=lambda: dt.datetime.now(dt.timezone.utc), max_attempts: int = MAX_ATTEMPTS,
-                 backoff_minutes=BACKOFF_MIN):
+                 backoff_minutes=BACKOFF_MIN, hold_reason: str | None = None):
         """store: object store holding artifacts/{brainId}/... (read only here). shadow: a ShadowPublisher (SHADOW mode). live: a LivePublisher, or None while the Publisher is unarmed.
         cutover: Brain ids whose approved cutover has happened; for every other Brain the existing direct writer stays the writer and nothing is requested."""
         self.ledger, self.store, self.shadow, self.live = ledger, store, shadow, live
         self.cutover, self._clock, self.max_attempts, self.backoff = set(cutover), clock, max_attempts, tuple(backoff_minutes)
+        self.hold_reason = hold_reason                                           # e.g. EXECUTION_PAUSED: artifacts are still collected and recorded, no publication is requested
 
     def _now(self) -> str:
         return iso(self._clock())
@@ -117,6 +118,10 @@ class PublicationCoordinator:
             rec["publication"].update(reason="ARTIFACT_DIGEST_MISMATCH")
             return self.ledger.put(rec)
         art = json.loads(data)
+        if canonical_bytes(art) != data:                                         # a Brain's ArtifactWriter always stores canonical bytes; anything else was not sealed by it
+            rec["artifact"] = {"state": "INVALID", "artifactId": ref.artifact_id, "location": ref.location, "problems": ["NOT_CANONICAL"]}
+            rec["publication"].update(reason="ARTIFACT_NOT_CANONICAL")
+            return self.ledger.put(rec)
         lin = art.get("lineage") or {}
         problems = [n for n, a, b in (("brainId", lin.get("brainId"), ref.brain_id), ("artifactId", lin.get("artifactId"), ref.artifact_id), ("executionId", lin.get("executionId"), ref.execution_id),
                                        ("artifactSchema", lin.get("artifactSchema"), ref.expected_schema)) if a != b]
@@ -176,6 +181,8 @@ class PublicationCoordinator:
             return self.ledger.put(rec)
         if rec["brainId"] not in self.cutover:
             return hold("DIRECT_WRITER_ACTIVE")                                  # pre-cutover: the Brain's own writer is the writer
+        if self.hold_reason:
+            return hold(self.hold_reason)
         if self.live is None:
             return hold("PUBLISHER_UNARMED")
         if rec["shadow"].get("checked") and rec["shadow"].get("result") not in SHADOW_OK:
@@ -187,6 +194,11 @@ class PublicationCoordinator:
             after = parse_time(pub.get("nextAttemptAfter"))
             if after and now < after:
                 return rec                                                       # backoff not elapsed: nothing happens
+        data = self.store.get(rec["artifact"]["location"])                      # the digest pinned at collection must still be the stored artifact: tampering after collection is never published
+        if data is None or sha256_ref(data) != rec["artifact"]["digest"]:
+            rec["artifact"].update(state="INVALID", problems=["DIGEST_CHANGED_AFTER_COLLECTION"] if data is not None else ["ARTIFACT_REMOVED_AFTER_COLLECTION"])
+            pub.update(requested=False, outcome="REJECTED", reason="ARTIFACT_CHANGED_AFTER_COLLECTION", retryable=False)
+            return self.ledger.put(rec)
         pub["attempts"] += 1
         pub.update(requested=True, lastAttemptAt=iso(now))
         try:
@@ -274,6 +286,19 @@ class PublicationCoordinator:
                 self.ledger.put(rec)
             out["collected"].append(rec["key"])
         return out
+
+    def output_change(self, rec: dict) -> str:
+        """YES / NO / UNKNOWN: did this run's artifact carry a different outputFingerprint than the Brain's previous collected artifact? Scoring triggers are NOT changed by this; it only
+        replaces the execution record's UNKNOWN with evidence."""
+        fp = rec["artifact"].get("outputFingerprint")
+        if rec["artifact"].get("state") != "COLLECTED" or not fp:
+            return "UNKNOWN"
+        prev = [r for r in self.ledger.records(rec["brainId"]) if r["key"] != rec["key"] and r["artifact"].get("state") == "COLLECTED"
+                and r["artifact"].get("generatedAt", "") < (rec["artifact"].get("generatedAt") or "~")]
+        if not prev:
+            return "UNKNOWN"
+        last = max(prev, key=lambda r: r["artifact"].get("generatedAt") or "")
+        return "NO" if last["artifact"].get("outputFingerprint") == fp else "YES"
 
     def _known_artifact(self, brain: str, artifact_id: str | None) -> bool:
         return any(r["artifact"].get("artifactId") == artifact_id for r in self.ledger.records(brain))

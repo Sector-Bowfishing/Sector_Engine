@@ -45,3 +45,18 @@ Standards: Rehtac Cortex 3.1.0 @ 9562274 (clean), pack sector/engine. The reposi
 4. Wiring `publication_cycle` and `dispatch_gate` into the scheduled Orchestrator cycle (a deploy of `brain-orchestrator`).
 5. Migrations M01-M03 (split `brains/fish/`), M05 (dependencies), M06 (new Firebase families for `fish-knowledge`/`fish-behavior`), M07 (per-Brain rubrics).
 6. Owner decisions already listed elsewhere: the 7 Brain dependency declarations (branch `cortex/declare-brain-dependencies-2026-10-26`), releases, score promotion.
+
+## Completion pass 2026-10-29 — the real execution path (owner mission "Complete Orchestrator and Brain publication integration")
+
+Standards: Rehtac Cortex 3.1.0 @ 9562274.
+
+The earlier pass delivered the components (coordinator, ownership table, routing) and a standalone harness. This pass connects them to `jobs/brain-orchestrator/orchestrate.py main()`:
+
+- **Step 4b, publication stage** (`--coordinate-publication` or `PUBLICATION_COORDINATION=on`; OFF by default, so the deployed cycle is byte-for-byte unchanged): reconciles this cycle's execution records and the Cloud Run results with the sealed artifacts, runs the SHADOW Publisher (recorded separately), asks the live Publisher only for a Brain with an approved CENTRAL cutover AND a supplied live Publisher AND execution control that permits work. The cycle builds no live Publisher (`build_live_publisher` returns None; arming is gate G-ARM). Result lands in `control/orchestrator.publication` (an existing registered Orchestrator family) and `--emit-publication-state`.
+- **Cutover document** (`sector-publication-cutover-v1`, `publication_stage.py`): DIRECT_WRITE is the default and the rollback; CENTRAL needs an `approvalRef`; the frozen `biological-state` (BA-04), aliases and unknown Brains are refused and reported. Rolling back changes the mode only; nothing the Publisher published is rewritten.
+- **Dispatch gate in the cycle** (`gate_dispatch`, M08): unregistered and alias identities never run; target Brains already covered by the legacy combined package are not double-dispatched.
+- **Integrity**: the coordinator now pins the digest at collection and refuses to publish an artifact whose stored bytes changed afterwards, and rejects non-canonical bytes; `output_change` replaces `outputChanged: UNKNOWN` with fingerprint evidence (scoring triggers untouched).
+- **Execution-paused behaviour**: artifacts are still collected and recorded; publication is held with reason `EXECUTION_PAUSED`.
+- **Test**: `jobs/brain-orchestrator/tests/test_orchestrator_publication_e2e.py` (19 tests) drives the real `main()` end to end with the in-memory Publisher rig; only the store/live-Publisher factory seams are replaced.
+- **Fixture**: `contracts/conformance/ownership.json` hash in `verification/fixtures/conformance/manifest.json` re-pinned (intentional change from the first pass, FD-15/SC-04).
+- **Cortex registry gaps (CG-3.1-1)**: Cortex is read-only here, so the registry additions were prepared as `docs/cortex/proposals/cg-3-1-1-registry-patch.py` and validated in a scratch clone of Cortex (`validate` 0 problems; `data-check` UNDECLARED_ACCESS 107 -> 13, PRIVATE_DATA_READ 5 -> 2); the resulting diff is `docs/cortex/proposals/cg-3-1-1-cortex-registry.diff` for a Cortex maintenance session. The real Cortex repository was not modified.
