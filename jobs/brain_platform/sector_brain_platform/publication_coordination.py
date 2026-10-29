@@ -358,6 +358,41 @@ class PublicationCoordinator:
         last = max(prev, key=lambda r: r["artifact"].get("generatedAt") or "")
         return "NO" if last["artifact"].get("outputFingerprint") == fp else "YES"
 
+    def import_publisher_history(self, brain_ids) -> dict:
+        """Reflect completed LIVE publications found in the Publisher's immutable history (publishes/{brain}/{publishId}/record.json) that this ledger does not know: a publication made
+        by any path (a pilot, a manual run, a worker whose ledger write was lost) must appear in the Orchestrator's account of what happened to each Brain's output. Read-only on the
+        history; adds ledger records only; never changes an existing record."""
+        added, seen = [], 0
+        for brain in sorted(brain_ids):
+            for k in self.store.list(f"publishes/{brain}/"):
+                if not k.endswith("/record.json"):
+                    continue
+                try:
+                    r = json.loads(self.store.get(k))
+                except (TypeError, ValueError):
+                    continue
+                seen += 1
+                if not (r.get("live") and r.get("status") == "COMPLETE" and r.get("result") == "PUBLISHED" and r.get("artifactId") and r.get("executionId")):
+                    continue
+                key = PublicationLedger.key(brain, r["executionId"], r["artifactId"])
+                if self.ledger.get(key):
+                    continue
+                loc = artifact_location(brain, r["artifactId"])
+                data = self.store.get(loc)
+                rec = _blank(brain, r["executionId"], r["artifactId"], self._now())
+                rec["runStatus"] = "SUCCEEDED"
+                rec["writePath"] = VIA_PUBLISHER
+                rec["artifact"] = ({"state": "COLLECTED", "artifactId": r["artifactId"], "schema": r.get("artifactSchema"), "location": loc, "digest": sha256_ref(data), "outputFingerprint": r.get("outputFingerprint"),
+                                    "generatedAt": r.get("generatedAt"), "version": {"codeVersion": r.get("codeVersion"), "knowledgeRelease": r.get("knowledgeRelease"), "lifecycle": r.get("lifecycle"),
+                                                                                    "reviewStatus": r.get("reviewStatus"), "validationStatus": r.get("validationStatus")}}
+                                   if data is not None else {"state": "MISSING", "artifactId": r["artifactId"], "location": loc, "reason": "ARTIFACT_NOT_IN_STORE"})
+                rec["inputLineage"] = {"inputFingerprint": r.get("inputFingerprint"), "knowledgeRelease": r.get("knowledgeRelease")}
+                rec["publication"].update(requested=True, outcome="PUBLISHED", reason="IMPORTED_FROM_PUBLISHER_HISTORY", livePublishId=r.get("publishId"), attempts=1, retryable=False,
+                                          readback={"verified": True, "source": "PUBLISHER_HISTORY"}, recovered=False, importedAt=self._now(), publishedAt=r.get("publishedAt"))
+                self.ledger.put(rec)
+                added.append(key)
+        return {"recordsSeen": seen, "imported": added}
+
     def _known_artifact(self, brain: str, artifact_id: str | None) -> bool:
         return any(r["artifact"].get("artifactId") == artifact_id for r in self.ledger.records(brain))
 

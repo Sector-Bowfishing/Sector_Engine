@@ -375,3 +375,8 @@ def test_a_dry_run_cycle_writes_nothing_to_the_artifact_store(stack):
     assert OR.main(["--dry-run"] + stack.argv) == 0
     assert sorted(stack.rig.store.list("exports/")) == [] and sorted(stack.rig.store.list("publishes/")) == []
     assert db.writes == []                                                              # and no database write either
+
+
+def test_the_shipped_cutover_document_is_valid_and_lists_only_water_clarity():
+    cut, problems = PS.load_cutover(os.path.join(HERE, "..", "publication-cutover.json"))
+    assert problems == [] and {b: e["state"] for b, e in cut.items()} == {"water-clarity": "CENTRAL"}

@@ -309,3 +309,28 @@ def test_a_structurally_valid_research_or_shadow_artifact_is_never_published_liv
         assert res.result is LiveResult.REJECTED and res.codes == ["LIFECYCLE_NOT_LIVE_ELIGIBLE"], lc
         assert r.rtdb.updates == []
         assert r.history.records("wind")[-1]["live"] is False
+
+
+def test_packaged_release_resolver_verifies_files_digest_identity_and_approval(tmp_path):
+    import json as _json
+    import shutil
+    from sector_brain_platform import knowledge_release as KR
+    from sector_brain_platform.publisher_live.release_resolver import PackagedReleaseResolver
+    (tmp_path / "data.json").write_text('{"a":1}')
+    files = KR.describe_files(str(tmp_path), ["data.json"])
+    man = {"schemaVersion": "1.0.0", "brainId": "water-clarity", "releaseId": "rel-1", "store": "PACKAGED_IN_IMAGE", "owner": "water-clarity",
+           "approval": {"status": "APPROVED", "record": "r"}, "files": files, "releaseDigest": KR.release_digest(files)}
+    (tmp_path / "knowledge-release.json").write_text(_json.dumps(man))
+    res = PackagedReleaseResolver(str(tmp_path), "water-clarity")
+    ref = "image:knowledge-release.json"
+    assert res("rel-1", ref, man["releaseDigest"]) is True
+    assert res("rel-2", ref, man["releaseDigest"]) is False                       # wrong release identity
+    assert res("rel-1", ref, "sha256:" + "0" * 64) is False                        # wrong digest
+    assert res("rel-1", "image:other.json", man["releaseDigest"]) is False          # wrong reference
+    assert PackagedReleaseResolver(str(tmp_path), "wind")("rel-1", ref, man["releaseDigest"]) is False       # another Brain's release
+    (tmp_path / "data.json").write_text('{"a":2}')                                  # a packaged file changed after the manifest was sealed
+    assert res("rel-1", ref, man["releaseDigest"]) is False
+    (tmp_path / "data.json").write_text('{"a":1}')
+    man["approval"]["status"] = "NOT_RECORDED"
+    (tmp_path / "knowledge-release.json").write_text(_json.dumps(man))
+    assert res("rel-1", ref, man["releaseDigest"]) is False and PackagedReleaseResolver(str(tmp_path), "water-clarity", require_approved=False)("rel-1", ref, man["releaseDigest"]) is True

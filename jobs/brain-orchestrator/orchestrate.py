@@ -534,7 +534,9 @@ def main(argv=None) -> int:
                         r["outputChanged"] = ch
             print(f"publication: {publication['state']}" + (f" ({publication.get('reason')})" if publication.get("reason") else
                   f" collected {len(publication['reconcile']['collected'])}, missing {len(publication['reconcile']['missing'])}, failed runs {len(publication['reconcile']['failedRuns'])}; "
-                  f"Publisher {'ARMED' if publication['armed'] else 'unarmed'}"), flush=True)
+                  f"Publisher {'ARMED' if publication['armed'] else 'unarmed'}; imported from Publisher history {len(publication['importedFromPublisherHistory']['imported'])}; "
+                  f"central {publication['cutover']['central']}; per Brain " + json.dumps({b: {k: v[k] for k in ('runs', 'published', 'failed', 'notRequested', 'missingArtifacts')}
+                                                                                               for b, v in publication['summary']['brains'].items()}, sort_keys=True)), flush=True)
             if a.emit_publication_state:
                 json.dump(publication, open(a.emit_publication_state, "w"), indent=1, sort_keys=True)
         except Exception as e:                                       # the stage never breaks the cycle

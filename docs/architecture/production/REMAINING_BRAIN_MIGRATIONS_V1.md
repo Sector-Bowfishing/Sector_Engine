@@ -1,0 +1,25 @@
+Standards: Rehtac Cortex 3.1.x (pin per CLAUDE.md)
+
+# Remaining Brain migrations: one coordinated plan (prepared 2026-10-29; NOTHING here is executed or authorised)
+
+Water Clarity is the only Brain under an approved production pilot. This is the plan for everything after it, in the one enforced order (`jobs/brain_platform/sector_brain_platform/cutover_order.json`). Each Brain needs its own owner approval before its live steps; the common gates below are the same for all.
+
+## Common gates (every Brain, in this order; any failure halts that Brain only)
+1. **Artifact**: the Brain's runtime emits one sealed artifact per run (create-only, private bucket) and performs no database write (the Water Clarity `--artifact-bucket` mode is the template). 2. **Identity**: the Brain's job runs as its own service account with `roles/firebasedatabase.viewer` (read-only), create-only on `artifacts/{brain}/`; the shared `brain-writer` / `wind-hourly-job` RTDB-admin grants are removed from that Brain's job. Denied-write probe (`iam_probe.py`) must pass. 3. **Health**: the Publisher registration drops `/health/*` (Orchestrator-derived via `health_mirror.py`). 4. **Release**: packaged release verifies file-by-file; lifecycle recorded honestly; production lifecycles need an approvalRef; a release whose approval is NOT_RECORDED may only be republished state-neutrally in the CALIBRATION lane (owner-visible exception), never promoted. 5. **Baseline**: private capture, equivalence diff with zero unexplained differences, acknowledged baseline. 6. **Rehearsal** against the captured data, including restore. 7. **Publish once, readback every path against the Publisher's immutable record, consumers/health/score unchanged**. 8. **Retire** the direct writer (identity read-only + code write sites removed + cutoverStatus `CUTOVER_COMPLETE` + AST pin) in the same approved change. 9. Rollback: `LivePublisher.rollback` (previous immutable artifact; never over newer data) or the pilot `restore` for state-neutral publications.
+
+## Facts per Brain (verified 2026-10-29)
+| Step | Brain | Direct writer today (identity) | Artifact builder | Release approval | cutoverStatus | Preconditions beyond the common gates |
+|---|---|---|---|---|---|---|
+| 1 | water-clarity | retired in the pilot (read-only identity) | emitter in `run.py` CENTRAL mode | NOT_RECORDED (calibration-lane exception) | pilot executed; flip to CUTOVER_COMPLETE with the retirement PR | pilot verification complete; first real artifact-mode run (cloud job run needs approval) |
+| 2 | wind | `wind-hourly` job (`wind-hourly-job`, RTDB admin) | `artifact.py` in shadow | NOT_RECORDED | SHADOW | at least 7 days of shadow equivalence vs the legacy writer; rollback rehearsal; Wind score frozen/unchanged; independent hourly and manual publication paths both moved |
+| 3 | water-temp | `water-temp-brain` (shared `brain-writer`) | `publish_artifact.py` (shadow) | contract present, release record to verify | SHADOW | write its own cutover plan; split `brain-writer` first |
+| 4 | lake-brain | `lake-brain` (shared `brain-writer`); Water Temp and Clarity read its state | `publish_artifact.py` (shadow) | to verify | SHADOW | own plan; hartwell CWMS fetch-failure retry fix (earlier finding) deployed first |
+| 5 | sector-intelligence | in-process in the orchestrator (`brain-writer`) | `publish_artifact.py` (shadow) | NOT_RECORDED | SHADOW | publishes last; consumes validated outputs only; own plan |
+| deferred | fish-knowledge, fish-behavior | legacy combined `biological-state` in-process (`brain-writer`) | `publish_artifact.py` for the combined package (shadow) | n/a | SHADOW | M01-M03 split first; history/score attribution preserved; D-1/D-3 decisions; never published as a combined unit |
+| BLOCKED | depth, vegetation | none (shadow lane only) | shadow only | candidate releases, NOT_RECORDED | SHADOW | no approved release and no validated capability; a shadow implementation is not production readiness |
+
+## One shared blocker class: the shared writer identities
+`brain-writer` (orchestrator, lake-brain, water-temp-brain and, until the pilot swap, water-clarity-brain) holds `firebasedatabase.admin`; so does `wind-hourly-job`. Path-level RTDB IAM does not exist for privileged identities, so the separation is by identity: each Brain moves to its own read-only job identity at its step; the Orchestrator keeps RTDB write for health, jobs, control (its own paths) until its writes are moved to a narrower identity in a later approved step; only `sector-publisher` holds RTDB write for canonical Brain paths. Until all steps are done the unmigrated Brains stay on their existing identities (documented, owner-visible).
+
+## What is deliberately not in this plan
+No schedule resume, no research, no Fish/Biological production data change, no score or rubric change, no Ops deploy. Ops visibility for the new records is a read-only Sector Ops change (separate repository and deploy) that reads `control/orchestrator.publication`.

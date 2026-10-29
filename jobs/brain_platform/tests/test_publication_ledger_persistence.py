@@ -110,3 +110,17 @@ def test_the_orchestrator_view_can_write_only_its_own_prefix():
             v.put(key, b"{}", if_generation_match=0)
         with pytest.raises(AccessDenied):
             v.put(key, b"{}", if_generation_match=1)
+
+
+def test_a_publication_made_by_any_path_is_imported_from_the_publisher_history_once():
+    rig = Rig(brains=("wind",))
+    ref, res = rig.publish_first(wind_artifact(n=1))                                  # published by a path that never touched the Orchestrator's ledger
+    disk = rig.store.__class__()
+    co = coordinator(rig, disk, None, cutover=())
+    out = co.import_publisher_history(["wind", "lake-brain"])
+    assert len(out["imported"]) == 1 and out["recordsSeen"] >= 1
+    rec = next(iter(StoreLedger(disk).records("wind")))
+    assert rec["publication"]["outcome"] == "PUBLISHED" and rec["publication"]["reason"] == "IMPORTED_FROM_PUBLISHER_HISTORY" and rec["publication"]["livePublishId"] == res.publish_id
+    assert rec["writePath"] == "PUBLISHER" and rec["artifact"]["state"] == "COLLECTED" and rec["artifact"]["digest"] == ref.sha256
+    assert co.import_publisher_history(["wind"])["imported"] == []                    # idempotent: never duplicated or changed
+    assert co.summary()["brains"]["wind"]["published"] == 1
