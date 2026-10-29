@@ -1,6 +1,6 @@
 # Session record 2026-10-28: Orchestrator aligned to Cortex 3.1
 
-Standards: Rehtac Cortex 3.1.0 @ 9562274 (clean), pack sector/engine. The repository's recorded pin (0f9ee75, Cortex 2.1.0) is stale; this record and `CLAUDE.md` now name 3.1.0 @ 9562274. Branch `cortex/orchestrator-cortex-3-1-2026-10-28` from `origin/main` edc4a37b. Local only: nothing pushed, merged or deployed. Cloud schedules PAUSED; the Publisher is unarmed; no production RTDB read or write; no new scientific research.
+Standards: Rehtac Cortex 3.1.0 @ 9562274 (clean), pack sector/engine. The repository pin in `CLAUDE.md` was ebc7fb9 (Cortex 2.7.0); it now names 3.1.0 @ 9562274. Branch `cortex/orchestrator-cortex-3-1-2026-10-28` from `origin/main` edc4a37b. Local only: nothing pushed, merged or deployed. Cloud schedules PAUSED; the Publisher is unarmed; no production RTDB read or write; no new scientific research.
 
 ## 1. What already worked (kept as is)
 - The central Publisher exists and is complete locally: `publisher/` (artifact envelope, validators, planner, shadow evaluation, `ArtifactWriter`, `ShadowDispatcher`) and `publisher_live/` (authorization, baseline reconcile, per-Brain lock, atomic or chunked apply, authoritative readback, immutable record, head advance, quarantine, rollback, S1 score signal), with fakes and a rig. Shadow vocabulary has no `PUBLISHED` member (tested).
