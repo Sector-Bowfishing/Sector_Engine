@@ -42,7 +42,7 @@ def stack(world, monkeypatch, tmp_path):
     setup, calls = world
     rig = Rig(brains=("wind",))
     arm = {"live": None, "stores": 0}
-    monkeypatch.setattr(OR, "build_publication_store", lambda d: rig.store if d else None)
+    monkeypatch.setattr(OR, "build_publication_store", lambda d, b=None: rig.store if (d or b) else None)
     monkeypatch.setattr(OR, "build_live_publisher", lambda store: arm["live"])
     paths = {"ledger": str(tmp_path / "ledger.json"), "cut": str(tmp_path / "cutover.json"), "out": str(tmp_path / "pub.json")}
     argv = ["--coordinate-publication", "--artifact-store-dir", "x", "--publication-ledger", paths["ledger"], "--publication-cutover", paths["cut"], "--emit-publication-state", paths["out"]]
@@ -357,3 +357,21 @@ def test_health_mirror_never_runs_for_a_brain_that_was_not_published(stack, monk
     db = stack.setup(quiet(), cloud())
     assert OR.main(stack.argv) == 0                                                    # pre-cutover: the legacy writer still owns what it writes today
     assert stack.pub(db)["healthMirror"] == {} and "wind" not in (db.tree.get("health") or {}).get("sources", {})
+
+
+# 15. the bucket store and the dry run -----------------------------------------------------------------------------------------------------------------------------------
+def test_bucket_store_is_built_only_from_the_configured_bucket_and_never_without_it(monkeypatch):
+    from sector_brain_platform.object_bucket import GcsRestObjectStore
+    assert OR.build_publication_store(None, None) is None
+    monkeypatch.setattr(OR, "TokenProvider", lambda *a, **k: object())
+    s = OR.build_publication_store(None, "some-bucket")
+    assert isinstance(s, GcsRestObjectStore) and s.bucket == "some-bucket"
+
+
+def test_a_dry_run_cycle_writes_nothing_to_the_artifact_store(stack):
+    stack.rig.ref(wind_artifact(n=1))
+    before = sorted(stack.rig.store.list(""))  if hasattr(stack.rig.store, "list") else None
+    db = stack.setup(quiet(), cloud())
+    assert OR.main(["--dry-run"] + stack.argv) == 0
+    assert sorted(stack.rig.store.list("exports/")) == [] and sorted(stack.rig.store.list("publishes/")) == []
+    assert db.writes == []                                                              # and no database write either

@@ -300,8 +300,12 @@ def score_cmd(env=None) -> list[str]:
     return cmd
 
 
-def build_publication_store(directory: str | None):
-    """The artifact store the publication stage reads. Local directory only today; the private bucket (a gated deployment resource) plugs in here, read-only."""
+def build_publication_store(directory: str | None, bucket: str | None = None):
+    """The artifact store the publication stage uses: the private GCS bucket (PUBLICATION_ARTIFACT_BUCKET; the stage wraps it in the Orchestrator's least-privilege view and IAM
+    enforces the same) or a local directory for review. None = not configured."""
+    if bucket:
+        from sector_brain_platform.object_bucket import GcsRestObjectStore
+        return GcsRestObjectStore(bucket, TokenProvider())
     if not directory:
         return None
     from sector_brain_platform.publisher.storage import LocalDirObjectStore
@@ -310,7 +314,9 @@ def build_publication_store(directory: str | None):
 
 def build_shadow_publisher(store):
     from sector_brain_platform.publisher import ShadowPublisher, ShadowSink, PublishHistory, PublisherMode, default_registry, publisher_view
-    return ShadowPublisher(default_registry(), PublishHistory(publisher_view(store)), ShadowSink(), mode=PublisherMode.SHADOW)
+    from sector_brain_platform.publisher.storage import OverlayObjectStore
+    # reads the real artifacts and history; its own records stay in memory (the Orchestrator may not write publishes/, and a shadow verdict is never a publication)
+    return ShadowPublisher(default_registry(), PublishHistory(publisher_view(OverlayObjectStore(store))), ShadowSink(), mode=PublisherMode.SHADOW)
 
 
 def build_live_publisher(store):
@@ -364,6 +370,7 @@ def main(argv=None) -> int:
                     help="PL-19 publication coordination: reconcile this cycle's and Cloud Run's executions with the sealed artifacts in the private store, record each run's publication outcome "
                          "(control/orchestrator.publication). OFF by default (also PUBLICATION_COORDINATION=on). Never arms the Publisher: a Brain is only handed to a live Publisher after an approved cutover")
     ap.add_argument("--artifact-store-dir", default=os.environ.get("PUBLICATION_ARTIFACT_DIR"), help="directory holding the artifact store (local); the private bucket is a gated deployment resource")
+    ap.add_argument("--artifact-bucket", default=os.environ.get("PUBLICATION_ARTIFACT_BUCKET"), help="private GCS bucket holding artifacts/, publishes/ and exports/orchestrator/ (the Orchestrator reads artifacts and writes only exports/orchestrator/)")
     ap.add_argument("--publication-ledger", default=os.environ.get("PUBLICATION_LEDGER"), help="JSON ledger file persisting run/publication records between cycles")
     ap.add_argument("--publication-cutover", default=os.environ.get("PUBLICATION_CUTOVER"), help=f"{PS.CUTOVER_SCHEMA} document naming Brains approved for CENTRAL publication; absent = every Brain on its direct writer")
     ap.add_argument("--emit-publication-state", default=None, metavar="FILE", help="write the publication stage result JSON here (review; Sector Ops reads control/orchestrator.publication)")
@@ -507,7 +514,7 @@ def main(argv=None) -> int:
     publication = None
     if a.coordinate_publication:
         try:
-            pstore = build_publication_store(a.artifact_store_dir)
+            pstore = build_publication_store(a.artifact_store_dir, a.artifact_bucket)
             if pstore is None:
                 publication = {"state": "UNAVAILABLE", "reason": "no artifact store configured (--artifact-store-dir / PUBLICATION_ARTIFACT_DIR)"}
             else:
@@ -516,7 +523,7 @@ def main(argv=None) -> int:
                 terminal = [e for e in exec_records + [c for c in cloud_now if c["executionId"] not in seen_ids] if e.get("status") not in ("STARTED", "RUNNING")]
                 publication = PS.run_stage(store=pstore, ledger_path=a.publication_ledger, executions=terminal, shadow=build_shadow_publisher(pstore),
                                            live=build_live_publisher(pstore), cutover_path=a.publication_cutover,
-                                           paused_reason=None if auto_ok else "EXECUTION_PAUSED")
+                                           paused_reason=None if auto_ok else "EXECUTION_PAUSED", dry_run=a.dry_run)
                 publication["state"] = "COORDINATED"
                 # operational health of a CENTRAL Brain is the Orchestrator's, derived only from what the Publisher published (never written by the Publisher or the Brain)
                 central_published = [b for b in publication["cutover"]["central"] if (publication["summary"]["brains"].get(b) or {}).get("published")]
