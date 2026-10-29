@@ -3,7 +3,7 @@
 Living ledger (Cortex `core/execution.md` §9). One row per requirement, one column per Brain discovered, plus **Platform**. A row is updated only when it is re-evaluated, with the date and session. `NOT_VERIFIED` means not checked or not checkable without production access; it is **not** a failure.
 
 ```text
-Standards: Rehtac Cortex 2.1.0 @ 0f9ee75 (clean), pack sector/engine
+Standards: Rehtac Cortex 2.1.0 @ 0f9ee75 (historical; the pin is now 3.1.0 @ 9562274, see sessions/2026-10-28-orchestrator-cortex-3-1.md) (clean), pack sector/engine
 Evaluated: 2026-10-20 · sessions/2026-10-20-architecture-all-brains.md (first pass), sessions/2026-10-20-architecture-completion.md (re-evaluation),
   sessions/2026-10-20-cortex-2-1-memory.md (standing memory checks) and sessions/2026-10-20-cortex-2-1-structural-completion.md (this re-evaluation:
   Depth and Vegetation migrated and certified; every Depth/Vegetation cell, BR-10/11/16/18/19 and the standing checks re-checked)

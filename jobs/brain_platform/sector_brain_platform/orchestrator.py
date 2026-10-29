@@ -17,7 +17,11 @@ from .timeutil import age_hours, iso, parse_time
 
 MAX_RETRIES = 3
 RETRY_BACKOFF_MIN = (5, 15, 45)          # minutes after the 1st, 2nd, 3rd failure
-DEFAULT_ORDER = ("lake-brain", "water-temp", "water-clarity", "wind", "biological-state", "sector-intelligence")
+from .data_ownership import deployed_execution_order
+from .keys import BRAINS
+# Tie-break order for brains no dependsOn edge orders: the Cortex 3.1 target order (environmental specialists and Fish, then the Biological Brain, then Sector Intelligence; M08) projected
+# onto the deployed packages. The combined biological-state package keeps its single slot after every environmental Brain.
+DEFAULT_ORDER = tuple(deployed_execution_order(list(BRAINS)))
 
 
 def _truthy(v) -> bool:

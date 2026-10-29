@@ -48,6 +48,7 @@ from sector_brain_platform import brain_operations as BOPS                      
 from sector_brain_platform import execution_control as EC                                                            # noqa: E402
 from sector_brain_platform import engineering_status_publication as ESP                                                # noqa: E402
 from sector_brain_platform import shadow_lane as SL                                                                   # noqa: E402
+from sector_brain_platform import data_ownership as DO, publication_stage as PS                                       # noqa: E402
 sys.path.insert(0, HERE)
 import control_plane as CP                                                                                            # noqa: E402
 
@@ -299,6 +300,41 @@ def score_cmd(env=None) -> list[str]:
     return cmd
 
 
+def build_publication_store(directory: str | None):
+    """The artifact store the publication stage reads. Local directory only today; the private bucket (a gated deployment resource) plugs in here, read-only."""
+    if not directory:
+        return None
+    from sector_brain_platform.publisher.storage import LocalDirObjectStore
+    return LocalDirObjectStore(directory)
+
+
+def build_shadow_publisher(store):
+    from sector_brain_platform.publisher import ShadowPublisher, ShadowSink, PublishHistory, PublisherMode, default_registry, publisher_view
+    return ShadowPublisher(default_registry(), PublishHistory(publisher_view(store)), ShadowSink(), mode=PublisherMode.SHADOW)
+
+
+def build_live_publisher(store):
+    """The LIVE Publisher. NEVER constructed by the scheduled cycle: arming needs the approved LiveAuthorization, a reconciled baseline, an RTDB client with the Publisher identity and the
+    release resolver (docs/cortex/sessions/2026-10-28-orchestrator-cortex-3-1.md, gate G-ARM). Returns None so every Brain's run record says PUBLISHER_UNARMED / DIRECT_WRITER_ACTIVE."""
+    return None
+
+
+def gate_dispatch(todo: set, deferred: list) -> set:
+    """Cortex M08 in the execution path: only recognised Brain identities run; an alias or unknown identity never runs; the legacy combined package is the ONLY dispatch of its two target
+    Brains (a target Brain that the legacy package already covers is not also dispatched: no double dispatch, no duplicated scientific result)."""
+    ok = set()
+    for b in sorted(todo):
+        r = DO.recognize(b)
+        if r["kind"] in ("UNREGISTERED", "ALIAS"):
+            deferred.append({"brainId": b, "why": f"{r.get('finding')}: {b!r} is not a Cortex target Brain or deployed package; not dispatched"})
+        else:
+            ok.add(b)
+    covered = {t for b in ok if DO.recognize(b)["kind"] == "LEGACY_COMBINED" for t in DO.recognize(b)["targets"]}
+    for b in sorted(ok & covered):
+        deferred.append({"brainId": b, "why": "DOUBLE_DISPATCH_PREVENTED: the legacy combined package already covers this target Brain"})
+    return ok - covered
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true", help="write nothing, start nothing")
@@ -324,11 +360,19 @@ def main(argv=None) -> int:
                     help="run the internal SHADOW lane for Brains with control_manifest shadowLane.enabled (candidate knowledge, in-memory, summary to "
                          "/control/shadowLaneV1/{id}; never authoritative or customer). OFF by default; enabled by the deployed job's arguments")
     ap.add_argument("--force-shadow-lane", action="store_true", help="with --run-shadow-lane: ignore the shadow cadence (ADMIN run)")
+    ap.add_argument("--coordinate-publication", action="store_true",
+                    help="PL-19 publication coordination: reconcile this cycle's and Cloud Run's executions with the sealed artifacts in the private store, record each run's publication outcome "
+                         "(control/orchestrator.publication). OFF by default (also PUBLICATION_COORDINATION=on). Never arms the Publisher: a Brain is only handed to a live Publisher after an approved cutover")
+    ap.add_argument("--artifact-store-dir", default=os.environ.get("PUBLICATION_ARTIFACT_DIR"), help="directory holding the artifact store (local); the private bucket is a gated deployment resource")
+    ap.add_argument("--publication-ledger", default=os.environ.get("PUBLICATION_LEDGER"), help="JSON ledger file persisting run/publication records between cycles")
+    ap.add_argument("--publication-cutover", default=os.environ.get("PUBLICATION_CUTOVER"), help=f"{PS.CUTOVER_SCHEMA} document naming Brains approved for CENTRAL publication; absent = every Brain on its direct writer")
+    ap.add_argument("--emit-publication-state", default=None, metavar="FILE", help="write the publication stage result JSON here (review; Sector Ops reads control/orchestrator.publication)")
     ap.add_argument("--health-only", action="store_true", help="publish ONLY control/healthV1: implies --control-only and --publish-health, and additionally writes no control/orchestratorV1 "
                                                                "and asks no Brain for a plan (the exact write set is control/healthV1/* and nothing else)")
     a = ap.parse_args(argv)
     if a.health_only:
         a.control_only, a.publish_health = True, True
+    a.coordinate_publication = (a.coordinate_publication or os.environ.get("PUBLICATION_COORDINATION") == "on") and not a.health_only
     t0 = time.time()
     now = dt.datetime.now(dt.timezone.utc)
     if a.control_only:
@@ -393,6 +437,7 @@ def main(argv=None) -> int:
     day = f"{now:%Y-%m-%d}"
     manifest = world["manifest"]
     todo = set(allowed) | ({r["brainId"] for r in plan["runs"]} if a.legacy_execution else set())
+    todo = gate_dispatch(todo, deferred)
     for r in plan["runs"]:                       # stale by the legacy TIME/plan logic, but not allowed to run by the decision model: say why
         if r["brainId"] not in todo:
             why = next((d["reason"] for d in evaluation["decisions"] if d["brainId"] == r["brainId"] and d["trigger"] == "SCHEDULE"), "no RUN decision")
@@ -456,6 +501,35 @@ def main(argv=None) -> int:
             exec_records.append(rec)
             executed.append(res)
             print(f"{'✓' if res.get('ok') else '✗'} {b} [{trigger}] {res.get('execution') or res.get('tail', res.get('error', ''))[-200:]}", flush=True)
+
+    # 4b. publication coordination (Cortex PL-19): what each Brain produced and what happened to it. Reads sealed artifacts and Cloud Run results; the Publisher is asked only after an
+    #     approved cutover with a live Publisher supplied (none is, today), so nothing here writes a canonical Brain path. A failure here never breaks the cycle or the scores.
+    publication = None
+    if a.coordinate_publication:
+        try:
+            pstore = build_publication_store(a.artifact_store_dir)
+            if pstore is None:
+                publication = {"state": "UNAVAILABLE", "reason": "no artifact store configured (--artifact-store-dir / PUBLICATION_ARTIFACT_DIR)"}
+            else:
+                cloud_now = CP.executions_from_cloud_run(manifest, executions, records, now)
+                seen_ids = {e["executionId"] for e in exec_records}
+                terminal = [e for e in exec_records + [c for c in cloud_now if c["executionId"] not in seen_ids] if e.get("status") not in ("STARTED", "RUNNING")]
+                publication = PS.run_stage(store=pstore, ledger_path=a.publication_ledger, executions=terminal, shadow=build_shadow_publisher(pstore),
+                                           live=build_live_publisher(pstore), cutover_path=a.publication_cutover,
+                                           paused_reason=None if auto_ok else "EXECUTION_PAUSED")
+                publication["state"] = "COORDINATED"
+                for r in exec_records:                                       # evidence replaces UNKNOWN; the scoring trigger below is unchanged
+                    ch = (publication["outputChanged"].get(r["executionId"]) or {}).get("outputChanged")
+                    if ch and r.get("outputChanged", "UNKNOWN") == "UNKNOWN":
+                        r["outputChanged"] = ch
+            print(f"publication: {publication['state']}" + (f" ({publication.get('reason')})" if publication.get("reason") else
+                  f" collected {len(publication['reconcile']['collected'])}, missing {len(publication['reconcile']['missing'])}, failed runs {len(publication['reconcile']['failedRuns'])}; "
+                  f"Publisher {'ARMED' if publication['armed'] else 'unarmed'}"), flush=True)
+            if a.emit_publication_state:
+                json.dump(publication, open(a.emit_publication_state, "w"), indent=1, sort_keys=True)
+        except Exception as e:                                       # the stage never breaks the cycle
+            publication = {"state": "FAILED", "reason": repr(e)[:300]}
+            print(f"publication: FAILED {e!r}", file=sys.stderr)
 
     # 4. scores / control — only after a state change
     seen = {b: PT.seen_token(brains.get(b)) for b in brains}      # S1: a COMPLETE Publisher publication (new artifactId) also counts as a Brain state change
@@ -564,6 +638,8 @@ def main(argv=None) -> int:
               "locks": {**{b: l for b, l in (state.get("locks") or {}).items() if l.get("lockedUntil", "") > iso(now) and b not in locks}, **locks},
               "lastSeen": {**(state.get("lastSeen") or {}), **{b: v for b, v in seen.items() if v}} if write else state.get("lastSeen"),
               "jobsSynced": len(records), "jobsChanged": n_changed, "scores": scores, "executionControl": EC.summary(ctl)}
+    if publication is not None:
+        record["publication"] = {k: publication[k] for k in ("state", "reason", "armed", "cutover", "summary") if k in publication}
     if write and not a.control_only:
         live.update({"control/orchestrator": record})
     print(json.dumps({k: record[k] for k in ("mode", "durationMs", "jobsChanged", "scores")}, indent=None))

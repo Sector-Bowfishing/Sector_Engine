@@ -1,0 +1,23 @@
+{
+  "schema": "sector-cutover-order-v1",
+  "authority": "Cortex platform.md PL-10 (recorded order Water Clarity -> Fish -> Wind) + docs/architecture/production/PRODUCTION_CUTOVER_PLANS_V1.md; Brains beyond the three planned ones are ordered by readiness and dependency and each still needs its own cutover plan before approval",
+  "order": [
+    {"brainId": "water-clarity", "step": 1, "basis": "PL-10 pilot; sealed artifact contract clarity-publication-v1; manual C1 run, score frozen, lowest blast radius", "plan": "PRODUCTION_CUTOVER_PLANS_V1.md#water-clarity"},
+    {"brainId": "biological-state", "step": 2, "basis": "PL-10 'Fish'. Published as the LEGACY_COMBINED package it is (one state-neutral publication of the already-live release, fish-publication-v1); NOT treated as two Brains. Open decisions D-1, D-3 apply", "plan": "PRODUCTION_CUTOVER_PLANS_V1.md#fish", "legacyCombined": true},
+    {"brainId": "wind", "step": 3, "basis": "PL-10; needs >= 7 days of shadow equivalence and a rollback rehearsal; hourly cadence raises the blast radius so it follows the two manual/low-cadence Brains", "plan": "PRODUCTION_CUTOVER_PLANS_V1.md#wind"},
+    {"brainId": "water-temp", "step": 4, "basis": "TIME Brain with a registered publication contract and a Cloud Run job; needs its own cutover plan (not yet written) before approval; depends on no other Brain's output", "plan": null},
+    {"brainId": "lake-brain", "step": 5, "basis": "TIME Brain with a registered contract; Water Temp and Clarity consume its published state, so it follows them only if consumers need a stable source; own plan required", "plan": null},
+    {"brainId": "sector-intelligence", "step": 6, "basis": "consumes validated outputs of the other Brains (authorizedInputs); publishes last among production Brains", "plan": null}
+  ],
+  "blocked": [
+    {"brainId": "depth", "reason": "SHADOW-only: no approved knowledge release; a shadow implementation is not production readiness (Cortex G-1 abstain)"},
+    {"brainId": "vegetation", "reason": "SHADOW-only: surface-only shadow V1, NOT_VALIDATED; no approved release"}
+  ],
+  "separateMigration": {"id": "M01-M03", "what": "split biological-state into fish-knowledge and fish-behavior; only after approved, validated implementations; historical scores stay attributed to the combined package", "after": "step 6"},
+  "rules": [
+    "This is the order in which the WRITER changes (risk, readiness, rollback). It is not the execution order (data_ownership.execution_order): an input Brain keeps serving its consumers from its own working direct writer until its step",
+    "A Brain may be CENTRAL only when every earlier step is CENTRAL, unless the cutover document carries an orderReviewRef (PL-10: changing the order requires explicit review)",
+    "A BLOCKED Brain can never be CENTRAL",
+    "biological-state may be CENTRAL only as the legacy combined unit (legacyCombinedAck: true)"
+  ]
+}

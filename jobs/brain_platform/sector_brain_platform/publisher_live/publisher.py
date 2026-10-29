@@ -26,7 +26,7 @@ from . import apply as AP
 from . import baseline as BL
 from . import locks as LK
 from .authorization import LiveAuthorization
-from .model import (COMPLETE, LIVE_MODE, LiveError, LiveResult, NoRollbackTarget, NotAuthorized, RtdbAmbiguousFailure, RtdbDefiniteFailure)
+from .model import (COMPLETE, LIVE_LIFECYCLES, LIVE_MODE, LiveError, LiveResult, NoRollbackTarget, NotAuthorized, RtdbAmbiguousFailure, RtdbDefiniteFailure)
 from .security_model import assert_publisher_keys
 
 DEFAULT_MAX_UPDATE_BYTES = 4 * 1024 * 1024
@@ -117,6 +117,11 @@ class LivePublisher:
             if apply:
                 self.history.append_record(rec)
             return LivePublishResult(LiveResult(res.result.value), rec, codes=res.codes)
+        if rec.get("lifecycle") not in LIVE_LIFECYCLES:                          # structurally valid is not scientifically eligible for the canonical lane
+            rec = {**rec, "result": LiveResult.REJECTED.value, "codes": ["LIFECYCLE_NOT_LIVE_ELIGIBLE"]}
+            if apply:
+                self.history.append_record(rec)
+            return LivePublishResult(LiveResult.REJECTED, rec, codes=["LIFECYCLE_NOT_LIVE_ELIGIBLE"], detail=f"lifecycle {rec.get('lifecycle')!r} is not eligible for live publication")
         if res.result is Result.SKIP:
             if apply:
                 self.history.append_record(rec)

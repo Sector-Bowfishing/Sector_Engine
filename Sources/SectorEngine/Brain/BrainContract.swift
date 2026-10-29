@@ -150,6 +150,8 @@ public enum BrainOwnership {
         let p = path.split(separator: "/", omittingEmptySubsequences: true).map(String.init)
         guard let root = p.first else { return false }
         if brainId == platformWriter {
+            // @external-admin families (Cortex 3.1 registry): access lists and the owner's execution-control document are never a platform write.
+            if root == "access" || (root == "control" && p.count >= 2 && p[1] == "executionControlV1") { return false }
             if platformOnly.contains(root) || (root == "health" && p.count >= 2 && (p[1] == "engine" || p[1] == "rtdb")) { return true }
             if root == "activity" { return p.count == 2 && p[1].contains("-\(platformWriter)-") }
             return false
@@ -180,8 +182,11 @@ public enum BrainOwnership {
             if rollupSnapshot.contains(f) { return false }
             if f == "brainVersions" { return p.count >= 5 && p[4] == brainId }
             return f == field
-        case "species": return brainId == "biological-state"
-        case "brains", "validation": return p.count >= 2 && p[1] == brainId
+        case "species": return brainId == "biological-state" && p.count >= 2     // never the whole /species root (Cortex 3.1 FD-03: a whole-node write erases every other record)
+        case "brains", "validation":
+            // Cortex 3.1 SC-04 / FD-15: the /brains/{id}/score(s) mirrors are the shared scorer's fields; /brains/wind/scores is the one registered LEGACY Wind family.
+            if root == "brains", p.count >= 3, p[2] == "score" || p[2] == "scores", !(brainId == "wind" && p[2] == "scores") { return false }
+            return p.count >= 2 && p[1] == brainId
         case "health":
             guard p.count >= 3 else { return false }
             switch p[1] {

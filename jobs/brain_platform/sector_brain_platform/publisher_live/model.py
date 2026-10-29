@@ -20,6 +20,10 @@ class LiveResult(str, Enum):
     ROLLED_BACK = "ROLLED_BACK"
 
 
+# Scientific-eligibility lane for LIVE publication. A structurally valid artifact whose lifecycle is RESEARCH or SHADOW is experimental or candidate output and is NEVER written to
+# canonical Brain intelligence; BLOCKED and RETIRED are not publishable states either. (The shadow lane keeps recording such artifacts; this only guards the live one.)
+LIVE_LIFECYCLES = ("PROFILED", "CALIBRATION", "PRODUCTION_READY", "PRODUCTION", "DEGRADED")
+
 # RTDB publication-record statuses (live). SHADOW's "SHADOW" never appears in a live database.
 COMPLETE, PARTIAL = "COMPLETE", "PARTIAL"
 LIVE_MODE = "LIVE"

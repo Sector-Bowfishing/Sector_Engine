@@ -241,3 +241,9 @@ def publisher_view(store, *, may_store_artifacts: bool = False) -> ScopedObjectS
     (the Brain did) unless `may_store_artifacts` is set for the local direct-evaluate convenience path."""
     return ScopedObjectStore(store, read=("artifacts/", "publishes/"), create=("publishes/",) + (("artifacts/",) if may_store_artifacts else ()),
                              overwrite=("publishes/",))
+
+
+def orchestrator_view(store) -> ScopedObjectStore:
+    """The Orchestrator: read artifacts (to verify and reconcile them) and the Publisher's history (to confirm outcomes); write ONLY its own coordination records under
+    exports/orchestrator/. It can create nothing under artifacts/ or publishes/ and cannot move a head."""
+    return ScopedObjectStore(store, read=("artifacts/", "publishes/", "exports/orchestrator/"), create=("exports/orchestrator/",), overwrite=("exports/orchestrator/",))

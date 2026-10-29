@@ -6,6 +6,7 @@ LIVE_SECURITY_VERIFIED (exit evidence F, X16) is a different, later fact: tested
 from __future__ import annotations
 
 from ..keys import BRAINS
+from .. import data_ownership as DO
 from ..ownership import PLATFORM_ONLY, PLATFORM_WRITER, path_allowed
 
 # Principals (identity CLASSES; never account names)
@@ -73,7 +74,9 @@ def rtdb_write_allowed(principal: str, key: str, *, brain_id: str | None = None,
     if principal == SPECIALIST:
         return phase == "CURRENT" and brain_id is not None and path_allowed(brain_id, key)
     if principal in (ORCHESTRATOR, SCORER):
-        return path_allowed(PLATFORM_WRITER, key)
+        # Cortex 3.1 FD-15: the Orchestrator owns operational health, execution records and job controls; the shared scorer owns authoritative scores and nothing else.
+        want = DO.ORCHESTRATOR if principal == ORCHESTRATOR else DO.SCORER
+        return path_allowed(PLATFORM_WRITER, key) and DO.platform_path_role(key) == want
     return False                                               # ops and anything unknown
 
 

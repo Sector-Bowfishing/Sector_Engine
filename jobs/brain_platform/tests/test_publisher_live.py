@@ -295,3 +295,17 @@ def test_release_resolver_verifies_hash_and_release_identity_and_fails_closed():
     assert not ManifestReleaseResolver(lambda r: (_ for _ in ()).throw(OSError("denied")))("2026-10-17.1", ref, sha)
     assert not ManifestReleaseResolver(lambda r: b"not json")("x", ref, "sha256:" + hashlib.sha256(b"not json").hexdigest())
     assert not ManifestReleaseResolver(lambda r: b'{"files": []}')("x", ref, "sha256:" + hashlib.sha256(b'{"files": []}').hexdigest())     # no release identity at all
+
+
+def test_a_structurally_valid_research_or_shadow_artifact_is_never_published_live():
+    """Scientific eligibility: schema validity is not release eligibility. RESEARCH / SHADOW lifecycles are accepted by the shared validators for the shadow lane only."""
+    from publisher_fixtures import wind_artifact
+    from sector_brain_platform.publisher_live.model import LiveResult
+    for n, lc in ((31, "RESEARCH"), (32, "SHADOW")):
+        r = Rig(brains=("wind",))
+        ref = r.ref(wind_artifact(n=n, lifecycle=lc))
+        r.reconcile(ref)
+        res = r.live.publish(ref)
+        assert res.result is LiveResult.REJECTED and res.codes == ["LIFECYCLE_NOT_LIVE_ELIGIBLE"], lc
+        assert r.rtdb.updates == []
+        assert r.history.records("wind")[-1]["live"] is False
