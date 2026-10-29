@@ -14,9 +14,15 @@ from __future__ import annotations
 import json
 import os
 
-from .publication_coordination import PublicationCoordinator, PublicationLedger
+from .publication_coordination import PublicationCoordinator, PublicationLedger, StoreLedger
+from .publisher.storage import orchestrator_view
 
 CUTOVER_SCHEMA = "sector-publication-cutover-v1"
+ORDER_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cutover_order.json")
+
+
+def cutover_order() -> dict:
+    return json.load(open(ORDER_FILE, encoding="utf-8"))
 STATES = ("DIRECT_WRITE", "CENTRAL")
 
 
@@ -33,18 +39,32 @@ def load_cutover(path: str | None) -> tuple[dict, list]:
         return {}, [{"kind": "CUTOVER_UNREADABLE", "why": type(e).__name__}]
     if doc.get("schema") != CUTOVER_SCHEMA:
         return {}, [{"kind": "CUTOVER_SCHEMA", "why": f"expected {CUTOVER_SCHEMA}"}]
+    order = cutover_order()
+    steps = [o["brainId"] for o in order["order"]]
+    blocked = {b["brainId"]: b["reason"] for b in order["blocked"]}
     for bid, e in sorted((doc.get("brains") or {}).items()):
         kind = DO.recognize(bid)["kind"]
         if kind in ("UNREGISTERED", "ALIAS"):
             problems.append({"kind": "CUTOVER_UNKNOWN_BRAIN", "brainId": bid})
-        elif kind == "LEGACY_COMBINED" and e.get("state") == "CENTRAL":
-            problems.append({"kind": "CUTOVER_LEGACY_COMBINED_FROZEN", "brainId": bid, "why": "biological-state stays on its direct writer until the approved Fish/Biological split (BA-04)"})
         elif e.get("state") not in STATES:
             problems.append({"kind": "CUTOVER_STATE", "brainId": bid})
-        elif e["state"] == "CENTRAL" and not e.get("approvalRef"):
+        elif e["state"] == "DIRECT_WRITE":
+            out[bid] = {"state": "DIRECT_WRITE", "approvalRef": e.get("approvalRef")}
+        elif not e.get("approvalRef"):
             problems.append({"kind": "CUTOVER_NOT_APPROVED", "brainId": bid, "why": "CENTRAL needs an approvalRef"})
+        elif bid in blocked:
+            problems.append({"kind": "CUTOVER_BLOCKED", "brainId": bid, "why": blocked[bid]})
+        elif bid not in steps:
+            problems.append({"kind": "CUTOVER_NOT_IN_ORDER", "brainId": bid, "why": "not in the authoritative cutover order"})
+        elif kind == "LEGACY_COMBINED" and not e.get("legacyCombinedAck"):
+            problems.append({"kind": "CUTOVER_LEGACY_COMBINED_ACK", "brainId": bid, "why": "biological-state publishes as the legacy combined unit only with legacyCombinedAck: true; the Fish/Biological split is a separate migration (BA-04)"})
         else:
-            out[bid] = {"state": e["state"], "approvalRef": e.get("approvalRef")}
+            out[bid] = {"state": "CENTRAL", "approvalRef": e["approvalRef"], "orderReviewRef": e.get("orderReviewRef")}
+    for bid in sorted(b for b, e in out.items() if e["state"] == "CENTRAL" and not e.get("orderReviewRef")):       # PL-10: the recorded order holds unless explicitly reviewed
+        missing = [p for p in steps[:steps.index(bid)] if (out.get(p) or {}).get("state") != "CENTRAL"]
+        if missing:
+            problems.append({"kind": "CUTOVER_ORDER", "brainId": bid, "why": f"earlier steps not CENTRAL: {missing} (PL-10; add an orderReviewRef only after an explicit order review)"})
+            del out[bid]
     return out, problems
 
 
@@ -54,7 +74,9 @@ def run_stage(*, store, ledger_path: str | None, executions: list, shadow=None, 
     cut, problems = load_cutover(cutover_path)
     central = sorted(b for b, e in cut.items() if e["state"] == "CENTRAL")
     kw = {"clock": clock} if clock else {}
-    co = PublicationCoordinator(PublicationLedger(ledger_path), store, shadow=shadow, live=live, cutover=central, hold_reason=paused_reason, **kw)
+    # a ledger file when one is named (local review); otherwise the durable ledger in the private store, written through the Orchestrator's own least-privilege view
+    ledger = PublicationLedger(ledger_path) if ledger_path else StoreLedger(orchestrator_view(store))
+    co = PublicationCoordinator(ledger, orchestrator_view(store), shadow=shadow, live=live, cutover=central, hold_reason=paused_reason, **kw)
     rec = co.reconcile(executions)
     changes = {}
     for key in rec["collected"]:

@@ -24,6 +24,7 @@ import os
 from .publisher.canonical import canonical_bytes, sha256_ref
 from .publisher.refs import ArtifactRef, artifact_location
 from .publisher.model import Rejected
+from .publisher.storage import PreconditionFailed
 from . import data_ownership as DO
 from .timeutil import iso, parse_time
 
@@ -73,6 +74,45 @@ class PublicationLedger:
 
     def for_run(self, brain_id: str, run_id: str) -> list:
         return [r for r in self.records(brain_id) if r["runId"] == run_id]
+
+
+def _precedence(r: dict) -> tuple:
+    """Which of two versions of one run record wins when two workers wrote concurrently: a final outcome beats an open one, then more attempts, then the later write."""
+    p = r["publication"]
+    return (p["outcome"] in FINAL, p.get("attempts", 0), r["artifact"].get("state") == "COLLECTED", p.get("lastAttemptAt") or r.get("recordedAt") or "")
+
+
+class StoreLedger(PublicationLedger):
+    """The same ledger persisted as ONE object in the private artifact store (`exports/orchestrator/publication-ledger-v1.json`) with optimistic concurrency (generation match): safe across
+    worker restarts and overlapping workers. A conflicting write re-reads, merges per record by precedence and retries. Never deletes a record."""
+    KEY = "exports/orchestrator/publication-ledger-v1.json"
+
+    def __init__(self, store, key: str | None = None, retries: int = 8):
+        self.store, self.obj, self.retries, self.path = store, key or self.KEY, retries, None
+        self.gen = 0
+        self.doc = {"schema": "sector-publication-ledger-v1", "records": {}}
+        self._load()
+
+    def _load(self):
+        data = self.store.get(self.obj)
+        self.gen = self.store.generation(self.obj)
+        if data:
+            self.doc = json.loads(data)
+
+    def put(self, rec: dict) -> dict:
+        for _ in range(self.retries):
+            self.doc["records"][rec["key"]] = rec
+            try:
+                self.gen = self.store.put(self.obj, json.dumps(self.doc, sort_keys=True, separators=(",", ":")).encode(), if_generation_match=self.gen)
+                return rec
+            except PreconditionFailed:
+                mine = self.doc["records"]
+                self._load()                                                      # somebody else wrote: take theirs, keep the higher-precedence version of each record
+                for k, r in mine.items():
+                    if k not in self.doc["records"] or _precedence(r) > _precedence(self.doc["records"][k]):
+                        self.doc["records"][k] = r
+                rec = self.doc["records"][rec["key"]]
+        raise RuntimeError("publication ledger: could not commit after %d conflicting writes" % self.retries)
 
 
 def _blank(brain_id: str, run_id: str, artifact_id: str | None, now: str) -> dict:
@@ -194,19 +234,27 @@ class PublicationCoordinator:
             after = parse_time(pub.get("nextAttemptAfter"))
             if after and now < after:
                 return rec                                                       # backoff not elapsed: nothing happens
+        if pub.get("inFlight") or pub.get("attempts"):                            # an earlier attempt may have succeeded and lost its answer: the Publisher's immutable history decides
+            hist = self._published_in_history(rec)
+            if hist:
+                pub.update(requested=True, outcome="PUBLISHED", reason="RECOVERED_FROM_PUBLISHER_HISTORY", livePublishId=hist["publishId"], inFlight=False, retryable=False,
+                           nextAttemptAfter=None, recovered=True, readback={"verified": True, "source": "PUBLISHER_HISTORY"}, codes=[])
+                return self.ledger.put(rec)
         data = self.store.get(rec["artifact"]["location"])                      # the digest pinned at collection must still be the stored artifact: tampering after collection is never published
         if data is None or sha256_ref(data) != rec["artifact"]["digest"]:
             rec["artifact"].update(state="INVALID", problems=["DIGEST_CHANGED_AFTER_COLLECTION"] if data is not None else ["ARTIFACT_REMOVED_AFTER_COLLECTION"])
             pub.update(requested=False, outcome="REJECTED", reason="ARTIFACT_CHANGED_AFTER_COLLECTION", retryable=False)
             return self.ledger.put(rec)
         pub["attempts"] += 1
-        pub.update(requested=True, lastAttemptAt=iso(now))
+        pub.update(requested=True, lastAttemptAt=iso(now), inFlight=True)
+        self.ledger.put(rec)                                                    # durable BEFORE the Publisher is asked: a crash after a successful write leaves an in-flight marker, never silence
         try:
             res = self.live.publish(self._ref(rec))
         except Exception as e:                                                  # noqa: BLE001 - an exception means the outcome is UNKNOWN, never published
             return self._failed(rec, now, "PUBLISHER_ERROR:" + type(e).__name__, retryable=True, detail=str(e)[:200])
         name = res.result.value
         outcome, retry = _LIVE.get(name, ("FAILED", False))
+        pub["inFlight"] = False
         if outcome in FINAL:
             pub.update(outcome=outcome, reason=name, codes=list(res.codes or []), livePublishId=res.publish_id, retryable=False, nextAttemptAfter=None,
                        recovered=(name == "RECOVERED"), readback=(None if outcome == "SKIPPED" else {"verified": outcome == "PUBLISHED", "mismatched": list(res.mismatched or [])}),
@@ -214,8 +262,18 @@ class PublicationCoordinator:
             return self.ledger.put(rec)
         return self._failed(rec, now, name, retryable=retry, codes=list(res.codes or []), mismatched=list(res.mismatched or []), detail=(res.detail or "")[:200], publish_id=res.publish_id)
 
+    def _published_in_history(self, rec: dict) -> dict | None:
+        h = getattr(self.live, "history", None)
+        if h is None:
+            return None
+        for r in h.records(rec["brainId"]):
+            if r.get("artifactId") == rec["artifact"]["artifactId"] and r.get("result") == "PUBLISHED" and r.get("status") == "COMPLETE" and r.get("live"):
+                return r
+        return None
+
     def _failed(self, rec: dict, now: dt.datetime, reason: str, *, retryable: bool, codes=None, mismatched=None, detail: str = "", publish_id=None) -> dict:
         pub = rec["publication"]
+        pub["inFlight"] = False
         exhausted = pub["attempts"] >= self.max_attempts
         step = self.backoff[min(pub["attempts"] - 1, len(self.backoff) - 1)]
         pub.update(outcome="FAILED", reason="RETRIES_EXHAUSTED" if (retryable and exhausted) else reason, lastReason=reason, codes=codes or [], detail=detail, livePublishId=publish_id,

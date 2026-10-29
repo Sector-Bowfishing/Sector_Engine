@@ -89,7 +89,7 @@ def test_approved_central_brain_is_published_once_through_the_publisher_in_the_r
     ref = stack.rig.ref(wind_artifact(n=1))
     stack.rig.reconcile(ref)
     stack.arm["live"] = stack.rig.live
-    stack.cutover(wind={"state": "CENTRAL", "approvalRef": "approval/test/wind"})
+    stack.cutover(wind={"state": "CENTRAL", "approvalRef": "approval/test/wind", "orderReviewRef": "review/test"})
     db = stack.setup(quiet(), cloud())
     assert OR.main(stack.argv) == 0
     r = rec_of(stack.paths["ledger"])
@@ -103,7 +103,10 @@ def test_approved_central_brain_is_published_once_through_the_publisher_in_the_r
 
 # 4. a cutover without an approval reference, for a legacy/alias identity, or while the Publisher is unarmed changes nothing -------------------------------------
 @pytest.mark.parametrize("entry,problem", [({"wind": {"state": "CENTRAL"}}, "CUTOVER_NOT_APPROVED"),
-                                           ({"biological-state": {"state": "CENTRAL", "approvalRef": "x"}}, "CUTOVER_LEGACY_COMBINED_FROZEN"),
+                                           ({"biological-state": {"state": "CENTRAL", "approvalRef": "x"}}, "CUTOVER_LEGACY_COMBINED_ACK"),
+                                           ({"depth": {"state": "CENTRAL", "approvalRef": "x"}}, "CUTOVER_BLOCKED"),
+                                           ({"vegetation": {"state": "CENTRAL", "approvalRef": "x"}}, "CUTOVER_BLOCKED"),
+                                           ({"wind": {"state": "CENTRAL", "approvalRef": "x"}}, "CUTOVER_ORDER"),
                                            ({"fish": {"state": "CENTRAL", "approvalRef": "x"}}, "CUTOVER_UNKNOWN_BRAIN")])
 def test_unapproved_or_frozen_cutover_is_ignored_and_reported(stack, entry, problem):
     stack.rig.reconcile(stack.rig.ref(wind_artifact(n=1)))
@@ -117,7 +120,7 @@ def test_unapproved_or_frozen_cutover_is_ignored_and_reported(stack, entry, prob
 
 def test_cutover_declared_but_publisher_unarmed_holds_with_a_reason(stack):
     stack.rig.ref(wind_artifact(n=1))
-    stack.cutover(wind={"state": "CENTRAL", "approvalRef": "approval/test/wind"})
+    stack.cutover(wind={"state": "CENTRAL", "approvalRef": "approval/test/wind", "orderReviewRef": "review/test"})
     db = stack.setup(quiet(), cloud())
     assert OR.main(stack.argv) == 0 and stack.pub(db)["armed"] is False
     p = rec_of(stack.paths["ledger"])["publication"]
@@ -129,7 +132,7 @@ def test_paused_execution_control_records_but_never_publishes_or_starts(stack):
     ref = stack.rig.ref(wind_artifact(n=1))
     stack.rig.reconcile(ref)
     stack.arm["live"] = stack.rig.live
-    stack.cutover(wind={"state": "CENTRAL", "approvalRef": "approval/test/wind"})
+    stack.cutover(wind={"state": "CENTRAL", "approvalRef": "approval/test/wind", "orderReviewRef": "review/test"})
     db = stack.setup(quiet(control=None), cloud())
     assert OR.main(stack.argv) == 0
     p = rec_of(stack.paths["ledger"])
@@ -149,7 +152,7 @@ def test_a_succeeded_run_without_an_artifact_and_a_failed_run_are_recorded_not_p
 def test_an_artifact_changed_after_collection_is_rejected_and_never_reaches_the_publisher(stack):
     ref = stack.rig.ref(wind_artifact(n=1))
     stack.rig.reconcile(ref)
-    stack.cutover(wind={"state": "CENTRAL", "approvalRef": "approval/test/wind"})
+    stack.cutover(wind={"state": "CENTRAL", "approvalRef": "approval/test/wind", "orderReviewRef": "review/test"})
     db = stack.setup(quiet(), cloud())
     assert OR.main(stack.argv) == 0                                         # unarmed: collected and pinned, held
     assert rec_of(stack.paths["ledger"])["publication"]["reason"] == "PUBLISHER_UNARMED"
@@ -184,7 +187,7 @@ def test_publisher_outage_is_retried_in_a_later_cycle_and_publishes_exactly_once
                 raise ConnectionError("publisher unreachable")
             return real.publish(r)
     stack.arm["live"] = Flaky()
-    stack.cutover(wind={"state": "CENTRAL", "approvalRef": "approval/test/wind"})
+    stack.cutover(wind={"state": "CENTRAL", "approvalRef": "approval/test/wind", "orderReviewRef": "review/test"})
     db = stack.setup(quiet(), cloud())
     assert OR.main(stack.argv) == 0
     p = rec_of(stack.paths["ledger"])["publication"]
@@ -268,7 +271,7 @@ def test_rollback_to_direct_write_stops_publication_without_touching_published_d
     ref = stack.rig.ref(wind_artifact(n=1))
     stack.rig.reconcile(ref)
     stack.arm["live"] = stack.rig.live
-    stack.cutover(wind={"state": "CENTRAL", "approvalRef": "approval/test/wind"})
+    stack.cutover(wind={"state": "CENTRAL", "approvalRef": "approval/test/wind", "orderReviewRef": "review/test"})
     db = stack.setup(quiet(), cloud(1))
     assert OR.main(stack.argv) == 0 and rec_of(stack.paths["ledger"])["publication"]["outcome"] == "PUBLISHED"
     before = [dict(u) for u in stack.rig.rtdb.updates]
@@ -281,3 +284,39 @@ def test_rollback_to_direct_write_stops_publication_without_touching_published_d
     assert new["publication"]["outcome"] == "NOT_REQUESTED" and new["publication"]["reason"] == "DIRECT_WRITER_ACTIVE" and new["writePath"] == "DIRECT_WRITE_PRE_CUTOVER"
     assert stack.rig.rtdb.updates == before                                  # the rollback is a mode change: nothing was rewritten
     assert rec_of(stack.paths["ledger"])["publication"]["outcome"] == "PUBLISHED"       # the earlier publication stays recorded as published
+
+
+# 12. durable ledger: no ledger file, the cycle persists its records in the private store and a restarted worker resumes from them ------------------------------------------
+def test_without_a_ledger_file_the_records_live_in_the_store_and_survive_a_restart(stack):
+    from sector_brain_platform.publication_coordination import StoreLedger
+    ref = stack.rig.ref(wind_artifact(n=1))
+    stack.rig.reconcile(ref)
+    stack.cutover(wind={"state": "CENTRAL", "approvalRef": "approval/test/wind", "orderReviewRef": "review/test"})
+    argv = [x for x in stack.argv if x not in ("--publication-ledger", stack.paths["ledger"])]
+    stack.arm["live"] = None                                                 # first worker: Publisher unarmed
+    db = stack.setup(quiet(), cloud())
+    assert OR.main(argv) == 0
+    wind = [r for r in StoreLedger(stack.rig.store).records("wind")]
+    assert [r["publication"]["reason"] for r in wind] == ["PUBLISHER_UNARMED"] and not os.path.exists(stack.paths["ledger"])
+    stack.arm["live"] = stack.rig.live                                       # a later worker (new process, nothing in memory) with the Publisher armed
+    stack.setup(quiet(), cloud())
+    assert OR.main(argv) == 0
+    r = StoreLedger(stack.rig.store).records("wind")[0]
+    assert r["publication"]["outcome"] == "PUBLISHED" and r["publication"]["attempts"] == 1
+
+
+# 13. one authoritative cutover order (Cortex PL-10) ------------------------------------------------------------------------------------------------------------------------
+def test_cutover_document_enforces_the_recorded_order(tmp_path):
+    def load(brains):
+        p = tmp_path / "c.json"
+        json.dump({"schema": PS.CUTOVER_SCHEMA, "brains": brains}, open(p, "w"))
+        return PS.load_cutover(str(p))
+    ok = {"state": "CENTRAL", "approvalRef": "a"}
+    cut, problems = load({"water-clarity": ok, "biological-state": {**ok, "legacyCombinedAck": True}, "wind": ok})
+    assert sorted(cut) == ["biological-state", "water-clarity", "wind"] and problems == []                    # the recorded order, in full
+    cut, problems = load({"water-clarity": ok, "wind": ok})                                                  # skips the second step
+    assert sorted(cut) == ["water-clarity"] and problems[0]["kind"] == "CUTOVER_ORDER"
+    cut, problems = load({"wind": {**ok, "orderReviewRef": "review/1"}})                                    # an explicit order review is the only way to change it
+    assert sorted(cut) == ["wind"] and problems == []
+    cut, problems = load({"wind": {"state": "DIRECT_WRITE"}, "depth": {"state": "DIRECT_WRITE"}})            # DIRECT_WRITE is always allowed (rollback)
+    assert problems == [] and all(e["state"] == "DIRECT_WRITE" for e in cut.values())
