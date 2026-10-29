@@ -76,6 +76,7 @@ for d in biological-brain sector-intelligence-brain brain-scores brain-orchestra
   [[ "$d" == "biological-brain" ]] && src="$ROOT/brains/fish/runtime"     # Fish Brain canonical home; staged under the legacy job layout the image expects
   [[ "$d" == "sector-intelligence-brain" ]] && src="$ROOT/brains/sector-intelligence/runtime"   # Sector Intelligence canonical home; same legacy layout
   cp "$src"/*.py "stage/jobs/$d/" 2>/dev/null || true
+  [[ "$d" == "brain-orchestrator" && -f "$src/publication-cutover.json" ]] && cp "$src/publication-cutover.json" "stage/jobs/$d/"     # reviewed cutover document (DIRECT_WRITE unless listed)
   [[ -f "$src/catalog.json" ]] && cp "$src/catalog.json" "stage/jobs/$d/"
   [[ -f "$src/knowledge-release.json" ]] && cp "$src/knowledge-release.json" "stage/jobs/$d/"     # packaged knowledge release (verified on load)
   cp -R "$src/schemas" "stage/jobs/$d/" 2>/dev/null || true
@@ -125,7 +126,7 @@ run gcloud run jobs deploy "$JOB" --source . \
   --project "$PROJECT_ID" --region "$REGION" --service-account "$SA" \
   --tasks 1 --max-retries 0 --cpu 1 --memory 512Mi --task-timeout 30m \
   --labels "commit=$COMMIT" \
-  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=$RTDB_URL,ENGINE_URL=$ENGINE_URL,LAKE_BRAIN_ARCHIVE=$LAKE_BRAIN_ARCHIVE,BIOLOGY_BUCKET=$BIOLOGY_BUCKET,DEPLOYMENT_VERSION=brain-orchestrator@$COMMIT,ORCHESTRATOR_SCOPE=pilots,WATER_TEMP_SCOPE=pilots,WIND_MEASUREMENTS=$WIND_MEASUREMENTS,PUBLICATION_COORDINATION=$PUBLICATION_COORDINATION,PUBLICATION_ARTIFACT_BUCKET=$PUBLICATION_ARTIFACT_BUCKET"
+  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=$RTDB_URL,ENGINE_URL=$ENGINE_URL,LAKE_BRAIN_ARCHIVE=$LAKE_BRAIN_ARCHIVE,BIOLOGY_BUCKET=$BIOLOGY_BUCKET,DEPLOYMENT_VERSION=brain-orchestrator@$COMMIT,ORCHESTRATOR_SCOPE=pilots,WATER_TEMP_SCOPE=pilots,WIND_MEASUREMENTS=$WIND_MEASUREMENTS,PUBLICATION_COORDINATION=$PUBLICATION_COORDINATION,PUBLICATION_ARTIFACT_BUCKET=$PUBLICATION_ARTIFACT_BUCKET,PUBLICATION_CUTOVER=/job/jobs/brain-orchestrator/publication-cutover.json"
 run gcloud run jobs add-iam-policy-binding "$JOB" --project "$PROJECT_ID" --region "$REGION" --member "serviceAccount:$SA" --role roles/run.invoker
 
 echo "▶ schedule $JOB ($CRON UTC): definition only, always left PAUSED"

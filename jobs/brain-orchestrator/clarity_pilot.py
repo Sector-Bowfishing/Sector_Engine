@@ -49,15 +49,10 @@ def _tokens(impersonate: str | None):
     return TokenProvider()
 
 
-def _gcs_store(bucket: str, impersonate: str | None):
-    import google.auth
-    from google.auth import impersonated_credentials
-    from google.cloud import storage
-    from google.api_core import exceptions
-    from sector_brain_platform.publisher_live.gcs_store import GcsObjectStore
-    src, _ = google.auth.default()
-    creds = impersonated_credentials.Credentials(source_credentials=src, target_principal=impersonate, target_scopes=["https://www.googleapis.com/auth/devstorage.read_write"]) if impersonate else src
-    return GcsObjectStore(storage.Client(credentials=creds, project="sector-9393c").bucket(bucket), precondition_errors=(exceptions.PreconditionFailed,))
+def _gcs_store(bucket: str, tokens):
+    """The same stdlib REST store the Orchestrator image uses (no cloud client library, no application-default credentials): the stage's identity is the impersonated token."""
+    from sector_brain_platform.object_bucket import GcsRestObjectStore
+    return GcsRestObjectStore(bucket, tokens)
 
 
 def _rtdb(tokens):
@@ -128,28 +123,27 @@ def build(baseline: dict, commit: str):
     return r
 
 
-def _publisher(store, tokens, armed_rtdb: bool, resolver_dir: str):
+def _publisher(store, tokens, armed_rtdb: bool, resolver_dir: str, require_approved: bool = True):
     from sector_brain_platform.publisher import PublishHistory, default_registry, publisher_view
     from sector_brain_platform.publisher_live.authorization import BrainAuthorization, LiveAuthorization
     from sector_brain_platform.publisher_live.publisher import LivePublisher
-    from sector_brain_platform.publisher_live.release_resolver import ManifestReleaseResolver
+    from sector_brain_platform.publisher_live.release_resolver import PackagedReleaseResolver
     from sector_brain_platform.publisher_live.rtdb_client import RtdbRestPublisherClient
 
-    def reader(ref):                                                           # the packaged release manifest of THIS image/commit (image:<path>)
-        name = ref.split(":", 1)[-1]
-        p = os.path.join(resolver_dir, os.path.basename(name))
-        return open(p, "rb").read() if os.path.exists(p) else None
     rt = RtdbRestPublisherClient(RTDB_URL, brain_id=BRAIN, tokens=tokens, armed=armed_rtdb)
-    return LivePublisher(default_registry(), PublishHistory(publisher_view(store)), rt, LiveAuthorization(BrainAuthorization(BRAIN, APPROVAL)), release_resolver=ManifestReleaseResolver(reader))
+    return LivePublisher(default_registry(), PublishHistory(publisher_view(store)), rt, LiveAuthorization(BrainAuthorization(BRAIN, APPROVAL)), release_resolver=PackagedReleaseResolver(resolver_dir, BRAIN, require_approved=require_approved))
 
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=("capture", "build", "plan", "acknowledge", "publish", "restore", "rehearse"))
+    ap.add_argument("stage", choices=("capture", "build", "plan", "acknowledge", "publish", "release-lock", "verify", "restore", "rehearse"))
     ap.add_argument("--out", required=True, help="private evidence directory (outside the repository)")
     ap.add_argument("--bucket")
     ap.add_argument("--impersonate", help="service account this stage runs as")
     ap.add_argument("--commit", default=os.environ.get("DEPLOYMENT_VERSION", "unknown"))
+    ap.add_argument("--release-approval-not-recorded-ok", action="store_true",
+                    help="CALIBRATION lane only: accept a packaged release whose approval is NOT_RECORDED. The release must still verify file-by-file and match the artifact lineage. Used ONLY for the "
+                         "state-neutral pilot republish of data already live from this same release; without it an unapproved release is rejected")
     ap.add_argument("--yes-live", action="store_true", help="required for acknowledge/publish/restore (live writes)")
     a = ap.parse_args(argv)
     os.makedirs(a.out, exist_ok=True)
@@ -167,7 +161,7 @@ def main(argv=None) -> int:
         b = load("baseline.json")
         r = build(b, a.commit)
         from sector_brain_platform.publisher.handoff import ArtifactWriter
-        store = _gcs_store(a.bucket, a.impersonate)
+        store = _gcs_store(a.bucket, _tokens(a.impersonate))
         ref = ArtifactWriter(store, BRAIN).write(r.artifact)
         dump("ref.json", {"brain_id": ref.brain_id, "artifact_id": ref.artifact_id, "location": ref.location, "sha256": ref.sha256, "execution_id": ref.execution_id, "expected_schema": ref.expected_schema})
         dump("build-report.json", {"dropped": r.dropped, "omittedUnknown": r.omitted_unknown, "deletes": r.deletes, "artifactSha256": ref.sha256, "bundleSchema": r.artifact["lineage"]["artifactSchema"]})
@@ -178,8 +172,8 @@ def main(argv=None) -> int:
 
     from sector_brain_platform.publisher.refs import ArtifactRef
     tokens = _tokens(a.impersonate)
-    store = _gcs_store(a.bucket, a.impersonate)
-    live = _publisher(store, tokens, True, resolver_dir)
+    store = _gcs_store(a.bucket, tokens)
+    live = _publisher(store, tokens, True, resolver_dir, require_approved=not a.release_approval_not_recorded_ok)
     ref = ArtifactRef(**load("ref.json"))
     if a.stage == "plan":
         diff = live.baseline_diff(ref)
@@ -207,6 +201,42 @@ def main(argv=None) -> int:
         dump("readback.json", {"written": written, "changedVsBaseline": mism, "notInBaseline": bad})
         print("readback: written", len(written), "mismatch vs pre-pilot values", len(mism), "paths not in baseline", len(bad))
         return 0 if not mism else 5
+    if a.stage == "release-lock":
+        from sector_brain_platform.publisher_live import locks as LK
+        pid = _latest_publish_id(store)
+        cur = json.loads(store.get(f"publishes/{BRAIN}/_locks/apply.json") or b"{}")
+        if cur.get("state") == "HELD" and cur.get("publishId") == pid:           # only the lock of the COMPLETE publication it belongs to
+            LK.release(store, BRAIN, pid, dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))
+        after = json.loads(store.get(f"publishes/{BRAIN}/_locks/apply.json") or b"{}")
+        dump("lock-after.json", {"before": cur, "after": after})
+        print("lock:", cur.get("state"), "->", after.get("state"))
+        return 0 if after.get("state") == "RELEASED" else 7
+    if a.stage == "verify":
+        baseline = load("baseline.json")
+        pid = _latest_publish_id(store)
+        rec = json.loads(store.get(f"publishes/{BRAIN}/{pid}/record.json"))
+        rb = _rtdb(tokens)
+        from sector_brain_platform.publisher.canonical import canonical_bytes, sha256_ref
+        written = rec.get("pathSha256") or {}
+
+        def chk(p):
+            return p, sha256_ref(canonical_bytes(rb.get(p)))
+        with cf.ThreadPoolExecutor(8) as ex:
+            live_sha = dict(ex.map(chk, sorted(written)))
+        bad_sha = sorted(p for p, h in live_sha.items() if h != written[p])
+        pub = rb.get(f"brains/{BRAIN}/publication") or {}
+        from sector_brain_platform.publisher_live.apply import canonical_equal
+        changed = sorted(p for p in written if baseline["values"].get(p.strip("/")) is not None and not canonical_equal(rb.get(p), baseline["values"][p.strip("/")]))
+        ctx = {p: rb.get(p) for p in (f"scores/{BRAIN}", f"health/brains/{BRAIN}")}
+        out = {"publishId": pid, "record": {k: rec.get(k) for k in ("result", "status", "live", "publishedAt", "artifactId", "lifecycle", "knowledgeRelease")},
+               "pathsChecked": len(written), "liveHashMismatch": bad_sha[:20], "liveHashMismatchCount": len(bad_sha),
+               "valuesChangedVsPrePilot": changed[:20], "valuesChangedVsPrePilotCount": len(changed),
+               "publicationNodeMatchesRecord": pub.get("publishId") == pid and pub.get("status") == "COMPLETE",
+               "scoreNow": {k: (ctx[f"scores/{BRAIN}"] or {}).get(k) for k in ("value", "basis")}, "scoreBefore": {k: ((baseline["context"].get(f"scores/{BRAIN}")) or {}).get(k) for k in ("value", "basis")},
+               "healthNodeUnchanged": _sha(ctx[f"health/brains/{BRAIN}"]) == _sha(baseline["context"].get(f"health/brains/{BRAIN}"))}
+        dump("verify.json", out)
+        print(json.dumps(out, indent=1)[:1500])
+        return 0 if not bad_sha and not changed and out["publicationNodeMatchesRecord"] and out["scoreNow"] == out["scoreBefore"] and out["healthNodeUnchanged"] else 8
     if a.stage == "restore":
         baseline, pr = load("baseline.json"), load("publish-result.json")
         out = restore(_rtdb(tokens), baseline, pr["record"].get("pathSha256") or {}, pr.get("publishId"))
@@ -214,6 +244,13 @@ def main(argv=None) -> int:
         print("removed", len(out["removed"]), "already equal", out["alreadyEqualToPrePilot"], "skipped (newer)", len(out["skipped"]))
         return 0
     return 2
+
+
+def _latest_publish_id(store) -> str:
+    ids = sorted({k.split("/")[2] for k in store.list(f"publishes/{BRAIN}/") if k.endswith("/record.json")})
+    if len(ids) != 1:
+        raise SystemExit(f"expected exactly one publication record for {BRAIN}, found {ids}")
+    return ids[0]
 
 
 def restore(rb, baseline: dict, written_sha: dict, publish_id: str | None = None) -> dict:

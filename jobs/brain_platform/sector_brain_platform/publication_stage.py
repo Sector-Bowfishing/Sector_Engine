@@ -15,6 +15,7 @@ import json
 import os
 
 from .publication_coordination import PublicationCoordinator, PublicationLedger, StoreLedger
+from .keys import BRAINS
 from .publisher.storage import orchestrator_view
 
 CUTOVER_SCHEMA = "sector-publication-cutover-v1"
@@ -86,6 +87,7 @@ def run_stage(*, store, ledger_path: str | None, executions: list, shadow=None, 
         co.evaluate_shadow(key)
         r = co.request_publication(key)
         changes[r["runId"] if r["brainId"] else key] = {"brainId": r["brainId"], "outputChanged": co.output_change(r)}
+    imported = co.import_publisher_history(BRAINS)                              # any completed live publication, from any path, is reflected in the ledger (read-only on the history)
     resumed = co.resume()                                                       # records left unfinished by an earlier cycle (retries after backoff, shadow not yet run)
     return {"armed": live is not None, "cutover": {"central": central, "directWrite": "every other Brain", "problems": problems}, "reconcile": rec, "resume": resumed,
-            "outputChanged": changes, "summary": co.summary()}
+            "outputChanged": changes, "importedFromPublisherHistory": imported, "summary": co.summary()}
