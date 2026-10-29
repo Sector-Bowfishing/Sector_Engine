@@ -8,8 +8,11 @@ a crash here cannot change what customers see.
 
 usage:
   python run.py --dry-run --out /tmp/wcb                 # build everything, write JSON files, no RTDB
-  python run.py --lakes "Guntersville|AL,Wheeler|AL"     # publish a few lakes
-  python run.py                                          # publish the whole directory
+  python run.py --artifact-bucket B                      # CENTRAL mode (the default way to publish): build ONE sealed artifact, store it create-only in the private
+                                                         # artifact bucket; the Orchestrator verifies it and the central Publisher writes the database. This process
+                                                         # performs NO database write in this mode.
+  python run.py --legacy-direct-write [--lakes ...]      # pre-cutover direct writer; refused unless named explicitly, and impossible once this job's identity is
+                                                         # read-only for the database (Cortex 3.1 FD-15)
 env:
   ENGINE_URL (default prod Cloud Run URL), BRAIN_RTDB_URL (default sector-brain),
   ENGINE_REVISION (else read from Cloud Run), POLYGONS (lake-surface outlines),
@@ -183,7 +186,13 @@ def main() -> int:
     ap.add_argument("--engine-concurrency", type=int, default=2)
     ap.add_argument("--batch", type=int, default=25, help="lakes per atomic RTDB update")
     ap.add_argument("--rtdb-url", default=os.environ.get("BRAIN_RTDB_URL", bp.BRAIN_RTDB_URL))
+    ap.add_argument("--artifact-bucket", default=os.environ.get("CLARITY_ARTIFACT_BUCKET"), help="CENTRAL mode: private bucket for the sealed artifact (no database write)")
+    ap.add_argument("--legacy-direct-write", action="store_true", help="pre-cutover direct RTDB writer (must be named explicitly)")
     a = ap.parse_args()
+    central = bool(a.artifact_bucket) and not a.legacy_direct_write and not a.dry_run
+    if not (a.dry_run or central or a.legacy_direct_write):
+        print("REFUSED (nothing published): Water Clarity publishes through the central Publisher; give --artifact-bucket (or --dry-run). The direct writer needs --legacy-direct-write.", file=sys.stderr)
+        return 2
     now = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
     t0 = time.time()
     report = {"startedAt": bp.iso(now), "dryRun": a.dry_run, "published": 0, "engineFailures": [], "publishFailures": [], "errors": []}
@@ -192,7 +201,7 @@ def main() -> int:
     payload = {}                     # dry-run: everything that would be written
 
     def write(updates: dict, what: str) -> bool:
-        if a.dry_run:
+        if a.dry_run or central:                 # dry run and CENTRAL mode never write the database: the update is only collected (and, in CENTRAL mode, sealed into the artifact)
             payload.update(updates)
             return True
         try:
@@ -220,7 +229,7 @@ def main() -> int:
     except Exception as e:
         report["errors"].append("aborted before any lake: " + str(e)[:300])
         report["status"] = "FAILED"
-        if rtdb:
+        if rtdb and not central:
             try:
                 rtdb.update({f"/health/brains/{cb.BRAIN_ID}/status": "FAILED", f"/health/brains/{cb.BRAIN_ID}/lastRun": bp.iso(now),
                              f"/health/brains/{cb.BRAIN_ID}/latestError": str(e)[:300]})
@@ -362,6 +371,20 @@ def main() -> int:
                 json.dump({"mode": ev.mode.value, "result": ev.result.value, "codes": ev.codes, "live": False, "artifactSchema": pa.CLARITY_BUNDLE,
                            "outputFingerprint": built.artifact["lineage"]["outputFingerprint"], "droppedLegacyPaths": len(built.dropped), "deletes": len(built.deletes)},
                           open(os.path.join(a.out, "shadow_verdict.json"), "w"), indent=1)
+    if central:
+        # CENTRAL mode: ONE sealed clarity-publication-v1 artifact, created once (create-only) under artifacts/water-clarity/ of the private bucket. Nothing else is written anywhere.
+        import uuid
+        import publish_artifact as pa
+        from sector_brain_platform.object_bucket import GcsRestObjectStore
+        from sector_brain_platform.publisher.handoff import ArtifactWriter
+        built = pa.build_artifact(payload, pa.BuildContext(bp.iso(now), str(uuid.uuid4()), deployment_version(), pa.catalog_digest(), **pa.release_lineage()), consumed=None)
+        if not built.artifact:
+            report["errors"].append("artifact build produced no artifact: nothing was stored")
+            print(json.dumps({k: report[k] for k in ("status", "lakes", "engineOk", "published", "errors")}, indent=1))
+            return 2
+        ref = ArtifactWriter(GcsRestObjectStore(a.artifact_bucket, tokens), cb.BRAIN_ID).write(built.artifact)
+        report["artifact"] = {"artifactId": ref.artifact_id, "location": ref.location, "sha256": ref.sha256, "executionId": ref.execution_id, "droppedLegacyPaths": len(built.dropped)}
+        print("artifact stored:", json.dumps(report["artifact"]), flush=True)
     print(json.dumps({k: report[k] for k in ("status", "lakes", "engineOk", "published", "durationMs", "readinessCounts")}, indent=1))
     return 0 if status in ("HEALTHY", "WARNING") else 2
 

@@ -8,7 +8,7 @@
 # The Water Clarity Brain publisher: restates production Clarity (Engine /conditions + gs://sector-lake-surface) into the dedicated Brain RTDB
 # (sector-brain) that Sector Ops reads. It is its own job: it reads production and never writes to it, so a Brain RTDB outage cannot affect customer Clarity.
 #
-#   account    $SA: writes the Brain RTDB, reads Cloud Run / Scheduler status
+#   account    $SA: reads the Brain RTDB (read-only role) and Cloud Run / Scheduler status; creates its sealed artifact in the private bucket (no database write)
 #   job        $JOB: Cloud Run Job, one task, the whole directory
 #
 # IAM note: Firebase RTDB IAM is project-wide, so roles/firebasedatabase.admin also reaches the app databases. The code refuses any app-database URL
@@ -44,7 +44,9 @@ fi
 PROJECT_ID="${PROJECT_ID:-sector-9393c}"
 REGION="${REGION:-us-central1}"
 JOB="${JOB:-water-clarity-brain}"
-SA_NAME="${SA_NAME:-brain-writer}"                          # existing Brain RTDB writer (roles/firebasedatabase.admin); no new account or project grant
+SA_NAME="${SA_NAME:-clarity-brain-job}"                     # Cortex 3.1 / owner-approved pilot 2026-10-29: its OWN identity. RTDB read-only (roles/firebasedatabase.viewer), create-only on
+                                                            # artifacts/water-clarity/ of the private artifact bucket; it can NOT write canonical Brain RTDB paths (the central Publisher does).
+ARTIFACT_BUCKET="${CLARITY_ARTIFACT_BUCKET:-sector-9393c-brain-artifacts}"
 SA="$SA_NAME@$PROJECT_ID.iam.gserviceaccount.com"
 LAKES="${LAKES:-Guntersville|AL,Lake Hartwell|SC}"            # pilot scope (control_manifest scopes guntersville, lake-hartwell); never the fleet
 COMMIT="$(git -C "$REPO_ROOT" rev-parse --short=12 HEAD)"
@@ -63,7 +65,7 @@ gcloud run jobs deploy "$JOB" --source . \
   --tasks 1 --max-retries 0 --cpu 1 --memory 2Gi --task-timeout 30m \
   --labels "commit=$COMMIT" \
   --args="^;^--lakes;$LAKES" \
-  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=https://sector-brain.firebaseio.com,DEPLOYMENT_VERSION=water-clarity-brain@$COMMIT${CLARITY_PRIVATE_CATALOG:+,CLARITY_PRIVATE_CATALOG=$CLARITY_PRIVATE_CATALOG}"
+  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=https://sector-brain.firebaseio.com,CLARITY_ARTIFACT_BUCKET=$ARTIFACT_BUCKET,DEPLOYMENT_VERSION=water-clarity-brain@$COMMIT${CLARITY_PRIVATE_CATALOG:+,CLARITY_PRIVATE_CATALOG=$CLARITY_PRIVATE_CATALOG}"
 # Optional private overlay (detailed candidate research, never in this public repo): set CLARITY_PRIVATE_CATALOG=gs://<private-bucket>/<object>
 # and grant $SA roles/storage.objectViewer on that bucket. Without it the registry carries the public catalog (catalogDetail PUBLIC_ONLY).
 
