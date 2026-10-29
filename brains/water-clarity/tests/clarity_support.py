@@ -54,7 +54,7 @@ class FakeTransport:
         return 200, "null"
 
 
-def real_run_updates(engine=None, reads=None, argv=("--batch", "2")):
+def real_run_updates(engine=None, reads=None, argv=("--legacy-direct-write", "--batch", "2")):
     """Execute the REAL run.main with every network edge faked; return (flat PATCH updates, transport, exit code). This is the legacy write set of one run."""
     os.environ["BRAIN_ACCESS_TOKEN"] = "test-token"
     t = FakeTransport(reads)

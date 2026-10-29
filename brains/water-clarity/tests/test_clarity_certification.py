@@ -177,7 +177,7 @@ def test_actual_consumption_capture_works_for_rtdb_reads_and_http_reads_are_not_
 
 
 def test_live_run_report_carries_recorded_rtdb_reads_only(tmp_path):
-    flat, t, rc = real_run_updates(argv=("--batch", "2", "--out", str(tmp_path / "o")))
+    flat, t, rc = real_run_updates(argv=("--legacy-direct-write", "--batch", "2", "--out", str(tmp_path / "o")))
     rep = json.load(open(tmp_path / "o" / "run_report.json"))
     assert rep["consumedRtdbReads"] == [] and rep["dryRun"] is False          # the run read only its own / shared fleet state: recorded as "nothing that is a dependency"
 

@@ -414,7 +414,7 @@ class EndToEnd(unittest.TestCase):
              mock.patch.object(run, "lake_surface_run", return_value=None), \
              mock.patch.object(run, "job_health", return_value={"status": "HEALTHY"}), \
              mock.patch.object(bp.BrainRtdb, "__init__", init), \
-             mock.patch.object(sys, "argv", ["run.py", "--batch", "2"]):
+             mock.patch.object(sys, "argv", ["run.py", "--legacy-direct-write", "--batch", "2"]):
             return run.main()
 
     def test_one_lake_failing_does_not_stop_the_others(self):
