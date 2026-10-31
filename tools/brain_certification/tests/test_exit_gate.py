@@ -9,6 +9,7 @@ from brain_cert_kit import exit_gate as g
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 BRAINS = ("wind", "fish", "water-clarity")
+LEGACY_WRITERS = ("wind", "fish")            # Brains whose runtime still carries a direct write site (Water Clarity's was retired: X14)
 
 
 def _full(brain_id="b"):
@@ -59,7 +60,7 @@ def _clone(tmp_path, brain, status, evidence=None):
     return str(d), b["brainId"]
 
 
-@pytest.mark.parametrize("brain", BRAINS)
+@pytest.mark.parametrize("brain", LEGACY_WRITERS)
 def test_cutover_complete_is_refused_while_a_legacy_write_site_remains_active(tmp_path, brain):
     """Even a fully PASSing evidence record cannot complete a cutover while the Brain still carries a direct production write site (Water Clarity: the whole-node
     /brains/water-clarity + /health/brains/water-clarity replacement). The guard reads the runtime source, not a claim."""
@@ -77,10 +78,23 @@ def test_cutover_complete_is_refused_while_a_legacy_write_site_remains_active(tm
     assert g.cutover_guard(d)["gate"] == "PASS"
 
 
-def test_water_clarity_whole_node_legacy_write_keys_are_named_by_the_guard():
-    left = g.legacy_write_sites(os.path.join(REPO, "brains", "water-clarity"), "water-clarity")
-    assert left["wholeNodeKeys"], "run.py builds the whole-node keys /brains/water-clarity and /health/brains/water-clarity"
-    assert {s[2] for s in left["writeSites"]} == {"rtdb.update"} and len(left["writeSites"]) == 2
+def test_water_clarity_legacy_writer_is_retired_in_code():
+    """X14 (code half): Water Clarity's runtime has no direct write site and builds no whole-node key (the retired run.py replaced /brains/water-clarity and
+    /health/brains/water-clarity as units)."""
+    assert g.legacy_write_sites(os.path.join(REPO, "brains", "water-clarity"), "water-clarity") == {"writeSites": [], "wholeNodeKeys": []}
+
+
+def test_water_clarity_cutover_complete_waits_only_for_the_exit_record(tmp_path):
+    """The prepared flip: with the REAL runtime, CUTOVER_COMPLETE passes the guard once a complete exit record exists, and is refused without one. The record
+    needs the LIVE checks of an approved cutover, so the committed brain.json stays SHADOW (test_current_brains_are_shadow_and_the_gate_is_not_yet_claimable)."""
+    import shutil
+    d, bid = _clone(tmp_path / "without", "water-clarity", "CUTOVER_COMPLETE")
+    shutil.copytree(os.path.join(REPO, "brains", "water-clarity", "runtime"), os.path.join(d, "runtime"))
+    with pytest.raises(AssertionError, match="requires"):
+        g.cutover_guard(d)
+    d, bid = _clone(tmp_path / "with", "water-clarity", "CUTOVER_COMPLETE", _full("water-clarity"))
+    shutil.copytree(os.path.join(REPO, "brains", "water-clarity", "runtime"), os.path.join(d, "runtime"))
+    assert g.cutover_guard(d)["gate"] == "PASS"
 
 
 def test_the_repo_coverage_matrix_names_real_tests_and_keeps_live_only_checks_live_only():

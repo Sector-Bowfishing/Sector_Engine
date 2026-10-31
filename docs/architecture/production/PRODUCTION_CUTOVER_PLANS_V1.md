@@ -13,7 +13,7 @@ Authoritative order (machine-readable, enforced: `jobs/brain_platform/sector_bra
 | dry run | `run.py` builds the sealed bundle (already done in memory); evaluate against live read (GET only); equivalence diff plan vs live; zero unexplained diffs; check artifact size vs `max_bytes` for the 621-lake fleet (split by scope or manifest-last) |
 | artifact | `clarity-publication-v1`, one run = one artifact |
 | expected write set | child-level only; `publication` in the same atomic update; typed DELETE for `lastError`; no whole-node keys |
-| legacy writer state | **disabled in the same change as go-live**: the PR flips `cutoverStatus`, removes the two `run.py` RTDB write sites and their AST pin; `--dry-run` remains |
+| legacy writer state | **disabled in the same change as go-live**: the PR flips `cutoverStatus`, removes the two `run.py` RTDB write sites and their AST pin; `--dry-run` remains. (2026-10-31: write sites and pin removed on `cortex/water-clarity-cutover-finish-2026-10-31`; the flip is prepared in `WATER_CLARITY_CUTOVER_COMPLETE_V1.md`.) |
 | production mutation | exactly one Publisher publish after approval |
 | readback | independent GET of every planned path = artifact content (X15); `publication` record (X10) |
 | score | `/scores/water-clarity` still 8.0 under the same scoreType/version (X12); scorer runs via S1 trigger, not by the Publisher |
