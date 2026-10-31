@@ -56,7 +56,8 @@
         "loader": "brains/water-clarity/runtime/clarity_brain.py verified_release",
         "verification": "sector_brain_platform.knowledge_release: per-file sha256 and bytes plus release digest",
         "lineage": "knowledgeRelease, manifestRef and manifestSha256 in the shadow artifact lineage",
-        "approval": "NOT_RECORDED",
+        "approval": "APPROVED",
+        "approvalRecord": "docs/cortex/approvals/water-clarity-knowledge-2026-10-20.1.md",
         "onUnavailable": "REFUSE"
       }
     ],
@@ -72,8 +73,8 @@
       "INTERNAL"
     ],
     "knowledgeLoading": {
-      "approved": "NONE",
-      "experimental": "clarity-catalog (PACKAGED_IN_IMAGE, brains/water-clarity/runtime/knowledge-release.json, approval NOT_RECORDED)",
+      "approved": "clarity-catalog (PACKAGED_IN_IMAGE, brains/water-clarity/runtime/knowledge-release.json; APPROVED for INTERNAL and CALIBRATION use only, not customer-eligible: docs/cortex/approvals/water-clarity-knowledge-2026-10-20.1.md)",
+      "experimental": "NONE",
       "refuseWithoutApproved": [
         "CUSTOMER_SERVING"
       ]
@@ -95,6 +96,6 @@
       "status": "NOT_ELIGIBLE",
       "approvalRef": null
     },
-    "notes": "No APPROVED knowledge release exists (approval NOT_RECORDED): production runs are INTERNAL mode on the packaged candidate/reviewed knowledge. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
+    "notes": "The packaged knowledge release is APPROVED for INTERNAL and CALIBRATION use only (Sector_Ops #18 D2, 2026-10-31); it is not customer-eligible. Production runs are INTERNAL mode. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
   }
 }

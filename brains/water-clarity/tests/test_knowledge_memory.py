@@ -56,3 +56,13 @@ def test_a_tampered_catalog_refuses_the_run_and_is_never_used(tmp_path):
     (d / "catalog.json").write_text(json.dumps(cat))
     out = _run(d, tmp_path)
     assert out.returncode == 2 and "REFUSED (nothing published)" in out.stderr and "fails verification" in out.stderr
+
+
+def test_the_release_is_approved_for_internal_and_calibration_only_and_never_customer_eligible():
+    """Sector_Ops #18 D2 (2026-10-31): INTERNAL / CALIBRATION scope; customer publication stays NOT_ELIGIBLE with no approval reference."""
+    r = S.cb.RELEASE
+    assert (r["approvalStatus"], r["approvalScope"], r["customerEligible"]) == ("APPROVED", ["INTERNAL", "CALIBRATION"], False)
+    assert os.path.isfile(os.path.join(S.REPO, r["approvalRecord"]))
+    with open(os.path.join(S.REPO, "brains", "water-clarity", "brain.json"), encoding="utf-8") as fh:
+        ops = json.load(fh)["operations"]
+    assert ops["customerPublication"] == {"status": "NOT_ELIGIBLE", "approvalRef": None}

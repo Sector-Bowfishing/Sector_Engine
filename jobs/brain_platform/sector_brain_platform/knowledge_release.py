@@ -5,7 +5,8 @@ A Brain whose approved operational knowledge ships INSIDE its runtime image (con
 
     {"schemaVersion": "1.0.0", "brainId": "wind", "releaseId": "wind-knowledge-2026-10-20.1",
      "store": "PACKAGED_IN_IMAGE", "owner": "wind",
-     "approval": {"status": "APPROVED" | "NOT_RECORDED", "record": "<repo path of the approval/certification record, or null>"},
+     "approval": {"status": "APPROVED" | "NOT_RECORDED", "record": "<repo path of the approval/certification record, or null>",
+                  "scope": ["INTERNAL", "CALIBRATION", "CUSTOMER"] (optional subset), "customerEligible": false (optional)},
      "files": [{"path": "lakes.json", "sha256": "<hex>", "bytes": 1234}, ...],
      "releaseDigest": "sha256:<hex over the canonical file list>"}
 
@@ -26,6 +27,7 @@ MANIFEST = "knowledge-release.json"
 SCHEMA_VERSION = "1.0.0"
 STORES = ("PACKAGED_IN_IMAGE",)
 APPROVAL_STATUSES = ("APPROVED", "NOT_RECORDED")
+APPROVAL_SCOPES = ("INTERNAL", "CALIBRATION", "CUSTOMER")
 
 
 class KnowledgeReleaseError(RuntimeError):
@@ -53,7 +55,8 @@ def describe_files(base_dir: str, paths: list[str]) -> list[dict]:
 
 
 def load_release(base_dir: str, brain_id: str) -> dict:
-    """Verify the packaged release in `base_dir` and return {releaseId, releaseDigest, approvalStatus, approvalRecord, store, files}.
+    """Verify the packaged release in `base_dir` and return {releaseId, releaseDigest, approvalStatus, approvalRecord, approvalScope, customerEligible, store, files}.
+    approvalScope is None when the manifest declares no scope; customerEligible is True only when the manifest says so and the scope includes CUSTOMER.
     Raises KnowledgeReleaseError on any problem; the caller must not continue without approved memory."""
     mpath = os.path.join(base_dir, MANIFEST)
     try:
@@ -72,6 +75,13 @@ def load_release(base_dir: str, brain_id: str) -> dict:
     approval = m.get("approval") or {}
     if approval.get("status") not in APPROVAL_STATUSES:
         raise KnowledgeReleaseError(f"knowledge release approval status {approval.get('status')!r} is not one of {APPROVAL_STATUSES}")
+    if approval["status"] == "APPROVED" and not approval.get("record"):
+        raise KnowledgeReleaseError("an APPROVED knowledge release must name its approval record")
+    scope = approval.get("scope")
+    if scope is not None and (not isinstance(scope, list) or not scope or any(x not in APPROVAL_SCOPES for x in scope)):
+        raise KnowledgeReleaseError(f"knowledge release approval scope {scope!r} is not a non-empty subset of {APPROVAL_SCOPES}")
+    if approval.get("customerEligible") is True and scope is not None and "CUSTOMER" not in scope:
+        raise KnowledgeReleaseError("a knowledge release cannot be customer-eligible without CUSTOMER in its approval scope")
     for f in m["files"]:
         full = os.path.normpath(os.path.join(base_dir, f.get("path", "")))
         if not full.startswith(os.path.normpath(base_dir) + os.sep):
@@ -85,7 +95,8 @@ def load_release(base_dir: str, brain_id: str) -> dict:
     if release_digest(m["files"]) != m.get("releaseDigest"):
         raise KnowledgeReleaseError("knowledge release digest does not match its file list")
     return {"releaseId": m["releaseId"], "releaseDigest": m["releaseDigest"], "store": m["store"], "owner": m.get("owner"),
-            "approvalStatus": approval["status"], "approvalRecord": approval.get("record"), "files": [f["path"] for f in m["files"]]}
+            "approvalStatus": approval["status"], "approvalRecord": approval.get("record"), "approvalScope": scope,
+            "customerEligible": approval.get("customerEligible") is True and scope is not None and "CUSTOMER" in scope, "files": [f["path"] for f in m["files"]]}
 
 
 def lineage_triple(release: dict | None) -> tuple[str, str, str]:

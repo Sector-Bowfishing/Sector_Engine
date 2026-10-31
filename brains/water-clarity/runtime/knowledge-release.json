@@ -5,8 +5,13 @@
   "store": "PACKAGED_IN_IMAGE",
   "owner": "water-clarity",
   "approval": {
-    "status": "NOT_RECORDED",
-    "record": null
+    "status": "APPROVED",
+    "record": "docs/cortex/approvals/water-clarity-knowledge-2026-10-20.1.md",
+    "scope": [
+      "INTERNAL",
+      "CALIBRATION"
+    ],
+    "customerEligible": false
   },
   "files": [
     {
