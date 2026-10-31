@@ -1,0 +1,53 @@
+{
+  "standard": "sector-identity-split-plan-v1",
+  "status": "PLAN_NOT_APPLIED",
+  "preparedAt": "2026-10-31",
+  "note": "Identity CLASSES only. Concrete account names, current bindings and project details are in the private record (Sector_Ops 19). Nothing here changes IAM; every step needs its own approval and a passing denial probe before the next starts.",
+  "classes": {
+    "shared-writer": {"what": "the one runtime identity used today by the Orchestrator, the Lake and Water Temperature jobs, and the Brains the Orchestrator runs in process (biological-state, sector-intelligence)", "rtdb": "ADMIN", "artifactStore": "NONE", "target": "RETIRED"},
+    "wind-writer": {"what": "the wind-hourly job", "rtdb": "ADMIN", "artifactStore": "NONE", "target": "RETIRED"},
+    "brain-job": {"what": "one per Brain job (water-clarity already has its own)", "rtdb": "READ_ONLY", "artifactStore": "CREATE_ONLY_OWN_PREFIX", "target": "KEPT"},
+    "publisher": {"what": "the central Publisher (pilot tool today; brain-publisher job after approval)", "rtdb": "WRITE_BRAIN_FAMILIES", "artifactStore": "READ_ARTIFACTS_REQUESTS_WRITE_PUBLISHES", "target": "KEPT"},
+    "orchestrator": {"what": "brain-orchestrator once nothing else shares its identity", "rtdb": "WRITE_PLATFORM_FAMILIES", "artifactStore": "READ_ARTIFACTS_PUBLISHES_WRITE_EXPORTS", "target": "KEPT"},
+    "scorer": {"what": "the shared scorer (runs inside the Orchestrator today)", "rtdb": "WRITE_SCORES", "artifactStore": "NONE", "target": "KEPT"},
+    "ops-reader": {"what": "Sector Ops", "rtdb": "READ_ONLY", "artifactStore": "NONE", "target": "KEPT"}
+  },
+  "current": {
+    "water-clarity": "brain-job",
+    "wind": "wind-writer",
+    "water-temp": "shared-writer",
+    "lake-brain": "shared-writer",
+    "biological-state": "shared-writer",
+    "sector-intelligence": "shared-writer",
+    "depth": "NONE",
+    "vegetation": "NONE",
+    "orchestrator": "shared-writer",
+    "publisher": "publisher"
+  },
+  "target": {
+    "water-clarity": "brain-job",
+    "wind": "brain-job",
+    "water-temp": "brain-job",
+    "lake-brain": "brain-job",
+    "biological-state": "shared-writer",
+    "sector-intelligence": "brain-job",
+    "depth": "brain-job",
+    "vegetation": "brain-job",
+    "orchestrator": "orchestrator",
+    "publisher": "publisher"
+  },
+  "targetExceptions": {
+    "biological-state": "LEGACY_COMBINED: stays on its direct writer, unchanged, until the approved Fish/Biological split (Cortex BA-04, M01-M03); then fish-knowledge and fish-behavior get brain-job identities and the shared writer is retired"
+  },
+  "steps": [
+    {"id": "S0", "what": "water-clarity job on its own read-only identity", "state": "DONE_PILOT", "gate": "owner pilot approval 2026-10-29", "denialProbe": "the job identity's database write is denied"},
+    {"id": "S1", "what": "deploy brain-publisher in dry-run mode on the existing publisher identity (no new grant)", "state": "PREPARED", "gate": "Sector_Ops 19: approve the recurring Publisher service", "denialProbe": "the publisher identity cannot create under artifacts/ or exports/ and cannot delete history", "dependsOn": ["S0"]},
+    {"id": "S2", "what": "brain-publisher live for water-clarity; the Orchestrator writes publication requests and starts the job", "state": "PLANNED", "gate": "Sector_Ops 18 D1 + D2 (release approval) and an Orchestrator change (decision-required)", "denialProbe": "X16 for water-clarity: specialist, Ops and a cross-domain identity denied; publisher allowed", "dependsOn": ["S1"]},
+    {"id": "S3", "what": "wind-hourly moves to a brain-job identity at the Wind cutover", "state": "PLANNED", "gate": "Wind 7-day shadow equivalence + Wind cutover approval", "denialProbe": "the Wind job identity's database write is denied", "dependsOn": ["S2"]},
+    {"id": "S4", "what": "water-temp-brain moves off the shared writer to a brain-job identity", "state": "PLANNED", "gate": "Water Temperature cutover plan approval", "denialProbe": "the Water Temp job identity's database write is denied", "dependsOn": ["S3"]},
+    {"id": "S5", "what": "lake-brain moves off the shared writer to a brain-job identity", "state": "PLANNED", "gate": "Lake cutover plan approval (and Sector_Ops 22 contract decisions)", "denialProbe": "the Lake job identity's database write is denied", "dependsOn": ["S4"]},
+    {"id": "S6", "what": "sector-intelligence stops writing in process; it emits an artifact and the Publisher publishes it", "state": "PLANNED", "gate": "Sector Intelligence cutover plan approval", "denialProbe": "no Brain path appears in the Orchestrator's own writes for sector-intelligence (code pin) ", "dependsOn": ["S5"]},
+    {"id": "S7", "what": "the Orchestrator gets its own orchestrator identity; the shared writer is left with biological-state only", "state": "PLANNED", "gate": "owner approval; decision O-ID (how platform-only writes are enforced, see the plan document)", "denialProbe": "Lake/Water Temp/Intelligence jobs can no longer act as the shared writer", "dependsOn": ["S6"]},
+    {"id": "S8", "what": "after the Fish/Biological split: fish-knowledge and fish-behavior on brain-job identities; the shared writer is deleted", "state": "BLOCKED", "gate": "M01-M03 + Fish/Biological cutover approvals", "denialProbe": "the shared writer no longer exists", "dependsOn": ["S7"]}
+  ]
+}
