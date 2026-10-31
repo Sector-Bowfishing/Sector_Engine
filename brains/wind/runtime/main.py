@@ -44,11 +44,27 @@ def main(argv=None):
         if brain_url:
             from sector_wind.brain.publish import safe_publish
             from sector_wind.brain.writer import RtdbWriter
+            shadow = os.environ.get("WIND_SHADOW_EQUIVALENCE") == "on" and os.environ.get("WIND_SHADOW_EVIDENCE_BUCKET")
+            writer = None
             try:
-                brain = safe_publish(store, cfg, RtdbWriter(brain_url), now=now, run_summary=res)
+                writer = RtdbWriter(brain_url)
+                if shadow:                          # 7-day shadow equivalence (OFF by default): records what the legacy writer sent, nothing else changes
+                    from sector_wind.brain.shadow_equivalence import RecordingWriter
+                    writer = RecordingWriter(writer)
+                brain = safe_publish(store, cfg, writer, now=now, run_summary=res)
             except Exception as e:                  # writer construction (bad URL) — still never fatal
                 brain = {"ok": False, "errors": [repr(e)]}
             print("windbrain", json.dumps(brain, default=str)[:1500])
+            if shadow and writer is not None and hasattr(writer, "patches"):
+                try:                                # never fatal and never changes the exit code; evidence only (digests), GET-only readback
+                    from sector_wind.brain import shadow_equivalence as SE
+                    from sector_wind.brain.publish import deployment_version
+                    from sector_brain_platform.object_bucket import GcsRestObjectStore
+                    from sector_brain_platform.rtdb import TokenProvider
+                    ev = SE.safe_record(writer, GcsRestObjectStore(shadow, TokenProvider()), now=now, code_version=deployment_version() or "wind@unknown")
+                except Exception as e:
+                    ev = {"verdict": "ERROR", "stored": False, "error": repr(e)[:200]}
+                print("windshadow", json.dumps(ev, default=str)[:600])
         # A failed run must be visible as a failed Cloud Run execution, never a silent success.
         return 1 if res["errors"] else 0
     start, end = day(a.start), day(a.end) + timedelta(hours=23)
