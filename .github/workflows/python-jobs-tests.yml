@@ -28,7 +28,7 @@ jobs:
       - name: Platform suites (offline)
         run: |
           set -e
-          for d in jobs/brain_platform jobs/brain-orchestrator jobs/brain-scores; do
+          for d in jobs/brain_platform jobs/brain-orchestrator jobs/brain-scores jobs/brain-publisher; do
             echo "== $d"; (cd "$d" && python -m pytest -q)
           done
 
