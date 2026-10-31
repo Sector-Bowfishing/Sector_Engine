@@ -47,7 +47,7 @@ def walk_files(root, exts=None):
 
 
 @pytest.fixture(scope="module")
-def legacy_updates():
+def run_updates():
     flat, _, rc = real_run_updates()
     assert rc == 0
     return flat
@@ -138,22 +138,22 @@ def test_no_fabricated_provider_signal_or_brain_edges():
 # ===================================================================================================== 6-8 artifact, fingerprint, lineage
 
 
-def test_semantic_fingerprint_ignores_execution_identity_and_per_run_timestamps(legacy_updates):
-    base = build(legacy_updates, n=1)
+def test_semantic_fingerprint_ignores_execution_identity_and_per_run_timestamps(run_updates):
+    base = build(run_updates, n=1)
     fp = base.artifact["lineage"]["outputFingerprint"]
-    assert build(legacy_updates, n=2, generated_at="2026-10-13T03:00:00Z").artifact["lineage"]["outputFingerprint"] == fp        # new executionId + generatedAt
-    moved = copy.deepcopy(legacy_updates)
+    assert build(run_updates, n=2, generated_at="2026-10-13T03:00:00Z").artifact["lineage"]["outputFingerprint"] == fp        # new executionId + generatedAt
+    moved = copy.deepcopy(run_updates)
     for k, v in moved.items():                                                                              # run-clock fields move: slot lastUpdatedAt, profile updatedAt, registry updatedAt/lastSuccessfulRun, source lastFetchAt
         if k.endswith("/slots/waterClarity") and isinstance(v, dict):
             v["lastUpdatedAt"] = "2026-10-13T09:00:00Z"
         if "/profiles/" in k and isinstance(v, dict):
             v["updatedAt"] = "2026-10-13T09:00:00Z"
-        if k == "brains/water-clarity":
-            v["updatedAt"] = "2026-10-13T09:00:00Z"; v["lastSuccessfulRun"] = "2026-10-13T09:00:00Z"
+        if k in ("brains/water-clarity/updatedAt", "brains/water-clarity/lastSuccessfulRun"):
+            moved[k] = "2026-10-13T09:00:00Z"
         if k.startswith("health/sources/") or (k.startswith("sources/") and isinstance(v, dict)):
             v["lastFetchAt"] = "2026-10-13T09:00:00Z"
     assert build(moved, n=3).artifact["lineage"]["outputFingerprint"] == fp
-    assert build(legacy_updates, n=4, consumed=[]).artifact["lineage"]["outputFingerprint"] == fp           # lineage never enters the fingerprint
+    assert build(run_updates, n=4, consumed=[]).artifact["lineage"]["outputFingerprint"] == fp           # lineage never enters the fingerprint
     assert base.artifact["lineage"]["inputFingerprint"] == build(moved, n=3).artifact["lineage"]["inputFingerprint"]
 
 
@@ -166,7 +166,7 @@ def test_actual_consumption_capture_works_for_rtdb_reads_and_http_reads_are_not_
     assert db.consumed() == [] or all(e["dependencyId"] != "brain:water-clarity" for e in db.consumed())  # own state is never a dependency
     db.get("brains/water-temp")
     assert "brain:water-temp" in {e["dependencyId"] for e in db.consumed()}                                 # a real foreign read IS recorded
-    art = build({"brains/water-clarity": {"brainId": "water-clarity", "version": "1.1.0"}}, consumed=db.consumed()).artifact
+    art = build({"brains/water-clarity/brainId": "water-clarity", "brains/water-clarity/version": "1.1.0"}, consumed=db.consumed()).artifact
     st, publish = rig()
     assert publish(art).result is Result.SHADOW_READY
     # the live path attaches the recorder; the dry run reads no RTDB so its report says "not recorded" (None), not "[]"
@@ -177,7 +177,7 @@ def test_actual_consumption_capture_works_for_rtdb_reads_and_http_reads_are_not_
 
 
 def test_live_run_report_carries_recorded_rtdb_reads_only(tmp_path):
-    flat, t, rc = real_run_updates(argv=("--legacy-direct-write", "--batch", "2", "--out", str(tmp_path / "o")))
+    flat, t, rc = real_run_updates(argv=("--artifact-bucket", "b", "--batch", "2", "--out", str(tmp_path / "o")))
     rep = json.load(open(tmp_path / "o" / "run_report.json"))
     assert rep["consumedRtdbReads"] == [] and rep["dryRun"] is False          # the run read only its own / shared fleet state: recorded as "nothing that is a dependency"
 
@@ -206,8 +206,8 @@ def test_freshness_unknown_unavailable_and_missing_evidence_are_honest():
     assert pa.freshness(_states(stateType="UNAVAILABLE", evaluationTime=None, satelliteObservationAt=None), "2026-10-12T06:30:00Z")["freshnessStatus"] == "UNAVAILABLE"
 
 
-def test_artifact_freshness_block_is_derived_from_states_not_from_process_history(legacy_updates):
-    art = build(legacy_updates).artifact
+def test_artifact_freshness_block_is_derived_from_states_not_from_process_history(run_updates):
+    art = build(run_updates).artifact
     lake_sections = [s for s in art["sections"] if s["artifactSchema"] == "clarity-lake-state-v1"]
     assert lake_sections and all(s["freshness"]["freshnessStatus"] in ("FRESH", "STALE", "UNKNOWN", "UNAVAILABLE") for s in lake_sections)
     assert all("lastSuccess" not in json.dumps(s.get("freshness")) for s in art["sections"])
@@ -217,33 +217,41 @@ def test_artifact_freshness_block_is_derived_from_states_not_from_process_histor
 # ===================================================================================================== 12-13 Publisher shadow
 
 
-def test_last_error_is_the_single_typed_delete_and_absent_values_are_plain_absence(legacy_updates):
+def test_last_error_is_the_single_typed_delete_and_absent_values_are_plain_absence(run_updates):
     """Domain part of the delete proof (the generic typed-delete / null != delete / no-lake-state-delete proofs are shared: BRAIN_CERT_KIT_V1 P13)."""
-    art = build(legacy_updates).artifact
+    art = build(run_updates).artifact
     muts = [m for sec in art["sections"] for m in sec["mutations"]]
     assert [m for m in muts if m["op"] == "DELETE"] == [{"op": "DELETE", "path": "/brains/water-clarity/lastError", "reason": "OPTIONAL_CHILD_CLEARED"}]
     assert "None" not in json.dumps([m for m in muts if m["path"] == "/lakes/Guntersville_AL/states/waterClarity"])
 
 
-def test_every_registry_child_the_runtime_emits_is_covered_by_the_contract(legacy_updates):
-    emitted = set(legacy_updates["brains/water-clarity"])
+def test_every_registry_child_the_runtime_emits_is_covered_by_the_contract(run_updates):
+    emitted = {k.split("/", 2)[2] for k in run_updates if k.startswith("brains/water-clarity/")}
+    assert emitted
     from sector_brain_platform.publisher.registry import CLARITY_REGISTRY_CHILDREN
     covered = {c for g in CLARITY_REGISTRY_CHILDREN.values() for c in g}
     assert emitted <= covered, f"registry children without a contract entry: {sorted(emitted - covered)}"
     assert not ({"publication", "certification"} & covered)
     for k in ("lakeId",):
-        assert not [m for s in build(legacy_updates).artifact["sections"] for m in s["mutations"] if m["path"].endswith("/" + k)]
+        assert not [m for s in build(run_updates).artifact["sections"] for m in s["mutations"] if m["path"].endswith("/" + k)]
 
 
-def test_unmapped_paths_fail_closed_never_silently_dropped_or_emitted(legacy_updates):
+def test_a_whole_brain_node_key_fails_the_build(run_updates):
+    """X14: the retired legacy writer replaced /brains/water-clarity and /health/brains/water-clarity as units; that form can never re-enter through the builder."""
+    for whole in ("brains/water-clarity", "/brains/water-clarity", "health/brains/water-clarity"):
+        with pytest.raises(pa.ArtifactBuildError, match="whole Brain node"):
+            build(dict(run_updates, **{whole: {"version": "legacy"}}))
+
+
+def test_unmapped_paths_fail_closed_never_silently_dropped_or_emitted(run_updates):
     with pytest.raises(pa.ArtifactBuildError):
-        build(dict(legacy_updates, **{"/speciesProfiles/x": {"a": 1}}))
+        build(dict(run_updates, **{"/speciesProfiles/x": {"a": 1}}))
     with pytest.raises(pa.ArtifactBuildError):
-        build(dict(legacy_updates, **{"/scores/water-clarity": {"value": 9}}))
+        build(dict(run_updates, **{"/scores/water-clarity": {"value": 9}}))
 
 
 # ===================================================================================================== 14-16 direct-write audit, write isolation
-#: The audit table (docs/architecture/certification/water-clarity/CLARITY_DIRECT_WRITE_AUDIT.md): every RTDB write site in the runtime. Both are LEGACY / RETIREMENT_CANDIDATE.
+#: The audit table (docs/architecture/certification/water-clarity/CLARITY_DIRECT_WRITE_AUDIT.md): the runtime has no RTDB write site; the two legacy ones are RETIRED (X14).
 
 
 def test_dry_run_artifact_path_writes_only_local_files_and_never_touches_the_database(tmp_path, monkeypatch):
@@ -267,9 +275,9 @@ def test_dry_run_artifact_path_writes_only_local_files_and_never_touches_the_dat
     assert "consumed" not in art                                                                             # a dry run reads no RTDB: unknown, not []
 
 
-def test_write_path_remains_ownership_checked_and_clarity_cannot_write_foreign_or_customer_roots(legacy_updates):
+def test_write_path_remains_ownership_checked_and_clarity_cannot_write_foreign_or_customer_roots(run_updates):
     from sector_brain_platform.ownership import OwnershipError, assert_owned
-    assert_owned(legacy_updates, "water-clarity")                                                             # the REAL legacy write set is within Clarity's ownership
+    assert_owned(run_updates, "water-clarity")                                                             # the REAL run write set is within Clarity's ownership
     for bad in ("/lakes/G/states/wind", "/scores/water-clarity", "/brains/wind/version", "/control/orchestratorV1", "/snapshots/G/latest/waterTemperature", "/species/x"):
         with pytest.raises(OwnershipError):
             assert_owned({bad: {"x": 1}}, "water-clarity")
@@ -277,9 +285,9 @@ def test_write_path_remains_ownership_checked_and_clarity_cannot_write_foreign_o
         S.run.bp.BrainRtdb("https://example-app-prod-default-rtdb.firebaseio.com", object(), brain_id="water-clarity")      # the platform client refuses anything but the Brain RTDB
 
 
-def test_legacy_write_set_classification_is_complete(legacy_updates):
+def test_legacy_write_set_classification_is_complete(run_updates):
     """Every path of the real legacy write set is either authored by a Clarity schema, a Publisher-derived projection, or classified (no unknown door)."""
-    r = build(legacy_updates)
+    r = build(run_updates)
     assert r.unsupported == []
     classes = {d["classification"] for d in r.dropped}
     assert classes <= {"PLATFORM_OWNED", "DERIVED_COMPATIBILITY_PROJECTION", "LEGACY_READER_DEPENDENCY"}
@@ -378,13 +386,13 @@ def test_the_production_catalog_and_thresholds_are_unchanged_by_the_move():
 FROZEN_BLOCK_SHA256 = "b2cb88becb9dac6ddddec271ee4dd7c5cfd51141bf4f09ac9b4f2dceca9d13a1"      # sha256 of the water-clarity block of docs/brains/scoring/frozen-scores.json at origin/main 4ff9bed0 (BEFORE); AFTER must equal it
 
 
-def test_research_score_is_unchanged_before_equals_after_and_the_brain_does_not_write_scores(legacy_updates):
+def test_research_score_is_unchanged_before_equals_after_and_the_brain_does_not_write_scores(run_updates):
     frozen = load("docs", "brains", "scoring", "frozen-scores.json")["water-clarity"]
     assert (frozen["value"], frozen["scale"], frozen["basis"], frozen["scoreVersion"]) == (8.0, 10, "FROZEN", "clarity-research-certification-r3.1")
     assert frozen["appliesTo"]["deploymentStatus"] == "NOT_DEPLOYED"                                          # a research score for the CANDIDATE; production clarity is unscored
     got = hashlib.sha256(json.dumps(frozen, sort_keys=True).encode()).hexdigest()
     assert got == FROZEN_BLOCK_SHA256, got
-    assert not [k for k in legacy_updates if k.lstrip("/").startswith("scores")]                              # C1 writes no score (the shared score proof P19 also runs score_baseline --check)
+    assert not [k for k in run_updates if k.lstrip("/").startswith("scores")]                              # C1 writes no score (the shared score proof P19 also runs score_baseline --check)
 
 
 
@@ -423,15 +431,15 @@ def test_the_freshness_threshold_is_the_existing_26_hours():
     assert cm["freshness"]["staleAfterHours"] == cb.STALE_AFTER_H == 26
 
 
-def test_a_new_engine_evaluation_is_a_new_input_but_run_clock_fields_are_not(legacy_updates):
-    base = build(legacy_updates, n=1)
-    new_input = copy.deepcopy(legacy_updates)
+def test_a_new_engine_evaluation_is_a_new_input_but_run_clock_fields_are_not(run_updates):
+    base = build(run_updates, n=1)
+    new_input = copy.deepcopy(run_updates)
     new_input["lakes/Guntersville_AL/states/waterClarity"]["evaluationTime"] = "2026-10-14T05:00:00Z"
     assert build(new_input, n=2).artifact["lineage"]["inputFingerprint"] != base.artifact["lineage"]["inputFingerprint"]
 
 
-def test_the_snapshot_compatibility_copy_is_publisher_derived_in_the_plan(legacy_updates):
+def test_the_snapshot_compatibility_copy_is_publisher_derived_in_the_plan(run_updates):
     st, publish = rig()
-    assert publish(build(legacy_updates).artifact).result is Result.SHADOW_READY
+    assert publish(build(run_updates).artifact).result is Result.SHADOW_READY
     plan = st.sink.submitted[-1][0]
     assert any(k.startswith("snapshots/") and k.endswith("/latest/waterClarity") for k in plan.updates)

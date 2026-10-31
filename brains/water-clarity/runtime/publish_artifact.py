@@ -8,7 +8,8 @@ to the Brain RTDB as the sections of one sealed bundle. It adds no science and c
     `clarity-source-registry-v1`); Clarity keeps no second ownership list. A path the registry does not author is never emitted: it is reported in `dropped`
     with its classification (platform-owned / publisher-derived projection / orchestrator-owned process fact / retention), or, if nothing covers it, the build
     FAILS CLOSED (`unsupported` -> ArtifactBuildError);
-  * the whole `/brains/water-clarity` node is NEVER replaced: it is split into approved CHILDREN; `publication` / `certification` stay Publisher-owned;
+  * the whole `/brains/water-clarity` node is NEVER replaced: the run emits approved CHILDREN only and a whole-node key fails the build; `publication` /
+    `certification` stay Publisher-owned;
   * `/health/brains/water-clarity` carries domain health facts only (`status`, `staleLakeCount`); the process fields the legacy record also carries are
     Orchestrator-owned and reported in `dropped`;
   * null / missing NEVER means delete. The only inferred removal is the single declared optional child `/brains/water-clarity/lastError` (typed DELETE,
@@ -219,18 +220,18 @@ class _Router:
         return None
 
 
+_WHOLE_NODES = {"/" + root + CLARITY for root in ("brains/", "health/brains/")}    # the retired legacy writer's whole-node form: refused, never expanded (X14)
+
+
 def _expand(flat):
-    """Whole-node writes of the legacy writer -> child paths. Returns [(path, value)]."""
+    """The run's flat update dictionary -> [(path, value)], child-level only. A key naming the whole Brain node fails closed: the Publisher owns reserved children
+    (`publication`, `certification`) of that node, so no producer may address it as a unit."""
     out = []
     for key in sorted(flat):
-        val = flat[key]
         path = "/" + key.lstrip("/")
-        if path in (f"/brains/{CLARITY}", f"/health/brains/{CLARITY}"):
-            if not isinstance(val, dict):
-                raise ArtifactBuildError(f"{path} must be an object")
-            out += [(f"{path}/{c}", val[c]) for c in sorted(val)]
-        else:
-            out.append((path, val))
+        if path in _WHOLE_NODES:
+            raise ArtifactBuildError(f"{path} names a whole Brain node; emit its children instead")
+        out.append((path, flat[key]))
     return out
 
 
