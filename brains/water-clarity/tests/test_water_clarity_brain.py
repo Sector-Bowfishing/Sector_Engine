@@ -397,15 +397,23 @@ DIRECTORY = [{"id": "Guntersville|AL", "lat": 34.42, "lon": -86.25}, {"id": "Ken
 
 
 class EndToEnd(unittest.TestCase):
-    """run.main with every network edge faked."""
+    """run.main (CENTRAL mode) with every network edge faked; the artifact goes to an in-memory store and the sealed payload is captured."""
 
     def run_main(self, transport, engine):
+        import publish_artifact as pa
+        import sector_brain_platform.object_bucket as ob
+        from sector_brain_platform.publisher import MemoryObjectStore
         os.environ["BRAIN_ACCESS_TOKEN"] = "test-token"
         bucket = {"latest": LATEST, "meta": META, "passCount": 16}
-        real_init = bp.BrainRtdb.__init__
+        real_init, real_build = bp.BrainRtdb.__init__, pa.build_artifact
+        self.payload = {}
 
         def init(self_, url=bp.BRAIN_RTDB_URL, tokens=None, transport_=None, **kw):
             real_init(self_, url, tokens, transport=transport, backoff_s=0)
+
+        def build_capture(updates, *a, **kw):
+            self.payload.update({k.lstrip("/"): v for k, v in updates.items()})
+            return real_build(updates, *a, **kw)
         with mock.patch.object(run, "load_directory", return_value=DIRECTORY * 1), \
              mock.patch.object(run, "polygon_ids", return_value={"Guntersville|AL", "Kentucky Lake|KY"}), \
              mock.patch.object(run, "bucket_lake", side_effect=lambda lid: bucket if lid == "Guntersville|AL" else {"latest": None, "meta": None, "passCount": None}), \
@@ -414,7 +422,9 @@ class EndToEnd(unittest.TestCase):
              mock.patch.object(run, "lake_surface_run", return_value=None), \
              mock.patch.object(run, "job_health", return_value={"status": "HEALTHY"}), \
              mock.patch.object(bp.BrainRtdb, "__init__", init), \
-             mock.patch.object(sys, "argv", ["run.py", "--legacy-direct-write", "--batch", "2"]):
+             mock.patch.object(pa, "build_artifact", build_capture), \
+             mock.patch.object(ob, "GcsRestObjectStore", lambda bucket_, tokens: MemoryObjectStore()), \
+             mock.patch.object(sys, "argv", ["run.py", "--artifact-bucket", "test-artifacts", "--batch", "2"]):
             return run.main()
 
     def test_one_lake_failing_does_not_stop_the_others(self):
@@ -425,10 +435,8 @@ class EndToEnd(unittest.TestCase):
                 raise TimeoutError("engine timeout")
             return {"Guntersville|AL": GUNT, "Aleknagik|AK": ALEK}[lake["id"]]
         rc = self.run_main(t, engine)
-        writes = {}
-        for m, _, body in t.calls:
-            if m == "PATCH":
-                writes.update(body)
+        self.assertEqual([m for m, _, _ in t.calls if m != "GET"], [])     # the run never writes the database
+        writes = self.payload
         for path, value in writes.items():                              # path keys are multi-location paths;
             assert_rtdb_safe(self, value, path)                         # every nested key and value must be RTDB-legal
         self.assertIn("lakes/Guntersville_AL/states/waterClarity", writes)
@@ -437,7 +445,7 @@ class EndToEnd(unittest.TestCase):
         self.assertEqual(ky["stateType"], "UNAVAILABLE")
         self.assertEqual(ky["provenance"]["readiness"], "DEGRADED")
         self.assertIn(rc, (0, 2))
-        self.assertEqual(writes["brains/water-clarity"]["supportedLakeCount"], 3)
+        self.assertEqual(writes["brains/water-clarity/supportedLakeCount"], 3)
 
     def test_brain_rtdb_outage_exits_without_touching_production(self):
         t = FakeTransport([OSError("unreachable")] * 50)
@@ -449,7 +457,7 @@ class EndToEnd(unittest.TestCase):
         rc = self.run_main(t, engine)
         self.assertEqual(rc, 1)                 # aborted at the schema check
         self.assertEqual(calls, [])             # nothing else ran; production endpoints are only ever read
-        self.assertTrue(all(m in ("GET", "PATCH") for m, _, _ in t.calls))
+        self.assertTrue(all(m == "GET" for m, _, _ in t.calls))           # not even the old FAILED health write: health is Orchestrator-derived
 
 
 if __name__ == "__main__":

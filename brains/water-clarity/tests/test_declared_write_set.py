@@ -1,4 +1,5 @@
-"""Cortex 2.2 FD-01/FD-03: brain.json declares every path this Brain's runtime writes today (the REAL run.main write set (Kit spec)).
+"""Cortex 2.2 FD-01/FD-03: brain.json declares every path this Brain's runtime produces (the REAL run.main payload it seals for the Publisher (Kit spec);
+the runtime itself has no database write site any more, X14).
 
 Contract families (`pathFamilies`, Publisher contract) plus `legacyDirectWrites` (direct-writer paths the Brain does not author at cutover) must
 cover the write set exactly: nothing undeclared, and no legacy declaration for a write that does not happen."""
@@ -12,7 +13,7 @@ BRAIN_JSON = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file_
 
 
 def _written():
-    return list(clarity_cert_spec._legacy_updates())
+    return list(clarity_cert_spec._run_updates())
 
 
 def test_every_runtime_write_is_declared():

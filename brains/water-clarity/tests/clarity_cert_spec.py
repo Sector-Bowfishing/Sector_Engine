@@ -8,7 +8,7 @@ from brain_cert_kit import BrainCertSpec, Rejection
 _updates = {}
 
 
-def _legacy_updates():
+def _run_updates():
     if "u" not in _updates:
         flat, _, rc = S.real_run_updates()
         assert rc == 0
@@ -17,11 +17,11 @@ def _legacy_updates():
 
 
 def artifact(n, generated_at, consumed, rerun):
-    return S.build(_legacy_updates(), n=n, generated_at=generated_at, consumed=consumed).artifact
+    return S.build(_run_updates(), n=n, generated_at=generated_at, consumed=consumed).artifact
 
 
 def changed_artifact(n, generated_at):
-    u = copy.deepcopy(_legacy_updates())
+    u = copy.deepcopy(_run_updates())
     st = u["lakes/Guntersville_AL/states/waterClarity"]
     st["clarityFt"] = round(st["clarityFt"] + 0.5, 2)
     return S.build(u, n=n, generated_at=generated_at).artifact
@@ -43,7 +43,7 @@ SPEC = BrainCertSpec(
     extra_rejections=(Rejection("/lakes/Guntersville_AL/states/wind", "CROSS_DOMAIN_PATH"),
                       Rejection("/snapshots/Guntersville_AL/latest/waterClarity", "PLATFORM_DERIVED_PATH")),
     write_call_suffixes=("rtdb.update",),
-    allowed_write_sites=frozenset({("run.py", "write", "rtdb.update"), ("run.py", "main", "rtdb.update")}),
+    allowed_write_sites=frozenset(),          # X14: the direct writer is retired; the runtime has no database write site (the Publisher is the only writer)
     builder_module="runtime/publish_artifact.py",
     local_path_regex=r"/Users/|/home/[a-z]|\bDesktop/|Sector[ _]Research|Sector_Research_Data|~/|expanduser|SECTOR_RESEARCH_ROOT|water-clarity/(sources|datasets|analysis)",
     arch_findings=(("clarity_brain.py", 8),), baseline_entry_basenames=("clarity_brain.py",), score_baseline_substring="water-clarity=8.0/10",
