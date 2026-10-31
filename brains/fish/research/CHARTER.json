@@ -13,17 +13,20 @@
   {
    "id": "speciesPresence",
    "desc": "Presence labels per lake with source confidence",
-   "status": "EXPERIMENTAL"
+   "status": "EXPERIMENTAL",
+   "targetBrain": "fish-knowledge"
   },
   {
    "id": "evidenceGradedRules",
    "desc": "Species rules with graded evidence",
-   "status": "EXPERIMENTAL"
+   "status": "EXPERIMENTAL",
+   "targetBrain": "fish-knowledge"
   },
   {
    "id": "responseBandOrSpawnWindow",
    "desc": "Behaviour response bands",
-   "status": "ABSTAIN_NO_FIELD_VALIDATION"
+   "status": "ABSTAIN_NO_FIELD_VALIDATION",
+   "targetBrain": "fish-behavior"
   }
  ],
  "mustNotPredict": [
@@ -34,31 +37,36 @@
    "brain": "water-temp",
    "output": "modeledSurfaceTemp",
    "why": "temperature-gated spawn and activity rules",
-   "requiredFor": "spawn windows, cold inactivity"
+   "requiredFor": "spawn windows, cold inactivity",
+   "targetBrain": "fish-behavior"
   },
   {
    "brain": "lake-brain",
    "output": "stageTrend",
    "why": "rising-stage rules",
-   "requiredFor": "flooded-margin use"
+   "requiredFor": "flooded-margin use",
+   "targetBrain": "fish-behavior"
   },
   {
    "brain": "water-clarity",
    "output": "clarityBand",
    "why": "clarity-dependent species rules",
-   "requiredFor": "turbidity tolerance"
+   "requiredFor": "turbidity tolerance",
+   "targetBrain": "fish-behavior"
   },
   {
    "brain": "depth",
    "output": "shallowArea",
    "why": "shallow-water use",
-   "requiredFor": "night shallow feeding"
+   "requiredFor": "night shallow feeding",
+   "targetBrain": "fish-behavior"
   },
   {
    "brain": "vegetation",
    "output": "vegetationState",
    "why": "habitat rules",
-   "requiredFor": "spawn in vegetation"
+   "requiredFor": "spawn in vegetation",
+   "targetBrain": "fish-behavior"
   }
  ],
  "providesTo": [
@@ -89,5 +97,10 @@
  "abstainWhen": [
   "rule evidence indirect or unread",
   "input Brain stale or missing"
- ]
+ ],
+ "splitInto": {
+  "fish-knowledge": "docs/architecture/production/fish-biological-split/fish-knowledge.CHARTER.json",
+  "fish-behavior": "docs/architecture/production/fish-biological-split/fish-behavior.CHARTER.json",
+  "note": "Cortex M04. This combined charter stays the one the tools read for the LEGACY_COMBINED package biological-state until the M02 package split; each target charter then becomes its package's research/CHARTER.json unchanged."
+ }
 }
