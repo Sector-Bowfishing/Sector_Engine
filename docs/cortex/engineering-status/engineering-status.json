@@ -15,8 +15,8 @@
     "evaluatedAt": "2026-10-23",
     "session": "docs/cortex/sessions/2026-10-23-research-automation.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:0086293f145de64c05583ef93431fff7256cdc108a34cdadc3f482df9be9f5ea",
-    "certificationDigest": "sha256:0086293f145de64c05583ef93431fff7256cdc108a34cdadc3f482df9be9f5ea",
+    "sourceDigest": "sha256:6955d7d49a8162f86aca96733d8f30c144b1dbbebe7e385bd590b9f717ba3fda",
+    "certificationDigest": "sha256:6955d7d49a8162f86aca96733d8f30c144b1dbbebe7e385bd590b9f717ba3fda",
     "certificationCurrent": true,
     "verificationCommit": "3e8a3857"
   },
@@ -415,7 +415,7 @@
       "packageStatus": "CANONICAL",
       "structuralCertification": {
         "status": "PASS",
-        "evidence": "Kit V1 run: 47 passed, 4 skipped (inputs/certification.json)"
+        "evidence": "Kit V1 run: 47 passed, 2 skipped (inputs/certification.json)"
       },
       "memory": [
         {
@@ -537,7 +537,7 @@
         "structuralCertification": {
           "status": "PASS",
           "label": "KIT_V1_CERTIFIED",
-          "evidence": "Kit V1 run: 47 passed, 4 skipped (inputs/certification.json)"
+          "evidence": "Kit V1 run: 47 passed, 2 skipped (inputs/certification.json)"
         },
         "scientificValidation": {
           "status": "BLOCKED",
@@ -1037,7 +1037,7 @@
       "packageStatus": "CANONICAL",
       "structuralCertification": {
         "status": "PASS",
-        "evidence": "Kit V1 run: 52 passed (inputs/certification.json)"
+        "evidence": "Kit V1 run: 50 passed (inputs/certification.json)"
       },
       "memory": [
         {
@@ -1116,7 +1116,7 @@
         "P19": "PASS"
       },
       "certificationMutations": {
-        "passed": 31,
+        "passed": 29,
         "failed": 0
       },
       "dataDependencies": {
@@ -1147,7 +1147,7 @@
         "structuralCertification": {
           "status": "PASS",
           "label": "KIT_V1_CERTIFIED",
-          "evidence": "Kit V1 run: 52 passed (inputs/certification.json)"
+          "evidence": "Kit V1 run: 50 passed (inputs/certification.json)"
         },
         "scientificValidation": {
           "status": "PARTIAL",
@@ -1238,7 +1238,7 @@
       "packageStatus": "CANONICAL",
       "structuralCertification": {
         "status": "PASS",
-        "evidence": "Kit V1 run: 48 passed, 4 skipped (inputs/certification.json)"
+        "evidence": "Kit V1 run: 48 passed, 2 skipped (inputs/certification.json)"
       },
       "memory": [
         {
@@ -1350,7 +1350,7 @@
         "structuralCertification": {
           "status": "PASS",
           "label": "KIT_V1_CERTIFIED",
-          "evidence": "Kit V1 run: 48 passed, 4 skipped (inputs/certification.json)"
+          "evidence": "Kit V1 run: 48 passed, 2 skipped (inputs/certification.json)"
         },
         "scientificValidation": {
           "status": "PARTIAL",

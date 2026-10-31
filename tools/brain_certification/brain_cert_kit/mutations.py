@@ -96,8 +96,6 @@ def mutation_cases(spec):
         ("missing_unique_module", P.p02_one_production_implementation, r(spec, unique_module_basenames=tuple(spec.unique_module_basenames) + ("no_such_module_anywhere.py",))),
         ("contract_missing_statement", P.p04_operating_contract, r(spec, contract_tokens=tuple(spec.contract_tokens) + ("THIS-SENTENCE-IS-NOT-IN-ANY-CONTRACT",))),
         ("extra_write_site_unaccounted", P.p14_direct_write_sites_pinned, r(spec, allowed_write_sites=frozenset(spec.allowed_write_sites) | {("ghost.py", "ghost", "x.update")})),
-        ("write_site_not_in_audit", P.p14_direct_write_sites_pinned, r(spec, allowed_write_sites=frozenset())),
-        ("write_primitive_unrecognised", P.p14_direct_write_sites_pinned, r(spec, write_call_suffixes=("no_such_client.update",))),
         ("builder_imports_io", P.p15_artifact_path_cannot_write, r(spec, builder_forbidden_imports=_a_builder_import(spec))),
         ("builder_uses_forbidden_token", P.p15_artifact_path_cannot_write, r(spec, builder_forbidden_tokens=("import",))),
         ("runtime_path_leak", P.p16_runtime_isolation_paths, r(spec, local_path_regex=r"import ")),
@@ -116,6 +114,9 @@ def mutation_cases(spec):
     ]
     if spec.consumed_absent_when_unknown:
         cases.append(("consumed_emitted_when_unknown", P.p09_lineage_truthful_never_optimistic, r(spec, artifact_factory=_leaky_consumed(spec.artifact_factory))))
+    if spec.allowed_write_sites:                             # emptying the audit table or hiding the primitive can only fail when the Brain still has write sites
+        cases.append(("write_site_not_in_audit", P.p14_direct_write_sites_pinned, r(spec, allowed_write_sites=frozenset())))      # (a retired writer has none)
+        cases.append(("write_primitive_unrecognised", P.p14_direct_write_sites_pinned, r(spec, write_call_suffixes=("no_such_client.update",))))
     if spec.arch_findings:                                   # removing carried findings can only fail when the Brain carries some (a clean Brain has none)
         cases.append(("architecture_finding_not_carried", P.p18_architecture_gates_no_new_violations, r(spec, arch_findings=())))
     if not spec.has_score:                                   # a Brain without a score: declaring one must fail

@@ -6,13 +6,12 @@ from clarity_cert_spec import SPEC
 globals().update(make_live_parity_tests(SPEC))
 
 
-def test_clarity_live_parity_the_whole_node_legacy_writer_is_still_present_and_therefore_blocks_cutover_completion():
-    """WATER CLARITY SPECIAL CASE: the legacy run.py replaces /brains/water-clarity and /health/brains/water-clarity as whole nodes. It is NOT retired here; this proves
-    the cutover guard sees it (so CUTOVER_COMPLETE is refused) and that the Publisher's own child-level writes never replace those nodes."""
-    import os
+def test_clarity_live_parity_the_legacy_writer_is_retired_and_the_publisher_never_replaces_the_whole_node():
+    """WATER CLARITY SPECIAL CASE (X14): the retired run.py replaced /brains/water-clarity and /health/brains/water-clarity as whole nodes. The runtime now has no write
+    site and builds no whole-node key, so the cutover guard has nothing left to refuse on code grounds; the Publisher's own child-level writes never replace those nodes."""
     from brain_cert_kit import exit_gate
     left = exit_gate.legacy_write_sites(SPEC.brain_dir, "water-clarity")
-    assert left["wholeNodeKeys"] and len(left["writeSites"]) == 2
+    assert left == {"writeSites": [], "wholeNodeKeys": []}, left
     import datetime as dt
     from sector_brain_platform.publisher_live.rig import Rig
     r = Rig(brains=("water-clarity",), clock=dt.datetime(2026, 10, 15, 4, tzinfo=dt.timezone.utc))
