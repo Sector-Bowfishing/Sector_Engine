@@ -1,5 +1,5 @@
 """Shared support for the Water Clarity certification tests: repository roots, the synthetic multi-lake update (captured from a REAL `run.main` execution with
-every network edge faked), a pinned build context and a local SHADOW Publisher rig. Everything is SYNTHETIC (this repository is public) and offline."""
+every network edge faked, CENTRAL mode), a pinned build context and a local SHADOW Publisher rig. Everything is SYNTHETIC (this repository is public) and offline."""
 import datetime as dt
 import itertools
 import json
@@ -54,16 +54,29 @@ class FakeTransport:
         return 200, "null"
 
 
-def real_run_updates(engine=None, reads=None, argv=("--legacy-direct-write", "--batch", "2")):
-    """Execute the REAL run.main with every network edge faked; return (flat PATCH updates, transport, exit code). This is the legacy write set of one run."""
+def real_run_updates(engine=None, reads=None, argv=("--artifact-bucket", "test-artifacts", "--batch", "2")):
+    """Execute the REAL run.main in CENTRAL mode with every network edge faked; return (flat updates, transport, exit code).
+
+    `flat` is the update dictionary the run handed to the artifact builder (the payload it seals), captured at `publish_artifact.build_artifact`: the run has no
+    database write site any more (X14), so the write set is what the Publisher is asked to publish, not what a direct writer sent. `transport` records every
+    REST call the platform client made (reads only; a test asserts no write verb). The artifact itself goes to an in-memory object store."""
+    from sector_brain_platform.publisher import MemoryObjectStore
+    import sector_brain_platform.object_bucket as ob
     os.environ["BRAIN_ACCESS_TOKEN"] = "test-token"
     t = FakeTransport(reads)
     engine = engine or (lambda lake: {"Guntersville|AL": GUNT, "Kentucky Lake|KY": KY, "Aleknagik|AK": ALEK}[lake["id"]])
     real_init = bp.BrainRtdb.__init__
+    real_build = pa.build_artifact
+    captured = {}
+    store = MemoryObjectStore()
 
     def init(self_, url=bp.BRAIN_RTDB_URL, tokens=None, **kw):
         kw.pop("transport", None)
         real_init(self_, url, tokens, transport=t, backoff_s=0, **kw)
+
+    def build_capture(updates, *a, **kw):
+        captured.update(updates)
+        return real_build(updates, *a, **kw)
     with mock.patch.object(run, "load_directory", return_value=list(DIRECTORY)), \
          mock.patch.object(run, "polygon_ids", return_value={"Guntersville|AL", "Kentucky Lake|KY"}), \
          mock.patch.object(run, "bucket_lake", side_effect=lambda lid: {"latest": LATEST, "meta": META, "passCount": 16} if lid == "Guntersville|AL" else {"latest": None, "meta": None, "passCount": None}), \
@@ -71,13 +84,12 @@ def real_run_updates(engine=None, reads=None, argv=("--legacy-direct-write", "--
          mock.patch.object(run, "engine_revision", return_value="sector-engine-test"), \
          mock.patch.object(run, "lake_surface_run", return_value=None), \
          mock.patch.object(bp.BrainRtdb, "__init__", init), \
+         mock.patch.object(pa, "build_artifact", build_capture), \
+         mock.patch.object(ob, "GcsRestObjectStore", lambda bucket, tokens: store), \
          mock.patch.object(sys, "argv", ["run.py", *argv]):
         rc = run.main()
-    flat = {}
-    for m, _, body in t.calls:
-        if m == "PATCH":
-            flat.update(body)
-    return flat, t, rc
+    t.store = store
+    return {k.lstrip("/"): v for k, v in captured.items()}, t, rc            # the RTDB key form (no leading slash), as a PATCH body carries it
 
 
 def ctx(n=1, generated_at=GENERATED_AT, code_version="test@1", catalog_sha256="sha256:" + "ab" * 32):
