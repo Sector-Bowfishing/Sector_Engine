@@ -1,0 +1,62 @@
+{
+ "schema": "sector-bowfishing-charter-v1",
+ "status": "CANDIDATE_PRIORS_NOT_VALIDATED",
+ "note": "Practical priors about bowfishing are hypotheses until validated by independent historical, public-dataset, literature or model evidence (owner-collected field data is optional, never required); fit-for-purpose targets are pre-declared requirements, not achievements.",
+ "brainId": "fish-knowledge",
+ "role": "Species knowledge for bowfishing targets: identification, biology, distribution and per-lake presence, habitat preferences, spawning requirements, tolerances and evidence-graded rules",
+ "bowfishingPurpose": "Which species live in a lake, and what each one generally needs and tolerates, decides which targets a trip can expect at all.",
+ "decisionsInformed": [
+  "which species to expect"
+ ],
+ "predicts": [
+  {
+   "id": "speciesPresence",
+   "desc": "Presence labels per lake with source confidence",
+   "status": "EXPERIMENTAL"
+  },
+  {
+   "id": "evidenceGradedRules",
+   "desc": "Species rules with graded evidence",
+   "status": "EXPERIMENTAL"
+  }
+ ],
+ "mustNotPredict": [
+  "a species rule that has no direct, fully read evidence",
+  "the current or forecast behavioural state of fish at a lake and time (Biological Brain owns it)",
+  "environmental measurements or forecasts",
+  "bowfishing recommendations (Sector Intelligence owns them)"
+ ],
+ "needsFrom": [],
+ "providesTo": [
+  {
+   "brain": "fish-behavior",
+   "output": "speciesKnowledge",
+   "why": "species rules, response bands and tolerances applied to current conditions"
+  },
+  {
+   "brain": "sector-intelligence",
+   "output": "speciesFacts",
+   "why": "which species to expect"
+  }
+ ],
+ "fitForPurpose": [
+  {
+   "metric": "species rules validated against independent historical or public observations",
+   "target": 1,
+   "direction": "higher",
+   "rationale": "none is today"
+  },
+  {
+   "metric": "species rules with direct, fully read evidence",
+   "target": 1.0,
+   "direction": "higher",
+   "rationale": "unsupported rules must abstain"
+  }
+ ],
+ "priorityQuestions": [
+  "Do dated historical and public records support the spawn temperature bands?"
+ ],
+ "abstainWhen": [
+  "rule evidence indirect or unread"
+ ]
+}
