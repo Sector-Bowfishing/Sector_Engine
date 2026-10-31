@@ -76,3 +76,32 @@ def test_a_path_outside_the_release_directory_is_refused(tmp_path):
     (tmp_path / K.MANIFEST).write_text(json.dumps(m))
     with pytest.raises(K.KnowledgeReleaseError, match="escapes"):
         K.load_release(str(tmp_path), "demo")
+
+
+def test_an_approved_release_must_name_its_record(tmp_path):
+    make(tmp_path, approval={"status": "APPROVED", "record": None})
+    with pytest.raises(K.KnowledgeReleaseError, match="approval record"):
+        K.load_release(str(tmp_path), "demo")
+
+
+def test_a_scoped_approval_loads_and_is_not_customer_eligible(tmp_path):
+    make(tmp_path, approval={"status": "APPROVED", "record": "docs/x.md", "scope": ["INTERNAL", "CALIBRATION"], "customerEligible": False})
+    r = K.load_release(str(tmp_path), "demo")
+    assert (r["approvalStatus"], r["approvalScope"], r["customerEligible"]) == ("APPROVED", ["INTERNAL", "CALIBRATION"], False)
+
+
+def test_an_unscoped_manifest_reports_no_scope_and_no_customer_eligibility(tmp_path):
+    make(tmp_path)
+    r = K.load_release(str(tmp_path), "demo")
+    assert (r["approvalScope"], r["customerEligible"]) == (None, False)
+
+
+@pytest.mark.parametrize("approval,needle", [
+    ({"status": "APPROVED", "record": "r", "scope": []}, "approval scope"),
+    ({"status": "APPROVED", "record": "r", "scope": ["EVERYTHING"]}, "approval scope"),
+    ({"status": "APPROVED", "record": "r", "scope": "INTERNAL"}, "approval scope"),
+    ({"status": "APPROVED", "record": "r", "scope": ["INTERNAL"], "customerEligible": True}, "without CUSTOMER")])
+def test_an_invalid_or_contradictory_scope_fails_closed(tmp_path, approval, needle):
+    make(tmp_path, approval=approval)
+    with pytest.raises(K.KnowledgeReleaseError, match=needle):
+        K.load_release(str(tmp_path), "demo")
