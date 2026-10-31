@@ -1,23 +1,26 @@
 # Water Clarity — direct-write audit
 
-**Scope:** every database/storage write door of the Clarity components. **Result:** C1 has exactly TWO RTDB write sites, both **LEGACY / RETIREMENT_CANDIDATE**, pinned by an AST test (`test_no_unauthorized_production_write_in_the_clarity_runtime`); the artifact path writes nothing. No door was removed or added; cutover is a separate approved task. Vocabulary: CANONICAL_PLATFORM, LEGACY, SHADOW, RETIREMENT_CANDIDATE, BLOCKER.
+**Scope:** every database/storage write door of the Clarity components. **Result (updated 2026-10-31, branch `cortex/water-clarity-cutover-finish-2026-10-31`):** C1 has **ZERO** RTDB write sites. The two former LEGACY / RETIREMENT_CANDIDATE sites are **RETIRED** in code, and the AST pin (Kit P14, `allowed_write_sites=frozenset()`) and the exit-gate guard (X14: no write site, no whole-node key) enforce it. The run produces one sealed artifact (CENTRAL mode) or local files (`--dry-run`); the central Publisher is the only writer. `publisherRequired.cutoverStatus` stays `SHADOW` until an approved cutover records a complete `production-exit-evidence.json` (the LIVE checks). Vocabulary: CANONICAL_PLATFORM, LEGACY, SHADOW, RETIREMENT_CANDIDATE, RETIRED, BLOCKER.
 
 ## C1 write sites (`brains/water-clarity/runtime/run.py`)
 | Site | What it writes | Class | Notes |
 |---|---|---|---|
-| `write()` → `rtdb.update(updates)` | per-lake batches and the fleet record set (below) via the ownership-checked platform client (`BrainRtdb`, refuses app databases) | **LEGACY / RETIREMENT_CANDIDATE** | retires at the approved Publisher cutover; MANUAL execution only (no scheduler) |
-| `main()` → `rtdb.update({...FAILED...})` | abort path: `/health/brains/water-clarity/{status,lastRun,latestError}` | **LEGACY / RETIREMENT_CANDIDATE** | process facts: Orchestrator-owned at cutover |
+| `write()` → `rtdb.update(updates)` (the `--legacy-direct-write` path) | per-lake batches and the fleet record set (below) | **RETIRED** | removed with the flag; `collect()` only gathers the payload; the flag is now an unknown option (argparse exit 2) |
+| `main()` → `rtdb.update({...FAILED...})` | abort path: `/health/brains/water-clarity/{status,lastRun,latestError}` | **RETIRED** | process facts are Orchestrator-derived; an aborted run stores nothing |
+| CENTRAL mode → `ArtifactWriter.write` | ONE sealed `clarity-publication-v1` artifact, create-only, private artifact bucket | **CANONICAL_PLATFORM** | the Orchestrator verifies it and the central Publisher writes the database |
 | `publish_artifact.build_artifact` + `--dry-run` | local files only (`payload.json`, `artifact.json`, `shadow_verdict.json`, `run_report.json`); in-memory SHADOW evaluation | **SHADOW** | zero database writes (tested) |
 
-## The real write set (captured from an actual `run.main` execution with network edges faked) and its disposition at cutover
+The run still READS the Brain RTDB (schema check, `brains/water-clarity/{version,lastSuccessfulRun}` child reads, `lakeFleet`, `activity`). It never addresses the whole Brain node, and the builder refuses a whole-node key (`test_a_whole_brain_node_key_fails_the_build`).
+
+## The real write set (the payload an actual `run.main` execution seals, network edges faked) and its disposition at cutover
 | Row / path | Class | Disposition |
 |---|---|---|
 | `/lakes/{k}/states/waterClarity`, `/lakes/{k}/profiles/waterClarity` | domain truth | authored by `clarity-lake-state-v1` |
 | `/lakeFleet/{k}/slots/waterClarity` (and children `stale`, `lastError`, `lastErrorAt` on an Engine miss), `/readiness/waterClarity`, `/modelVersions/waterClarity` | domain projections of the state | authored in the same atomic publish |
-| `/brains/water-clarity` (legacy: the **whole node is replaced**) | domain truth + status | authored child-by-child; **cutover precondition:** the legacy whole-node replace would erase Publisher-owned `publication` / `certification` children, so the legacy writer must be retired at (not after) Publisher production mode — invariant 10 enforces this once `cutoverStatus` is `CUTOVER_COMPLETE` |
+| `/brains/water-clarity/{child}` (the retired writer replaced the **whole node**) | domain truth + status | emitted and authored child-by-child; the whole-node replace (which would erase Publisher-owned `publication` / `certification`) is retired in code and refused by the builder |
 | `/validation/water-clarity`, `/sources/{id}`, `/activity/{event}` | domain truth | authored by the registry / source schemas |
 | `/health/sources/{id}` | operational source health | row `health-sources`: **PLATFORM_OWNED → ORCHESTRATOR_DERIVED** (Cortex 3.1: the Publisher writes no `/health/*`; the Orchestrator derives it from the published `/sources/{id}`) |
-| `/health/brains/water-clarity` (legacy: whole node) | **no longer authored by the artifact (owner decision 2026-10-29, Cortex 3.1 FD-15)**: `status`, `staleLakeCount` are derived by the Orchestrator from the published `/brains/water-clarity/status`; `lastRun`, `lastSuccess`, `durationMs`, `errorCount`, `latestError`, `deployedVersion`, `brainVersion`, `engineRevision`, `publisherDeployment`, `lakesAttempted`, `lakesPublished`, `lakeSurfaceRun` are process facts | row `health-brains`: **PLATFORM_OWNED → ORCHESTRATOR_DERIVED** (not authored by the artifact) |
+| `/health/brains/water-clarity/{child}` (the retired writer replaced the whole node) | **no longer authored by the artifact (owner decision 2026-10-29, Cortex 3.1 FD-15)**: `status`, `staleLakeCount` are derived by the Orchestrator from the published `/brains/water-clarity/status`; `lastRun`, `lastSuccess`, `durationMs`, `errorCount`, `latestError`, `deployedVersion`, `brainVersion`, `engineRevision`, `publisherDeployment`, `lakesAttempted`, `lakesPublished`, `lakeSurfaceRun` are process facts | row `health-brains`: **PLATFORM_OWNED → ORCHESTRATOR_DERIVED** (not authored by the artifact) |
 | `/health/jobs/water-clarity-brain` | job record | row `health-jobs`: **PLATFORM_OWNED → ORCHESTRATOR_DERIVED** |
 | `/lakeFleet/{k}/lakeId` | lake identity | row `lakefleet-lakeid`: **PLATFORM_OWNED → STOP_WRITING** (Lake Registry) |
 | `/snapshots/{k}/latest/lakeId` | lake identity | row `snapshot-lakeid`: **PLATFORM_OWNED → STOP_WRITING** |
@@ -32,4 +35,4 @@ No path of the real write set is unclassified; the builder fails closed on any n
 `lake-surface-daily` / `lake-surface-dispatch` / `hydrology-hourly` (C2), `clarity-current-hourly` / `ClarityPrecompute` (C3) write to `gs://sector-lake-surface` (LEGACY); `clarity-candidate-shadow` (C4) writes a private bucket (SHADOW, private). The Publisher's path families are RTDB-only; the platform has no storage-write semantics. These writes are **not** forced through the Publisher, **not** changed, and not part of the C1 contract. Item recorded for the platform lane: decide whether Brain-owned storage products get a Publisher model or stay Orchestrator-managed jobs. No Firebase write exists in C2–C4.
 
 ## Verdict
-No BLOCKER. Two LEGACY / RETIREMENT_CANDIDATE RTDB doors (C1), GCS doors outside the Publisher model (debt), a documented cutover precondition (whole-node replace). `publisherRequired.cutoverStatus` stays `SHADOW`.
+No BLOCKER. No RTDB door left in C1 (both RETIRED, rtdb.update gone; pinned), GCS doors outside the Publisher model (debt). `publisherRequired.cutoverStatus` stays `SHADOW`: flipping it to `CUTOVER_COMPLETE` needs the exit record of an approved cutover (see `docs/architecture/production/WATER_CLARITY_CUTOVER_COMPLETE_V1.md`).

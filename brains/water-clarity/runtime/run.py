@@ -1,18 +1,18 @@
-"""Water Clarity Brain run: production Clarity -> Brain RTDB (sector-brain).
+"""Water Clarity Brain run: production Clarity -> one sealed artifact for the central Publisher.
 
 Reads only what production already publishes (Engine /lakes, Engine
-/conditions, the public gs://sector-lake-surface bucket, Cloud Run job status)
-and writes only Water Clarity's Brain RTDB paths. It is a separate process
-from every production Clarity path, so a Brain RTDB outage, a bad payload or
-a crash here cannot change what customers see.
+/conditions, the public gs://sector-lake-surface bucket, Cloud Run job status,
+its own previous Brain RTDB state) and writes NO database path: the central
+Publisher is the only writer of Water Clarity's Brain RTDB paths (Cortex 3.1
+FD-15). It is a separate process from every production Clarity path, so a
+Brain RTDB outage, a bad payload or a crash here cannot change what customers see.
 
 usage:
   python run.py --dry-run --out /tmp/wcb                 # build everything, write JSON files, no RTDB
   python run.py --artifact-bucket B                      # CENTRAL mode (the default way to publish): build ONE sealed artifact, store it create-only in the private
                                                          # artifact bucket; the Orchestrator verifies it and the central Publisher writes the database. This process
                                                          # performs NO database write in this mode.
-  python run.py --legacy-direct-write [--lakes ...]      # pre-cutover direct writer; refused unless named explicitly, and impossible once this job's identity is
-                                                         # read-only for the database (Cortex 3.1 FD-15)
+The pre-cutover direct writer (--legacy-direct-write) is retired: this module has no database write site (exit gate X14).
 env:
   ENGINE_URL (default prod Cloud Run URL), BRAIN_RTDB_URL (default sector-brain),
   ENGINE_REVISION (else read from Cloud Run), POLYGONS (lake-surface outlines),
@@ -181,35 +181,26 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--lakes", default=None, help="comma-separated canonical lake IDs")
     ap.add_argument("--limit", type=int, default=None)
-    ap.add_argument("--dry-run", action="store_true", help="write the payloads to --out instead of the Brain RTDB")
+    ap.add_argument("--dry-run", action="store_true", help="write the payloads to --out (no artifact is stored)")
     ap.add_argument("--out", default=None, help="folder for the run report (and the payloads in --dry-run)")
     ap.add_argument("--engine-concurrency", type=int, default=2)
-    ap.add_argument("--batch", type=int, default=25, help="lakes per atomic RTDB update")
-    ap.add_argument("--rtdb-url", default=os.environ.get("BRAIN_RTDB_URL", bp.BRAIN_RTDB_URL))
+    ap.add_argument("--batch", type=int, default=25, help="lakes collected per progress step")
+    ap.add_argument("--rtdb-url", default=os.environ.get("BRAIN_RTDB_URL", bp.BRAIN_RTDB_URL), help="Brain RTDB read for the previous state (never written)")
     ap.add_argument("--artifact-bucket", default=os.environ.get("CLARITY_ARTIFACT_BUCKET"), help="CENTRAL mode: private bucket for the sealed artifact (no database write)")
-    ap.add_argument("--legacy-direct-write", action="store_true", help="pre-cutover direct RTDB writer (must be named explicitly)")
     a = ap.parse_args()
-    central = bool(a.artifact_bucket) and not a.legacy_direct_write and not a.dry_run
-    if not (a.dry_run or central or a.legacy_direct_write):
-        print("REFUSED (nothing published): Water Clarity publishes through the central Publisher; give --artifact-bucket (or --dry-run). The direct writer needs --legacy-direct-write.", file=sys.stderr)
+    central = bool(a.artifact_bucket) and not a.dry_run
+    if not (a.dry_run or central):
+        print("REFUSED (nothing published): Water Clarity publishes through the central Publisher; give --artifact-bucket (or --dry-run).", file=sys.stderr)
         return 2
     now = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
     t0 = time.time()
     report = {"startedAt": bp.iso(now), "dryRun": a.dry_run, "published": 0, "engineFailures": [], "publishFailures": [], "errors": []}
     tokens = bp.TokenProvider()
-    rtdb = None if a.dry_run else bp.BrainRtdb(a.rtdb_url, tokens, brain_id=cb.BRAIN_ID, recorder=bp.ConsumptionRecorder(cb.BRAIN_ID))   # reads recorded as ACTUAL RTDB consumption (GCS/HTTP reads are NOT recorded: platform debt)
-    payload = {}                     # dry-run: everything that would be written
+    rtdb = None if a.dry_run else bp.BrainRtdb(a.rtdb_url, tokens, brain_id=cb.BRAIN_ID, recorder=bp.ConsumptionRecorder(cb.BRAIN_ID))   # READ ONLY; reads recorded as ACTUAL RTDB consumption (GCS/HTTP reads are NOT recorded: platform debt)
+    payload = {}                     # everything this run produces, child-level paths only (CENTRAL mode seals it into the artifact; dry run writes it to --out)
 
-    def write(updates: dict, what: str) -> bool:
-        if a.dry_run or central:                 # dry run and CENTRAL mode never write the database: the update is only collected (and, in CENTRAL mode, sealed into the artifact)
-            payload.update(updates)
-            return True
-        try:
-            rtdb.update(updates)
-            return True
-        except Exception as e:
-            report["publishFailures"].append({"what": what, "error": str(e)[:300]})
-            return False
+    def collect(updates: dict) -> None:
+        payload.update(updates)
 
     # 1. canonical lakes, outlines, previous Brain state
     try:
@@ -222,19 +213,14 @@ def main() -> int:
         prev_registry = prev_fleet = prev_activity = None
         if rtdb:
             bp.check_schema(rtdb)
-            prev_registry = rtdb.get(f"brains/{cb.BRAIN_ID}")
+            prev = {c: rtdb.get(f"brains/{cb.BRAIN_ID}/{c}") for c in ("version", "lastSuccessfulRun")}   # child reads only: the run never addresses the whole Brain node
+            prev_registry = {c: v for c, v in prev.items() if v is not None} or None
             prev_fleet = rtdb.get("lakeFleet") or {}
             prev_activity = rtdb.get("activity") or {}
         prev_fleet = prev_fleet or {}
     except Exception as e:
         report["errors"].append("aborted before any lake: " + str(e)[:300])
-        report["status"] = "FAILED"
-        if rtdb and not central:
-            try:
-                rtdb.update({f"/health/brains/{cb.BRAIN_ID}/status": "FAILED", f"/health/brains/{cb.BRAIN_ID}/lastRun": bp.iso(now),
-                             f"/health/brains/{cb.BRAIN_ID}/latestError": str(e)[:300]})
-            except Exception:
-                pass
+        report["status"] = "FAILED"                # nothing is stored; the Orchestrator records the failed execution (health is Orchestrator-derived)
         print(json.dumps(report, indent=1))
         return 1
 
@@ -295,9 +281,8 @@ def main() -> int:
                 results[lid] = {"state": None, "error": str(e)}
             done += 1
             if len(pending) >= a.batch or done == len(lakes):
-                batch = {k: v for w in pending.values() for k, v in w.items()}
-                if write(batch, f"{len(pending)} lakes"):
-                    report["published"] += sum(1 for l in pending if results[l].get("state"))
+                collect({k: v for w in pending.values() for k, v in w.items()})
+                report["published"] += sum(1 for l in pending if results[l].get("state"))
                 pending = {}
                 print(f"  {done}/{len(lakes)} lakes", flush=True)
 
@@ -337,7 +322,10 @@ def main() -> int:
               "lakesAttempted": len(lakes), "lakesPublished": report["published"], "lakeSurfaceRun": run_rec}
     validation = dict(cb.CATALOG["validation"]["production"])
     validation["candidates"] = cb.CATALOG["validation"]["candidates"]
-    glob = {f"/brains/{cb.BRAIN_ID}": registry, f"/health/brains/{cb.BRAIN_ID}": health, f"/validation/{cb.BRAIN_ID}": validation}
+    # child-level paths only: the Publisher owns /brains/water-clarity/{publication,certification}, so no key here may name the whole Brain node (X14)
+    glob = {f"/brains/{cb.BRAIN_ID}/{c}": v for c, v in registry.items()}
+    glob.update({f"/health/brains/{cb.BRAIN_ID}/{c}": v for c, v in health.items()})
+    glob[f"/validation/{cb.BRAIN_ID}"] = validation
     for sid, rec in sources.items():
         glob[f"/sources/{sid}"] = rec
         glob[f"/health/sources/{sid}"] = {"status": rec["health"], "lastFetchAt": rec["lastFetchAt"]}
@@ -348,7 +336,7 @@ def main() -> int:
     events = cb.activity_events(prev_registry, prev_fleet, results, now, status)
     glob.update({f"/activity/{k}": v for k, v in events.items()})
     glob.update(cb.prune_activity(prev_activity, now))
-    write(glob, "fleet records")
+    collect(glob)
     report.update({"status": status, "durationMs": duration_ms, "lakes": len(lakes), "engineOk": n_ok,
                    "readinessCounts": registry["readinessCounts"], "breakdowns": registry["breakdowns"],
                    "rtdbWrites": rtdb.writes if rtdb else 0, "rtdbBytes": rtdb.bytes_written if rtdb else 0,
