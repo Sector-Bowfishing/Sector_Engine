@@ -57,10 +57,18 @@ gcloud storage buckets add-iam-policy-binding "gs://$BUCKET" --member "serviceAc
   --role roles/storage.objectAdmin >/dev/null
 # --set-env-vars REPLACES the job's env: keep the Brain RTDB URL (the Wind Brain publish) and label the build.
 BRAIN_RTDB_URL="${BRAIN_RTDB_URL:-https://sector-brain.firebaseio.com}"
+# 7-day shadow equivalence (deploy/shadow-equivalence/): OFF unless this deploy is approved with WIND_SHADOW_EQUIVALENCE=on and an evidence bucket the job
+# identity may create objects in under exports/shadow-equivalence/wind/ (that grant is a separate approved step; this script binds nothing for it).
+WIND_SHADOW_EQUIVALENCE="${WIND_SHADOW_EQUIVALENCE:-off}"
+[[ "$WIND_SHADOW_EQUIVALENCE" == "on" || "$WIND_SHADOW_EQUIVALENCE" == "off" ]] || { echo "WIND_SHADOW_EQUIVALENCE must be on or off" >&2; exit 2; }
+SHADOW_ENV=""
+if [[ "$WIND_SHADOW_EQUIVALENCE" == "on" ]]; then
+  SHADOW_ENV=",WIND_SHADOW_EQUIVALENCE=on,WIND_SHADOW_EVIDENCE_BUCKET=${WIND_SHADOW_EVIDENCE_BUCKET:?WIND_SHADOW_EQUIVALENCE=on needs WIND_SHADOW_EVIDENCE_BUCKET}"
+fi
 gcloud run jobs deploy "$JOB" --source . --project "$PROJECT_ID" --region "$REGION" \
   --service-account "$SA" --tasks 1 --max-retries 1 --task-timeout 900 --memory 2Gi --cpu 1 \
   --labels "commit=$COMMIT" \
-  --set-env-vars "SECTOR_WIND_GCS_APPROVED=yes,SECTOR_WIND_BRAIN_RTDB_URL=$BRAIN_RTDB_URL,SECTOR_WIND_BUILD=main@$COMMIT" \
+  --set-env-vars "SECTOR_WIND_GCS_APPROVED=yes,SECTOR_WIND_BRAIN_RTDB_URL=$BRAIN_RTDB_URL,SECTOR_WIND_BUILD=main@$COMMIT$SHADOW_ENV" \
   --args="hourly,--store,gs://$BUCKET/wind/v1"
 gcloud run jobs add-iam-policy-binding "$JOB" --region "$REGION" --project "$PROJECT_ID" \
   --member "serviceAccount:$SA" --role roles/run.invoker >/dev/null

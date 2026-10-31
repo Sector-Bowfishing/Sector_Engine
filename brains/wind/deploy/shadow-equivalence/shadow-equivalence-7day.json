@@ -1,0 +1,17 @@
+{
+  "schema": "wind-shadow-equivalence-config-v1",
+  "status": "PREPARED_NOT_STARTED",
+  "approvalRef": null,
+  "evaluator": "wind-shadow-equivalence-v1",
+  "evidencePrefix": "exports/shadow-equivalence/wind/",
+  "window": {"minDays": 7, "minContinuousHours": 168, "expectedRunsPerHour": 1, "minCoverage": 0.9, "maxGapHours": 6},
+  "pass": {
+    "verdictsAccepted": ["EQUIVALENT_WITH_EXPECTED_DIFFS"],
+    "maxNotEquivalentRuns": 0,
+    "maxErrorRuns": 0,
+    "allowedOpenCompatibilityRules": ["health-jobs-wind-hourly", "health-brains-wind-process"],
+    "sameCodeVersionRequired": false
+  },
+  "start": {"env": {"WIND_SHADOW_EQUIVALENCE": "on", "WIND_SHADOW_EVIDENCE_BUCKET": "<private artifact bucket, Sector_Ops tracker>"}, "needs": ["owner approval for the wind-hourly redeploy with the flag", "create-only grant for the Wind job identity on exports/shadow-equivalence/wind/ of that bucket"]},
+  "stop": {"env": {"WIND_SHADOW_EQUIVALENCE": "off"}}
+}
