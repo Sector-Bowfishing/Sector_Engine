@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "kit": "BRAIN_CERT_KIT_V1",
   "collectedWith": "pytest -rA per Brain directory (tools/cortex_status/collect_certification.py)",
-  "sourceDigest": "sha256:bd51123924c4d421fdd7c35a875199ad1d2e755c207a6feb35ad18aa10658208",
+  "sourceDigest": "sha256:c289cd043629d240934cbb7aefada64f31e22f1e8f11a0ef397a25c3aaa9fe7e",
   "brains": {
     "depth": {
       "directory": "brains/depth",
@@ -92,7 +92,7 @@
         "passed": 27,
         "failed": 0
       },
-      "summary": "47 passed, 4 skipped"
+      "summary": "47 passed, 2 skipped"
     },
     "sector-intelligence": {
       "directory": "brains/sector-intelligence",
@@ -179,10 +179,10 @@
         "P19": "PASS"
       },
       "mutations": {
-        "passed": 31,
+        "passed": 29,
         "failed": 0
       },
-      "summary": "52 passed"
+      "summary": "50 passed"
     },
     "water-temp": {
       "directory": "brains/water-temperature",
@@ -212,7 +212,7 @@
         "passed": 28,
         "failed": 0
       },
-      "summary": "48 passed, 4 skipped"
+      "summary": "48 passed, 2 skipped"
     },
     "wind": {
       "directory": "brains/wind",
