@@ -304,6 +304,7 @@ def main() -> int:
         last_error = {"at": bp.iso(now), "message": f"{len(report['engineFailures'])} engine misses, {len(report['publishFailures'])} publish failures; first: {msg.get('error')}"[:300]}
     # counts span the whole directory: lakes not in this run keep their last published slot
     registry = cb.registry_entry(results, prev_fleet, now, status, last_error, rev, all_ids, last_success)
+    partial = len(lakes) < len(all_ids)
     sources = cb.source_records(results, now, run_rec)
     # Job records for lake-surface-daily / hydrology-hourly / clarity-current-hourly / clarity-candidate-shadow are
     # NOT written here any more: /jobs is the Engine's one canonical sync (sector_brain_platform.jobs, published by
@@ -323,8 +324,9 @@ def main() -> int:
     validation = dict(cb.CATALOG["validation"]["production"])
     validation["candidates"] = cb.CATALOG["validation"]["candidates"]
     # child-level paths only: the Publisher owns /brains/water-clarity/{publication,certification}, so no key here may name the whole Brain node (X14)
-    glob = {f"/brains/{cb.BRAIN_ID}/{c}": v for c, v in registry.items()}
-    glob.update({f"/health/brains/{cb.BRAIN_ID}/{c}": v for c, v in health.items()})
+    # a partial run updates only its own lakes: the fleet totals are left out (absent = unchanged), never rewritten from a subset
+    glob = {f"/brains/{cb.BRAIN_ID}/{c}": v for c, v in (cb.without_fleet_totals(registry) if partial else registry).items()}
+    glob.update({f"/health/brains/{cb.BRAIN_ID}/{c}": v for c, v in (cb.without_fleet_totals(health) if partial else health).items()})
     glob[f"/validation/{cb.BRAIN_ID}"] = validation
     for sid, rec in sources.items():
         glob[f"/sources/{sid}"] = rec
@@ -337,7 +339,8 @@ def main() -> int:
     glob.update({f"/activity/{k}": v for k, v in events.items()})
     glob.update(cb.prune_activity(prev_activity, now))
     collect(glob)
-    report.update({"status": status, "durationMs": duration_ms, "lakes": len(lakes), "engineOk": n_ok,
+    report.update({"status": status, "durationMs": duration_ms, "lakes": len(lakes), "engineOk": n_ok, "partialRun": partial,
+                   "fleetTotalsOmitted": list(cb.FLEET_TOTALS) if partial else [],
                    "readinessCounts": registry["readinessCounts"], "breakdowns": registry["breakdowns"],
                    "rtdbWrites": rtdb.writes if rtdb else 0, "rtdbBytes": rtdb.bytes_written if rtdb else 0,
                    "consumedRtdbReads": rtdb.consumed() if rtdb else None})      # consumption-lineage-v1: RTDB reads only; None = not recorded (dry run); HTTP/GCS reads are never in it

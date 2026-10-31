@@ -402,6 +402,15 @@ def stale_carry(lake_id: str, prev_slot: dict | None, now: dt.datetime) -> dict:
 
 
 # ---------------------------------------------------------------- fleet records
+# Fleet totals summarise every lake in the directory. A partial run (--lakes / --limit) sees only its own lakes, so it never emits them:
+# an absent path is never a delete, so the published totals stay as the last full run left them (Sector_Ops #18 D1 finding).
+FLEET_TOTALS = ("readinessCounts", "staleLakeCount", "breakdowns")
+
+
+def without_fleet_totals(record: dict) -> dict:
+    return {k: v for k, v in record.items() if k not in FLEET_TOTALS}
+
+
 def registry_entry(results: dict, prev_fleet: dict, now: dt.datetime, health: str, last_error: dict | None,
                    engine_revision: str | None, lake_ids: list, last_success: str | None) -> dict:
     states = {lid: r["state"] for lid, r in results.items() if r.get("state")}
