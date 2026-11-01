@@ -300,8 +300,8 @@
       "rubricSource": "docs/brains/scoring/frozen-scores.json (FROZEN research certification; the production models carry no score)",
       "entries": {
         "gate:deployment": {
-          "title": "Approve and deploy the certified R3.1 candidate, then re-certify on live data",
-          "action": "The published 8.0 is the frozen research certification of candidate R3.1 (NOT_DEPLOYED). Production clarity is served by models that carry no score. A production score exists only after R3.1 is approved, deployed and re-certified on live data.",
+          "title": "Find Sector-domain evidence for a clarity model before any promotion",
+          "action": "The published 8.0 is the frozen research certification of candidate R3.1 (NOT_DEPLOYED). Sector-domain validation (G0, 2026-11-01) found no admitted matchups at the home lakes and failed bars on South/mid-South reservoirs, so R3.1 is not promotable. Production clarity is served by models that carry no score.",
           "type": "DEPLOYMENT",
           "nature": "DEPLOYMENT",
           "researchGaps": [
