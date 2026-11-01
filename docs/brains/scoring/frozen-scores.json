@@ -18,9 +18,9 @@
     "scoreUpdatedAt": "2026-10-12T00:00:00Z",
     "appliesTo": {"modelId": "r3.1", "status": "CANDIDATE", "certificationStatus": "CERTIFIED", "deploymentStatus": "NOT_DEPLOYED"},
     "scoreBlockers": [
-      {"gate": "deployment", "why": "R3.1 is a certified CANDIDATE, NOT_DEPLOYED; production clarity is secchi-power-v1 / rain-decay-v0 (unscored). Promotion needs Michael's explicit approval"}
+      {"gate": "deployment", "why": "R3.1 is a CANDIDATE, NOT_DEPLOYED: no Sector-domain evidence (G0, Sector_Ops #40, 2026-11-01): no admitted matchups at the home lakes; reservoir bars failed. Production clarity is secchi-power-v1 / rain-decay-v0 (unscored). Promotion needs Michael's explicit approval"}
     ],
-    "nextScoreOpportunity": "Approve and deploy R3.1 as production clarity, then re-certify on live data",
+    "nextScoreOpportunity": "No R3.1 promotion path today; a baseline-first production clarity plan is scoped for owner review (Sector_Ops #40)",
     "note": "research score, not a production-quality score"
   },
   "wind": {

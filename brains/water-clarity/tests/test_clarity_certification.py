@@ -383,7 +383,7 @@ def test_the_production_catalog_and_thresholds_are_unchanged_by_the_move():
     assert (cb.STALE_AFTER_H, cb.SAT_FRESH_DAYS) == (26, 14)
 
 
-FROZEN_BLOCK_SHA256 = "b2cb88becb9dac6ddddec271ee4dd7c5cfd51141bf4f09ac9b4f2dceca9d13a1"      # sha256 of the water-clarity block of docs/brains/scoring/frozen-scores.json at origin/main 4ff9bed0 (BEFORE); AFTER must equal it
+FROZEN_BLOCK_SHA256 = "f4b8f6d6630c570372355b6f23ec04d296e86f46644286ab962a35666adc4378"      # sha256 of the water-clarity block of docs/brains/scoring/frozen-scores.json; re-pinned 2026-11-01 for the owner-approved G0 blocker text (Sector_Ops #40), value unchanged (was b2cb88be at 4ff9bed0)
 
 
 def test_research_score_is_unchanged_before_equals_after_and_the_brain_does_not_write_scores(run_updates):

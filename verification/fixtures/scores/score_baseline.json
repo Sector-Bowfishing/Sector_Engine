@@ -4,7 +4,7 @@
     "water-clarity value reflects a research certification of an undeployed candidate (see the artifact's appliesTo/scoreBlockers); it is not reinterpreted.",
     "Research candidate scores elsewhere are out of scope and are not official readiness."
   ],
-  "frozenScoresFileSha256": "062ddb12abc164b152aa61151a7185c1b5ae5a06836804624b5f1a8de5de493f",
+  "frozenScoresFileSha256": "64074a2170b41e5e49ff13e142c1d2627269d614936558ab8f001d782b82acb9",
   "notBaselinableOffline": [
     "lake-brain",
     "biological-state",
@@ -28,7 +28,7 @@
   "scores": {
     "water-clarity": {
       "basis": "FROZEN",
-      "blockSha256": "b3e7fe3cd4415e96e44d9b51ca3e22088e98a39fe7d7b8c566d07d5f8aba817f",
+      "blockSha256": "17e8ea59251f79792cb8b85d381875bf1fd702745cac8f1e2950d6d6dd62a9cb",
       "scale": 10,
       "scoreType": "ENGINE_READINESS_SCORE",
       "scoreUpdatedAt": "2026-10-12T00:00:00Z",
