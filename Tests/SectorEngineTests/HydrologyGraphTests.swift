@@ -171,6 +171,8 @@ final class VisibilityModelTests: XCTestCase {
         }
         let g = SectorEngineAPI.clarityVisibilityDTO(input(6), turbidity: nil, mrms: nil, config: .default)
         XCTAssertEqual(g.model, "secchi-power-v1"); XCTAssertEqual(g.source, "inSituGauge")
+        XCTAssertEqual(g.confidence, "low", "the gauge path is not validated in Sector water (Sector_Ops #40)")
+        XCTAssertTrue(g.limitations.contains("Not checked against measured clarity at Sector lakes."))
         XCTAssertEqual(g.centralFt, ClarityFactor.visibilityFt(input(6)), accuracy: 1e-9)
         XCTAssertLessThan(try! XCTUnwrap(g.lowFt), g.centralFt); XCTAssertGreaterThan(try! XCTUnwrap(g.highFt), g.centralFt)
         let r = SectorEngineAPI.clarityVisibilityDTO(input(nil), turbidity: nil, mrms: nil, config: .default)
