@@ -172,6 +172,10 @@
     "sourceFallback": {
       "type": "object",
       "description": "Swift record LakeSourceFallback"
+    },
+    "release": {
+      "type": "object",
+      "description": "Swift record LakeReleaseState"
     }
   }
 }
