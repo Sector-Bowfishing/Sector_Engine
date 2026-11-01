@@ -150,6 +150,25 @@ def test_judge_verdicts():
     assert P.judge(blk(3.3, "2026-10-15T00:00:00Z", scoreBlockers=[]), readback)["verdict"] == "SAME"
 
 
+def test_attached_sub_blocks_are_not_proposal_content():
+    """2026-10-19 rehearsal: /scores/wind carries `measurements` (attached after the guard), the frozen candidate does not, both carry the
+    same scoreUpdatedAt -> judged CONFLICT on every run. Attachments are not part of the proposal; a real content change still is."""
+    meas = {"windCapability": {"value": 6.7, "basis": "COMPUTED"}}
+    published = dict(WIND_NEW, measurements=meas, explanation={"summary": "x"})
+    assert P.judge(WIND_NEW, published)["verdict"] == "SAME"
+    eff, held = P.apply_guard({"wind": WIND_NEW}, {"wind": published})
+    assert held == [] and eff["wind"]["measurements"] == meas           # carried forward: a HELD re-attachment cannot delete it
+    assert eff["wind"]["value"] == WIND_NEW["value"] and "explanation" not in eff["wind"]
+    fish = dict(blk(4.0, "2026-10-13T00:00:00Z"), capability={"evaluationId": "e1"})
+    assert P.judge(blk(4.0, "2026-10-13T00:00:00Z"), fish)["verdict"] == "SAME"
+    # same timestamp, different certification content: still a CONFLICT, attachments or not
+    assert P.judge(dict(WIND_NEW, uncapped=3.4), published)["verdict"] == "CONFLICT"
+    # a newer certification is an ADVANCE and does NOT inherit the old block's measurements (they were computed against the old block)
+    newer = blk(3.6, "2026-10-20T00:00:00Z", "wind-certification-rubric-v1")
+    eff, held = P.apply_guard({"wind": newer}, {"wind": published})
+    assert held == [] and "measurements" not in eff["wind"]
+
+
 def test_updating_one_brain_cannot_regress_the_others():
     """Lake / Biological / Depth publishing with a stale frozen Wind artifact in their image: only the intended Brain moves."""
     published = {"wind": WIND_NEW, "lake-brain": blk(5.0, "2026-10-13T00:00:00Z"), "biological-state": blk(4.0, "2026-10-13T00:00:00Z"),
