@@ -57,7 +57,21 @@ and no lake is eligible.
 | Merge and deploy the Engine with `SECTOR_LAKE_LEVEL_OUTPUT=1` | owner (deploy) |
 | Wire the iOS reader into a screen and release the app | owner (App Store) |
 
-## 6. What this does not decide
+## 6. Open decision: which family the Engine reads
+`data-check` reports two findings on this draft, and they are correct:
+- `UNDECLARED_ACCESS`: `service.customer-engine` is not a declared reader of `fam.lake-states` (FD-04, FD-11).
+- `INTERNAL_TO_CUSTOMER`: `fam.lake-states` is an INTERNAL-lane family, and customer components read only CUSTOMER-lane families (IO-06).
+
+Nothing reads it today (the server has no reader), but the path cannot be turned on until one of these is approved:
+- **A (recommended):** the Publisher writes a small CUSTOMER-lane projection per eligible lake (the §2 fields only), and the Engine reads
+  that family instead. The INTERNAL state stays internal, and eligibility is applied once, at publish time, in the Publisher.
+- **B:** declare `service.customer-engine` a reader of `fam.lake-states` and move that family to the CUSTOMER lane. It is simpler, but it
+  exposes the full internal record to the customer boundary.
+
+Either option changes the RTDB path-ownership matrix and is a data-architecture approval. Under A, the reader path in
+`LakeLevelOutputAPI` changes; the projection, the gates and the iOS reader do not.
+
+## 7. What this does not decide
 - Which screen shows the level, and its wording beyond the chip and the limitation line.
 - Any other Brain's customer path. Each follows this pattern with its own eligibility rule.
 - The registry's `customerIntegrationMode` for Lake. It changes only when the output is turned on.
