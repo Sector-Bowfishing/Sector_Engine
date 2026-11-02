@@ -92,6 +92,19 @@ router.get("hydrology") { request, _ -> Response in
     return jsonResponse(inputs)
 }
 
+// Lake Brain's level and trend for one lake (LakeLevelOutputAPI, Sector_Ops #43, #44).
+// Fails closed: UNKNOWN unless SECTOR_LAKE_LEVEL_OUTPUT=1, the lake is on the
+// validated list and the Publisher's CUSTOMER-lane copy can be read. This server
+// has no reader yet (granting it one is a separate, approved IAM change), so
+// every lake answers UNKNOWN.
+let lakeLevelEligibility = LakeLevelEligibility.fromEnvironment()
+router.get("lake/level") { request, _ -> Response in
+    guard let lake = request.uri.queryParameters.get("lake").map({ String($0) }), !lake.isEmpty else {
+        return Response(status: .badRequest)
+    }
+    return jsonResponse(await LakeLevelOutputAPI.output(lakeId: lake, eligibility: lakeLevelEligibility, reader: nil))
+}
+
 // Each arm's current clarity state (ClarityStateAPI, Clarity Fusion Stage 2).
 // A review build: routed only where SECTOR_STAGE2_ROUTES=1, so a deploy of
 // this branch does not publish it before it is reviewed.
