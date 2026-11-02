@@ -48,7 +48,8 @@ one stops passing):
 
 5. **Switched on:** `SECTOR_LAKE_LEVEL_OUTPUT=1` on the Engine service. Off by default.
 6. **Validated at this lake:** the lake is in `LakeLevelEligibility.validatedLakeIds`. This list is code, so adding a lake is a
-   reviewed PR. It is empty until the owner approves lakes from the scored validation.
+   reviewed PR. It holds the 30 lakes the owner approved on Sector_Ops #45 from the scored Lake Beta validation (18 class A, 12
+   class B). Same-instrument passes, failures, abstentions and the four home lakes are not on it.
 7. **A reader exists.** This build has none. Read access to the copy is an IAM change and needs its own approval.
 8. **A copy for this lake:** `/customer/lakes/{lakeKey}/level` exists, its `schema` is `sector-customer-lake-level-v1` and its
    `lakeId` matches.

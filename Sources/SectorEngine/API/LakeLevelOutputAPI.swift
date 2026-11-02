@@ -66,7 +66,20 @@ public struct LakeLevelEligibility: Sendable {
         LakeLevelEligibility(enabled: env["SECTOR_LAKE_LEVEL_OUTPUT"] == "1", eligibleLakeIds: validatedLakeIds)
     }
 
-    public static let validatedLakeIds: Set<String> = []
+    /// Lakes that passed the frozen Lake Beta validation V1 (scored once 2026-11-02; Sector_Ops #34, #44) and that the owner
+    /// approved on Sector_Ops #45. Excluded: the 7 lakes whose check gauge is the same instrument, the 4 failures and every
+    /// abstention. Being listed opens nothing by itself: the flag, the reader and a fresh Publisher copy are still required.
+    public static let validatedLakeIds: Set<String> = [
+        // Class A (18)
+        "Allegheny Reservoir|PA", "Berlin Lake|OH", "Canyon Lake|TX", "Clearwater Lake|MO", "Don Pedro|CA", "Flathead Lake|MT",
+        "Hungry Horse Reservoir|MT", "Jackson Lake|WY", "Jamestown Reservoir|ND", "Lake Darling|ND", "Lake Milton|OH",
+        "Pactola Reservoir|SD", "Possum Kingdom Lake|TX", "Pueblo Reservoir|CO", "Stonewall Jackson Lake|WV",
+        "Tiber Reservoir (Lake Elwell)|MT", "Tygart Lake|WV", "Waconda Lake|KS",
+        // Class B (12)
+        "Bighorn Lake|WY", "Boysen Reservoir|WY", "Cecil M. Harden Lake|IN", "Cedar Creek Reservoir|TX", "Glendo Reservoir|WY",
+        "Keyhole Reservoir|WY", "Lake Powell|UT", "Lake Roosevelt (FDR)|WA", "Lake Tschida|ND", "Monroe Lake|IN", "Patoka Lake|IN",
+        "Sam Rayburn Reservoir|TX",
+    ]
 }
 
 public enum LakeLevelOutputAPI {
