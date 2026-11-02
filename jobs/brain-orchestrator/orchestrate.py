@@ -49,6 +49,7 @@ from sector_brain_platform import execution_control as EC                       
 from sector_brain_platform import engineering_status_publication as ESP                                                # noqa: E402
 from sector_brain_platform import shadow_lane as SL                                                                   # noqa: E402
 from sector_brain_platform import data_ownership as DO, publication_stage as PS, health_mirror as HM                                       # noqa: E402
+from sector_brain_platform import runner_lease as RL                                                                  # noqa: E402
 sys.path.insert(0, HERE)
 import control_plane as CP                                                                                            # noqa: E402
 
@@ -325,6 +326,17 @@ def build_live_publisher(store):
     return None
 
 
+def runner_gate(a, brain_id: str, now: dt.datetime) -> tuple[bool, str]:
+    """--runner-leases: may the cloud start this Brain? Unreadable store or policy = no (fail closed: a missing lease system never means a surprise cloud run)."""
+    try:
+        store = build_publication_store(a.artifact_store_dir, a.artifact_bucket)
+        if store is None:
+            return False, "NO_ARTIFACT_STORE"
+        return RL.cloud_may_start(RL.orchestrator_view(store), RL.load_policy(), brain_id, now)
+    except Exception as e:                                       # noqa: BLE001 - fail closed
+        return False, f"LEASE_CHECK_FAILED:{type(e).__name__}"
+
+
 PUBLISHER_JOB = "brain-publisher"
 
 
@@ -395,6 +407,10 @@ def main(argv=None) -> int:
     ap.add_argument("--hand-off-publication", action="store_true",
                     help="with --coordinate-publication (Sector_Ops #46 Q3): for each sealed artifact of a CENTRAL Brain write a create-only publication request and start brain-publisher "
                          "when requests are pending and automatic work is permitted. OFF by default (also PUBLICATION_HANDOFF=on); a dry run writes and starts nothing")
+    ap.add_argument("--runner-leases", action="store_true",
+                    help="Sector_Ops #50: honour runner leases (runner_lease.py, runner-policy.json): never start a Brain's Cloud Run job while another runner holds its lease, "
+                         "or while its policy primary is not the cloud and failover is OFF; reconcile runner execution records in the publication stage. OFF by default "
+                         "(also RUNNER_LEASES=on); needs the artifact store")
     ap.add_argument("--artifact-store-dir", default=os.environ.get("PUBLICATION_ARTIFACT_DIR"), help="directory holding the artifact store (local); the private bucket is a gated deployment resource")
     ap.add_argument("--artifact-bucket", default=os.environ.get("PUBLICATION_ARTIFACT_BUCKET"), help="private GCS bucket holding artifacts/, publishes/ and exports/orchestrator/ (the Orchestrator reads artifacts and writes only exports/orchestrator/)")
     ap.add_argument("--publication-ledger", default=os.environ.get("PUBLICATION_LEDGER"), help="JSON ledger file persisting run/publication records between cycles")
@@ -407,6 +423,7 @@ def main(argv=None) -> int:
         a.control_only, a.publish_health = True, True
     a.coordinate_publication = (a.coordinate_publication or os.environ.get("PUBLICATION_COORDINATION") == "on") and not a.health_only
     a.hand_off_publication = (a.hand_off_publication or os.environ.get("PUBLICATION_HANDOFF") == "on") and a.coordinate_publication
+    a.runner_leases = a.runner_leases or os.environ.get("RUNNER_LEASES") == "on"
     t0 = time.time()
     now = dt.datetime.now(dt.timezone.utc)
     if a.control_only:
@@ -502,6 +519,12 @@ def main(argv=None) -> int:
                 deferred.append({"brainId": b, "why": f"execution control: {gwhy}"})
                 print(f"HOLD {b:20s} {gwhy}", flush=True)
                 continue
+            if a.runner_leases and ex["kind"] == "cloud-run-job":
+                lok, lwhy = runner_gate(a, b, now)
+                if not lok:
+                    deferred.append({"brainId": b, "why": f"runner lease: {lwhy}"})
+                    print(f"HOLD {b:20s} runner lease: {lwhy}", flush=True)
+                    continue
             if a.dry_run or a.no_execute:
                 deferred.append({"brainId": b, "why": "not executed (--dry-run/--no-execute)"})
                 continue
@@ -548,6 +571,10 @@ def main(argv=None) -> int:
                 cloud_now = CP.executions_from_cloud_run(manifest, executions, records, now)
                 seen_ids = {e["executionId"] for e in exec_records}
                 terminal = [e for e in exec_records + [c for c in cloud_now if c["executionId"] not in seen_ids] if e.get("status") not in ("STARTED", "RUNNING")]
+                if a.runner_leases:                                      # runs outside Cloud Run (Sector Pulse) are reconciled like Cloud Run ones
+                    seen_ids |= {e["executionId"] for e in terminal}
+                    terminal += [e for e in RL.runner_executions(RL.orchestrator_view(pstore), set(EXECUTORS), since=iso(now - dt.timedelta(days=2)))
+                                 if e["executionId"] not in seen_ids]
                 publication = PS.run_stage(store=pstore, ledger_path=a.publication_ledger, executions=terminal, shadow=build_shadow_publisher(pstore),
                                            live=build_live_publisher(pstore), cutover_path=a.publication_cutover,
                                            paused_reason=None if auto_ok else "EXECUTION_PAUSED", dry_run=a.dry_run,
