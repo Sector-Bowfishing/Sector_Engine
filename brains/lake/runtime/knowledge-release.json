@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "lake-brain",
+  "releaseId": "lake-knowledge-2026-11-02.1",
+  "store": "PACKAGED_IN_IMAGE",
+  "owner": "lake-brain",
+  "approval": {
+    "status": "NOT_RECORDED",
+    "record": null
+  },
+  "files": [
+    {
+      "path": "LakeBrain/LakeGeneratedBindings.swift",
+      "sha256": "e37f4a50083d50020f3879db7caf3c8944b888d05c09a474cce28b48151b0f61",
+      "bytes": 9072
+    },
+    {
+      "path": "LakeBrain/LakeSourceBindings.swift",
+      "sha256": "79142b6e9b9fd4455207c1b50f5a9f7f1c25420f4cbf6dc0c497ff651cd11368",
+      "bytes": 12756
+    },
+    {
+      "path": "LakeBrain/LakeSourceBindingsGenerated.swift",
+      "sha256": "bd629ab166f98e40a526f5625ebae2bdcba3b6f4104438ea8777ae272eb70d20",
+      "bytes": 425479
+    }
+  ],
+  "releaseDigest": "sha256:be71a8a8783bf91195f8ba7815e419dbfb99bdcd37f159cad31c04780fc5fdb1"
+}
