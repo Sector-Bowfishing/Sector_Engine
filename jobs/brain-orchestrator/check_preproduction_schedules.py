@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Pre-production schedule audit (docs/brains/platform/cost-freeze/schedule-policy.json).
 
-Fails (exit 1) when a Brain-related Cloud Scheduler job is ENABLED but not on the policy allowlist with gate, cost bound and stop condition.
+Fails (exit 1) when a Brain-related Cloud Scheduler job is ENABLED but not on the policy allowlist with gate, cost bound and stop condition,
+or when a live scheduler is neither in the execution manifest nor classified non-Brain (nonBrainSchedulers, target pinned).
 Read-only: one `gcloud scheduler jobs list`, or --input <file.json> for tests.
 
   python3 check_preproduction_schedules.py            # live
@@ -18,6 +19,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 POLICY = os.path.join(HERE, "..", "..", "docs", "brains", "platform", "cost-freeze", "schedule-policy.json")
 REQUIRED = ("gate", "maxMonthlyUsd", "stop", "approvedAt")
+NON_BRAIN_REQUIRED = ("owner", "reason", "expectTarget", "classifiedAt", "approvalRef")
 
 
 def audit(jobs: list[dict], policy: dict, control: dict | None = None) -> tuple[list[str], list[str]]:
@@ -39,6 +41,12 @@ def audit(jobs: list[dict], policy: dict, control: dict | None = None) -> tuple[
         missing = [k for k in REQUIRED if not entry.get(k)]
         if missing:
             bad.append(f"allowlist entry {name} lacks {missing}")
+    for name, entry in policy.get("nonBrainSchedulers", {}).items():
+        missing = [k for k in NON_BRAIN_REQUIRED if not entry.get(k)]
+        if missing:
+            bad.append(f"non-Brain entry {name} lacks {missing}")
+        if name in brain or name in allow or name in deprecated:
+            bad.append(f"{name} is classified non-Brain but is also listed as a Brain scheduler")
     for j in jobs:
         name = (j.get("name") or "").rsplit("/", 1)[-1]
         if name not in brain or j.get("state") != "ENABLED" or name in deprecated:
@@ -50,9 +58,18 @@ def audit(jobs: list[dict], policy: dict, control: dict | None = None) -> tuple[
     return bad, ok
 
 
-def drift(jobs: list[dict], manifest: dict) -> list[str]:
+def _target_matches(job: dict, expect: dict) -> bool:
+    """A non-Brain scheduler must still point where it was classified: the pinned Pub/Sub topic, and no HTTP or App Engine target."""
+    if job.get("httpTarget") or job.get("appEngineHttpTarget"):
+        return False
+    return (job.get("pubsubTarget") or {}).get("topicName") == expect.get("pubsubTopic")
+
+
+def drift(jobs: list[dict], manifest: dict, non_brain: dict | None = None) -> list[str]:
     """Compare live Cloud Scheduler with the orchestrator's execution manifest (the single schedule model). Reports: a job the manifest says is
-    PAUSED/MANUAL but is ENABLED; a VALIDATION_EXCEPTION that is not ENABLED (evidence capture silently off); a live scheduler the manifest does not know."""
+    PAUSED/MANUAL but is ENABLED; a VALIDATION_EXCEPTION that is not ENABLED (evidence capture silently off); a live scheduler the manifest does not know.
+    non_brain = the policy's nonBrainSchedulers: those are not UNMANAGED, but one whose target moved, or that the manifest also claims, is DRIFT."""
+    non_brain = non_brain or {}
     live = {(j.get("name") or "").rsplit("/", 1)[-1]: j for j in jobs}
     known = {mj.get("scheduler"): (jid, mj) for jid, mj in manifest["jobs"].items() if mj.get("scheduler")}
     out = []
@@ -69,7 +86,12 @@ def drift(jobs: list[dict], manifest: dict) -> list[str]:
             out.append(f"DRIFT {sch}: ENABLED but the manifest classifies it {mj['classification']}")
         elif st != "ENABLED" and mj["classification"] == "VALIDATION_EXCEPTION":
             out.append(f"DRIFT {sch}: validation exception is {st}: prospective evidence capture is not running")
-    for name in sorted(set(live) - set(known) - {"unrelated"}):
+    for name in sorted(set(live) & set(non_brain)):
+        if name in known:
+            out.append(f"DRIFT {name}: classified non-Brain but the execution manifest schedules it")
+        elif not _target_matches(live[name], non_brain[name].get("expectTarget") or {}):
+            out.append(f"DRIFT {name}: classified non-Brain, but its target is no longer the pinned one - re-classify it before trusting the audit")
+    for name in sorted(set(live) - set(known) - set(non_brain) - {"unrelated"}):
         out.append(f"UNMANAGED {name}: live scheduler not in the execution manifest (hidden cron) - classify it or confirm it is not Brain-related")
     return out
 
@@ -103,8 +125,9 @@ def main() -> int:
             print(f"execution control unreadable ({type(e).__name__}): treated as PAUSED", file=sys.stderr)
     if control is not None:
         print(f"execution control: {control['state']} ({control['reason']})")
-    bad, ok = audit(jobs, json.load(open(POLICY)), control)
-    notes = drift(jobs, O.load_manifest())
+    policy = json.load(open(POLICY))
+    bad, ok = audit(jobs, policy, control)
+    notes = drift(jobs, O.load_manifest(), policy.get("nonBrainSchedulers"))
     print("enabled Brain schedulers with a gate:", ", ".join(ok) or "none")
     for n in notes:
         print(n, file=sys.stderr)

@@ -47,5 +47,17 @@
     "clarity-current-hourly",
     "clarity-candidate-shadow"
   ],
-  "pausedPipelinesNote": "Brain input pipelines with their own (paused) schedulers. Their deploy scripts no longer create or update schedulers. Re-activation, if ever, goes through the orchestrator (PL-15), not their own cron."
+  "pausedPipelinesNote": "Brain input pipelines with their own (paused) schedulers. Their deploy scripts no longer create or update schedulers. Re-activation, if ever, goes through the orchestrator (PL-15), not their own cron.",
+  "nonBrainSchedulers": {
+    "firebase-schedule-sweepListingCoverOwners-us-central1": {
+      "owner": "Sector app backend: Firebase scheduled function sweepListingCoverOwners (deployed by the Firebase CLI 2026-10-29), not a Brain",
+      "reason": "Firebase creates one Cloud Scheduler job per scheduled function. This one publishes only to that function's own Pub/Sub topic (checked 2026-11-02: pubsubTarget, no HTTP target). It is not a Brain job, not in the execution manifest, and not started by the orchestrator. Its source is not in this repository and was not reviewed here; what it writes is the app's business.",
+      "expectTarget": {
+        "pubsubTopic": "projects/sector-9393c/topics/firebase-schedule-sweepListingCoverOwners-us-central1"
+      },
+      "classifiedAt": "2026-11-02",
+      "approvalRef": "Sector_Ops #46 P1 (owner approval 2026-11-02, recorded on #46 and #47)"
+    }
+  },
+  "nonBrainSchedulersNote": "Live schedulers confirmed NOT Brain-related, so the audit does not report them UNMANAGED. Each entry pins its target; if the live job points anywhere else (another topic or any HTTP target) the audit reports DRIFT. A name may not be both here and in brainSchedulers or the execution manifest. Adding an entry needs an owner approvalRef."
 }
