@@ -571,7 +571,7 @@ def main(argv=None) -> int:
                 cloud_now = CP.executions_from_cloud_run(manifest, executions, records, now)
                 seen_ids = {e["executionId"] for e in exec_records}
                 terminal = [e for e in exec_records + [c for c in cloud_now if c["executionId"] not in seen_ids] if e.get("status") not in ("STARTED", "RUNNING")]
-                if a.runner_leases:                                      # runs outside Cloud Run (Sector Pulse) are reconciled like Cloud Run ones
+                if a.runner_leases:                                      # runs outside Cloud Run (a registered runner) are reconciled like Cloud Run ones
                     seen_ids |= {e["executionId"] for e in terminal}
                     terminal += [e for e in RL.runner_executions(RL.orchestrator_view(pstore), set(EXECUTORS), since=iso(now - dt.timedelta(days=2)))
                                  if e["executionId"] not in seen_ids]

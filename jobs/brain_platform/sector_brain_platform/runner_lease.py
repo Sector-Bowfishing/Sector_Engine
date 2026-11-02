@@ -1,4 +1,4 @@
-"""Runner leases: which runner (the cloud jobs or Sector Pulse on the owner's Mac mini) runs a Brain's next cycle (Sector_Ops #46, #47, #50). DRAFT, nothing wired by default.
+"""Runner leases: which runner (the cloud jobs, or a registered runner outside Cloud Run) runs a Brain's next cycle (Sector_Ops #46, #47, #50). DRAFT, nothing wired by default.
 
 One lease object per Brain in the private artifact store, written by compare-and-swap (generation match, the same mechanism as the Publisher's apply lock):
 
