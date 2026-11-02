@@ -92,11 +92,11 @@ router.get("hydrology") { request, _ -> Response in
     return jsonResponse(inputs)
 }
 
-// Lake Brain's level and trend for one lake (LakeLevelOutputAPI, Sector_Ops #43).
+// Lake Brain's level and trend for one lake (LakeLevelOutputAPI, Sector_Ops #43, #44).
 // Fails closed: UNKNOWN unless SECTOR_LAKE_LEVEL_OUTPUT=1, the lake is on the
-// validated list and a published state can be read. This server has no Brain
-// reader yet (granting it one is a separate, approved IAM change), so every
-// lake answers UNKNOWN.
+// validated list and the Publisher's CUSTOMER-lane copy can be read. This server
+// has no reader yet (granting it one is a separate, approved IAM change), so
+// every lake answers UNKNOWN.
 let lakeLevelEligibility = LakeLevelEligibility.fromEnvironment()
 router.get("lake/level") { request, _ -> Response in
     guard let lake = request.uri.queryParameters.get("lake").map({ String($0) }), !lake.isEmpty else {
