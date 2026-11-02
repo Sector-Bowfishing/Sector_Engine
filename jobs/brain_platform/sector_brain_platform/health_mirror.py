@@ -8,14 +8,21 @@ from __future__ import annotations
 
 from . import data_ownership as DO
 
-#: Brains whose legacy health paths are mirrored after cutover. Only Water Clarity (the approved pilot) is listed; a Brain is added with its own cutover plan.
+#: Brains whose legacy health paths are mirrored after cutover. Water Clarity (the approved pilot) and Lake (#48 A3, ahead of its cutover) are listed.
 def _clarity_source_ids():
     from .publisher.registry import _clarity_sources              # the Publisher registry's own list of the source records Clarity authors
     return tuple(_clarity_sources())
 
 
+def _lake_source_ids():
+    from .publisher.registry import LAKE, _owned_sources           # the Publisher registry's own list of the source records Lake authors
+    return tuple(sorted(_owned_sources(LAKE)))
+
+
 SPECS = {
     "water-clarity": {"registryChildren": ("status", "staleLakeCount"), "sources": _clarity_source_ids},
+    # Sector_Ops #48 A3: mirrored only once Lake is CENTRAL (the stage derives health for CENTRAL Brains that published); until then Lake's own writer writes them
+    "lake-brain": {"registryChildren": ("status", "staleLakeCount", "reasons"), "sources": _lake_source_ids},
 }
 
 

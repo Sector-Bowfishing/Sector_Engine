@@ -23,8 +23,6 @@
       "pathFamilies": [
         "/activity/{event}",
         "/brains/lake-brain/{child}",
-        "/health/brains/lake-brain/{child}",
-        "/health/sources/{id}",
         "/lakeFleet/{k}/modelVersions/lake",
         "/lakeFleet/{k}/readiness/lake",
         "/lakeFleet/{k}/slots/lake",
@@ -39,7 +37,9 @@
         {"path": "/snapshots/{k}/latest/lakeState", "disposition": "PUBLISHER_COMPATIBILITY_PROJECTION", "ref": "lake-snapshot-copy-v1"},
         {"path": "/snapshots/{k}/latest/brainVersions/lake-brain", "disposition": "PUBLISHER_COMPATIBILITY_PROJECTION", "ref": "lake-snapshot-brainversion-v1"},
         {"path": "/snapshots/{k}/latest/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "snapshot-lakeid"},
-        {"path": "/health/jobs/{job}", "disposition": "ORCHESTRATOR_DERIVED", "ref": "health-jobs"}
+        {"path": "/health/jobs/{job}", "disposition": "ORCHESTRATOR_DERIVED", "ref": "health-jobs"},
+        {"path": "/health/brains/lake-brain/{child}", "disposition": "ORCHESTRATOR_DERIVED", "ref": "health-brains"},
+        {"path": "/health/sources/{id}", "disposition": "ORCHESTRATOR_DERIVED", "ref": "health-sources"}
       ]
     }
   ],
