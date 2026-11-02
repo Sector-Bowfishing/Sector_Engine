@@ -325,6 +325,29 @@ def build_live_publisher(store):
     return None
 
 
+PUBLISHER_JOB = "brain-publisher"
+
+
+def start_publisher_if_needed(handoff: dict, executions: dict, tokens: TokenProvider, *, auto_ok: bool, may_start: bool) -> dict:
+    """Hand-off mode: start the recurring Publisher job once when requests are pending. Never while automatic work is not permitted, never in a dry run / no-execute cycle, never
+    while an execution of it is already running (single flight); the job re-checks the execution control and the cutover itself. No argument overrides: its deployed arguments decide
+    whether it runs --live."""
+    if not handoff.get("pending"):
+        return {"started": False, "reason": "NOTHING_PENDING"}
+    if not auto_ok:
+        return {"started": False, "reason": "EXECUTION_PAUSED"}
+    if not may_start:
+        return {"started": False, "reason": "DRY_RUN_OR_NO_EXECUTE"}
+    running = gcp.running_executions(executions.get(PUBLISHER_JOB) or [])
+    if running:
+        return {"started": False, "reason": "ALREADY_RUNNING", "execution": running[0]}
+    try:
+        op = gcp.run_job(tokens, PUBLISHER_JOB)
+    except Exception as e:                                       # noqa: BLE001 - recorded; the requests stay pending for the next cycle
+        return {"started": False, "reason": f"START_FAILED:{type(e).__name__}", "detail": str(e)[:200]}
+    return {"started": True, "execution": (op.get("metadata") or {}).get("name"), "at": iso(dt.datetime.now(dt.timezone.utc))}
+
+
 def gate_dispatch(todo: set, deferred: list) -> set:
     """Cortex M08 in the execution path: only recognised Brain identities run; an alias or unknown identity never runs; the legacy combined package is the ONLY dispatch of its two target
     Brains (a target Brain that the legacy package already covers is not also dispatched: no double dispatch, no duplicated scientific result)."""
@@ -369,6 +392,9 @@ def main(argv=None) -> int:
     ap.add_argument("--coordinate-publication", action="store_true",
                     help="PL-19 publication coordination: reconcile this cycle's and Cloud Run's executions with the sealed artifacts in the private store, record each run's publication outcome "
                          "(control/orchestrator.publication). OFF by default (also PUBLICATION_COORDINATION=on). Never arms the Publisher: a Brain is only handed to a live Publisher after an approved cutover")
+    ap.add_argument("--hand-off-publication", action="store_true",
+                    help="with --coordinate-publication (Sector_Ops #46 Q3): for each sealed artifact of a CENTRAL Brain write a create-only publication request and start brain-publisher "
+                         "when requests are pending and automatic work is permitted. OFF by default (also PUBLICATION_HANDOFF=on); a dry run writes and starts nothing")
     ap.add_argument("--artifact-store-dir", default=os.environ.get("PUBLICATION_ARTIFACT_DIR"), help="directory holding the artifact store (local); the private bucket is a gated deployment resource")
     ap.add_argument("--artifact-bucket", default=os.environ.get("PUBLICATION_ARTIFACT_BUCKET"), help="private GCS bucket holding artifacts/, publishes/ and exports/orchestrator/ (the Orchestrator reads artifacts and writes only exports/orchestrator/)")
     ap.add_argument("--publication-ledger", default=os.environ.get("PUBLICATION_LEDGER"), help="JSON ledger file persisting run/publication records between cycles")
@@ -380,6 +406,7 @@ def main(argv=None) -> int:
     if a.health_only:
         a.control_only, a.publish_health = True, True
     a.coordinate_publication = (a.coordinate_publication or os.environ.get("PUBLICATION_COORDINATION") == "on") and not a.health_only
+    a.hand_off_publication = (a.hand_off_publication or os.environ.get("PUBLICATION_HANDOFF") == "on") and a.coordinate_publication
     t0 = time.time()
     now = dt.datetime.now(dt.timezone.utc)
     if a.control_only:
@@ -523,8 +550,12 @@ def main(argv=None) -> int:
                 terminal = [e for e in exec_records + [c for c in cloud_now if c["executionId"] not in seen_ids] if e.get("status") not in ("STARTED", "RUNNING")]
                 publication = PS.run_stage(store=pstore, ledger_path=a.publication_ledger, executions=terminal, shadow=build_shadow_publisher(pstore),
                                            live=build_live_publisher(pstore), cutover_path=a.publication_cutover,
-                                           paused_reason=None if auto_ok else "EXECUTION_PAUSED", dry_run=a.dry_run)
+                                           paused_reason=None if auto_ok else "EXECUTION_PAUSED", dry_run=a.dry_run,
+                                           handoff=a.hand_off_publication, run_id=f"orchestrator-{iso(now)}")
                 publication["state"] = "COORDINATED"
+                if publication["handoff"]["enabled"]:
+                    publication["handoff"]["publisherStart"] = start_publisher_if_needed(publication["handoff"], executions, tokens, auto_ok=auto_ok,
+                                                                                         may_start=write and not a.control_only and not a.no_execute)
                 # operational health of a CENTRAL Brain is the Orchestrator's, derived only from what the Publisher published (never written by the Publisher or the Brain)
                 central_published = [b for b in publication["cutover"]["central"] if (publication["summary"]["brains"].get(b) or {}).get("published")]
                 publication["healthMirror"] = HM.stage(db, central_published, write and not a.control_only)
@@ -651,7 +682,7 @@ def main(argv=None) -> int:
               "lastSeen": {**(state.get("lastSeen") or {}), **{b: v for b, v in seen.items() if v}} if write else state.get("lastSeen"),
               "jobsSynced": len(records), "jobsChanged": n_changed, "scores": scores, "executionControl": EC.summary(ctl)}
     if publication is not None:
-        record["publication"] = {k: publication[k] for k in ("state", "reason", "armed", "cutover", "summary", "healthMirror") if k in publication}
+        record["publication"] = {k: publication[k] for k in ("state", "reason", "armed", "cutover", "summary", "healthMirror", "handoff") if k in publication}
     if write and not a.control_only:
         live.update({"control/orchestrator": record})
     print(json.dumps({k: record[k] for k in ("mode", "durationMs", "jobsChanged", "scores")}, indent=None))
