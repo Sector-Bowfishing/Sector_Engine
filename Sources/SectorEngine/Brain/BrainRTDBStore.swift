@@ -146,6 +146,18 @@ public final class RTDBRestStore: BrainStore, @unchecked Sendable {
     }
 }
 
+/// Dry run against the LIVE Brain RTDB: reads (GET) go to `reader`, every write and delete
+/// goes to `writer` (a local directory). The database is never written. Used by the Lake and
+/// Water Temperature jobs (`--dry-run DIR --read-rtdb URL`) so a dry run sees the previous state.
+public final class ReadThroughDryRunStore: BrainStore, @unchecked Sendable {
+    public let reader: BrainStore, writer: LocalDirectoryStore
+    public init(reader: BrainStore, writer: LocalDirectoryStore) { self.reader = reader; self.writer = writer }
+    public func update(_ paths: [String: Data]) async throws { try await writer.update(paths) }
+    public func get(_ path: String) async throws -> Data? { try await reader.get(path) }
+    public func delete(_ path: String) async throws { try await writer.delete(path) }
+    public func shallowKeys(_ path: String) async throws -> [String] { try await reader.shallowKeys(path) }
+}
+
 /// Dry run: every path becomes <dir>/<path>.json. Nothing leaves the machine.
 public final class LocalDirectoryStore: BrainStore, @unchecked Sendable {
     package let dir: URL

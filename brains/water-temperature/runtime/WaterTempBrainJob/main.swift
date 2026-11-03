@@ -4,6 +4,7 @@
 //  usage: WaterTempBrainJob [--dry-run DIR] [--rtdb URL] [--lake ID] [--limit N] [--concurrency N]
 //    --dry-run DIR  write every Brain RTDB path as a JSON file under DIR (no database)
 //    --rtdb URL     write the Brain RTDB (default $SECTOR_BRAIN_RTDB_URL)
+//    --read-rtdb URL  with --dry-run: read the live Brain RTDB (GET only) for the previous state; writes still go to DIR
 //    --lake ID      one canonical lake id, e.g. "Guntersville|AL" (repeatable); per-lake nodes only
 //    --limit N      the first N directory lakes; per-lake nodes only
 //
@@ -31,8 +32,14 @@ options.processingVersion = env["SECTOR_ENGINE_REVISION"] ?? env["K_REVISION"] ?
 let store: BrainStore
 var rest: RTDBRestStore? = nil
 if let dir = flag("--dry-run") {
-    store = LocalDirectoryStore(directory: dir, brainId: WaterTemperatureBrain.brainId)
-    print("▶ dry run → \(dir)")
+    if let live = flag("--read-rtdb") {           // GET only: the previous state, so a dry run seals the same artifact a live run would (Sector_Ops #50 WT-P2)
+        rest = try RTDBRestStore(databaseURL: live, brainId: WaterTemperatureBrain.brainId)
+        store = ReadThroughDryRunStore(reader: rest!, writer: LocalDirectoryStore(directory: dir, brainId: WaterTemperatureBrain.brainId))
+        print("▶ dry run → \(dir) (reads \(live), GET only)")
+    } else {
+        store = LocalDirectoryStore(directory: dir, brainId: WaterTemperatureBrain.brainId)
+        print("▶ dry run → \(dir)")
+    }
 } else if let url = flag("--rtdb") ?? env["SECTOR_BRAIN_RTDB_URL"] {
     rest = try RTDBRestStore(databaseURL: url, brainId: WaterTemperatureBrain.brainId)
     store = rest!
