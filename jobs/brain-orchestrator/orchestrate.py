@@ -345,7 +345,22 @@ def runner_primary_is_cloud(brain_id: str) -> bool:
         return False
 
 
-def grant_to_primary(a, brain_id: str, now: dt.datetime) -> tuple[bool, str, dict | None]:
+def runner_grants_today(a, brain_id: str, now: dt.datetime) -> int:
+    """Grants made today for this Brain: each counts as a run against the execution control's maxRunsPerDay (a grant is a run outside Cloud Run)."""
+    try:
+        store = build_publication_store(a.artifact_store_dir, a.artifact_bucket)
+        return len(RL.grants_since(RL.orchestrator_view(store), brain_id, now.strftime("%Y-%m-%dT00:00:00Z"))) if store is not None else 0
+    except Exception:                                            # noqa: BLE001 - unreadable: the grant itself then fails closed
+        return 0
+
+
+def regrant_cooldown_minutes(manifest: dict, brain_id: str) -> int:
+    """A runner is granted a new cycle at most once per the Brain's staleness window (TIME Brains), else every 6 h, never more often than the lease TTL."""
+    hours = ((manifest.get("brains") or {}).get(brain_id) or {}).get("staleAfterHours") or 6
+    return max(RL.DEFAULT_TTL_MINUTES, int(float(hours) * 60))
+
+
+def grant_to_primary(a, brain_id: str, now: dt.datetime, cooldown_minutes: int = 360) -> tuple[bool, str, dict | None]:
     """--runner-leases, a Brain whose policy primary is not the cloud (Sector_Ops #51 C1): the Orchestrator grants that runner the lease for this cycle and starts
     nothing itself. A fresh lease of the same holder means its cycle is still in progress (not granted again). Unreadable store or policy = no grant (fail closed)."""
     try:
@@ -357,6 +372,9 @@ def grant_to_primary(a, brain_id: str, now: dt.datetime) -> tuple[bool, str, dic
         cur, _ = RL.read(view, brain_id)
         if cur and cur.get("holder") == holder and RL.fresh(cur, now):
             return False, f"CYCLE_IN_PROGRESS:{holder}:{cur.get('cycleId')}", None
+        last = (RL.grants_since(view, brain_id, iso(now - dt.timedelta(minutes=cooldown_minutes))) or [None])[-1]
+        if last:                                                 # granted recently and not yet published: never a fresh cycle every hour
+            return False, f"GRANTED_RECENTLY:{last['holder']}:{last['cycleId']} (cooldown {cooldown_minutes} min)", None
         if a.dry_run or a.no_execute:
             return False, f"WOULD_GRANT:{holder} (--dry-run/--no-execute)", None
         doc = RL.grant(view, pol, brain_id, holder, f"{brain_id}-{now:%Y%m%dT%H%MZ}", now)
@@ -400,9 +418,14 @@ def run_publisher_locally(handoff: dict, *, auto_ok: bool, may_start: bool, buck
         return {"started": False, "reason": "DRY_RUN_OR_NO_EXECUTE"}
     if not bucket:
         return {"started": False, "reason": "NO_ARTIFACT_BUCKET"}
+    pub_token = os.environ.get("PUBLISHER_ACCESS_TOKEN")
+    if not pub_token:                                            # the Publisher identity only: never the cycle's (orchestrator) token, never a gcloud fallback
+        return {"started": False, "reason": "NO_PUBLISHER_TOKEN"}
     cmd = [PYTHON, PUBLISHER_LOCAL, "--artifact-bucket", bucket, "--max-artifacts", "4"] + (["--live"] if live else [])
+    env = {k: v for k, v in os.environ.items() if k not in ("BRAIN_ACCESS_TOKEN", "PUBLISHER_ACCESS_TOKEN")}
+    env["BRAIN_ACCESS_TOKEN"] = pub_token
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, env=env)
     except subprocess.TimeoutExpired:
         return {"started": True, "how": "local", "ok": False, "reason": "TIMED_OUT", "live": live}
     return {"started": True, "how": "local", "ok": r.returncode == 0, "exit": r.returncode, "live": live, "tail": (r.stdout + r.stderr)[-400:],
@@ -502,6 +525,10 @@ def main(argv=None) -> int:
     a.local_mode = a.runner_mode == "local"
     a.runner_leases = a.runner_leases or os.environ.get("RUNNER_LEASES") == "on" or a.local_mode
     a.publisher_local_live = a.publisher_local_live or os.environ.get("PUBLISHER_LOCAL_LIVE") == "on"
+    if a.local_mode and not os.environ.get("BRAIN_ACCESS_TOKEN"):
+        print("REFUSED: --runner-mode local needs BRAIN_ACCESS_TOKEN (a short-lived token of the intended identity); it never falls back to the gcloud login of "
+              "whoever runs it", file=sys.stderr)
+        return 2
     if a.local_mode:
         gcp.disable_cloud_calls("orchestrator local runner mode (--runner-mode local): no Cloud Run or Cloud Scheduler call")
     t0 = time.time()
@@ -601,14 +628,16 @@ def main(argv=None) -> int:
             # the execution control gate (PL-16, PL-17): global + per-Brain enablement, starts-per-cycle, runs-per-day, cost-per-day
             mine = [e for e in ledger + exec_records if e.get("brainId") == b and (e.get("startedAt") or "").startswith(day)
                     and e.get("status") in ("STARTED", "RUNNING", "SUCCEEDED", "SKIPPED", "FAILED", "DEGRADED")]
-            ok, gwhy = EC.gate(ctl, b, trigger, admin=admin if a.run_now == b else None, starts_this_cycle=starts, runs_today=len(mine),
+            runner_path = a.runner_leases and ex["kind"] == "cloud-run-job" and not runner_primary_is_cloud(b)
+            granted_today = runner_grants_today(a, b, now) if runner_path else 0
+            ok, gwhy = EC.gate(ctl, b, trigger, admin=admin if a.run_now == b else None, starts_this_cycle=starts, runs_today=len(mine) + granted_today,
                                cost_today=O.cost_rollup(mine, day).get("usd"))
             if not ok:
                 deferred.append({"brainId": b, "why": f"execution control: {gwhy}"})
                 print(f"HOLD {b:20s} {gwhy}", flush=True)
                 continue
-            if a.runner_leases and ex["kind"] == "cloud-run-job" and not runner_primary_is_cloud(b):
-                gok, gwhy2, gdoc = grant_to_primary(a, b, now)
+            if runner_path:
+                gok, gwhy2, gdoc = grant_to_primary(a, b, now, regrant_cooldown_minutes(manifest, b))
                 if gok:
                     starts += 1
                     leases_granted.append(gdoc)
@@ -771,7 +800,9 @@ def main(argv=None) -> int:
 
     # 5c. internal SHADOW lane (Brains without an APPROVED knowledge release): experimental, isolated, never authoritative or customer
     shadow = []
-    if a.run_shadow_lane and not a.control_only and not auto_ok:
+    if a.run_shadow_lane and a.local_mode:
+        print("shadow lane: not run (local runner mode runs no Brain code in this process)")
+    elif a.run_shadow_lane and not a.control_only and not auto_ok:
         print(f"shadow lane: not run ({auto_why})")
     elif a.run_shadow_lane and not a.control_only:
         try:

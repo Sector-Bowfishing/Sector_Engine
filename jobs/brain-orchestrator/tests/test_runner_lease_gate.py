@@ -1,6 +1,7 @@
 """--runner-leases in the real orchestrate.main() cycle (Sector_Ops #50): the cloud never starts a Brain another runner holds, nor one whose primary is Pulse
 while failover is off; a missing store fails closed. Off by default: the cycle is unchanged."""
 import datetime as dt
+import json
 import os
 import sys
 
@@ -73,6 +74,7 @@ def test_local_mode_makes_no_cloud_call_and_starts_no_cloud_job(world, monkeypat
     """#51 C1: --runner-mode local never syncs /jobs, never starts a Cloud Run job (a cloud-primary Brain waits) and every Cloud API call is refused."""
     from sector_brain_platform import gcp
     monkeypatch.setattr(gcp, "_DISABLED", None)                               # restored after the test (the switch is process-wide)
+    monkeypatch.setenv("BRAIN_ACCESS_TOKEN", "test-token")
     synced = []
     setup, calls = world
     real_setup = setup
@@ -95,9 +97,15 @@ def test_local_cycle_lock_refuses_an_overlapping_cycle(tmp_path):
 
 
 def test_local_publisher_pass_is_a_dry_run_unless_live(monkeypatch):
-    seen = []
-    monkeypatch.setattr(OR.subprocess, "run", lambda cmd, **k: seen.append(cmd) or type("R", (), {"returncode": 0, "stdout": "ok", "stderr": ""})())
+    seen, envs = [], []
+    monkeypatch.setattr(OR.subprocess, "run", lambda cmd, **k: seen.append(cmd) or envs.append(k.get("env")) or type("R", (), {"returncode": 0, "stdout": "ok", "stderr": ""})())
+    monkeypatch.setenv("BRAIN_ACCESS_TOKEN", "orchestrator-token")
+    monkeypatch.delenv("PUBLISHER_ACCESS_TOKEN", raising=False)
+    assert OR.run_publisher_locally({"pending": 1}, auto_ok=True, may_start=True, bucket="b", live=True)["reason"] == "NO_PUBLISHER_TOKEN"
+    assert seen == []                                                          # never with the orchestrator's token or a gcloud fallback
+    monkeypatch.setenv("PUBLISHER_ACCESS_TOKEN", "publisher-token")
     res = OR.run_publisher_locally({"pending": 1}, auto_ok=True, may_start=True, bucket="b", live=False)
+    assert envs[-1]["BRAIN_ACCESS_TOKEN"] == "publisher-token" and "PUBLISHER_ACCESS_TOKEN" not in envs[-1]
     assert res["started"] and res["ok"] and "--live" not in seen[-1] and seen[-1][1].endswith("publish_job.py")
     OR.run_publisher_locally({"pending": 1}, auto_ok=True, may_start=True, bucket="b", live=True)
     assert "--live" in seen[-1]
@@ -129,6 +137,7 @@ def test_local_mode_never_runs_an_in_process_writer(world, monkeypatch, capsys, 
     """#51 C1 review: Sector Intelligence / Fish run in process with `run.py --write` (direct database writes). A local cycle never runs them."""
     from sector_brain_platform import gcp
     monkeypatch.setattr(gcp, "_DISABLED", None)
+    monkeypatch.setenv("BRAIN_ACCESS_TOKEN", "test-token")
     setup, calls = world
     ctl = enabled_control()
     t = stale_world(ctl)
@@ -140,3 +149,22 @@ def test_local_mode_never_runs_an_in_process_writer(world, monkeypatch, capsys, 
     monkeypatch.setattr(RL, "load_policy", lambda path=None: CLOUD)
     assert OR.main(["--runner-mode", "local", "--artifact-store-dir", "x", "--local-lock", str(tmp_path / "l"), "--legacy-execution"]) == 0
     assert calls["inproc"] == [] and calls["plan"] == []
+
+
+def test_local_mode_refuses_without_an_explicit_token(monkeypatch, capsys):
+    """Review of #102: a local cycle never falls back to the gcloud login of whoever runs it."""
+    monkeypatch.delenv("BRAIN_ACCESS_TOKEN", raising=False)
+    assert OR.main(["--runner-mode", "local"]) == 2
+    assert "needs BRAIN_ACCESS_TOKEN" in capsys.readouterr().err
+
+
+def test_a_recent_grant_is_not_repeated_and_counts_against_the_daily_cap(world, monkeypatch, capsys):
+    """Review of #102: until the Brain publishes, the primary gets at most one cycle per staleness window, and today's grants count as runs."""
+    store = MemoryObjectStore()
+    run(world, monkeypatch, ARGV, policy=PULSE, store=store)
+    capsys.readouterr()
+    lease = json.loads(store.get(RL.lease_key("wind")))
+    store.put(RL.lease_key("wind"), json.dumps({**lease, "leaseUntil": "2000-01-01T00:00:00Z"}).encode())   # the lease expired, nothing was published
+    assert "wind" not in run(world, monkeypatch, ARGV, policy=PULSE, store=store)
+    assert "GRANTED_RECENTLY:pulse" in capsys.readouterr().out
+    assert OR.runner_grants_today(type("A", (), {"artifact_store_dir": "x", "artifact_bucket": None})(), "wind", dt.datetime.now(dt.timezone.utc)) == 1

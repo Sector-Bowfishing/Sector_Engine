@@ -116,11 +116,14 @@ def test_a_record_in_another_runners_folder_is_ignored(s):
     assert RL.runner_executions(RL.orchestrator_view(s), {"water-clarity"}) == []
 
 
-def test_current_grants_are_the_only_history_until_a_ledger_exists(s):
+def test_only_the_grant_ledger_proves_a_grant(s):
+    """Review of #102: the runner's credential may rewrite the live lease object, so a forged lease never counts; only the ledger does."""
     RL.grant(RL.orchestrator_view(s), PULSE_PRIMARY, "water-clarity", "pulse", "c2", T0)
-    g = RL.current_grants(RL.orchestrator_view(s), {"water-clarity", "wind"})
-    assert [(x["brainId"], x["holder"], x["cycleId"]) for x in g] == [("water-clarity", "pulse", "c2")]
-    assert RL.held_for_cycle(g, "pulse", "c2") and not RL.held_for_cycle(g, "pulse", "c1")       # never granted: not reconciled
+    assert RL.ledger_grant(s, "water-clarity", "c2")["holder"] == "pulse"
+    forged = {**json.loads(s.get(RL.lease_key("water-clarity"))), "cycleId": "c9"}
+    s.put(RL.lease_key("water-clarity"), json.dumps(forged).encode())              # a runner rewrites the lease with a cycle it was never granted
+    assert RL.ledger_grant(s, "water-clarity", "c9") is None
+    assert RL.ledger_grant(s, "water-clarity", "../leases/water-clarity") is None
 
 
 def test_the_grant_ledger_keeps_older_cycles_and_is_create_only(s):
@@ -128,9 +131,8 @@ def test_the_grant_ledger_keeps_older_cycles_and_is_create_only(s):
     orch = RL.orchestrator_view(s)
     RL.grant(orch, PULSE_PRIMARY, "water-clarity", "pulse", "c1", T0)
     RL.grant(orch, PULSE_PRIMARY, "water-clarity", "pulse", "c2", m(30))                      # c1 expired, re-granted to the primary
-    g = RL.current_grants(orch, {"water-clarity"})
-    assert sorted(x["cycleId"] for x in g) == ["c1", "c2"]
-    assert RL.held_for_cycle(g, "pulse", "c1") and RL.held_for_cycle(g, "pulse", "c2")
+    assert [g["cycleId"] for g in RL.grants_since(orch, "water-clarity", "2026-11-02T00:00:00Z")] == ["c1", "c2"]
+    assert [g["cycleId"] for g in RL.grants_since(orch, "water-clarity", "2026-11-02T12:10:00Z")] == ["c2"]
     first = s.get(RL.grant_key("water-clarity", "c1"))
     RL.grant(orch, PULSE_PRIMARY, "water-clarity", "pulse", "c1", m(31))                      # the same cycleId again: the first grant stands
     assert s.get(RL.grant_key("water-clarity", "c1")) == first
