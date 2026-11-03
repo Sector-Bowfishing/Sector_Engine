@@ -4,6 +4,7 @@ One lease object per Brain in the private artifact store, written by compare-and
 
     exports/runners/leases/{brainId}.json        sector-runner-lease-v1 {brainId, holder, cycleId, grantedAt, grantedBy, heartbeatAt, leaseUntil}
     exports/runners/{holder}/executions/{brainId}/{executionId}.json      sector-runner-execution-v1, create-only: a run that did not happen in Cloud Run
+    exports/runners/grants/{brainId}/{cycleId}.json                      the grant ledger (#51 C2): create-only copy of every grant the Orchestrator made
 
 Who may do what (tested):
   * grant / take over   only the Orchestrator (`grant`). It is the single scheduling authority (Cortex PL-15), wherever it runs.
@@ -41,6 +42,10 @@ class LeaseLost(RuntimeError):
     pass
 
 
+def grant_key(brain_id: str, cycle_id: str) -> str:
+    return f"{PREFIX}grants/{brain_id}/{cycle_id}.json"
+
+
 def lease_key(brain_id: str) -> str:
     return f"{PREFIX}leases/{brain_id}.json"
 
@@ -51,7 +56,7 @@ def execution_key(holder: str, brain_id: str, execution_id: str) -> str:
 
 def orchestrator_view(store) -> ScopedObjectStore:
     """The Orchestrator: read every lease and runner execution, grant leases. It cannot write a runner's execution records."""
-    return ScopedObjectStore(store, read=(PREFIX,), create=(f"{PREFIX}leases/",), overwrite=(f"{PREFIX}leases/",))
+    return ScopedObjectStore(store, read=(PREFIX,), create=(f"{PREFIX}leases/", f"{PREFIX}grants/"), overwrite=(f"{PREFIX}leases/",))
 
 
 def runner_view(store, holder: str) -> ScopedObjectStore:
@@ -118,6 +123,10 @@ def grant(store, policy: dict, brain_id: str, holder: str, cycle_id: str, now: d
         store.put(lease_key(brain_id), canonical_bytes(doc), if_generation_match=gen)
     except PreconditionFailed:
         raise LeaseBusy(f"{brain_id}: the lease changed concurrently") from None
+    try:                                                         # the ledger copy: create-only, so a cycle's grant is never rewritten
+        store.put(grant_key(brain_id, cycle_id), canonical_bytes(doc), if_generation_match=0)
+    except PreconditionFailed:
+        pass                                                     # the same cycle granted again to its holder (an identical cycleId): the first grant stands
     return doc
 
 
@@ -200,12 +209,23 @@ def runner_executions(store, brain_ids, since: str | None = None) -> list[dict]:
 
 
 def current_grants(store, brain_ids) -> list[dict]:
-    """The grants still visible in the lease objects (one per Brain, the latest cycle). Until a grant ledger exists this is the only lease history, so a runner
-    execution for an older cycle cannot be shown to have held its lease and is not reconciled (fail closed)."""
-    out = []
+    """Every grant the Orchestrator made for these Brains: the grant ledger (#51 C2) plus the live lease objects (a lease granted before the ledger existed).
+    A runner execution whose cycle is in neither was never granted and is not reconciled (fail closed)."""
+    out, seen = [], set()
+    for k in sorted(store.list(f"{PREFIX}grants/")):
+        parts = k.split("/")
+        if len(parts) != 5 or parts[3] not in brain_ids or not k.endswith(".json"):
+            continue
+        try:
+            g = json.loads(store.get(k))
+        except (TypeError, ValueError):
+            continue
+        if g.get("schema") == SCHEMA and g.get("brainId") == parts[3] and f"{g.get('cycleId')}.json" == parts[4]:
+            out.append(g)
+            seen.add((g["brainId"], g["cycleId"]))
     for b in sorted(brain_ids):
         cur, _ = read(store, b)
-        if cur and cur.get("schema") == SCHEMA:
+        if cur and cur.get("schema") == SCHEMA and (b, cur.get("cycleId")) not in seen:
             out.append(cur)
     return out
 

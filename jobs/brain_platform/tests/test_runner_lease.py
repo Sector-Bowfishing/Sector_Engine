@@ -120,4 +120,19 @@ def test_current_grants_are_the_only_history_until_a_ledger_exists(s):
     RL.grant(RL.orchestrator_view(s), PULSE_PRIMARY, "water-clarity", "pulse", "c2", T0)
     g = RL.current_grants(RL.orchestrator_view(s), {"water-clarity", "wind"})
     assert [(x["brainId"], x["holder"], x["cycleId"]) for x in g] == [("water-clarity", "pulse", "c2")]
-    assert RL.held_for_cycle(g, "pulse", "c2") and not RL.held_for_cycle(g, "pulse", "c1")       # an older cycle cannot be shown: not reconciled
+    assert RL.held_for_cycle(g, "pulse", "c2") and not RL.held_for_cycle(g, "pulse", "c1")       # never granted: not reconciled
+
+
+def test_the_grant_ledger_keeps_older_cycles_and_is_create_only(s):
+    """#51 C2: a cycle granted earlier still shows its holder after the lease moved on; a ledger entry is never rewritten; a runner cannot write it."""
+    orch = RL.orchestrator_view(s)
+    RL.grant(orch, PULSE_PRIMARY, "water-clarity", "pulse", "c1", T0)
+    RL.grant(orch, PULSE_PRIMARY, "water-clarity", "pulse", "c2", m(30))                      # c1 expired, re-granted to the primary
+    g = RL.current_grants(orch, {"water-clarity"})
+    assert sorted(x["cycleId"] for x in g) == ["c1", "c2"]
+    assert RL.held_for_cycle(g, "pulse", "c1") and RL.held_for_cycle(g, "pulse", "c2")
+    first = s.get(RL.grant_key("water-clarity", "c1"))
+    RL.grant(orch, PULSE_PRIMARY, "water-clarity", "pulse", "c1", m(31))                      # the same cycleId again: the first grant stands
+    assert s.get(RL.grant_key("water-clarity", "c1")) == first
+    with pytest.raises(AccessDenied):
+        RL.runner_view(s, "pulse").put(RL.grant_key("water-clarity", "c9"), b"{}", if_generation_match=0)

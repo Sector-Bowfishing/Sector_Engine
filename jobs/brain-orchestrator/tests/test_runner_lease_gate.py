@@ -52,9 +52,57 @@ def test_a_fresh_pulse_lease_keeps_the_cloud_job_from_starting(world, monkeypatc
     assert "runner lease: HELD_BY_PULSE" in capsys.readouterr().out
 
 
-def test_pulse_primary_with_failover_off_never_starts_in_the_cloud(world, monkeypatch, capsys):
-    assert "wind" not in run(world, monkeypatch, ARGV, policy=PULSE)
-    assert "PRIMARY_PULSE_FAILOVER_OFF" in capsys.readouterr().out
+def test_pulse_primary_is_granted_the_lease_and_never_started_in_the_cloud(world, monkeypatch, capsys):
+    """#51 C1: the Orchestrator grants the policy primary its cycle instead of starting a Cloud Run job; a fresh lease is not granted twice."""
+    store = MemoryObjectStore()
+    assert "wind" not in run(world, monkeypatch, ARGV, policy=PULSE, store=store)
+    assert "LEASE wind" in capsys.readouterr().out
+    lease, _ = RL.read(store, "wind")
+    assert lease["holder"] == "pulse" and lease["grantedBy"] == "orchestrator"
+    assert "wind" not in run(world, monkeypatch, ARGV, policy=PULSE, store=store)
+    assert "CYCLE_IN_PROGRESS:pulse" in capsys.readouterr().out
+
+
+def test_dry_run_grants_nothing(world, monkeypatch, capsys):
+    store = MemoryObjectStore()
+    run(world, monkeypatch, ARGV + ["--dry-run"], policy=PULSE, store=store)
+    assert "WOULD_GRANT:pulse" in capsys.readouterr().out and RL.read(store, "wind")[0] is None
+
+
+def test_local_mode_makes_no_cloud_call_and_starts_no_cloud_job(world, monkeypatch, capsys, tmp_path):
+    """#51 C1: --runner-mode local never syncs /jobs, never starts a Cloud Run job (a cloud-primary Brain waits) and every Cloud API call is refused."""
+    from sector_brain_platform import gcp
+    monkeypatch.setattr(gcp, "_DISABLED", None)                               # restored after the test (the switch is process-wide)
+    synced = []
+    setup, calls = world
+    real_setup = setup
+
+    def setup_local(t, executions=None):
+        db = real_setup(t, executions)
+        monkeypatch.setattr(OR, "sync_jobs", lambda *a, **k: synced.append(1) or ({}, {}, 0))
+        return db
+    argv = ["--runner-mode", "local", "--artifact-store-dir", "x", "--local-lock", str(tmp_path / "cycle.lock")]
+    assert "wind" not in run((setup_local, calls), monkeypatch, argv)                  # cloud primary: held, not started
+    out = capsys.readouterr().out
+    assert "local runner mode: cloud primary, not started" in out and synced == []
+    with pytest.raises(gcp.CloudCallsDisabled):
+        gcp.list_run_jobs(object())
+
+
+def test_local_cycle_lock_refuses_an_overlapping_cycle(tmp_path):
+    a, b = OR.LocalCycleLock(str(tmp_path / "l")), OR.LocalCycleLock(str(tmp_path / "l"))
+    assert a.acquire() and not b.acquire()
+
+
+def test_local_publisher_pass_is_a_dry_run_unless_live(monkeypatch):
+    seen = []
+    monkeypatch.setattr(OR.subprocess, "run", lambda cmd, **k: seen.append(cmd) or type("R", (), {"returncode": 0, "stdout": "ok", "stderr": ""})())
+    res = OR.run_publisher_locally({"pending": 1}, auto_ok=True, may_start=True, bucket="b", live=False)
+    assert res["started"] and res["ok"] and "--live" not in seen[-1] and seen[-1][1].endswith("publish_job.py")
+    OR.run_publisher_locally({"pending": 1}, auto_ok=True, may_start=True, bucket="b", live=True)
+    assert "--live" in seen[-1]
+    assert OR.run_publisher_locally({"pending": 1}, auto_ok=False, may_start=True, bucket="b", live=True)["reason"] == "EXECUTION_PAUSED"
+    assert OR.run_publisher_locally({"pending": 0}, auto_ok=True, may_start=True, bucket="b", live=False)["reason"] == "NOTHING_PENDING"
 
 
 def test_no_store_fails_closed(world, monkeypatch, capsys):
