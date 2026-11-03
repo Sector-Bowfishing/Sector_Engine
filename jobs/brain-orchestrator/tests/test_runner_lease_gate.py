@@ -60,3 +60,18 @@ def test_pulse_primary_with_failover_off_never_starts_in_the_cloud(world, monkey
 def test_no_store_fails_closed(world, monkeypatch, capsys):
     assert "wind" not in run(world, monkeypatch, ["--runner-leases"])
     assert "NO_ARTIFACT_STORE" in capsys.readouterr().out
+
+
+
+def test_runner_execution_without_its_lease_is_not_reconciled():
+    """The publication-stage filter orchestrate.py uses: only executions whose runner holds the granted cycle are passed on; the rest are skipped."""
+    store = MemoryObjectStore()
+    pol = {**CLOUD, "primary": {"water-clarity": "pulse"}}
+    RL.grant(RL.orchestrator_view(store), pol, "water-clarity", "pulse", "c2", dt.datetime.now(dt.timezone.utc))
+    kw = dict(status="SUCCEEDED", started_at="2026-11-02T12:00:00Z", ended_at="2026-11-02T12:01:00Z", artifact=None, engine_commit=None)
+    pulse = RL.runner_view(store, "pulse")
+    RL.record_execution(pulse, "pulse", "water-clarity", "ok", cycle_id="c2", **kw)
+    RL.record_execution(pulse, "pulse", "water-clarity", "old", cycle_id="c1", **kw)
+    RL.record_execution(pulse, "pulse", "water-clarity", "seen", cycle_id="c2", **kw)
+    kept, skipped = RL.reconcilable_executions(RL.orchestrator_view(store), {"water-clarity"}, exclude={"seen"})
+    assert [e["executionId"] for e in kept] == ["ok"] and [e["executionId"] for e in skipped] == ["old"]

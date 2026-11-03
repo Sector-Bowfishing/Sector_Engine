@@ -55,7 +55,8 @@ def orchestrator_view(store) -> ScopedObjectStore:
 
 
 def runner_view(store, holder: str) -> ScopedObjectStore:
-    """A runner: read leases, renew its own (the CAS check refuses another holder's), create its own execution records once."""
+    """A runner: read leases, renew its own (`renew` refuses another holder's lease), create its own execution records once. The path scope alone does not stop
+    a runner rewriting a lease document: that must also be enforced by the runner's credential (IAM), never by this view only."""
     if holder not in HOLDERS:
         raise ValueError(f"unknown runner {holder!r}")
     return ScopedObjectStore(store, read=(PREFIX,), create=(f"{PREFIX}{holder}/executions/",), overwrite=(f"{PREFIX}leases/",))
@@ -190,13 +191,38 @@ def runner_executions(store, brain_ids, since: str | None = None) -> list[dict]:
             r = json.loads(store.get(k))
         except (TypeError, ValueError):
             continue
+        if r.get("runner") != parts[2]:                       # a record claims the runner whose folder holds it, or it is ignored
+            continue
         if r.get("schema") == EXEC_SCHEMA and (since is None or (r.get("endedAt") or "") >= since):
             out.append({"executionId": r["executionId"], "brainId": r["brainId"], "status": r["status"], "startedAt": r["startedAt"], "endedAt": r["endedAt"],
                         "runner": r["runner"], "cycleId": r.get("cycleId")})
     return sorted(out, key=lambda e: e["endedAt"] or "")
 
 
+def current_grants(store, brain_ids) -> list[dict]:
+    """The grants still visible in the lease objects (one per Brain, the latest cycle). Until a grant ledger exists this is the only lease history, so a runner
+    execution for an older cycle cannot be shown to have held its lease and is not reconciled (fail closed)."""
+    out = []
+    for b in sorted(brain_ids):
+        cur, _ = read(store, b)
+        if cur and cur.get("schema") == SCHEMA:
+            out.append(cur)
+    return out
+
+
 def held_for_cycle(lease_history: list[dict], holder: str, cycle_id: str) -> bool:
     """Was `holder` the granted holder of `cycle_id`? The Orchestrator keeps the grants it made (its ledger); a runner's artifact for a cycle it did not hold
     is never requested for publication."""
     return any(g.get("holder") == holder and g.get("cycleId") == cycle_id for g in lease_history)
+
+
+def reconcilable_executions(store, brain_ids, since: str | None = None, exclude=()) -> tuple[list[dict], list[dict]]:
+    """Runner executions the publication stage may reconcile: only those whose runner held the granted lease for their cycle. Returns (kept, skipped)."""
+    grants = current_grants(store, brain_ids)
+    kept, skipped = [], []
+    for e in runner_executions(store, brain_ids, since=since):
+        if e["executionId"] in exclude:
+            continue
+        ok = held_for_cycle([g for g in grants if g.get("brainId") == e["brainId"]], e["runner"], e["cycleId"])
+        (kept if ok else skipped).append(e)
+    return kept, skipped

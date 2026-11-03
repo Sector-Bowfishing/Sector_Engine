@@ -107,3 +107,17 @@ def test_execution_records_are_create_only_and_reconcilable(s):
                    "endedAt": "2026-11-02T12:01:00Z", "runner": "pulse", "cycleId": "c1"}]
     assert RL.runner_executions(RL.orchestrator_view(s), {"wind"}) == []
     assert RL.held_for_cycle([{"holder": "pulse", "cycleId": "c1"}], "pulse", "c1") and not RL.held_for_cycle([{"holder": "cloud", "cycleId": "c1"}], "pulse", "c1")
+
+
+def test_a_record_in_another_runners_folder_is_ignored(s):
+    doc = {"schema": RL.EXEC_SCHEMA, "executionId": "e9", "brainId": "water-clarity", "runner": "pulse", "status": "SUCCEEDED", "startedAt": "2026-11-02T12:00:00Z",
+           "endedAt": "2026-11-02T12:01:00Z", "cycleId": "c1", "engineCommit": None, "artifact": None}
+    s.put(RL.execution_key("cloud", "water-clarity", "e9"), json.dumps(doc).encode())          # claims pulse, sits under cloud/
+    assert RL.runner_executions(RL.orchestrator_view(s), {"water-clarity"}) == []
+
+
+def test_current_grants_are_the_only_history_until_a_ledger_exists(s):
+    RL.grant(RL.orchestrator_view(s), PULSE_PRIMARY, "water-clarity", "pulse", "c2", T0)
+    g = RL.current_grants(RL.orchestrator_view(s), {"water-clarity", "wind"})
+    assert [(x["brainId"], x["holder"], x["cycleId"]) for x in g] == [("water-clarity", "pulse", "c2")]
+    assert RL.held_for_cycle(g, "pulse", "c2") and not RL.held_for_cycle(g, "pulse", "c1")       # an older cycle cannot be shown: not reconciled

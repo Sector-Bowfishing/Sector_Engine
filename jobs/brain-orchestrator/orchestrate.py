@@ -573,8 +573,10 @@ def main(argv=None) -> int:
                 terminal = [e for e in exec_records + [c for c in cloud_now if c["executionId"] not in seen_ids] if e.get("status") not in ("STARTED", "RUNNING")]
                 if a.runner_leases:                                      # runs outside Cloud Run (a registered runner) are reconciled like Cloud Run ones
                     seen_ids |= {e["executionId"] for e in terminal}
-                    terminal += [e for e in RL.runner_executions(RL.orchestrator_view(pstore), set(EXECUTORS), since=iso(now - dt.timedelta(days=2)))
-                                 if e["executionId"] not in seen_ids]
+                    kept, skipped = RL.reconcilable_executions(RL.orchestrator_view(pstore), set(EXECUTORS), since=iso(now - dt.timedelta(days=2)), exclude=seen_ids)
+                    for e in skipped:                                    # fail closed: a run whose runner did not hold its cycle's lease is never published
+                        print(f"SKIP {e['brainId']:20s} runner execution {e['executionId']}: {e['runner']} did not hold the lease for cycle {e['cycleId']}", flush=True)
+                    terminal += kept
                 publication = PS.run_stage(store=pstore, ledger_path=a.publication_ledger, executions=terminal, shadow=build_shadow_publisher(pstore),
                                            live=build_live_publisher(pstore), cutover_path=a.publication_cutover,
                                            paused_reason=None if auto_ok else "EXECUTION_PAUSED", dry_run=a.dry_run,
