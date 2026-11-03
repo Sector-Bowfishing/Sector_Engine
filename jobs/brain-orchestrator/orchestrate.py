@@ -552,7 +552,7 @@ def main(argv=None) -> int:
     world = CP.load_world(live, now)
     activity = O.effective_activity(world["manifest"], world["overrides"])
     brain_plans = {b: brain_plan(b) for b, ex in EXECUTORS.items()
-                   if ex["kind"] == "in-process" and b in brains and (a.legacy_execution or activity.get(b) == "ACTIVE") and not a.health_only
+                   if ex["kind"] == "in-process" and b in brains and (a.legacy_execution or activity.get(b) == "ACTIVE") and not a.health_only and not a.local_mode
                    and (auto_ok and EC.brain_enabled(ctl, b) or (admin and a.run_now == b))}
     locks_now = state.get("locks") or {}
     run_now = (a.run_now, a.scope, a.requested_by) if a.run_now else None
@@ -614,6 +614,11 @@ def main(argv=None) -> int:
                     leases_granted.append(gdoc)
                 deferred.append({"brainId": b, "why": f"runner lease: {gwhy2}" + ("; the runner runs it, its execution is reconciled next cycles" if gok else "")})
                 print(f"{'LEASE' if gok else 'HOLD '} {b:20s} runner lease: {gwhy2}", flush=True)
+                continue
+            if a.local_mode and ex["kind"] == "in-process":       # its `run.py --write` writes the database directly: never from a runner's machine
+                deferred.append({"brainId": b, "why": "local runner mode: an in-process Brain writes the database directly and is never run from a local cycle "
+                                                      "(it needs its own artifact job first; cutover plan SI-1)"})
+                print(f"HOLD {b:20s} local runner mode: in-process writer, not run", flush=True)
                 continue
             if a.local_mode and ex["kind"] == "cloud-run-job":
                 deferred.append({"brainId": b, "why": "local runner mode: a Cloud Run job is never started from a local cycle (policy primary is the cloud)"})

@@ -123,3 +123,20 @@ def test_runner_execution_without_its_lease_is_not_reconciled():
     RL.record_execution(pulse, "pulse", "water-clarity", "seen", cycle_id="c2", **kw)
     kept, skipped = RL.reconcilable_executions(RL.orchestrator_view(store), {"water-clarity"}, exclude={"seen"})
     assert [e["executionId"] for e in kept] == ["ok"] and [e["executionId"] for e in skipped] == ["old"]
+
+
+def test_local_mode_never_runs_an_in_process_writer(world, monkeypatch, capsys, tmp_path):
+    """#51 C1 review: Sector Intelligence / Fish run in process with `run.py --write` (direct database writes). A local cycle never runs them."""
+    from sector_brain_platform import gcp
+    monkeypatch.setattr(gcp, "_DISABLED", None)
+    setup, calls = world
+    ctl = enabled_control()
+    t = stale_world(ctl)
+    t["brains"]["wind"]["lastSuccessfulRun"] = ago(0)
+    t["brains"]["water-clarity"]["lastSuccessfulRun"] = ago(1)
+    t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(1)
+    setup(t)
+    monkeypatch.setattr(OR, "build_publication_store", lambda d, b=None: MemoryObjectStore())
+    monkeypatch.setattr(RL, "load_policy", lambda path=None: CLOUD)
+    assert OR.main(["--runner-mode", "local", "--artifact-store-dir", "x", "--local-lock", str(tmp_path / "l"), "--legacy-execution"]) == 0
+    assert calls["inproc"] == [] and calls["plan"] == []
