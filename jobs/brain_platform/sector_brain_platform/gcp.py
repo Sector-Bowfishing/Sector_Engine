@@ -24,7 +24,22 @@ class GcpError(RuntimeError):
     pass
 
 
+class CloudCallsDisabled(GcpError):
+    pass
+
+
+_DISABLED: str | None = None
+
+
+def disable_cloud_calls(reason: str) -> None:
+    """A cycle that must make no Cloud Run / Cloud Scheduler API call at all (the orchestrator's local runner mode, Sector_Ops #51 C1). Every call then raises."""
+    global _DISABLED
+    _DISABLED = reason
+
+
 def _call(method: str, url: str, tokens: TokenProvider, body: dict | None = None, timeout: float = 30.0):
+    if _DISABLED:
+        raise CloudCallsDisabled(f"{method} {url.split('?')[0]} refused: {_DISABLED}")
     data = None if body is None else json.dumps(body).encode()
     req = urllib.request.Request(url, data=data, method=method,
                                  headers={"Authorization": f"Bearer {tokens.token()}", "Content-Type": "application/json"})
