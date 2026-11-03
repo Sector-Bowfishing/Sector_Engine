@@ -1,0 +1,7 @@
+{
+  "schema": "sector-runner-policy-v1",
+  "note": "Reviewed in git; deploying it is the approval boundary (Sector_Ops #50). Which runner is primary for each Brain, and whether an expired primary's cycle may fail over to the other runner. Failover is OFF: a dead primary means the Brain waits, never a surprise run on the other side. Making Pulse primary for a Brain, or enabling failover, is an owner decision recorded with an approvalRef.",
+  "defaultPrimary": "cloud",
+  "primary": {},
+  "failover": {"enabled": false, "brains": [], "approvalRef": null}
+}
