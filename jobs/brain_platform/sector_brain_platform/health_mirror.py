@@ -14,6 +14,11 @@ def _clarity_source_ids():
     return tuple(_clarity_sources())
 
 
+def _water_temp_source_ids():
+    from .publisher.registry import WATER_TEMP, _owned_sources     # the Publisher registry's own list of the source records Water Temp authors
+    return tuple(sorted(_owned_sources(WATER_TEMP)))
+
+
 def _lake_source_ids():
     from .publisher.registry import LAKE, _owned_sources           # the Publisher registry's own list of the source records Lake authors
     return tuple(sorted(_owned_sources(LAKE)))
@@ -23,6 +28,8 @@ SPECS = {
     "water-clarity": {"registryChildren": ("status", "staleLakeCount"), "sources": _clarity_source_ids},
     # Sector_Ops #48 A3: mirrored only once Lake is CENTRAL (the stage derives health for CENTRAL Brains that published); until then Lake's own writer writes them
     "lake-brain": {"registryChildren": ("status", "staleLakeCount", "reasons"), "sources": _lake_source_ids},
+    # Sector_Ops #50 WT-P2 A3: mirrored only once Water Temp is CENTRAL; until then its own writer writes them
+    "water-temp": {"registryChildren": ("status", "staleLakeCount"), "sources": _water_temp_source_ids},
 }
 
 

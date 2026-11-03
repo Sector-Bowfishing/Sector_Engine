@@ -537,6 +537,9 @@ WATER_TEMP_REGISTRY_CHILDREN = {
     "status": ("schedule", "enabled", "health", "status", "supportedLakeCount", "readinessCounts", "staleLakeCount", "staleAfterHours",
                "lastSuccessfulRun", "lastError", "deploymentVersion", "breakdowns", "runsPerMinute", "fleetScope"),
 }
+#: Sector_Ops #50 WT-P2 A3 (cutover gate G3, as Water Clarity and Lake): the Publisher writes NO /health/* path for Water Temp. /health/brains/water-temp/
+#: {status,staleLakeCount} and /health/sources/{id} are Orchestrator-owned operational health, derived from the published /brains/water-temp and /sources/{id}
+#: (sector_brain_platform.health_mirror). The tuple stays for the health mirror; it authorises nothing in the registry.
 WATER_TEMP_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount")
 WATER_TEMP_VOLATILE_CONTRACT_V1 = VolatileContract(
     "water-temp-volatile-v1", 1,
@@ -569,12 +572,11 @@ def water_temp_specs() -> list[SchemaSpec]:
         (PathFamily(f"/brains/{WATER_TEMP}/{{child}}", {"child": one_of(c for group in WATER_TEMP_REGISTRY_CHILDREN.values() for c in group)},
                     note="approved CHILDREN only; never the whole node, never publication/certification"),
          PathFamily(f"/validation/{WATER_TEMP}"),
-         PathFamily(f"/health/brains/{WATER_TEMP}/{{child}}", {"child": one_of(WATER_TEMP_HEALTH_DOMAIN_CHILDREN)}, note="domain health facts only"),
          PathFamily("/activity/{event}", {"event": contains(f"-{WATER_TEMP}-")}, note="own domain events only")),
         delete_families=(PathFamily(f"/brains/{WATER_TEMP}/lastError"),), delete_reasons=("OPTIONAL_CHILD_CLEARED",), volatile=WATER_TEMP_VOLATILE_CONTRACT_V1)
     sources = SchemaSpec(
         "water-temp-source-registry-v1", WATER_TEMP,
-        (PathFamily("/sources/{id}", {"id": one_of(_owned_sources(WATER_TEMP))}), PathFamily("/health/sources/{id}", {"id": one_of(_owned_sources(WATER_TEMP))})),
+        (PathFamily("/sources/{id}", {"id": one_of(_owned_sources(WATER_TEMP))}),),
         volatile=WATER_TEMP_VOLATILE_CONTRACT_V1)
     return [lake_state, registry, sources]
 
