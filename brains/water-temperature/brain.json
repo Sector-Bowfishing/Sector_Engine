@@ -91,12 +91,12 @@
     "stores": [
       {
         "id": "model",
-        "store": "COMPILED_IN_BINARY",
+        "store": "PACKAGED_IN_IMAGE",
         "owner": "water-temp",
-        "location": "brains/water-temperature/runtime/WaterTemperatureBrain",
-        "loader": "compiled Swift model",
-        "verification": "compiled into the binary; brainVersion",
-        "lineage": "brainVersion and processingVersion in published state",
+        "location": "brains/water-temperature/runtime/knowledge-release.json",
+        "loader": "compiled Swift model (the Brain's model definition, pinned by the release; the shared surface-energy-balance physics in Sources/SectorEngine is released with the image's Engine commit)",
+        "verification": "sector_brain_platform.knowledge_release: per-file sha256 and bytes plus release digest over the model definition (CI --check); the binary compiles exactly that file",
+        "lineage": "brainVersion and processingVersion in published state; knowledgeRelease in the artifact lineage once the artifact entry records it (before G7)",
         "approval": "NOT_RECORDED",
         "onUnavailable": "NOT_APPLICABLE"
       }
