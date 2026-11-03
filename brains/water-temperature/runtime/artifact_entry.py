@@ -35,7 +35,7 @@ def seal(updates: dict, *, now: dt.datetime, code_version: str) -> dict:
 
 def _job_args(ap):
     ap.add_argument("--lake", action="append", default=[])
-    ap.add_argument("--limit", default=None)
+    ap.add_argument("--limit", type=int, default=None)       # an int, so a typo is refused here (exit 2) instead of the Swift job running the whole fleet
 
 
 def _job_command(a, td):

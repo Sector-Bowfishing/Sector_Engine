@@ -60,3 +60,9 @@ def test_a_failing_job_stores_nothing(tmp_path):
 def test_the_entry_has_no_database_writer():
     src = open(E.__file__).read()
     assert "BrainRtdb" not in src and "RtdbRestPublisherClient" not in src and ".update(" not in src
+
+
+def test_non_integer_limit_is_refused():
+    with pytest.raises(SystemExit) as e:
+        E.main(["--job", "WaterTempBrainJob", "--limit", "ten", "--artifact-dir", "/nonexistent"])
+    assert e.value.code == 2
