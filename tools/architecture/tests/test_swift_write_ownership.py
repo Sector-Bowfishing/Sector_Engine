@@ -26,8 +26,6 @@ EXPECTED = {
         ("LakeBrain/LakeBrainRunner.swift", "archive.write("): 2,
         ("LakeBrain/LakePredictionLedger.swift", "archive.write("): 1,
         ("LakeBrain/LakeBrainArchive.swift", "primary.write("): 1,          # LayeredLakeBrainArchive: writes only to its primary (never the seed)
-        ("LakeBrain/LakeBrainArchive.swift", "writer.update("): 1,          # ReadThroughDryRunStore -> its ownership-checked LocalDirectoryStore
-        ("LakeBrain/LakeBrainArchive.swift", "writer.delete("): 1,
     },
     "brains/water-temperature/runtime": {
         ("WaterTemperatureBrain/WaterTemperatureBrainRunner.swift", "store.update("): 4,
@@ -35,6 +33,20 @@ EXPECTED = {
 }
 BRAIN_IDS = {"brains/lake": "lake-brain", "brains/water-temperature": "water-temp"}
 GOLDEN = {"lake-brain": "brains/lake/tests/golden/lake_run_updates.json", "water-temp": "brains/water-temperature/tests/golden/water_temp_run_updates.json"}
+
+
+SHARED_READ_THROUGH = "Sources/SectorEngine/Brain/BrainRTDBStore.swift"      # ReadThroughDryRunStore (moved from LakeBrain, Sector_Ops #50 WT-P2)
+
+
+def test_the_shared_read_through_dry_run_store_writes_only_to_its_local_writer():
+    """The store both Swift jobs use for `--dry-run DIR --read-rtdb URL`: every update/delete goes to the ownership-checked LocalDirectoryStore;
+    the live reader is only ever read (get / shallowKeys)."""
+    src = open(os.path.join(ROOT, SHARED_READ_THROUGH), encoding="utf-8").read()
+    body = src.split("public final class ReadThroughDryRunStore", 1)[1].split("\n}\n", 1)[0]
+    body = _code(body)
+    assert Counter(m.group(0) for m in WRITE.finditer(body)) == Counter({"writer.update(": 1, "writer.delete(": 1})
+    assert not re.search(r"\breader\.(update|delete|write)\(", body)
+    assert "writer: LocalDirectoryStore" in body
 
 
 def _swift(root):

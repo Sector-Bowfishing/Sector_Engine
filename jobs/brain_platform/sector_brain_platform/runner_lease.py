@@ -4,6 +4,7 @@ One lease object per Brain in the private artifact store, written by compare-and
 
     exports/runners/leases/{brainId}.json        sector-runner-lease-v1 {brainId, holder, cycleId, grantedAt, grantedBy, heartbeatAt, leaseUntil}
     exports/runners/{holder}/executions/{brainId}/{executionId}.json      sector-runner-execution-v1, create-only: a run that did not happen in Cloud Run
+    exports/runners/grants/{brainId}/{cycleId}.json                      the grant ledger (#51 C2): create-only copy of every grant the Orchestrator made
 
 Who may do what (tested):
   * grant / take over   only the Orchestrator (`grant`). It is the single scheduling authority (Cortex PL-15), wherever it runs.
@@ -41,6 +42,10 @@ class LeaseLost(RuntimeError):
     pass
 
 
+def grant_key(brain_id: str, cycle_id: str) -> str:
+    return f"{PREFIX}grants/{brain_id}/{cycle_id}.json"
+
+
 def lease_key(brain_id: str) -> str:
     return f"{PREFIX}leases/{brain_id}.json"
 
@@ -51,7 +56,7 @@ def execution_key(holder: str, brain_id: str, execution_id: str) -> str:
 
 def orchestrator_view(store) -> ScopedObjectStore:
     """The Orchestrator: read every lease and runner execution, grant leases. It cannot write a runner's execution records."""
-    return ScopedObjectStore(store, read=(PREFIX,), create=(f"{PREFIX}leases/",), overwrite=(f"{PREFIX}leases/",))
+    return ScopedObjectStore(store, read=(PREFIX,), create=(f"{PREFIX}leases/", f"{PREFIX}grants/"), overwrite=(f"{PREFIX}leases/",))
 
 
 def runner_view(store, holder: str) -> ScopedObjectStore:
@@ -114,7 +119,11 @@ def grant(store, policy: dict, brain_id: str, holder: str, cycle_id: str, now: d
         raise LeaseBusy(f"{brain_id}: {holder} is not the policy primary ({primary(policy, brain_id)}) and failover is OFF")
     doc = {"schema": SCHEMA, "brainId": brain_id, "holder": holder, "cycleId": cycle_id, "grantedAt": _iso(now), "grantedBy": "orchestrator",
            "heartbeatAt": _iso(now), "leaseUntil": _iso(now + dt.timedelta(minutes=ttl_minutes))}
-    try:
+    try:                                                         # the ledger first (create-only): a lease never exists without its grant record
+        store.put(grant_key(brain_id, cycle_id), canonical_bytes(doc), if_generation_match=0)
+    except PreconditionFailed:
+        pass                                                     # the same cycle granted again to its holder (an identical cycleId): the first grant stands
+    try:                                                         # then the lease. If this loses the race, the orphan grant record is harmless: may_run needs the lease
         store.put(lease_key(brain_id), canonical_bytes(doc), if_generation_match=gen)
     except PreconditionFailed:
         raise LeaseBusy(f"{brain_id}: the lease changed concurrently") from None
@@ -199,15 +208,29 @@ def runner_executions(store, brain_ids, since: str | None = None) -> list[dict]:
     return sorted(out, key=lambda e: e["endedAt"] or "")
 
 
-def current_grants(store, brain_ids) -> list[dict]:
-    """The grants still visible in the lease objects (one per Brain, the latest cycle). Until a grant ledger exists this is the only lease history, so a runner
-    execution for an older cycle cannot be shown to have held its lease and is not reconciled (fail closed)."""
+def ledger_grant(store, brain_id: str, cycle_id: str | None) -> dict | None:
+    """The Orchestrator's grant record for this cycle (the grant ledger, #51 C2), or None. The ledger is the ONLY lease history that counts: a runner's
+    credential may rewrite the live lease object (renew), so a lease object alone never proves a grant."""
+    if not cycle_id or "/" in str(cycle_id):
+        return None
+    try:
+        g = json.loads(store.get(grant_key(brain_id, cycle_id)) or "null")
+    except (TypeError, ValueError):
+        return None
+    return g if isinstance(g, dict) and g.get("schema") == SCHEMA and g.get("brainId") == brain_id and g.get("cycleId") == cycle_id else None
+
+
+def grants_since(store, brain_id: str, since: str) -> list[dict]:
+    """Grants made for one Brain at or after `since` (ISO), oldest first: the daily-cap and re-grant cooldown input."""
     out = []
-    for b in sorted(brain_ids):
-        cur, _ = read(store, b)
-        if cur and cur.get("schema") == SCHEMA:
-            out.append(cur)
-    return out
+    for k in store.list(f"{PREFIX}grants/{brain_id}/"):
+        try:
+            g = json.loads(store.get(k))
+        except (TypeError, ValueError):
+            continue
+        if g.get("schema") == SCHEMA and (g.get("grantedAt") or "") >= since:
+            out.append(g)
+    return sorted(out, key=lambda g: g["grantedAt"])
 
 
 def held_for_cycle(lease_history: list[dict], holder: str, cycle_id: str) -> bool:
@@ -218,11 +241,10 @@ def held_for_cycle(lease_history: list[dict], holder: str, cycle_id: str) -> boo
 
 def reconcilable_executions(store, brain_ids, since: str | None = None, exclude=()) -> tuple[list[dict], list[dict]]:
     """Runner executions the publication stage may reconcile: only those whose runner held the granted lease for their cycle. Returns (kept, skipped)."""
-    grants = current_grants(store, brain_ids)
     kept, skipped = [], []
     for e in runner_executions(store, brain_ids, since=since):
         if e["executionId"] in exclude:
             continue
-        ok = held_for_cycle([g for g in grants if g.get("brainId") == e["brainId"]], e["runner"], e["cycleId"])
-        (kept if ok else skipped).append(e)
+        g = ledger_grant(store, e["brainId"], e["cycleId"])
+        (kept if g and held_for_cycle([g], e["runner"], e["cycleId"]) else skipped).append(e)
     return kept, skipped
