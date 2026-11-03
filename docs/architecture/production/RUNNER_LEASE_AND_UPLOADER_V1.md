@@ -32,3 +32,15 @@ It never writes a database and never starts anything. `runner.py renew` is the h
 - **Identity.** The access split (Pulse may create only `artifacts/{brainId}/` and its own execution records, and renew leases) is enforced in code (`runner_view`), not yet by IAM. A per-holder IAM condition is part of the Pulse activation plan.
 - **Lease history.** The Orchestrator does not yet record its grants in its publication ledger, so `held_for_cycle` has no production caller. That wiring comes with Pulse activation.
 - **Pulse side.** Calling `renew` / `upload` from Pulse's pipeline is the matching Sector-Pulse PR.
+
+## Runner executor, local runner mode and grant ledger (Sector_Ops #51 C1, C2)
+- **Grant instead of start.** With `--runner-leases`, a Brain whose `runner-policy.json` primary is not the cloud is granted that runner's lease for the cycle (`grant_to_primary`). The Orchestrator starts nothing; the runner runs the Brain while it holds the lease and records its execution. A fresh lease of the same holder is not granted again (the cycle is in progress). A dry run grants nothing.
+- **Local runner mode.** `--runner-mode local` (or `RUNNER_MODE=local`) is for an Orchestrator cycle that runs outside Cloud Run. It makes **no Cloud Run or Cloud Scheduler API call**: `gcp.disable_cloud_calls` refuses every call, `/jobs` is not synced, a cloud-primary Brain waits, and the overlap guard is a local lock file. The Publisher pass runs as a local process (`run_publisher_locally`); it is a dry run unless `PUBLISHER_LOCAL_LIVE=on`, which needs its own approval.
+- **Grant ledger.** Every grant is also written create-only to `exports/runners/grants/{brainId}/{cycleId}.json`. The publication stage reconciles a runner execution only for a cycle that was granted to that runner (`reconcilable_executions`).
+- Nothing changes until the policy names a non-cloud primary (owner step O4).
+- **Review hardening (2026-11-03):**
+  - **The grant ledger is the only proof of a grant.** A runner's credential may rewrite the live lease object (renew), so a lease object alone never counts. The ledger record is written before the lease.
+  - **No grant every hour.** A primary gets a new cycle at most once per the Brain's staleness window, and never more often than the lease TTL. Today's grants count against the execution control's `maxRunsPerDay`.
+  - **The local Publisher pass runs only with the Publisher identity:** `PUBLISHER_ACCESS_TOKEN`, mapped to the child's `BRAIN_ACCESS_TOKEN`. It never uses the orchestrator's token or a gcloud fallback.
+  - **A local cycle refuses to start without an explicit `BRAIN_ACCESS_TOKEN`.**
+  - **The shadow lane never runs in local mode.**
