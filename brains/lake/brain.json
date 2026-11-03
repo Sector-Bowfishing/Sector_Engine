@@ -23,8 +23,6 @@
       "pathFamilies": [
         "/activity/{event}",
         "/brains/lake-brain/{child}",
-        "/health/brains/lake-brain/{child}",
-        "/health/sources/{id}",
         "/lakeFleet/{k}/modelVersions/lake",
         "/lakeFleet/{k}/readiness/lake",
         "/lakeFleet/{k}/slots/lake",
@@ -39,7 +37,9 @@
         {"path": "/snapshots/{k}/latest/lakeState", "disposition": "PUBLISHER_COMPATIBILITY_PROJECTION", "ref": "lake-snapshot-copy-v1"},
         {"path": "/snapshots/{k}/latest/brainVersions/lake-brain", "disposition": "PUBLISHER_COMPATIBILITY_PROJECTION", "ref": "lake-snapshot-brainversion-v1"},
         {"path": "/snapshots/{k}/latest/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "snapshot-lakeid"},
-        {"path": "/health/jobs/{job}", "disposition": "ORCHESTRATOR_DERIVED", "ref": "health-jobs"}
+        {"path": "/health/jobs/{job}", "disposition": "ORCHESTRATOR_DERIVED", "ref": "health-jobs"},
+        {"path": "/health/brains/lake-brain/{child}", "disposition": "ORCHESTRATOR_DERIVED", "ref": "health-brains"},
+        {"path": "/health/sources/{id}", "disposition": "ORCHESTRATOR_DERIVED", "ref": "health-sources"}
       ]
     }
   ],
@@ -92,12 +92,12 @@
     "stores": [
       {
         "id": "reviewed-bindings",
-        "store": "COMPILED_IN_BINARY",
+        "store": "PACKAGED_IN_IMAGE",
         "owner": "lake-brain",
-        "location": "brains/lake/runtime/LakeBrain/LakeSourceBindings.swift",
-        "loader": "LakeSourceBindings (compiled)",
-        "verification": "compiled into the binary; bindingVersion and tableFingerprint",
-        "lineage": "bindingVersion in state provenance",
+        "location": "brains/lake/runtime/knowledge-release.json",
+        "loader": "LakeSourceBindings (compiled from the files the release pins)",
+        "verification": "sector_brain_platform.knowledge_release: per-file sha256 and bytes plus release digest over the binding sources (CI --check); the binary compiles exactly those files",
+        "lineage": "bindingVersion in state provenance; knowledgeRelease in the artifact lineage once the artifact entry records it (Sector_Ops #48, before G7)",
         "approval": "NOT_RECORDED",
         "onUnavailable": "NOT_APPLICABLE"
       },
