@@ -23,6 +23,8 @@ DEFAULT_STALE_AFTER_H = 36
 # Which Lake Brain presence states make a species "relevant" is an OPEN decision (integration contract section 10). This is the
 # conservative default; species outside it are reported as evaluated=false, never silently dropped.
 DEFAULT_RELEVANT_PRESENCE = ("established", "reported", "stocked", "inRangeUnconfirmed")
+# "No record" from the Lake Brain means unknown (Lake writes no row for `unknown`). Never read it as absent.
+PRESENCE_UNKNOWN = "UNKNOWN"
 SEASONS = {12: "WINTER", 1: "WINTER", 2: "WINTER", 3: "SPRING", 4: "SPRING", 5: "SPRING", 6: "SUMMER", 7: "SUMMER", 8: "SUMMER",
            9: "FALL", 10: "FALL", 11: "FALL"}
 
@@ -85,8 +87,11 @@ def normalize_inputs(snapshot: dict | None, now: dt.datetime, stale_after_h: flo
 
 def build_lake_state(lake_id: str, *, region: str, waterbody_type: str, now: dt.datetime, inputs: dict, daypart: str | None,
                      presence: dict, ruleset: rl.RuleSet, species_info: dict | None = None,
-                     relevant_presence=DEFAULT_RELEVANT_PRESENCE) -> dict:
-    """One lake's internal Biological State. `presence` = {speciesId: {presenceState, confidence, ...}} from the Lake Brain."""
+                     relevant_presence=DEFAULT_RELEVANT_PRESENCE, roster=None) -> dict:
+    """One lake's internal Biological State. `presence` = {speciesId: {presenceState, confidence, ...}} from the Lake Brain.
+
+    `roster` = the species this Brain knows (for example the rule set's species). The Lake Brain writes no row for an unknown presence, so a roster
+    species with NO presence record is presence UNKNOWN, never absent: it is listed with evaluated=false (Sector_Ops #23 / #22 roadmap item 4)."""
     month = now.month
     ctx = {"month": month, "region": region, "waterbodyType": waterbody_type}
     feats = ft.evaluate_features(inputs, {"month": month, "daypart": daypart})
@@ -94,6 +99,9 @@ def build_lake_state(lake_id: str, *, region: str, waterbody_type: str, now: dt.
     temp_c = ft.f_to_c(cur_f) if isinstance(cur_f, (int, float)) else None
 
     species_out, lake_unknowns = [], []
+    for sid in sorted(set(roster or ()) - set(presence or {})):
+        species_out.append({"speciesId": sid, "presence": {"presenceState": PRESENCE_UNKNOWN, "reason": "no presence record for this lake"},
+                            "evaluated": False, "notEvaluatedReason": "no presence record: presence is UNKNOWN (not absent), so the species is not rated"})
     for sid in sorted(presence):
         p = presence[sid] or {}
         info = (species_info or {}).get(sid) or {}
@@ -153,6 +161,7 @@ def build_lake_state(lake_id: str, *, region: str, waterbody_type: str, now: dt.
             lake_unknowns.append(f"{slot} input {(inputs.get(slot) or {}).get('status', 'NOT_PUBLISHED')}: dependent features are UNKNOWN")
     lake_unknowns.append("tributary discharge change is not published by any Brain: rapidDischargeIncrease is UNKNOWN")
     lake_unknowns.append("area-level habitat classes are not evaluable at lake level")
+    species_out.sort(key=lambda s: s["speciesId"])
     evaluated = [s for s in species_out if s.get("evaluated")]
     return {
         "lakeId": lake_id, "kind": "biological-state", "stateVersion": STATE_VERSION, "status": "PILOT_INTERNAL",
@@ -161,7 +170,9 @@ def build_lake_state(lake_id: str, *, region: str, waterbody_type: str, now: dt.
         "inputs": {k: {kk: vv for kk, vv in v.items() if kk != "values"} for k, v in inputs.items()},
         "features": {k: v for k, v in feats.items() if ft.REGISTRY[k]["availability"] != "AREA"},
         "species": species_out, "unknowns": lake_unknowns,
-        "summary": {"speciesPresent": len(species_out), "speciesEvaluated": len(evaluated),
+        "summary": {"speciesPresent": sum(1 for s in species_out if s["speciesId"] in (presence or {})),   # species with a Lake presence record
+                    "speciesPresenceUnknown": sum(1 for s in species_out if s["speciesId"] not in (presence or {})),
+                    "speciesEvaluated": len(evaluated),
                     "speciesWithAnyResponseBand": sum(1 for s in evaluated if any(r["response"] != "UNKNOWN" for r in s.get("responses", [])))},
         "provenance": {"brainId": "biological-state", "featuresVersion": ft.FEATURES_VERSION, "rulesVersion": ruleset.rules_version,
                        "stateVersion": STATE_VERSION},

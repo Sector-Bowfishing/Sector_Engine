@@ -59,7 +59,8 @@ def main(argv=None) -> int:
         presence = json.load(open(a.presence)) if a.presence else {}
     inputs = bs.normalize_inputs(snap, now)
     state = bs.build_lake_state(a.lake, region=meta["region"], waterbody_type=meta["waterbodyType"], now=now, inputs=inputs,
-                                daypart=bs.daypart_for(meta["lat"], meta["lon"], now), presence=presence, ruleset=ruleset, species_info=species_info)
+                                daypart=bs.daypart_for(meta["lat"], meta["lon"], now), presence=presence, ruleset=ruleset, species_info=species_info,
+                                roster=sorted(ruleset.by_species))           # no presence record = UNKNOWN, listed, not dropped
     os.makedirs(a.out, exist_ok=True)
     path = os.path.join(a.out, f"biological_state_{meta['key']}.json")
     fp = bs.state_fingerprint(state)
