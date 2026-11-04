@@ -11,6 +11,7 @@ def test_water_temp_health_is_derived_from_published_registry_and_sources_only()
     assert out == {f"health/brains/{WATER_TEMP}/status": "WARNING", f"health/brains/{WATER_TEMP}/staleLakeCount": 1,
                    f"health/brains/{WATER_TEMP}/lastSuccess": "2026-11-03T06:00:00Z",
                    f"health/brains/{WATER_TEMP}/lastRun": None, f"health/brains/{WATER_TEMP}/errorCount": None, f"health/brains/{WATER_TEMP}/durationMs": None,
+                   f"health/brains/{WATER_TEMP}/latestError": None,
                    f"health/sources/{src}": {"status": "HEALTHY", "lastFetchAt": "2026-11-03T06:00:00Z", "failuresLastRun": 0}}
     assert set(WATER_TEMP_HEALTH_DOMAIN_CHILDREN) <= set(HM.SPECS[WATER_TEMP]["registryChildren"])
 
@@ -25,7 +26,7 @@ def test_every_child_the_legacy_job_writes_is_either_derived_or_retired():
     import json, os
     golden = os.path.join(os.path.dirname(__file__), "..", "..", "..", "brains", "water-temperature", "tests", "golden", "water_temp_run_updates.json")
     u = json.load(open(golden))
-    legacy = set((u.get("updates", u))[f"health/brains/{WATER_TEMP}"])
+    legacy = set((u.get("updates", u))[f"health/brains/{WATER_TEMP}"]) | {"latestError"}     # latestError: the failure path (BrainHealthRecord)
     spec = HM.SPECS[WATER_TEMP]
     assert legacy == set(spec["registryChildren"]) | set(spec["retireChildren"]), legacy
 

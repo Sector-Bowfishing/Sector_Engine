@@ -8,12 +8,23 @@ def test_lake_health_is_derived_from_published_registry_and_sources_only():
     out = HM.derive(LAKE, {"status": "CALIBRATION", "health": "WARNING", "staleLakeCount": 1, "healthReasons": ["cwms fallback"], "lastSuccessfulRun": "x"},
                     {src: {"health": "HEALTHY", "lastFetchAt": "2026-11-02T12:00:00Z"}, "not-lakes-source": {"health": "HEALTHY"}})
     assert out == {f"health/brains/{LAKE}/status": "WARNING", f"health/brains/{LAKE}/staleLakeCount": 1, f"health/brains/{LAKE}/reasons": ["cwms fallback"],
+                   f"health/brains/{LAKE}/lastSuccess": "x",
+                   **{f"health/brains/{LAKE}/{c}": None for c in ("lastRun", "errorCount", "durationMs", "latestError")},
                    f"health/sources/{src}": {"status": "HEALTHY", "lastFetchAt": "2026-11-02T12:00:00Z"}}
-    assert set(HM.SPECS[LAKE]["registryChildren"]) == set(LAKE_HEALTH_DOMAIN_CHILDREN)
+    assert set(LAKE_HEALTH_DOMAIN_CHILDREN) <= set(HM.SPECS[LAKE]["registryChildren"])
+
+
+def test_every_child_lakes_legacy_job_writes_is_either_derived_or_retired():
+    import json, os
+    golden = os.path.join(os.path.dirname(__file__), "..", "..", "..", "brains", "lake", "tests", "golden", "lake_run_updates.json")
+    u = json.load(open(golden))
+    legacy = set((u.get("updates", u))[f"health/brains/{LAKE}"]) | {"reasons", "latestError"}     # reasons / latestError: non-HEALTHY and failure paths
+    spec = HM.SPECS[LAKE]
+    assert legacy == set(spec["registryChildren"]) | set(spec["retireChildren"]), legacy
 
 
 def test_unknown_stays_absent():
-    assert HM.derive(LAKE, {}, {}) == {}
+    assert all(v is None for v in HM.derive(LAKE, {}, {}).values())
 
 
 def test_the_publisher_registry_no_longer_authorises_lake_health_paths():

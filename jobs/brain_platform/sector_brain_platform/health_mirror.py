@@ -33,13 +33,16 @@ SPECS = {
                       "sources": _clarity_source_ids},
     # Sector_Ops #48 A3: mirrored only once Lake is CENTRAL (the stage derives health for CENTRAL Brains that published); until then Lake's own writer writes them.
     # `reasons` is not in Lake's published registry, so it stays absent until Lake publishes it.
-    "lake-brain": {"registryChildren": ("status", "staleLakeCount", "reasons"), "registryMap": {"status": "health", "staleLakeCount": "staleLakeCount", "reasons": "healthReasons"},
-                   "sources": _lake_source_ids},
+    # Lake's job also writes lastRun/lastSuccess/durationMs/errorCount (and latestError on failure): lastSuccess is published (lastSuccessfulRun), the rest retire.
+    "lake-brain": {"registryChildren": ("status", "staleLakeCount", "reasons", "lastSuccess"),
+                   "registryMap": {"status": "health", "staleLakeCount": "staleLakeCount", "reasons": "healthReasons", "lastSuccess": "lastSuccessfulRun"},
+                   "retireChildren": ("lastRun", "errorCount", "durationMs", "latestError"), "sources": _lake_source_ids},
     # Sector_Ops #50 WT-P2 A3: mirrored only once Water Temp is CENTRAL; until then its own writer writes them. Its job writes lastRun/lastSuccess/errorCount/durationMs
-    # today: lastSuccess is published (lastSuccessfulRun); the others are execution facts nothing published carries, so they are retired at cutover.
+    # today (latestError on the failure path): lastSuccess is published (lastSuccessfulRun); the others are execution facts nothing published carries,
+    # so they are retired at cutover.
     "water-temp": {"registryChildren": ("status", "staleLakeCount", "lastSuccess"),
                    "registryMap": {"status": "health", "staleLakeCount": "staleLakeCount", "lastSuccess": "lastSuccessfulRun"},
-                   "retireChildren": ("lastRun", "errorCount", "durationMs"), "sources": _water_temp_source_ids},
+                   "retireChildren": ("lastRun", "errorCount", "durationMs", "latestError"), "sources": _water_temp_source_ids},
 }
 
 #: Source health fields carried from the published `/sources/{id}` record when present (Water Temp publishes failuresLastRun, Clarity failures24h).
