@@ -14,6 +14,7 @@ set -euo pipefail
 JOB_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$JOB_DIR/../.." && pwd)"
 CUTOVER="$REPO_ROOT/jobs/brain-orchestrator/publication-cutover.json"      # the ONE reviewed cutover document; the Orchestrator image stages the same file
+if [[ "${1:-}" == "--stage-only" && -n "${STAGE_ONLY_CUTOVER:-}" ]]; then CUTOVER="$STAGE_ONLY_CUTOVER"; fi   # tests and review only; a deploy always uses the reviewed file
 
 stage_context() {
   local dest="$1"
@@ -38,7 +39,9 @@ for b in central:
     os.makedirs(os.path.join(out, b))
     shutil.copy(rel, os.path.join(out, b))
     for f in json.load(open(rel))["files"]:
-        shutil.copy(os.path.join(dirs[b], f["path"]), os.path.join(out, b, f["path"]))
+        dst = os.path.join(out, b, f["path"])
+        os.makedirs(os.path.dirname(dst), exist_ok=True)          # Swift Brains list files in subfolders (LakeBrain/..., WaterTemperatureBrain/...)
+        shutil.copy(os.path.join(dirs[b], f["path"]), dst)
 PY
   find "$dest" -name __pycache__ -type d -prune -exec rm -rf {} +
 }
