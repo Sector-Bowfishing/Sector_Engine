@@ -54,7 +54,7 @@ def test_no_brain_imports_another_brains_code():
 
 # Documented duplicate: Fish and Sector Intelligence both ship `orchestration.py` (their own plan() helpers). Safe ONLY because the orchestrator
 # starts every in-process Brain as its own subprocess with cwd = that Brain's runtime directory (asserted below), never in a shared interpreter.
-ALLOWED_DUPLICATES = {"run", "main", "brain_platform", "publish_artifact", "orchestration"}
+ALLOWED_DUPLICATES = {"run", "main", "brain_platform", "publish_artifact", "artifact_entry", "orchestration"}   # per-Brain entry points by convention
 
 
 def test_brain_python_module_names_are_unambiguous():
