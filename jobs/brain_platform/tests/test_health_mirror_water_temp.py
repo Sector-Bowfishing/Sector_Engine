@@ -6,15 +6,49 @@ from sector_brain_platform.publisher.registry import WATER_TEMP, WATER_TEMP_HEAL
 
 def test_water_temp_health_is_derived_from_published_registry_and_sources_only():
     src = sorted(_owned_sources(WATER_TEMP))[0]
-    out = HM.derive(WATER_TEMP, {"status": "WARNING", "staleLakeCount": 1, "lastSuccessfulRun": "x"},
-                    {src: {"health": "HEALTHY", "lastFetchAt": "2026-11-03T06:00:00Z"}, "not-its-source": {"health": "HEALTHY"}})
+    out = HM.derive(WATER_TEMP, {"status": "CALIBRATION", "health": "WARNING", "staleLakeCount": 1, "lastSuccessfulRun": "2026-11-03T06:00:00Z"},
+                    {src: {"health": "HEALTHY", "lastFetchAt": "2026-11-03T06:00:00Z", "failuresLastRun": 0}, "not-its-source": {"health": "HEALTHY"}})
     assert out == {f"health/brains/{WATER_TEMP}/status": "WARNING", f"health/brains/{WATER_TEMP}/staleLakeCount": 1,
-                   f"health/sources/{src}": {"status": "HEALTHY", "lastFetchAt": "2026-11-03T06:00:00Z"}}
-    assert set(HM.SPECS[WATER_TEMP]["registryChildren"]) == set(WATER_TEMP_HEALTH_DOMAIN_CHILDREN)
+                   f"health/brains/{WATER_TEMP}/lastSuccess": "2026-11-03T06:00:00Z",
+                   f"health/brains/{WATER_TEMP}/lastRun": None, f"health/brains/{WATER_TEMP}/errorCount": None, f"health/brains/{WATER_TEMP}/durationMs": None,
+                   f"health/brains/{WATER_TEMP}/latestError": None,
+                   f"health/sources/{src}": {"status": "HEALTHY", "lastFetchAt": "2026-11-03T06:00:00Z", "failuresLastRun": 0}}
+    assert set(WATER_TEMP_HEALTH_DOMAIN_CHILDREN) <= set(HM.SPECS[WATER_TEMP]["registryChildren"])
+
+
+def test_lifecycle_status_is_never_published_as_health():
+    """The registry `status` is the lifecycle (CALIBRATION); health comes from `health` (2026-11-04 review)."""
+    out = HM.derive(WATER_TEMP, {"status": "CALIBRATION"}, {})
+    assert f"health/brains/{WATER_TEMP}/status" not in out
+
+
+def test_every_child_the_legacy_job_writes_is_either_derived_or_retired():
+    import json, os
+    golden = os.path.join(os.path.dirname(__file__), "..", "..", "..", "brains", "water-temperature", "tests", "golden", "water_temp_run_updates.json")
+    u = json.load(open(golden))
+    legacy = set((u.get("updates", u))[f"health/brains/{WATER_TEMP}"]) | {"latestError"}     # latestError: the failure path (BrainHealthRecord)
+    spec = HM.SPECS[WATER_TEMP]
+    assert legacy == set(spec["registryChildren"]) | set(spec["retireChildren"]), legacy
+
+
+def test_stage_removes_retired_children_and_keeps_derived_ones_fresh():
+    class DB:
+        def __init__(self, tree): self.tree, self.updates = tree, []
+        def get(self, path): return self.tree.get(path)
+        def update(self, d): self.updates.append(d); self.tree.update({k: v for k, v in d.items()})
+    src = sorted(_owned_sources(WATER_TEMP))[0]
+    db = DB({f"brains/{WATER_TEMP}/health": "HEALTHY", f"brains/{WATER_TEMP}/staleLakeCount": 0, f"brains/{WATER_TEMP}/lastSuccessfulRun": "2026-11-04T00:00:00Z",
+             f"health/brains/{WATER_TEMP}/lastRun": "2026-10-22T00:00:00Z", f"health/brains/{WATER_TEMP}/lastSuccess": "2026-10-22T00:00:00Z",
+             "sources": {src: {"health": "HEALTHY", "failuresLastRun": 0}}})
+    HM.stage(db, [WATER_TEMP], write=True)
+    (u,) = db.updates
+    assert u[f"health/brains/{WATER_TEMP}/lastRun"] is None and u[f"health/brains/{WATER_TEMP}/lastSuccess"] == "2026-11-04T00:00:00Z"
+    assert u[f"health/brains/{WATER_TEMP}/status"] == "HEALTHY" and f"health/brains/{WATER_TEMP}/errorCount" not in u   # already absent: nothing to remove
 
 
 def test_unknown_stays_absent():
-    assert HM.derive(WATER_TEMP, {}, {}) == {}
+    out = HM.derive(WATER_TEMP, {}, {})
+    assert all(v is None for v in out.values()) and set(out) == {f"health/brains/{WATER_TEMP}/{c}" for c in HM.SPECS[WATER_TEMP]["retireChildren"]}
 
 
 def test_the_publisher_registry_no_longer_authorises_water_temp_health_paths():
