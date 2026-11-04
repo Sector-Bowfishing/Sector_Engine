@@ -131,7 +131,7 @@ public struct ClarityVisibilityDTO: Codable, Equatable {
     /// The 80% range; nil where no validated range exists (the rain-decay estimate).
     public let lowFt: Double?
     public let highFt: Double?
-    public let confidence: String      // medium | low
+    public let confidence: String      // low (both paths until a Sector-water validation); medium reserved
     public let model: String           // secchi-power-v1 | rain-decay-v0
     public let source: String          // inSituGauge | rainDecayModel | noRainData
     public let provenance: String
@@ -495,9 +495,12 @@ public enum SectorEngineAPI {
             let site = turbidity.map { "USGS \($0.siteCode) \($0.siteName)" } ?? "a USGS turbidity gauge"
             return ClarityVisibilityDTO(
                 centralFt: central, lowFt: algal ? nil : e.lowFt, highFt: algal ? nil : e.highFt,
-                confidence: e.confidence, model: VisibilityModel.modelId, source: "inSituGauge",
+                // "low", not the conversion's national "medium": on Sector's Southern reservoirs the
+                // gauge path matched measured clarity no better than rain-decay (Sector_Ops #40, G0-1).
+                confidence: "low", model: VisibilityModel.modelId, source: "inSituGauge",
                 provenance: String(format: "%@ measuring %.1f FNU", site, fnu),
-                limitations: ["Visibility converted from turbidity (validated on 81,661 WQP pairs: median error 1.2 ft); the range is the conversion's 80% spread, not the gauge's."]
+                limitations: ["Visibility converted from turbidity (validated on 81,661 WQP pairs: median error 1.2 ft); the range is the conversion's 80% spread, not the gauge's.",
+                              "Not checked against measured clarity at Sector lakes."]
                     + (algal ? ["Algal turbidity halves the sightline; no validated range for it."] : []))
         }
         if !input.rainDataAvailable && input.rainWatershed72hIn == nil {
