@@ -78,3 +78,44 @@ def test_central_scheduling_live_board_has_no_drift():
     assert C.audit(live, POLICY, {"state": "PAUSED"}) == ([], [])
     # a deprecated scheduler that comes back ENABLED is drift as well as a policy violation
     assert any("wind-hourly" in d for d in C.drift([job("wind-hourly", "ENABLED")] + live[1:], m))
+
+
+def fb(name="firebase-schedule-sweepListingCoverOwners-us-central1", state="ENABLED", **target):
+    j = job(name, state, "every 30 minutes")
+    j.update(target or {"pubsubTarget": {"topicName": f"projects/sector-9393c/topics/{name}"}})
+    return j
+
+
+def test_classified_non_brain_scheduler_is_not_unmanaged():
+    """Sector_Ops #46 P1: the Firebase app scheduler is classified non-Brain, so the audit no longer fails on it (and the resume preflight can pass)."""
+    from sector_brain_platform import orchestration as O
+    m, nb = O.load_manifest(), POLICY["nonBrainSchedulers"]
+    assert set(nb) == {"firebase-schedule-sweepListingCoverOwners-us-central1"}
+    assert C.audit([], POLICY)[0] == []                         # entries are complete and not also Brain schedulers
+    live = [job("brain-orchestrator", "PAUSED"), fb()]
+    assert [d for d in C.drift(live, m, nb) if "firebase" in d] == []         # (the frozen test manifest has its own drift lines)
+    assert any(d.startswith("UNMANAGED firebase-schedule") for d in C.drift(live, m))   # without the classification it is still caught
+
+
+def test_a_non_brain_scheduler_that_moves_its_target_is_drift():
+    from sector_brain_platform import orchestration as O
+    m, nb = O.load_manifest(), POLICY["nonBrainSchedulers"]
+    moved = fb(pubsubTarget={"topicName": "projects/sector-9393c/topics/something-else"})
+    assert any("no longer the pinned one" in d for d in C.drift([moved], m, nb))
+    http = fb(httpTarget={"uri": "https://run.googleapis.com/v2/projects/p/locations/l/jobs/lake-brain:run"})
+    assert any("no longer the pinned one" in d for d in C.drift([http], m, nb))
+    both = fb(pubsubTarget={"topicName": "projects/sector-9393c/topics/firebase-schedule-sweepListingCoverOwners-us-central1"},
+              httpTarget={"uri": "https://example.invalid"})
+    assert any("no longer the pinned one" in d for d in C.drift([both], m, nb))
+
+
+def test_only_exact_names_are_classified_and_a_name_cannot_be_both():
+    from sector_brain_platform import orchestration as O
+    m, nb = O.load_manifest(), POLICY["nonBrainSchedulers"]
+    assert any("UNMANAGED firebase-schedule-other" in d for d in C.drift([fb("firebase-schedule-other-us-central1")], m, nb))
+    pol = {**POLICY, "nonBrainSchedulers": {"wind-hourly": dict(next(iter(nb.values())))}}
+    assert any("also listed as a Brain scheduler" in b for b in C.audit([], pol)[0])
+    pol2 = {**POLICY, "nonBrainSchedulers": {"x": {"owner": "o"}}}
+    assert any("non-Brain entry x lacks" in b for b in C.audit([], pol2)[0])
+    claimed = {"wind-hourly": dict(next(iter(nb.values())))}
+    assert any("execution manifest schedules it" in d for d in C.drift([fb("wind-hourly", "PAUSED")], m, claimed))

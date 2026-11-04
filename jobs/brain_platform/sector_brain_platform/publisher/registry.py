@@ -472,6 +472,9 @@ LAKE_REGISTRY_CHILDREN = {
     # accepts the production registry unchanged (Cortex 2.2 audit E-8 / C-8). Never scores, never publication state.
     "evidence": ("predictionLedger", "claimMaturity"),
 }
+#: Sector_Ops #48 step A3 (cutover gate G3, as Water Clarity under FD-15): the Publisher writes NO /health/* path for Lake. /health/brains/lake-brain/{status,staleLakeCount,
+#: reasons} and /health/sources/{id} are Orchestrator-owned operational health, derived from the Publisher-published /brains/lake-brain and /sources/{id}
+#: (sector_brain_platform.health_mirror). The tuple stays for existing imports and the health mirror; it authorises nothing in the registry.
 LAKE_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount", "reasons")      # domain facts + WHY; run/process fields are Orchestrator-owned
 LAKE_FLEET_CHILDREN = ("riverSystem",)                                      # the one Lake-only shared fleet field the job writes (ownership.LAKE_BRAIN_ONLY_FLEET)
 
@@ -514,12 +517,11 @@ def lake_specs() -> list[SchemaSpec]:
         (PathFamily(f"/brains/{LAKE}/{{child}}", {"child": one_of(c for group in LAKE_REGISTRY_CHILDREN.values() for c in group)},
                     note="approved CHILDREN only; never the whole node, never publication/certification"),
          PathFamily(f"/validation/{LAKE}"),
-         PathFamily(f"/health/brains/{LAKE}/{{child}}", {"child": one_of(LAKE_HEALTH_DOMAIN_CHILDREN)}, note="domain health facts only"),
          PathFamily("/activity/{event}", {"event": contains(f"-{LAKE}-")}, note="own domain events only")),
         delete_families=(PathFamily(f"/brains/{LAKE}/lastError"),), delete_reasons=("OPTIONAL_CHILD_CLEARED",), volatile=LAKE_VOLATILE_CONTRACT_V1)
     sources = SchemaSpec(
         "lake-source-registry-v1", LAKE,
-        (PathFamily("/sources/{id}", {"id": one_of(_owned_sources(LAKE))}), PathFamily("/health/sources/{id}", {"id": one_of(_owned_sources(LAKE))})),
+        (PathFamily("/sources/{id}", {"id": one_of(_owned_sources(LAKE))}),),
         volatile=LAKE_VOLATILE_CONTRACT_V1)
     return [lake_state, registry, sources]
 
@@ -535,6 +537,9 @@ WATER_TEMP_REGISTRY_CHILDREN = {
     "status": ("schedule", "enabled", "health", "status", "supportedLakeCount", "readinessCounts", "staleLakeCount", "staleAfterHours",
                "lastSuccessfulRun", "lastError", "deploymentVersion", "breakdowns", "runsPerMinute", "fleetScope"),
 }
+#: Sector_Ops #50 WT-P2 A3 (cutover gate G3, as Water Clarity and Lake): the Publisher writes NO /health/* path for Water Temp. /health/brains/water-temp/
+#: {status,staleLakeCount} and /health/sources/{id} are Orchestrator-owned operational health, derived from the published /brains/water-temp and /sources/{id}
+#: (sector_brain_platform.health_mirror). The tuple stays for the health mirror; it authorises nothing in the registry.
 WATER_TEMP_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount")
 WATER_TEMP_VOLATILE_CONTRACT_V1 = VolatileContract(
     "water-temp-volatile-v1", 1,
@@ -567,12 +572,11 @@ def water_temp_specs() -> list[SchemaSpec]:
         (PathFamily(f"/brains/{WATER_TEMP}/{{child}}", {"child": one_of(c for group in WATER_TEMP_REGISTRY_CHILDREN.values() for c in group)},
                     note="approved CHILDREN only; never the whole node, never publication/certification"),
          PathFamily(f"/validation/{WATER_TEMP}"),
-         PathFamily(f"/health/brains/{WATER_TEMP}/{{child}}", {"child": one_of(WATER_TEMP_HEALTH_DOMAIN_CHILDREN)}, note="domain health facts only"),
          PathFamily("/activity/{event}", {"event": contains(f"-{WATER_TEMP}-")}, note="own domain events only")),
         delete_families=(PathFamily(f"/brains/{WATER_TEMP}/lastError"),), delete_reasons=("OPTIONAL_CHILD_CLEARED",), volatile=WATER_TEMP_VOLATILE_CONTRACT_V1)
     sources = SchemaSpec(
         "water-temp-source-registry-v1", WATER_TEMP,
-        (PathFamily("/sources/{id}", {"id": one_of(_owned_sources(WATER_TEMP))}), PathFamily("/health/sources/{id}", {"id": one_of(_owned_sources(WATER_TEMP))})),
+        (PathFamily("/sources/{id}", {"id": one_of(_owned_sources(WATER_TEMP))}),),
         volatile=WATER_TEMP_VOLATILE_CONTRACT_V1)
     return [lake_state, registry, sources]
 

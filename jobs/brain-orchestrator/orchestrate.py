@@ -49,6 +49,7 @@ from sector_brain_platform import execution_control as EC                       
 from sector_brain_platform import engineering_status_publication as ESP                                                # noqa: E402
 from sector_brain_platform import shadow_lane as SL                                                                   # noqa: E402
 from sector_brain_platform import data_ownership as DO, publication_stage as PS, health_mirror as HM                                       # noqa: E402
+from sector_brain_platform import runner_lease as RL                                                                  # noqa: E402
 sys.path.insert(0, HERE)
 import control_plane as CP                                                                                            # noqa: E402
 
@@ -325,6 +326,132 @@ def build_live_publisher(store):
     return None
 
 
+def runner_gate(a, brain_id: str, now: dt.datetime) -> tuple[bool, str]:
+    """--runner-leases: may the cloud start this Brain? Unreadable store or policy = no (fail closed: a missing lease system never means a surprise cloud run)."""
+    try:
+        store = build_publication_store(a.artifact_store_dir, a.artifact_bucket)
+        if store is None:
+            return False, "NO_ARTIFACT_STORE"
+        return RL.cloud_may_start(RL.orchestrator_view(store), RL.load_policy(), brain_id, now)
+    except Exception as e:                                       # noqa: BLE001 - fail closed
+        return False, f"LEASE_CHECK_FAILED:{type(e).__name__}"
+
+
+def runner_primary_is_cloud(brain_id: str) -> bool:
+    """Is the cloud this Brain's reviewed runner (runner-policy.json)? Unreadable policy = no (then the grant path fails closed and nothing starts)."""
+    try:
+        return RL.primary(RL.load_policy(), brain_id) == "cloud"
+    except Exception:                                            # noqa: BLE001
+        return False
+
+
+def runner_grants_today(a, brain_id: str, now: dt.datetime) -> int:
+    """Grants made today for this Brain: each counts as a run against the execution control's maxRunsPerDay (a grant is a run outside Cloud Run)."""
+    try:
+        store = build_publication_store(a.artifact_store_dir, a.artifact_bucket)
+        return len(RL.grants_since(RL.orchestrator_view(store), brain_id, now.strftime("%Y-%m-%dT00:00:00Z"))) if store is not None else 0
+    except Exception:                                            # noqa: BLE001 - unreadable: the grant itself then fails closed
+        return 0
+
+
+def regrant_cooldown_minutes(manifest: dict, brain_id: str) -> int:
+    """A runner is granted a new cycle at most once per the Brain's staleness window (TIME Brains), else every 6 h, never more often than the lease TTL."""
+    hours = ((manifest.get("brains") or {}).get(brain_id) or {}).get("staleAfterHours") or 6
+    return max(RL.DEFAULT_TTL_MINUTES, int(float(hours) * 60))
+
+
+def grant_to_primary(a, brain_id: str, now: dt.datetime, cooldown_minutes: int = 360) -> tuple[bool, str, dict | None]:
+    """--runner-leases, a Brain whose policy primary is not the cloud (Sector_Ops #51 C1): the Orchestrator grants that runner the lease for this cycle and starts
+    nothing itself. A fresh lease of the same holder means its cycle is still in progress (not granted again). Unreadable store or policy = no grant (fail closed)."""
+    try:
+        store = build_publication_store(a.artifact_store_dir, a.artifact_bucket)
+        if store is None:
+            return False, "NO_ARTIFACT_STORE", None
+        view, pol = RL.orchestrator_view(store), RL.load_policy()
+        holder = RL.primary(pol, brain_id)
+        cur, _ = RL.read(view, brain_id)
+        if cur and cur.get("holder") == holder and RL.fresh(cur, now):
+            return False, f"CYCLE_IN_PROGRESS:{holder}:{cur.get('cycleId')}", None
+        last = (RL.grants_since(view, brain_id, iso(now - dt.timedelta(minutes=cooldown_minutes))) or [None])[-1]
+        if last:                                                 # granted recently and not yet published: never a fresh cycle every hour
+            return False, f"GRANTED_RECENTLY:{last['holder']}:{last['cycleId']} (cooldown {cooldown_minutes} min)", None
+        if a.dry_run or a.no_execute:
+            return False, f"WOULD_GRANT:{holder} (--dry-run/--no-execute)", None
+        doc = RL.grant(view, pol, brain_id, holder, f"{brain_id}-{now:%Y%m%dT%H%MZ}", now)
+        return True, f"GRANTED:{holder}:{doc['cycleId']}", doc
+    except RL.LeaseBusy as e:
+        return False, f"LEASE_BUSY:{e}", None
+    except Exception as e:                                       # noqa: BLE001 - fail closed
+        return False, f"GRANT_FAILED:{type(e).__name__}", None
+
+
+class LocalCycleLock:
+    """Local runner mode: no overlapping orchestrator cycles on this machine (PL-17), an exclusive non-blocking lock file instead of the Cloud Run execution list."""
+    def __init__(self, path: str):
+        self.path, self.fh = path, None
+
+    def acquire(self) -> bool:
+        import fcntl
+        os.makedirs(os.path.dirname(os.path.abspath(self.path)), exist_ok=True)
+        self.fh = open(self.path, "a+")
+        try:
+            fcntl.flock(self.fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            return True
+        except OSError:
+            self.fh.close()
+            self.fh = None
+            return False
+
+
+PUBLISHER_JOB = "brain-publisher"
+PUBLISHER_LOCAL = os.path.join(HERE, "..", "brain-publisher", "publish_job.py")
+
+
+def run_publisher_locally(handoff: dict, *, auto_ok: bool, may_start: bool, bucket: str | None, live: bool, timeout: int = 900) -> dict:
+    """Local Publisher mode (Sector_Ops #51 C1): the same Publisher pass as the brain-publisher job, as a subprocess of this cycle instead of a Cloud Run start.
+    A dry run unless `live` (PUBLISHER_LOCAL_LIVE=on, its own approval); the pass re-checks the execution control and the cutover itself."""
+    if not handoff.get("pending"):
+        return {"started": False, "reason": "NOTHING_PENDING"}
+    if not auto_ok:
+        return {"started": False, "reason": "EXECUTION_PAUSED"}
+    if not may_start:
+        return {"started": False, "reason": "DRY_RUN_OR_NO_EXECUTE"}
+    if not bucket:
+        return {"started": False, "reason": "NO_ARTIFACT_BUCKET"}
+    pub_token = os.environ.get("PUBLISHER_ACCESS_TOKEN")
+    if not pub_token:                                            # the Publisher identity only: never the cycle's (orchestrator) token, never a gcloud fallback
+        return {"started": False, "reason": "NO_PUBLISHER_TOKEN"}
+    cmd = [PYTHON, PUBLISHER_LOCAL, "--artifact-bucket", bucket, "--max-artifacts", "4"] + (["--live"] if live else [])
+    env = {k: v for k, v in os.environ.items() if k not in ("BRAIN_ACCESS_TOKEN", "PUBLISHER_ACCESS_TOKEN")}
+    env["BRAIN_ACCESS_TOKEN"] = pub_token
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, env=env)
+    except subprocess.TimeoutExpired:
+        return {"started": True, "how": "local", "ok": False, "reason": "TIMED_OUT", "live": live}
+    return {"started": True, "how": "local", "ok": r.returncode == 0, "exit": r.returncode, "live": live, "tail": (r.stdout + r.stderr)[-400:],
+            "at": iso(dt.datetime.now(dt.timezone.utc))}
+
+
+def start_publisher_if_needed(handoff: dict, executions: dict, tokens: TokenProvider, *, auto_ok: bool, may_start: bool) -> dict:
+    """Hand-off mode: start the recurring Publisher job once when requests are pending. Never while automatic work is not permitted, never in a dry run / no-execute cycle, never
+    while an execution of it is already running (single flight); the job re-checks the execution control and the cutover itself. No argument overrides: its deployed arguments decide
+    whether it runs --live."""
+    if not handoff.get("pending"):
+        return {"started": False, "reason": "NOTHING_PENDING"}
+    if not auto_ok:
+        return {"started": False, "reason": "EXECUTION_PAUSED"}
+    if not may_start:
+        return {"started": False, "reason": "DRY_RUN_OR_NO_EXECUTE"}
+    running = gcp.running_executions(executions.get(PUBLISHER_JOB) or [])
+    if running:
+        return {"started": False, "reason": "ALREADY_RUNNING", "execution": running[0]}
+    try:
+        op = gcp.run_job(tokens, PUBLISHER_JOB)
+    except Exception as e:                                       # noqa: BLE001 - recorded; the requests stay pending for the next cycle
+        return {"started": False, "reason": f"START_FAILED:{type(e).__name__}", "detail": str(e)[:200]}
+    return {"started": True, "execution": (op.get("metadata") or {}).get("name"), "at": iso(dt.datetime.now(dt.timezone.utc))}
+
+
 def gate_dispatch(todo: set, deferred: list) -> set:
     """Cortex M08 in the execution path: only recognised Brain identities run; an alias or unknown identity never runs; the legacy combined package is the ONLY dispatch of its two target
     Brains (a target Brain that the legacy package already covers is not also dispatched: no double dispatch, no duplicated scientific result)."""
@@ -369,6 +496,20 @@ def main(argv=None) -> int:
     ap.add_argument("--coordinate-publication", action="store_true",
                     help="PL-19 publication coordination: reconcile this cycle's and Cloud Run's executions with the sealed artifacts in the private store, record each run's publication outcome "
                          "(control/orchestrator.publication). OFF by default (also PUBLICATION_COORDINATION=on). Never arms the Publisher: a Brain is only handed to a live Publisher after an approved cutover")
+    ap.add_argument("--hand-off-publication", action="store_true",
+                    help="with --coordinate-publication (Sector_Ops #46 Q3): for each sealed artifact of a CENTRAL Brain write a create-only publication request and start brain-publisher "
+                         "when requests are pending and automatic work is permitted. OFF by default (also PUBLICATION_HANDOFF=on); a dry run writes and starts nothing")
+    ap.add_argument("--runner-leases", action="store_true",
+                    help="Sector_Ops #50: honour runner leases (runner_lease.py, runner-policy.json): never start a Brain's Cloud Run job while another runner holds its lease, "
+                         "or while its policy primary is not the cloud and failover is OFF; reconcile runner execution records in the publication stage. OFF by default "
+                         "(also RUNNER_LEASES=on); needs the artifact store")
+    ap.add_argument("--runner-mode", choices=("cloud", "local"), default=os.environ.get("RUNNER_MODE", "cloud"),
+                    help="Sector_Ops #51 C1. cloud (default): unchanged. local: this cycle runs outside Cloud Run (a registered runner's machine) and makes NO Cloud Run or "
+                         "Cloud Scheduler API call at all: /jobs is not synced, no Cloud Run job is started (a Brain whose policy primary is the cloud waits), the overlap "
+                         "guard is a local lock file, and the Publisher pass runs as a local process. Implies --runner-leases")
+    ap.add_argument("--local-lock", default=os.environ.get("RUNNER_LOCAL_LOCK"), help="local runner mode: the cycle lock file (default: next to the publication ledger)")
+    ap.add_argument("--publisher-local-live", action="store_true",
+                    help="local runner mode: run the local Publisher pass with --live (also PUBLISHER_LOCAL_LIVE=on; its own approval). Default: a dry run")
     ap.add_argument("--artifact-store-dir", default=os.environ.get("PUBLICATION_ARTIFACT_DIR"), help="directory holding the artifact store (local); the private bucket is a gated deployment resource")
     ap.add_argument("--artifact-bucket", default=os.environ.get("PUBLICATION_ARTIFACT_BUCKET"), help="private GCS bucket holding artifacts/, publishes/ and exports/orchestrator/ (the Orchestrator reads artifacts and writes only exports/orchestrator/)")
     ap.add_argument("--publication-ledger", default=os.environ.get("PUBLICATION_LEDGER"), help="JSON ledger file persisting run/publication records between cycles")
@@ -380,6 +521,16 @@ def main(argv=None) -> int:
     if a.health_only:
         a.control_only, a.publish_health = True, True
     a.coordinate_publication = (a.coordinate_publication or os.environ.get("PUBLICATION_COORDINATION") == "on") and not a.health_only
+    a.hand_off_publication = (a.hand_off_publication or os.environ.get("PUBLICATION_HANDOFF") == "on") and a.coordinate_publication
+    a.local_mode = a.runner_mode == "local"
+    a.runner_leases = a.runner_leases or os.environ.get("RUNNER_LEASES") == "on" or a.local_mode
+    a.publisher_local_live = a.publisher_local_live or os.environ.get("PUBLISHER_LOCAL_LIVE") == "on"
+    if a.local_mode and not os.environ.get("BRAIN_ACCESS_TOKEN"):
+        print("REFUSED: --runner-mode local needs BRAIN_ACCESS_TOKEN (a short-lived token of the intended identity); it never falls back to the gcloud login of "
+              "whoever runs it", file=sys.stderr)
+        return 2
+    if a.local_mode:
+        gcp.disable_cloud_calls("orchestrator local runner mode (--runner-mode local): no Cloud Run or Cloud Scheduler call")
     t0 = time.time()
     now = dt.datetime.now(dt.timezone.utc)
     if a.control_only:
@@ -401,13 +552,20 @@ def main(argv=None) -> int:
           + (f"; ADMIN run of {a.run_now} by {a.requested_by}: {a.admin_reason}" if admin else ""), flush=True)
 
     # 1. /jobs
-    records, executions, n_changed = sync_jobs(db, tokens, now, write and not a.control_only)
+    if a.local_mode:                                             # nothing is read from or written about Cloud Run: /jobs keeps what the cloud last recorded
+        records, executions, n_changed = {}, {}, 0
+    else:
+        records, executions, n_changed = sync_jobs(db, tokens, now, write and not a.control_only)
     print(f"jobs: {len(records)} records, {n_changed} changed", flush=True)
     if a.sync_jobs_only:
         return 0
     # no overlapping orchestrator cycles (PL-17): another running execution of this job owns the cycle; this one starts nothing
     me = os.environ.get("CLOUD_RUN_EXECUTION")
     others = [n for n in gcp.running_executions(executions.get(JOB_NAME) or []) if n != me] if me else []     # execution NAMES still running
+    if a.local_mode:
+        lock = LocalCycleLock(a.local_lock or os.path.join(os.path.dirname(os.path.abspath(a.publication_ledger or ".")), "orchestrator-cycle.lock"))
+        if not lock.acquire():
+            others = [f"local cycle lock {lock.path}"]
     if others:
         a.no_execute = True
         auto_ok, auto_why = False, f"another orchestrator cycle is running ({others[0]}): this cycle starts nothing"
@@ -421,7 +579,7 @@ def main(argv=None) -> int:
     world = CP.load_world(live, now)
     activity = O.effective_activity(world["manifest"], world["overrides"])
     brain_plans = {b: brain_plan(b) for b, ex in EXECUTORS.items()
-                   if ex["kind"] == "in-process" and b in brains and (a.legacy_execution or activity.get(b) == "ACTIVE") and not a.health_only
+                   if ex["kind"] == "in-process" and b in brains and (a.legacy_execution or activity.get(b) == "ACTIVE") and not a.health_only and not a.local_mode
                    and (auto_ok and EC.brain_enabled(ctl, b) or (admin and a.run_now == b))}
     locks_now = state.get("locks") or {}
     run_now = (a.run_now, a.scope, a.requested_by) if a.run_now else None
@@ -440,6 +598,7 @@ def main(argv=None) -> int:
     executed, deferred, locks, exec_records = [], [], {}, []
     started_async = set()
     starts = 0
+    leases_granted = []                                          # --runner-leases: cycles granted to a runner outside Cloud Run this cycle (it starts nothing here)
     ledger = list(((world["prev"] or {}).get("executions") or {}).values())
     day = f"{now:%Y-%m-%d}"
     manifest = world["manifest"]
@@ -469,12 +628,37 @@ def main(argv=None) -> int:
             # the execution control gate (PL-16, PL-17): global + per-Brain enablement, starts-per-cycle, runs-per-day, cost-per-day
             mine = [e for e in ledger + exec_records if e.get("brainId") == b and (e.get("startedAt") or "").startswith(day)
                     and e.get("status") in ("STARTED", "RUNNING", "SUCCEEDED", "SKIPPED", "FAILED", "DEGRADED")]
-            ok, gwhy = EC.gate(ctl, b, trigger, admin=admin if a.run_now == b else None, starts_this_cycle=starts, runs_today=len(mine),
+            runner_path = a.runner_leases and ex["kind"] == "cloud-run-job" and not runner_primary_is_cloud(b)
+            granted_today = runner_grants_today(a, b, now) if runner_path else 0
+            ok, gwhy = EC.gate(ctl, b, trigger, admin=admin if a.run_now == b else None, starts_this_cycle=starts, runs_today=len(mine) + granted_today,
                                cost_today=O.cost_rollup(mine, day).get("usd"))
             if not ok:
                 deferred.append({"brainId": b, "why": f"execution control: {gwhy}"})
                 print(f"HOLD {b:20s} {gwhy}", flush=True)
                 continue
+            if runner_path:
+                gok, gwhy2, gdoc = grant_to_primary(a, b, now, regrant_cooldown_minutes(manifest, b))
+                if gok:
+                    starts += 1
+                    leases_granted.append(gdoc)
+                deferred.append({"brainId": b, "why": f"runner lease: {gwhy2}" + ("; the runner runs it, its execution is reconciled next cycles" if gok else "")})
+                print(f"{'LEASE' if gok else 'HOLD '} {b:20s} runner lease: {gwhy2}", flush=True)
+                continue
+            if a.local_mode and ex["kind"] == "in-process":       # its `run.py --write` writes the database directly: never from a runner's machine
+                deferred.append({"brainId": b, "why": "local runner mode: an in-process Brain writes the database directly and is never run from a local cycle "
+                                                      "(it needs its own artifact job first; cutover plan SI-1)"})
+                print(f"HOLD {b:20s} local runner mode: in-process writer, not run", flush=True)
+                continue
+            if a.local_mode and ex["kind"] == "cloud-run-job":
+                deferred.append({"brainId": b, "why": "local runner mode: a Cloud Run job is never started from a local cycle (policy primary is the cloud)"})
+                print(f"HOLD {b:20s} local runner mode: cloud primary, not started", flush=True)
+                continue
+            if a.runner_leases and ex["kind"] == "cloud-run-job":
+                lok, lwhy = runner_gate(a, b, now)
+                if not lok:
+                    deferred.append({"brainId": b, "why": f"runner lease: {lwhy}"})
+                    print(f"HOLD {b:20s} runner lease: {lwhy}", flush=True)
+                    continue
             if a.dry_run or a.no_execute:
                 deferred.append({"brainId": b, "why": "not executed (--dry-run/--no-execute)"})
                 continue
@@ -521,10 +705,23 @@ def main(argv=None) -> int:
                 cloud_now = CP.executions_from_cloud_run(manifest, executions, records, now)
                 seen_ids = {e["executionId"] for e in exec_records}
                 terminal = [e for e in exec_records + [c for c in cloud_now if c["executionId"] not in seen_ids] if e.get("status") not in ("STARTED", "RUNNING")]
+                if a.runner_leases:                                      # runs outside Cloud Run (a registered runner) are reconciled like Cloud Run ones
+                    seen_ids |= {e["executionId"] for e in terminal}
+                    kept, skipped = RL.reconcilable_executions(RL.orchestrator_view(pstore), set(EXECUTORS), since=iso(now - dt.timedelta(days=2)), exclude=seen_ids)
+                    for e in skipped:                                    # fail closed: a run whose runner did not hold its cycle's lease is never published
+                        print(f"SKIP {e['brainId']:20s} runner execution {e['executionId']}: {e['runner']} did not hold the lease for cycle {e['cycleId']}", flush=True)
+                    terminal += kept
                 publication = PS.run_stage(store=pstore, ledger_path=a.publication_ledger, executions=terminal, shadow=build_shadow_publisher(pstore),
                                            live=build_live_publisher(pstore), cutover_path=a.publication_cutover,
-                                           paused_reason=None if auto_ok else "EXECUTION_PAUSED", dry_run=a.dry_run)
+                                           paused_reason=None if auto_ok else "EXECUTION_PAUSED", dry_run=a.dry_run,
+                                           handoff=a.hand_off_publication, run_id=f"orchestrator-{iso(now)}")
                 publication["state"] = "COORDINATED"
+                if publication["handoff"]["enabled"] and a.local_mode:
+                    publication["handoff"]["publisherStart"] = run_publisher_locally(publication["handoff"], auto_ok=auto_ok, bucket=a.artifact_bucket,
+                                                                                     may_start=write and not a.control_only and not a.no_execute, live=a.publisher_local_live)
+                elif publication["handoff"]["enabled"]:
+                    publication["handoff"]["publisherStart"] = start_publisher_if_needed(publication["handoff"], executions, tokens, auto_ok=auto_ok,
+                                                                                         may_start=write and not a.control_only and not a.no_execute)
                 # operational health of a CENTRAL Brain is the Orchestrator's, derived only from what the Publisher published (never written by the Publisher or the Brain)
                 central_published = [b for b in publication["cutover"]["central"] if (publication["summary"]["brains"].get(b) or {}).get("published")]
                 publication["healthMirror"] = HM.stage(db, central_published, write and not a.control_only)
@@ -603,7 +800,9 @@ def main(argv=None) -> int:
 
     # 5c. internal SHADOW lane (Brains without an APPROVED knowledge release): experimental, isolated, never authoritative or customer
     shadow = []
-    if a.run_shadow_lane and not a.control_only and not auto_ok:
+    if a.run_shadow_lane and a.local_mode:
+        print("shadow lane: not run (local runner mode runs no Brain code in this process)")
+    elif a.run_shadow_lane and not a.control_only and not auto_ok:
         print(f"shadow lane: not run ({auto_why})")
     elif a.run_shadow_lane and not a.control_only:
         try:
@@ -651,7 +850,7 @@ def main(argv=None) -> int:
               "lastSeen": {**(state.get("lastSeen") or {}), **{b: v for b, v in seen.items() if v}} if write else state.get("lastSeen"),
               "jobsSynced": len(records), "jobsChanged": n_changed, "scores": scores, "executionControl": EC.summary(ctl)}
     if publication is not None:
-        record["publication"] = {k: publication[k] for k in ("state", "reason", "armed", "cutover", "summary", "healthMirror") if k in publication}
+        record["publication"] = {k: publication[k] for k in ("state", "reason", "armed", "cutover", "summary", "healthMirror", "handoff") if k in publication}
     if write and not a.control_only:
         live.update({"control/orchestrator": record})
     print(json.dumps({k: record[k] for k in ("mode", "durationMs", "jobsChanged", "scores")}, indent=None))

@@ -13,6 +13,8 @@ Rules this module enforces and the tests prove:
     Publisher's own idempotent recovery (RECOVERED) and cannot publish twice. FAILED retries use bounded backoff and a maximum number of attempts.
   * A succeeded Cloud Run execution with no artifact is recorded as a MISSING artifact (never as published, never silently ignored); a failed execution is recorded as a failed run.
   * `resume()` makes an interrupted coordinator continue exactly where it stopped (collect -> shadow -> request) from the persisted ledger.
+  * Hand-off mode (a RequestHandoff instead of a live Publisher; Sector_Ops #47 item 4): the request is a create-only object for the recurring Publisher job, the record says
+    PENDING until the Publisher's immutable history decides it, and a held cycle (execution paused) never erases a request already handed off.
 Nothing here is wired to a production path: `orchestrate.py` may call it only behind an explicit flag (default off).
 """
 from __future__ import annotations
@@ -29,7 +31,7 @@ from . import data_ownership as DO
 from .timeutil import iso, parse_time
 
 SCHEMA = "sector-publication-run-record-v1"
-OUTCOMES = ("NOT_REQUESTED", "PUBLISHED", "SKIPPED", "REJECTED", "FAILED")
+OUTCOMES = ("NOT_REQUESTED", "PENDING", "PUBLISHED", "SKIPPED", "REJECTED", "FAILED")       # PENDING: handed to the Publisher job, no answer yet (hand-off mode only)
 FINAL = ("PUBLISHED", "SKIPPED", "REJECTED")
 DIRECT, VIA_PUBLISHER = "DIRECT_WRITE_PRE_CUTOVER", "PUBLISHER"
 SHADOW_OK = ("SHADOW_READY", "SKIP")
@@ -124,12 +126,13 @@ def _blank(brain_id: str, run_id: str, artifact_id: str | None, now: str) -> dic
 
 class PublicationCoordinator:
     def __init__(self, ledger: PublicationLedger, store, *, shadow=None, live=None, cutover=(), clock=lambda: dt.datetime.now(dt.timezone.utc), max_attempts: int = MAX_ATTEMPTS,
-                 backoff_minutes=BACKOFF_MIN, hold_reason: str | None = None):
+                 backoff_minutes=BACKOFF_MIN, hold_reason: str | None = None, handoff=None):
         """store: object store holding artifacts/{brainId}/... (read only here). shadow: a ShadowPublisher (SHADOW mode). live: a LivePublisher, or None while the Publisher is unarmed.
         cutover: Brain ids whose approved cutover has happened; for every other Brain the existing direct writer stays the writer and nothing is requested."""
         self.ledger, self.store, self.shadow, self.live = ledger, store, shadow, live
         self.cutover, self._clock, self.max_attempts, self.backoff = set(cutover), clock, max_attempts, tuple(backoff_minutes)
         self.hold_reason = hold_reason                                           # e.g. EXECUTION_PAUSED: artifacts are still collected and recorded, no publication is requested
+        self.handoff = handoff                                                   # publication_requests.RequestHandoff, or None; used only while no live Publisher is supplied
 
     def _now(self) -> str:
         return iso(self._clock())
@@ -217,13 +220,16 @@ class PublicationCoordinator:
         now = self._clock()
 
         def hold(reason):
+            if pub["outcome"] == "PENDING":                                      # already handed off: the request exists, so the record keeps saying so
+                pub["heldReason"] = reason
+                return self.ledger.put(rec)
             pub.update(requested=False, outcome="NOT_REQUESTED", reason=reason)
             return self.ledger.put(rec)
         if rec["brainId"] not in self.cutover:
             return hold("DIRECT_WRITER_ACTIVE")                                  # pre-cutover: the Brain's own writer is the writer
         if self.hold_reason:
             return hold(self.hold_reason)
-        if self.live is None:
+        if self.live is None and self.handoff is None:
             return hold("PUBLISHER_UNARMED")
         if rec["shadow"].get("checked") and rec["shadow"].get("result") not in SHADOW_OK:
             return hold("SHADOW_" + str(rec["shadow"].get("result")))            # the shadow already said no: the Publisher is not asked
@@ -234,6 +240,8 @@ class PublicationCoordinator:
             after = parse_time(pub.get("nextAttemptAfter"))
             if after and now < after:
                 return rec                                                       # backoff not elapsed: nothing happens
+        if self.live is None:
+            return self._hand_off(rec, now)
         if pub.get("inFlight") or pub.get("attempts"):                            # an earlier attempt may have succeeded and lost its answer: the Publisher's immutable history decides
             hist = self._published_in_history(rec)
             if hist:
@@ -261,6 +269,34 @@ class PublicationCoordinator:
                        detail=(res.detail or "")[:200])
             return self.ledger.put(rec)
         return self._failed(rec, now, name, retryable=retry, codes=list(res.codes or []), mismatched=list(res.mismatched or []), detail=(res.detail or "")[:200], publish_id=res.publish_id)
+
+    def _hand_off(self, rec: dict, now: dt.datetime) -> dict:
+        """Hand-off mode: the Publisher job's history decides a PENDING record; otherwise the (re-verified) artifact is handed off once as a create-only request."""
+        pub = rec["publication"]
+        pub.pop("heldReason", None)
+        done = self.handoff.outcome(rec["brainId"], rec["artifact"]["artifactId"])
+        if done:
+            name = done.get("result")
+            outcome, _ = _LIVE.get(name, ("FAILED", False))
+            pub.update(requested=True, outcome=outcome, reason="PUBLISHER_JOB:" + str(name), livePublishId=done.get("publishId"), inFlight=False, retryable=False,
+                       nextAttemptAfter=None, readback=(None if outcome == "SKIPPED" else {"verified": outcome == "PUBLISHED", "source": "PUBLISHER_HISTORY"}),
+                       publishedAt=done.get("publishedAt"), codes=list(done.get("codes") or []))
+            return self.ledger.put(rec)
+        if pub["outcome"] == "PENDING":
+            return rec                                                           # handed off, no answer yet: nothing to do this cycle
+        data = self.store.get(rec["artifact"]["location"])
+        if data is None or sha256_ref(data) != rec["artifact"]["digest"]:
+            rec["artifact"].update(state="INVALID", problems=["DIGEST_CHANGED_AFTER_COLLECTION"] if data is not None else ["ARTIFACT_REMOVED_AFTER_COLLECTION"])
+            pub.update(requested=False, outcome="REJECTED", reason="ARTIFACT_CHANGED_AFTER_COLLECTION", retryable=False)
+            return self.ledger.put(rec)
+        pub["attempts"] += 1
+        try:
+            r = self.handoff.submit(self._ref(rec))
+        except Exception as e:                                                  # noqa: BLE001 - the request may not exist: retried with backoff, never reported as handed off
+            return self._failed(rec, now, "HANDOFF_ERROR:" + type(e).__name__, retryable=True, detail=str(e)[:200])
+        pub.update(requested=True, outcome="PENDING", reason="HANDED_TO_PUBLISHER_JOB", requestKey=r["requestKey"], lastAttemptAt=iso(now), inFlight=False,
+                   retryable=False, nextAttemptAfter=None)
+        return self.ledger.put(rec)
 
     def _published_in_history(self, rec: dict) -> dict | None:
         h = getattr(self.live, "history", None)
@@ -418,13 +454,13 @@ class PublicationCoordinator:
         """Operational summary for the control plane (PROPOSED family; see docs/cortex/CORTEX_GAPS.md): per Brain, the last run, what was produced, published and failed."""
         by = {}
         for r in self.ledger.records():
-            b = by.setdefault(r["brainId"], {"runs": 0, "produced": 0, "published": 0, "skipped": 0, "rejected": 0, "failed": 0, "notRequested": 0, "missingArtifacts": 0, "problems": [],
+            b = by.setdefault(r["brainId"], {"runs": 0, "produced": 0, "published": 0, "skipped": 0, "rejected": 0, "failed": 0, "notRequested": 0, "pending": 0, "missingArtifacts": 0, "problems": [],
                                               "directWriter": r["writePath"] == DIRECT})
             b["runs"] += 1
             b["produced"] += r["artifact"].get("state") == "COLLECTED"
             b["missingArtifacts"] += r["artifact"].get("state") == "MISSING"
             o = r["publication"]["outcome"]
-            b[{"PUBLISHED": "published", "SKIPPED": "skipped", "REJECTED": "rejected", "FAILED": "failed", "NOT_REQUESTED": "notRequested"}[o]] += 1
+            b[{"PUBLISHED": "published", "SKIPPED": "skipped", "REJECTED": "rejected", "FAILED": "failed", "NOT_REQUESTED": "notRequested", "PENDING": "pending"}[o]] += 1
             if o == "FAILED" or r["artifact"].get("state") in ("MISSING", "INVALID"):
                 b["problems"].append({"runId": r["runId"], "artifactId": r["artifact"].get("artifactId"), "reason": r["publication"].get("reason")})
         return {"schema": "sector-publication-summary-v1", "generatedAt": self._now(), "brains": by, "note": "PUBLISHED counts only outcomes returned by the live Publisher; shadow checks are never counted"}
