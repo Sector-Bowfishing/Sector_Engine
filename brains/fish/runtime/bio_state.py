@@ -100,7 +100,7 @@ def build_lake_state(lake_id: str, *, region: str, waterbody_type: str, now: dt.
 
     species_out, lake_unknowns = [], []
     for sid in sorted(set(roster or ()) - set(presence or {})):
-        species_out.append({"speciesId": sid, "presence": {"presenceState": PRESENCE_UNKNOWN, "reason": "no presence record for this lake"},
+        species_out.append({"speciesId": sid, "presence": {"presenceState": PRESENCE_UNKNOWN, "reason": "no presence record for this lake"}, "knowledge": {},
                             "evaluated": False, "notEvaluatedReason": "no presence record: presence is UNKNOWN (not absent), so the species is not rated"})
     for sid in sorted(presence):
         p = presence[sid] or {}
