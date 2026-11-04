@@ -51,16 +51,47 @@ def test_fake_serves_gets_and_refuses_writes():
 def test_compare_ignores_only_volatile_keys():
     cap = {"lakes/A_X/states/lake": {"levelFt": 1, "updatedAt": "t0"}, "brains/lake-brain/health": "HEALTHY"}
     art = {"sections": [{"mutations": [
-        {"path": "/lakes/A_X/states/lake", "op": "set", "value": {"levelFt": 1, "updatedAt": "t1"}},
-        {"path": "/brains/lake-brain/health", "op": "set", "value": "HEALTHY"}]}]}
-    out = R.compare(art, cap, keys=frozenset({"updatedAt"}))
+        {"path": "/lakes/A_X/states/lake", "op": "SET", "value": {"levelFt": 1, "updatedAt": "t1"}},
+        {"path": "/brains/lake-brain/health", "op": "SET", "value": "HEALTHY"}]}]}
+    out = R.compare(art, cap, keys=frozenset({"updatedAt"}), paths=())
     assert (out["equal"], out["volatileOnly"], out["verdict"]) == (1, 1, "ZERO_UNEXPLAINED")
     art["sections"][0]["mutations"][0]["value"]["levelFt"] = 2
     art["sections"][0]["mutations"].append({"path": "/lakes/B_Y/brain", "op": "set", "value": {}})
-    out = R.compare(art, cap, keys=frozenset({"updatedAt"}))
+    out = R.compare(art, cap, keys=frozenset({"updatedAt"}), paths=())
     assert out["different"] == ["/lakes/A_X/states/lake"] and out["notInCapture"] == ["/lakes/B_Y/brain"] and out["verdict"] == "DIFFERENCES_TO_EXPLAIN"
 
 
 def test_rehearsal_refuses_a_bucket_archive(tmp_path):
     (tmp_path / "cap").mkdir(); (tmp_path / "cap" / "capture.json").write_text("{}")
     assert R.main(["--capture", str(tmp_path / "cap"), "--job", "x", "--out", str(tmp_path / "o"), "--archive", "gs://b"]) == 2
+
+
+
+def test_deleting_a_captured_value_is_never_zero_unexplained():
+    """Review 2026-11-04: a blanked lake (DELETE of a value that exists now) must fail the rehearsal, whatever the op's case."""
+    cap = {"lakes/A_X/states/lake": {"levelFt": 1}}
+    for op in ("DELETE", "delete"):
+        out = R.compare({"sections": [{"mutations": [{"path": "/lakes/A_X/states/lake", "op": op}]}]}, cap, keys=frozenset(), paths=())
+        assert out["deletes"] == ["/lakes/A_X/states/lake"] and out["verdict"] == "DIFFERENCES_TO_EXPLAIN"
+    out = R.compare({"sections": [{"mutations": [{"path": "/brains/lake-brain/lastError", "op": "DELETE"}]}]}, {"brains/lake-brain": {}}, keys=frozenset(), paths=())
+    assert out["verdict"] == "ZERO_UNEXPLAINED"                     # clearing something that is already absent is no change
+
+
+def test_registered_volatile_paths_are_expected_to_change():
+    cap = {"brains/lake-brain/lastSuccessfulRun": "t0"}
+    art = {"sections": [{"mutations": [{"path": "/brains/lake-brain/lastSuccessfulRun", "op": "SET", "value": "t1"}]}]}
+    assert R.compare(art, cap, keys=frozenset())["volatileOnly"] == 1
+
+
+def test_capture_refuses_a_non_https_or_foreign_database(monkeypatch, tmp_path):
+    monkeypatch.setenv("BRAIN_ACCESS_TOKEN", "t")
+    monkeypatch.setattr(C, "inside_git", lambda p: False)
+    for url in ("http://sector-brain.firebaseio.com", "https://example.com"):
+        assert C.main(["--brain", "lake-brain", "--out", str(tmp_path / "c"), "--rtdb", url], fetch=lambda *a: {}) == 2
+
+
+def test_capture_files_are_owner_only(monkeypatch, tmp_path):
+    monkeypatch.setenv("BRAIN_ACCESS_TOKEN", "t")
+    monkeypatch.setattr(C, "inside_git", lambda p: False)
+    assert C.main(["--brain", "lake-brain", "--out", str(tmp_path / "c")], fetch=lambda *a: {}) == 0
+    assert oct(os.stat(tmp_path / "c" / "capture.json").st_mode & 0o777) == "0o600"
