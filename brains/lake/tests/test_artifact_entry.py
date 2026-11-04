@@ -76,3 +76,11 @@ def test_a_rehearsal_fault_is_passed_to_the_job():
     a = ap.parse_args(["--fault", "cwms-unreachable"])
     a.job, a.read_rtdb = "LakeBrainJob", None
     assert E._job_command(a, "D")[-2:] == ["--fault", "cwms-unreachable"]
+def test_seed_archive_and_presence_are_forwarded_to_the_job():
+    import argparse
+    ap = argparse.ArgumentParser()
+    E._job_args(ap)
+    a = ap.parse_args(["--seed-archive", "gs://seed", "--presence", "DIR"])
+    a.job, a.read_rtdb = "LakeBrainJob", None
+    cmd = E._job_command(a, "D")
+    assert cmd[cmd.index("--seed-archive") + 1] == "gs://seed" and cmd[cmd.index("--presence") + 1] == "DIR"
