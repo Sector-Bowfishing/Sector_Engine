@@ -378,5 +378,7 @@ def test_a_dry_run_cycle_writes_nothing_to_the_artifact_store(stack):
 
 
 def test_the_shipped_cutover_document_is_valid_and_lists_only_water_clarity():
+    """Sector_Ops #48 B5 draft: Lake's entry has no approvalRef yet, so it is ignored (reported) and Lake stays on its direct writer."""
     cut, problems = PS.load_cutover(os.path.join(HERE, "..", "publication-cutover.json"))
-    assert problems == [] and {b: e["state"] for b, e in cut.items()} == {"water-clarity": "CENTRAL"}
+    assert problems == [{"kind": "CUTOVER_NOT_APPROVED", "brainId": "lake-brain", "why": "CENTRAL needs an approvalRef"}]
+    assert {b: e["state"] for b, e in cut.items()} == {"water-clarity": "CENTRAL"}
