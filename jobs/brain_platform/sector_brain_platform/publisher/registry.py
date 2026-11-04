@@ -412,6 +412,9 @@ INTELLIGENCE_REGISTRY_CHILDREN = {
                "deploymentVersion", "lastSuccessfulRun", "updatedAt"),
 }
 INTELLIGENCE_HEALTH_DOMAIN_CHILDREN = ("status",)                   # /health/brains/sector-intelligence: domain fact only; run/process fields are Orchestrator-owned
+#: SI-A3 (Sector_Ops #50/#51, as Water Clarity, Lake and Water Temp): the Publisher writes NO /health/* path for Intelligence. /health/brains/sector-intelligence/
+#: status is Orchestrator-owned operational health, derived from the published /brains/sector-intelligence (sector_brain_platform.health_mirror). The tuple stays
+#: for the health mirror; it authorises nothing in the registry.
 
 #: Intelligence's volatile contract: run-clock values only (measured by re-running the builder on identical inputs). The upstream registration, health,
 #: version and evaluation inputs are NOT volatile: a change there IS a new input. Shared defaults (generatedAt publishedAt checkedAt ageHours durationMs) apply.
@@ -444,7 +447,6 @@ def intelligence_specs() -> list[SchemaSpec]:
         (PathFamily(f"/brains/{INTELLIGENCE}/{{child}}", {"child": one_of(c for group in INTELLIGENCE_REGISTRY_CHILDREN.values() for c in group)},
                     note="approved CHILDREN only (INTELLIGENCE_REGISTRY_CHILDREN); never the whole node, never publication/certification"),
          PathFamily(f"/validation/{INTELLIGENCE}"),
-         PathFamily(f"/health/brains/{INTELLIGENCE}/{{child}}", {"child": one_of(INTELLIGENCE_HEALTH_DOMAIN_CHILDREN)}, note="domain health fact only"),
          PathFamily("/activity/{event}", {"event": contains(f"-{INTELLIGENCE}-")}, note="own domain events only; retention/pruning is a platform concern")),
         volatile=INTELLIGENCE_VOLATILE_CONTRACT_V1)
     return [lake_state, registry]

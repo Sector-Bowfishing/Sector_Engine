@@ -43,6 +43,14 @@ SPECS = {
     "water-temp": {"registryChildren": ("status", "staleLakeCount", "lastSuccess"),
                    "registryMap": {"status": "health", "staleLakeCount": "staleLakeCount", "lastSuccess": "lastSuccessfulRun"},
                    "retireChildren": ("lastRun", "errorCount", "durationMs", "latestError"), "sources": _water_temp_source_ids},
+    # Sector_Ops #50 SI-A3: mirrored only once Intelligence is CENTRAL (SI-A2 / its cutover); until then its in-process writer writes the node. Its legacy
+    # record also carries run facts (lastRun, durationMs, errorCount, evaluationErrors, ...): those published in the registry are derived, the rest retire.
+    "sector-intelligence": {"registryChildren": ("status", "lastSuccess", "deployedVersion", "publishMode", "lakesPublished", "evaluatedLakes"),
+                            "registryMap": {"status": "health", "lastSuccess": "lastSuccessfulRun", "deployedVersion": "deploymentVersion",
+                                            "publishMode": "publishMode", "lakesPublished": "directoryLakeCount", "evaluatedLakes": "evaluatedLakeCount"},
+                            "retireChildren": ("lastRun", "durationMs", "errorCount", "engineRevision", "dependencyFailures", "staleInputs",
+                                               "notRegisteredInputs", "evaluationErrors", "note", "latestError"),
+                            "sources": None},
 }
 
 #: Source health fields carried from the published `/sources/{id}` record when present (Water Temp publishes failuresLastRun, Clarity failures24h).
