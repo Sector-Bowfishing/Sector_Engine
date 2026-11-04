@@ -19,8 +19,35 @@ The pilot published Water Clarity once, from the pilot tool under the Publisher 
 | Deploy | `deploy-job.sh` refuses without `MICHAEL_APPROVED_BRAIN_PUBLISHER_DEPLOY=yes`, creates no identity, binds no role, and stages the cutover document plus each CENTRAL Brain's packaged release (`--stage-only` for review; tested) |
 | Rollback | Delete the job or redeploy the previous commit. The Publisher's history and heads are never rewritten by a job rollback; `LivePublisher.rollback` is the data rollback |
 
-### Not wired yet (decision-required)
-`orchestrate.py` does not write requests or start the job. Doing so changes the Orchestrator's execution plan (PROJECT §6: decision-required). The change is small: in `publication_stage.run_stage`, for a CENTRAL Brain whose artifact passed shadow, call `publication_requests.write_request(...)`, then start `brain-publisher` within the cycle's start budget. Its test is a cycle with a fake job runner.
+### Wiring: drafted, off by default (Sector_Ops #46 Q3, #47 item 4)
+The draft PR adds `--hand-off-publication` (or `PUBLICATION_HANDOFF=on`), which works only together with `--coordinate-publication`. Without it, the cycle is unchanged and every CENTRAL artifact still says `PUBLISHER_UNARMED`.
+
+With it, for each collected artifact of a CENTRAL Brain:
+1. **Gates.** The usual gates apply first: the cutover is approved, the execution control permits automatic work, and the shadow did not refuse.
+2. **The request.** The coordinator re-checks the artifact's digest, then writes the create-only request with `publication_requests.RequestHandoff`.
+   - The run record says `PENDING` / `HANDED_TO_PUBLISHER_JOB`.
+   - A request already stored for the same artifact counts as submitted, so a crash between the two writes never makes a second request. A different request under that key is an error.
+3. **Starting the Publisher.** When requests are pending, the cycle starts `brain-publisher` once, with no argument overrides, so its deployed arguments decide `--live`. It does not start it:
+   - while the control is paused;
+   - in a dry run or a no-execute cycle;
+   - while an execution of it is already running.
+
+   A failed start is recorded and the request stays pending.
+4. **The answer.** A later cycle reads the Publisher's history. A decided LIVE record turns `PENDING` into `PUBLISHED`, `SKIPPED` or `REJECTED` (`PUBLISHER_JOB:<result>`). A pause never erases a request already handed off.
+5. **What the Orchestrator writes.** Only `exports/orchestrator/` (requests and its ledger). It never writes a Brain key.
+
+**Deliberate choice (review it):** starting the Publisher does **not** use the Brain start budget (`maxStartsPerCycle`). It is not a Brain run, and it is single-flight. The Publisher job keeps its own `--max-artifacts` bound and re-checks the execution control and the cutover itself.
+
+**Additive contract change:**
+- the run-record outcome gains `PENDING`;
+- the publication summary gains `pending`;
+- the cycle record gains `publication.handoff`.
+
+Turning it on needs, each approved separately:
+- this PR merged;
+- an orchestrator redeploy (lineage preflight) with the flag in its arguments;
+- `run.jobs.run` on `brain-publisher` for the orchestrator identity;
+- `brain-publisher` deployed with `--live`.
 
 ## 2. Identity split (plan; machine-readable in `platform/security/identity_split_plan.json`)
 Separation is by identity, because Firebase Realtime Database IAM is project-wide (no path-level IAM) and admin identities bypass rules. Each step is approved on its own, and the next one starts only after a passing denial probe.

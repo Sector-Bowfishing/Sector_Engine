@@ -20,8 +20,10 @@ BRAIN = FlatBrain(
     not_authored=(NotAuthored(rf"/lakeFleet/{_LAKE}/lakeId", "lakefleet-lakeid", "PLATFORM_OWNED", "STOP_WRITING", "Platform Lake Registry (lake identity)"),
                   NotAuthored(rf"/snapshots/{_LAKE}/latest/lakeId", "snapshot-lakeid", "PLATFORM_OWNED", "STOP_WRITING", "Platform Lake Registry (lake identity)"),
                   NotAuthored(r"/health/jobs/.+", "health-jobs", "PLATFORM_OWNED", "ORCHESTRATOR_DERIVED", "Orchestrator (/jobs + execution ledger)"),
-                  NotAuthored(rf"/health/brains/{WATER_TEMP}/.+", "health-brains-process", "LEGACY_READER_DEPENDENCY", "ORCHESTRATOR_DERIVED",
-                              "Orchestrator (execution / deployment state)")),
+                  NotAuthored(rf"/health/brains/{WATER_TEMP}/.+", "health-brains", "LEGACY_READER_DEPENDENCY", "ORCHESTRATOR_DERIVED",
+                              "Orchestrator (derived from the published /brains/water-temp, health_mirror; Sector_Ops #50 WT-P2 A3)"),
+                  NotAuthored(r"/health/sources/.+", "health-sources", "LEGACY_READER_DEPENDENCY", "ORCHESTRATOR_DERIVED",
+                              "Orchestrator (derived from the published /sources/{id}, health_mirror; Sector_Ops #50 WT-P2 A3)")),
     clear_absent_children=("lastError",))
 
 

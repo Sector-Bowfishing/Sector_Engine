@@ -9,6 +9,7 @@ Brain RTDB outage, a bad payload or a crash here cannot change what customers se
 
 usage:
   python run.py --dry-run --out /tmp/wcb                 # build everything, write JSON files, no RTDB
+  python run.py --dry-run --read-rtdb --out /tmp/wcb     # the same, reading the previous Brain state (GET only): the artifact CENTRAL mode would store
   python run.py --artifact-bucket B                      # CENTRAL mode (the default way to publish): build ONE sealed artifact, store it create-only in the private
                                                          # artifact bucket; the Orchestrator verifies it and the central Publisher writes the database. This process
                                                          # performs NO database write in this mode.
@@ -176,6 +177,22 @@ def deployment_version() -> str:
         return "brain/water-clarity@unknown"
 
 
+class ReadOnlyRtdb:
+    """GET-only view of the Brain RTDB for --read-rtdb (a dry run reading the previous state). It exposes no write method, so no code path of the run can
+    write through it, whatever the token could do."""
+
+    def __init__(self, inner):
+        self._inner = inner
+        self.writes = 0
+        self.bytes_written = 0
+
+    def get(self, path: str, shallow: bool = False):
+        return self._inner.get(path, shallow=shallow)
+
+    def consumed(self):
+        return self._inner.consumed()
+
+
 # ---------------------------------------------------------------- run
 def main() -> int:
     ap = argparse.ArgumentParser()
@@ -187,8 +204,14 @@ def main() -> int:
     ap.add_argument("--batch", type=int, default=25, help="lakes collected per progress step")
     ap.add_argument("--rtdb-url", default=os.environ.get("BRAIN_RTDB_URL", bp.BRAIN_RTDB_URL), help="Brain RTDB read for the previous state (never written)")
     ap.add_argument("--artifact-bucket", default=os.environ.get("CLARITY_ARTIFACT_BUCKET"), help="CENTRAL mode: private bucket for the sealed artifact (no database write)")
+    ap.add_argument("--read-rtdb", action="store_true",
+                    help="with --dry-run and --out: read the previous Brain state (GET only, through a read-only view; never written), so the sealed artifact in --out "
+                         "is the one CENTRAL mode would store. For a runner outside Cloud Run that hands the artifact off itself (Sector_Ops #51)")
     a = ap.parse_args()
     central = bool(a.artifact_bucket) and not a.dry_run
+    if a.read_rtdb and not (a.dry_run and a.out):
+        print("REFUSED (nothing read or written): --read-rtdb is only for a dry run into an --out folder.", file=sys.stderr)
+        return 2
     if not (a.dry_run or central):
         print("REFUSED (nothing published): Water Clarity publishes through the central Publisher; give --artifact-bucket (or --dry-run).", file=sys.stderr)
         return 2
@@ -196,7 +219,9 @@ def main() -> int:
     t0 = time.time()
     report = {"startedAt": bp.iso(now), "dryRun": a.dry_run, "published": 0, "engineFailures": [], "publishFailures": [], "errors": []}
     tokens = bp.TokenProvider()
-    rtdb = None if a.dry_run else bp.BrainRtdb(a.rtdb_url, tokens, brain_id=cb.BRAIN_ID, recorder=bp.ConsumptionRecorder(cb.BRAIN_ID))   # READ ONLY; reads recorded as ACTUAL RTDB consumption (GCS/HTTP reads are NOT recorded: platform debt)
+    rtdb = None if a.dry_run and not a.read_rtdb else bp.BrainRtdb(a.rtdb_url, tokens, brain_id=cb.BRAIN_ID, recorder=bp.ConsumptionRecorder(cb.BRAIN_ID))   # READ ONLY; reads recorded as ACTUAL RTDB consumption (GCS/HTTP reads are NOT recorded: platform debt)
+    if a.dry_run and rtdb is not None:
+        rtdb = ReadOnlyRtdb(rtdb)                                     # --read-rtdb: a view with no write method at all
     payload = {}                     # everything this run produces, child-level paths only (CENTRAL mode seals it into the artifact; dry run writes it to --out)
 
     def collect(updates: dict) -> None:

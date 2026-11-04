@@ -112,3 +112,49 @@ def pending(store, brain_id: str, cutover: dict) -> tuple[list, list]:
             continue
         out.append((json.loads(raw)["requestedAt"], ref))
     return sorted(out, key=lambda x: x[0]), problems
+
+
+_SAME = tuple(f for f in FIELDS if f not in ("requestedAt", "runId"))     # what makes two requests the same request
+
+
+class RequestHandoff:
+    """The Orchestrator's side of the hand-off, used INSIDE the cycle (Sector_Ops #46 Q3, #47 item 4): instead of an in-process live Publisher, the coordinator records a create-only
+    request for each collected artifact of a CENTRAL Brain, and the recurring Publisher job publishes it; the Publisher's immutable history is the answer. OFF unless the cycle runs
+    with --hand-off-publication. `store` is the Orchestrator's view (orchestrator_view; an overlay in a dry run, so nothing persists)."""
+
+    def __init__(self, store, cutover: dict, run_id: str, clock):
+        self.store, self.cutover, self.run_id, self._clock = store, cutover, run_id, clock
+        self.written: list[str] = []
+
+    def submit(self, ref: ArtifactRef) -> dict:
+        """-> {requestKey, created}. A request already stored for the same artifact (same digest, execution, schema and approval) counts as submitted: a crash between the request
+        write and the ledger write never produces a second request. A different request under the same key is an error, never overwritten."""
+        entry = self.cutover.get(ref.brain_id) or {}
+        if entry.get("state") != "CENTRAL":
+            raise ValueError(f"{ref.brain_id} is not CENTRAL in the reviewed cutover document")
+        req = build_request(ref, approval_ref=entry.get("approvalRef"), requested_at=self._clock().strftime("%Y-%m-%dT%H:%M:%SZ"), run_id=self.run_id)
+        key = request_key(ref.brain_id, ref.artifact_id)
+        have = self.store.get(key)
+        if have is not None:
+            old = json.loads(have)
+            if {f: old.get(f) for f in _SAME} != {f: req[f] for f in _SAME}:
+                raise ValueError(f"{key} already holds a different request")
+            return {"requestKey": key, "created": False}
+        write_request(self.store, req)
+        self.written.append(key)
+        return {"requestKey": key, "created": True}
+
+    def outcome(self, brain_id: str, artifact_id: str) -> dict | None:
+        """The Publisher job's decided LIVE record for this artifact, or None while it is still pending (a shadow or dry-run record never decides)."""
+        for k in self.store.list(f"publishes/{brain_id}/"):
+            if not k.endswith("/record.json"):
+                continue
+            try:
+                r = json.loads(self.store.get(k))
+            except (TypeError, ValueError):
+                continue
+            if r.get("mode") != LIVE_MODE or r.get("artifactId") != artifact_id:
+                continue
+            if (r.get("result") == "PUBLISHED" and r.get("live") and r.get("status") == "COMPLETE") or r.get("result") in FINAL_NOT_APPLIED:
+                return r
+        return None

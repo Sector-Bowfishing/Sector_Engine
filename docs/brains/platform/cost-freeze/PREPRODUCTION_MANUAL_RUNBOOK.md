@@ -18,4 +18,4 @@ Depth, Vegetation, Biological and Intelligence have no cloud job at all: run the
 After a manual run, check the bill driver with `gcloud run jobs executions list --job <name> --region us-central1 --limit 3` and leave schedulers as they are.
 
 ## Staying paused
-`jobs/brain-orchestrator/deploy-job.sh` now leaves the scheduler PAUSED unless `SCHEDULE_STATE=enabled` is given with a recorded gate; `jobs/brain-orchestrator/check_preproduction_schedules.py` (read-only) fails when an enabled Brain scheduler is not on the allowlist in `schedule-policy.json`.
+`jobs/brain-orchestrator/deploy-job.sh` now leaves the scheduler PAUSED unless `SCHEDULE_STATE=enabled` is given with a recorded gate; `jobs/brain-orchestrator/check_preproduction_schedules.py` (read-only) fails when an enabled Brain scheduler is not on the allowlist in `schedule-policy.json`. A live scheduler that is neither in the execution manifest nor listed under `nonBrainSchedulers` (non-Brain, target pinned, owner approvalRef) is reported UNMANAGED and also fails it; a classified one whose target moves is DRIFT (Sector_Ops #46 P1).

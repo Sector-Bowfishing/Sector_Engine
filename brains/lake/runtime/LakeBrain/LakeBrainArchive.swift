@@ -148,13 +148,4 @@ extension LakeLevelCalendar {
     static func isDayString(_ day: String) -> Bool { day.count == 10 && doy365(day) != nil }
 }
 
-/// Dry run against the LIVE Brain RTDB: reads (GET) go to `reader`, every write
-/// goes to `writer` (a local directory). The database is never written.
-public final class ReadThroughDryRunStore: BrainStore, @unchecked Sendable {
-    let reader: BrainStore, writer: LocalDirectoryStore
-    public init(reader: BrainStore, writer: LocalDirectoryStore) { self.reader = reader; self.writer = writer }
-    public func update(_ paths: [String: Data]) async throws { try await writer.update(paths) }
-    public func get(_ path: String) async throws -> Data? { try await reader.get(path) }
-    public func delete(_ path: String) async throws { try await writer.delete(path) }
-    public func shallowKeys(_ path: String) async throws -> [String] { try await reader.shallowKeys(path) }
-}
+// ReadThroughDryRunStore moved to SectorEngine (BrainRTDBStore.swift), shared with the Water Temperature job (Sector_Ops #50 WT-P2).

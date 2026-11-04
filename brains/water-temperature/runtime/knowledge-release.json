@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "water-temp",
+  "releaseId": "water-temp-knowledge-2026-11-03.1",
+  "store": "PACKAGED_IN_IMAGE",
+  "owner": "water-temp",
+  "approval": {
+    "status": "NOT_RECORDED",
+    "record": null
+  },
+  "files": [
+    {
+      "path": "WaterTemperatureBrain/WaterTemperatureBrain.swift",
+      "sha256": "84cd6002a7b8972a6778c34bad1205988e8523876e32f03cf4a9deb671883087",
+      "bytes": 22429
+    }
+  ],
+  "releaseDigest": "sha256:9e1bb9e23392cc1775c675b8853ecf5e60528fe23c78118626008ae1871ef280"
+}

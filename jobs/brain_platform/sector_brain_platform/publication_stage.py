@@ -16,7 +16,8 @@ import os
 
 from .publication_coordination import PublicationCoordinator, PublicationLedger, StoreLedger
 from .keys import BRAINS
-from .publisher.storage import orchestrator_view
+from .publisher.storage import OverlayObjectStore, orchestrator_view
+from . import publication_requests as PR
 
 CUTOVER_SCHEMA = "sector-publication-cutover-v1"
 ORDER_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cutover_order.json")
@@ -71,16 +72,22 @@ def load_cutover(path: str | None) -> tuple[dict, list]:
     return out, problems
 
 
-def run_stage(*, store, ledger_path: str | None, executions: list, shadow=None, live=None, cutover_path: str | None = None, paused_reason: str | None = None, clock=None, dry_run: bool = False) -> dict:
-    """One publication pass. Returns {summary, reconcile, resume, cutover, outputChanged, armed} for the cycle record. Raises nothing the cycle needs to handle for a single bad artifact:
-    those become ledger records."""
+def run_stage(*, store, ledger_path: str | None, executions: list, shadow=None, live=None, cutover_path: str | None = None, paused_reason: str | None = None, clock=None, dry_run: bool = False,
+              handoff: bool = False, run_id: str = "orchestrator") -> dict:
+    """One publication pass. Returns {summary, reconcile, resume, cutover, outputChanged, armed, handoff} for the cycle record. Raises nothing the cycle needs to handle for a single bad
+    artifact: those become ledger records. handoff=True (and no live Publisher): CENTRAL artifacts are handed to the recurring Publisher job as create-only requests; in a dry run the
+    requests land in an in-memory overlay and nothing persists."""
     cut, problems = load_cutover(cutover_path)
     central = sorted(b for b, e in cut.items() if e["state"] == "CENTRAL")
     kw = {"clock": clock} if clock else {}
     # a ledger file when one is named (local review); otherwise the durable ledger in the private store, written through the Orchestrator's own least-privilege view
     # a dry run writes NOTHING anywhere: its ledger is in memory (seeded from nothing), so it neither reads another run's state nor persists its own
     ledger = PublicationLedger(None) if dry_run else (PublicationLedger(ledger_path) if ledger_path else StoreLedger(orchestrator_view(store)))
-    co = PublicationCoordinator(ledger, orchestrator_view(store), shadow=shadow, live=live, cutover=central, hold_reason=paused_reason, **kw)
+    ho = None
+    if handoff and live is None:
+        import datetime as _dt
+        ho = PR.RequestHandoff(orchestrator_view(OverlayObjectStore(store)) if dry_run else orchestrator_view(store), cut, run_id, clock or (lambda: _dt.datetime.now(_dt.timezone.utc)))
+    co = PublicationCoordinator(ledger, orchestrator_view(store), shadow=shadow, live=live, cutover=central, hold_reason=paused_reason, handoff=ho, **kw)
     rec = co.reconcile(executions)
     changes = {}
     for key in rec["collected"]:
@@ -89,5 +96,8 @@ def run_stage(*, store, ledger_path: str | None, executions: list, shadow=None, 
         changes[r["runId"] if r["brainId"] else key] = {"brainId": r["brainId"], "outputChanged": co.output_change(r)}
     imported = co.import_publisher_history(BRAINS)                              # any completed live publication, from any path, is reflected in the ledger (read-only on the history)
     resumed = co.resume()                                                       # records left unfinished by an earlier cycle (retries after backoff, shadow not yet run)
-    return {"armed": live is not None, "cutover": {"central": central, "directWrite": "every other Brain", "problems": problems}, "reconcile": rec, "resume": resumed,
-            "outputChanged": changes, "importedFromPublisherHistory": imported, "summary": co.summary()}
+    summary = co.summary()
+    pending = sum((summary["brains"].get(b) or {}).get("pending", 0) for b in central)
+    return {"armed": live is not None or ho is not None, "handoff": {"enabled": ho is not None, "requestsWritten": list(ho.written) if ho else [], "pending": pending},
+            "cutover": {"central": central, "directWrite": "every other Brain", "problems": problems}, "reconcile": rec, "resume": resumed,
+            "outputChanged": changes, "importedFromPublisherHistory": imported, "summary": summary}
