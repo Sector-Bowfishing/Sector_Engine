@@ -36,13 +36,21 @@ def seal(updates: dict, *, now: dt.datetime, code_version: str) -> dict:
 def _job_args(ap):
     ap.add_argument("--scope", default="pilots")
     ap.add_argument("--archive", default=None)
+    ap.add_argument("--fault", action="append", default=[], help="REHEARSAL ONLY, with --artifact-dir: e.g. cwms-unreachable (Sector_Ops #48 B4b)")
 
 
 def _job_command(a, td):
-    return [a.job, "--dry-run", td, "--scope", a.scope] + (["--read-rtdb", a.read_rtdb] if a.read_rtdb else []) + (["--archive", a.archive] if a.archive else [])
+    return ([a.job, "--dry-run", td, "--scope", a.scope] + (["--read-rtdb", a.read_rtdb] if a.read_rtdb else []) + (["--archive", a.archive] if a.archive else [])
+            + [x for f in a.fault for x in ("--fault", f)])
 
 
 def main(argv=None) -> int:
+    args = sys.argv[1:] if argv is None else list(argv)
+    has = lambda name: any(x == name or x.startswith(name + "=") for x in args)
+    if has("--fault") and not has("--artifact-dir"):
+        # a fault-injected artifact must never reach a bucket the Publisher reads
+        print("REFUSED (nothing stored): --fault is a rehearsal and needs --artifact-dir (a local folder), never a bucket", file=sys.stderr)
+        return 2
     return SE.main(argv, brain_id=BRAIN_ID, builder=pa, bucket_env="LAKE_ARTIFACT_BUCKET", add_job_args=_job_args, job_command=_job_command)
 
 

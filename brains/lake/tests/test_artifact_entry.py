@@ -60,3 +60,19 @@ def test_a_failing_job_stores_nothing(tmp_path):
 def test_the_entry_has_no_database_writer():
     src = open(E.__file__).read()
     assert "BrainRtdb" not in src and "RtdbRestPublisherClient" not in src and ".update(" not in src
+
+
+@pytest.mark.parametrize("args", [["--fault", "cwms-unreachable", "--artifact-bucket", "b"], ["--fault=cwms-unreachable"]])
+def test_a_rehearsal_fault_is_refused_unless_the_artifact_stays_local(args, capsys):
+    """Sector_Ops #48 B4b: a fault-injected artifact must never reach a bucket the Publisher reads."""
+    assert E.main(["--job", "/nonexistent/LakeBrainJob"] + args) == 2
+    assert "needs --artifact-dir" in capsys.readouterr().err
+
+
+def test_a_rehearsal_fault_is_passed_to_the_job():
+    import argparse
+    ap = argparse.ArgumentParser()
+    E._job_args(ap)
+    a = ap.parse_args(["--fault", "cwms-unreachable"])
+    a.job, a.read_rtdb = "LakeBrainJob", None
+    assert E._job_command(a, "D")[-2:] == ["--fault", "cwms-unreachable"]
