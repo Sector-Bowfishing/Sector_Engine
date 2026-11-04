@@ -61,3 +61,40 @@ def test_a_partial_run_updates_only_its_own_lakes_and_never_rewrites_the_fleet_t
     art = json.loads(t.store.get(next(iter(t.store.list("artifacts/water-clarity/")))))
     named = {m["path"] for sec in art["sections"] for m in sec["mutations"]}
     assert not any("/" + p in named for p in FLEET_TOTAL_PATHS)                # no SET and no DELETE of a fleet total
+
+
+# --read-rtdb (Sector_Ops #51: Sector Pulse runs the dry run and hands the artifact off itself, so the dry run must read the previous state)
+def test_dry_run_with_read_rtdb_reads_the_previous_state_and_writes_nothing(tmp_path):
+    flat, t, rc = S.real_run_updates(argv=("--dry-run", "--read-rtdb", "--out", str(tmp_path), "--batch", "2"))
+    gets = [u.split(".firebaseio.com/", 1)[-1].split(".json", 1)[0] for m, u, _ in t.calls if m == "GET"]
+    assert {"brains/water-clarity/version", "brains/water-clarity/lastSuccessfulRun"} <= set(gets)
+    assert [m for m, _, _ in t.calls if m in WRITE_VERBS] == []
+    assert list(t.store.list("artifacts/")) == []                                                            # nothing stored anywhere: the artifact is in --out
+    art = json.loads((tmp_path / "artifact.json").read_text())
+    assert art["lineage"]["brainId"] == "water-clarity" and rc == 0
+    assert json.loads((tmp_path / "run_report.json").read_text())["rtdbWrites"] == 0
+
+
+def test_dry_run_with_read_rtdb_seals_the_same_payload_as_central_mode(tmp_path):
+    central, _, _ = S.real_run_updates()
+    dry, _, _ = S.real_run_updates(argv=("--dry-run", "--read-rtdb", "--out", str(tmp_path), "--batch", "2"))
+    time_free = lambda d: {k for k in d if "/activity/" not in "/" + k}                                       # activity ids are uuid-like per run
+    assert time_free(central) == time_free(dry)
+
+
+def test_plain_dry_run_still_makes_no_database_call(tmp_path):
+    _, t, rc = S.real_run_updates(argv=("--dry-run", "--out", str(tmp_path), "--batch", "2"))
+    assert t.calls == [] and rc == 0
+
+
+@pytest.mark.parametrize("argv", [("--read-rtdb", "--artifact-bucket", "b"), ("--dry-run", "--read-rtdb")])
+def test_read_rtdb_outside_a_dry_run_into_a_folder_is_refused(argv, capsys):
+    flat, t, rc = S.real_run_updates(argv=(*argv, "--batch", "2"))
+    assert rc == 2 and flat == {} and t.calls == []
+    assert "REFUSED" in capsys.readouterr().err
+
+
+def test_the_read_only_view_has_no_write_method():
+    import run
+    view = run.ReadOnlyRtdb(object())
+    assert not any(hasattr(view, m) for m in ("patch", "put", "post", "delete", "update", "set", "write"))
