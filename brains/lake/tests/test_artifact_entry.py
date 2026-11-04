@@ -60,3 +60,13 @@ def test_a_failing_job_stores_nothing(tmp_path):
 def test_the_entry_has_no_database_writer():
     src = open(E.__file__).read()
     assert "BrainRtdb" not in src and "RtdbRestPublisherClient" not in src and ".update(" not in src
+
+
+def test_seed_archive_and_presence_are_forwarded_to_the_job():
+    import argparse
+    ap = argparse.ArgumentParser()
+    E._job_args(ap)
+    a = ap.parse_args(["--seed-archive", "gs://seed", "--presence", "DIR"])
+    a.job, a.read_rtdb = "LakeBrainJob", None
+    cmd = E._job_command(a, "D")
+    assert cmd[cmd.index("--seed-archive") + 1] == "gs://seed" and cmd[cmd.index("--presence") + 1] == "DIR"

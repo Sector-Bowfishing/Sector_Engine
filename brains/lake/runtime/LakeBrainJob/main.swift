@@ -62,6 +62,11 @@ options.force = argv.contains("--force")
 options.backfill = argv.contains("--backfill")
 options.processingVersion = env["SECTOR_ENGINE_REVISION"] ?? env["K_REVISION"] ?? env["SECTOR_ENGINE_COMMIT"]
 
+if (argv.contains("--read-rtdb") || argv.contains("--dry-run")) && flag("--dry-run") == nil {
+    // a read-only or dry-run flag must never fall through to the live writer ($SECTOR_BRAIN_RTDB_URL is set in the image)
+    refuse("--read-rtdb needs --dry-run DIR, and --dry-run needs a DIR; nothing was run")
+}
+
 var store: BrainStore? = nil
 var rest: RTDBRestStore? = nil
 if let dir = flag("--dry-run") {

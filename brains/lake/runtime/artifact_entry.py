@@ -36,10 +36,13 @@ def seal(updates: dict, *, now: dt.datetime, code_version: str) -> dict:
 def _job_args(ap):
     ap.add_argument("--scope", default="pilots")
     ap.add_argument("--archive", default=None)
+    ap.add_argument("--seed-archive", default=None, help="read-only fallback history archive (gs:// allowed: read only)")
+    ap.add_argument("--presence", default=None, help="where the private presence release lives")
 
 
 def _job_command(a, td):
-    return [a.job, "--dry-run", td, "--scope", a.scope] + (["--read-rtdb", a.read_rtdb] if a.read_rtdb else []) + (["--archive", a.archive] if a.archive else [])
+    return ([a.job, "--dry-run", td, "--scope", a.scope] + (["--read-rtdb", a.read_rtdb] if a.read_rtdb else []) + (["--archive", a.archive] if a.archive else [])
+            + (["--seed-archive", a.seed_archive] if a.seed_archive else []) + (["--presence", a.presence] if a.presence else []))
 
 
 def main(argv=None) -> int:
