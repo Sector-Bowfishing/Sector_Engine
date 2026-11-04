@@ -31,6 +31,12 @@ def volatile_keys() -> frozenset:
     return frozenset(LAKE_VOLATILE_CONTRACT_V1.keys)
 
 
+def volatile_paths() -> tuple:
+    """Lake's registered volatile path families (e.g. /brains/lake-brain/lastSuccessfulRun): a change there is expected every run."""
+    from sector_brain_platform.publisher.registry import LAKE_VOLATILE_CONTRACT_V1
+    return tuple(LAKE_VOLATILE_CONTRACT_V1.paths)
+
+
 def strip(v, keys):
     if isinstance(v, dict):
         return {k: strip(x, keys) for k, x in v.items() if k not in keys}
@@ -43,14 +49,19 @@ def mutations(artifact: dict) -> list[tuple[str, str, object]]:
     return [(m["path"], m.get("op"), m.get("value")) for s in artifact.get("sections") or [] for m in s.get("mutations") or []]
 
 
-def compare(artifact: dict, capture: dict, keys=None) -> dict:
+def compare(artifact: dict, capture: dict, keys=None, paths=None) -> dict:
     keys = volatile_keys() if keys is None else keys
+    paths = volatile_paths() if paths is None else paths
     tree = Tree(capture)
     out = {"equal": 0, "volatileOnly": 0, "different": [], "notInCapture": [], "deletes": []}
     for path, op, value in mutations(artifact):
         p = path.strip("/")
-        if op == "delete" or value is None:
-            out["deletes"].append(path)
+        if str(op).upper() == "DELETE" or value is None:
+            if tree.covered(p) and tree.get(p) is not None:
+                out["deletes"].append(path)              # removing a value that exists now (a blanked lake is the first halt condition)
+            continue
+        if any(f.match("/" + p) for f in paths):
+            out["volatileOnly"] += 1
             continue
         if not tree.covered(p):
             out["notInCapture"].append(path)
@@ -62,7 +73,7 @@ def compare(artifact: dict, capture: dict, keys=None) -> dict:
             out["volatileOnly"] += 1
         else:
             out["different"].append(path)
-    out["verdict"] = "ZERO_UNEXPLAINED" if not (out["different"] or out["notInCapture"]) else "DIFFERENCES_TO_EXPLAIN"
+    out["verdict"] = "ZERO_UNEXPLAINED" if not (out["different"] or out["notInCapture"] or out["deletes"]) else "DIFFERENCES_TO_EXPLAIN"
     return out
 
 
@@ -85,7 +96,9 @@ def main(argv=None) -> int:
     with FakeRTDB(capture) as fake:
         cmd = [sys.executable, os.path.join(REPO, "brains", "lake", "runtime", "artifact_entry.py"), "--job", a.job, "--scope", "pilots",
                "--read-rtdb", fake.url, "--archive", archive, "--artifact-dir", art_dir]
-        env = {**os.environ, "SECTOR_BRAIN_ACCESS_TOKEN": "rehearsal-fake"}     # the fake ignores it; no real token reaches the job
+        cmd += (["--seed-archive", a.seed_archive] if a.seed_archive else []) + (["--presence", a.presence] if a.presence else [])
+        env = {k: v for k, v in os.environ.items() if k not in ("BRAIN_ACCESS_TOKEN", "SECTOR_BRAIN_ACCESS_TOKEN")}
+        env["SECTOR_BRAIN_ACCESS_TOKEN"] = "rehearsal-fake"                       # the fake ignores it; no real database token reaches the job
         r = subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=1800)
         reads, uncovered, refused = list(fake.reads), sorted(fake.uncovered), list(fake.refused)
     open(os.path.join(a.out, "job.log"), "w").write(r.stdout + "\n--- stderr ---\n" + r.stderr)
@@ -95,7 +108,8 @@ def main(argv=None) -> int:
     report = {"jobExit": r.returncode, "reads": len(reads), "readsOutsideCapture": uncovered, "writeAttemptsRefused": refused, "artifacts": len(found)}
     if len(found) == 1:
         report["comparison"] = compare(json.loads(store.get(found[0])), capture)
-    report["verdict"] = ("REFUSED_WRITE" if refused else report.get("comparison", {}).get("verdict", "NO_ARTIFACT"))
+    report["verdict"] = ("REFUSED_WRITE" if refused else "READ_OUTSIDE_CAPTURE" if uncovered
+                         else report.get("comparison", {}).get("verdict", "NO_ARTIFACT"))
     json.dump(report, open(os.path.join(a.out, "REHEARSAL.json"), "w"), indent=1)
     print(json.dumps({k: report[k] for k in ("jobExit", "reads", "artifacts", "verdict")} | {"readsOutsideCapture": len(uncovered)}))
     return 0 if report["verdict"] == "ZERO_UNEXPLAINED" else 1

@@ -67,6 +67,10 @@ def main(argv=None, fetch=get) -> int:
     if not token:
         print("REFUSED: set BRAIN_ACCESS_TOKEN to a read-only token", file=sys.stderr)
         return 2
+    u = urllib.parse.urlparse(a.rtdb)
+    if u.scheme != "https" or not (u.hostname or "").endswith(".firebaseio.com"):
+        print("REFUSED: --rtdb must be an https://*.firebaseio.com database (the token is sent to it)", file=sys.stderr)
+        return 2
     if inside_git(a.out):
         print(f"REFUSED: {a.out} is inside a git checkout; a capture holds live data and must stay private", file=sys.stderr)
         return 2
@@ -75,12 +79,16 @@ def main(argv=None, fetch=get) -> int:
         return 2
     paths = PATHS[a.brain]()
     capture = {p: fetch(a.rtdb, p, token) for p in paths}
-    os.makedirs(a.out, exist_ok=True)
+    os.makedirs(a.out, mode=0o700, exist_ok=True)
     body = json.dumps(capture, indent=1, sort_keys=True, ensure_ascii=False).encode()
-    open(os.path.join(a.out, "capture.json"), "wb").write(body)
     manifest = {"schema": "sector-rtdb-capture-v1", "brain": a.brain, "rtdb": a.rtdb, "capturedAt": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 "paths": paths, "absent": [p for p, v in capture.items() if v is None], "sha256": hashlib.sha256(body).hexdigest()}
-    json.dump(manifest, open(os.path.join(a.out, "MANIFEST.json"), "w"), indent=1)
+    old = os.umask(0o077)                                    # live data: readable by the owner only
+    try:
+        open(os.path.join(a.out, "capture.json"), "wb").write(body)
+        json.dump(manifest, open(os.path.join(a.out, "MANIFEST.json"), "w"), indent=1)
+    finally:
+        os.umask(old)
     print(json.dumps({k: manifest[k] for k in ("brain", "capturedAt", "sha256")} | {"paths": len(paths), "absent": len(manifest["absent"])}))
     return 0
 
