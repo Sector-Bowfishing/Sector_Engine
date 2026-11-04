@@ -39,9 +39,20 @@ public struct DailyLevel: Codable, Equatable, Sendable {
     public var sourceId: String
 }
 
+/// One hourly dam release reading (LB-09): the operator's average hourly discharge and the tailwater elevation, kept apart
+/// from the pool. Either value may be missing on a given hour.
+public struct ReleaseObservation: Codable, Equatable, Sendable {
+    public var at: Date
+    public var outflowCfs: Double?
+    public var tailwaterFt: Double?
+    public init(at: Date, outflowCfs: Double?, tailwaterFt: Double?) { self.at = at; self.outflowCfs = outflowCfs; self.tailwaterFt = tailwaterFt }
+}
+
 public struct FeedResult: Sendable {
     public var observations: [LevelObservation]
     public var error: String?
+    /// Release readings from the same response, where the source publishes them (TVA's 48 h feed). Empty elsewhere.
+    public var release: [ReleaseObservation] = []
     public static func failed(_ e: String) -> FeedResult { FeedResult(observations: [], error: e) }
 }
 
@@ -70,8 +81,20 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
     private var guideCache: [String: [TVAGuideRow]] = [:]
     private let lock = NSLock()
 
+    /// CWMS requests: bounded, classified retries (LakeLevelFeedsCWMS.swift). Injected by tests.
+    let cwmsTransport: CWMSTransport
+    let cwmsPolicy: CWMSRetryPolicy
+
     public init(sharedArchive: @escaping (String) -> LakeBrainArchive? = { _ in nil }) {
         self.sharedArchive = sharedArchive
+        self.cwmsTransport = .live()
+        self.cwmsPolicy = CWMSRetryPolicy()
+    }
+
+    init(sharedArchive: @escaping (String) -> LakeBrainArchive? = { _ in nil }, cwmsTransport: CWMSTransport, cwmsPolicy: CWMSRetryPolicy = CWMSRetryPolicy()) {
+        self.sharedArchive = sharedArchive
+        self.cwmsTransport = cwmsTransport
+        self.cwmsPolicy = cwmsPolicy
     }
 
     public func recent(_ ref: LevelSeriesRef, hours: Int, now: Date) async -> FeedResult {
@@ -257,7 +280,21 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
             return .failed("TVA observed-data-48-hours/\(loc) unreachable")
         }
         let obs = Self.parseTVAObserved(data)
-        return obs.isEmpty ? .failed("TVA observed-data-48-hours/\(loc) returned no readings") : FeedResult(observations: obs, error: nil)
+        return obs.isEmpty ? .failed("TVA observed-data-48-hours/\(loc) returned no readings")
+            : FeedResult(observations: obs, error: nil, release: Self.parseTVARelease(data))
+    }
+
+    /// The same 48 h rows' `AverageHourlyDischarge` (cfs) and `TailwaterElevation` (ft), oldest first. Zero or blank is "no value".
+    static func parseTVARelease(_ data: Data) -> [ReleaseObservation] {
+        guard let rows = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else { return [] }
+        func num(_ k: String, _ r: [String: Any]) -> Double? { TVAGenerationService.number(r[k] as? String).flatMap { $0 > 0 ? $0 : nil } }
+        var byTime: [Date: ReleaseObservation] = [:]
+        for r in rows {
+            guard let day = r["Day"] as? String, let time = r["Time"] as? String, let at = tvaTime(day: day, time: time) else { continue }
+            let o = ReleaseObservation(at: at, outflowCfs: num("AverageHourlyDischarge", r), tailwaterFt: num("TailwaterElevation", r))
+            if o.outflowCfs != nil || o.tailwaterFt != nil { byTime[at] = o }
+        }
+        return byTime.values.sorted { $0.at < $1.at }
     }
 
     static func parseTVAObserved(_ data: Data) -> [LevelObservation] {
@@ -309,8 +346,12 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
             ]
             if let page { q.append(.init(name: "page", value: page)) }
             c?.queryItems = q
-            guard let url = c?.url?.absoluteString, let data = await get(url, accept: "application/json;version=2") else {
-                return out.isEmpty ? .failed("CWMS \(office) \(name) unreachable") : FeedResult(observations: out, error: "CWMS page fetch failed")
+            guard let url = c?.url?.absoluteString else { return .failed("CWMS \(office) \(name): bad request URL") }
+            let fetched = await CWMSRequest.get(url, accept: "application/json;version=2", label: "\(office) \(name)",
+                                                transport: cwmsTransport, policy: cwmsPolicy)
+            guard case .ok(let data, _) = fetched else {
+                let why = fetched.failure ?? "CWMS \(office) \(name) unreachable"
+                return out.isEmpty ? .failed(why) : FeedResult(observations: LakeLevelSeries.merge(out), error: "CWMS page fetch failed: \(why)")
             }
             guard let raw = CWMSObservedService.parseJSON(data) as? [String: Any] else { return .failed("CWMS \(name): unreadable JSON") }
             // Asked in English units; if a feed still answers in metres, convert.

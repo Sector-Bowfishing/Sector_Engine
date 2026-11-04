@@ -32,6 +32,19 @@ final class LakeBrainTests: XCTestCase {
         XCTAssertEqual(obs.map(\.ft), [594.02, 594.03, 594.05])
     }
 
+    func testTVAReleaseParsesDischargeAndTailwater() {
+        let rows = """
+        [{"Day":"10/10/2026","Time":"11 PM CDT","ReservoirElevation":"594.02","TailwaterElevation":"507.07","AverageHourlyDischarge":"63,258"},
+         {"Day":"10/10/2026","Time":"Midnight CDT","ReservoirElevation":"594.03","TailwaterElevation":"","AverageHourlyDischarge":"0"},
+         {"Day":"10/11/2026","Time":"1 AM CDT","ReservoirElevation":"594.05","TailwaterElevation":"507.01","AverageHourlyDischarge":"61,900"}]
+        """
+        let rel = PublicLakeLevelFeeds.parseTVARelease(Data(rows.utf8))
+        XCTAssertEqual(rel.map(\.outflowCfs), [63258, 61900])          // the midnight row has neither value
+        XCTAssertEqual(rel.map(\.tailwaterFt), [507.07, 507.01])
+        XCTAssertEqual(rel.last?.at, iso("2026-10-11T06:00:00Z"))
+        XCTAssertEqual(PublicLakeLevelFeeds.parseTVAObserved(Data(rows.utf8)).count, 3)   // level parsing unchanged
+    }
+
     func testTVAGuideZeroIsMissingAndYearLabelIgnored() {
         let json = """
         {"items":[{"Day":"10/11/2025","GuideCurve":594.2,"BtmOpZone":593.6,"TopOpZone":594.6,"TopOfGates":595.4,"CurYrElev":593.8,"PrevYrElev":594.1},
@@ -145,6 +158,29 @@ final class LakeBrainTests: XCTestCase {
         LakeLevelInputs(lakeId: "Test|ST", binding: b, capabilityIfUnbound: .noSource, fullPoolFt: 600, poolBasisIsFullPool: true,
                         poolConfidenceLow: false, live: live.map { ($0.0, $0.1, nil) }, archivedHourly: [], guide: guide,
                         baseline: baseline, now: now, processingVersion: "test")
+    }
+
+    func testReleaseOnlyFromTheLevelSourceAndOnlyWhenObserved() {
+        let now = iso("2026-06-01T12:30:00Z")
+        let r = ref(.directOperatorPool, "R1")
+        var x = inputs(binding([r]), live: [(r, hourly(iso("2026-06-01T12:00:00Z"), hours: 30, start: 600, step: 0.0))], now: now)
+        XCTAssertNil(LakeLevelClassifier.evaluate(x).release)                       // no release series: absent = UNKNOWN
+        x.releaseBySource = [r.sourceId: [ReleaseObservation(at: iso("2026-06-01T09:00:00Z"), outflowCfs: 41000, tailwaterFt: nil),
+                                          ReleaseObservation(at: iso("2026-06-01T12:00:00Z"), outflowCfs: 52000, tailwaterFt: 507.2)]]
+        let s = LakeLevelClassifier.evaluate(x).release
+        XCTAssertEqual(s?.outflowCfs, 52000)
+        XCTAssertEqual(s?.tailwaterElevationFt, 507.2)
+        XCTAssertEqual(s?.observationTime, "2026-06-01T12:00:00Z")
+        XCTAssertEqual(s?.sourceAgeHours, 0.5)
+        XCTAssertEqual(s?.stale, false)
+        x.releaseBySource = [r.sourceId: [ReleaseObservation(at: iso("2026-06-01T08:00:00Z"), outflowCfs: 41000, tailwaterFt: nil)]]
+        XCTAssertEqual(LakeLevelClassifier.evaluate(x).release?.stale, true)       // older than cadence + lag
+        x.releaseBySource = ["other": [ReleaseObservation(at: iso("2026-06-01T12:00:00Z"), outflowCfs: 1, tailwaterFt: nil)]]
+        XCTAssertNil(LakeLevelClassifier.evaluate(x).release)                       // never from another series
+        let p = ref(.nearbyGaugeProxy, "P1")
+        var px = inputs(binding([p], cap: .nearbyGaugeProxy), live: [(p, hourly(iso("2026-06-01T12:00:00Z"), hours: 30, start: 3, step: 0.0))], now: now)
+        px.releaseBySource = [p.sourceId: [ReleaseObservation(at: iso("2026-06-01T12:00:00Z"), outflowCfs: 9, tailwaterFt: nil)]]
+        XCTAssertNil(LakeLevelClassifier.evaluate(px).release)                      // a proxy never carries release
     }
 
     func testProxyGetsTrendOnly() {

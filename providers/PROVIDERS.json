@@ -40,7 +40,7 @@
     },
     {
       "providerId": "tva-restapi",
-      "displayName": "TVA REST API (observed reservoir elevation, operating guide)",
+      "displayName": "TVA REST API (observed reservoir elevation, hourly discharge and tailwater, operating guide)",
       "acquisitionOwner": "lake-brain",
       "healthOwner": "lake-brain",
       "authorizedConsumers": [

@@ -22,6 +22,11 @@
    "status": "EXPERIMENTAL"
   },
   {
+   "id": "outflow",
+   "desc": "Observed dam outflow and tailwater with source and age, kept apart from the pool; absent where no release series is published (LB-09)",
+   "status": "MEASUREMENT"
+  },
+  {
    "id": "floodMarginAccess",
    "desc": "Rising/falling stage as an access signal",
    "status": "HYPOTHESIS_NOT_VALIDATED"

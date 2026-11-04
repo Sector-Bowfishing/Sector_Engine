@@ -24,8 +24,9 @@
     {
       "brainId": "lake-brain",
       "step": 4,
-      "basis": "TIME Brain with a registered contract; own plan required",
-      "plan": null
+      "basis": "TIME Brain with a registered contract; own plan required. Order review L-2 (owner, Sector_Ops #48 decided on #50, 2026-11-02): Lake may cut over before Water Temp (and Wind), because the customer level path waits on Lake and Water Temp has no customer path; the cutover document entry must carry this orderReviewRef",
+      "plan": "CUTOVER_PLANS_WT_LAKE_INTELLIGENCE_V1.md#2-lake-lake-brain-step-4; Sector_Ops #48",
+      "orderReviewRef": "owner-approval-2026-11-02/sector-ops-50#L-2"
     },
     {
       "brainId": "sector-intelligence",

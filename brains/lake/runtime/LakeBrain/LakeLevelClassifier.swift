@@ -40,6 +40,8 @@ public struct LakeLevelInputs: Sendable {
     public var baseline: LakeLevelBaseline?
     public var now: Date
     public var processingVersion: String?
+    /// Release readings by live source id (LB-09); empty where no source publishes release.
+    public var releaseBySource: [String: [ReleaseObservation]] = [:]
 }
 
 public enum LakeLevelClassifier {
@@ -322,7 +324,17 @@ public enum LakeLevelClassifier {
                                           freshUntil: BrainPlatform.iso(freshUntil), nextCheckAt: BrainPlatform.iso(next),
                                           stale: stale, refreshReason: reason),
             provenance: provenance(readiness, sources: sources, inputAge: ageH),
-            sourceFallback: fallback(sel, live: x.live))
+            sourceFallback: fallback(sel, live: x.live),
+            release: kind == .observed ? releaseState(x.releaseBySource[src.sourceId], src: src, now: now) : nil)
+    }
+
+    /// The newest release reading of the level's own source (LB-09). nil when the source publishes none.
+    static func releaseState(_ obs: [ReleaseObservation]?, src: LevelSeriesRef, now: Date) -> LakeReleaseState? {
+        guard let r = obs?.last(where: { $0.outflowCfs != nil || $0.tailwaterFt != nil }) else { return nil }
+        let age = now.timeIntervalSince(r.at)
+        return LakeReleaseState(outflowCfs: r.outflowCfs, tailwaterElevationFt: r.tailwaterFt, observationTime: BrainPlatform.iso(r.at),
+                                sourceAgeHours: r2(age / 3600), sourceId: src.sourceId,
+                                stale: age > Double(src.cadenceMin + src.lagMin) * 60)
     }
 
     /// The fallback record (PL-03): only when the reading did not come from the primary source.

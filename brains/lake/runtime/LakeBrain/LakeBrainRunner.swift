@@ -132,6 +132,7 @@ public enum LakeBrainRunner {
         var plan: LakeBrainPlanDecision?
         var lastMerged: [DailyLevel] = []
         var liveResults: [(ref: LevelSeriesRef, readings: [LevelObservation], error: String?)] = []
+        var releaseBySource: [String: [ReleaseObservation]] = [:]
 
         if let binding, binding.status == .reviewed {
             let tz = TimeZone(identifier: binding.timeZone) ?? TimeZone(identifier: "UTC")!
@@ -143,6 +144,7 @@ public enum LakeBrainRunner {
                 for ref in binding.live {
                     let r = await feeds.recent(ref, hours: liveHours(ref), now: now)
                     liveResults.append((ref, r.observations, r.error))
+                    if !r.release.isEmpty { releaseBySource[ref.sourceId] = r.release }
                 }
                 var archivedHourly: [LevelObservation] = []
                 for h in binding.history {
@@ -185,7 +187,7 @@ public enum LakeBrainRunner {
                     fullPoolFt: lake.fullPoolFt, poolBasisIsFullPool: lake.poolBasis == .fullPool,
                     poolConfidenceLow: lake.poolConfidence == .low || lake.poolConfidence == nil,
                     live: liveResults, archivedHourly: archivedHourly, guide: guide, baseline: b,
-                    now: now, processingVersion: options.processingVersion))
+                    now: now, processingVersion: options.processingVersion, releaseBySource: releaseBySource))
             } else {
                 state = published
             }

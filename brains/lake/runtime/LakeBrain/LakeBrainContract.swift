@@ -245,6 +245,20 @@ public struct LakeLevelStateRecord: Codable, Equatable, Sendable {
     /// Present only when the reading comes from a FALLBACK source (Cortex PL-03, 2026-10-20; additive): the state is degraded but usable, the primary
     /// failure is kept, and the source actually used is named with its own capability. Absent when the primary source supplied the reading.
     public var sourceFallback: LakeSourceFallback? = nil
+    /// LB-09 observed dam release (additive, Sector_Ops #43). Absent = UNKNOWN.
+    public var release: LakeReleaseState? = nil
+}
+
+/// Observed dam release at the time of the reading (LB-09). Only from the source that supplied the level, only for an observed
+/// (not proxy) state. Absent means UNKNOWN: no published release series, or none in the feed.
+public struct LakeReleaseState: Codable, Equatable, Sendable {
+    public var outflowCfs: Double?
+    public var tailwaterElevationFt: Double?
+    public var observationTime: String
+    public var sourceAgeHours: Double
+    public var sourceId: String
+    /// True when the release reading is older than the source's cadence plus lag.
+    public var stale: Bool
 }
 
 /// Why a LakeState is on a fallback source, and what that source is (`sourceCapability` above stays the binding's capability, unchanged).
