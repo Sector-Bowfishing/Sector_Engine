@@ -110,6 +110,10 @@ def test_family_writers_match_the_ownership_table():
                 continue
             ids = [x for x in w.split("|")]
             ids = [brain if x == "{brain}" else x for x in ids]
+            if w == "{brain}" and ownership.orchestrator_owned_health([x for x in (path.strip("/") + "/status").split("/") if x]):
+                if ownership.path_allowed(brain, path) or not ownership.path_allowed(ownership.PLATFORM_WRITER, path + "/status"):
+                    bad.append((path, ids, "moved to the Orchestrator but the guard disagrees"))
+                continue                                                   # option (a), 2026-11-04 (CG-3.1-15): a registry row moved this Brain's health to the Orchestrator
             if not any(ownership.path_allowed(i, path) for i in ids if i):
                 bad.append((path, ids, "denied"))
             others = [b for b in LIVE_BRAINS if b not in ids and ownership.path_allowed(b, path)
