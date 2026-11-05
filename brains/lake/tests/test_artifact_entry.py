@@ -62,6 +62,25 @@ def test_the_entry_has_no_database_writer():
     assert "BrainRtdb" not in src and "RtdbRestPublisherClient" not in src and ".update(" not in src
 
 
+@pytest.mark.parametrize("args", [["--fault", "cwms-unreachable", "--artifact-bucket", "b"], ["--fault=cwms-unreachable"],
+                                  ["--fa", "cwms-unreachable", "--artifact-bucket", "b"],                    # an argparse abbreviation (review of #117)
+                                  ["--fault", "cwms-unreachable", "--artifact-dir", "", "--artifact-bucket", "b"],   # an empty dir would fall through to the bucket
+                                  ["--fault", "cwms-unreachable", "--artifact-dir", "  "],
+                                  ["--fault", "cwms-unreachable"]])                                           # LAKE_ARTIFACT_BUCKET from the environment
+def test_a_rehearsal_fault_is_refused_unless_the_artifact_stays_local(args, capsys, monkeypatch):
+    """Sector_Ops #48 B4b: a fault-injected artifact must never reach a bucket the Publisher reads, whatever spelling argparse accepts."""
+    monkeypatch.setenv("LAKE_ARTIFACT_BUCKET", "env-bucket")
+    assert E.main(["--job", "/nonexistent/LakeBrainJob"] + args) == 2
+    assert "needs --artifact-dir" in capsys.readouterr().err
+
+
+def test_a_rehearsal_fault_is_passed_to_the_job():
+    import argparse
+    ap = argparse.ArgumentParser()
+    E._job_args(ap)
+    a = ap.parse_args(["--fault", "cwms-unreachable"])
+    a.job, a.read_rtdb = "LakeBrainJob", None
+    assert E._job_command(a, "D")[-2:] == ["--fault", "cwms-unreachable"]
 def test_seed_archive_and_presence_are_forwarded_to_the_job():
     import argparse
     ap = argparse.ArgumentParser()
