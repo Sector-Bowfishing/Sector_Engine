@@ -87,10 +87,17 @@ def engine_serving(service: dict | None, lineage: dict, checked_at: dt.datetime)
         return out | {"status": "UNKNOWN", "lineageVerified": False, "reason": "no revision receives traffic"}
     top = serving[0]
     rev = top.get("revision") or (service.get("latestReadyRevision") or "").rsplit("/", 1)[-1]
-    verified = digest is not None and digest == lineage.get("imageDigest")
+    matches = digest is not None and digest == lineage.get("imageDigest")
+    if service.get("source") == "runner":
+        # SI-A1: the runner (Pulse) supplied the revision. Its digest is a claim, not an attestation, so the lineage is never VERIFIED from it.
+        return out | {"status": "SERVING", "revision": rev, "trafficPercent": top.get("percent"), "imageDigest": digest, "lineageVerified": False,
+                      "lineageSource": "RUNNER_SUPPLIED", "digestMatchesDeclared": matches,
+                      "reason": ("unverified: the runner supplied no image digest" if digest is None else
+                                 "unverified: the runner-supplied digest matches the declared lineage but is not attested" if matches else
+                                 "the runner-supplied image digest differs from the declared code lineage; review catalog.json")}
     return out | {"status": "SERVING", "revision": rev, "trafficPercent": top.get("percent"),
-                  "imageDigest": digest, "lineageVerified": verified,
-                  **({} if verified else {"reason": "serving image differs from the declared code lineage; review catalog.json"})}
+                  "imageDigest": digest, "lineageVerified": matches,
+                  **({} if matches else {"reason": "serving image differs from the declared code lineage; review catalog.json"})}
 
 
 # ------------------------------------------------------------------ dependencies
@@ -213,8 +220,10 @@ def derived_blockers(deps: dict, serving: dict) -> list[dict]:
             out.append({"id": f"DEPENDENCY_STALE:{bid}", "severity": "info", "brainId": bid,
                         "title": f"{d['displayName']} state is stale ({d.get('degradedReason')})"})
     if serving.get("status") == "SERVING" and not serving.get("lineageVerified"):
-        out.append({"id": "ENGINE_LINEAGE_UNVERIFIED", "severity": "warning",
-                    "title": "The serving Engine image differs from the declared code lineage; catalog.json needs review"})
+        differs = serving.get("lineageSource") != "RUNNER_SUPPLIED" or (serving.get("imageDigest") is not None and not serving.get("digestMatchesDeclared"))
+        out.append({"id": "ENGINE_LINEAGE_UNVERIFIED", "severity": "warning" if differs else "info",
+                    "title": "The serving Engine image differs from the declared code lineage; catalog.json needs review" if differs else
+                             f"The serving Engine lineage is not verified ({serving.get('reason')})"})
     return out
 
 
