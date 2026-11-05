@@ -32,14 +32,30 @@ final class LakeLevelOutputTests: XCTestCase {
     func testShippedDefaultsAreUnknownEverywhere() async {
         let shipped = LakeLevelEligibility.fromEnvironment([:])
         XCTAssertFalse(shipped.enabled)
-        XCTAssertTrue(LakeLevelEligibility.validatedLakeIds.isEmpty)
         let o = await out(shipped)
         XCTAssertEqual(o.status, LakeLevelOutput.unknown)
         XCTAssertEqual(o.reason, LakeLevelOutputAPI.notEnabled)
         XCTAssertNil(o.elevationFt)
-        // The flag alone opens nothing while the validated list is empty.
+        // The flag alone opens nothing for a lake that is not on the validated list.
         let flagged = await out(LakeLevelEligibility.fromEnvironment(["SECTOR_LAKE_LEVEL_OUTPUT": "1"]))
         XCTAssertEqual(flagged.reason, LakeLevelOutputAPI.notValidatedHere)
+    }
+
+    func testValidatedListMatchesTheLakeBetaResult() async {
+        let ids = LakeLevelEligibility.validatedLakeIds
+        XCTAssertEqual(ids.count, 30)
+        // Same-instrument passes, failures, abstentions and the home lakes stay off.
+        for lake in ["Bluestone Lake|WV", "Tappan Lake|OH", "Brookville Lake|IN", "Cagles Mill Lake|IN", "Navajo Reservoir|NM",
+                     "Sumner Lake|NM", "Kentucky Lake|KY", "Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN"] {
+            XCTAssertFalse(ids.contains(lake), lake)
+        }
+        // Every listed id is a directory lake.
+        let directory = Set(LakeDirectory.all.map(\.id))
+        XCTAssertTrue(ids.isSubset(of: directory), "\(ids.subtracting(directory))")
+        // Listed and flagged, but with no reader the lake is still UNKNOWN.
+        let o = await LakeLevelOutputAPI.output(lakeId: "Tygart Lake|WV", eligibility: .fromEnvironment(["SECTOR_LAKE_LEVEL_OUTPUT": "1"]),
+                                                reader: nil)
+        XCTAssertEqual(o.reason, LakeLevelOutputAPI.noReader)
     }
 
     func testReadsOnlyTheCustomerCopy() async {
