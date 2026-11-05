@@ -75,3 +75,12 @@ def test_a_built_artifact_declares_the_packaged_release_and_the_resolver_accepts
     approved = S.release().get("approvalStatus") == "APPROVED"
     assert approved is False                                                                # NOT_RECORDED today: the owner records it (SI-A5)
     assert PackagedReleaseResolver(runtime, "sector-intelligence", require_approved=True)(*declared) is False
+
+
+def test_emit_writes_the_stored_artifact_for_a_runner_hand_off(tmp_path):
+    """SI-A5 (draft): Pulse's lease jobs hand off {out}/artifact.json; --emit writes exactly the stored artifact there, create-only."""
+    store, emit = LocalDirObjectStore(tmp_path / "store"), tmp_path / "artifact.json"
+    ref = run.seal_and_store(S.run_updates(), now=S.NOW, release=S.release(), consumed=None, store=store, execution_id=S.uid(8), emit=str(emit))
+    assert json.loads(emit.read_text()) == json.loads(store.get(ref["location"]))
+    with pytest.raises(FileExistsError):
+        run.seal_and_store(S.run_updates(), now=S.NOW, release=S.release(), consumed=None, store=LocalDirObjectStore(tmp_path / "s2"), emit=str(emit))
