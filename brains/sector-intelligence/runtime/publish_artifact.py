@@ -27,8 +27,8 @@ BRAIN = FlatBrain(
             (rf"/lakeFleet/{_LAKE}/(readiness|modelVersions)/{sib.SLOT}", "fleet"), (rf"/snapshots/{_LAKE}/latest/.+", "snapshot")),
     not_authored=(NotAuthored(rf"/lakeFleet/{_LAKE}/lakeId", "lakefleet-lakeid", "PLATFORM_OWNED", "STOP_WRITING", "Platform Lake Registry (lake identity)"),
                   NotAuthored(rf"/snapshots/{_LAKE}/latest/lakeId", "snapshot-lakeid", "PLATFORM_OWNED", "STOP_WRITING", "Platform Lake Registry (lake identity)"),
-                  NotAuthored(rf"/health/brains/{INTELLIGENCE}/.+", "health-brains-process", "LEGACY_READER_DEPENDENCY", "ORCHESTRATOR_DERIVED",
-                              "Orchestrator (execution / deployment state)")))
+                  NotAuthored(rf"/health/brains/{INTELLIGENCE}/.+", "health-brains", "LEGACY_READER_DEPENDENCY", "ORCHESTRATOR_DERIVED",
+                              "Orchestrator (derived from the published /brains/sector-intelligence, health_mirror; Sector_Ops #50 SI-A3)")))
 
 
 def input_fingerprint(updates: dict) -> str:
