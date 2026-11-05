@@ -299,7 +299,22 @@ final class ConditionsForecastService: ObservableObject {
             URLQueryItem(name: "precipitation_unit", value: "inch"),
             URLQueryItem(name: "timezone", value: "auto"),
         ])
-        return try JSONDecoder().decode(ForecastResponse.self, from: data)
+        let response = try JSONDecoder().decode(ForecastResponse.self, from: data)
+        guard let model = WindForecastModel.current else { return response }      // default: unchanged (Open-Meteo best_match by omission)
+        // Owner-gated switch (APP_WIND_SOURCE_REVIEW_V1 option 1; W1 + W1b). Only the wind changes: a second, wind-only request for the model,
+        // overlaid where it has a value. Everything else stays best_match, because W1/W1b graded wind speed only. Any failure keeps best_match.
+        guard let windData = try? await WeatherService.fetchForecastData(queryItems: [
+            URLQueryItem(name: "latitude", value: String(format: "%.4f", coordinate.latitude)),
+            URLQueryItem(name: "longitude", value: String(format: "%.4f", coordinate.longitude)),
+            URLQueryItem(name: "hourly", value: "wind_speed_10m"),
+            URLQueryItem(name: "daily", value: "wind_speed_10m_max"),
+            URLQueryItem(name: "past_days", value: "1"),
+            URLQueryItem(name: "forecast_days", value: "8"),
+            URLQueryItem(name: "wind_speed_unit", value: "mph"),
+            URLQueryItem(name: "timezone", value: "auto"),
+            URLQueryItem(name: "models", value: model),
+        ]), let wind = try? JSONDecoder().decode(WindOnlyResponse.self, from: windData) else { return response }
+        return WindForecastModel.overlay(response, with: wind)
     }
 
     // MARK: Compute
@@ -852,8 +867,8 @@ private extension Int {
 // MARK: - JSON
 
 struct ForecastResponse: Decodable {
-    let hourly: Hourly
-    let daily: Daily
+    var hourly: Hourly
+    var daily: Daily
     // Lake's offset from UTC (timezone=auto). The hourly/daily strings are local
     // wall-clock parsed as naive-UTC, so this converts a wall-clock hour to its
     // true instant for astronomy (moon altitude / moonset in the ribbon).
@@ -863,7 +878,7 @@ struct ForecastResponse: Decodable {
 
     struct Hourly: Decodable {
         let time: [String]
-        let wind_speed_10m: [Double?]
+        var wind_speed_10m: [Double?]
         let cloud_cover: [Double?]
         let precipitation: [Double?]
         // % chance of rain that hour. `var` (not `let`) so the default doesn't drop it
@@ -878,13 +893,52 @@ struct ForecastResponse: Decodable {
         let time: [String]
         let sunrise: [String]
         let sunset: [String]
-        let wind_speed_10m_max: [Double?]
+        var wind_speed_10m_max: [Double?]
         let weather_code: [Int?]
         let precipitation_sum: [Double?]
         // % chance of measurable rain that day. `var` (not `let`) so the default
         // doesn't drop it from synthesized Decodable; nil elements are common.
         var precipitation_probability_max: [Int?]? = nil
         let cloud_cover_mean: [Double?]?
+    }
+}
+
+/// The wind-only answer for one Open-Meteo model.
+struct WindOnlyResponse: Decodable {
+    struct Hourly: Decodable { let time: [String]; let wind_speed_10m: [Double?] }
+    struct Daily: Decodable { let time: [String]; let wind_speed_10m_max: [Double?] }
+    var hourly: Hourly
+    var daily: Daily
+}
+
+/// Which Open-Meteo model the forecast wind comes from (Sector_Ops #30, #47; docs/brains/wind/APP_WIND_SOURCE_REVIEW_V1.md option 1).
+/// Off by default: no `models` parameter is sent, so Open-Meteo answers with `best_match`, exactly as before. `SECTOR_WIND_FORECAST_MODEL=ncep_nbm_conus`
+/// switches tonight's window and the 7-night outlook wind to NBM. Current conditions (WeatherService) are not changed here. Switching customer wind needs a
+/// scoring review (Cortex scoring.md), a merge and a deploy, each approved by the owner.
+enum WindForecastModel {
+    /// The only model a reviewed pre-registration has graded (W1, W1b). Anything else is ignored.
+    static let allowed: Set<String> = ["ncep_nbm_conus"]
+
+    static func from(_ env: [String: String]) -> String? {
+        guard let v = env["SECTOR_WIND_FORECAST_MODEL"], allowed.contains(v) else { return nil }
+        return v
+    }
+
+    static let current: String? = from(ProcessInfo.processInfo.environment)
+
+    /// best_match with the model's wind written over it, hour by hour and day by day, matched on the local time string. A missing or null
+    /// model value (outside CONUS, beyond the model's range) keeps best_match's value.
+    static func overlay(_ base: ForecastResponse, with wind: WindOnlyResponse) -> ForecastResponse {
+        var out = base
+        let hourly = Dictionary(zip(wind.hourly.time, wind.hourly.wind_speed_10m), uniquingKeysWith: { a, _ in a })
+        for (i, t) in base.hourly.time.enumerated() where i < out.hourly.wind_speed_10m.count {
+            if let v = hourly[t] ?? nil, v.isFinite, v >= 0 { out.hourly.wind_speed_10m[i] = v }
+        }
+        let daily = Dictionary(zip(wind.daily.time, wind.daily.wind_speed_10m_max), uniquingKeysWith: { a, _ in a })
+        for (i, t) in base.daily.time.enumerated() where i < out.daily.wind_speed_10m_max.count {
+            if let v = daily[t] ?? nil, v.isFinite, v >= 0 { out.daily.wind_speed_10m_max[i] = v }
+        }
+        return out
     }
 }
 
