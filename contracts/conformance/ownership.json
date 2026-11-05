@@ -229,13 +229,13 @@
    "brainId": "brain-platform",
    "path": "brains/water-temp/score",
    "allowed": false,
-   "note": "registry nodes are written whole by their brain; a platform sub-node there would be clobbered \u2014 scores live at /scores/{id}"
+   "note": "registry nodes are written whole by their brain; a platform sub-node there would be clobbered — scores live at /scores/{id}"
   },
   {
    "brainId": "brain-platform",
    "path": "brains/water-temp/score/value",
    "allowed": false,
-   "note": "registry nodes are written whole by their brain; a platform sub-node there would be clobbered \u2014 scores live at /scores/{id}"
+   "note": "registry nodes are written whole by their brain; a platform sub-node there would be clobbered — scores live at /scores/{id}"
   },
   {
    "brainId": "brain-platform",
@@ -392,6 +392,51 @@
    "path": "brains/wind/score",
    "allowed": false,
    "note": "scorer field"
+  },
+  {
+   "brainId": "brain-platform",
+   "path": "health/brains/water-clarity/status",
+   "allowed": true
+  },
+  {
+   "brainId": "brain-platform",
+   "path": "health/brains/water-clarity",
+   "allowed": false
+  },
+  {
+   "brainId": "brain-platform",
+   "path": "health/sources/noaa-mrms",
+   "allowed": true
+  },
+  {
+   "brainId": "brain-platform",
+   "path": "health/brains/lake-brain/status",
+   "allowed": false
+  },
+  {
+   "brainId": "brain-platform",
+   "path": "health/sources/usgs-nwis-00010",
+   "allowed": false
+  },
+  {
+   "brainId": "water-clarity",
+   "path": "health/brains/water-clarity/status",
+   "allowed": false
+  },
+  {
+   "brainId": "water-clarity",
+   "path": "health/brains/water-clarity",
+   "allowed": false
+  },
+  {
+   "brainId": "water-clarity",
+   "path": "health/sources/sentinel-2-l2a",
+   "allowed": false
+  },
+  {
+   "brainId": "lake-brain",
+   "path": "health/brains/lake-brain/status",
+   "allowed": true
   }
  ],
  "sourceOwners": {

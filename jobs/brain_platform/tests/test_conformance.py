@@ -177,9 +177,16 @@ def test_vocabularies():
 
 def test_failure_writes_are_owned_and_complete():
     now = dt.datetime(2026, 10, 12, 12, 0, tzinfo=dt.timezone.utc)
-    w = failure_writes("water-clarity", "boom", now, started=now - dt.timedelta(seconds=5), job_id="water-clarity-brain")
-    assert_owned(w, "water-clarity")
-    assert w["health/brains/water-clarity/status"] == "FAILED" and w["brains/water-clarity/health"] == "FAILED"
-    assert w["health/brains/water-clarity/durationMs"] == 5000
+    w = failure_writes("water-temp", "boom", now, started=now - dt.timedelta(seconds=5), job_id="water-temp-brain")
+    assert_owned(w, "water-temp")
+    assert w["health/brains/water-temp/status"] == "FAILED" and w["brains/water-temp/health"] == "FAILED"
+    assert w["health/brains/water-temp/durationMs"] == 5000
     ev = [v for k, v in w.items() if k.startswith("activity/")][0]
-    assert ev["kind"] == "run.failed" and ev["severity"] == "critical" and ev["brainId"] == "water-clarity"
+    assert ev["kind"] == "run.failed" and ev["severity"] == "critical" and ev["brainId"] == "water-temp"
+
+
+def test_a_brain_whose_health_moved_to_the_orchestrator_cannot_write_failure_health():
+    """Option (a), 2026-11-04 (CG-3.1-15): Water Clarity's health family is the Orchestrator's (registry row); Clarity has no database write site (X14) and the guard agrees."""
+    now = dt.datetime(2026, 10, 12, 12, 0, tzinfo=dt.timezone.utc)
+    with pytest.raises(OwnershipError):
+        assert_owned(failure_writes("water-clarity", "boom", now, job_id="water-clarity-brain"), "water-clarity")

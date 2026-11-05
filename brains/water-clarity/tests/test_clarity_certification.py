@@ -275,9 +275,17 @@ def test_dry_run_artifact_path_writes_only_local_files_and_never_touches_the_dat
     assert "consumed" not in art                                                                             # a dry run reads no RTDB: unknown, not []
 
 
+def _clarity_owned(updates):
+    """The run's legacy write set minus the health family the registry moved to the Orchestrator (option a, 2026-11-04, CG-3.1-15); those paths must be the Orchestrator's."""
+    from sector_brain_platform.ownership import PLATFORM_WRITER, orchestrator_owned_health, path_allowed
+    moved = {k for k in updates if orchestrator_owned_health([x for x in k.strip("/").split("/") if x])}
+    assert all(path_allowed(PLATFORM_WRITER, k) and not path_allowed("water-clarity", k) for k in moved)
+    return {k: v for k, v in updates.items() if k not in moved}
+
+
 def test_write_path_remains_ownership_checked_and_clarity_cannot_write_foreign_or_customer_roots(run_updates):
     from sector_brain_platform.ownership import OwnershipError, assert_owned
-    assert_owned(run_updates, "water-clarity")                                                             # the REAL run write set is within Clarity's ownership
+    assert_owned(_clarity_owned(run_updates), "water-clarity")                                             # the REAL run write set is within Clarity's ownership (health: the Orchestrator's)
     for bad in ("/lakes/G/states/wind", "/scores/water-clarity", "/brains/wind/version", "/control/orchestratorV1", "/snapshots/G/latest/waterTemperature", "/species/x"):
         with pytest.raises(OwnershipError):
             assert_owned({bad: {"x": 1}}, "water-clarity")
@@ -409,7 +417,7 @@ def test_engine_miss_run_keeps_the_last_good_state_and_is_a_publisher_valid_arti
     assert flat["lakeFleet/Kentucky_Lake_KY/slots/waterClarity/stale"] is True
     assert "lakeFleet/Kentucky_Lake_KY/slots/waterClarity/lastError" in flat
     from sector_brain_platform.ownership import assert_owned
-    assert_owned(flat, "water-clarity")
+    assert_owned(_clarity_owned(flat), "water-clarity")
     st, publish = rig()
     r = build(flat)
     assert r.unsupported == []

@@ -91,6 +91,16 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
         self.cwmsPolicy = CWMSRetryPolicy()
     }
 
+    /// Faults a dry-run rehearsal may inject (never a live run; LakeBrainJob refuses them without --dry-run).
+    public struct RehearsalFaults: Sendable, Equatable {
+        public var cwmsUnreachable = false
+        public init(cwmsUnreachable: Bool = false) { self.cwmsUnreachable = cwmsUnreachable }
+    }
+
+    public convenience init(sharedArchive: @escaping (String) -> LakeBrainArchive? = { _ in nil }, rehearsalFaults: RehearsalFaults) {
+        self.init(sharedArchive: sharedArchive, cwmsTransport: rehearsalFaults.cwmsUnreachable ? .unreachable() : .live())
+    }
+
     init(sharedArchive: @escaping (String) -> LakeBrainArchive? = { _ in nil }, cwmsTransport: CWMSTransport, cwmsPolicy: CWMSRetryPolicy = CWMSRetryPolicy()) {
         self.sharedArchive = sharedArchive
         self.cwmsTransport = cwmsTransport

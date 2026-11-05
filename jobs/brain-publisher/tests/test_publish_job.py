@@ -195,3 +195,20 @@ def test_the_staged_image_runs_and_verifies_each_central_brains_packaged_release
     args = (rel["releaseId"], "image:knowledge-release.json", rel["releaseDigest"])
     assert PackagedReleaseResolver(str(stage / "releases" / "water-clarity"), "water-clarity", require_approved=False)(*args) is True
     assert PackagedReleaseResolver(str(stage / "releases" / "water-clarity"), "water-clarity", require_approved=True)(*args) is (rel["approvalStatus"] == "APPROVED")
+
+
+def test_swift_brains_packaged_releases_stage_with_their_subfolders(tmp_path):
+    """Sector_Ops #48 B5 / WT G4: Lake's and Water Temp's releases list files in subfolders; staging used to fail on them (2026-11-04)."""
+    import json
+    import subprocess
+    cut = tmp_path / "cutover.json"
+    cut.write_text(json.dumps({"schema": "sector-publication-cutover-v1", "brains": {b: {"state": "CENTRAL", "approvalRef": "test"} for b in ("lake-brain", "water-temp")}}))
+    stage = tmp_path / "ctx"
+    r = subprocess.run(["bash", os.path.join(JOB, "deploy-job.sh"), "--stage-only", str(stage)], capture_output=True, text=True, timeout=120,
+                       env={**os.environ, "STAGE_ONLY_CUTOVER": str(cut)})
+    assert r.returncode == 0, r.stderr[-400:]
+    from sector_brain_platform.knowledge_release import load_release
+    from sector_brain_platform.publisher_live.release_resolver import PackagedReleaseResolver
+    for b in ("lake-brain", "water-temp"):
+        rel = load_release(str(stage / "releases" / b), b)
+        assert PackagedReleaseResolver(str(stage / "releases" / b), b, require_approved=False)(rel["releaseId"], "image:knowledge-release.json", rel["releaseDigest"]) is True

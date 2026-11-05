@@ -142,6 +142,18 @@ public enum BrainOwnership {
     static let platformOnly: Set<String> = ["schemaVersion", "access", "validationOps", "engine", "control", "scores", "jobs"]
     /// The Engine's own publisher (scores, engine health); not a brain.
     public static let platformWriter = "brain-platform"
+    /// Brain health families the Cortex registry moved to the Orchestrator (option a, owner decision 2026-11-04, CG-3.1-15): literal rows of
+    /// jobs/brain_platform/sector_brain_platform/data_ownership.json (the Python guard reads them from the registry; contracts/conformance/ownership.json keeps both equal).
+    static let orchestratorHealthBrains: Set<String> = ["water-clarity"]
+    static let orchestratorHealthSources: Set<String> = ["sentinel-2-l2a", "usgs-nwis-turbidity", "noaa-mrms"]
+
+    /// /health/brains/{id}/{child} (child level) or /health/sources/{id} of a family the registry gives the Orchestrator.
+    static func orchestratorOwnedHealth(_ p: [String]) -> Bool {
+        guard p.count >= 3, p[0] == "health" else { return false }
+        if p[1] == "brains" { return p.count >= 4 && orchestratorHealthBrains.contains(p[2]) }
+        if p[1] == "sources" { return orchestratorHealthSources.contains(p[2]) }
+        return false
+    }
 
     public static func sourceOwner(_ sourceId: String) -> String? { sourceOwners[sourceId] }
 
@@ -153,6 +165,7 @@ public enum BrainOwnership {
             // @external-admin families (Cortex 3.1 registry): access lists and the owner's execution-control document are never a platform write.
             if root == "access" || (root == "control" && p.count >= 2 && p[1] == "executionControlV1") { return false }
             if platformOnly.contains(root) || (root == "health" && p.count >= 2 && (p[1] == "engine" || p[1] == "rtdb")) { return true }
+            if orchestratorOwnedHealth(p) { return true }
             if root == "activity" { return p.count == 2 && p[1].contains("-\(platformWriter)-") }
             return false
         }
@@ -189,6 +202,7 @@ public enum BrainOwnership {
             return p.count >= 2 && p[1] == brainId
         case "health":
             guard p.count >= 3 else { return false }
+            if orchestratorOwnedHealth(p) || (p[1] == "brains" && p.count == 3 && orchestratorOwnedHealth(p + ["status"])) { return false }
             switch p[1] {
             case "brains": return p[2] == brainId
             case "jobs": return true

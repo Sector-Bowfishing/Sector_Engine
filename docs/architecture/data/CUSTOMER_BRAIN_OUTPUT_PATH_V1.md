@@ -14,7 +14,7 @@ lake is eligible.
   state (`fam.lake-states`) is INTERNAL and stays INTERNAL.
 
 ## 2. What the Engine serves
-`GET /lake/level?lake=<lakeId>` returns one `LakeLevelOutput` (`Sources/SectorEngine/API/LakeLevelOutputAPI.swift`):
+`GET /lake/level?lake=<lakeId>` (routed only where `SECTOR_LAKE_LEVEL_OUTPUT=1`; with the flag off the server has no such route) returns one `LakeLevelOutput` (`Sources/SectorEngine/API/LakeLevelOutputAPI.swift`):
 
 | Field | Meaning |
 |---|---|
