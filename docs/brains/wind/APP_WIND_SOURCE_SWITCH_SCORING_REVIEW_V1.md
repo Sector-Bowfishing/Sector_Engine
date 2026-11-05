@@ -41,3 +41,6 @@
 - **WS-3:** turn it on and deploy. This is customer-visible.
 - **WS-4:** current conditions: stay on `best_match` (recommended) or follow W1b's 0 h result.
 - **WS-5 (built, owner-approved 2026-11-05):** the switch now changes the outlook's **future nights only**. Every hour before noon of the location's local tomorrow, and today's and earlier daily values, keep `best_match`. That covers all of tonight: tonight's window, the outlook's tonight row, and the rest of tonight after midnight. The switch is still off by default.
+  - **Independent review fix:** tonight's window is computed in the process time zone, which is UTC on a server. For western and non-contiguous US zones late in the evening (Hawaii, Alaska, Pacific, Mountain), that window can run to 06:00 of the day after tomorrow. The cutoff is therefore the later of noon tomorrow (local) and the hour after the window ends.
+  - **Trade-off:** in those hours the first future night also stays on `best_match`. That is the safe direction, and the window overrun itself is an existing quirk in `buildTonight`.
+  - **Tests:** every hour of the day is checked for UTC−4 to UTC−10, with the process in UTC, in Central time and in the lake's own zone.

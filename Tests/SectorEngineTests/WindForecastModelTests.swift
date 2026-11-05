@@ -69,4 +69,45 @@ final class WindForecastModelTests: XCTestCase {
         XCTAssertEqual(o.hourly.wind_speed_10m, [6.0, 8.0, 9.0, 10.0, 5.5, 12.0])
         XCTAssertEqual(o.daily.wind_speed_10m_max, b.daily.wind_speed_10m_max)
     }
+
+    // Review of #125 (2026-11-05): tonight's window is computed in the PROCESS calendar (UTC on Cloud Run). Sweep every hour of a day, for every US
+    // offset, with the process in UTC, in Central time and in the lake's own zone: the cutoff is always after every hour tonight's window reads.
+    private func calendar(_ tz: TimeZone) -> Calendar { var c = Calendar(identifier: .gregorian); c.timeZone = tz; return c }
+    private func string(_ d: Date, _ cal: Calendar) -> String {
+        let c = cal.dateComponents([.year, .month, .day, .hour], from: d)
+        return String(format: "%04d-%02d-%02dT%02d:00", c.year!, c.month!, c.day!, c.hour!)
+    }
+
+    func testTheCutoffIsAfterTonightsWindowWhateverTheServersTimeZone() {
+        for offsetH in [-4, -5, -6, -7, -8, -9, -10] {
+            let lake = TimeZone(secondsFromGMT: offsetH * 3600)!
+            for process in [TimeZone(identifier: "UTC")!, TimeZone(identifier: "America/Chicago")!, lake] {
+                let pc = calendar(process)
+                for h in 0..<24 {
+                    let now = at("2026-11-05T00:00:00Z").addingTimeInterval(Double(h) * 3600 + 1800)
+                    let cut = WindForecastModel.outlookStart(utcOffsetSeconds: offsetH * 3600, now: now, processCalendar: pc).hour
+                    let end = ConditionsForecastService.tonightWindowEnd(now: now, cal: pc)!
+                    XCTAssertGreaterThan(cut, string(end, pc), "offset \(offsetH) h, process \(process.identifier), UTC hour \(h)")
+                }
+            }
+        }
+    }
+
+    func testWhenTheServerRunsInTheLakesZoneTheCutoffIsTomorrowNoon() {
+        let lake = TimeZone(secondsFromGMT: -8 * 3600)!
+        for h in 0..<24 {
+            let now = at("2026-11-05T00:00:00Z").addingTimeInterval(Double(h) * 3600 + 1800)
+            let r = WindForecastModel.outlookStart(utcOffsetSeconds: -8 * 3600, now: now, processCalendar: calendar(lake))
+            XCTAssertEqual(r.hour, r.day + "T12:00")
+        }
+    }
+
+    func testPacificLateEveningOnAUTCServerKeepsAllOfTonightOnBestMatch() throws {
+        // The reviewer's case: a PST lake at 22:00 on the 5th = 06:00Z on the 6th; tonight's window then reads strings up to the 7th at 06:00.
+        let utc = calendar(TimeZone(identifier: "UTC")!)
+        let now = at("2026-11-06T06:00:00Z")
+        let r = WindForecastModel.outlookStart(utcOffsetSeconds: -8 * 3600, now: now, processCalendar: utc)
+        XCTAssertEqual(r.hour, "2026-11-07T07:00")
+        XCTAssertEqual(r.day, "2026-11-06")
+    }
 }
