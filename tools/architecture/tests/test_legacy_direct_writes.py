@@ -56,7 +56,12 @@ def test_legacy_direct_writes_are_owned_disjoint_and_resolvable(path):
     projections = _projections()
     text = _classification_sources(os.path.dirname(path))
     for e in legacy:
-        assert OWN.path_allowed(brain_id, _concrete(e["path"], brain_id)), f"{brain_id} is not allowed to write {e['path']}"
+        concrete = _concrete(e["path"], brain_id)
+        if e["disposition"] == "ORCHESTRATOR_DERIVED" and OWN.orchestrator_owned_health([x for x in concrete.strip("/").split("/") if x]):
+            # the registry moved this health family to the Orchestrator (option a, 2026-11-04, CG-3.1-15): the Brain's legacy set still produces it, the artifact drops it
+            assert not OWN.path_allowed(brain_id, concrete) and OWN.path_allowed(OWN.PLATFORM_WRITER, concrete), e["path"]
+            continue
+        assert OWN.path_allowed(brain_id, concrete), f"{brain_id} is not allowed to write {e['path']}"
         if e["disposition"] == "PUBLISHER_COMPATIBILITY_PROJECTION":
             pr = projections.get(e["ref"])
             assert pr is not None, f"{e['ref']}: no such Publisher projection"
