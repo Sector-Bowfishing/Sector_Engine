@@ -1,6 +1,7 @@
 """SI-1 (a) draft: Intelligence seals ONE artifact create-only instead of writing the database, and a runner outside Cloud Run supplies the
 Engine serving revision (Sector_Ops #50/#51)."""
 import json
+import os
 
 import pytest
 
@@ -58,3 +59,19 @@ def test_recorded_consumption_goes_into_the_artifact_lineage(tmp_path):
     ref = run.seal_and_store(S.run_updates(), now=S.NOW, release=S.release(), consumed=rec.entries(), store=store)
     art = json.loads(store.get(ref["location"]))
     assert [c["dependencyId"] for c in art["consumed"]] == ["brain:water-clarity"]
+
+
+def test_a_built_artifact_declares_the_packaged_release_and_the_resolver_accepts_it():
+    """SI-A4 (review of #124): the lineage comes from a REAL artifact (publish_artifact.build_artifact), not from lineage_triple called directly. The packaged
+    resolver over the release folder accepts it for a test publication. A live publication stays refused while the approval is NOT_RECORDED."""
+    import intelligence_support as S
+    from sector_brain_platform.knowledge_release import lineage_triple
+    from sector_brain_platform.publisher_live.release_resolver import PackagedReleaseResolver
+    lin = S.build(S.run_updates()).artifact["lineage"]
+    declared = (lin["knowledgeRelease"], lin["manifestRef"], lin["manifestSha256"])
+    assert declared == lineage_triple(S.release()) and "NONE" not in declared
+    runtime = os.path.join(S.REPO, "brains", "sector-intelligence", "runtime")
+    assert PackagedReleaseResolver(runtime, "sector-intelligence", require_approved=False)(*declared) is True
+    approved = S.release().get("approvalStatus") == "APPROVED"
+    assert approved is False                                                                # NOT_RECORDED today: the owner records it (SI-A5)
+    assert PackagedReleaseResolver(runtime, "sector-intelligence", require_approved=True)(*declared) is False

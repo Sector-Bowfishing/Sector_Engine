@@ -81,8 +81,27 @@ EXECUTORS = {
     # same Cloud Run job (arguments baked in: `hourly --store ...`) when Wind is due. Its science and job are unchanged.
     "wind": {"kind": "cloud-run-job", "job": "wind-hourly"},
     "biological-state": {"kind": "in-process", "dir": _fish_runtime_dir(), "jobId": "biological-brain"},
-    "sector-intelligence": {"kind": "in-process", "dir": _intelligence_runtime_dir(), "jobId": "sector-intelligence-brain"},
+    "sector-intelligence": None,                                                         # set below: in-process today; artifact job only behind SI_ARTIFACT_JOB
 }
+
+
+INTELLIGENCE_JOB = "sector-intelligence-brain"
+
+
+def intelligence_executor(env=None) -> dict:
+    """Sector Intelligence's executor (SECTOR_INTELLIGENCE_JOB_PLAN_V1 SI-A2). Default: in-process (`run.py --write`), exactly as before.
+    SI_ARTIFACT_JOB=1: an artifact job (`run.py --artifact-dir/--artifact-bucket`, SI-A1) that is LEASE-ONLY. The Orchestrator grants the cycle to the
+    runner-policy primary (Pulse) and never starts a Cloud Run job for it, because none is deployed (a deploy is a separate approval). With the cloud as
+    primary it holds. Its `--plan` verdict is still asked in-process, so the decision inputs do not change (SI-P2 is not decided). The in-process path is
+    removed only at SI-A6."""
+    env = os.environ if env is None else env
+    if env.get("SI_ARTIFACT_JOB") == "1":
+        return {"kind": "cloud-run-job", "job": INTELLIGENCE_JOB, "jobId": INTELLIGENCE_JOB, "dir": _intelligence_runtime_dir(),
+                "artifactMode": True, "leaseOnly": True, "planInProcess": True}
+    return {"kind": "in-process", "dir": _intelligence_runtime_dir(), "jobId": INTELLIGENCE_JOB}
+
+
+EXECUTORS["sector-intelligence"] = intelligence_executor()
 NOT_STARTED_HERE: dict = {}                     # every Brain with an executor is started only by the orchestrator (PL-15)
 
 
@@ -579,7 +598,7 @@ def main(argv=None) -> int:
     world = CP.load_world(live, now)
     activity = O.effective_activity(world["manifest"], world["overrides"])
     brain_plans = {b: brain_plan(b) for b, ex in EXECUTORS.items()
-                   if ex["kind"] == "in-process" and b in brains and (a.legacy_execution or activity.get(b) == "ACTIVE") and not a.health_only and not a.local_mode
+                   if (ex["kind"] == "in-process" or ex.get("planInProcess")) and b in brains and (a.legacy_execution or activity.get(b) == "ACTIVE") and not a.health_only and not a.local_mode
                    and (auto_ok and EC.brain_enabled(ctl, b) or (admin and a.run_now == b))}
     locks_now = state.get("locks") or {}
     run_now = (a.run_now, a.scope, a.requested_by) if a.run_now else None
@@ -643,6 +662,11 @@ def main(argv=None) -> int:
                     leases_granted.append(gdoc)
                 deferred.append({"brainId": b, "why": f"runner lease: {gwhy2}" + ("; the runner runs it, its execution is reconciled next cycles" if gok else "")})
                 print(f"{'LEASE' if gok else 'HOLD '} {b:20s} runner lease: {gwhy2}", flush=True)
+                continue
+            if ex.get("leaseOnly"):                              # SI-A2 artifact job: no Cloud Run job is deployed, so only a runner lease may run it
+                deferred.append({"brainId": b, "why": "artifact job (SI_ARTIFACT_JOB): lease-only and no runner lease was granted (needs --runner-leases and a "
+                                                      "non-cloud runner-policy primary); no Cloud Run job is deployed for it"})
+                print(f"HOLD {b:20s} artifact job: lease-only, not started", flush=True)
                 continue
             if a.local_mode and ex["kind"] == "in-process":       # its `run.py --write` writes the database directly: never from a runner's machine
                 deferred.append({"brainId": b, "why": "local runner mode: an in-process Brain writes the database directly and is never run from a local cycle "
