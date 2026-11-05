@@ -38,15 +38,26 @@ def _job_args(ap):
     ap.add_argument("--archive", default=None)
     ap.add_argument("--seed-archive", default=None, help="read-only fallback history archive (gs:// allowed: read only)")
     ap.add_argument("--presence", default=None, help="where the private presence release lives")
+    ap.add_argument("--fault", action="append", default=[], help="REHEARSAL ONLY, with --artifact-dir: e.g. cwms-unreachable (Sector_Ops #48 B4b)")
 
 
 def _job_command(a, td):
     return ([a.job, "--dry-run", td, "--scope", a.scope] + (["--read-rtdb", a.read_rtdb] if a.read_rtdb else []) + (["--archive", a.archive] if a.archive else [])
-            + (["--seed-archive", a.seed_archive] if a.seed_archive else []) + (["--presence", a.presence] if a.presence else []))
+            + (["--seed-archive", a.seed_archive] if a.seed_archive else []) + (["--presence", a.presence] if a.presence else [])
+            + [x for f in a.fault for x in ("--fault", f)])
+
+
+def _validate(a) -> str | None:
+    """On the PARSED arguments (so `--fa`, `--fault=x` and an empty `--artifact-dir ""` are all seen): a fault-injected artifact must never reach a bucket."""
+    if a.fault and not (a.artifact_dir or "").strip():
+        return "--fault is a rehearsal and needs --artifact-dir (a local folder), never a bucket"
+    if a.fault and a.from_dir:
+        return "--fault applies to a --job run; --from-dir seals an existing folder"
+    return None
 
 
 def main(argv=None) -> int:
-    return SE.main(argv, brain_id=BRAIN_ID, builder=pa, bucket_env="LAKE_ARTIFACT_BUCKET", add_job_args=_job_args, job_command=_job_command)
+    return SE.main(argv, brain_id=BRAIN_ID, builder=pa, bucket_env="LAKE_ARTIFACT_BUCKET", add_job_args=_job_args, job_command=_job_command, validate=_validate)
 
 
 if __name__ == "__main__":
