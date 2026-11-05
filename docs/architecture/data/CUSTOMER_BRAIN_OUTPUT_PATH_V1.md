@@ -94,6 +94,10 @@ one stops passing):
 | `brainId`, `sourceRelease`, `writtenAt` | string | Provenance: `lake-brain`, the Lake publication release, the write time |
 
 - Nothing else from Lake's INTERNAL record is copied: no pool, zone, percentile, band, release, provenance detail or binding.
+- **Publisher side (draft, Sector_Ops #47):** `jobs/brain_platform/sector_brain_platform/publisher_live/customer_lake_level.py` plans these writes from one Lake write set and applies gates 1 to 4.
+  - The owner-approved list is `customer_lake_level_eligible.json`. A test keeps it equal to the Engine's `validatedLakeIds`.
+  - A lake that stops passing, including one removed from the list or a demoted Brain, gets `status: UNKNOWN` over its old copy.
+  - **It is not wired into the LivePublisher's atomic apply yet.** That needs Lake CENTRAL, the Cortex family (proposal `docs/cortex/proposals/CG-3.1-8-customer-lake-level-family.md`) and the owner's approval.
 - `data-check` will report the new path as undeclared until the family is declared in Cortex (step 1 of §5). That is expected and is
   the Cortex gap, not something to work around in the Engine.
 
