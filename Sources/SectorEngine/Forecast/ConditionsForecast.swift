@@ -314,7 +314,7 @@ final class ConditionsForecastService: ObservableObject {
             URLQueryItem(name: "timezone", value: "auto"),
             URLQueryItem(name: "models", value: model),
         ]), let wind = try? JSONDecoder().decode(WindOnlyResponse.self, from: windData) else { return response }
-        return WindForecastModel.overlay(response, with: wind)
+        return WindForecastModel.overlay(response, with: wind, now: Date())
     }
 
     // MARK: Compute
@@ -913,7 +913,9 @@ struct WindOnlyResponse: Decodable {
 
 /// Which Open-Meteo model the forecast wind comes from (Sector_Ops #30, #47; docs/brains/wind/APP_WIND_SOURCE_REVIEW_V1.md option 1).
 /// Off by default: no `models` parameter is sent, so Open-Meteo answers with `best_match`, exactly as before. `SECTOR_WIND_FORECAST_MODEL=ncep_nbm_conus`
-/// switches tonight's window and the 7-night outlook wind to NBM. Current conditions (WeatherService) are not changed here. Switching customer wind needs a
+/// switches the 7-night outlook's FUTURE nights to NBM wind (WS-5, Sector_Ops #50): tonight (tonight's window and the outlook's tonight row) stays on
+/// best_match, because the offline band count found NBM slightly worse at the 0 h lead and clearly better at days 3-7
+/// (APP_WIND_SOURCE_SWITCH_SCORING_REVIEW_V1 §3). Current conditions (WeatherService) are not changed here. Switching customer wind needs a
 /// scoring review (Cortex scoring.md), a merge and a deploy, each approved by the owner.
 enum WindForecastModel {
     /// The only model a reviewed pre-registration has graded (W1, W1b). Anything else is ignored.
@@ -926,16 +928,31 @@ enum WindForecastModel {
 
     static let current: String? = from(ProcessInfo.processInfo.environment)
 
-    /// best_match with the model's wind written over it, hour by hour and day by day, matched on the local time string. A missing or null
-    /// model value (outside CONUS, beyond the model's range) keeps best_match's value.
-    static func overlay(_ base: ForecastResponse, with wind: WindOnlyResponse) -> ForecastResponse {
+    /// Where the outlook's future nights begin, as the location's local time strings Open-Meteo uses (`timezone=auto`): the day after the
+    /// location's local today, and noon of that day. Tonight's window ends by 06:00 of that day at the latest (the outlook's tonight row is
+    /// today's 18:00 to 06:00; tonight's window after midnight is yesterday's 18:00 to today's 06:00), and the first future night starts
+    /// at its 18:00, so every tonight hour is before the noon cutoff and every future-night hour is after it.
+    static func outlookStart(utcOffsetSeconds: Int?, now: Date) -> (day: String, hour: String) {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = TimeZone(secondsFromGMT: utcOffsetSeconds ?? 0) ?? TimeZone(identifier: "UTC")!
+        let tomorrow = cal.date(byAdding: .day, value: 1, to: now) ?? now
+        let c = cal.dateComponents([.year, .month, .day], from: tomorrow)
+        let day = String(format: "%04d-%02d-%02d", c.year ?? 0, c.month ?? 0, c.day ?? 0)
+        return (day, day + "T12:00")
+    }
+
+    /// best_match with the model's wind written over the outlook's FUTURE nights only (WS-5), hour by hour and day by day, matched on the
+    /// local time string. Hours before `outlookStart` (all of tonight) and today's and earlier days keep best_match. A missing or null model
+    /// value (outside CONUS, beyond the model's range) also keeps best_match's value.
+    static func overlay(_ base: ForecastResponse, with wind: WindOnlyResponse, now: Date) -> ForecastResponse {
         var out = base
+        let start = outlookStart(utcOffsetSeconds: base.utc_offset_seconds, now: now)
         let hourly = Dictionary(zip(wind.hourly.time, wind.hourly.wind_speed_10m), uniquingKeysWith: { a, _ in a })
-        for (i, t) in base.hourly.time.enumerated() where i < out.hourly.wind_speed_10m.count {
+        for (i, t) in base.hourly.time.enumerated() where i < out.hourly.wind_speed_10m.count && t >= start.hour {
             if let v = hourly[t] ?? nil, v.isFinite, v >= 0 { out.hourly.wind_speed_10m[i] = v }
         }
         let daily = Dictionary(zip(wind.daily.time, wind.daily.wind_speed_10m_max), uniquingKeysWith: { a, _ in a })
-        for (i, t) in base.daily.time.enumerated() where i < out.daily.wind_speed_10m_max.count {
+        for (i, t) in base.daily.time.enumerated() where i < out.daily.wind_speed_10m_max.count && t >= start.day {
             if let v = daily[t] ?? nil, v.isFinite, v >= 0 { out.daily.wind_speed_10m_max[i] = v }
         }
         return out

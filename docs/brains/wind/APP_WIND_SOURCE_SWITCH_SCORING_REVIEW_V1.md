@@ -3,7 +3,7 @@
 **Status:** DRAFT for the owner (Sector_Ops #50). Nothing is switched. The code switch `SECTOR_WIND_FORECAST_MODEL` is off by default. Merging it, turning it on and deploying are each separate owner approvals (Cortex `scoring.md` Gates; `PROJECT.md` §7).
 
 ## 1. What changes when the switch is on
-- **Changes:** the hourly `wind_speed_10m` and daily `wind_speed_10m_max` that feed **tonight's window** and the **7-night outlook** (`ConditionsForecast`).
+- **Changes:** the hourly `wind_speed_10m` and daily `wind_speed_10m_max` that feed the **7-night outlook's future nights** (`ConditionsForecast`). Tonight stays on `best_match` (WS-5).
   - They come from `models=ncep_nbm_conus` in a second, wind-only request.
   - Wherever NBM has no value (outside CONUS, beyond its range) or the request fails, the value stays `best_match`.
 - **Unchanged:**
@@ -40,4 +40,4 @@
 - **WS-2:** merge the default-off switch (code only).
 - **WS-3:** turn it on and deploy. This is customer-visible.
 - **WS-4:** current conditions: stay on `best_match` (recommended) or follow W1b's 0 h result.
-- **WS-5 (new):** switch the outlook only and keep tonight's window on `best_match`. The band count favours this. It is not implemented here: the switch currently changes both tonight's window and the outlook.
+- **WS-5 (built, owner-approved 2026-11-05):** the switch now changes the outlook's **future nights only**. Every hour before noon of the location's local tomorrow, and today's and earlier daily values, keep `best_match`. That covers all of tonight: tonight's window, the outlook's tonight row, and the rest of tonight after midnight. The switch is still off by default.
