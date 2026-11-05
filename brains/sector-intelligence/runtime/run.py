@@ -61,7 +61,7 @@ def runner_service(env=os.environ) -> dict | None:
     if not rev:
         return None
     digest = env.get("ENGINE_IMAGE_DIGEST")
-    return {"trafficStatuses": [{"revision": rev, "percent": 100}],
+    return {"source": "runner", "trafficStatuses": [{"revision": rev, "percent": 100}],
             "template": {"containers": [{"image": f"runner-supplied@{digest}" if digest else "runner-supplied"}]}}
 
 
