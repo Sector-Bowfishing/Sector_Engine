@@ -44,6 +44,13 @@ struct CWMSTransport: Sendable {
     /// Progress lines ("CWMS retry …") for the job log.
     var log: @Sendable (_ line: String) -> Void
 
+    /// DRY-RUN REHEARSAL ONLY (cutover gate G6, Sector_Ops #48 B4b): every CWMS request fails as a connection error, at once and
+    /// without waiting, so a rehearsal can prove Lake degrades honestly when CWMS is down. LakeBrainJob accepts it only with --dry-run.
+    static func unreachable(log: @escaping @Sendable (_ line: String) -> Void = { print($0) }) -> CWMSTransport {
+        CWMSTransport(fetch: { _, _, _ in .failure(.connection("fault injection: CWMS unreachable (dry-run rehearsal)")) },
+                      sleep: { _ in }, jitter: { 0 }, log: log)
+    }
+
     static func live() -> CWMSTransport {
         CWMSTransport(
             fetch: { url, accept, timeout in
