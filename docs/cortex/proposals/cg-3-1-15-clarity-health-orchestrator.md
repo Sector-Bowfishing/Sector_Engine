@@ -2,6 +2,8 @@
 
 Owner decision 2026-11-04 (Sector_Ops #50): **option (a)**. Water Clarity's health family moves to the Orchestrator through a Cortex change and an Engine PR. Cortex is read-only from the Engine, so this file is the proposal for a Cortex maintenance session. The Engine side is the draft PR on `feat/clarity-health-orchestrator-2026-11-04`.
 
+**Status: LANDED.** Cortex 3.1.2 merged as Rehtac_Cortex #2 (`ecaef70`). The Engine mirror was re-synced to it (all 42 families and the nine target Brains equal Cortex in every mirrored column) and the Cortex pin moved from `d5c8380` to `ecaef70`.
+
 ## Proposed Cortex change (3.1.2, registry only)
 
 Add four families to `projects/sector/shared/data/firebase-data-contracts.json`, immediately after `fam.health-sources`. Then reseal the registry and re-render `DATA_CONTRACTS.md`.

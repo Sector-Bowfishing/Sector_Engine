@@ -1,8 +1,8 @@
 {
  "schema": "sector-data-ownership-mirror-v1",
  "note": "Engine-side mirror of the Cortex data-ownership columns (families: pattern, domain, status, writer, targetWriter) and of the nine target Brains. Cortex is the authority and is never edited from here; tests compare this mirror with Cortex when it is present (CORTEX_HOME). Refresh with `python3 -m sector_brain_platform.data_ownership --sync <cortex projects/sector/shared/data>`.",
- "cortexVersionAtSync": "3.1.2 (PROPOSED, CG-3.1-15; re-sync when Cortex lands)",
- "registryAsOf": "2026-11-04",
+ "cortexVersionAtSync": "3.1.2 (ecaef70)",
+ "registryAsOf": "2026-10-23",
  "families": [
   {
    "id": "fam.brains",
