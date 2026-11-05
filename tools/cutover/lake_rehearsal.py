@@ -107,13 +107,13 @@ def main(argv=None) -> int:
     from sector_brain_platform.publisher.storage import LocalDirObjectStore
     store = LocalDirObjectStore(art_dir)
     found = [k for k in store.list("artifacts/lake-brain/") if k.endswith("/artifact.json")] if os.path.isdir(art_dir) else []
-    report = {"jobExit": r.returncode, "reads": len(reads), "readsOutsideCapture": uncovered, "writeAttemptsRefused": refused, "artifacts": len(found)}
+    report = {"faults": sorted(a.fault), "rehearsal": "B4b (fault injected)" if a.fault else "B4", "jobExit": r.returncode, "reads": len(reads), "readsOutsideCapture": uncovered, "writeAttemptsRefused": refused, "artifacts": len(found)}
     if len(found) == 1:
         report["comparison"] = compare(json.loads(store.get(found[0])), capture)
     report["verdict"] = ("REFUSED_WRITE" if refused else "READ_OUTSIDE_CAPTURE" if uncovered
                          else report.get("comparison", {}).get("verdict", "NO_ARTIFACT"))
     json.dump(report, open(os.path.join(a.out, "REHEARSAL.json"), "w"), indent=1)
-    print(json.dumps({k: report[k] for k in ("jobExit", "reads", "artifacts", "verdict")} | {"readsOutsideCapture": len(uncovered)}))
+    print(json.dumps({k: report[k] for k in ("faults", "jobExit", "reads", "artifacts", "verdict")} | {"readsOutsideCapture": len(uncovered)}))
     return 0 if report["verdict"] == "ZERO_UNEXPLAINED" else 1
 
 

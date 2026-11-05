@@ -55,6 +55,7 @@ if includeCandidates {
 }
 
 let faults = flags("--fault")
+if argv.contains(where: { $0.hasPrefix("--fault=") }) { refuse("write --fault NAME (two arguments); --fault=NAME is not read, so the run would be live-CWMS") }
 if argv.contains("--fault") && faults.isEmpty { refuse("--fault needs a name (cwms-unreachable)") }
 for f in faults where f != "cwms-unreachable" { refuse("unknown --fault \(f) (known: cwms-unreachable)") }
 if !faults.isEmpty {

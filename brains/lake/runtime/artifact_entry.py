@@ -47,14 +47,17 @@ def _job_command(a, td):
             + [x for f in a.fault for x in ("--fault", f)])
 
 
+def _validate(a) -> str | None:
+    """On the PARSED arguments (so `--fa`, `--fault=x` and an empty `--artifact-dir ""` are all seen): a fault-injected artifact must never reach a bucket."""
+    if a.fault and not (a.artifact_dir or "").strip():
+        return "--fault is a rehearsal and needs --artifact-dir (a local folder), never a bucket"
+    if a.fault and a.from_dir:
+        return "--fault applies to a --job run; --from-dir seals an existing folder"
+    return None
+
+
 def main(argv=None) -> int:
-    args = sys.argv[1:] if argv is None else list(argv)
-    has = lambda name: any(x == name or x.startswith(name + "=") for x in args)
-    if has("--fault") and not has("--artifact-dir"):
-        # a fault-injected artifact must never reach a bucket the Publisher reads
-        print("REFUSED (nothing stored): --fault is a rehearsal and needs --artifact-dir (a local folder), never a bucket", file=sys.stderr)
-        return 2
-    return SE.main(argv, brain_id=BRAIN_ID, builder=pa, bucket_env="LAKE_ARTIFACT_BUCKET", add_job_args=_job_args, job_command=_job_command)
+    return SE.main(argv, brain_id=BRAIN_ID, builder=pa, bucket_env="LAKE_ARTIFACT_BUCKET", add_job_args=_job_args, job_command=_job_command, validate=_validate)
 
 
 if __name__ == "__main__":
