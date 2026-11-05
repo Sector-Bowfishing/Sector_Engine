@@ -7,7 +7,7 @@ synthesis and changes no value. Intelligence-specific facts declared here:
   * the snapshot field and its brainVersion are Brain-authored for EVALUATED pilot lakes only (registry families, not a Publisher COPY projection);
   * lake identity fields are platform-owned; the run/process fields of `/health/brains/sector-intelligence` are Orchestrator-owned;
   * no delete family: Intelligence never deletes anything;
-  * knowledgeRelease / manifestRef / manifestSha256 are NONE; the runtime's own input fingerprint and the catalog digest are the input identity.
+  * knowledgeRelease / manifestRef / manifestSha256 are the packaged release (`knowledge-release.json`, catalog.json) passed by run.py (BR-11 e); the runtime's own input fingerprint is the input identity.
 Pure: no clock, no randomness, no I/O.
 """
 from __future__ import annotations

@@ -17,6 +17,7 @@ from sector_brain_platform.publisher_live.publisher import LivePublisher
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 JOB = os.path.dirname(HERE)
+REPO = os.path.dirname(os.path.dirname(JOB))
 APPROVAL = "approval/test/wind-cutover"
 ENABLED = EC.parse({"schema": EC.SCHEMA, "state": "ENABLED", "approvalRef": "approval/test/resume", "brains": {"wind": {"enabled": True}}})
 PAUSED = EC.parse({"schema": EC.SCHEMA, "state": "PAUSED", "brains": {}})
@@ -212,3 +213,29 @@ def test_swift_brains_packaged_releases_stage_with_their_subfolders(tmp_path):
     for b in ("lake-brain", "water-temp"):
         rel = load_release(str(stage / "releases" / b), b)
         assert PackagedReleaseResolver(str(stage / "releases" / b), b, require_approved=False)(rel["releaseId"], "image:knowledge-release.json", rel["releaseDigest"]) is True
+
+
+def test_sector_intelligence_packaged_release_stages_and_resolves_against_its_own_artifact_lineage(tmp_path):
+    """SI-A4 (SECTOR_INTELLIGENCE_JOB_PLAN_V1): with Intelligence CENTRAL in a test cutover, its packaged release (one file, catalog.json) stages into the Publisher context and the
+    packaged resolver accepts exactly the lineage Intelligence's own artifact declares (run.load_knowledge -> publish_artifact -> lineage_triple). The release is NOT approved, so a
+    live publication is refused until the approval is recorded: the same deliberate dependency as Water Clarity's. The reviewed cutover document is not changed."""
+    import json
+    import subprocess
+    cut = tmp_path / "cutover.json"
+    cut.write_text(json.dumps({"schema": "sector-publication-cutover-v1", "brains": {"sector-intelligence": {"state": "CENTRAL", "approvalRef": "test"}}}))
+    stage = tmp_path / "ctx"
+    r = subprocess.run(["bash", os.path.join(JOB, "deploy-job.sh"), "--stage-only", str(stage)], capture_output=True, text=True, timeout=120,
+                       env={**os.environ, "STAGE_ONLY_CUTOVER": str(cut)})
+    assert r.returncode == 0, r.stderr[-400:]
+    from sector_brain_platform.knowledge_release import lineage_triple, load_release
+    from sector_brain_platform.publisher_live.release_resolver import PackagedReleaseResolver
+    staged = str(stage / "releases" / "sector-intelligence")
+    assert sorted(os.listdir(staged)) == ["catalog.json", "knowledge-release.json"]
+    repo_rel = load_release(os.path.join(REPO, "brains", "sector-intelligence", "runtime"), "sector-intelligence")
+    rel = load_release(staged, "sector-intelligence")
+    assert (rel["releaseId"], rel["releaseDigest"]) == (repo_rel["releaseId"], repo_rel["releaseDigest"])
+    triple = lineage_triple(repo_rel)                                              # what the Brain's artifact declares
+    assert PackagedReleaseResolver(staged, "sector-intelligence", require_approved=False)(*triple) is True
+    assert PackagedReleaseResolver(staged, "sector-intelligence", require_approved=True)(*triple) is (rel["approvalStatus"] == "APPROVED")
+    assert PackagedReleaseResolver(staged, "sector-intelligence", require_approved=False)(triple[0], triple[1], "sha256:" + "0" * 64) is False
+    assert "sector-intelligence" not in json.load(open(os.path.join(REPO, "jobs", "brain-orchestrator", "publication-cutover.json")))["brains"]
