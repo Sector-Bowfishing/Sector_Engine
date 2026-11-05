@@ -65,7 +65,7 @@ def runner_service(env=os.environ) -> dict | None:
             "template": {"containers": [{"image": f"runner-supplied@{digest}" if digest else "runner-supplied"}]}}
 
 
-def seal_and_store(updates: dict, *, now: dt.datetime, release: dict, consumed, store, execution_id: str | None = None) -> dict:
+def seal_and_store(updates: dict, *, now: dt.datetime, release: dict, consumed, store, execution_id: str | None = None, emit: str | None = None) -> dict:
     """SI-1 (a): the same update set, sealed as ONE sector-intelligence-publication-v1 artifact and stored create-only. Nothing else is written."""
     import uuid
     import publish_artifact as pa
@@ -75,6 +75,9 @@ def seal_and_store(updates: dict, *, now: dt.datetime, release: dict, consumed, 
     if not built.artifact:
         raise RuntimeError("artifact build produced no artifact: nothing was stored")
     ref = ArtifactWriter(store, sib.BRAIN_ID).write(built.artifact)
+    if emit:                                                            # SI-A5: a runner's hand-off file (Pulse {out}/artifact.json), local and create-only
+        with open(emit, "x") as fh:
+            json.dump(built.artifact, fh, sort_keys=True)
     return {"artifactId": ref.artifact_id, "location": ref.location, "sha256": ref.sha256, "executionId": ref.execution_id, "droppedLegacyPaths": len(built.dropped)}
 
 
@@ -117,6 +120,7 @@ def main(argv=None) -> int:
     g.add_argument("--write", action="store_true")
     g.add_argument("--artifact", action="store_true", help="SI-1 (a): seal one artifact into --artifact-dir / --artifact-bucket; no database write")
     ap.add_argument("--artifact-dir", default=None)
+    ap.add_argument("--emit", default=None, help="SI-A5: with --artifact, also write the sealed artifact JSON to this LOCAL file (Pulse's hand-off)")
     ap.add_argument("--artifact-bucket", default=os.environ.get("SI_ARTIFACT_BUCKET"))
     ap.add_argument("--out", default="out")
     ap.add_argument("--no-pilot", action="store_true", help="skip the pilot evaluations (inventory-only publish)")
@@ -199,7 +203,7 @@ def main(argv=None) -> int:
             from sector_brain_platform.object_bucket import GcsRestObjectStore
             store = GcsRestObjectStore(a.artifact_bucket, tokens)
         try:
-            ref = seal_and_store(updates, now=now, release=release, consumed=summary["consumed"], store=store)
+            ref = seal_and_store(updates, now=now, release=release, consumed=summary["consumed"], store=store, emit=a.emit)
         except RuntimeError as e:
             print(f"REFUSED: {e}", file=sys.stderr)
             return 2
