@@ -24,6 +24,12 @@ and bucket details live in the private Sector_Ops #50, not in this public reposi
 | B6 | **Retire (G8):** remove the Swift database write path (`--rtdb`) from `LakeBrainJob` and set `CUTOVER_COMPLETE` in the same change, with an AST pin that no writer is left. Merged only after B5 | same | code PR after B5 | — | the old writer is gone |
 | B7 | **Resume Lake:** `execution_control.py enable --brains water-clarity,lake-brain`, with the Orchestrator in runner mode `local` granting Pulse the Lake lease (about every 26 h) | same | owner | `tools/ops/execution_control.py` | 3-day watch as in #46 |
 
+**B4 on the real capture (2026-11-05, Sector_Ops #50):**
+- 0 reads outside the capture, 0 write attempts and 0 deletes, and every difference is explained.
+- It also found that without `--seed-archive` and `--presence`, four pilot lakes drop BETA → CALIBRATION and every `speciesPresenceSummary` is written null.
+- `artifact_entry.py` now refuses a `--job` run whose artifact goes to a bucket unless both inputs are given. A local `--artifact-dir` rehearsal is unaffected.
+- **So B5 needs B2** (the read grant on the private history and presence buckets) first.
+
 **Also in this change:**
 - `LakeBrainJob` now refuses `--read-rtdb` without `--dry-run DIR`, or a bare `--dry-run`, instead of falling through to the live writer. This is the same guard Water Temp got (#104).
 
