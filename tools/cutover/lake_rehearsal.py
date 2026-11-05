@@ -5,10 +5,10 @@
 2. Run Lake's artifact mode (`brains/lake/runtime/artifact_entry.py`) against it, with a LOCAL history archive and a LOCAL artifact folder.
 3. Compare every mutation of the sealed artifact with the capture, ignoring Lake's registered volatile keys.
 
-  python tools/cutover/lake_rehearsal.py --capture DIR --job PATH/LakeBrainJob --out DIR [--archive DIR] [--seed-archive gs://B] [--presence X]
+  python tools/cutover/lake_rehearsal.py --capture DIR --job PATH/LakeBrainJob --out DIR [--archive DIR] [--seed-archive gs://B] [--presence X] [--fault cwms-unreachable]
 
 The verdict is a summary for the owner: DIFFERENCES_TO_EXPLAIN lists each non-volatile difference; ZERO_UNEXPLAINED needs none. A forced CWMS
-failure is a second run with the CWMS host unreachable (the runner's network policy), compared the same way: no lake may be blanked.
+failure is a second run with `--fault cwms-unreachable` (LakeBrainJob's dry-run-only fault), compared the same way: no lake may be blanked.
 """
 from __future__ import annotations
 
@@ -85,6 +85,7 @@ def main(argv=None) -> int:
     ap.add_argument("--archive", default=None, help="LOCAL history archive (default OUT/_archive); never a bucket")
     ap.add_argument("--seed-archive", default=None, help="read-only fallback archive (gs:// allowed: read only)")
     ap.add_argument("--presence", default=None, help="presence release location (private)")
+    ap.add_argument("--fault", action="append", default=[], help="B4b: e.g. cwms-unreachable (dry-run fault injection in LakeBrainJob)")
     a = ap.parse_args(argv)
     archive = a.archive or os.path.join(a.out, "_archive")
     if archive.startswith("gs://"):
@@ -97,6 +98,7 @@ def main(argv=None) -> int:
         cmd = [sys.executable, os.path.join(REPO, "brains", "lake", "runtime", "artifact_entry.py"), "--job", a.job, "--scope", "pilots",
                "--read-rtdb", fake.url, "--archive", archive, "--artifact-dir", art_dir]
         cmd += (["--seed-archive", a.seed_archive] if a.seed_archive else []) + (["--presence", a.presence] if a.presence else [])
+        cmd += [x for f in a.fault for x in ("--fault", f)]
         env = {k: v for k, v in os.environ.items() if k not in ("BRAIN_ACCESS_TOKEN", "SECTOR_BRAIN_ACCESS_TOKEN")}
         env["SECTOR_BRAIN_ACCESS_TOKEN"] = "rehearsal-fake"                       # the fake ignores it; no real database token reaches the job
         r = subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=1800)
@@ -105,13 +107,13 @@ def main(argv=None) -> int:
     from sector_brain_platform.publisher.storage import LocalDirObjectStore
     store = LocalDirObjectStore(art_dir)
     found = [k for k in store.list("artifacts/lake-brain/") if k.endswith("/artifact.json")] if os.path.isdir(art_dir) else []
-    report = {"jobExit": r.returncode, "reads": len(reads), "readsOutsideCapture": uncovered, "writeAttemptsRefused": refused, "artifacts": len(found)}
+    report = {"faults": sorted(a.fault), "rehearsal": "B4b (fault injected)" if a.fault else "B4", "jobExit": r.returncode, "reads": len(reads), "readsOutsideCapture": uncovered, "writeAttemptsRefused": refused, "artifacts": len(found)}
     if len(found) == 1:
         report["comparison"] = compare(json.loads(store.get(found[0])), capture)
     report["verdict"] = ("REFUSED_WRITE" if refused else "READ_OUTSIDE_CAPTURE" if uncovered
                          else report.get("comparison", {}).get("verdict", "NO_ARTIFACT"))
     json.dump(report, open(os.path.join(a.out, "REHEARSAL.json"), "w"), indent=1)
-    print(json.dumps({k: report[k] for k in ("jobExit", "reads", "artifacts", "verdict")} | {"readsOutsideCapture": len(uncovered)}))
+    print(json.dumps({k: report[k] for k in ("faults", "jobExit", "reads", "artifacts", "verdict")} | {"readsOutsideCapture": len(uncovered)}))
     return 0 if report["verdict"] == "ZERO_UNEXPLAINED" else 1
 
 
