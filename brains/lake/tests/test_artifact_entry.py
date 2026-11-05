@@ -89,3 +89,24 @@ def test_seed_archive_and_presence_are_forwarded_to_the_job():
     a.job, a.read_rtdb = "LakeBrainJob", None
     cmd = E._job_command(a, "D")
     assert cmd[cmd.index("--seed-archive") + 1] == "gs://seed" and cmd[cmd.index("--presence") + 1] == "DIR"
+
+
+@pytest.mark.parametrize("args", [["--artifact-bucket", "b"], ["--artifact-bucket", "b", "--seed-archive", "gs://seed"],
+                                  ["--artifact-bucket", "b", "--presence", "P"], ["--artifact-bucket", "b", "--seed-archive", " ", "--presence", "P"],
+                                  ["--artifact-dir", "", "--seed-archive", "gs://seed"], []])            # [] = LAKE_ARTIFACT_BUCKET from the environment
+def test_a_bucket_bound_job_run_needs_the_history_archive_and_presence(args, capsys, monkeypatch):
+    """Sector_Ops #50 B4 finding: a publishable Lake artifact without them downgrades four pilots and nulls every presence summary."""
+    monkeypatch.setenv("LAKE_ARTIFACT_BUCKET", "env-bucket")
+    assert E.main(["--job", "/nonexistent/LakeBrainJob"] + args) == 2
+    assert "needs --seed-archive and --presence" in capsys.readouterr().err
+
+
+def test_a_local_rehearsal_or_a_fully_seeded_bucket_run_is_not_refused_by_the_guard():
+    import argparse
+    for extra in (["--artifact-dir", "D"], ["--artifact-bucket", "b", "--seed-archive", "gs://seed", "--presence", "P"]):
+        ap = argparse.ArgumentParser()
+        E._job_args(ap)
+        ap.add_argument("--artifact-bucket"); ap.add_argument("--artifact-dir")
+        a = ap.parse_args(extra)
+        a.job, a.from_dir, a.read_rtdb = "LakeBrainJob", None, None
+        assert E._validate(a) is None

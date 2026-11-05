@@ -53,6 +53,10 @@ def _validate(a) -> str | None:
         return "--fault is a rehearsal and needs --artifact-dir (a local folder), never a bucket"
     if a.fault and a.from_dir:
         return "--fault applies to a --job run; --from-dir seals an existing folder"
+    if a.job and not (a.artifact_dir or "").strip() and not ((a.seed_archive or "").strip() and (a.presence or "").strip()):
+        # Sector_Ops #50 (B4 on the real capture, 2026-11-05): without the history archive four pilot lakes drop BETA -> CALIBRATION, and without the
+        # presence release every pilot's speciesPresenceSummary is written null. An artifact the Publisher can read must carry both inputs.
+        return "a --job run whose artifact goes to a bucket needs --seed-archive and --presence (without them it downgrades lakes and blanks presence)"
     return None
 
 
