@@ -955,7 +955,19 @@ enum WindForecastModel {
             let s = String(format: "%04d-%02d-%02dT%02d:00", e.year ?? 0, e.month ?? 0, e.day ?? 0, e.hour ?? 0)
             if s > hour { hour = s }
         }
-        return (day, hour)
+        // The daily cutoff follows the hour cutoff (re-review of #125): a night dated D reads D 18:00 to D+1 06:00, so its daily fallback gets the
+        // model only when the whole night is at or after the hour cutoff.
+        var dayCut = day
+        let cutDay = String(hour.prefix(10)), cutTime = String(hour.suffix(5))
+        if cutDay > dayCut || cutTime > "18:00" {
+            dayCut = cutTime <= "18:00" ? cutDay : {
+                var u = Calendar(identifier: .gregorian); u.timeZone = TimeZone(identifier: "UTC")!
+                let f = DateFormatter(); f.locale = Locale(identifier: "en_US_POSIX"); f.timeZone = u.timeZone; f.dateFormat = "yyyy-MM-dd"
+                guard let d = f.date(from: cutDay), let n = u.date(byAdding: .day, value: 1, to: d) else { return cutDay }
+                return f.string(from: n)
+            }()
+        }
+        return (dayCut, hour)
     }
 
     /// best_match with the model's wind written over the outlook's FUTURE nights only (WS-5), hour by hour and day by day, matched on the

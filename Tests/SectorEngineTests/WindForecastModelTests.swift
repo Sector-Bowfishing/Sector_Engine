@@ -108,6 +108,6 @@ final class WindForecastModelTests: XCTestCase {
         let now = at("2026-11-06T06:00:00Z")
         let r = WindForecastModel.outlookStart(utcOffsetSeconds: -8 * 3600, now: now, processCalendar: utc)
         XCTAssertEqual(r.hour, "2026-11-07T07:00")
-        XCTAssertEqual(r.day, "2026-11-06")
+        XCTAssertEqual(r.day, "2026-11-07")       // the night of the 6th reads hours before the cutoff, so its daily fallback stays best_match too
     }
 }
