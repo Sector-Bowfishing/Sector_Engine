@@ -177,12 +177,12 @@ def test_vocabularies():
 
 def test_failure_writes_are_owned_and_complete():
     now = dt.datetime(2026, 10, 12, 12, 0, tzinfo=dt.timezone.utc)
-    w = failure_writes("water-temp", "boom", now, started=now - dt.timedelta(seconds=5), job_id="water-temp-brain")
-    assert_owned(w, "water-temp")
-    assert w["health/brains/water-temp/status"] == "FAILED" and w["brains/water-temp/health"] == "FAILED"
-    assert w["health/brains/water-temp/durationMs"] == 5000
+    w = failure_writes("lake-brain", "boom", now, started=now - dt.timedelta(seconds=5), job_id="lake-brain")
+    assert_owned(w, "lake-brain")
+    assert w["health/brains/lake-brain/status"] == "FAILED" and w["brains/lake-brain/health"] == "FAILED"
+    assert w["health/brains/lake-brain/durationMs"] == 5000
     ev = [v for k, v in w.items() if k.startswith("activity/")][0]
-    assert ev["kind"] == "run.failed" and ev["severity"] == "critical" and ev["brainId"] == "water-temp"
+    assert ev["kind"] == "run.failed" and ev["severity"] == "critical" and ev["brainId"] == "lake-brain"
 
 
 def test_a_brain_whose_health_moved_to_the_orchestrator_cannot_write_failure_health():
@@ -190,3 +190,5 @@ def test_a_brain_whose_health_moved_to_the_orchestrator_cannot_write_failure_hea
     now = dt.datetime(2026, 10, 12, 12, 0, tzinfo=dt.timezone.utc)
     with pytest.raises(OwnershipError):
         assert_owned(failure_writes("water-clarity", "boom", now, job_id="water-clarity-brain"), "water-clarity")
+    with pytest.raises(OwnershipError):                                                    # Water Temp G3 (DRAFT, Sector_Ops #52)
+        assert_owned(failure_writes("water-temp", "boom", now, job_id="water-temp-brain"), "water-temp")

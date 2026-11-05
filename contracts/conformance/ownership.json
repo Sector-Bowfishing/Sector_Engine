@@ -144,7 +144,8 @@
   {
    "brainId": "water-temp",
    "path": "health/brains/water-temp",
-   "allowed": true
+   "allowed": false,
+   "note": "Water Temp G3 (draft): its health family moves to the Orchestrator at its CENTRAL cutover"
   },
   {
    "brainId": "water-temp",
@@ -416,7 +417,8 @@
   {
    "brainId": "brain-platform",
    "path": "health/sources/usgs-nwis-00010",
-   "allowed": false
+   "allowed": true,
+   "note": "Water Temp G3 (draft): moved to the Orchestrator by registry row"
   },
   {
    "brainId": "water-clarity",
@@ -437,6 +439,36 @@
    "brainId": "lake-brain",
    "path": "health/brains/lake-brain/status",
    "allowed": true
+  },
+  {
+   "brainId": "brain-platform",
+   "path": "health/brains/water-temp/status",
+   "allowed": true
+  },
+  {
+   "brainId": "brain-platform",
+   "path": "health/brains/water-temp",
+   "allowed": false
+  },
+  {
+   "brainId": "brain-platform",
+   "path": "health/sources/usace-cwms-water-temp",
+   "allowed": true
+  },
+  {
+   "brainId": "water-temp",
+   "path": "health/brains/water-temp/status",
+   "allowed": false
+  },
+  {
+   "brainId": "water-temp",
+   "path": "health/sources/open-meteo-forecast",
+   "allowed": false
+  },
+  {
+   "brainId": "brain-platform",
+   "path": "health/brains/wind/status",
+   "allowed": false
   }
  ],
  "sourceOwners": {
