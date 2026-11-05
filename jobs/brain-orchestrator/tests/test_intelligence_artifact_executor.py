@@ -81,3 +81,19 @@ def test_with_the_cloud_as_primary_it_holds(cycle, artifact_mode, monkeypatch, c
 def test_the_shipped_runner_policy_gives_pulse_nothing():
     """Making Pulse Intelligence's primary is an owner decision recorded in runner-policy.json (SI-A5); this change does not make it."""
     assert SI not in (RL.load_policy().get("primary") or {})
+
+
+def test_artifact_mode_still_asks_intelligence_for_its_plan(cycle, monkeypatch):
+    """Review of #123: the plan verdict is still computed in-process (planInProcess), so the decision inputs are the same in both modes (SI-P2 not decided)."""
+    real = OR.O.effective_activity
+    monkeypatch.setattr(OR.O, "effective_activity", lambda m, o: {**real(m, o), SI: "ACTIVE"})
+    asked = {}
+    for mode in ("0", "1"):
+        monkeypatch.setitem(OR.EXECUTORS, SI, OR.intelligence_executor({"SI_ARTIFACT_JOB": mode}))
+        setup, calls = cycle
+        setup(tree())
+        got = []
+        monkeypatch.setattr(OR, "brain_plan", lambda b, timeout=600: got.append(b) or {"action": "SKIP", "reasons": ["test"]})
+        assert OR.main(RUN_NOW) == 0
+        asked[mode] = got
+    assert SI in asked["0"] and asked["0"] == asked["1"]
