@@ -19,7 +19,7 @@ SYNTHETIC = json.load(open(os.path.join(HERE, "fixtures", "conditions_tile_sourc
 POINTS = CSP.load_points()
 BY_COORD = {(f"{p['lat']:.5f}", f"{p['lon']:.5f}"): p["slug"] for p in POINTS}
 NOW = dt.datetime(2026, 11, 6, 20, 10, tzinfo=dt.timezone.utc)
-ON = {"CONDITIONS_SOURCES_PROJECTION": "1", "SECTOR_ENGINE_URL": "https://engine.test", "DEPLOYMENT_VERSION": "brain-orchestrator@abc123def456"}
+ON = {"CONDITIONS_SOURCES_PROJECTION": "1", "SECTOR_ENGINE_URL": "https://sector-engine.test", "DEPLOYMENT_VERSION": "brain-orchestrator@abc123def456"}
 
 
 def golden(slug):
@@ -172,7 +172,7 @@ def test_requests_carry_the_orchestrator_user_agent_and_engine_url():
     f = Fetch()
     run(f)
     assert len(f.calls) == 17 and len({u for u, _, _ in f.calls}) == 17
-    assert all(u.startswith("https://engine.test/conditions?lat=") for u, _, _ in f.calls)
+    assert all(u.startswith("https://sector-engine.test/conditions?lat=") for u, _, _ in f.calls)
     assert {ua for _, _, ua in f.calls} == {"Sector-Orchestrator/abc123def456"}
     assert all(t <= CSP.REQUEST_TIMEOUT_SECONDS for _, t, _ in f.calls)
     assert CSP.user_agent(None) == "Sector-Orchestrator/dev"
@@ -200,8 +200,8 @@ def test_default_fetcher_sends_the_user_agent(monkeypatch):
         return R()
 
     monkeypatch.setattr(CSP.urllib.request, "urlopen", urlopen)
-    status, body, headers = CSP.http_fetch("https://engine.test/conditions?lat=1&lon=2", 5, "Sector-Orchestrator/x")
-    assert (status, body, headers["X-Engine-Revision"]) == (200, b"{}", "r1") and seen == {"ua": "Sector-Orchestrator/x", "timeout": 5, "url": "https://engine.test/conditions?lat=1&lon=2"}
+    status, body, headers = CSP.http_fetch("https://sector-engine.test/conditions?lat=1&lon=2", 5, "Sector-Orchestrator/x")
+    assert (status, body, headers["X-Engine-Revision"]) == (200, b"{}", "r1") and seen == {"ua": "Sector-Orchestrator/x", "timeout": 5, "url": "https://sector-engine.test/conditions?lat=1&lon=2"}
 
 
 # ----------------------------------------------------------------------------------------------------------------- tileSources present
