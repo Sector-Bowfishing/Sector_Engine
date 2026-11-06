@@ -116,7 +116,7 @@ package enum HTTP {
     /// A short, stable label for a failed call: a timeout, a cancellation (a
     /// `withDeadline` budget ran out and tore the request down), or the error's
     /// type. Never the error's text, which can echo the URL with its query.
-    package static func errorLabel(_ error: Error) -> String {
+    static func errorLabel(_ error: Error) -> String {
         if error is CancellationError { return "CANCELLED" }
         if let e = error as? HTTPClientError {
             switch e {
