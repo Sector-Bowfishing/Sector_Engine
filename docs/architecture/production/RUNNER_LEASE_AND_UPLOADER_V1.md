@@ -10,7 +10,7 @@
   - A fresh lease of another runner is never taken.
   - An expired lease goes to a different runner only when **failover is enabled** for that Brain in the reviewed `runner-policy.json`.
 - **Renewing.** Only the **holder** renews, as a heartbeat (`renew`), and only while the lease is unexpired. An expired lease must be granted again, so a runner that lost its lease stops before it seals.
-- **Policy.** `runner-policy.json` is reviewed in git: `defaultPrimary: cloud`, no per-Brain primaries, **failover off**. Making Pulse primary for a Brain, or enabling failover, is an owner decision with an `approvalRef`.
+- **Policy.** `runner-policy.json` is reviewed in git: `defaultPrimary: cloud`, **failover off**. Since 2026-11-06 one per-Brain primary: `water-clarity` = `pulse` (owner, Sector_Ops #51 O4; `approvals` records the approvalRef). Every other Brain stays on the cloud. Making Pulse primary for a Brain, or enabling failover, is an owner decision with an `approvalRef`.
 - **Orchestrator gate** (`--runner-leases` or `RUNNER_LEASES=on`, default off). Before starting a Brain's Cloud Run job, `cloud_may_start`:
   - refuses while another runner holds a fresh lease;
   - refuses whenever the policy primary is not the cloud and failover is off.
@@ -44,3 +44,20 @@ It never writes a database and never starts anything. `runner.py renew` is the h
   - **The local Publisher pass runs only with the Publisher identity:** `PUBLISHER_ACCESS_TOKEN`, mapped to the child's `BRAIN_ACCESS_TOKEN`. It never uses the orchestrator's token or a gcloud fallback.
   - **A local cycle refuses to start without an explicit `BRAIN_ACCESS_TOKEN`.**
   - **The shadow lane never runs in local mode.**
+
+## Hybrid deploy switches (Sector_Ops #51 O5.1; O3 decision (b))
+In the hybrid path, Pulse runs the Brain job and the Orchestrator and Publisher stay in Cloud Run. `jobs/brain-orchestrator/deploy-job.sh` takes three switches, all off by default:
+
+- **`RUNNER_LEASES=on`:** the cloud cycle honours `runner-policy.json`.
+  - **Every** cloud Brain's start reads the lease store first.
+  - So `brain-writer` needs its `exports/runners/` grants (O5.2) before this is on; otherwise every Brain fails closed and holds.
+- **`PUBLICATION_HANDOFF=on`** (requires `PUBLICATION_COORDINATION=on`): publication requests for CENTRAL Brains, and the `brain-publisher` start.
+- **`ORCH_ARGS`:** the job's arguments, `;`-separated, from an allowlist (`--publish-engineering-status`, `--publish-health`, `--run-shadow-lane`).
+  - Unset leaves the deployed arguments as they are. An empty string resets them.
+  - The hybrid deploy uses `ORCH_ARGS="--publish-engineering-status;--publish-health"`, so the shadow lane is off (owner choice (ii), 2026-11-06).
+- **Every deploy replaces the job's whole environment** (`--set-env-vars`), and every script default is `off`. So the hybrid deploy must restate the live switches:
+  `WIND_MEASUREMENTS=on PUBLICATION_COORDINATION=on PUBLICATION_HANDOFF=on RUNNER_LEASES=on ORCH_ARGS="--publish-engineering-status;--publish-health"`.
+  - Leaving out `WIND_MEASUREMENTS=on` silently turns the Wind measurements off.
+- **Before `RUNNER_LEASES=on` or `PUBLICATION_HANDOFF=on`,** `brain-writer` needs `roles/run.invoker` on `brain-publisher` and its `exports/runners/` grants (O5.2). Without them:
+  - every Publisher start fails with START_FAILED (requests stay pending);
+  - every Brain holds.
