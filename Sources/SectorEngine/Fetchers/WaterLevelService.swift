@@ -79,9 +79,10 @@ package final class WaterLevelService {
     // one slow gage to tentpole the whole parallel snapshot. A dropped reading
     // just degrades the score slightly; a 60s hang blocks the response.
     private let requestTimeout: TimeInterval = 12
-    /// Sector_Ops #51 F3: one USGS hop (an OGC page, its names/metadata lookup, or the legacy fallback) gets 2.5 s, so the
-    /// worst chain (OGC 2.5 + names 2.5 + legacy 2.5 = 7.5 s) still fits the 9 s fetch budget instead of one stalled hop
-    /// using all of it. Healthy hops take 0.3–1.1 s (measured 2026-11-06).
+    /// Sector_Ops #51 F3: one USGS hop (an OGC page, its names/metadata lookup, or the legacy fallback) gets 2.5 s instead
+    /// of the 8 s HTTP cap, so one stalled hop can't use the whole 9 s fetch budget. The usual chain is one OGC page +
+    /// names (+ legacy only on failure), about 7.5 s at worst; a multi-page box (up to 5 pages) is still cut by the 9 s
+    /// budget. Healthy hops take 0.3–1.1 s (measured 2026-11-06).
     static let usgsHopTimeout: TimeInterval = 2.5
 
     private static let isoFormatter: ISO8601DateFormatter = {
@@ -127,12 +128,14 @@ package final class WaterLevelService {
         let series: [USGSSeries]
         let started = Date()
         var api = "legacy"
+        var complete = true          // legacy answers carry their names inline
         do {
             if sites == nil, siteType == nil {
                 do {
-                    series = try await USGSWaterData.recentSeries(west: west, south: south, east: east, north: north,
-                                                                  parameterCodes: codes, lookback: lookbackPeriod,
-                                                                  timeout: Self.usgsHopTimeout)
+                    (series, complete) = try await USGSWaterData.recentSeriesChecked(west: west, south: south, east: east,
+                                                                                     north: north, parameterCodes: codes,
+                                                                                     lookback: lookbackPeriod,
+                                                                                     timeout: Self.usgsHopTimeout)
                     api = "ogc"
                 } catch {
                     api = "legacy-after-ogc-" + HTTP.errorLabel(error)
@@ -159,7 +162,9 @@ package final class WaterLevelService {
                                series: series.count, started: started))
         let readings = series.compactMap { Self.reading(from: $0, absThreshold: absThreshold,
                                                         pctThreshold: pctThreshold) }
-        await cache.put(cacheKey, readings)
+        // Only a whole answer is cached: never one from a cancelled task (a larger box cancelled because a smaller one
+        // answered, or a spent withDeadline budget) or one whose names/metadata lookup failed.
+        if complete && !Task.isCancelled { await cache.put(cacheKey, readings) }
         return readings
     }
 

@@ -9,7 +9,9 @@
 //   - last good for 6 h: when a fetch fails, the most recent non-empty answer
 //     is served instead of dropping the factor. Each reading keeps its own
 //     `dateTime`, so its age stays visible downstream;
-//   - at most `maxEntries` keys; the oldest are dropped first.
+//   - at most `maxEntries` keys; the oldest are dropped first;
+//   - only whole answers: never one from a cancelled task or one whose
+//     names/metadata lookup failed (WaterLevelService.nearbyReadings).
 //
 //  USGS gauges report every 15–60 min, so a 15 min cache rarely hides a newer
 //  value. The cache is lost when an instance stops.
@@ -22,7 +24,8 @@ actor USGSReadingCache {
 
     static let freshFor: TimeInterval = 15 * 60
     static let lastGoodFor: TimeInterval = 6 * 3600
-    static let maxEntries = 2_000
+    /// A 2.5° box can hold hundreds of readings with their history, so the cap is kept modest (review of #139).
+    static let maxEntries = 500
 
     private struct Entry { let readings: [WaterLevelReading]; let at: Date }
     private var entries: [String: Entry] = [:]
@@ -51,9 +54,9 @@ actor USGSReadingCache {
 
     var count: Int { entries.count }
 
+    /// Drops the oldest entry once over the cap (one put adds at most one key, so one removal keeps the bound).
     private static func trim(_ d: inout [String: Entry]) {
-        guard d.count > maxEntries else { return }
-        for (k, _) in d.sorted(by: { $0.value.at < $1.value.at }).prefix(d.count - maxEntries) { d.removeValue(forKey: k) }
+        while d.count > maxEntries, let oldest = d.min(by: { $0.value.at < $1.value.at })?.key { d.removeValue(forKey: oldest) }
     }
 }
 
