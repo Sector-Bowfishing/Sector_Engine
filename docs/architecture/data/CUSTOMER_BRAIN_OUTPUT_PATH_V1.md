@@ -108,3 +108,26 @@ the full internal record at the customer boundary.
 - Which screen shows the level, and its wording beyond the chip and the limitation line.
 - Any other Brain's customer path. Each follows this pattern with its own copy and eligibility rule.
 - The registry's `customerIntegrationMode` for Lake. It changes only when the output is turned on.
+
+## 8. Conditions consolidation copies (Sector_Ops #53, spec §5)
+Four more CUSTOMER-lane copies follow §3 and §6 exactly: a pure Publisher planner per copy (Brain-side gates; `status: UNKNOWN`
+written once over a copy that stops passing) and a read-only Engine reader per copy (every gate fails closed to UNKNOWN with a
+reason; freshness checked again on every request). Each Publisher writer also sits behind its own env switch, **default off**.
+Nothing is wired: no writer is called by the LivePublisher, no reader is called by `/conditions`, and there is no reader identity.
+
+| Copy | Schema | Publisher writer (switch) | Source | Engine reader |
+|---|---|---|---|---|
+| `/customer/lakes/{k}/clarity` | `sector-customer-clarity-v1` | `customer_clarity.py` (`PUBLISHER_CUSTOMER_CLARITY=1`) | Water Clarity state; observed → AVAILABLE, modeled → ESTIMATE; `observedAt` = the state's `evaluationTime` | `ClarityBrainOutputAPI` → `clarityBrain` |
+| `/customer/lakes/{k}/waterTemp` | `sector-customer-water-temp-v1` | `customer_water_temp.py` (`PUBLISHER_CUSTOMER_WATER_TEMP=1`) | Water Temp state; `measured` only; `freshUntil` = `lastObservationAt` + the Brain's `staleAfterHours` | `WaterTempBrainOutputAPI` → `waterTempBrain` |
+| `/customer/lakes/{k}/generationBinding` | `sector-customer-generation-binding-v1` | `customer_generation_binding.py` (`PUBLISHER_CUSTOMER_GENERATION_BINDING=1`) | Lake reviewed bindings contract, proposed `damBinding` per record | `GenerationBindingOutputAPI` |
+| `/customer/wind/outlookModel` | `sector-customer-wind-outlook-model-v1` | `customer_wind_outlook_model.py` (`PUBLISHER_CUSTOMER_WIND_MODEL=1`) | Wind `activeProductionModel.outlookModel` (proposed); stale after 14 days | `WindOutlookModelOutputAPI` |
+
+Gaps (each needs the owning Brain, then the owner):
+- **Water Temp modeled lakes** carry no source observation time, so they get no copy (`NO_OBSERVATION_TIME`); the spec's
+  `kind: modeled` ESTIMATE needs the Brain to publish the model's valid time.
+- **Lake dam bindings** are not published. `reviewed-lake-bindings-v1` binds lakes to pool-level sources, not to a generating dam,
+  so every lake gets `NO_DAM_BINDING` and the Engine keeps `TailwaterRegistry`.
+- **Wind outlook decision** is not published, so the writer writes nothing (`NO_PUBLICATION`) and the Engine keeps the env path.
+
+Registered as `PLACEHOLDER` in `publisher/paths.py` (`CUSTOMER_COPY_FAMILIES`) and the path ownership matrix. Client rules: proposed in
+`platform/security/rtdb.rules.customer-copies.PROPOSED.json` (deny every client, as today), not applied.
