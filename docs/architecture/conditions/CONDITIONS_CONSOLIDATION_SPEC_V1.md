@@ -155,3 +155,17 @@ Freshness: green when within `freshUntil` (class 2: within 2× the source cadenc
 ## Amendment 2 (2026-11-06, from the Android build)
 - **Additive keys inside `water` and `discharge`:** `siteCode` (string), `siteName` (string), `distanceMiles` (number), `observedAt` (ISO). Optional; build 28 ignores unknown keys. The Engine fills them from the gauge it already used (WaterLevelReading has them).
 - **Apps go Engine-first for the Water Level card only when `water.siteName` is present.** Otherwise they keep today's on-device view, so the station name and distance never disappear.
+
+## Engine implementation note: Web CORS (Sector_Engine, foundation PR)
+*Added in the Engine repo only; not part of the shared spec text above.*
+
+`GET /conditions` and `GET /health` answer browser requests from this allow-list only (`Sources/SectorEngine/Conditions/CORSPolicy.swift`). Origins come from the Web repo (Sector-Web): the `firebase.json` / `.firebaserc` hosting targets (prod `sector-9393c`, dev `sector-9393c-dev`) and the custom domain.
+- `https://sectorbowfishing.com`
+- `https://www.sectorbowfishing.com`
+- `https://sector-9393c.web.app`
+- `https://sector-9393c.firebaseapp.com`
+- `https://sector-9393c-dev.web.app`
+- `https://sector-9393c-dev.firebaseapp.com`
+- `http://localhost:3000`, only when env `SECTOR_CORS_DEV=1`
+
+Rules: the allowed origin is echoed in `Access-Control-Allow-Origin`, never `*`, and no credentials. Every response to a request with an `Origin` carries `Vary: Origin`. The preflight `OPTIONS` answers 204 with `Access-Control-Allow-Methods: GET`, `Access-Control-Allow-Headers: X-Sector-Client, Accept` and `Access-Control-Max-Age: 600`. A request without an `Origin` (the apps) is unchanged, and `OPTIONS` without an `Origin` is still 404.

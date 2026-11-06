@@ -17,6 +17,43 @@ setvbuf(stdout, nil, _IOLBF, 0)
 
 let router = Router()
 
+// Browser CORS for the website (CORSPolicy): GET /conditions and GET /health only, from the Web project's own origins.
+// Added before every route so it wraps them (and the not-found responder, which answers the OPTIONS preflight). A
+// request without an Origin header (the apps) passes straight through, unchanged.
+struct SectorCORSMiddleware<Context: RequestContext>: RouterMiddleware {
+    let policy: CORSPolicy
+
+    func handle(_ request: Request, context: Context,
+                next: (Request, Context) async throws -> Response) async throws -> Response {
+        guard CORSPolicy.paths.contains(request.uri.path), let origin = request.headers[.origin] else {
+            return try await next(request, context)
+        }
+        if request.method == .options, let headers = policy.preflightHeaders(origin: origin) {
+            var response = Response(status: .noContent)
+            Self.apply(headers, to: &response)
+            return response
+        }
+        guard request.method == .get || request.method == .head else { return try await next(request, context) }
+        var response = try await next(request, context)
+        Self.apply(policy.responseHeaders(origin: origin), to: &response)
+        return response
+    }
+
+    static func apply(_ headers: [(name: String, value: String)], to response: inout Response) {
+        for (name, value) in headers {
+            switch name {
+            case "Vary": response.headers[.vary] = value
+            case "Access-Control-Allow-Origin": response.headers[.accessControlAllowOrigin] = value
+            case "Access-Control-Allow-Methods": response.headers[.accessControlAllowMethods] = value
+            case "Access-Control-Allow-Headers": response.headers[.accessControlAllowHeaders] = value
+            case "Access-Control-Max-Age": response.headers[.accessControlMaxAge] = value
+            default: break
+            }
+        }
+    }
+}
+router.add(middleware: SectorCORSMiddleware(policy: CORSPolicy.fromEnvironment()))
+
 router.get("health") { _, _ in "ok" }
 
 func jsonResponse<T: Encodable>(_ value: T) -> Response {

@@ -442,6 +442,43 @@ final class ConditionsTilesFoundationTests: XCTestCase {
         XCTAssertEqual(computed.unit, "ft"); XCTAssertEqual(computed.trend, "steady"); XCTAssertEqual(computed.history, [594.7, 594.8])
     }
 
+    // MARK: - Web CORS
+
+    func testCORSAllowListAndDevOrigin() {
+        let prod = CORSPolicy.fromEnvironment([:])
+        XCTAssertEqual(prod.allowedOrigins, Set(["https://sectorbowfishing.com", "https://www.sectorbowfishing.com",
+                                                 "https://sector-9393c.web.app", "https://sector-9393c.firebaseapp.com",
+                                                 "https://sector-9393c-dev.web.app", "https://sector-9393c-dev.firebaseapp.com"]))
+        XCTAssertFalse(prod.allowedOrigins.contains("*"))
+        XCTAssertNil(prod.allowedOrigin("http://localhost:3000"), "localhost only with SECTOR_CORS_DEV=1")
+        XCTAssertNil(CORSPolicy.fromEnvironment(["SECTOR_CORS_DEV": "true"]).allowedOrigin("http://localhost:3000"))
+        XCTAssertEqual(CORSPolicy.fromEnvironment(["SECTOR_CORS_DEV": "1"]).allowedOrigin("http://localhost:3000"),
+                       "http://localhost:3000")
+        for bad in ["https://evil.example", "https://www.sectorbowfishing.com.evil.example", "http://www.sectorbowfishing.com",
+                    "https://other-project.web.app", "null", ""] {
+            XCTAssertNil(prod.allowedOrigin(bad), bad)
+        }
+        XCTAssertEqual(CORSPolicy.paths, ["/conditions", "/health"])
+    }
+
+    func testCORSHeaders() {
+        let p = CORSPolicy.fromEnvironment([:])
+        func pairs(_ h: [(name: String, value: String)]?) -> [String]? { h?.map { "\($0.name): \($0.value)" } }
+        // No Origin (the apps): nothing added, no preflight.
+        XCTAssertEqual(pairs(p.responseHeaders(origin: nil)), [])
+        XCTAssertNil(p.preflightHeaders(origin: nil))
+        XCTAssertEqual(pairs(p.responseHeaders(origin: "https://www.sectorbowfishing.com")),
+                       ["Vary: Origin", "Access-Control-Allow-Origin: https://www.sectorbowfishing.com"])
+        XCTAssertEqual(pairs(p.responseHeaders(origin: "https://evil.example")), ["Vary: Origin"])
+        XCTAssertEqual(pairs(p.preflightHeaders(origin: "https://sector-9393c.web.app")),
+                       ["Vary: Origin", "Access-Control-Allow-Origin: https://sector-9393c.web.app",
+                        "Access-Control-Allow-Methods: GET", "Access-Control-Allow-Headers: X-Sector-Client, Accept",
+                        "Access-Control-Max-Age: 600"])
+        XCTAssertEqual(pairs(p.preflightHeaders(origin: "https://evil.example")), ["Vary: Origin"])
+        let all = (p.preflightHeaders(origin: "https://sector-9393c.web.app") ?? []).map(\.name)
+        XCTAssertFalse(all.contains("Access-Control-Allow-Credentials"))
+    }
+
     // MARK: - [conditions-request]
 
     func testRequestLogLine() async throws {
