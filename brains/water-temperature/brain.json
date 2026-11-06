@@ -36,10 +36,7 @@
         {"path": "/snapshots/{k}/latest/waterTemperature", "disposition": "PUBLISHER_COMPATIBILITY_PROJECTION", "ref": "water-temp-snapshot-copy-v1"},
         {"path": "/snapshots/{k}/latest/brainVersions/water-temp", "disposition": "PUBLISHER_COMPATIBILITY_PROJECTION", "ref": "water-temp-snapshot-brainversion-v1"},
         {"path": "/snapshots/{k}/latest/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "snapshot-lakeid"},
-        {"path": "/lakeFleet/{k}/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "lakefleet-lakeid"},
-        {"path": "/health/jobs/{job}", "disposition": "ORCHESTRATOR_DERIVED", "ref": "health-jobs"},
-        {"path": "/health/brains/water-temp/{child}", "disposition": "ORCHESTRATOR_DERIVED", "ref": "health-brains"},
-        {"path": "/health/sources/{id}", "disposition": "ORCHESTRATOR_DERIVED", "ref": "health-sources"}
+        {"path": "/lakeFleet/{k}/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "lakefleet-lakeid"}
       ]
     }
   ],
