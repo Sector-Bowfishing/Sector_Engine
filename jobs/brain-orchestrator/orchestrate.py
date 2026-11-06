@@ -379,7 +379,8 @@ def runner_grants_today(a, brain_id: str, now: dt.datetime) -> int:
 
 def regrant_cooldown_minutes(manifest: dict, brain_id: str) -> int:
     """A runner is granted a new cycle at most once per the Brain's staleness window (TIME Brains), else every 6 h, never more often than the lease TTL."""
-    hours = ((manifest.get("brains") or {}).get(brain_id) or {}).get("staleAfterHours") or 6
+    b = (manifest.get("brains") or {}).get(brain_id) or {}
+    hours = (b.get("freshness") or {}).get("staleAfterHours") or b.get("staleAfterHours") or 6   # the control manifest keeps it under freshness
     return max(RL.DEFAULT_TTL_MINUTES, int(float(hours) * 60))
 
 

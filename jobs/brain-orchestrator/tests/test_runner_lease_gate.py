@@ -168,3 +168,20 @@ def test_a_recent_grant_is_not_repeated_and_counts_against_the_daily_cap(world, 
     assert "wind" not in run(world, monkeypatch, ARGV, policy=PULSE, store=store)
     assert "GRANTED_RECENTLY:pulse" in capsys.readouterr().out
     assert OR.runner_grants_today(type("A", (), {"artifact_store_dir": "x", "artifact_bucket": None})(), "wind", dt.datetime.now(dt.timezone.utc)) == 1
+
+
+def test_regrant_cooldown_reads_the_staleness_window_from_the_control_manifest():
+    """Sector_Ops #51 prep: the control manifest keeps staleAfterHours under `freshness`. Reading it at the top level gave every Brain the 6 h default, so
+    Water Clarity (26 h) would have been granted up to four cycles a day while nothing was published."""
+    man = OR.O.load_manifest()
+    assert OR.regrant_cooldown_minutes(man, "water-clarity") == 26 * 60
+    assert OR.regrant_cooldown_minutes(man, "lake-brain") == 26 * 60
+    assert OR.regrant_cooldown_minutes(man, "water-temp") == 6 * 60
+    assert OR.regrant_cooldown_minutes(man, "wind") == 90                                      # 1.5 h, above the 20 min lease TTL
+
+
+def test_regrant_cooldown_defaults_and_floor():
+    assert OR.regrant_cooldown_minutes({"brains": {"x": {}}}, "x") == 360                     # no window: 6 h
+    assert OR.regrant_cooldown_minutes({"brains": {}}, "missing") == 360
+    assert OR.regrant_cooldown_minutes({"brains": {"x": {"staleAfterHours": 3}}}, "x") == 180   # a top-level value is still honoured
+    assert OR.regrant_cooldown_minutes({"brains": {"x": {"freshness": {"staleAfterHours": 0.1}}}}, "x") == RL.DEFAULT_TTL_MINUTES   # never below the lease TTL
