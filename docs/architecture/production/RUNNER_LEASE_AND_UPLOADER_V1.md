@@ -44,3 +44,14 @@ It never writes a database and never starts anything. `runner.py renew` is the h
   - **The local Publisher pass runs only with the Publisher identity:** `PUBLISHER_ACCESS_TOKEN`, mapped to the child's `BRAIN_ACCESS_TOKEN`. It never uses the orchestrator's token or a gcloud fallback.
   - **A local cycle refuses to start without an explicit `BRAIN_ACCESS_TOKEN`.**
   - **The shadow lane never runs in local mode.**
+
+## Hybrid deploy switches (Sector_Ops #51 O5.1; O3 decision (b))
+In the hybrid path, Pulse runs the Brain job and the Orchestrator and Publisher stay in Cloud Run. `jobs/brain-orchestrator/deploy-job.sh` takes three switches, all off by default:
+
+- **`RUNNER_LEASES=on`:** the cloud cycle honours `runner-policy.json`.
+  - **Every** cloud Brain's start reads the lease store first.
+  - So `brain-writer` needs its `exports/runners/` grants (O5.2) before this is on; otherwise every Brain fails closed and holds.
+- **`PUBLICATION_HANDOFF=on`** (requires `PUBLICATION_COORDINATION=on`): publication requests for CENTRAL Brains, and the `brain-publisher` start.
+- **`ORCH_ARGS`:** the job's arguments, `;`-separated, from an allowlist (`--publish-engineering-status`, `--publish-health`, `--run-shadow-lane`).
+  - Unset leaves the deployed arguments as they are. An empty string resets them.
+  - The hybrid deploy uses `ORCH_ARGS="--publish-engineering-status;--publish-health"`, so the shadow lane is off (owner choice (ii), 2026-11-06).

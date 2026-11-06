@@ -28,6 +28,31 @@ WIND_MEASUREMENTS="${WIND_MEASUREMENTS:-off}"
 PUBLICATION_COORDINATION="${PUBLICATION_COORDINATION:-off}"
 [[ "$PUBLICATION_COORDINATION" == "on" || "$PUBLICATION_COORDINATION" == "off" ]] || { echo "PUBLICATION_COORDINATION must be on or off"; exit 1; }
 PUBLICATION_ARTIFACT_BUCKET="${PUBLICATION_ARTIFACT_BUCKET:-sector-9393c-brain-artifacts}"
+# Hybrid runner path (Sector_Ops #51 O5.1; O3 decision (b)). Both OFF unless the deploy is approved with the switch on.
+#   PUBLICATION_HANDOFF=on  with PUBLICATION_COORDINATION=on: write create-only publication requests for CENTRAL Brains and start brain-publisher.
+#   RUNNER_LEASES=on        honour runner-policy.json: a Brain whose primary is not the cloud is granted its runner's lease and never started in Cloud Run.
+#                           EVERY cloud Brain's start then reads the lease store first: brain-writer needs its exports/runners/ grants (O5.2) before this is on.
+PUBLICATION_HANDOFF="${PUBLICATION_HANDOFF:-off}"
+[[ "$PUBLICATION_HANDOFF" == "on" || "$PUBLICATION_HANDOFF" == "off" ]] || { echo "PUBLICATION_HANDOFF must be on or off"; exit 1; }
+[[ "$PUBLICATION_HANDOFF" == "off" || "$PUBLICATION_COORDINATION" == "on" ]] || { echo "PUBLICATION_HANDOFF=on needs PUBLICATION_COORDINATION=on"; exit 1; }
+RUNNER_LEASES="${RUNNER_LEASES:-off}"
+[[ "$RUNNER_LEASES" == "on" || "$RUNNER_LEASES" == "off" ]] || { echo "RUNNER_LEASES must be on or off"; exit 1; }
+# ORCH_ARGS: the job's container arguments, ';'-separated, from an allowlist. Unset (the default) = the deploy leaves the job's current arguments as they are.
+# Set it to the empty string ("") to clear them. Example (hybrid, shadow lane off): ORCH_ARGS="--publish-engineering-status;--publish-health"
+ORCH_ARGS_ALLOWED=(--publish-engineering-status --publish-health --run-shadow-lane)
+ARGS_FLAG=()
+if [[ -n "${ORCH_ARGS+set}" ]]; then
+  if [[ -n "$ORCH_ARGS" ]]; then
+    IFS=';' read -r -a _orch_args <<< "$ORCH_ARGS"
+    for x in "${_orch_args[@]}"; do
+      ok=0; for y in "${ORCH_ARGS_ALLOWED[@]}"; do [[ "$x" == "$y" ]] && ok=1; done
+      [[ "$ok" == "1" ]] || { echo "ORCH_ARGS: $x is not allowed (allowed: ${ORCH_ARGS_ALLOWED[*]})"; exit 1; }
+    done
+    ARGS_FLAG=(--args="^;^$ORCH_ARGS")
+  else
+    ARGS_FLAG=(--args=)                                         # gcloud: an empty --args resets the arguments
+  fi
+fi
 RTDB_URL="${RTDB_URL:-https://sector-brain.firebaseio.com}"
 ENGINE_URL="${ENGINE_URL:-https://sector-engine-e43utajroa-uc.a.run.app}"
 LAKE_BRAIN_ARCHIVE="${LAKE_BRAIN_ARCHIVE:-gs://sector-lake-brain}"
@@ -125,8 +150,8 @@ echo "▶ job $JOB"
 run gcloud run jobs deploy "$JOB" --source . \
   --project "$PROJECT_ID" --region "$REGION" --service-account "$SA" \
   --tasks 1 --max-retries 0 --cpu 1 --memory 512Mi --task-timeout 30m \
-  --labels "commit=$COMMIT" \
-  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=$RTDB_URL,ENGINE_URL=$ENGINE_URL,LAKE_BRAIN_ARCHIVE=$LAKE_BRAIN_ARCHIVE,BIOLOGY_BUCKET=$BIOLOGY_BUCKET,DEPLOYMENT_VERSION=brain-orchestrator@$COMMIT,ORCHESTRATOR_SCOPE=pilots,WATER_TEMP_SCOPE=pilots,WIND_MEASUREMENTS=$WIND_MEASUREMENTS,PUBLICATION_COORDINATION=$PUBLICATION_COORDINATION,PUBLICATION_ARTIFACT_BUCKET=$PUBLICATION_ARTIFACT_BUCKET,PUBLICATION_CUTOVER=/job/jobs/brain-orchestrator/publication-cutover.json"
+  --labels "commit=$COMMIT" ${ARGS_FLAG[@]+"${ARGS_FLAG[@]}"} \
+  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=$RTDB_URL,ENGINE_URL=$ENGINE_URL,LAKE_BRAIN_ARCHIVE=$LAKE_BRAIN_ARCHIVE,BIOLOGY_BUCKET=$BIOLOGY_BUCKET,DEPLOYMENT_VERSION=brain-orchestrator@$COMMIT,ORCHESTRATOR_SCOPE=pilots,WATER_TEMP_SCOPE=pilots,WIND_MEASUREMENTS=$WIND_MEASUREMENTS,PUBLICATION_COORDINATION=$PUBLICATION_COORDINATION,PUBLICATION_HANDOFF=$PUBLICATION_HANDOFF,RUNNER_LEASES=$RUNNER_LEASES,PUBLICATION_ARTIFACT_BUCKET=$PUBLICATION_ARTIFACT_BUCKET,PUBLICATION_CUTOVER=/job/jobs/brain-orchestrator/publication-cutover.json"
 run gcloud run jobs add-iam-policy-binding "$JOB" --project "$PROJECT_ID" --region "$REGION" --member "serviceAccount:$SA" --role roles/run.invoker
 
 echo "▶ schedule $JOB ($CRON UTC): definition only, always left PAUSED"
