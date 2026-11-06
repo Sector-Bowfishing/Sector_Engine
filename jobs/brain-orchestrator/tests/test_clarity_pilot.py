@@ -84,3 +84,15 @@ def test_rollback_calls_the_publisher_and_records_the_result_without_a_ref_file(
 def test_rollback_that_does_not_roll_back_exits_non_zero(tmp_path, monkeypatch):
     _wire(monkeypatch, _Live("NOT_AUTHORIZED"))
     assert CP.main(["rollback", "--out", str(tmp_path), "--bucket", "b", "--yes-live", "--publish-id", "P2", "--approval-ref", "r", "--reason", "x"]) == 9
+
+
+def test_a_refused_rollback_is_recorded_and_exits_non_zero(tmp_path, monkeypatch):
+    """Review of #137: NoRollbackTarget (e.g. a different knowledge release in the checkout) leaves a record, not only a traceback."""
+    class Refusing(_Live):
+        def rollback(self, *a, **k):
+            raise ValueError("previous artifact is not restorable")
+    _wire(monkeypatch, Refusing())
+    assert CP.main(["rollback", "--out", str(tmp_path), "--bucket", "b", "--yes-live", "--publish-id", "P2", "--approval-ref", "r", "--reason", "x"]) == 9
+    import json
+    out = json.load(open(tmp_path / "rollback-result.json"))
+    assert out["result"] == "REFUSED" and "not restorable" in out["detail"]

@@ -145,7 +145,8 @@ def main(argv=None) -> int:
                     help="CALIBRATION lane only: accept a packaged release whose approval is NOT_RECORDED. The release must still verify file-by-file and match the artifact lineage. Used ONLY for the "
                          "state-neutral pilot republish of data already live from this same release; without it an unapproved release is rejected")
     ap.add_argument("--yes-live", action="store_true", help="required for acknowledge/publish/restore/rollback (live writes)")
-    ap.add_argument("--publish-id", help="verify/rollback: the publication to check or roll back (verify defaults to the only one; required once there are several)")
+    ap.add_argument("--publish-id", help="verify/release-lock/rollback: the publication to check, unlock or roll back (verify and release-lock default to the only one; "
+                                         "required once there are several)")
     ap.add_argument("--expect-changes", action="store_true",
                     help="verify a REAL publish (Sector_Ops #51 O6): values that differ from the pre-capture are expected and reported, not a failure; every other check is unchanged")
     ap.add_argument("--approval-ref", help="rollback: the owner's approval reference")
@@ -208,7 +209,7 @@ def main(argv=None) -> int:
         return 0 if not mism else 5
     if a.stage == "release-lock":
         from sector_brain_platform.publisher_live import locks as LK
-        pid = _latest_publish_id(store)
+        pid = a.publish_id or _latest_publish_id(store)
         cur = json.loads(store.get(f"publishes/{BRAIN}/_locks/apply.json") or b"{}")
         if cur.get("state") == "HELD" and cur.get("publishId") == pid:           # only the lock of the COMPLETE publication it belongs to
             LK.release(store, BRAIN, pid, dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))
@@ -249,7 +250,12 @@ def main(argv=None) -> int:
         # rolled-back publication wrote, and verifies by readback. Owner-approved only; run AS the Publisher identity (--impersonate).
         if not (a.publish_id and (a.approval_ref or "").strip() and (a.reason or "").strip()):
             raise SystemExit("rollback needs --publish-id, --approval-ref and --reason")
-        res = live.rollback(BRAIN, a.publish_id, approval_ref=a.approval_ref, reason=a.reason)
+        try:
+            res = live.rollback(BRAIN, a.publish_id, approval_ref=a.approval_ref, reason=a.reason)
+        except Exception as e:                                       # noqa: BLE001 - NoRollbackTarget, StorageError, ...: recorded, nothing applied by this stage
+            dump("rollback-result.json", {"result": "REFUSED", "error": type(e).__name__, "detail": str(e)[:500], "publishId": None})
+            print("REFUSED", type(e).__name__, str(e)[:300])
+            return 9
         dump("rollback-result.json", {"result": res.result.value, "codes": res.codes, "detail": res.detail, "publishId": res.publish_id,
                                       "rollback": (res.record or {}).get("rollback")})
         print(res.result.value, res.codes, res.detail, res.publish_id)
