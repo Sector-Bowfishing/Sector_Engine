@@ -10,7 +10,7 @@
   - A fresh lease of another runner is never taken.
   - An expired lease goes to a different runner only when **failover is enabled** for that Brain in the reviewed `runner-policy.json`.
 - **Renewing.** Only the **holder** renews, as a heartbeat (`renew`), and only while the lease is unexpired. An expired lease must be granted again, so a runner that lost its lease stops before it seals.
-- **Policy.** `runner-policy.json` is reviewed in git: `defaultPrimary: cloud`, no per-Brain primaries, **failover off**. Making Pulse primary for a Brain, or enabling failover, is an owner decision with an `approvalRef`.
+- **Policy.** `runner-policy.json` is reviewed in git: `defaultPrimary: cloud`, **failover off**. Since 2026-11-06 one per-Brain primary: `water-clarity` = `pulse` (owner, Sector_Ops #51 O4; `approvals` records the approvalRef). Every other Brain stays on the cloud. Making Pulse primary for a Brain, or enabling failover, is an owner decision with an `approvalRef`.
 - **Orchestrator gate** (`--runner-leases` or `RUNNER_LEASES=on`, default off). Before starting a Brain's Cloud Run job, `cloud_may_start`:
   - refuses while another runner holds a fresh lease;
   - refuses whenever the policy primary is not the cloud and failover is off.
