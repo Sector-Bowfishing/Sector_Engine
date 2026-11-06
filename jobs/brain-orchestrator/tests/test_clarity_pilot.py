@@ -38,3 +38,49 @@ def test_restore_does_not_remove_a_later_publication_record():
     assert db.get("brains/water-clarity/publication") == {"publishId": "P2"}
 
 
+
+
+# ------------------------------------------------------------------------------------------- Sector_Ops #51 O6: rollback of a real publish, verify by publish id
+class _Res:
+    def __init__(self, value, pid="R1"):
+        self.result, self.codes, self.detail, self.publish_id = type("V", (), {"value": value})(), [], "", pid
+        self.record = {"rollback": {"fromPublishId": "P2", "restoredPublishId": "P1"}}
+
+
+class _Live:
+    def __init__(self, value="ROLLED_BACK"):
+        self.value, self.calls = value, []
+
+    def rollback(self, brain, pid, *, approval_ref, reason):
+        self.calls.append((brain, pid, approval_ref, reason))
+        return _Res(self.value)
+
+
+def _wire(monkeypatch, live):
+    monkeypatch.setattr(CP, "_tokens", lambda imp: object())
+    monkeypatch.setattr(CP, "_gcs_store", lambda bucket, tokens: object())
+    monkeypatch.setattr(CP, "_publisher", lambda *a, **k: live)
+
+
+def test_rollback_needs_yes_live_and_every_reference(tmp_path, monkeypatch):
+    live = _Live()
+    _wire(monkeypatch, live)
+    with pytest.raises(SystemExit, match="--yes-live"):
+        CP.main(["rollback", "--out", str(tmp_path), "--bucket", "b", "--publish-id", "P2", "--approval-ref", "r", "--reason", "x"])
+    with pytest.raises(SystemExit, match="needs --publish-id"):
+        CP.main(["rollback", "--out", str(tmp_path), "--bucket", "b", "--yes-live", "--publish-id", "P2", "--reason", "x"])
+    assert live.calls == []                                                          # nothing was rolled back
+
+
+def test_rollback_calls_the_publisher_and_records_the_result_without_a_ref_file(tmp_path, monkeypatch):
+    live = _Live()
+    _wire(monkeypatch, live)                                                         # no ref.json in the folder: rollback does not need one
+    assert CP.main(["rollback", "--out", str(tmp_path), "--bucket", "b", "--yes-live", "--publish-id", "P2", "--approval-ref", "owner/o6", "--reason", "bad data"]) == 0
+    assert live.calls == [("water-clarity", "P2", "owner/o6", "bad data")]
+    import json
+    assert json.load(open(tmp_path / "rollback-result.json"))["result"] == "ROLLED_BACK"
+
+
+def test_rollback_that_does_not_roll_back_exits_non_zero(tmp_path, monkeypatch):
+    _wire(monkeypatch, _Live("NOT_AUTHORIZED"))
+    assert CP.main(["rollback", "--out", str(tmp_path), "--bucket", "b", "--yes-live", "--publish-id", "P2", "--approval-ref", "r", "--reason", "x"]) == 9
