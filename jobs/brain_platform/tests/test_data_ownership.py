@@ -32,10 +32,12 @@ def test_only_the_publisher_writes_brain_intelligence_in_the_target_and_it_never
 def test_existing_direct_writers_keep_every_path_production_uses():
     for b, p in (("wind", "lakes/k/states/wind"), ("lake-brain", "lakes/k/states/lake"), ("water-temp", "lakeFleet/k/slots/waterTemp"), ("biological-state", "species/bluegill"),
                  ("wind", "brains/wind/lastSuccessfulRun"), ("wind", "brains/wind/scores"), ("sector-intelligence", "snapshots/k/latest/sectorIntelligence"), ("depth", "validation/depth/x"),
-                 ("water-temp", "health/brains/water-temp/status"), ("lake-brain", "lakes/k/speciesPresence/x")):
+                 ("lake-brain", "health/brains/lake-brain/status"), ("lake-brain", "lakes/k/speciesPresence/x")):
         assert path_allowed(b, p), (b, p)
     # Water Clarity is CENTRAL and has no database write site (X14); its health family moved to the Orchestrator (option a, 2026-11-04, CG-3.1-15)
     assert not path_allowed("water-clarity", "health/brains/water-clarity/status") and path_allowed(PLATFORM_WRITER, "health/brains/water-clarity/status")
+    # Water Temp G3 (DRAFT, Sector_Ops #52): its health family moves with its CENTRAL cutover; this branch must land in that same change
+    assert not path_allowed("water-temp", "health/brains/water-temp/status") and path_allowed(PLATFORM_WRITER, "health/brains/water-temp/status")
     assert path_allowed(PLATFORM_WRITER, "scores/wind") and path_allowed(PLATFORM_WRITER, "control/orchestratorV1") and path_allowed(PLATFORM_WRITER, "jobs/probe")
 
 

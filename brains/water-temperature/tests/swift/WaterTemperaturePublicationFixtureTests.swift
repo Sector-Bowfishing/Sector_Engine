@@ -6,7 +6,8 @@
 //  (brains/water-temperature/runtime/publish_artifact.py) and of the Brain Certification Kit adapter. It is produced ONLY by this test,
 //  from the unchanged runner (full-fleet run, injected offline inputs and a fixed generation clock):
 //      SECTOR_WRITE_BRAIN_FIXTURES=1 swift test --filter WaterTemperaturePublicationFixtureTests
-//  The fixture keeps every fleet-level path (registry, validation, health, sources, activity) and the per-lake paths of three lakes
+//  It is recorded in artifact mode (--artifact-mode, G3-2: no health/* path; health is Orchestrator-derived).
+//  The fixture keeps every fleet-level path (registry, validation, sources, activity) and the per-lake paths of three lakes
 //  (a full fleet is 621 lakes); every kept value is exactly what the runner wrote. Without the variable the test fails on any drift.
 //
 
@@ -41,9 +42,12 @@ final class WaterTemperaturePublicationFixtureTests: XCTestCase {
                                                 model: m, modelFetchFailed: false)
     }
 
-    static func runUpdates() async throws -> Data {
+    /// The golden is the CENTRAL artifact entry's write set (`--artifact-mode`, Sector_Ops #52 G3-2): no health/* path.
+    static func runUpdates(artifactMode: Bool = true) async throws -> Data {
         let store = InMemoryBrainStore(brainId: WaterTemperatureBrain.brainId)
-        let r = await WaterTemperatureBrainRunner.run(store: store, options: .init(), now: now, fetchInputs: { await inputs($0) }, generationClock: { now })
+        var options = WaterTemperatureBrainRunOptions()
+        options.artifactMode = artifactMode
+        let r = await WaterTemperatureBrainRunner.run(store: store, options: options, now: now, fetchInputs: { await inputs($0) }, generationClock: { now })
         XCTAssertTrue(r.ok, r.writeError ?? "")
         var flat: [String: Any] = [:]
         for patch in store.patches {
@@ -79,6 +83,31 @@ final class WaterTemperaturePublicationFixtureTests: XCTestCase {
         let committed = try String(contentsOf: Self.fixtureURL, encoding: .utf8)
         XCTAssertEqual(numbersByValue(try Self.stable(fresh) + "\n"), numbersByValue(committed),
                        "the Water Temperature runner's write set changed: review the change, then regenerate with SECTOR_WRITE_BRAIN_FIXTURES=1")
+    }
+
+    /// G3-2: artifact mode emits no health/* path and keeps the registry and sources. With Water Temp's health family Orchestrator-owned, the direct
+    /// writer (no artifact mode) is refused on exactly those paths: why this change lands only with the approved CENTRAL cutover (G3-4).
+    func testArtifactModeEmitsNoHealthAndTheDirectWriterIsRefused() async throws {
+        let artifact = try JSONSerialization.jsonObject(with: try await Self.runUpdates(artifactMode: true)) as! [String: Any]
+        XCTAssertFalse(artifact.keys.contains { $0.hasPrefix("health/") })
+        XCTAssertNotNil(artifact["brains/water-temp"])
+        XCTAssertTrue(artifact.keys.contains { $0.hasPrefix("sources/") })
+        let store = InMemoryBrainStore(brainId: WaterTemperatureBrain.brainId)
+        let direct = await WaterTemperatureBrainRunner.run(store: store, options: .init(), now: Self.now, fetchInputs: { await Self.inputs($0) }, generationClock: { Self.now })
+        XCTAssertFalse(direct.ok)
+        XCTAssertTrue((direct.writeError ?? "").contains("health/brains/water-temp"), direct.writeError ?? "")
+    }
+
+    func testArtifactModeFailureWritesCarryNoHealth() throws {
+        var o = WaterTemperatureBrainRunOptions()
+        let t0 = Self.now
+        let direct = try WaterTemperatureBrainRunner.failureWrites(message: "boom", at: Self.maskedNow, now: t0, prev: nil, options: o, t0: t0)
+        XCTAssertNotNil(direct["health/brains/water-temp"])
+        o.artifactMode = true
+        let art = try WaterTemperatureBrainRunner.failureWrites(message: "boom", at: Self.maskedNow, now: t0, prev: nil, options: o, t0: t0)
+        XCTAssertFalse(art.keys.contains { $0.hasPrefix("health/") })
+        XCTAssertNotNil(art["brains/water-temp/health"])
+        XCTAssertNoThrow(try BrainOwnership.check(art, brainId: "water-temp"))
     }
 }
 

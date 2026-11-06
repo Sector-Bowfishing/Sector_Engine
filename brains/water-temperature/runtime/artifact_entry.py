@@ -39,7 +39,7 @@ def _job_args(ap):
 
 
 def _job_command(a, td):
-    cmd = [a.job, "--dry-run", td]
+    cmd = [a.job, "--dry-run", td, "--artifact-mode"]                   # G3-2: the job emits no health/* (Orchestrator-derived)
     for lake in a.lake:
         cmd += ["--lake", lake]
     if a.limit:

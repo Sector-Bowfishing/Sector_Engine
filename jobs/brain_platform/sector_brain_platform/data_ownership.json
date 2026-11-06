@@ -113,6 +113,42 @@
    "targetWriter": null
   },
   {
+   "id": "fam.health-brains-water-temp",
+   "pattern": "/health/brains/water-temp",
+   "domain": "health-control-jobs",
+   "scope": "per-brain",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.health-sources-open-meteo-forecast",
+   "pattern": "/health/sources/open-meteo-forecast",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.health-sources-usace-cwms-water-temp",
+   "pattern": "/health/sources/usace-cwms-water-temp",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.health-sources-usgs-nwis-00010",
+   "pattern": "/health/sources/usgs-nwis-00010",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
    "id": "fam.sources",
    "pattern": "/sources/{sourceId}",
    "domain": "operational",
