@@ -92,12 +92,16 @@ def intelligence_executor(env=None) -> dict:
     """Sector Intelligence's executor (SECTOR_INTELLIGENCE_JOB_PLAN_V1 SI-A2). Default: in-process (`run.py --write`), exactly as before.
     SI_ARTIFACT_JOB=1: an artifact job (`run.py --artifact-dir/--artifact-bucket`, SI-A1) that is LEASE-ONLY. The Orchestrator grants the cycle to the
     runner-policy primary (Pulse) and never starts a Cloud Run job for it, because none is deployed (a deploy is a separate approval). With the cloud as
-    primary it holds. Its `--plan` verdict is still asked in-process, so the decision inputs do not change (SI-P2 is not decided). The in-process path is
-    removed only at SI-A6."""
+    primary it holds. Its `--plan` verdict is still asked in-process, so the decision inputs do not change. The in-process path is removed only at SI-A6.
+
+    SI-P2 option (b), owner-approved 2026-11-05 (Sector_Ops #50): with SI_JOB_PLAN=1 as well (default off), the Orchestrator no longer runs Intelligence's
+    `--plan` itself (planInProcess False): it leases the cycle on the schedule and dependency triggers alone, and the job's own `orch.plan`, computed from
+    the same reads, decides PUBLISH or SKIP. A SKIP comes back as a SKIPPED runner record (runner.py skip), a normal cycle outcome. SI_JOB_PLAN without
+    SI_ARTIFACT_JOB changes nothing: the in-process Brain keeps its plan."""
     env = os.environ if env is None else env
     if env.get("SI_ARTIFACT_JOB") == "1":
         return {"kind": "cloud-run-job", "job": INTELLIGENCE_JOB, "jobId": INTELLIGENCE_JOB, "dir": _intelligence_runtime_dir(),
-                "artifactMode": True, "leaseOnly": True, "planInProcess": True}
+                "artifactMode": True, "leaseOnly": True, "planInProcess": env.get("SI_JOB_PLAN") != "1"}
     return {"kind": "in-process", "dir": _intelligence_runtime_dir(), "jobId": INTELLIGENCE_JOB}
 
 
@@ -754,7 +758,8 @@ def main(argv=None) -> int:
                     if ch and r.get("outputChanged", "UNKNOWN") == "UNKNOWN":
                         r["outputChanged"] = ch
             print(f"publication: {publication['state']}" + (f" ({publication.get('reason')})" if publication.get("reason") else
-                  f" collected {len(publication['reconcile']['collected'])}, missing {len(publication['reconcile']['missing'])}, failed runs {len(publication['reconcile']['failedRuns'])}; "
+                  f" collected {len(publication['reconcile']['collected'])}, missing {len(publication['reconcile']['missing'])}, failed runs {len(publication['reconcile']['failedRuns'])}, "
+                  f"skipped runs {len(publication['reconcile']['skippedRuns'])}; "
                   f"Publisher {'ARMED' if publication['armed'] else 'unarmed'}; imported from Publisher history {len(publication['importedFromPublisherHistory']['imported'])}; "
                   f"central {publication['cutover']['central']}; per Brain " + json.dumps({b: {k: v[k] for k in ('runs', 'published', 'failed', 'notRequested', 'missingArtifacts')}
                                                                                                for b, v in publication['summary']['brains'].items()}, sort_keys=True)), flush=True)

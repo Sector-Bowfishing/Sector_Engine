@@ -328,8 +328,9 @@ class PublicationCoordinator:
     # ----------------------------------------------------------------------------------------------------------------------------- reconcile with Cloud Run
     def reconcile(self, executions: list, window_minutes: int = 10) -> dict:
         """Reconcile Cloud Run execution results (orchestration.execution_record dicts) with the artifacts in storage. A SUCCEEDED execution is matched to an artifact first by
-        lineage.executionId, otherwise (labelled `matchBasis: TIME_WINDOW`) by the Brain's artifact generated inside the execution window. No match = MISSING artifact."""
-        out = {"collected": [], "missing": [], "failedRuns": [], "alreadyKnown": 0}
+        lineage.executionId, otherwise (labelled `matchBasis: TIME_WINDOW`) by the Brain's artifact generated inside the execution window. No match = MISSING artifact.
+        A SKIPPED execution (the Brain's own plan said SKIP; SI-P2) is a normal cycle outcome: listed under `skippedRuns`, never MISSING or FAILED, and no artifact is looked for."""
+        out = {"collected": [], "missing": [], "failedRuns": [], "skippedRuns": [], "alreadyKnown": 0}
         index: dict = {}
 
         def artifacts(brain):
@@ -351,6 +352,9 @@ class PublicationCoordinator:
                 continue
             if any(r["artifact"].get("state") in ("COLLECTED", "INVALID") for r in self.ledger.for_run(brain, run_id)):
                 out["alreadyKnown"] += 1
+                continue
+            if status == "SKIPPED":
+                out["skippedRuns"].append({"brainId": brain, "runId": run_id, "reasons": list(((ex.get("decision") or {}).get("reasons")) or [])})
                 continue
             if status != "SUCCEEDED":
                 self.report_missing(brain, run_id, "FAILED", "execution did not succeed")

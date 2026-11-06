@@ -109,6 +109,20 @@ def read_upstream(rtdb: bp.BrainRtdb) -> dict:
     return out
 
 
+DECISION_SCHEMA = "sector-job-decision-v1"
+
+
+def emit_decision(path: str | None, decision: dict, *, artifact_id: str | None = None, forced: bool = False) -> None:
+    """SI-P2 (option b): the job's own PUBLISH/SKIP verdict, for a runner (Pulse reads {out}/decision.json). LOCAL and create-only; a SKIP names no artifact.
+    It is the same `orch.plan` verdict `--plan` prints, computed from the same reads."""
+    if not path:
+        return
+    doc = {"schema": DECISION_SCHEMA, "brainId": sib.BRAIN_ID, "action": decision.get("action"),
+           "reasons": [str(r) for r in (decision.get("reasons") or [])], "artifactId": artifact_id, "forced": forced}
+    with open(path, "x") as fh:
+        json.dump(doc, fh, sort_keys=True)
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     g = ap.add_mutually_exclusive_group(required=True)
@@ -121,9 +135,13 @@ def main(argv=None) -> int:
     ap.add_argument("--out", default="out")
     ap.add_argument("--no-pilot", action="store_true", help="skip the pilot evaluations (inventory-only publish)")
     ap.add_argument("--force", action="store_true", help="publish even when --plan says SKIP")
+    ap.add_argument("--emit-decision", default=None, help="SI-P2: with --artifact, write the job's PUBLISH/SKIP verdict to this LOCAL file (create-only)")
     a = ap.parse_args(argv)
     if a.artifact and not (a.artifact_dir or a.artifact_bucket):
         print("REFUSED (nothing stored): --artifact needs --artifact-dir or --artifact-bucket", file=sys.stderr)
+        return 2
+    if a.emit_decision and (not a.artifact or "://" in a.emit_decision or os.path.exists(a.emit_decision)):
+        print("REFUSED (nothing stored): --emit-decision needs --artifact and a new LOCAL file", file=sys.stderr)
         return 2
 
     t0 = time.time()
@@ -189,6 +207,8 @@ def main(argv=None) -> int:
         return 0
 
     if decision["action"] == "SKIP" and not a.force:
+        if a.artifact:
+            emit_decision(a.emit_decision, decision)
         print(json.dumps(summary | {"published": False}, indent=1))
         return 0
     if a.artifact:
@@ -203,6 +223,7 @@ def main(argv=None) -> int:
         except RuntimeError as e:
             print(f"REFUSED: {e}", file=sys.stderr)
             return 2
+        emit_decision(a.emit_decision, decision, artifact_id=ref["artifactId"], forced=decision["action"] == "SKIP")
         print(json.dumps(summary | {"published": False, "artifact": ref}, indent=1))
         return 0
     bp.check_schema(rtdb)
