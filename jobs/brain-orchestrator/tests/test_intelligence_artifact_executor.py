@@ -52,12 +52,12 @@ def test_artifact_mode_never_runs_in_process_nor_starts_a_cloud_job(cycle, artif
     assert any(d["brainId"] == SI and "lease-only" in d["why"] for d in db.tree["control"]["orchestrator"]["deferred"])
 
 
-def lease_run(cycle, monkeypatch, policy, store):
+def lease_run(cycle, monkeypatch, policy, store, extra=()):
     setup, calls = cycle
     monkeypatch.setattr(OR, "build_publication_store", lambda d, b=None: store if (d or b) else None)
     monkeypatch.setattr(RL, "load_policy", lambda path=None: policy)
     setup(tree())
-    assert OR.main(RUN_NOW + ["--runner-leases", "--artifact-store-dir", "x"]) == 0
+    assert OR.main(RUN_NOW + ["--runner-leases", "--artifact-store-dir", "x", *extra]) == 0
     return calls
 
 
@@ -97,3 +97,43 @@ def test_artifact_mode_still_asks_intelligence_for_its_plan(cycle, monkeypatch):
         assert OR.main(RUN_NOW) == 0
         asked[mode] = got
     assert SI in asked["0"] and asked["0"] == asked["1"]
+
+
+# -- SI-P2 option (b): the plan runs in the job (SI_JOB_PLAN, default off) ---------------------------------------------------------------------------
+def test_si_job_plan_is_off_by_default_and_needs_the_artifact_job():
+    assert OR.intelligence_executor({"SI_ARTIFACT_JOB": "1"})["planInProcess"] is True
+    assert OR.intelligence_executor({"SI_ARTIFACT_JOB": "1", "SI_JOB_PLAN": "0"})["planInProcess"] is True
+    assert OR.intelligence_executor({"SI_JOB_PLAN": "1"})["kind"] == "in-process"                 # alone it changes nothing
+    ex = OR.intelligence_executor({"SI_ARTIFACT_JOB": "1", "SI_JOB_PLAN": "1"})
+    assert ex["planInProcess"] is False and ex["leaseOnly"] and ex["artifactMode"]
+    if os.environ.get("SI_JOB_PLAN") != "1":
+        assert OR.EXECUTORS[SI].get("planInProcess", True) is not False
+
+
+def test_with_si_job_plan_the_orchestrator_never_asks_for_the_plan_and_still_leases(cycle, monkeypatch, capsys):
+    real = OR.O.effective_activity
+    monkeypatch.setattr(OR.O, "effective_activity", lambda m, o: {**real(m, o), SI: "ACTIVE"})
+    monkeypatch.setitem(OR.EXECUTORS, SI, OR.intelligence_executor({"SI_ARTIFACT_JOB": "1", "SI_JOB_PLAN": "1"}))
+    asked = []
+    monkeypatch.setattr(OR, "brain_plan", lambda b, timeout=600: asked.append(b) or {"action": "SKIP", "reasons": ["test"]})
+    store = MemoryObjectStore()
+    calls = lease_run(cycle, monkeypatch, PULSE, store)
+    assert SI not in asked                                                   # no Brain code of Intelligence runs in the Orchestrator
+    assert calls["inproc"] == [] and calls["start"] == []
+    assert f"LEASE {SI}" in capsys.readouterr().out
+    assert RL.read(store, SI)[0]["holder"] == "pulse"
+
+
+def test_a_skipped_runner_record_is_reconciled_as_a_skip_not_a_failure(cycle, artifact_mode, monkeypatch, capsys, tmp_path):
+    """The job's SKIP (runner.py skip) for a cycle the Orchestrator granted: the next cycle counts it under skipped runs, never failed or missing."""
+    import datetime as dt
+    store = MemoryObjectStore()
+    now = dt.datetime.now(dt.timezone.utc)
+    RL.grant(RL.orchestrator_view(store), PULSE, SI, "pulse", "si-c1", now)
+    RL.record_execution(RL.runner_view(store, "pulse"), "pulse", SI, "si-c1-skip", status="SKIPPED", artifact=None, cycle_id="si-c1",
+                        started_at=(now - dt.timedelta(minutes=2)).strftime("%Y-%m-%dT%H:%M:%SZ"), ended_at=now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        engine_commit="abc", decision={"action": "SKIP", "reasons": ["no material change"]})
+    lease_run(cycle, monkeypatch, PULSE, store, extra=["--coordinate-publication", "--publication-ledger", str(tmp_path / "ledger.json")])
+    out = capsys.readouterr().out
+    assert "failed runs 0, skipped runs 1;" in out and "missing 0" in out
+    assert '"sector-intelligence": {"failed": 0, "missingArtifacts": 0, "notRequested": 0, "published": 0, "runs": 1}' in out

@@ -172,13 +172,28 @@ def cloud_may_start(store, policy: dict, brain_id: str, now: dt.datetime) -> tup
 
 
 def record_execution(store, holder: str, brain_id: str, execution_id: str, *, status: str, started_at: str, ended_at: str, artifact: dict | None,
-                     cycle_id: str | None, engine_commit: str | None) -> str:
+                     cycle_id: str | None, engine_commit: str | None, decision: dict | None = None) -> str:
     """Create-only run record for a run outside Cloud Run, in the shape the Orchestrator reconciles (orchestration.execution_record fields used by the
-    publication stage). An identical record re-written is a no-op; a different one under the same key is an error."""
-    if status not in ("SUCCEEDED", "FAILED"):
-        raise ValueError("status must be SUCCEEDED or FAILED")
+    publication stage). An identical record re-written is a no-op; a different one under the same key is an error.
+
+    SKIPPED (SI-P2, Sector_Ops #50): the Brain's own plan, run inside the job, said SKIP. Such a record carries no artifact and the decision instead
+    ({"action": "SKIP", "reasons": [...]}); the publication stage counts it as a normal cycle outcome, never as a missing artifact or a failed run.
+    SUCCEEDED and FAILED records keep their exact shape (no `decision` key), so records written before this are byte-identical."""
+    if status not in ("SUCCEEDED", "FAILED", "SKIPPED"):
+        raise ValueError("status must be SUCCEEDED, FAILED or SKIPPED")
+    if status == "SKIPPED":
+        if artifact is not None:
+            raise ValueError("a SKIPPED run hands off no artifact")
+        if not isinstance(decision, dict) or decision.get("action") != "SKIP":
+            raise ValueError('a SKIPPED run needs its decision: {"action": "SKIP", "reasons": [...]}')
+        if not cycle_id:
+            raise ValueError("a SKIPPED run must name the cycle it was granted")
+    elif decision is not None:
+        raise ValueError("only a SKIPPED run carries a decision")
     doc = {"schema": EXEC_SCHEMA, "executionId": execution_id, "brainId": brain_id, "runner": holder, "status": status, "startedAt": started_at,
            "endedAt": ended_at, "cycleId": cycle_id, "engineCommit": engine_commit, "artifact": artifact}
+    if decision is not None:
+        doc["decision"] = {"action": "SKIP", "reasons": [str(r) for r in (decision.get("reasons") or [])][:20]}
     key = execution_key(holder, brain_id, execution_id)
     data = canonical_bytes(doc)
     try:
@@ -203,8 +218,11 @@ def runner_executions(store, brain_ids, since: str | None = None) -> list[dict]:
         if r.get("runner") != parts[2]:                       # a record claims the runner whose folder holds it, or it is ignored
             continue
         if r.get("schema") == EXEC_SCHEMA and (since is None or (r.get("endedAt") or "") >= since):
-            out.append({"executionId": r["executionId"], "brainId": r["brainId"], "status": r["status"], "startedAt": r["startedAt"], "endedAt": r["endedAt"],
-                        "runner": r["runner"], "cycleId": r.get("cycleId")})
+            e = {"executionId": r["executionId"], "brainId": r["brainId"], "status": r["status"], "startedAt": r["startedAt"], "endedAt": r["endedAt"],
+                 "runner": r["runner"], "cycleId": r.get("cycleId")}
+            if r["status"] == "SKIPPED":
+                e["decision"] = r.get("decision")
+            out.append(e)
     return sorted(out, key=lambda e: e["endedAt"] or "")
 
 

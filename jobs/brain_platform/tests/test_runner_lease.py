@@ -138,3 +138,26 @@ def test_the_grant_ledger_keeps_older_cycles_and_is_create_only(s):
     assert s.get(RL.grant_key("water-clarity", "c1")) == first
     with pytest.raises(AccessDenied):
         RL.runner_view(s, "pulse").put(RL.grant_key("water-clarity", "c9"), b"{}", if_generation_match=0)
+
+
+def test_a_skipped_record_has_a_decision_and_no_artifact():
+    """SI-P2: SKIPPED is a normal outcome. SUCCEEDED/FAILED records keep their exact shape (no decision key)."""
+    _pt = pytest
+    s = MemoryObjectStore()
+    kw = dict(started_at="2026-11-05T12:00:00Z", ended_at="2026-11-05T12:01:00Z", engine_commit="abc")
+    with _pt.raises(ValueError):
+        RL.record_execution(s, "pulse", "sector-intelligence", "c1-skip", status="SKIPPED", artifact={"x": 1}, cycle_id="c1",
+                            decision={"action": "SKIP"}, **kw)
+    with _pt.raises(ValueError):
+        RL.record_execution(s, "pulse", "sector-intelligence", "c1-skip", status="SKIPPED", artifact=None, cycle_id="c1", decision=None, **kw)
+    with _pt.raises(ValueError):
+        RL.record_execution(s, "pulse", "sector-intelligence", "c1-skip", status="SKIPPED", artifact=None, cycle_id=None,
+                            decision={"action": "SKIP"}, **kw)
+    with _pt.raises(ValueError):
+        RL.record_execution(s, "pulse", "sector-intelligence", "e1", status="FAILED", artifact=None, cycle_id="c1",
+                            decision={"action": "SKIP"}, **kw)
+    k = RL.record_execution(s, "pulse", "sector-intelligence", "e2", status="FAILED", artifact=None, cycle_id="c1", **kw)
+    assert "decision" not in json.loads(s.get(k))
+    k = RL.record_execution(s, "pulse", "sector-intelligence", "c1-skip", status="SKIPPED", artifact=None, cycle_id="c1",
+                            decision={"action": "SKIP", "reasons": ["no material change"]}, **kw)
+    assert json.loads(s.get(k))["decision"] == {"action": "SKIP", "reasons": ["no material change"]}
