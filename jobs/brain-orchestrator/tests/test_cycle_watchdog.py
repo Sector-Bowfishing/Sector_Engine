@@ -102,8 +102,71 @@ def test_publishes_outside_the_brain_the_lakes_or_not_complete_trip():
 def test_a_quarantine_or_a_stuck_lock_trips():
     s = healthy()
     put(s, LK.quarantine_key("water-clarity"), {"state": "QUARANTINED"})
-    put(s, LK.lock_key("water-clarity"), {"state": "HELD", "at": "2026-11-07T10:00:00Z"})
+    LK.acquire(s, "water-clarity", "p9", "2026-11-07T10:00:00Z")           # the Publisher's own lock document ({state, publishId, since})
     assert kinds(s)[0] == ["LOCK_STUCK", "QUARANTINED"]
+
+
+def test_a_lock_held_by_a_publication_in_progress_is_not_stuck():
+    s = healthy()
+    LK.acquire(s, "water-clarity", "p9", "2026-11-07T11:50:00Z")           # 10 min before NOW: an apply in progress
+    assert kinds(s)[0] == []
+
+
+def test_an_unchanged_publication_is_clean_and_a_rejected_one_trips():
+    s = healthy()
+    put(s, "publishes/water-clarity/p4/record.json", {"mode": "LIVE", "result": "SKIP", "status": "SKIPPED_UNCHANGED", "live": False,
+                                                       "publishedAt": "2026-11-07T11:00:00Z"})
+    assert kinds(s)[0] == []
+    put(s, "publishes/water-clarity/p5/record.json", {"mode": "LIVE", "result": "REJECTED", "status": "COMPLETE", "live": False,
+                                                       "codes": ["LIFECYCLE_NOT_LIVE_ELIGIBLE"], "publishedAt": "2026-11-07T11:30:00Z"})
+    assert kinds(s)[0] == ["PUBLISH_NOT_COMPLETE"]
+
+
+def test_a_cleared_halt_does_not_re_trip_on_the_same_records_but_a_new_fault_does():
+    s = healthy()
+    RL.record_fault(RL.runner_view(s, "pulse"), "pulse", "water-clarity", "LEASE_RENEWAL_REFUSED", "x", NOW - dt.timedelta(hours=2))
+    WD.write_halt(s, [WD.Trip("RUNNER_FAULT", "x")], cycle="c1", now=NOW - dt.timedelta(hours=2), scheduler_pause="PAUSED")
+    cleared = WD.clear(s, changed_by="michael", approval_ref="owner/ok", reason="fixed", now=NOW - dt.timedelta(hours=1))
+    k, _ = kinds(s)
+    res = WD.evaluate(POLICY, store=s, executions=EXECS, control=CTL, now=NOW, latch=cleared)
+    assert [t.kind for t in res.trips] == []                                  # the old fault is before the clear
+    RL.record_fault(RL.runner_view(s, "pulse"), "pulse", "water-clarity", "RUN_WITHOUT_LEASE", "y", NOW)
+    res = WD.evaluate(POLICY, store=s, executions=EXECS, control=CTL, now=NOW, latch=cleared)
+    assert [t.kind for t in res.trips] == ["RUNNER_FAULT"]
+
+
+def test_old_objects_are_skipped_before_any_read_when_the_store_reports_creation_times():
+    class Timed(MemoryObjectStore):
+        created = {}
+
+        def put(self, key, data, **kw):
+            self.created.setdefault(key, "2026-11-07T11:00:00Z")
+            return super().put(key, data, **kw)
+
+        def list_created(self, prefix):
+            return [(k, self.created.get(k, "")) for k in self.list(prefix)]
+
+        def get(self, key, generation=None):
+            if key.startswith("artifacts/water-clarity/bad"):
+                raise AssertionError("an old object must not be read")
+            return super().get(key, generation)
+    s = Timed()
+    Timed.created = {"artifacts/water-clarity/bad/artifact.json": "2026-10-01T00:00:00Z"}
+    MemoryObjectStore.put(s, "artifacts/water-clarity/bad/artifact.json", b"not json")   # malformed history
+    for k, v in [("exports/runners/leases/water-clarity.json", {"holder": "pulse"}), ("exports/runners/grants/water-clarity/c1.json", {"grantedAt": "2026-11-07T10:50:00Z"}),
+                 ("artifacts/water-clarity/sha256-a/artifact.json", {"lineage": {"generatedAt": "2026-11-07T11:00:00Z"}})]:
+        put(s, k, v)
+    k, res = kinds(s)
+    assert k == [] and not res.unreadable
+
+
+def test_a_grant_just_before_a_clear_still_pairs_with_its_artifact_after_it():
+    s = MemoryObjectStore()
+    put(s, "exports/runners/leases/water-clarity.json", {"holder": "pulse"})
+    put(s, "exports/runners/grants/water-clarity/c2.json", {"grantedAt": "2026-11-07T10:55:00Z"})
+    put(s, "artifacts/water-clarity/sha256-c/artifact.json", {"lineage": {"generatedAt": "2026-11-07T11:05:00Z"}})
+    res = WD.evaluate(POLICY, store=s, executions=EXECS, control=CTL, now=NOW, latch={"state": "CLEARED", "at": "2026-11-07T11:00:00Z"})
+    assert [t.kind for t in res.trips] == []
 
 
 def test_the_execution_control_enabling_another_brain_trips():
@@ -205,6 +268,14 @@ def test_a_new_trip_latches_pauses_the_scheduler_and_grants_nothing(world, monke
     latch = WD.read_latch(store)
     assert WD.is_halted(latch) and latch["schedulerPause"] == "PAUSED" and latch["trips"][0]["kind"] == "RUNNER_FAULT"
     assert RL.read(RL.orchestrator_view(store), "wind")[0] is None
+
+
+def test_a_watchdog_crash_holds_the_cycle_and_says_so(world, monkeypatch, capsys):
+    store = MemoryObjectStore()
+    monkeypatch.setattr(OR, "watchdog_stage", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("boom")))
+    calls, paused = cycle(world, monkeypatch, store, wind_policy())
+    assert "[watchdog] UNREADABLE (watchdog error RuntimeError)" in capsys.readouterr().out
+    assert RL.read(RL.orchestrator_view(store), "wind")[0] is None and calls["start"] == []
 
 
 def test_a_failed_scheduler_pause_still_latches(world, monkeypatch, capsys):

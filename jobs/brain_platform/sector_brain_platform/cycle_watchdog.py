@@ -95,11 +95,40 @@ def _json(store, key):
 
 
 # ------------------------------------------------------------------------------------------------------------------------------ the checks
-def evaluate(policy: dict, *, store, executions: dict, control: dict | None, now: dt.datetime) -> Result:
-    """All checks. `store` is the raw artifact store (read-only use here), `executions` {job: [Cloud Run execution]} as the cycle already
-    lists them, `control` the parsed execution control (execution_control.parse). Never raises: an unreadable input is a CHECK_FAILED trip."""
-    res = Result()
+CLEAN_RESULTS = {"PUBLISHED", "ROLLED_BACK"}      # with status COMPLETE and live
+UNCHANGED_RESULTS = {"SKIP"}                       # unchanged against the head: nothing written (review of #141: never a halt)
+PAIRING_SLACK = dt.timedelta(hours=1)              # a grant just before the boundary still pairs with its artifact just after it
+
+
+def boundary(policy: dict, latch: dict | None) -> str:
+    """Events before this are history: the policy's `since`, or the time the owner last CLEARED a halt (review of #141: a cleared halt must
+    not re-trip on the same immutable records)."""
     since = _ts(policy["since"])
+    if latch and latch.get("state") == "CLEARED":
+        since = max(since, _ts(latch.get("at")))
+    return since
+
+
+def _keys(store, prefix: str, after: str) -> list[str]:
+    """Keys under `prefix`, skipping objects created before `after` when the store reports creation times (the GCS store does), so every cycle
+    reads only recent objects and old, malformed history never fails a check."""
+    lister = getattr(store, "list_created", None)
+    if lister is None:
+        return store.list(prefix)
+    return [k for k, created in lister(prefix) if _ts(created) >= after]
+
+
+def _shift(ts: str, delta: dt.timedelta) -> str:
+    return _ts(_iso(dt.datetime.fromisoformat(ts + "+00:00") - delta)) if ts else ts
+
+
+def evaluate(policy: dict, *, store, executions: dict, control: dict | None, now: dt.datetime, latch: dict | None = None) -> Result:
+    """All checks. `store` is the raw artifact store (read-only use here), `executions` {job: [Cloud Run execution]} as the cycle already
+    lists them, `control` the parsed execution control (execution_control.parse), `latch` the current latch (a CLEARED one moves the
+    boundary). Never raises: an unreadable input is a CHECK_FAILED trip."""
+    res = Result()
+    since = boundary(policy, latch)
+    pair_since = _shift(since, PAIRING_SLACK)
     brains = policy["brains"]
     allowed_jobs = set(policy["allowedJobs"])
 
@@ -118,7 +147,7 @@ def evaluate(policy: dict, *, store, executions: dict, control: dict | None, now
                     res.trips.append(Trip("EXECUTION_OUTSIDE_POLICY", f"job {job} execution {(e.get('metadata') or {}).get('name')} at {created}Z"))
 
     def leases_check():
-        for k in store.list("exports/runners/leases/"):
+        for k in store.list("exports/runners/leases/"):                  # current state, not history: always every lease
             brain = k.rsplit("/", 1)[-1].removesuffix(".json")
             doc = _json(store, k) or {}
             want = (brains.get(brain) or {}).get("holder")
@@ -130,18 +159,19 @@ def evaluate(policy: dict, *, store, executions: dict, control: dict | None, now
     grants_since: dict[str, int] = {}
 
     def grants_check():
-        for k in store.list("exports/runners/grants/"):
+        for k in _keys(store, "exports/runners/grants/", pair_since):
             brain = k.split("/")[3] if len(k.split("/")) > 4 else "?"
             doc = _json(store, k) or {}
-            if _ts(doc.get("grantedAt")) < since:
+            granted = _ts(doc.get("grantedAt"))
+            if granted < pair_since:
                 continue
-            if brain not in brains:
+            if granted >= since and brain not in brains:
                 res.trips.append(Trip("GRANT_OUTSIDE_POLICY", f"grant {k.rsplit('/', 1)[-1]} for {brain}"))
-            grants_since[brain] = grants_since.get(brain, 0) + 1
+            grants_since[brain] = grants_since.get(brain, 0) + 1          # pairs with artifacts since the boundary (an hour of slack)
 
     def artifacts_check():
         counts: dict[str, int] = {}
-        for k in store.list("artifacts/"):
+        for k in _keys(store, "artifacts/", since):
             if not k.endswith("/artifact.json"):
                 continue
             brain = k.split("/")[1]
@@ -157,7 +187,7 @@ def evaluate(policy: dict, *, store, executions: dict, control: dict | None, now
 
     def publishes_check():
         seen_brains = set()
-        for k in store.list("publishes/"):
+        for k in _keys(store, "publishes/", since):
             parts = k.split("/")
             if len(parts) < 3:
                 continue
@@ -172,8 +202,10 @@ def evaluate(policy: dict, *, store, executions: dict, control: dict | None, now
             if brain not in brains:
                 res.trips.append(Trip("PUBLISH_OUTSIDE_POLICY", f"publication {parts[2]} for {brain}"))
                 continue
-            if rec.get("mode") == "LIVE" and not (rec.get("result") in ("PUBLISHED", "ROLLED_BACK") and rec.get("status") == "COMPLETE" and rec.get("live")):
-                res.trips.append(Trip("PUBLISH_NOT_COMPLETE", f"{brain} publication {parts[2]}: {rec.get('result')} {rec.get('status')}"))
+            result = rec.get("result")
+            clean = (result in CLEAN_RESULTS and rec.get("status") == "COMPLETE" and rec.get("live")) or result in UNCHANGED_RESULTS
+            if rec.get("mode") == "LIVE" and not clean:                  # REJECTED, FAILED_VALIDATION, PRECONDITION_FAILED, APPLY_FAILED, READBACK_MISMATCH, unknown
+                res.trips.append(Trip("PUBLISH_NOT_COMPLETE", f"{brain} publication {parts[2]}: {result} {rec.get('status')}"))
             lakes = set((brains.get(brain) or {}).get("lakes") or [])
             if lakes:
                 outside = sorted({m.group(1) for p in (rec.get("pathSha256") or {}) for m in [LAKE_PATH.match(p)] if m} - lakes)
@@ -185,7 +217,7 @@ def evaluate(policy: dict, *, store, executions: dict, control: dict | None, now
                 res.trips.append(Trip("QUARANTINED", f"{brain} is quarantined by the Publisher"))
             lock = _json(store, lock_key(brain)) or {}
             if lock.get("state") == "HELD":
-                at = lock.get("at") or ""
+                at = lock.get("since") or lock.get("at") or ""             # the Publisher writes {state, publishId, since}
                 try:
                     age = (now - dt.datetime.fromisoformat(at.replace("Z", "+00:00"))).total_seconds() / 60
                 except ValueError:
@@ -201,7 +233,7 @@ def evaluate(policy: dict, *, store, executions: dict, control: dict | None, now
                 res.trips.append(Trip("CONTROL_OUTSIDE_POLICY", f"execution control enables {outside}"))
 
     def faults_check():
-        for k in store.list("exports/runners/"):
+        for k in _keys(store, "exports/runners/", since):
             parts = k.split("/")
             if len(parts) >= 5 and parts[3] == "faults" and k.endswith(".json"):
                 doc = _json(store, k) or {}
@@ -250,7 +282,8 @@ def clear(store, *, changed_by: str, approval_ref: str, reason: str, now: dt.dat
 
 
 def log_line(res: Result) -> str:
-    """One line per cycle; the alert policy matches `[watchdog] HALT ` (a new trip) only."""
+    """One line per cycle. The owner's alert matches `[watchdog] HALT ` (with the space: a new trip, not the hourly `HALTED since` reminder)
+    and `[watchdog] UNREADABLE`."""
     if res.tripped:
         return "[watchdog] HALT " + "; ".join(f"{t.kind}: {t.detail}" for t in res.trips)[:900]
     if res.unreadable:

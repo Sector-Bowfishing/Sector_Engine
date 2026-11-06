@@ -54,7 +54,7 @@ def main(argv=None) -> int:
         ctl = EC.parse(json.loads(urllib.request.urlopen(req, timeout=20).read() or b"null"))
         execs = {(j.get("metadata") or {}).get("name"): gcp.list_executions(tokens, (j.get("metadata") or {}).get("name"), limit=20)
                  for j in gcp.list_run_jobs(tokens)}
-        res = WD.evaluate(WD.load_policy(), store=store, executions=execs, control=ctl, now=now)
+        res = WD.evaluate(WD.load_policy(), store=store, executions=execs, control=ctl, now=now, latch=WD.read_latch(store))
         print(WD.log_line(res))
         for t in res.trips:
             print(f"  {t.kind}: {t.detail}")
@@ -62,7 +62,12 @@ def main(argv=None) -> int:
     if not (a.changed_by and a.approval_ref and a.reason):
         print("clear needs --changed-by, --approval-ref and --reason", file=sys.stderr)
         return 2
-    doc = WD.clear(store, changed_by=a.changed_by, approval_ref=a.approval_ref, reason=a.reason, now=now)
+    from sector_brain_platform.publisher.storage import PreconditionFailed
+    try:
+        doc = WD.clear(store, changed_by=a.changed_by, approval_ref=a.approval_ref, reason=a.reason, now=now)
+    except PreconditionFailed:
+        print("the latch changed while clearing (a cycle wrote it): run `show`, then clear again", file=sys.stderr)
+        return 3
     print(f"latch CLEARED at {doc['at']}. The scheduler is NOT resumed: tools/ops/resume-orchestrator.sh, after fixing the cause.")
     return 0
 

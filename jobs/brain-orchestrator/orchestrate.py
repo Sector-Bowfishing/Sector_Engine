@@ -480,7 +480,7 @@ def start_publisher_if_needed(handoff: dict, executions: dict, tokens: TokenProv
 def watchdog_stage(a, executions: dict, ctl: dict, tokens: TokenProvider, now: dt.datetime, write: bool) -> dict:
     """Sector_Ops #51: the O6.3 halt conditions, checked by the cycle itself. -> {hold, why}. A trip latches HALTED in the bucket and tries to
     pause this job's own Cloud Scheduler trigger; the latch holds every later cycle until the owner clears it (tools/ops/watchdog.py). Prints
-    one `[watchdog] ...` line per cycle; the owner's alert matches `[watchdog] HALT` and `[watchdog] UNREADABLE`."""
+    one `[watchdog] ...` line per cycle; the owner's alert matches `[watchdog] HALT ` (a new trip) and `[watchdog] UNREADABLE`."""
     try:
         pol = WD.load_policy()
     except Exception as e:                                       # noqa: BLE001 - an unreadable reviewed policy is never a silent pass
@@ -497,11 +497,14 @@ def watchdog_stage(a, executions: dict, ctl: dict, tokens: TokenProvider, now: d
     except Exception as e:                                       # noqa: BLE001
         print(f"[watchdog] UNREADABLE latch ({type(e).__name__}): holding this cycle", flush=True)
         return {"hold": True, "why": "watchdog latch unreadable"}
+    if latch is not None and not isinstance(latch, dict):
+        print("[watchdog] UNREADABLE latch (not a document): holding this cycle", flush=True)
+        return {"hold": True, "why": "watchdog latch malformed"}
     if WD.is_halted(latch):
         kinds = sorted({t.get("kind") for t in latch.get("trips") or []})
         print(f"[watchdog] HALTED since {latch.get('at')} ({', '.join(kinds)}); only the owner clears it (tools/ops/watchdog.py clear)", flush=True)
         return {"hold": True, "why": f"watchdog HALTED since {latch.get('at')}"}
-    res = WD.evaluate(pol, store=store, executions=executions, control=ctl, now=now)
+    res = WD.evaluate(pol, store=store, executions=executions, control=ctl, now=now, latch=latch)
     print(WD.log_line(res), flush=True)
     if res.tripped:
         real = [t for t in res.trips if t.kind != "CHECK_FAILED"]
@@ -644,7 +647,11 @@ def main(argv=None) -> int:
 
     # 1b. the cycle watchdog (Sector_Ops #51, O6.3 moved into the system): a latched halt, a new trip or an unreadable check holds this cycle
     #     exactly like the overlap guard (nothing granted, started or handed to the Publisher)
-    wd = watchdog_stage(a, executions, ctl, tokens, now, write)
+    try:
+        wd = watchdog_stage(a, executions, ctl, tokens, now, write)
+    except Exception as e:                                       # noqa: BLE001 - review of #141: the watchdog never crashes the cycle; it holds
+        print(f"[watchdog] UNREADABLE (watchdog error {type(e).__name__}): holding this cycle", flush=True)
+        wd = {"hold": True, "why": "watchdog error"}
     if wd["hold"]:
         a.no_execute = True
         auto_ok, auto_why = False, wd["why"]
