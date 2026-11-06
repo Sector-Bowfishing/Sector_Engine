@@ -16,7 +16,9 @@ from sector_brain_platform.publisher_live import customer_wind_outlook_model as 
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
-CLARITY_GOLDEN = json.load(open(os.path.join(ROOT, "brains", "water-clarity", "tests", "golden", "clarity_science_baseline.json")))["scenarios"]
+CLARITY_BASELINE = json.load(open(os.path.join(ROOT, "brains", "water-clarity", "tests", "golden", "clarity_science_baseline.json")))
+CLARITY_GOLDEN = CLARITY_BASELINE["scenarios"]
+CLARITY_STALE_H = CLARITY_BASELINE["registry"]["staleAfterHours"]                         # 26
 WT_GOLDEN = json.load(open(os.path.join(ROOT, "brains", "water-temperature", "tests", "golden", "water_temp_run_updates.json")))
 SWIFT = os.path.join(ROOT, "Sources", "SectorEngine", "API")
 ON = {v: "1" for v in CC.SWITCHES.values()}
@@ -38,13 +40,28 @@ def test_every_switch_is_the_spec_name_and_defaults_off():
 
 
 @pytest.mark.parametrize("env", [None, {}, {"PUBLISHER_CUSTOMER_CLARITY": "0", "PUBLISHER_CUSTOMER_WIND_MODEL": "on"}])
-def test_switch_off_computes_and_writes_nothing_even_over_an_old_copy(env):
-    u = clarity_updates("gaugeFalling")
-    prev = {CL.copy_path("Gauge A|AL"): {"lakeId": "Gauge A|AL", "status": "AVAILABLE"}}
-    assert CL.plan(u, prev, readiness="BETA", now=CL_NOW, env=env, **RUN) == ({}, {"Gauge A|AL": "NOT_ENABLED"})
-    assert WT.plan(WT_GOLDEN, {}, readiness="BETA", now=WT_NOW, env=env, **RUN)[0] == {}
-    assert GB.plan(GB.load_contract(), {}, readiness="BETA", env=env)[0] == {}
-    assert WM.plan(wind_updates(), {"status": "AVAILABLE"}, readiness="BETA", now=WIND_NOW, env=env) == ({}, "NOT_ENABLED")
+def test_switch_off_computes_nothing_new(env):
+    assert CL.plan(clarity_updates("gaugeFalling"), {}, readiness="BETA", now=CL_NOW, env=env, **RUN) == ({}, {})
+    assert WT.plan(WT_GOLDEN, {}, readiness="BETA", now=WT_NOW, env=env, **RUN) == ({}, {})
+    assert GB.plan(bound_contract(), {}, readiness="BETA", env=env) == ({}, {})
+    assert WM.plan(wind_updates(), None, readiness="BETA", now=WIND_NOW, env=env) == ({}, "NOT_ENABLED")
+    assert WM.plan(wind_updates(), {}, readiness="BETA", now=WIND_NOW, env=env) == ({}, "NOT_ENABLED")
+
+
+def test_switch_off_withdraws_every_live_copy_once_with_unknown():
+    off = {}
+    cl = cl_plan(clarity_updates("gaugeFalling", "guntersvilleRain"))[0]
+    w, why = CL.plan(clarity_updates("gaugeFalling"), cl, readiness="BETA", now=CL_NOW, env=off, **RUN)
+    assert {p: c["status"] for p, c in w.items()} == {p: "UNKNOWN" for p in cl} and set(why.values()) == {"NOT_ENABLED"}
+    assert CL.plan({}, {**cl, **w}, readiness="BETA", now=CL_NOW, env=off, **RUN)[0] == {}           # already UNKNOWN: not rewritten
+    wt = wt_plan()[0]
+    assert {p: c["status"] for p, c in WT.plan(WT_GOLDEN, wt, readiness="BETA", now=WT_NOW, env=off, **RUN)[0].items()} == {p: "UNKNOWN" for p in wt}
+    gb = gb_plan()[0]
+    w, why = GB.plan(bound_contract(), gb, readiness="BETA", env=off)
+    assert {p: c["status"] for p, c in w.items()} == {p: "UNKNOWN" for p in gb} and why == {"Guntersville|AL": "NOT_ENABLED"}
+    wm = wm_plan(wind_updates())[0][WM.PATH]
+    assert WM.plan(wind_updates(), wm, readiness="BETA", now=WIND_NOW, env=off) == ({WM.PATH: WM.unknown_copy()}, "NOT_ENABLED")
+    assert WM.plan(wind_updates(), WM.unknown_copy(), readiness="BETA", now=WIND_NOW, env=off) == ({}, "NOT_ENABLED")
 
 
 def test_each_switch_turns_on_only_its_own_copy():
@@ -63,7 +80,7 @@ CL_NOW = dt.datetime(2026, 10, 12, 12, 0, tzinfo=dt.timezone.utc)
 
 
 def clarity_updates(*names):
-    u = {}
+    u = {"brains/water-clarity/staleAfterHours": CLARITY_STALE_H}
     for n in names:
         for k, v in CLARITY_GOLDEN[n]["lakeWrites"].items():
             u[k.lstrip("/")] = copy.deepcopy(v)
@@ -79,11 +96,43 @@ def test_clarity_observed_is_available_with_its_range_and_modeled_is_an_estimate
     a = writes[CL.copy_path("Gauge A|AL")]
     assert CL.copy_path("Guntersville|AL") == "customer/lakes/Guntersville_AL/clarity"
     assert a == {"schema": "sector-customer-clarity-v1", "lakeId": "Gauge A|AL", "status": "AVAILABLE", "centralFt": 3.21, "lowFt": 1.33, "highFt": 4.45,
-                 "confidence": "medium", "observedAt": "2026-10-12T06:12:03Z", "freshUntil": "2026-10-13T08:30:00Z", "runner": "pulse", "publishId": "7def2674"}
+                 "confidence": "medium", "observedAt": "2026-10-12T06:12:03Z", "freshUntil": "2026-10-13T08:12:03Z", "runner": "pulse", "publishId": "7def2674"}
     g = writes[CL.copy_path("Guntersville|AL")]
     assert g["status"] == "ESTIMATE" and g["centralFt"] == 2.52 and g["confidence"] == "low"
     assert "lowFt" not in g and "highFt" not in g                                    # absent in the state: absent in the copy, never invented
     assert why == {"Gauge A|AL": "AVAILABLE", "Guntersville|AL": "ESTIMATE"}
+
+
+def test_an_old_evaluation_republished_by_a_new_run_is_stale():
+    """freshUntil is run time + staleAfterHours; a new run restating a 4-day-old evaluation must not look fresh."""
+    u = clarity_updates("gaugeFalling")
+    st = u["lakes/Gauge_A_AL/states/waterClarity"]
+    st["evaluationTime"] = "2026-10-08T12:00:00Z"                                          # 4 days before CL_NOW
+    st["freshness"].update(generatedAt="2026-10-12T11:30:00Z", freshUntil="2026-10-13T13:30:00Z")
+    before = {CL.copy_path("Gauge A|AL"): {"schema": CL.SCHEMA, "lakeId": "Gauge A|AL", "status": "AVAILABLE"}}
+    writes, why = cl_plan(u, previous=before)
+    assert why["Gauge A|AL"] == "STALE" and writes[CL.copy_path("Gauge A|AL")]["status"] == "UNKNOWN"
+    no_rule = clarity_updates("gaugeFalling"); del no_rule["brains/water-clarity/staleAfterHours"]
+    assert cl_plan(no_rule) == ({}, {"Gauge A|AL": "STALE"})                                   # without the Brain's rule: fail closed
+
+
+def test_future_source_times_are_refused_beyond_ten_minutes():
+    u = clarity_updates("gaugeFalling")
+    u["lakes/Gauge_A_AL/states/waterClarity"]["evaluationTime"] = "2026-10-12T12:10:01Z"
+    assert cl_plan(u)[1]["Gauge A|AL"] == "STALE"
+    u["lakes/Gauge_A_AL/states/waterClarity"]["evaluationTime"] = "2026-10-12T12:10:00Z"   # exactly 10 min: allowed
+    assert cl_plan(u)[1]["Gauge A|AL"] == "AVAILABLE"
+    w = copy.deepcopy(WT_GOLDEN)
+    w["lakes/Guntersville_AL/states/waterTemp"]["lastObservationAt"] = "2026-07-15T03:10:01Z"
+    assert wt_plan(w)[1]["Guntersville|AL"] == "STALE"
+    assert wm_plan(wind_updates(decidedAt="2026-11-10T12:10:01Z")) == ({}, "STALE")
+    assert wm_plan(wind_updates(decidedAt="2026-11-10T12:10:00Z"))[1] == "AVAILABLE"
+
+
+def test_empty_lake_id_returns_early():
+    assert CL.copy_for({"lakeId": ""}, "", readiness="BETA", stale_hours=26, now=CL_NOW, **RUN) == (None, "NO_PUBLICATION")
+    assert WT.copy_for({"lakeId": ""}, "", readiness="BETA", stale_hours=6, now=WT_NOW, **RUN) == (None, "NO_PUBLICATION")
+    assert GB.copy_for({"lakeId": ""}, "", readiness="BETA", updated=None) == (None, "NO_PUBLICATION")
 
 
 def test_clarity_observed_at_is_the_evaluation_time_never_the_run_time():
@@ -127,7 +176,7 @@ def test_a_state_whose_stored_lake_id_differs_never_writes_the_other_lakes_copy(
     u["lakes/Gauge_A_AL/states/waterClarity"]["lakeId"] = "Gauge A AL"                     # same key, different lake
     writes, why = cl_plan(u, previous=before)
     assert writes[CL.copy_path("Gauge A|AL")]["status"] == "UNKNOWN" and why["Gauge A|AL"] == "NO_PUBLICATION"
-    assert CL.copy_for(u["lakes/Gauge_A_AL/states/waterClarity"], "Gauge A|AL", readiness="BETA", now=CL_NOW, **RUN) == (None, "NO_PUBLICATION")
+    assert CL.copy_for(u["lakes/Gauge_A_AL/states/waterClarity"], "Gauge A|AL", readiness="BETA", stale_hours=26, now=CL_NOW, **RUN) == (None, "NO_PUBLICATION")
     w = copy.deepcopy(WT_GOLDEN)
     w["lakes/Guntersville_AL/states/waterTemp"]["lakeId"] = "Guntersville AL"
     assert WT.copy_for(w["lakes/Guntersville_AL/states/waterTemp"], "Guntersville|AL", readiness="BETA", stale_hours=6, now=WT_NOW, **RUN) == (None, "NO_PUBLICATION")
@@ -211,6 +260,8 @@ def test_generation_binding_copies_only_the_published_dam_binding():
     assert why["Wheeler|AL"] == "NO_DAM_BINDING"
     c = bound_contract(); c["reviewedAt"] = "2026-11-01T10:00:00Z"
     assert gb_plan(c)[0][GB.copy_path("Guntersville|AL")]["updatedAt"] == "2026-11-01T10:00:00Z"
+    c["reviewedAt"] = "2026-11-01T10:00:00"                                                # zoneless: unparseable, never assumed UTC
+    assert gb_plan(c) == ({}, {lid: "NO_REVIEW_TIME" for lid in GB._records(c)})
 
 
 @pytest.mark.parametrize("mutate,reason", [

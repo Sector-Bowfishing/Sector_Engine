@@ -31,5 +31,14 @@ enum BrainCopyRead {
 
     static func date(_ s: String?) -> Date? { s.flatMap(LakeLevelOutputAPI.isoDate) }
 
+    /// A source time more than this after the request time is refused: a future time never counts as fresh.
+    static let maxFutureSkew: TimeInterval = 10 * 60
+
+    /// The parsed time, or nil when it is unparseable or more than `maxFutureSkew` after `now`.
+    static func past(_ s: String?, now: Date) -> Date? {
+        guard let d = date(s), d <= now.addingTimeInterval(maxFutureSkew) else { return nil }
+        return d
+    }
+
     static func finite(_ x: Double?) -> Double? { x.flatMap { $0.isFinite ? $0 : nil } }
 }

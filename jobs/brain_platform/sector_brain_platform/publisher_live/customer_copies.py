@@ -9,6 +9,7 @@ nothing and writes nothing. Pure: no clock (the caller passes `now`), no I/O, an
 """
 from __future__ import annotations
 
+import datetime as dt
 from collections.abc import Mapping
 
 from .customer_lake_level import _iso, _num, _time, ready  # noqa: F401  (re-exported: one definition of each)
@@ -22,6 +23,8 @@ SWITCHES = {
 }
 RUNNERS = ("pulse", "cloud", "engine")              # spec §4 `runner`
 NOT_ENABLED = "NOT_ENABLED"
+#: A source time more than this after `now` is refused (clock skew allowance); it never counts as fresh.
+MAX_FUTURE_SKEW = dt.timedelta(minutes=10)
 
 
 def enabled(copy_name: str, env) -> bool:
@@ -33,6 +36,32 @@ def utc(s):
     """An ISO 8601 time WITH a zone, else None (a zoneless time cannot be compared and is never guessed)."""
     t = _time(s)
     return t if t is not None and t.tzinfo is not None else None
+
+
+def future(t, now) -> bool:
+    """True when `t` is more than MAX_FUTURE_SKEW after `now`."""
+    return t is not None and t > now + MAX_FUTURE_SKEW
+
+
+def stale_after_hours(updates: dict, brain_key: str):
+    """A Brain's published staleAfterHours from its registry write in the same write set (the child, or the whole node); None when absent."""
+    u = {k.lstrip("/"): v for k, v in (updates or {}).items()}
+    if _num(u.get(brain_key + "/staleAfterHours")) is not None:
+        return u[brain_key + "/staleAfterHours"]
+    node = u.get(brain_key)
+    return _num(node.get("staleAfterHours")) if isinstance(node, dict) else None
+
+
+def withdraw(previous: dict, unknown_for) -> tuple[dict, dict]:
+    """Switch off: compute nothing new, but write UNKNOWN (reason NOT_ENABLED) over every stored per-lake copy that is not already UNKNOWN,
+    the same withdrawal as a failing gate. Nothing else is written."""
+    writes, reasons = {}, {}
+    for path, c in sorted((previous or {}).items()):
+        if isinstance(c, dict) and isinstance(c.get("lakeId"), str) and c["lakeId"]:
+            reasons[c["lakeId"]] = NOT_ENABLED
+            if c.get("status") != "UNKNOWN":
+                writes[path] = unknown_for(c["lakeId"])
+    return writes, reasons
 
 
 def check_runner(runner: str) -> str:

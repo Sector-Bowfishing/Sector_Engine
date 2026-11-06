@@ -114,6 +114,9 @@ Four more CUSTOMER-lane copies follow §3 and §6 exactly: a pure Publisher plan
 written once over a copy that stops passing) and a read-only Engine reader per copy (every gate fails closed to UNKNOWN with a
 reason; freshness checked again on every request). Each Publisher writer also sits behind its own env switch, **default off**.
 Nothing is wired: no writer is called by the LivePublisher, no reader is called by `/conditions`, and there is no reader identity.
+Review fixes (#144): a switch turned off withdraws every live copy once with `status: UNKNOWN` (reason `NOT_ENABLED`); a source time more
+than 10 minutes in the future is refused by writers and readers; clarity freshness is `min(freshUntil, evaluationTime + staleAfterHours)`
+so a new run cannot make an old evaluation look fresh; a generation binding is `STALE` 30 days after its review time.
 
 | Copy | Schema | Publisher writer (switch) | Source | Engine reader |
 |---|---|---|---|---|

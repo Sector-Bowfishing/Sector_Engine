@@ -24,19 +24,20 @@ final class ConditionsBrainOutputTests: XCTestCase {
     }
 
     static func waterTemp(schema: String = WaterTempBrainOutputAPI.copySchema, lakeId: String = lake, status: String = "AVAILABLE",
-                          value: String = "64.2", kind: String = "measured", freshUntil: String = "2026-11-10T21:00:00Z") -> String {
+                          value: String = "64.2", kind: String = "measured", freshUntil: String = "2026-11-10T21:00:00Z",
+                          observedAt: String = "2026-11-10T15:00:00Z") -> String {
         """
-        {"schema":"\(schema)","lakeId":"\(lakeId)","status":"\(status)","valueF":\(value),"kind":"\(kind)","observedAt":"2026-11-10T15:00:00Z",
+        {"schema":"\(schema)","lakeId":"\(lakeId)","status":"\(status)","valueF":\(value),"kind":"\(kind)","observedAt":"\(observedAt)",
          "freshUntil":"\(freshUntil)","runner":"cloud","publishId":"p-1"}
         """
     }
 
     static func binding(schema: String = GenerationBindingOutputAPI.copySchema, lakeId: String = lake, status: String? = nil,
-                        damName: String = "Guntersville Dam") -> String {
+                        damName: String = "Guntersville Dam", updatedAt: String = "2026-10-13T00:00:00Z") -> String {
         let s = status.map { "\"status\":\"\($0)\"," } ?? ""
         return """
         {"schema":"\(schema)","lakeId":"\(lakeId)",\(s)"operatorId":"tva","damId":"tva:GUH","damName":"\(damName)","tvaCode":"GUH",
-         "updatedAt":"2026-10-13T00:00:00Z"}
+         "updatedAt":"\(updatedAt)"}
         """
     }
 
@@ -99,6 +100,7 @@ final class ConditionsBrainOutputTests: XCTestCase {
             (await clarityOut(Self.clarity(lakeId: "Guntersville|TN")), BrainCopyReason.lakeIdMismatch),
             (await clarityOut(Self.clarity(freshUntil: "2026-11-10T15:29:59Z")), BrainCopyReason.stale),
             (await clarityOut(Self.clarity(observedAt: "yesterday")), BrainCopyReason.stale),
+            (await clarityOut(Self.clarity(observedAt: "2026-11-10T15:40:01Z")), BrainCopyReason.stale),    // > 10 min in the future
             (await clarityOut(Self.clarity(status: "UNKNOWN")), BrainCopyReason.noSource),
             (await clarityOut(Self.clarity(status: "SOMETHING_NEW")), BrainCopyReason.noSource),
             (await clarityOut(Self.clarity(central: "null")), BrainCopyReason.noValue),
@@ -141,6 +143,7 @@ final class ConditionsBrainOutputTests: XCTestCase {
             (await waterTempOut(Self.waterTemp(lakeId: "Wheeler|AL")), BrainCopyReason.lakeIdMismatch),
             (await waterTempOut(Self.waterTemp(freshUntil: "2026-11-10T15:00:00Z")), BrainCopyReason.stale),
             (await waterTempOut(Self.waterTemp(status: "UNKNOWN")), BrainCopyReason.noSource),
+            (await waterTempOut(Self.waterTemp(observedAt: "2026-11-11T15:00:00Z")), BrainCopyReason.stale),
             (await waterTempOut(Self.waterTemp(value: "null")), BrainCopyReason.noValue),
             (await waterTempOut(Self.waterTemp(kind: "satellite")), BrainCopyReason.noValue),
         ]
@@ -167,6 +170,9 @@ final class ConditionsBrainOutputTests: XCTestCase {
             (await bindingOut(Self.binding(lakeId: "Wheeler|AL")), BrainCopyReason.lakeIdMismatch),
             (await bindingOut(Self.binding(status: "UNKNOWN")), BrainCopyReason.noSource),
             (await bindingOut(Self.binding(damName: "")), BrainCopyReason.noValue),
+            (await bindingOut(Self.binding(updatedAt: "2026-10-11T15:29:59Z")), BrainCopyReason.stale),     // 30 days + 1 s
+            (await bindingOut(Self.binding(updatedAt: "2026-11-10T15:40:01Z")), BrainCopyReason.stale),     // future
+            (await bindingOut(Self.binding(updatedAt: "2026-10-13")), BrainCopyReason.stale),               // unparseable
         ]
         for (o, reason) in cases {
             XCTAssertEqual(o.status, "UNKNOWN", reason)
@@ -190,6 +196,7 @@ final class ConditionsBrainOutputTests: XCTestCase {
             (await windOut(Self.wind(schema: "sector-customer-wind-model-v1")), BrainCopyReason.schemaMismatch),
             (await windOut(Self.wind(updatedAt: "2026-10-27T15:29:59Z")), BrainCopyReason.stale),       // 14 days + 1 s
             (await windOut(Self.wind(updatedAt: "not a date")), BrainCopyReason.stale),
+            (await windOut(Self.wind(updatedAt: "2026-11-10T15:40:01Z")), BrainCopyReason.stale),          // > 10 min in the future
             (await windOut(Self.wind(status: "UNKNOWN")), BrainCopyReason.noSource),
             (await windOut(Self.wind(tonight: "ncep_nbm_conus")), BrainCopyReason.noValue),             // WS-5: tonight stays best_match
             (await windOut(Self.wind(later: "gfs_global")), BrainCopyReason.noValue),
@@ -201,5 +208,25 @@ final class ConditionsBrainOutputTests: XCTestCase {
         }
         let edge = await windOut(Self.wind(updatedAt: "2026-10-27T15:30:00Z"))                         // exactly 14 days: still fresh
         XCTAssertEqual(edge.status, "AVAILABLE")
+    }
+
+    // MARK: shared
+
+    func testFractionalSecondsAndSmallClockSkewAreAccepted() async {
+        let frac = await clarityOut(Self.clarity(freshUntil: "2026-11-10T16:00:00.250Z", observedAt: "2026-11-10T15:00:00.123Z"))
+        XCTAssertEqual(frac.status, "AVAILABLE")
+        let skew = await clarityOut(Self.clarity(observedAt: "2026-11-10T15:40:00Z"))                     // exactly 10 min ahead
+        XCTAssertEqual(skew.status, "AVAILABLE")
+        let wind = await windOut(Self.wind(updatedAt: "2026-11-05T12:00:00.5Z"))
+        XCTAssertEqual(wind.status, "AVAILABLE")
+    }
+
+    func testEmptyLakeIdReturnsEarly() async {
+        let r = Reader(nodes: [ClarityBrainOutputAPI.copyPath(""): Self.clarity(lakeId: "")])
+        let c = await ClarityBrainOutputAPI.output(lakeId: "", reader: r, now: Self.now)
+        let t = await WaterTempBrainOutputAPI.output(lakeId: "", reader: r, now: Self.now)
+        let g = await GenerationBindingOutputAPI.output(lakeId: "", reader: r, now: Self.now)
+        for reason in [c.reason, t.reason, g.reason] { XCTAssertEqual(reason, BrainCopyReason.noPublication) }
+        XCTAssertNil(c.centralFt)
     }
 }

@@ -21,6 +21,12 @@ copies. A separate foundation PR adds the tile flags and shadow helper, so nothi
 - **Rules:** `platform/security/rtdb.rules.customer-copies.PROPOSED.json`, not applied (deny every client, as today).
 - Design note `CUSTOMER_BRAIN_OUTPUT_PATH_V1.md` §8.
 
+## Review fixes (independent review of #144)
+- Clarity freshness bounded by `evaluationTime + staleAfterHours` (a 4-day-old evaluation re-published by a new run is STALE).
+- Switch off withdraws live copies with UNKNOWN (`NOT_ENABLED`); generation binding STALE after 30 days in the reader.
+- Source times more than 10 minutes in the future are refused (writers and readers); zoneless `reviewedAt` is unparseable;
+  empty lakeId returns early; fractional-second dates tested.
+
 ## Gaps (owner / owning Brain)
 - Water Temp `modeled` lakes publish no source observation time: no copy (`NO_OBSERVATION_TIME`).
 - Lake publishes no dam bindings: `reviewed-lake-bindings-v1` binds pool sources only. Writer reads a proposed `damBinding`; today every lake is `NO_DAM_BINDING`.

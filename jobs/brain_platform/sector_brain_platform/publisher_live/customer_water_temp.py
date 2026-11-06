@@ -4,13 +4,13 @@ Schema sector-customer-water-temp-v1: {schema, lakeId, status, valueF, kind, obs
 Source: the Water Temp Brain's published per-lake state (`lakes/{k}/states/waterTemp`) and its `staleAfterHours` (the registry write
 in the same write set). Gates, all fail closed:
 
-  0. switch      PUBLISHER_CUSTOMER_WATER_TEMP=1 (default off)
+  0. switch      PUBLISHER_CUSTOMER_WATER_TEMP=1 (default off; a stored copy is withdrawn with UNKNOWN once)
   1. readiness   the Water Temp Brain's status is BETA or higher
   2. publication the lake's state exists and its stored lakeId matches
   3. fresh       stale and evidenceStale are both False
   4. source      kind `measured` with a source observation time (lastObservationAt) -> AVAILABLE
   5. value       currentTempF is a finite number in degF
-  6. not expired observedAt + staleAfterHours (the Brain's own rule) is not before now; that sum is the copy's freshUntil
+  6. not expired lastObservationAt is not more than 10 minutes in the future, and observedAt + staleAfterHours (the Brain's own rule) is not before now; that sum is the copy's freshUntil
 
 GAP (owner decision): a `modeled` state carries no source observation time (lastObservationAt is null; the Brain's only time is its run
 time, which the copy may never use). Modeled lakes therefore get no copy (reason NO_OBSERVATION_TIME) and stay on the old path, although
@@ -35,14 +35,12 @@ def copy_path(lake_id: str) -> str:
 
 def stale_after_hours(updates: dict):
     """The Brain's published staleAfterHours, from its registry write (whole node or the child); None when absent."""
-    u = {k.lstrip("/"): v for k, v in (updates or {}).items()}
-    if CC._num(u.get(BRAIN_KEY + "/staleAfterHours")) is not None:
-        return u[BRAIN_KEY + "/staleAfterHours"]
-    node = u.get(BRAIN_KEY)
-    return CC._num(node.get("staleAfterHours")) if isinstance(node, dict) else None
+    return CC.stale_after_hours(updates, BRAIN_KEY)
 
 
 def copy_for(state, lake_id: str, *, readiness: str | None, stale_hours, runner: str, publish_id: str, now: dt.datetime) -> tuple[dict | None, str]:
+    if not lake_id:
+        return None, "NO_PUBLICATION"
     if not CC.ready(readiness):
         return None, "WATER_TEMP_NOT_BETA"
     if not isinstance(state, dict) or state.get("lakeId") != lake_id:
@@ -56,6 +54,8 @@ def copy_for(state, lake_id: str, *, readiness: str | None, stale_hours, runner:
     observed = CC.utc(state.get("lastObservationAt"))
     if observed is None:
         return None, "NO_OBSERVATION_TIME"
+    if CC.future(observed, now):
+        return None, "STALE"
     value = CC._num(state.get("currentTempF"))
     if value is None or state.get("unit", "degF") != "degF":
         return None, "NO_VALUE"
@@ -75,7 +75,7 @@ def unknown_copy(lake_id: str, *, runner: str, publish_id: str) -> dict:
 def plan(updates: dict, previous: dict, *, readiness: str | None, runner: str, publish_id: str, now: dt.datetime, env) -> tuple[dict, dict]:
     states = CC.states_at(updates, SLOT)
     if not CC.enabled(COPY, env):
-        return {}, {lid: CC.NOT_ENABLED for lid in states}
+        return CC.withdraw(previous, lambda lid: unknown_copy(lid, runner=runner, publish_id=publish_id))
     hours = stale_after_hours(updates)
     return CC.plan_lakes(states, previous, path_for=copy_path,
                          copy_for=lambda lid: copy_for(states.get(lid), lid, readiness=readiness, stale_hours=hours, runner=runner,

@@ -3,7 +3,7 @@
 Schema sector-customer-generation-binding-v1: {schema, lakeId, operatorId, damId, damName, cwmsOffice?, tvaCode?, updatedAt}.
 Source: the Lake Brain's reviewed bindings contract (brains/lake/contracts/reviewed-lake-bindings-v1.json). Gates, all fail closed:
 
-  0. switch      PUBLISHER_CUSTOMER_GENERATION_BINDING=1 (default off)
+  0. switch      PUBLISHER_CUSTOMER_GENERATION_BINDING=1 (default off; a stored copy is withdrawn with UNKNOWN once)
   1. readiness   the Lake Brain's status is BETA or higher
   2. contract    schema reviewed-lake-bindings-v1, owner lake-brain, and a review date (`reviewedAt`, else the date in `bindingVersion`)
   3. binding     the lake's reviewed record carries a `damBinding` {operatorId, damId, damName, cwmsOffice?, tvaCode?} with the three
@@ -41,10 +41,10 @@ def load_contract(path: str = CONTRACT_FILE) -> dict:
 
 
 def reviewed_at(contract: dict):
-    """The Brain's review time: `reviewedAt`, else the date in `bindingVersion` (bindings-YYYY-MM-DD.n). Never a run time."""
-    t = CC._time(contract.get("reviewedAt"))
-    if t is not None:
-        return t if t.tzinfo else t.replace(tzinfo=dt.timezone.utc)
+    """The Brain's review time: `reviewedAt` (with a zone; a zoneless one is unparseable and never assumed UTC), else the date in
+    `bindingVersion` (bindings-YYYY-MM-DD.n, a calendar date read as 00:00Z). Never a run time."""
+    if "reviewedAt" in contract:
+        return CC.utc(contract.get("reviewedAt"))
     m = re.fullmatch(r"bindings-(\d{4}-\d{2}-\d{2})\.\d+", str(contract.get("bindingVersion", "")))
     return dt.datetime.fromisoformat(m.group(1)).replace(tzinfo=dt.timezone.utc) if m else None
 
@@ -58,6 +58,8 @@ def _records(contract: dict) -> dict:
 
 
 def copy_for(record, lake_id: str, *, readiness: str | None, updated) -> tuple[dict | None, str]:
+    if not lake_id:
+        return None, "NO_PUBLICATION"
     if not CC.ready(readiness):
         return None, "LAKE_NOT_BETA"
     if not isinstance(record, dict) or record.get("lakeId") != lake_id:
@@ -88,9 +90,9 @@ def plan(contract: dict, previous: dict, *, readiness: str | None, env) -> tuple
     contract = contract if isinstance(contract, dict) else {}
     valid = contract.get("schema") == SOURCE_SCHEMA and contract.get("owner") == "lake-brain"
     records = _records(contract) if valid else {}
-    if not CC.enabled(COPY, env):
-        return {}, {lid: CC.NOT_ENABLED for lid in records}
     updated = reviewed_at(contract) if valid else None
+    if not CC.enabled(COPY, env):
+        return CC.withdraw(previous, lambda lid: unknown_copy(lid, updated=updated))
     return CC.plan_lakes(records, previous, path_for=copy_path,
                          copy_for=lambda lid: copy_for(records.get(lid), lid, readiness=readiness, updated=updated),
                          unknown_for=lambda lid: unknown_copy(lid, updated=updated))

@@ -50,6 +50,7 @@ public enum ClarityBrainOutputAPI {
     }
 
     public static func output(lakeId: String, reader: BrainOutputReader?, now: Date = Date()) async -> ClarityBrainOutput {
+        guard !lakeId.isEmpty else { return .unknown(lakeId, BrainCopyReason.noPublication) }
         let c: CustomerCopy
         switch await BrainCopyRead.copy(CustomerCopy.self, path: copyPath(lakeId), schema: copySchema, schemaOf: \.schema, reader: reader) {
         case .failure(let f): return .unknown(lakeId, f.reason)
@@ -59,7 +60,7 @@ public enum ClarityBrainOutputAPI {
         guard c.status == LakeLevelOutput.available || c.status == LakeLevelOutput.estimate else {
             return .unknown(lakeId, BrainCopyReason.noSource)
         }
-        guard BrainCopyRead.date(c.observedAt) != nil, let until = BrainCopyRead.date(c.freshUntil), now <= until else {
+        guard BrainCopyRead.past(c.observedAt, now: now) != nil, let until = BrainCopyRead.date(c.freshUntil), now <= until else {
             return .unknown(lakeId, BrainCopyReason.stale)
         }
         guard let central = BrainCopyRead.finite(c.centralFt) else { return .unknown(lakeId, BrainCopyReason.noValue) }

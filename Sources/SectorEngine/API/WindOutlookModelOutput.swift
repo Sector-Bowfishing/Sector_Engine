@@ -5,7 +5,7 @@
 //  Reads only `customer/wind/outlookModel` (schema `sector-customer-wind-outlook-model-v1`). It is the Brain-owned
 //  replacement for the env `SECTOR_WIND_FORECAST_MODEL` (#125). Every gate fails closed to UNKNOWN, which means the env
 //  path. Tonight always stays `best_match` (WS-5); a copy that says otherwise is refused. A decision is stale 14 days
-//  after its `updatedAt`. Not wired into `/conditions` here.
+//  after its `updatedAt`, and an `updatedAt` more than 10 minutes in the future is refused. Not wired into `/conditions` here.
 //
 
 import Foundation
@@ -52,7 +52,7 @@ public enum WindOutlookModelOutputAPI {
         case .success(let v): c = v
         }
         guard c.status == nil || c.status == LakeLevelOutput.available else { return .unknown(BrainCopyReason.noSource) }
-        guard let updated = BrainCopyRead.date(c.updatedAt), now <= updated.addingTimeInterval(maxAge) else {
+        guard let updated = BrainCopyRead.past(c.updatedAt, now: now), now <= updated.addingTimeInterval(maxAge) else {
             return .unknown(BrainCopyReason.stale)
         }
         guard c.tonight == tonightModel, let later = c.nights2to7, models.contains(later), let by = c.decidedBy, !by.isEmpty else {
