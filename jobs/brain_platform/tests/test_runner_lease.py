@@ -22,10 +22,34 @@ def s():
     return MemoryObjectStore()
 
 
-def test_committed_policy_keeps_the_status_quo_and_failover_off():
+def test_committed_policy_makes_only_water_clarity_pulse_primary_and_keeps_failover_off():
+    """Sector_Ops #51 O4 (owner, 2026-11-06): water-clarity primary = pulse, failover OFF. Every other Brain stays on the cloud."""
     p = RL.load_policy()
-    assert p["defaultPrimary"] == "cloud" and p["primary"] == {} and p["failover"]["enabled"] is False
-    assert all(RL.primary(p, b) == "cloud" and not RL.failover_enabled(p, b) for b in ("water-clarity", "wind", "lake-brain"))
+    assert p["defaultPrimary"] == "cloud" and p["primary"] == {"water-clarity": "pulse"}
+    assert p["failover"] == {"enabled": False, "brains": [], "approvalRef": None}
+    assert RL.primary(p, "water-clarity") == "pulse"
+    assert all(RL.primary(p, b) == "cloud" for b in ("wind", "lake-brain", "water-temp", "sector-intelligence", "fish"))
+    assert not any(RL.failover_enabled(p, b) for b in ("water-clarity", "wind", "lake-brain", "water-temp", "sector-intelligence"))
+
+
+def test_every_non_cloud_primary_in_the_committed_policy_has_an_owner_approval_ref():
+    p = RL.load_policy()
+    approvals = p.get("approvals") or {}
+    for brain, holder in (p.get("primary") or {}).items():
+        assert holder in RL.HOLDERS and holder != "cloud"
+        assert str(approvals.get(brain, "")).startswith("owner-approval-"), brain
+
+
+def test_committed_policy_with_pulse_primary_never_lets_the_cloud_start_water_clarity(s):
+    """Failover OFF: with Pulse primary the cloud refuses Water Clarity with no lease, a fresh Pulse lease, or an expired one."""
+    p = RL.load_policy()
+    assert RL.cloud_may_start(RL.orchestrator_view(s), p, "water-clarity", T0) == (False, "PRIMARY_PULSE_FAILOVER_OFF")
+    RL.grant(RL.orchestrator_view(s), p, "water-clarity", "pulse", "c1", T0)
+    assert RL.cloud_may_start(RL.orchestrator_view(s), p, "water-clarity", m(5))[0] is False
+    assert RL.cloud_may_start(RL.orchestrator_view(s), p, "water-clarity", m(60)) == (False, "PRIMARY_PULSE_FAILOVER_OFF")
+    with pytest.raises(RL.LeaseBusy, match="failover to cloud is OFF"):
+        RL.grant(RL.orchestrator_view(s), p, "water-clarity", "cloud", "c2", m(60))
+    assert RL.cloud_may_start(RL.orchestrator_view(s), p, "wind", T0) == (True, "CLOUD_PRIMARY")
 
 
 def test_only_the_policy_primary_gets_a_first_lease(s):
