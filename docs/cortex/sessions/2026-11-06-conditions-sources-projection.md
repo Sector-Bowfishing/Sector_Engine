@@ -11,7 +11,7 @@ The Orchestrator projection that feeds the Sector Ops "Conditions sources" panel
 - `orchestrate.py` step 5e calls it only when the switch is on, and never with `--health-only` or `--control-only`. With the switch off nothing is probed, read or written.
 - `deploy-job.sh`: stages the points file, the phone contract and its validator into the image, and passes `CONDITIONS_SOURCES_PROJECTION` (default `0`, only `0` or `1` accepted).
 - `RTDB_PATH_OWNERSHIP_MATRIX.json`/`.md`: `/control/conditionsSourcesV1` registered as Orchestrator-owned, `NOT_VERIFIED` (not yet live).
-- Tests: `jobs/brain-orchestrator/tests/test_conditions_sources.py` (34 tests, no network) on the redacted 2026-11-06 goldens and a synthetic `tileSources` overlay.
+- Tests: `jobs/brain-orchestrator/tests/test_conditions_sources.py` (33 tests, no network) on the redacted 2026-11-06 goldens and a synthetic `tileSources` overlay.
 
 ## Database rules
 None needed. Ops already reads `/control` as a whole (`platform/security/rtdb.rules.target.json`: `control/.read` for `sectorOpsReader`), the same grant that serves `control/healthV1` and `control/engineeringStatusV1`. The platform writer guard (`ownership.py`) already allows `control/*`.
