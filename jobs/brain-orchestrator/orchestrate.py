@@ -895,7 +895,7 @@ def main(argv=None) -> int:
     #     --control-only (their write sets stay what they are). Probes the Engine's GET /conditions read-only; a failed probe never breaks the cycle.
     if CSP.enabled() and not a.health_only and not a.control_only:
         try:
-            csp = CSP.stage(live, db, now, write=write or a.dry_run, brains=brains, policy=_runner_policy_or_none(),
+            csp = CSP.stage(live, db, now, write=write, dry_run=a.dry_run, brains=brains, policy=_runner_policy_or_none(),
                             lease_holder=lambda b: _fresh_lease_holder(a, b, now))
             print(f"conditions sources: {json.dumps(csp, sort_keys=True)}", flush=True)
         except Exception as e:                                   # never breaks the cycle

@@ -24,6 +24,8 @@ import datetime as dt
 import importlib.util
 import json
 import os
+import re
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -34,7 +36,8 @@ SCHEMA = "sector-conditions-sources-v1"
 ENV_SWITCH = "CONDITIONS_SOURCES_PROJECTION"
 MIN_INTERVAL_MINUTES = 15
 BUDGET_SECONDS = 120.0
-REQUEST_TIMEOUT_SECONDS = 30.0
+REQUEST_TIMEOUT_SECONDS = 30.0                  # whole-request deadline per probe (a worker that overruns it is abandoned)
+CONCURRENCY = 4                                 # Engine concurrency is 1 per instance: 4 parallel probes scale it to at most 4 instances
 DEFAULT_ENGINE_URL = "https://sector-engine-e43utajroa-uc.a.run.app"     # the same default every Engine reader in this repository uses
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -134,28 +137,61 @@ def lake_key(point: dict) -> str:
     return point.get("lakeId") or point["slug"]
 
 
+def rotation(now: dt.datetime, n: int) -> int:
+    """Start offset for this cycle: steps every MIN_INTERVAL_MINUTES, so a budget cut never starves the same points every cycle."""
+    return int(now.timestamp() // (MIN_INTERVAL_MINUTES * 60)) % n if n else 0
+
+
+def _one(p: dict, base_url: str, ua: str, fetch, limit: float) -> dict:
+    url = f"{base_url}/conditions?lat={float(p['lat']):.5f}&lon={float(p['lon']):.5f}"
+    try:
+        status, body, headers = fetch(url, limit, ua)
+        doc = json.loads(body)
+        if not isinstance(doc, dict):
+            raise ValueError("response is not a JSON object")
+        return {"point": p, "ok": True, "status": status, "body": doc, "headers": headers or {}}
+    except urllib.error.HTTPError as e:
+        return {"point": p, "ok": False, "error": f"HTTP {e.code}"}
+    except Exception as e:                                                 # noqa: BLE001 - one failed point never stops the others
+        return {"point": p, "ok": False, "error": f"{type(e).__name__}: {str(e)[:120]}"}
+
+
 def probe(points: list[dict], base_url: str, *, ua: str, fetch=http_fetch, budget_seconds: float = BUDGET_SECONDS,
-          timeout_seconds: float = REQUEST_TIMEOUT_SECONDS, clock=time.monotonic) -> tuple[list[dict], float]:
-    """Sequential GET /conditions per point within one total budget. -> (results, seconds). Each result: {point, ok, body?, headers?, error?}."""
+          timeout_seconds: float = REQUEST_TIMEOUT_SECONDS, concurrency: int = CONCURRENCY, offset: int = 0,
+          clock=time.monotonic, poll_seconds: float = 0.02) -> tuple[list[dict], float]:
+    """GET /conditions per point, at most `concurrency` at once, within one total budget. Points start in rotated order (`offset`). Each request
+    runs on its own daemon worker with a hard whole-request deadline (min(timeout, budget left at its start)); an overrunning worker is abandoned
+    and its slot freed. -> (results in `points` order, seconds). Each result: {point, ok, body?, headers?, error?}."""
+    n = len(points)
+    order = [(offset + k) % n for k in range(n)] if n else []
+    results: dict[int, dict] = {}
+    active: dict[int, tuple[list, float, float]] = {}                     # index -> (box, started, limit)
     t0 = clock()
-    out = []
-    for p in points:
-        left = budget_seconds - (clock() - t0)
-        if left <= 1:
-            out.append({"point": p, "ok": False, "error": "not attempted: probe budget exhausted"})
-            continue
-        url = f"{base_url}/conditions?lat={float(p['lat']):.5f}&lon={float(p['lon']):.5f}"
-        try:
-            status, body, headers = fetch(url, min(timeout_seconds, left), ua)
-            doc = json.loads(body)
-            if not isinstance(doc, dict):
-                raise ValueError("response is not a JSON object")
-            out.append({"point": p, "ok": True, "status": status, "body": doc, "headers": headers or {}})
-        except urllib.error.HTTPError as e:
-            out.append({"point": p, "ok": False, "error": f"HTTP {e.code}"})
-        except Exception as e:                                             # noqa: BLE001 - one failed point never stops the others
-            out.append({"point": p, "ok": False, "error": f"{type(e).__name__}: {str(e)[:120]}"})
-    return out, round(clock() - t0, 1)
+    while order or active:
+        for i, (box, started, limit) in list(active.items()):
+            if box:
+                results[i] = box[0]
+                del active[i]
+            elif clock() - started >= limit:
+                results[i] = {"point": points[i], "ok": False, "error": f"deadline exceeded ({limit:.0f} s)"}
+                del active[i]
+        while order and len(active) < concurrency:
+            left = budget_seconds - (clock() - t0)
+            if left <= 1:
+                break
+            i = order.pop(0)
+            box: list = []
+            limit = min(timeout_seconds, left)
+            th = threading.Thread(target=lambda b=box, p=points[i], lim=limit: b.append(_one(p, base_url, ua, fetch, lim)), daemon=True)
+            th.start()
+            active[i] = (box, clock(), limit)
+        if order and not active and budget_seconds - (clock() - t0) <= 1:
+            for i in order:
+                results[i] = {"point": points[i], "ok": False, "error": "not attempted: probe budget exhausted"}
+            order = []
+        if active:
+            time.sleep(poll_seconds)
+    return [results[i] for i in range(n)], round(clock() - t0, 1)
 
 
 # --------------------------------------------------------------------------------------------------------------------------------- per-response tiles
@@ -251,6 +287,33 @@ def freshness(entry: dict, now: dt.datetime) -> str:
 
 _RANK = {"green": 0, "amber": 1, "red": 2}
 
+# Phone-contract paths per tile (the response fields each tile is built from). A violation at, under or above one of them fails that tile.
+CONTRACT_PATHS = {
+    "humidity": ("weather.humidity",),
+    "pressure": ("weather.pressure", "weather.pressureTrend", "weather.pressureChange"),
+    "temperature": ("weather.temperature",),
+    "sky": ("weather.cloudCover", "weather.weatherCode", "weather.conditionSymbol", "weather.conditionDescription"),
+    "wind": ("weather.windSpeed", "weather.windDirection"),
+    "windOutlookModel": ("nights",),
+    "waterLevel": ("water",),
+    "clarity": ("clarityVisibility", "clarityRain", "clarityGauges"),
+    "waterTemp": ("waterTemp", "waterTempModel", "waterTempState"),
+    "generation": ("generation", "discharge"),
+    "moon": ("moonIllumination",),
+}
+_INDEX = re.compile(r"\[\d+\]")
+
+
+def violated_tiles(violations) -> set:
+    """Tiles whose own contract paths a validator violation touches ("weather.humidity: ...", "nights[3].rating: ...", "weather: required ...")."""
+    hit = set()
+    for v in violations:
+        path = _INDEX.sub("", str(v).split(":", 1)[0].strip())
+        for tile, prefixes in CONTRACT_PATHS.items():
+            if any(path == q or path.startswith(q + ".") or q.startswith(path + ".") for q in prefixes):
+                hit.add(tile)
+    return hit
+
 
 # --------------------------------------------------------------------------------------------------------------------------------- runners
 def brain_runners(brain_ids, policy: dict | None, lease_holder=None) -> dict:
@@ -296,7 +359,7 @@ def build(results: list[dict], *, now: dt.datetime, brains: dict | None = None, 
     runners = runners or {}
     errors = list(extra_errors or [])
     per_point = []                       # (key, {tile: entry}) for answered points; None entries for failed ones
-    violations, checked, from_ts, revisions = 0, 0, 0, []
+    violations, checked, from_ts, revisions, bad_tiles = 0, 0, 0, [], set()
     for r in results:
         key = lake_key(r["point"])
         if not r.get("ok"):
@@ -311,6 +374,7 @@ def build(results: list[dict], *, now: dt.datetime, brains: dict | None = None, 
             v = validator(body)
             if v:
                 violations += 1
+                bad_tiles |= violated_tiles(v)
                 errors.append({"lake": key, "error": f"phone contract: {len(v)} violation(s), first: {str(v[0])[:120]}"})
         hdr = {k.lower(): v for k, v in (r.get("headers") or {}).items()}
         revisions.append(body.get("engineRevision") or hdr.get("x-engine-revision"))
@@ -348,28 +412,44 @@ def build(results: list[dict], *, now: dt.datetime, brains: dict | None = None, 
         observed = [t for t in (_t(en.get("observedAt")) for en in covered) if t is not None and t <= now + dt.timedelta(minutes=5)]
         fetched = [t for t in (_t(en.get("fetchedAt")) for en in covered) if t is not None]
         bid = meta["brainId"]
-        if path == "brain":
-            runner = _most_common([en.get("runner") for en in all_en], (runners.get(bid) or {}).get("runner", "unknown"))
+        reported = _most_common([en.get("runner") for en in all_en], None)
+        if path == "brain":                                 # only a fresh runner lease proves who runs the Brain; a policy primary is intent, not evidence
+            rb = runners.get(bid) or {}
+            runner = rb.get("runner", "unknown") if rb.get("basis") == "lease" else "unknown"
         elif path == "engine":
             runner = "engine"
         else:
             runner = "app"
+        if path == "app":
+            basis = "device"
+        elif any(en.get("freshUntil") for en in covered):
+            basis = "freshUntil"
+        elif observed:
+            basis = "observedAt"
+        elif covered:
+            basis = "fetchedAt (no source observation time: capped at amber)"
+            fresh = "amber" if fresh == "green" else fresh
+        else:
+            basis = "none covered"
         t = {"class": PATH_CLASS.get(path, 2), "flag": _most_common([en.get("flag") for en in all_en], "unknown"),
-             "sourcePath": f"{path}:{source}", "fresh": fresh, "runner": runner,
+             "sourcePath": f"{path}:{source}", "fresh": fresh, "freshBasis": basis, "runner": runner,
              "coverage": {"ok": len(ok), "fallback": len(fb), "unknown": len(elig) - len(covered) + failed, "total": len(elig) + failed},
              "breaker": _breaker([en.get("breaker") for en in all_en]), "lakes": lakes}
         if observed:
             t["lastUpdate"] = _iso(max(observed))          # the source's newest observation time, never a run time (Amendment 1)
         if fetched:
             t["fetchedAt"] = _iso(max(fetched))
+        if reported and path == "brain":
+            t["runnerReported"] = reported                  # what the Brain copy says produced it; not proof of the current runner
         if contract_ok is not None:
-            t["contractOk"] = contract_ok                   # build 28 decodes strictly: one violation blanks every tile, so it is per response, not per tile
+            t["contractOk"] = tile not in bad_tiles         # this tile's own contract paths; the document-level contractOk covers the whole response
         if bid:
             t["brainId"] = bid
         doc_tiles[tile] = t
 
     answered = sum(1 for _, t in per_point if t is not None)
     doc = {"schema": SCHEMA, "generatedAt": _iso(now), "engineRevision": _most_common(revisions, "unknown"), "tiles": doc_tiles,
+           **({} if contract_ok is None else {"contractOk": contract_ok}),
            "brains": {bid: {k: v for k, v in {"lastSuccessfulRun": (brains.get(bid) or {}).get("lastSuccessfulRun") if isinstance(brains.get(bid), dict) else None,
                                                "runner": (runners.get(bid) or {}).get("runner", "unknown"),
                                                "runnerBasis": (runners.get(bid) or {}).get("basis", "unknown")}.items() if v is not None}
@@ -383,9 +463,12 @@ def build(results: list[dict], *, now: dt.datetime, brains: dict | None = None, 
 
 
 # --------------------------------------------------------------------------------------------------------------------------------- the cycle stage
-def stage(live, db, now: dt.datetime, *, write: bool, env=None, brains: dict | None = None, policy: dict | None = None, lease_holder=None,
-          fetch=http_fetch, points_file: str = POINTS_FILE, validator_file: str = VALIDATOR_FILE, clock=time.monotonic) -> dict:
-    """One cycle's projection. OFF (the default) touches nothing. Never raises for a probe failure; returns a short summary for the cycle log."""
+def stage(live, db, now: dt.datetime, *, write: bool, dry_run: bool = False, env=None, brains: dict | None = None, policy: dict | None = None,
+          lease_holder=None, fetch=http_fetch, points_file: str = POINTS_FILE, validator_file: str = VALIDATOR_FILE, clock=time.monotonic,
+          budget_seconds: float = BUDGET_SECONDS, timeout_seconds: float = REQUEST_TIMEOUT_SECONDS) -> dict:
+    """One cycle's projection. OFF (the default) touches nothing. Never raises for a probe failure; returns a short summary for the cycle log.
+    A degraded run (no probe points, or no point answered) writes nothing: the last good document stays, and the summary says why.
+    `dry_run`: the update goes to the dry-run store (the orchestrator's in-memory _ReadThrough) and the state is DRY_RUN."""
     env = os.environ if env is None else env
     if not enabled(env):
         return {"state": "OFF"}
@@ -399,15 +482,21 @@ def stage(live, db, now: dt.datetime, *, write: bool, env=None, brains: dict | N
     try:
         points = load_points(points_file)
     except Exception as e:                                                 # noqa: BLE001
-        points = []
-        extra.append({"lake": "*", "error": f"probe points unreadable: {type(e).__name__}"})
+        return {"state": "SKIPPED", "reason": f"probe points unreadable ({type(e).__name__}): nothing written, last good document kept"}
+    if not points:
+        return {"state": "SKIPPED", "reason": "no probe points: nothing written, last good document kept"}
     validator = load_validator(validator_file)
     if validator is None:
         extra.append({"lake": "*", "error": "phone-contract validator unavailable: contractOk unknown"})
-    results, secs = probe(points, engine_url(env), ua=user_agent(env.get("DEPLOYMENT_VERSION")), fetch=fetch, clock=clock)
+    results, secs = probe(points, engine_url(env), ua=user_agent(env.get("DEPLOYMENT_VERSION")), fetch=fetch, clock=clock,
+                          offset=rotation(now, len(points)), budget_seconds=budget_seconds, timeout_seconds=timeout_seconds)
     runners = brain_runners([m["brainId"] for m in TILES.values() if m["brainId"]], policy, lease_holder)
-    doc = build(results, now=now, brains=brains, runners=runners, validator=validator, seconds=secs, extra_errors=extra)
-    if write:
+    doc = build(results, now=now, brains=brains, runners=runners, validator=validator, seconds=secs, budget_seconds=budget_seconds, extra_errors=extra)
+    summary = {"answered": doc["probe"]["answered"], "points": doc["probe"]["points"], "seconds": secs,
+               "errors": len(doc.get("errors") or []), "contractViolations": doc["probe"]["contractViolations"]}
+    if doc["probe"]["answered"] == 0:
+        first = (doc.get("errors") or [{}])[0].get("error", "")
+        return {"state": "SKIPPED", "reason": f"no point answered (first error: {first[:120]}): nothing written, last good document kept", **summary}
+    if write or dry_run:
         db.update({NODE: doc})
-    return {"state": "WRITTEN" if write else "COMPUTED", "answered": doc["probe"]["answered"], "points": doc["probe"]["points"],
-            "seconds": secs, "errors": len(doc.get("errors") or []), "contractViolations": doc["probe"]["contractViolations"]}
+    return {"state": "DRY_RUN" if dry_run else ("WRITTEN" if write else "COMPUTED"), **summary}

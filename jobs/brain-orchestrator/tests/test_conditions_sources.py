@@ -4,6 +4,8 @@ import copy
 import datetime as dt
 import json
 import os
+import threading
+import time
 import urllib.error
 
 import pytest
@@ -139,14 +141,17 @@ def test_todays_engine_derives_classes_and_marks_flags_unknown():
         assert t["coverage"]["ok"] + t["coverage"]["unknown"] == 17
     T = doc["tiles"]
     assert T["humidity"]["sourcePath"] == "engine:open-meteo" and T["humidity"]["coverage"] == {"ok": 17, "fallback": 0, "unknown": 0, "total": 17}
-    assert T["humidity"]["fresh"] == "green"
+    # no source observation time today: freshness is aged from the Engine's fetch time and capped at amber, and the tile says so
+    assert T["humidity"]["fresh"] == "amber" and T["humidity"]["freshBasis"].startswith("fetchedAt")
+    assert T["generation"]["fresh"] == "green" and T["generation"]["freshBasis"] == "observedAt"
+    assert doc["contractOk"] is True
     # Amendment 1: weather carries no observation time today, so there is no lastUpdate (a run time is never one); fetchedAt is the Engine's
     assert "lastUpdate" not in T["humidity"] and T["humidity"]["fetchedAt"] == max(golden(p["slug"])["generatedAt"] for p in POINTS)
     gl = T["humidity"]["lakes"]["Guntersville|AL"]
     assert gl == {"status": "AVAILABLE", "path": "engine", "source": "open-meteo", "eligible": True, "fetchedAt": "2026-11-06T20:05:19Z"}
     assert T["generation"]["lakes"]["Lake Hartwell|SC"]["lastUpdate"] == "2026-11-06T21:00:00Z"   # the point keeps the Engine's stamp as sent
     assert T["generation"]["lastUpdate"] == "2026-11-06T20:06:13Z"                              # but a future stamp never becomes the tile's lastUpdate
-    assert T["moon"]["sourcePath"] == "app:app" and T["moon"]["fresh"] == "green"
+    assert T["moon"]["sourcePath"] == "app:app" and T["moon"]["fresh"] == "green" and T["moon"]["freshBasis"] == "device"
     n_gen = sum("generation" in golden(p["slug"]) for p in POINTS)
     n_water = sum("water" in golden(p["slug"]) for p in POINTS)
     assert T["generation"]["coverage"]["ok"] == n_gen < 17 and T["waterLevel"]["coverage"]["ok"] == n_water < 17
@@ -163,10 +168,10 @@ def test_todays_engine_derives_classes_and_marks_flags_unknown():
     assert doc["brains"]["water-clarity"]["runner"] == "pulse" and set(doc["brains"]) == {"lake-brain", "water-clarity", "water-temp", "wind"}
 
 
-def test_requests_are_sequential_with_the_orchestrator_user_agent_and_engine_url():
+def test_requests_carry_the_orchestrator_user_agent_and_engine_url():
     f = Fetch()
     run(f)
-    assert len(f.calls) == 17
+    assert len(f.calls) == 17 and len({u for u, _, _ in f.calls}) == 17
     assert all(u.startswith("https://engine.test/conditions?lat=") for u, _, _ in f.calls)
     assert {ua for _, _, ua in f.calls} == {"Sector-Orchestrator/abc123def456"}
     assert all(t <= CSP.REQUEST_TIMEOUT_SECONDS for _, t, _ in f.calls)
@@ -215,12 +220,14 @@ def test_tile_sources_drive_flag_path_runner_breaker_and_freshness():
     assert T["sky"]["breaker"] == "open" and T["sky"]["coverage"] == {"ok": 0, "fallback": 17, "unknown": 0, "total": 17}
     assert T["temperature"]["breaker"] == "unknown"
     wl = T["waterLevel"]
-    assert (wl["class"], wl["flag"], wl["sourcePath"], wl["runner"], wl["fresh"]) == (1, "serve", "brain:lake-brain", "pulse", "green")
+    # no fresh lease: the tile's runner is unknown (a policy primary is intent, not proof); the copy's own claim is kept as runnerReported
+    assert (wl["class"], wl["flag"], wl["sourcePath"], wl["runner"], wl["fresh"]) == (1, "serve", "brain:lake-brain", "unknown", "green")
+    assert wl["runnerReported"] == "pulse" and wl["freshBasis"] == "freshUntil" and doc["brains"]["lake-brain"]["runnerBasis"] == "policy"
     assert wl["lakes"]["Guntersville|AL"] == {"status": "AVAILABLE", "observedAt": "2026-11-06T19:00:00Z", "path": "brain", "source": "lake-brain",
                                               "eligible": True, "lastUpdate": "2026-11-06T19:00:00Z", "fetchedAt": "2026-11-06T19:05:00Z"}
     assert wl["lastUpdate"] == "2026-11-06T19:00:00Z" and wl["fetchedAt"] == "2026-11-06T19:05:00Z"
     assert T["clarity"]["fresh"] == "amber"                                                         # past freshUntil, within twice its window
-    assert T["windOutlookModel"]["runner"] == "cloud" and T["moon"]["class"] == 3 and T["moon"]["sourcePath"] == "app:moon-v1"
+    assert T["windOutlookModel"]["runner"] == "unknown" and T["windOutlookModel"]["runnerReported"] == "cloud" and T["moon"]["class"] == 3 and T["moon"]["sourcePath"] == "app:moon-v1"
 
 
 def test_a_tile_missing_from_tile_sources_is_unknown_and_red():
@@ -264,40 +271,89 @@ def test_failed_probes_are_recorded_and_the_rest_is_written():
     assert h["lakes"]["Guntersville|AL"] == {"status": "UNKNOWN", "eligible": True}
 
 
-def test_every_probe_failing_still_writes_a_red_document():
+def test_no_answer_writes_nothing_and_keeps_the_last_good_document():
     f = Fetch(fail={p["slug"]: OSError("down") for p in POINTS})
     res, db = run(f)
+    assert res["state"] == "SKIPPED" and res["answered"] == 0 and "last good document kept" in res["reason"] and "OSError" in res["reason"]
+    assert db.writes == []
+
+
+def test_missing_points_writes_nothing(tmp_path):
+    empty = tmp_path / "empty.json"
+    empty.write_text('{"points": []}')
+    for pf in (str(tmp_path / "nope.json"), str(empty)):
+        f = Fetch()
+        res, db = run(f, points_file=pf)
+        assert res["state"] == "SKIPPED" and "last good document kept" in res["reason"] and db.writes == [] and f.calls == []
+
+
+def test_missing_validator_makes_contract_unknown_not_a_failure(tmp_path):
+    res, db = run(Fetch(), validator_file=str(tmp_path / "nope.py"))
     doc = db.writes[0][CSP.NODE]
     rtdb_safe(doc)
-    assert res["answered"] == 0 and len(doc["errors"]) == 17
-    assert all(t["fresh"] == "red" and t["coverage"]["ok"] == 0 and "contractOk" not in t for t in doc["tiles"].values())
+    assert res["state"] == "WRITTEN" and doc["errors"] == [{"lake": "*", "error": "phone-contract validator unavailable: contractOk unknown"}]
+    assert "contractOk" not in doc and all("contractOk" not in t for t in doc["tiles"].values())
 
 
-def test_the_time_budget_stops_further_requests():
-    ticks = iter(range(0, 10_000, 30))                                   # every clock read advances 30 s
-    f = Fetch()
-    res, db = run(f, clock=lambda: next(ticks))
+def test_at_most_four_probes_run_at_once():
+    lock, state = threading.Lock(), {"now": 0, "max": 0}
+
+    class Slow(Fetch):
+        def __call__(self, url, timeout, ua):
+            with lock:
+                state["now"] += 1
+                state["max"] = max(state["max"], state["now"])
+            time.sleep(0.05)
+            with lock:
+                state["now"] -= 1
+            return super().__call__(url, timeout, ua)
+    res, _ = run(Slow())
+    assert res["answered"] == 17 and state["max"] == CSP.CONCURRENCY == 4
+
+
+def test_a_hung_request_is_cut_off_at_its_deadline():
+    class Hang(Fetch):
+        def __call__(self, url, timeout, ua):
+            if slug_of(url) == "lanier-ga":
+                time.sleep(5)                                            # ignores its socket timeout
+            return super().__call__(url, timeout, ua)
+    t0 = time.monotonic()
+    res, db = run(Hang(), timeout_seconds=0.3)
+    assert time.monotonic() - t0 < 3 and res["answered"] == 16
+    errs = {e["lake"]: e["error"] for e in db.writes[0][CSP.NODE]["errors"]}
+    assert errs["Lanier (Sidney Lanier)|GA"].startswith("deadline exceeded")
+
+
+def test_the_time_budget_stops_further_requests_and_rotation_moves_the_start():
+    class Slow(Fetch):
+        def __call__(self, url, timeout, ua):
+            time.sleep(0.4)
+            return super().__call__(url, timeout, ua)
+    f = Slow()
+    res, db = run(f, budget_seconds=1.5, timeout_seconds=1.0)            # 4 at once, ~0.4 s each, new starts stop when <= 1 s is left
     doc = db.writes[0][CSP.NODE]
-    assert 0 < len(f.calls) < 17 and res["answered"] == len(f.calls)
-    assert sum(e["error"] == "not attempted: probe budget exhausted" for e in doc["errors"]) == 17 - len(f.calls)
+    attempted = [slug_of(u) for u, _, _ in f.calls]
+    assert 0 < len(attempted) < 17 and res["answered"] == len(attempted)
+    assert sum(e["error"] == "not attempted: probe budget exhausted" for e in doc["errors"]) == 17 - len(attempted)
+    off = CSP.rotation(NOW, 17)
+    assert set(attempted) == {POINTS[(off + k) % 17]["slug"] for k in range(len(attempted))}
+    assert len({CSP.rotation(NOW + dt.timedelta(hours=h), 17) for h in range(17)}) == 17     # hourly cycles visit every offset
 
 
-def test_a_contract_violation_sets_contract_ok_false():
+def test_contract_ok_is_per_tile_with_a_document_level_verdict():
     def breaks(slug, body):
         if slug == "lanier-ga":
-            del body["score"]
+            del body["score"]                                          # a root field: no tile's own path
+        if slug == "wheeler-al":
+            body["weather"]["humidity"] = "wet"                        # humidity's own path
+        if slug == "pickwick-tn":
+            body["nights"][0]["rating"] = 5                            # the outlook's path, inside an array
     _, db = run(Fetch(mutate=breaks))
     doc = db.writes[0][CSP.NODE]
-    assert doc["probe"]["contractViolations"] == 1 and all(t["contractOk"] is False for t in doc["tiles"].values())
+    assert doc["probe"]["contractViolations"] == 3 and doc["contractOk"] is False
+    assert {t for t, v in doc["tiles"].items() if v["contractOk"] is False} == {"humidity", "windOutlookModel"}
     assert any(e["lake"] == "Lanier (Sidney Lanier)|GA" and e["error"].startswith("phone contract") for e in doc["errors"])
-
-
-def test_missing_validator_or_points_is_reported_not_raised(tmp_path):
-    res, db = run(Fetch(), validator_file=str(tmp_path / "nope.py"), points_file=str(tmp_path / "nope.json"))
-    doc = db.writes[0][CSP.NODE]
-    rtdb_safe(doc)
-    assert res["points"] == 0 and {e["lake"] for e in doc["errors"]} == {"*"} and len(doc["errors"]) == 2
-    assert all("contractOk" not in t for t in doc["tiles"].values())
+    assert CSP.violated_tiles(["weather: required key missing or null"]) == {"humidity", "pressure", "temperature", "sky", "wind"}
 
 
 def test_unreadable_previous_document_counts_as_due():
@@ -356,7 +412,10 @@ def test_eligibility_limits_coverage_to_the_flagged_lakes():
     assert CSP.eligible(None, "x") and CSP.eligible({"flag": "serve", "lakes": ["a"]}, "a") and not CSP.eligible({"flag": "serve", "lakes": ["a"]}, "b")
 
 
-def test_dry_run_computes_without_writing():
+def test_dry_run_reports_dry_run_and_compute_only_writes_nothing():
     db = Db()
-    res = CSP.stage(Live(), db, NOW, write=False, env=ON, fetch=Fetch())
-    assert res["state"] == "COMPUTED" and db.writes == []
+    res = CSP.stage(Live(), db, NOW, write=False, dry_run=True, env=ON, fetch=Fetch())
+    assert res["state"] == "DRY_RUN" and len(db.writes) == 1                 # the orchestrator's dry-run store keeps it in memory
+    db2 = Db()
+    res2 = CSP.stage(Live(), db2, NOW, write=False, env=ON, fetch=Fetch())
+    assert res2["state"] == "COMPUTED" and db2.writes == []
