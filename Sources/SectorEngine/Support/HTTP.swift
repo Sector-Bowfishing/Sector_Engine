@@ -79,8 +79,65 @@ package enum HTTP {
         }
 
         let ms = Int64(min(timeout, maxTimeout) * 1000)
-        let response = try await client.execute(request, timeout: .milliseconds(ms))
-        let buffer = try await response.body.collect(upTo: maxBodyBytes)
-        return HTTPResult(status: Int(response.status.code), body: Data(buffer.readableBytesView))
+        let started = Date()
+        do {
+            let response = try await client.execute(request, timeout: .milliseconds(ms))
+            let buffer = try await response.body.collect(upTo: maxBodyBytes)
+            let result = HTTPResult(status: Int(response.status.code), body: Data(buffer.readableBytesView))
+            print(logLine(url: url, outcome: String(result.status), bytes: result.body.count, started: started))
+            return result
+        } catch {
+            print(logLine(url: url, outcome: errorLabel(error), bytes: 0, started: started))
+            throw error
+        }
     }
+
+    // MARK: Upstream call log (Sector_Ops #51 F1)
+
+    /// One line per upstream call: start time, host, path, status (or why it
+    /// failed), body bytes and wall time. Plain stdout, like the `[engine]`
+    /// deadline lines, so Cloud Logging picks it up with no extra client.
+    ///
+    /// Never the query string: some upstreams carry a key there (Firebase
+    /// Remote Config `?key=`), and USGS bounding boxes would make every line
+    /// unique. Keys sent as headers (`X-Api-Key`) are never touched. The path
+    /// is capped so a long one can't bloat the log.
+    static func logLine(url: URL, outcome: String, bytes: Int, started: Date,
+                        now: Date = Date()) -> String {
+        let host = url.host ?? "?"
+        var path = url.path.isEmpty ? "/" : url.path
+        if path.count > maxLoggedPath { path = String(path.prefix(maxLoggedPath)) + "…" }
+        let ms = Int((now.timeIntervalSince(started) * 1000).rounded())
+        return "[http] at=\(isoMillis(started)) host=\(host) path=\(path) status=\(outcome) bytes=\(bytes) ms=\(ms)"
+    }
+
+    static let maxLoggedPath = 80
+
+    /// A short, stable label for a failed call: a timeout, a cancellation (a
+    /// `withDeadline` budget ran out and tore the request down), or the error's
+    /// type. Never the error's text, which can echo the URL with its query.
+    static func errorLabel(_ error: Error) -> String {
+        if error is CancellationError { return "CANCELLED" }
+        if let e = error as? HTTPClientError {
+            switch e {
+            case .deadlineExceeded: return "TIMEOUT"
+            case .readTimeout: return "READ_TIMEOUT"
+            case .connectTimeout: return "CONNECT_TIMEOUT"
+            case .cancelled: return "CANCELLED"
+            case .remoteConnectionClosed: return "CONNECTION_CLOSED"
+            default: return "HTTP_CLIENT_ERROR"
+            }
+        }
+        return "ERR_" + String(describing: type(of: error))
+    }
+
+    /// One formatter for the process (creating one per call opens an ICU formatter on Linux). ISO8601DateFormatter
+    /// is thread-safe for formatting.
+    private static let isoFormatter: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return f
+    }()
+
+    private static func isoMillis(_ d: Date) -> String { isoFormatter.string(from: d) }
 }
