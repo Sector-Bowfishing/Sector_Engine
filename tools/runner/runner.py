@@ -91,7 +91,10 @@ def skip(a, store) -> int:
                                   cycle_id=a.cycle, engine_commit=a.engine_commit, decision={"action": "SKIP", "reasons": a.reason or []})
     except ValueError:                                       # a re-run in the same cycle (e.g. a requeue): the cycle's skip is already recorded
         key = RL.execution_key(a.holder, a.brain, eid)
-        prev = json.loads(view.get(key) or "null")
+        try:
+            prev = json.loads(view.get(key) or "null")
+        except (TypeError, ValueError):
+            prev = None
         if not (isinstance(prev, dict) and prev.get("status") == "SKIPPED" and prev.get("cycleId") == a.cycle):
             print(f"REFUSED: {key} already holds a different record", file=sys.stderr)
             return 4

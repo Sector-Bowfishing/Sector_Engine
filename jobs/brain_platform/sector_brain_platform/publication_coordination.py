@@ -474,11 +474,12 @@ class PublicationCoordinator:
         """Operational summary for the control plane (PROPOSED family; see docs/cortex/CORTEX_GAPS.md): per Brain, the last run, what was produced, published and failed."""
         by = {}
         for r in self.ledger.records():
-            b = by.setdefault(r["brainId"], {"runs": 0, "produced": 0, "published": 0, "skipped": 0, "rejected": 0, "failed": 0, "notRequested": 0, "pending": 0, "missingArtifacts": 0, "problems": [],
+            b = by.setdefault(r["brainId"], {"runs": 0, "produced": 0, "published": 0, "skipped": 0, "rejected": 0, "failed": 0, "notRequested": 0, "pending": 0, "missingArtifacts": 0, "planSkipped": 0, "problems": [],
                                               "directWriter": r["writePath"] == DIRECT})
             b["runs"] += 1
             b["produced"] += r["artifact"].get("state") == "COLLECTED"
             b["missingArtifacts"] += r["artifact"].get("state") == "MISSING"
+            b["planSkipped"] += r["artifact"].get("reason") == PLAN_SKIP          # the job's own plan said SKIP (also counted in `skipped`)
             o = r["publication"]["outcome"]
             b[{"PUBLISHED": "published", "SKIPPED": "skipped", "REJECTED": "rejected", "FAILED": "failed", "NOT_REQUESTED": "notRequested", "PENDING": "pending"}[o]] += 1
             if o == "FAILED" or r["artifact"].get("state") in ("MISSING", "INVALID"):

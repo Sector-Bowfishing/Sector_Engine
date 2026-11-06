@@ -192,7 +192,7 @@ def test_a_skipped_run_is_a_normal_outcome_never_missing_failed_or_matched_by_ti
     assert out["collected"] == [] and out["missing"] == [] and out["failedRuns"] == []
     assert out["skippedRuns"] == [{"brainId": "wind", "runId": "wind-20261105T1200Z-skip", "reasons": ["no material change"]}]
     s = co.summary()["brains"]["wind"]
-    assert s["skipped"] == 1 and s["runs"] == 1 and not s["missingArtifacts"] and not s["problems"] and not s["failed"]
+    assert s["skipped"] == 1 and s["planSkipped"] == 1 and s["runs"] == 1 and not s["missingArtifacts"] and not s["problems"] and not s["failed"]
     again = co.reconcile([skip])                                                                 # the next cycle lists it again: known, not re-counted
     assert again["skippedRuns"] == [] and again["alreadyKnown"] == 1 and co.summary()["brains"]["wind"]["runs"] == 1
 
