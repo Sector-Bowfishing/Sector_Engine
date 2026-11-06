@@ -1,0 +1,1 @@
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-114.35,34.45]},"properties":{"gridId":"VEF","gridX":140,"gridY":18,"forecastGridData":"https://api.weather.gov/gridpoints/VEF/140,18","observationStations":"https://api.weather.gov/gridpoints/VEF/140,18/stations","timeZone":"America/Los_Angeles"}}
