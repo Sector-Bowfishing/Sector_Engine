@@ -37,10 +37,19 @@ router.get("conditions") { request, _ -> Response in
         return Response(status: .badRequest)
     }
     let fresh = request.uri.queryParameters.get("fresh").map { $0 == "1" || $0 == "true" } ?? false
-    guard let payload = await ConditionsResponseCache.shared.conditions(
+    let started = ContinuousClock.now
+    let (payload, cache) = await ConditionsResponseCache.shared.conditionsWithOutcome(
         lat: lat, lon: lon, fresh: fresh,
         compute: { await SectorEngineAPI.conditions(lat: lat, lon: lon) }
-    ) else {
+    )
+    // [conditions-request] (Sector_Ops #53 spec §6): one line per request, cache hits included. Client app and build
+    // from the User-Agent / X-Sector-Client headers; coordinates rounded to 0.1; no user ids.
+    let elapsed = ContinuousClock.now - started
+    let ms = Int(elapsed.components.seconds * 1000 + elapsed.components.attoseconds / 1_000_000_000_000_000)
+    let client = ClientIdentity.parse(userAgent: request.headers[.userAgent],
+                                      sectorClient: request.headers.first { $0.name.canonicalName == "x-sector-client" }?.value)
+    print(ConditionsRequestLog.line(client: client, cache: cache, ms: ms, lat: lat, lon: lon, response: payload))
+    guard let payload else {
         return Response(status: .serviceUnavailable)   // no live data to score
     }
     return jsonResponse(payload)

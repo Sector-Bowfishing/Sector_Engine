@@ -72,28 +72,54 @@ actor RemoteConfigStore {
     }
 
     private func fetchOverrides() async -> ConditionsConfigOverrides? {
+        // template → parameters → conditions_config → defaultValue → value (a JSON string)
+        guard case .value(let value) = await RemoteConfigREST.parameter("conditions_config", projectId: projectId),
+              let valueData = value.data(using: .utf8) else { return nil }
+        return try? JSONDecoder().decode(ConditionsConfigOverrides.self, from: valueData)
+    }
+}
+
+/// One Remote Config parameter as read from the template: its default value, absent from the template, or unreadable.
+public enum RemoteConfigParameter: Equatable, Sendable {
+    case value(String)
+    /// The template was read and has no such parameter (or it has no default string value).
+    case absent
+    /// No token (off Cloud Run), an HTTP error, or a template that is not JSON.
+    case unreadable
+}
+
+/// The Remote Config REST read shared by `RemoteConfigStore` (`conditions_config`) and `TileFlagsStore`
+/// (`conditions_tiles_v1`). There is no Firebase Admin SDK for Swift: this reads the template over REST, authenticated by
+/// the Cloud Run service account via the GCP metadata server. Read-only.
+enum RemoteConfigREST {
+    static var defaultProjectId: String { ProcessInfo.processInfo.environment["GCP_PROJECT"] ?? "sector-9393c" }
+
+    static func parameter(_ name: String, projectId: String = defaultProjectId) async -> RemoteConfigParameter {
         guard let token = await accessToken(),
               let url = URL(string: "https://firebaseremoteconfig.googleapis.com/v1/projects/\(projectId)/remoteConfig")
-        else { return nil }
+        else { return .unreadable }
         do {
             let result = try await HTTP.get(url, headers: ["Authorization": "Bearer \(token)"])
-            guard result.status == 200 else { return nil }
-            // template → parameters → conditions_config → defaultValue → value (a JSON string)
-            guard let root = try JSONSerialization.jsonObject(with: result.body) as? [String: Any],
-                  let params = root["parameters"] as? [String: Any],
-                  let param = params["conditions_config"] as? [String: Any],
-                  let defaultValue = param["defaultValue"] as? [String: Any],
-                  let value = defaultValue["value"] as? String,
-                  let valueData = value.data(using: .utf8) else { return nil }
-            return try JSONDecoder().decode(ConditionsConfigOverrides.self, from: valueData)
+            guard result.status == 200,
+                  let root = try JSONSerialization.jsonObject(with: result.body) as? [String: Any] else { return .unreadable }
+            return parameter(name, inTemplate: root)
         } catch {
-            return nil
+            return .unreadable
         }
     }
 
+    /// Pure: template → parameters → name → defaultValue → value.
+    static func parameter(_ name: String, inTemplate root: [String: Any]) -> RemoteConfigParameter {
+        guard let params = root["parameters"] as? [String: Any],
+              let param = params[name] as? [String: Any],
+              let defaultValue = param["defaultValue"] as? [String: Any],
+              let value = defaultValue["value"] as? String else { return .absent }
+        return .value(value)
+    }
+
     /// OAuth access token for the Cloud Run service account, from the metadata server.
-    /// Returns nil off Cloud Run (local dev), so `current()` just serves defaults.
-    private func accessToken() async -> String? {
+    /// Returns nil off Cloud Run (local dev), so callers just serve their defaults.
+    static func accessToken() async -> String? {
         guard let url = URL(string: "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token")
         else { return nil }
         do {
