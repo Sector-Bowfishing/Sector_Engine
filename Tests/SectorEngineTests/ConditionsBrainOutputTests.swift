@@ -7,8 +7,9 @@ final class ConditionsBrainOutputTests: XCTestCase {
         let nodes: [String: String]
         func get(_ path: String) async throws -> Data? { nodes[path].map { Data($0.utf8) } }
     }
+    struct ReadError: Error {}
     struct Failing: BrainOutputReader {
-        func get(_ path: String) async throws -> Data? { throw URLError(.notConnectedToInternet) }
+        func get(_ path: String) async throws -> Data? { throw ReadError() }
     }
 
     static let lake = "Guntersville|AL"
