@@ -47,6 +47,8 @@ final class UpstreamCallLogTests: XCTestCase {
         XCTAssertEqual(HTTP.errorLabel(HTTPClientError.deadlineExceeded), "TIMEOUT")
         XCTAssertEqual(HTTP.errorLabel(HTTPClientError.readTimeout), "READ_TIMEOUT")
         XCTAssertEqual(HTTP.errorLabel(HTTPClientError.connectTimeout), "CONNECT_TIMEOUT")
+        XCTAssertEqual(HTTP.errorLabel(HTTPClientError.cancelled), "CANCELLED")
+        XCTAssertEqual(HTTP.errorLabel(HTTPClientError.remoteConnectionClosed), "CONNECTION_CLOSED")
         struct Leaky: Error, CustomStringConvertible { var description: String { "https://x/?key=SECRET123" } }
         let label = HTTP.errorLabel(Leaky())
         XCTAssertEqual(label, "ERR_Leaky")

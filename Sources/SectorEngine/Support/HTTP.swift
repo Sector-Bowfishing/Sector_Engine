@@ -131,9 +131,13 @@ package enum HTTP {
         return "ERR_" + String(describing: type(of: error))
     }
 
-    private static func isoMillis(_ d: Date) -> String {
+    /// One formatter for the process (creating one per call opens an ICU formatter on Linux). ISO8601DateFormatter
+    /// is thread-safe for formatting.
+    private static let isoFormatter: ISO8601DateFormatter = {
         let f = ISO8601DateFormatter()
         f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return f.string(from: d)
-    }
+        return f
+    }()
+
+    private static func isoMillis(_ d: Date) -> String { isoFormatter.string(from: d) }
 }
