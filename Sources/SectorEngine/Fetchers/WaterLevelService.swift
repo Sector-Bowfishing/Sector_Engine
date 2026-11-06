@@ -110,23 +110,45 @@ package final class WaterLevelService {
         // feature the OGC client doesn't model yet; those stay on the legacy
         // service so the lake-gauge path keeps exactly its production semantics.
         let series: [USGSSeries]
-        if sites == nil, siteType == nil {
-            do {
-                series = try await USGSWaterData.recentSeries(west: west, south: south, east: east, north: north,
-                                                              parameterCodes: codes, lookback: lookbackPeriod,
-                                                              timeout: requestTimeout)
-            } catch {
+        let started = Date()
+        var api = "legacy"
+        do {
+            if sites == nil, siteType == nil {
+                do {
+                    series = try await USGSWaterData.recentSeries(west: west, south: south, east: east, north: north,
+                                                                  parameterCodes: codes, lookback: lookbackPeriod,
+                                                                  timeout: requestTimeout)
+                    api = "ogc"
+                } catch {
+                    api = "legacy-after-ogc-" + HTTP.errorLabel(error)
+                    series = try await legacySeries(west: west, south: south, east: east, north: north,
+                                                    parameterCodes: codes, siteType: siteType,
+                                                    sites: sites, sitesPeriod: sitesPeriod)
+                }
+            } else {
                 series = try await legacySeries(west: west, south: south, east: east, north: north,
                                                 parameterCodes: codes, siteType: siteType,
                                                 sites: sites, sitesPeriod: sitesPeriod)
             }
-        } else {
-            series = try await legacySeries(west: west, south: south, east: east, north: north,
-                                            parameterCodes: codes, siteType: siteType,
-                                            sites: sites, sitesPeriod: sitesPeriod)
+        } catch {
+            print(Self.usgsLogLine(codes: codes, box: radiusDegrees, api: api, outcome: HTTP.errorLabel(error),
+                                   series: 0, started: started))
+            throw error
         }
+        print(Self.usgsLogLine(codes: codes, box: radiusDegrees, api: api, outcome: "ok",
+                               series: series.count, started: started))
         return series.compactMap { Self.reading(from: $0, absThreshold: absThreshold,
                                                 pctThreshold: pctThreshold) }
+    }
+
+    /// One line per USGS box attempt (Sector_Ops #51 F1): which parameter, how
+    /// wide a box, which API answered (or why the new one fell back), how many
+    /// series came back and how long it took. With the `[http]` lines this
+    /// shows where a slow water/discharge/turbidity fetch spends its budget.
+    static func usgsLogLine(codes: String, box: Double, api: String, outcome: String,
+                            series: Int, started: Date, now: Date = Date()) -> String {
+        let ms = Int((now.timeIntervalSince(started) * 1000).rounded())
+        return "[usgs] param=\(codes) box=\(String(format: "%.2f", box)) api=\(api) outcome=\(outcome) series=\(series) ms=\(ms)"
     }
 
     /// The trend and reading for one series — the same math whichever API

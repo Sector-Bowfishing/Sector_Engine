@@ -10,6 +10,11 @@ import Foundation
 import Hummingbird
 import SectorEngine
 
+// Line-buffered stdout (Sector_Ops #51 F1 review): on Cloud Run stdout is a pipe, so it is fully buffered by default —
+// the [engine]/[http]/[usgs] lines reached Cloud Logging in 4–8 KB batches stamped with the flush time, and lines
+// still buffered were lost when an instance was stopped (more often at min-instances 0). One write per line instead.
+setvbuf(stdout, nil, _IOLBF, 0)
+
 let router = Router()
 
 router.get("health") { _, _ in "ok" }

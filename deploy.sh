@@ -57,8 +57,18 @@ GC=(--project "$PROJECT_ID" --region "$REGION")
 CPU="${CPU:-2}"
 MEMORY="${MEMORY:-1Gi}"
 CONCURRENCY="${CONCURRENCY:-1}"
-MIN_INSTANCES="${MIN_INSTANCES:-1}"
+# min 0 since 2026-11-06 (Sector_Ops #51 C1): request-based billing bills only while serving, and the uptime
+# checks keep one instance warm. min 1 cost about $19/month idle.
+MIN_INSTANCES="${MIN_INSTANCES:-0}"
 MAX_INSTANCES="${MAX_INSTANCES:-30}"
+
+# ── Secrets ────────────────────────────────────────────────────────────────────
+# USGS Water Data API key (Sector_Ops #51 F2). Without a key the OGC API rate-limits by IP, and Cloud Run's shared
+# egress makes that the worst case. Secret Manager secret `usgs-api-key` in this project; the runtime service account
+# needs roles/secretmanager.secretAccessor on that secret only. USGS_SECRET= (empty) deploys without it.
+USGS_SECRET="${USGS_SECRET-usgs-api-key:latest}"
+SECRET_FLAGS=()
+[[ -n "$USGS_SECRET" ]] && SECRET_FLAGS=(--update-secrets "USGS_API_KEY=$USGS_SECRET")
 
 # The Linux image has to answer every route before it ships: three revisions
 # that built and tested clean on macOS aborted the Linux Swift runtime on
@@ -212,6 +222,7 @@ gcloud run deploy "$SERVICE" \
   --timeout 60 \
   --min-instances "$MIN_INSTANCES" \
   --max-instances "$MAX_INSTANCES" \
+  ${SECRET_FLAGS[@]+"${SECRET_FLAGS[@]}"} \
   --startup-probe "$STARTUP_PROBE" \
   --liveness-probe "$LIVENESS_PROBE" \
   --quiet
