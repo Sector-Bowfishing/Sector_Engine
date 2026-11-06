@@ -531,7 +531,15 @@ public enum SectorEngineAPI {
             generationPresent: g != nil,
             generationHasReading: g.map { $0.dischargeCfs != nil || $0.reservoirElevationFt != nil
                 || $0.tailwaterElevationFt != nil || !$0.windows.isEmpty } ?? false,
-            generationObservedAt: g?.observedAt)
+            generationObservedAt: g.flatMap { tileObservedAt(operatorID: $0.dam.operatorID, observedAt: $0.observedAt) })
+    }
+
+    /// The generation tile's `observedAt` for `tileSources`: the dam's own observation time, or nil when there is none.
+    /// Alabama Power publishes no observation time, so AlabamaPowerGenerationService stamps its FETCH time into
+    /// `observedAt` (and it wins over a CWMS fill-in); that is not an observation, so it is not reported here. The
+    /// frozen `generation.observedAt` field keeps its value.
+    static func tileObservedAt(operatorID: GenerationOperator, observedAt: Date?) -> Date? {
+        operatorID == .apc ? nil : observedAt
     }
 
     /// The canonical statement of the clarity number the score used.

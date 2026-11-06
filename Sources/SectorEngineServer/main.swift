@@ -81,15 +81,22 @@ router.get("conditions") { request, _ -> Response in
     )
     // [conditions-request] (Sector_Ops #53 spec §6): one line per request, cache hits included. Client app and build
     // from the User-Agent / X-Sector-Client headers; coordinates rounded to 0.1; no user ids.
-    let elapsed = ContinuousClock.now - started
-    let ms = Int(elapsed.components.seconds * 1000 + elapsed.components.attoseconds / 1_000_000_000_000_000)
-    let client = ClientIdentity.parse(userAgent: request.headers[.userAgent],
-                                      sectorClient: request.headers.first { $0.name.canonicalName == "x-sector-client" }?.value)
-    print(ConditionsRequestLog.line(client: client, cache: cache, ms: ms, lat: lat, lon: lon, response: payload))
+    print(ConditionsRequestLog.line(client: clientIdentity(request), cache: cache, ms: elapsedMs(since: started),
+                                    lat: lat, lon: lon, response: payload))
     guard let payload else {
         return Response(status: .serviceUnavailable)   // no live data to score
     }
     return jsonResponse(payload)
+}
+
+func clientIdentity(_ request: Request) -> ClientIdentity {
+    ClientIdentity.parse(userAgent: request.headers[.userAgent],
+                         sectorClient: request.headers.first { $0.name.canonicalName == "x-sector-client" }?.value)
+}
+
+func elapsedMs(since started: ContinuousClock.Instant) -> Int {
+    let e = ContinuousClock.now - started
+    return Int(e.components.seconds * 1000 + e.components.attoseconds / 1_000_000_000_000_000)
 }
 
 // Slim score+band for many coordinates in one request — My Lakes list rings.
@@ -103,7 +110,10 @@ router.post("conditions/batch") { request, _ -> Response in
         return Response(status: .badRequest)
     }
     let points = req.points.prefix(50).map { (lat: $0.lat, lon: $0.lon) }   // cap the list
+    let started = ContinuousClock.now
     let scores = await SectorEngineAPI.batch(points: Array(points))
+    // [conditions-request] with `batch: n` (spec §6 rule 5): which app builds still use the batch endpoint.
+    print(ConditionsRequestLog.batchLine(client: clientIdentity(request), points: points.count, ms: elapsedMs(since: started)))
     return jsonResponse(BatchResult(results: scores))
 }
 

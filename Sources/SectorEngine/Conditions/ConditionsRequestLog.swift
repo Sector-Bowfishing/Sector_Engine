@@ -91,12 +91,13 @@ public enum ConditionsRequestLog {
     struct Line: Encodable {
         let app: String
         let appBuild: String?
-        let cache: String
+        var batch: Int? = nil
+        let cache: String?
         let ms: Int
         let lakeId: String?
-        let latR: Double
-        let lonR: Double
-        let tiles: [String: TileLine]
+        let latR: Double?
+        let lonR: Double?
+        let tiles: [String: TileLine]?
     }
 
     /// Round to 0.1 degree (spec §6).
@@ -110,6 +111,15 @@ public enum ConditionsRequestLog {
         }
         let l = Line(app: client.app, appBuild: client.appBuild, cache: cache.rawValue, ms: max(0, ms),
                      lakeId: response?.resolvedLake?.id, latR: round1(lat), lonR: round1(lon), tiles: tiles)
+        return "[conditions-request] " + json(l)
+    }
+
+    /// `POST /conditions/batch` (the My Lakes rings): one line per batch request, `batch` = number of points scored.
+    /// It carries no coordinates (many points, and the slim scores have no tiles) and no cache field (the batch path
+    /// reads the snapshot cache, not the /conditions response cache).
+    public static func batchLine(client: ClientIdentity, points: Int, ms: Int) -> String {
+        let l = Line(app: client.app, appBuild: client.appBuild, batch: points, cache: nil, ms: max(0, ms),
+                     lakeId: nil, latR: nil, lonR: nil, tiles: nil)
         return "[conditions-request] " + json(l)
     }
 

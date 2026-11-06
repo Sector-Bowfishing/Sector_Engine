@@ -11,9 +11,12 @@
 //      // serve r.value, put r.entry into tileSources["humidity"]
 //
 //  - off:    the new provider is not called. Old is served.
-//  - shadow: the new provider is called, old is served, one `[tile-shadow]` line logs the difference.
-//  - serve:  if the tile's breaker allows, the new provider is called; new is served when it is AVAILABLE with a value,
-//            otherwise old (status FALLBACK). Both outcomes feed the breaker.
+//  - shadow: old is served at once; the new provider runs DETACHED (the response never waits for it), bounded to
+//            `TileShadowRunner.maxConcurrent` at a time (the excess is dropped and counted), and one `[tile-shadow]`
+//            line logs the difference when it finishes.
+//  - serve:  if the tile's breaker allows, the new provider is called with a `newPathDeadlineSeconds` (3 s) deadline;
+//            new is served when it is AVAILABLE with a value, otherwise old (status FALLBACK). A timeout counts as a
+//            failed/blank sample. Both outcomes feed the breaker.
 //  A tile with no new source yet (`new: nil`) always serves old and reports today's path.
 //
 //  Frozen fields are never overwritten: the caller decides what `T` is, and must put a served new value only into an
@@ -130,6 +133,8 @@ public struct TileRequestContext: Equatable, Sendable {
 }
 
 /// The step's answer: the value to serve and its `tileSources` entry.
+extension TileNewValue: Sendable where T: Sendable {}
+
 public struct TileServeResult<T> {
     public let value: T?
     public let entry: TileSourceDTO
@@ -139,6 +144,9 @@ public struct TileServeResult<T> {
 
 public enum TileShadow {
 
+    /// The deadline on every new-path call (serve and shadow). A provider that misses it counts as failed/blank.
+    public static let newPathDeadlineSeconds: Double = 3
+
     /// Apply the tile's flag mode and breaker. See the file header.
     /// - Parameters:
     ///   - old: today's value (nil = blank).
@@ -147,17 +155,19 @@ public enum TileShadow {
     ///     (unknown counts as 0 s, the strictest comparison).
     ///   - new: the new-path provider, or nil when the tile has no new source yet.
     ///   - compare: builds the `[tile-shadow]` old/new/delta.
-    public static func resolve<T>(
+    ///   - shadowRunner: bounds the detached shadow computations.
+    public static func resolve<T: Sendable>(
         tile: TileKey,
         mode: TileMode,
         old: T?,
         oldEntry: TileSourceDTO,
         oldLatency: TimeInterval? = nil,
         context: TileRequestContext,
-        new: (() async -> TileNewValue<T>)?,
-        compare: (T?, T?) -> TileComparison,
+        new: (@Sendable () async -> TileNewValue<T>)?,
+        compare: @escaping @Sendable (T?, T?) -> TileComparison,
         breaker: TileBreakerRegistry = .shared,
-        log: (String) -> Void = { print($0) }
+        shadowRunner: TileShadowRunner = .shared,
+        log: @escaping @Sendable (String) -> Void = { print($0) }
     ) async -> TileServeResult<T> {
         var oldOut = oldEntry
         oldOut.flag = mode.rawValue
@@ -168,9 +178,12 @@ public enum TileShadow {
 
         case .shadow:
             guard let new else { return TileServeResult(value: old, entry: oldOut, servedNew: false) }
-            let n = await new()
-            log(shadowLine(tile: tile, comparison: compare(old, n.value), oldSource: oldEntry.source,
-                           newSource: n.source, context: context))
+            let oldSource = oldEntry.source
+            await shadowRunner.launch {
+                let n = await withDeadline(newPathDeadlineSeconds, "tile-shadow-\(tile.rawValue)") { await new() }
+                log(shadowLine(tile: tile, comparison: compare(old, n?.value), oldSource: oldSource,
+                               newSource: n?.source ?? "timeout", context: context))
+            }
             return TileServeResult(value: old, entry: oldOut, servedNew: false)
 
         case .serve:
@@ -181,11 +194,11 @@ public enum TileShadow {
                 return TileServeResult(value: old, entry: fallback, servedNew: false)
             }
             let started = DispatchTime.now().uptimeNanoseconds
-            let n = await new()
+            let n = await withDeadline(newPathDeadlineSeconds, "tile-serve-\(tile.rawValue)") { await new() }
             let latency = Double(DispatchTime.now().uptimeNanoseconds - started) / 1e9
             await breaker.record(tile, path: .old, ok: old != nil, latency: oldLatency ?? 0)
-            await breaker.record(tile, path: .new, ok: n.isServable, latency: latency)
-            guard n.isServable else { return TileServeResult(value: old, entry: fallback, servedNew: false) }
+            await breaker.record(tile, path: .new, ok: n?.isServable ?? false, latency: latency)
+            guard let n, n.isServable else { return TileServeResult(value: old, entry: fallback, servedNew: false) }
             return TileServeResult(value: n.value, entry: n.entry(flag: .serve), servedNew: true)
         }
     }
@@ -202,5 +215,50 @@ public enum TileShadow {
                         oldSource: oldSource, newSource: newSource,
                         lakeId: context.lakeId, latR: context.latR, lonR: context.lonR)
         return "[tile-shadow] " + ConditionsRequestLog.json(line)
+    }
+}
+
+/// Runs shadow computations detached from the request, at most `maxConcurrent` at a time. A launch beyond that is
+/// dropped (never queued) and counted, so a slow new source can neither delay a response nor pile up work.
+public actor TileShadowRunner {
+    public static let defaultMaxConcurrent = 8
+    public static let shared = TileShadowRunner()
+
+    public let maxConcurrent: Int
+    public private(set) var running = 0
+    /// Shadow computations dropped because `maxConcurrent` were already running.
+    public private(set) var dropped = 0
+    private var idleWaiters: [CheckedContinuation<Void, Never>] = []
+
+    public init(maxConcurrent: Int = defaultMaxConcurrent) { self.maxConcurrent = maxConcurrent }
+
+    /// Start `work` detached, or drop it when the runner is full. Returns whether it started; never waits for `work`.
+    @discardableResult
+    public func launch(_ work: @escaping @Sendable () async -> Void) -> Bool {
+        guard running < maxConcurrent else {
+            dropped += 1
+            return false
+        }
+        running += 1
+        Task.detached { [self] in
+            await work()
+            await self.finished()
+        }
+        return true
+    }
+
+    private func finished() {
+        running -= 1
+        if running == 0 {
+            let waiters = idleWaiters
+            idleWaiters = []
+            for w in waiters { w.resume() }
+        }
+    }
+
+    /// Wait until no shadow computation is running (tests and shutdown).
+    public func waitUntilIdle() async {
+        guard running > 0 else { return }
+        await withCheckedContinuation { idleWaiters.append($0) }
     }
 }

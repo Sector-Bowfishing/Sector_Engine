@@ -96,6 +96,29 @@ final class ConditionsTilesFoundationTests: XCTestCase {
         XCTAssertEqual(RemoteConfigREST.parameter("x", inTemplate: [:]), .absent)
     }
 
+    func testOneTemplateReadServesBothParameters() async {
+        let clock = TestClock(t0)
+        let fetches = Counter()
+        let cache = RemoteConfigTemplateCache(now: { clock.now }, fetch: {
+            await fetches.inc()
+            return ["conditions_config": "{}", "conditions_tiles_v1": #"{"tiles":{}}"#]
+        })
+        let a = await RemoteConfigREST.parameter("conditions_config", cache: cache)
+        let b = await RemoteConfigREST.parameter("conditions_tiles_v1", cache: cache)
+        let c = await RemoteConfigREST.parameter("missing", cache: cache)
+        XCTAssertEqual(a, .value("{}"))
+        XCTAssertEqual(b, .value(#"{"tiles":{}}"#))
+        XCTAssertEqual(c, .absent)
+        var n = await fetches.value
+        XCTAssertEqual(n, 1, "one template fetch per TTL for both parameters")
+        clock.advance(10 * 60)
+        _ = await RemoteConfigREST.parameter("conditions_tiles_v1", cache: cache)
+        n = await fetches.value
+        XCTAssertEqual(n, 2)
+        let unreadable = await RemoteConfigREST.parameter("x", cache: RemoteConfigTemplateCache(fetch: { nil }))
+        XCTAssertEqual(unreadable, .unreadable)
+    }
+
     // MARK: - TileBreaker
 
     private let t0 = Date(timeIntervalSince1970: 2_000_000)
@@ -204,6 +227,18 @@ final class ConditionsTilesFoundationTests: XCTestCase {
         XCTAssertFalse(b.shouldTryNew(at: opened.addingTimeInterval(1802), roll: 0).tryNew)
     }
 
+    func testBreakerCapsSamplesPerTile() {
+        var b = TileBreaker(tile: .temperature)
+        for i in 0..<2_500 { b.record(path: i % 2 == 0 ? .new : .old, ok: true, latency: Double(i % 7) / 10, at: t0.addingTimeInterval(Double(i) * 0.1)) }
+        XCTAssertEqual(b.samples.count, TileBreakerConstants.maxSamplesPerTile)
+        XCTAssertEqual(TileBreakerConstants.maxSamplesPerTile, 2_000)
+        let w = b.stats(at: t0.addingTimeInterval(250))
+        XCTAssertEqual(w.newSamples + w.oldSamples, 2_000)
+        // The incremental p95 matches a full sort of the kept samples.
+        XCTAssertEqual(w.newP95Seconds, TileBreaker.p95(b.samples.filter { $0.path == .new }.map(\.latency)))
+        XCTAssertEqual(w.oldP95Seconds, TileBreaker.p95(b.samples.filter { $0.path == .old }.map(\.latency)))
+    }
+
     func testP95NearestRank() {
         XCTAssertEqual(TileBreaker.p95([]), 0)
         XCTAssertEqual(TileBreaker.p95([1]), 1)
@@ -234,14 +269,11 @@ final class ConditionsTilesFoundationTests: XCTestCase {
     private let ctx = TileRequestContext(lakeId: "Guntersville|AL", lat: 34.4321, lon: -86.2549)
     private let oldEntry = TileSourceDTO(flag: "off", path: "engine", source: "open-meteo", status: "AVAILABLE")
 
-    private func newValue(_ v: Int?, _ s: TileStatus = .available) -> TileNewValue<Int> {
-        TileNewValue(value: v, status: s, path: .engine, source: "nws-nbm", observedAt: Date(timeIntervalSince1970: 1_700_000_000))
-    }
 
     func testOffNeverCallsNew() async {
         let lines = Lines()
         let r = await TileShadow.resolve(tile: .humidity, mode: .off, old: 61, oldEntry: oldEntry, context: ctx,
-                                         new: { XCTFail("off must not compute new"); return self.newValue(58) },
+                                         new: { XCTFail("off must not compute new"); return nv(58) },
                                          compare: TileComparison.numeric, breaker: TileBreakerRegistry(log: { _ in }),
                                          log: { lines.append($0) })
         XCTAssertEqual(r.value, 61)
@@ -252,9 +284,12 @@ final class ConditionsTilesFoundationTests: XCTestCase {
 
     func testShadowServesOldAndLogsDifference() async {
         let lines = Lines()
+        let runner = TileShadowRunner()
         let r = await TileShadow.resolve(tile: .humidity, mode: .shadow, old: 61, oldEntry: oldEntry, context: ctx,
-                                         new: { self.newValue(58) }, compare: TileComparison.numeric,
-                                         breaker: TileBreakerRegistry(log: { _ in }), log: { lines.append($0) })
+                                         new: { nv(58) }, compare: TileComparison.numeric,
+                                         breaker: TileBreakerRegistry(log: { _ in }), shadowRunner: runner,
+                                         log: { lines.append($0) })
+        await runner.waitUntilIdle()
         XCTAssertEqual(r.value, 61)
         XCTAssertFalse(r.servedNew)
         XCTAssertEqual(r.entry.flag, "shadow")
@@ -264,16 +299,80 @@ final class ConditionsTilesFoundationTests: XCTestCase {
 
     func testShadowLogsBlankNewAsNull() async {
         let lines = Lines()
+        let runner = TileShadowRunner()
         _ = await TileShadow.resolve(tile: .humidity, mode: .shadow, old: 61, oldEntry: oldEntry, context: ctx,
-                                     new: { self.newValue(nil, .unknown) }, compare: TileComparison.numeric,
-                                     breaker: TileBreakerRegistry(log: { _ in }), log: { lines.append($0) })
+                                     new: { nv(nil, .unknown) }, compare: TileComparison.numeric,
+                                     breaker: TileBreakerRegistry(log: { _ in }), shadowRunner: runner,
+                                     log: { lines.append($0) })
+        await runner.waitUntilIdle()
         XCTAssertTrue(lines.all[0].contains(#""new":null"#))
         XCTAssertFalse(lines.all[0].contains("delta"))
     }
 
+    func testShadowNeverBlocksTheResponse() async {
+        let lines = Lines()
+        let runner = TileShadowRunner()
+        let started = Date()
+        let r = await TileShadow.resolve(tile: .humidity, mode: .shadow, old: 61, oldEntry: oldEntry, context: ctx,
+                                         new: { try? await Task.sleep(nanoseconds: 1_000_000_000); return nv(58) },
+                                         compare: TileComparison.numeric, breaker: TileBreakerRegistry(log: { _ in }),
+                                         shadowRunner: runner, log: { lines.append($0) })
+        XCTAssertLessThan(Date().timeIntervalSince(started), 0.5, "the response does not wait for the shadow")
+        XCTAssertEqual(r.value, 61)
+        XCTAssertTrue(lines.all.isEmpty)
+        await runner.waitUntilIdle()
+        XCTAssertEqual(lines.all.count, 1, "the diff is logged when the shadow finishes")
+    }
+
+    func testShadowIsBoundedAndCountsDrops() async {
+        let lines = Lines()
+        let runner = TileShadowRunner(maxConcurrent: 2)
+        for _ in 0..<5 {
+            _ = await TileShadow.resolve(tile: .sky, mode: .shadow, old: 1, oldEntry: oldEntry, context: ctx,
+                                         new: { try? await Task.sleep(nanoseconds: 300_000_000); return nv(2) },
+                                         compare: TileComparison.numeric, breaker: TileBreakerRegistry(log: { _ in }),
+                                         shadowRunner: runner, log: { lines.append($0) })
+        }
+        let running = await runner.running, dropped = await runner.dropped
+        XCTAssertEqual(running, 2)
+        XCTAssertEqual(dropped, 3)
+        await runner.waitUntilIdle()
+        XCTAssertEqual(lines.all.count, 2)
+        XCTAssertEqual(TileShadowRunner.defaultMaxConcurrent, 8)
+    }
+
+    func testShadowTimeoutLogsNull() async {
+        let lines = Lines()
+        let runner = TileShadowRunner()
+        _ = await TileShadow.resolve(tile: .wind, mode: .shadow, old: 7, oldEntry: oldEntry, context: ctx,
+                                     new: { try? await Task.sleep(nanoseconds: 10_000_000_000); return nv(9) },
+                                     compare: TileComparison.numeric, breaker: TileBreakerRegistry(log: { _ in }),
+                                     shadowRunner: runner, log: { lines.append($0) })
+        await runner.waitUntilIdle()
+        XCTAssertTrue(lines.all[0].contains(#""new":null"#))
+        XCTAssertTrue(lines.all[0].contains(#""newSource":"timeout""#))
+    }
+
+    func testServeTimeoutFallsBackAndCountsAsFailure() async {
+        let reg = TileBreakerRegistry(log: { _ in })
+        let started = Date()
+        let r = await TileShadow.resolve(tile: .wind, mode: .serve, old: 7, oldEntry: oldEntry, context: ctx,
+                                         new: { try? await Task.sleep(nanoseconds: 10_000_000_000); return nv(9) },
+                                         compare: TileComparison.numeric, breaker: reg, log: { _ in })
+        let took = Date().timeIntervalSince(started)
+        XCTAssertGreaterThanOrEqual(took, 2.9)
+        XCTAssertLessThan(took, 5, "bounded by the 3 s deadline")
+        XCTAssertEqual(r.value, 7)
+        XCTAssertEqual(r.entry.status, "FALLBACK")
+        let w = await reg.windowStats(.wind)
+        XCTAssertEqual(w.newSamples, 1)
+        XCTAssertEqual(w.newFailRate, 1, "a timeout is a failed sample")
+        XCTAssertEqual(TileShadow.newPathDeadlineSeconds, 3)
+    }
+
     func testServeUsesNewWhenAvailable() async {
         let r = await TileShadow.resolve(tile: .humidity, mode: .serve, old: 61, oldEntry: oldEntry, context: ctx,
-                                         new: { self.newValue(58) }, compare: TileComparison.numeric,
+                                         new: { nv(58) }, compare: TileComparison.numeric,
                                          breaker: TileBreakerRegistry(log: { _ in }), log: { _ in })
         XCTAssertEqual(r.value, 58)
         XCTAssertTrue(r.servedNew)
@@ -284,7 +383,7 @@ final class ConditionsTilesFoundationTests: XCTestCase {
     func testServeFallsBackWhenNewIsNotAvailable() async {
         for status in [TileStatus.unknown, .estimate, .fallback] {
             let r = await TileShadow.resolve(tile: .humidity, mode: .serve, old: 61, oldEntry: oldEntry, context: ctx,
-                                             new: { self.newValue(status == .unknown ? nil : 58, status) },
+                                             new: { nv(status == .unknown ? nil : 58, status) },
                                              compare: TileComparison.numeric,
                                              breaker: TileBreakerRegistry(log: { _ in }), log: { _ in })
             XCTAssertEqual(r.value, 61, status.rawValue)
@@ -296,7 +395,7 @@ final class ConditionsTilesFoundationTests: XCTestCase {
         // Old blank too: UNKNOWN, never blank-as-available.
         let blank = await TileShadow.resolve(tile: .humidity, mode: .serve, old: nil as Int?,
                                              oldEntry: TileSourceDTO(flag: "off", path: "engine", source: "open-meteo", status: "UNKNOWN"),
-                                             context: ctx, new: { self.newValue(nil, .unknown) },
+                                             context: ctx, new: { nv(nil, .unknown) },
                                              compare: TileComparison.numeric,
                                              breaker: TileBreakerRegistry(log: { _ in }), log: { _ in })
         XCTAssertEqual(blank.entry.status, "UNKNOWN")
@@ -318,7 +417,7 @@ final class ConditionsTilesFoundationTests: XCTestCase {
         for _ in 0..<20 {
             clock.advance(1)
             let r = await TileShadow.resolve(tile: .wind, mode: .serve, old: 7, oldEntry: oldEntry, context: ctx,
-                                             new: { await calls.inc(); return self.newValue(nil, .unknown) },
+                                             new: { await calls.inc(); return nv(nil, .unknown) },
                                              compare: TileComparison.numeric, breaker: reg, log: { _ in })
             XCTAssertEqual(r.value, 7)
         }
@@ -327,7 +426,7 @@ final class ConditionsTilesFoundationTests: XCTestCase {
         XCTAssertEqual(breakerLines.all.count, 1)
         clock.advance(60)
         let r = await TileShadow.resolve(tile: .wind, mode: .serve, old: 7, oldEntry: oldEntry, context: ctx,
-                                         new: { await calls.inc(); return self.newValue(9) },
+                                         new: { await calls.inc(); return nv(9) },
                                          compare: TileComparison.numeric, breaker: reg, log: { _ in })
         XCTAssertEqual(r.value, 7)
         XCTAssertEqual(r.entry.status, "FALLBACK")
@@ -442,6 +541,41 @@ final class ConditionsTilesFoundationTests: XCTestCase {
         XCTAssertEqual(computed.unit, "ft"); XCTAssertEqual(computed.trend, "steady"); XCTAssertEqual(computed.history, [594.7, 594.8])
     }
 
+    func testGenerationTileNeverReportsAPCFetchTime() {
+        let t = Date(timeIntervalSince1970: 1_762_786_800)
+        XCTAssertNil(SectorEngineAPI.tileObservedAt(operatorID: .apc, observedAt: t), "APC observedAt is its fetch time")
+        for op in [GenerationOperator.tva, .swpa, .usace] {
+            XCTAssertEqual(SectorEngineAPI.tileObservedAt(operatorID: op, observedAt: t), t, op.rawValue)
+            XCTAssertNil(SectorEngineAPI.tileObservedAt(operatorID: op, observedAt: nil))
+        }
+    }
+
+    func testBuild28DecodesTheEngineResponseWithNewFields() throws {
+        let raw = try Data(contentsOf: URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent().appendingPathComponent("verification/fixtures/conditions/response_contract.golden.json"))
+        let decoder = JSONDecoder(); decoder.dateDecodingStrategy = .iso8601
+        // The golden itself carries tileSources and the water/discharge gauge keys.
+        let golden = try XCTUnwrap(JSONSerialization.jsonObject(with: raw) as? [String: Any])
+        XCTAssertNotNil(golden["tileSources"])
+        XCTAssertNotNil((golden["water"] as? [String: Any])?["siteName"])
+        XCTAssertNoThrow(try decoder.decode(Build28.Response.self, from: raw), "build 28 decodes the golden")
+        // Through the Engine: decode, encode with the server's encoder, decode as build 28.
+        let response = try decoder.decode(ConditionsResponse.self, from: raw)
+        XCTAssertEqual(response.tileSources?.count, 11)
+        XCTAssertEqual(response.water?.siteCode, "00000002")
+        XCTAssertEqual(response.discharge?.distanceMiles, 6.3)
+        let bytes = try SectorEngineAPI.makeEncoder().encode(response)
+        let reencoded = try XCTUnwrap(JSONSerialization.jsonObject(with: bytes) as? [String: Any])
+        XCTAssertNotNil(reencoded["tileSources"])
+        XCTAssertNotNil((reencoded["discharge"] as? [String: Any])?["observedAt"])
+        XCTAssertNoThrow(try decoder.decode(Build28.Response.self, from: bytes), "build 28 decodes the Engine's output")
+    }
+
+    func testBatchRequestLine() {
+        XCTAssertEqual(ConditionsRequestLog.batchLine(client: ClientIdentity(app: "android", appBuild: "412"), points: 12, ms: 300),
+                       #"[conditions-request] {"app":"android","appBuild":"412","batch":12,"ms":300}"#)
+    }
+
     // MARK: - Web CORS
 
     func testCORSAllowListAndDevOrigin() {
@@ -516,6 +650,10 @@ final class ConditionsTilesFoundationTests: XCTestCase {
 }
 
 // MARK: - Test doubles
+
+private func nv(_ v: Int?, _ s: TileStatus = .available) -> TileNewValue<Int> {
+    TileNewValue(value: v, status: s, path: .engine, source: "nws-nbm", observedAt: Date(timeIntervalSince1970: 1_700_000_000))
+}
 
 private final class TestClock: @unchecked Sendable {
     private let lock = NSLock()

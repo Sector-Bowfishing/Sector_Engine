@@ -32,6 +32,8 @@ public enum TileBreakerConstants {
     public static let halfOpenTrialFraction = 0.10
     /// Consecutive good new-path samples that close a half-open breaker.
     public static let halfOpenGoodSamples = 20
+    /// Memory cap per tile: the oldest samples beyond this are dropped even inside the window.
+    public static let maxSamplesPerTile = 2_000
 }
 
 public struct TileBreaker: Equatable, Sendable {
@@ -82,7 +84,12 @@ public struct TileBreaker: Equatable, Sendable {
 
     public let tile: TileKey
     public private(set) var state: State = .closed
+    /// The window's samples, oldest first (at most `maxSamplesPerTile`).
     public private(set) var samples: [Sample] = []
+    /// Per path, the window's latencies kept sorted (binary insertion and removal) and its failure count, so a sample
+    /// never re-sorts the window.
+    private var newWindow = PathWindow()
+    private var oldWindow = PathWindow()
     /// When the breaker last opened (open state only).
     public private(set) var openedAt: Date?
     /// Consecutive good new-path samples while half-open.
@@ -111,7 +118,9 @@ public struct TileBreaker: Equatable, Sendable {
     /// Record one sample. Returns the transition when this sample changes the state.
     @discardableResult
     public mutating func record(path: Path, ok: Bool, latency: TimeInterval, at now: Date) -> Transition? {
-        samples.append(Sample(at: now, path: path, ok: ok, latency: max(0, latency)))
+        let sample = Sample(at: now, path: path, ok: ok, latency: max(0, latency))
+        samples.append(sample)
+        if path == .new { newWindow.insert(sample) } else { oldWindow.insert(sample) }
         prune(at: now)
 
         switch state {
@@ -119,7 +128,7 @@ public struct TileBreaker: Equatable, Sendable {
             return nil
         case .halfOpen:
             guard path == .new else { return nil }
-            let w = stats(at: now)
+            let w = currentStats()
             let good = ok && latency - w.oldP95Seconds <= TileBreakerConstants.p95LatencyMarginSeconds
             if !good {
                 return open(at: now, reason: ok ? "half-open trial too slow" : "half-open trial failed or blank", window: w)
@@ -129,11 +138,12 @@ public struct TileBreaker: Equatable, Sendable {
             state = .closed
             halfOpenGood = 0
             samples.removeAll()   // a fresh window after recovery
+            newWindow = PathWindow(); oldWindow = PathWindow()
             return Transition(tile: tile, state: .closed,
                               reason: "\(TileBreakerConstants.halfOpenGoodSamples) good half-open samples", window: w)
         case .closed:
             guard path == .new else { return nil }
-            let w = stats(at: now)
+            let w = currentStats()
             guard w.newSamples >= TileBreakerConstants.minNewSamples else { return nil }
             if w.newFailRate - w.oldFailRate > TileBreakerConstants.failureRateMargin {
                 return open(at: now, reason: "new failure rate more than 10 points above old", window: w)
@@ -147,13 +157,16 @@ public struct TileBreaker: Equatable, Sendable {
 
     /// Window statistics at `now` (samples older than the window are ignored).
     public func stats(at now: Date) -> WindowStats {
-        let cutoff = now.addingTimeInterval(-TileBreakerConstants.windowSeconds)
-        let live = samples.filter { $0.at >= cutoff }
-        let new = live.filter { $0.path == .new }, old = live.filter { $0.path == .old }
-        func failRate(_ s: [Sample]) -> Double { s.isEmpty ? 0 : Double(s.filter { !$0.ok }.count) / Double(s.count) }
-        return WindowStats(newSamples: new.count, oldSamples: old.count,
-                           newFailRate: failRate(new), oldFailRate: failRate(old),
-                           newP95Seconds: Self.p95(new.map(\.latency)), oldP95Seconds: Self.p95(old.map(\.latency)))
+        var copy = self
+        copy.prune(at: now)
+        return copy.currentStats()
+    }
+
+    /// Statistics of the window as it stands (already pruned).
+    private func currentStats() -> WindowStats {
+        WindowStats(newSamples: newWindow.count, oldSamples: oldWindow.count,
+                    newFailRate: newWindow.failRate, oldFailRate: oldWindow.failRate,
+                    newP95Seconds: newWindow.p95, oldP95Seconds: oldWindow.p95)
     }
 
     /// Nearest-rank p95; 0 for no samples.
@@ -173,7 +186,49 @@ public struct TileBreaker: Equatable, Sendable {
 
     private mutating func prune(at now: Date) {
         let cutoff = now.addingTimeInterval(-TileBreakerConstants.windowSeconds)
-        if let first = samples.first, first.at < cutoff { samples.removeAll { $0.at < cutoff } }
+        var drop = 0
+        while drop < samples.count,
+              samples[drop].at < cutoff || samples.count - drop > TileBreakerConstants.maxSamplesPerTile {
+            let s = samples[drop]
+            if s.path == .new { newWindow.remove(s) } else { oldWindow.remove(s) }
+            drop += 1
+        }
+        if drop > 0 { samples.removeFirst(drop) }
+    }
+}
+
+/// One path's window: latencies sorted ascending and a failure count, maintained incrementally.
+struct PathWindow: Equatable, Sendable {
+    private(set) var sortedLatencies: [TimeInterval] = []
+    private(set) var failures = 0
+
+    var count: Int { sortedLatencies.count }
+    var failRate: Double { count == 0 ? 0 : Double(failures) / Double(count) }
+    /// Nearest-rank p95; 0 for no samples.
+    var p95: TimeInterval {
+        guard !sortedLatencies.isEmpty else { return 0 }
+        let rank = Int((0.95 * Double(count)).rounded(.up))
+        return sortedLatencies[min(max(rank, 1), count) - 1]
+    }
+
+    mutating func insert(_ s: TileBreaker.Sample) {
+        sortedLatencies.insert(s.latency, at: lowerBound(s.latency))
+        if !s.ok { failures += 1 }
+    }
+
+    mutating func remove(_ s: TileBreaker.Sample) {
+        let i = lowerBound(s.latency)
+        if i < sortedLatencies.count, sortedLatencies[i] == s.latency { sortedLatencies.remove(at: i) }
+        if !s.ok { failures -= 1 }
+    }
+
+    private func lowerBound(_ v: TimeInterval) -> Int {
+        var lo = 0, hi = sortedLatencies.count
+        while lo < hi {
+            let mid = (lo + hi) / 2
+            if sortedLatencies[mid] < v { lo = mid + 1 } else { hi = mid }
+        }
+        return lo
     }
 }
 
@@ -210,4 +265,8 @@ public actor TileBreakerRegistry {
     }
 
     public func state(_ tile: TileKey) -> TileBreaker.State { breakers[tile]?.state ?? .closed }
+
+    public func windowStats(_ tile: TileKey) -> TileBreaker.WindowStats {
+        (breakers[tile] ?? TileBreaker(tile: tile)).stats(at: now())
+    }
 }

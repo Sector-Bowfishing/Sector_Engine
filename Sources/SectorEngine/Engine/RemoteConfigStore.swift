@@ -24,8 +24,6 @@ actor RemoteConfigStore {
     private let ttl: TimeInterval = 10 * 60
     private var inFlight: Task<ConditionsConfig, Never>?
 
-    /// Firebase project id (same as the GCP project). Overridable via env for staging.
-    private let projectId = ProcessInfo.processInfo.environment["GCP_PROJECT"] ?? "sector-9393c"
 
     /// The current tuned config. Never blocks the conditions request on Firebase
     /// once we've fetched at least once.
@@ -73,7 +71,7 @@ actor RemoteConfigStore {
 
     private func fetchOverrides() async -> ConditionsConfigOverrides? {
         // template → parameters → conditions_config → defaultValue → value (a JSON string)
-        guard case .value(let value) = await RemoteConfigREST.parameter("conditions_config", projectId: projectId),
+        guard case .value(let value) = await RemoteConfigREST.parameter("conditions_config"),
               let valueData = value.data(using: .utf8) else { return nil }
         return try? JSONDecoder().decode(ConditionsConfigOverrides.self, from: valueData)
     }
@@ -90,31 +88,47 @@ public enum RemoteConfigParameter: Equatable, Sendable {
 
 /// The Remote Config REST read shared by `RemoteConfigStore` (`conditions_config`) and `TileFlagsStore`
 /// (`conditions_tiles_v1`). There is no Firebase Admin SDK for Swift: this reads the template over REST, authenticated by
-/// the Cloud Run service account via the GCP metadata server. Read-only.
+/// the Cloud Run service account via the GCP metadata server. Read-only. Both parameters come from ONE template read:
+/// `RemoteConfigTemplateCache` makes one token fetch and one template fetch per TTL, shared by both stores.
 enum RemoteConfigREST {
+    /// Firebase project id (same as the GCP project). Overridable via env for staging.
     static var defaultProjectId: String { ProcessInfo.processInfo.environment["GCP_PROJECT"] ?? "sector-9393c" }
 
-    static func parameter(_ name: String, projectId: String = defaultProjectId) async -> RemoteConfigParameter {
+    static func parameter(_ name: String, cache: RemoteConfigTemplateCache = .shared) async -> RemoteConfigParameter {
+        guard let defaults = await cache.defaults() else { return .unreadable }
+        guard let value = defaults[name] else { return .absent }
+        return .value(value)
+    }
+
+    /// One template fetch: every parameter's default string value, or nil when unreadable.
+    static func fetchDefaults(projectId: String = defaultProjectId) async -> [String: String]? {
         guard let token = await accessToken(),
               let url = URL(string: "https://firebaseremoteconfig.googleapis.com/v1/projects/\(projectId)/remoteConfig")
-        else { return .unreadable }
+        else { return nil }
         do {
             let result = try await HTTP.get(url, headers: ["Authorization": "Bearer \(token)"])
             guard result.status == 200,
-                  let root = try JSONSerialization.jsonObject(with: result.body) as? [String: Any] else { return .unreadable }
-            return parameter(name, inTemplate: root)
+                  let root = try JSONSerialization.jsonObject(with: result.body) as? [String: Any] else { return nil }
+            return defaults(inTemplate: root)
         } catch {
-            return .unreadable
+            return nil
         }
     }
 
-    /// Pure: template → parameters → name → defaultValue → value.
+    /// Pure: template → parameters → name → defaultValue → value, for every parameter that has a string default.
+    static func defaults(inTemplate root: [String: Any]) -> [String: String] {
+        guard let params = root["parameters"] as? [String: Any] else { return [:] }
+        var out: [String: String] = [:]
+        for (name, raw) in params {
+            if let param = raw as? [String: Any], let dv = param["defaultValue"] as? [String: Any],
+               let value = dv["value"] as? String { out[name] = value }
+        }
+        return out
+    }
+
+    /// Pure: one parameter from a template.
     static func parameter(_ name: String, inTemplate root: [String: Any]) -> RemoteConfigParameter {
-        guard let params = root["parameters"] as? [String: Any],
-              let param = params[name] as? [String: Any],
-              let defaultValue = param["defaultValue"] as? [String: Any],
-              let value = defaultValue["value"] as? String else { return .absent }
-        return .value(value)
+        defaults(inTemplate: root)[name].map(RemoteConfigParameter.value) ?? .absent
     }
 
     /// OAuth access token for the Cloud Run service account, from the metadata server.
@@ -131,5 +145,35 @@ enum RemoteConfigREST {
         } catch {
             return nil
         }
+    }
+}
+
+/// One Remote Config template read per TTL for the whole process (single-flight). The result of the last attempt,
+/// readable or not, is reused within the TTL; each store keeps its own last-good value when it is unreadable.
+actor RemoteConfigTemplateCache {
+    static let shared = RemoteConfigTemplateCache()
+
+    private let ttl: TimeInterval
+    private let now: @Sendable () -> Date
+    private let fetch: @Sendable () async -> [String: String]?
+    private var last: (at: Date, defaults: [String: String]?)?
+    private var inFlight: Task<[String: String]?, Never>?
+
+    init(ttl: TimeInterval = 10 * 60, now: @escaping @Sendable () -> Date = { Date() },
+         fetch: @escaping @Sendable () async -> [String: String]? = { await RemoteConfigREST.fetchDefaults() }) {
+        self.ttl = ttl
+        self.now = now
+        self.fetch = fetch
+    }
+
+    func defaults() async -> [String: String]? {
+        if let last, now().timeIntervalSince(last.at) < ttl { return last.defaults }
+        if let inFlight { return await inFlight.value }
+        let task = Task { await fetch() }
+        inFlight = task
+        let value = await task.value
+        last = (now(), value)
+        inFlight = nil
+        return value
     }
 }
