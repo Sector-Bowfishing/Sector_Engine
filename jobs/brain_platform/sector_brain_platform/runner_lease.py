@@ -22,6 +22,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import os
+import re
 
 from .publisher.canonical import canonical_bytes
 from .publisher.storage import PreconditionFailed, ScopedObjectStore
@@ -64,7 +65,31 @@ def runner_view(store, holder: str) -> ScopedObjectStore:
     a runner rewriting a lease document: that must also be enforced by the runner's credential (IAM), never by this view only."""
     if holder not in HOLDERS:
         raise ValueError(f"unknown runner {holder!r}")
-    return ScopedObjectStore(store, read=(PREFIX,), create=(f"{PREFIX}{holder}/executions/",), overwrite=(f"{PREFIX}leases/",))
+    return ScopedObjectStore(store, read=(PREFIX,), create=(f"{PREFIX}{holder}/executions/", f"{PREFIX}{holder}/faults/"),
+                             overwrite=(f"{PREFIX}leases/",))
+
+
+FAULT_SCHEMA = "sector-runner-fault-v1"
+
+
+def fault_key(holder: str, brain_id: str, at: dt.datetime, kind: str) -> str:
+    return f"{PREFIX}{holder}/faults/{brain_id}/{at.astimezone(dt.timezone.utc):%Y%m%dT%H%M%SZ}-{kind}.json"
+
+
+def record_fault(view, holder: str, brain_id: str, kind: str, detail: str, now: dt.datetime) -> str:
+    """Sector_Ops #51: a runner reports a fault it stopped itself for (create-only). The Orchestrator's cycle watchdog reads every fault and
+    latches a halt (cycle_watchdog RUNNER_FAULT), which alerts the owner."""
+    if holder not in HOLDERS:
+        raise ValueError(f"unknown runner {holder!r}")
+    if not re.fullmatch(r"[A-Z_]{3,40}", kind or ""):
+        raise ValueError(f"fault kind {kind!r} must match [A-Z_]{{3,40}}")
+    if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,62}", brain_id or ""):
+        raise ValueError(f"brain id {brain_id!r} is not a valid id")
+    key = fault_key(holder, brain_id, now, kind)
+    doc = {"schema": FAULT_SCHEMA, "brainId": brain_id, "holder": holder, "kind": kind, "detail": (detail or "")[:300],
+           "at": now.astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+    view.put(key, json.dumps(doc, sort_keys=True).encode(), if_generation_match=0)
+    return key
 
 
 def load_policy(path: str = POLICY_FILE) -> dict:
