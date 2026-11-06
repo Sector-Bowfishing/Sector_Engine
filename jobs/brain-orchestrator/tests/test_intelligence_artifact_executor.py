@@ -136,3 +136,4 @@ def test_a_skipped_runner_record_is_reconciled_as_a_skip_not_a_failure(cycle, ar
     lease_run(cycle, monkeypatch, PULSE, store, extra=["--coordinate-publication", "--publication-ledger", str(tmp_path / "ledger.json")])
     out = capsys.readouterr().out
     assert "failed runs 0, skipped runs 1;" in out and "missing 0" in out
+    assert '"sector-intelligence": {"failed": 0, "missingArtifacts": 0, "notRequested": 0, "published": 0, "runs": 1}' in out

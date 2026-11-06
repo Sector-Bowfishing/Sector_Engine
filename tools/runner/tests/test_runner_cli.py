@@ -91,3 +91,13 @@ def test_skip_is_refused_without_the_lease_or_for_another_cycle(tmp_path):
     assert R.main(["skip", "--store-dir", d2, "--brain", "wind", "--holder", "pulse"] + TIMES) == 2
     assert R.main(["skip", "--store-dir", d2, "--brain", "wind", "--holder", "pulse", "--cycle", "a/b"] + TIMES) == 2
     assert RL.runner_executions(RL.orchestrator_view(LocalDirObjectStore(d2)), {"wind"}) == []
+
+
+def test_a_re_run_in_the_same_cycle_reports_the_skip_already_recorded(tmp_path, capsys):
+    d, _, _ = setup(tmp_path)
+    base = ["skip", "--store-dir", d, "--brain", "wind", "--holder", "pulse", "--cycle", "c1", "--started-at", "2026-11-02T12:00:00Z"]
+    assert R.main(base + ["--ended-at", "2026-11-02T12:01:00Z"]) == 0
+    capsys.readouterr()
+    assert R.main(base + ["--ended-at", "2026-11-02T12:09:00Z", "--reason=-starts with a dash"]) == 0
+    assert json.loads(capsys.readouterr().out)["alreadyRecorded"] is True
+    assert len(RL.runner_executions(RL.orchestrator_view(LocalDirObjectStore(d)), {"wind"})) == 1

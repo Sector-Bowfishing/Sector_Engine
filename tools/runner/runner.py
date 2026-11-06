@@ -86,8 +86,17 @@ def skip(a, store) -> int:
         print(f"REFUSED: the lease is for cycle {held!r}, the skip for cycle {a.cycle!r}", file=sys.stderr)
         return 3
     eid = f"{a.cycle}-skip"
-    key = RL.record_execution(view, a.holder, a.brain, eid, status="SKIPPED", started_at=a.started_at, ended_at=a.ended_at, artifact=None,
-                              cycle_id=a.cycle, engine_commit=a.engine_commit, decision={"action": "SKIP", "reasons": a.reason or []})
+    try:
+        key = RL.record_execution(view, a.holder, a.brain, eid, status="SKIPPED", started_at=a.started_at, ended_at=a.ended_at, artifact=None,
+                                  cycle_id=a.cycle, engine_commit=a.engine_commit, decision={"action": "SKIP", "reasons": a.reason or []})
+    except ValueError:                                       # a re-run in the same cycle (e.g. a requeue): the cycle's skip is already recorded
+        key = RL.execution_key(a.holder, a.brain, eid)
+        prev = json.loads(view.get(key) or "null")
+        if not (isinstance(prev, dict) and prev.get("status") == "SKIPPED" and prev.get("cycleId") == a.cycle):
+            print(f"REFUSED: {key} already holds a different record", file=sys.stderr)
+            return 4
+        print(json.dumps({"executionRecord": key, "executionId": eid, "status": "SKIPPED", "alreadyRecorded": True}, sort_keys=True))
+        return 0
     print(json.dumps({"executionRecord": key, "executionId": eid, "status": "SKIPPED"}, sort_keys=True))
     return 0
 

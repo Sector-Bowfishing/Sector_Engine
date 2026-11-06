@@ -19,15 +19,23 @@ Status: **DECIDED, option (b)**. The owner approved it on 2026-11-05 (Sector_Ops
 3. **Engine, the runner tool** (`tools/runner/runner.py skip`):
    - Pulse records a SKIP for the cycle it holds. The tool refuses if there is no fresh lease, or if the lease is for another cycle.
    - It writes a create-only `SKIPPED` runner execution record (`{cycle}-skip`): no artifact, with the decision instead.
+   - A later re-run in the same cycle reports the skip as already recorded (exit 0), not as a failure.
    - `runner_lease.record_execution` accepts `SKIPPED` only with a decision, no artifact and a cycle. Existing SUCCEEDED and FAILED records keep their exact bytes.
 4. **Engine, the publication stage** (`PublicationCoordinator.reconcile`):
-   - A SKIPPED run is listed under `skippedRuns`. It is never a missing artifact or a failed run, and it is never matched to an artifact by time window.
-   - The Orchestrator prints `skipped runs N` beside failed runs.
-   - This also fixes today's in-process SKIP records, which the stage had counted as failed runs.
+   - A **runner's** SKIPPED run (one that names its runner and carries the decision) is recorded once in the ledger: artifact `NOT_PRODUCED`, publication outcome `SKIPPED`, reason `PLAN_SKIP`.
+   - It is listed under `skippedRuns` in the cycle that first sees it, and later cycles count it as already known.
+   - It is never a missing artifact or a failed run, and it is never matched to an artifact by time window. The summary counts it under `skipped`.
+   - The Orchestrator's own in-process SKIPPED records are handled exactly as before (review of #132).
 5. **Pulse** (Sector-Pulse, `central.after_run`):
    - The fix applies only to a lease job that declares `skipDecision` (a decision file name) in the catalog.
    - When such a job leaves no artifact but a decision file that says SKIP, Pulse calls `runner.py skip` and records `CENTRAL_SKIPPED` (severity info) instead of `PUBLICATION_FAILED`.
    - A job that declares nothing behaves exactly as before.
+
+## Why (b) and not (a): the fingerprint
+- The Orchestrator's in-process `--plan` reads Cloud Run, where the lineage can be verified. A runner-run job reads the revision the runner supplies, which is never verified (`lineageVerified` False).
+- `sib.fingerprint` includes both of those, so under (a) the Orchestrator's plan and the job's plan could disagree every cycle.
+- Under (b) only the job plans. The first cycle on the runner sees a changed fingerprint and publishes once; later runner cycles compare like with like.
+- Pinned by `test_moving_the_plan_from_cloud_run_to_the_runner_changes_the_fingerprint_once`.
 
 ## Still to do (not in this change)
 - **SI-A5** (held by the owner): the `sector-intelligence-central` catalog entry (Pulse #6) and `run.py --emit` (#130). The entry would add `--emit-decision {out}/decision.json` and `"skipDecision": "decision.json"`.
