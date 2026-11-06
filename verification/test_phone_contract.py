@@ -24,10 +24,30 @@ def test_goldens_meet_contract():
         assert capture.validate(json.loads(f.read_text()), FIELDS) == [], f.name
 
 
-def test_goldens_are_redacted():
+def _strings(v, path=""):
+    if isinstance(v, dict):
+        for k, c in v.items():
+            yield from _strings(c, f"{path}.{k}" if path else k)
+    elif isinstance(v, list):
+        for c in v:
+            yield from _strings(c, path + "[]")
+    elif isinstance(v, str):
+        yield path, v
+
+
+def test_goldens_carry_no_free_text():
+    """Public repo: every string is redacted, an ISO date, or an enum/code/id on the keep-list."""
     for f in GOLDENS:
-        doc = json.loads(f.read_text())
-        assert capture.redact(doc) == doc, f"{f.name} carries unredacted free text"
+        for path, s in _strings(json.loads(f.read_text())):
+            ok = s == capture.REDACTED or capture.DATE_RE.match(s) or path in capture.KEEP
+            assert ok, f"{f.name}: free text at {path}"
+
+
+def test_redaction_is_default_deny():
+    doc = {"brandNewProse": "Carp are spawning in the creek", "band": "Good", "nights": [{"rating": "Fair", "x": "y"}]}
+    red = capture.redact(doc)
+    assert red["brandNewProse"] == capture.REDACTED
+    assert red["band"] == "Good" and red["nights"][0]["rating"] == "Fair" and red["nights"][0]["x"] == capture.REDACTED
 
 
 def test_validator_catches_breaking_changes():
@@ -39,6 +59,8 @@ def test_validator_catches_breaking_changes():
         lambda d: d["weather"].__setitem__("windDirection", 329.5),
         lambda d: d["tonight"]["hours"][0].__setitem__("date", "2026-11-06T12:00:00.123Z"),
         lambda d: d["factors"][0].pop("weightPct"),
+        lambda d: d.__setitem__("score", 72.0),
+        lambda d: d.__setitem__("moonIllumination", float("nan")),
     ):
         doc = copy.deepcopy(base)
         mutate(doc)

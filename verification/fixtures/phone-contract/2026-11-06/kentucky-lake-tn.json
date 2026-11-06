@@ -10,7 +10,7 @@
    "latitude": 36.0470382,
    "longitude": -88.0758624,
    "parameterCode": "00060",
-   "parameterName": "Streamflow, ft&#179;/s",
+   "parameterName": "<redacted>",
    "role": "discharge",
    "siteCode": "03605078",
    "siteName": "<redacted>",
@@ -86,11 +86,11 @@
   "centralFt": 3.229393540090726,
   "confidence": "low",
   "limitations": [
-   "Not calibrated: the rain-decay curve is heuristic, so no range is stated.",
-   "One value for the spot: creek backs and open water are not told apart."
+   "<redacted>",
+   "<redacted>"
   ],
   "model": "rain-decay-v0",
-  "provenance": "Rain-decay estimate from MRMS rain over the surrounding area, 0.53 in in 72 h.",
+  "provenance": "<redacted>",
   "source": "rainDecayModel"
  },
  "closingLine": "<redacted>",
@@ -1250,7 +1250,7 @@
  "regime": "normal",
  "resolvedLake": {
   "id": "Kentucky Lake|TN",
-  "name": "Kentucky Lake",
+  "name": "<redacted>",
   "state": "TN"
  },
  "score": 71,
@@ -2078,311 +2078,311 @@
  },
  "waterTempModel": {
   "currentF": 65.98253534028548,
-  "currentLocalDate": "2026-11-06",
+  "currentLocalDate": "<redacted>",
   "series": [
    {
     "airF": 69.7,
     "date": "2026-09-22T00:00:00Z",
-    "localDate": "2026-09-22",
+    "localDate": "<redacted>",
     "waterF": 68.66114100000001
    },
    {
     "airF": 66.7,
     "date": "2026-09-23T00:00:00Z",
-    "localDate": "2026-09-23",
+    "localDate": "<redacted>",
     "waterF": 68.86994631000002
    },
    {
     "airF": 69.2,
     "date": "2026-09-24T00:00:00Z",
-    "localDate": "2026-09-24",
+    "localDate": "<redacted>",
     "waterF": 69.31339014210002
    },
    {
     "airF": 69,
     "date": "2026-09-25T00:00:00Z",
-    "localDate": "2026-09-25",
+    "localDate": "<redacted>",
     "waterF": 69.73809202931102
    },
    {
     "airF": 68.2,
     "date": "2026-09-26T00:00:00Z",
-    "localDate": "2026-09-26",
+    "localDate": "<redacted>",
     "waterF": 69.96563974667303
    },
    {
     "airF": 68,
     "date": "2026-09-27T00:00:00Z",
-    "localDate": "2026-09-27",
+    "localDate": "<redacted>",
     "waterF": 70.12758216947246
    },
    {
     "airF": 65.9,
     "date": "2026-09-28T00:00:00Z",
-    "localDate": "2026-09-28",
+    "localDate": "<redacted>",
     "waterF": 70.15776977421994
    },
    {
     "airF": 69.5,
     "date": "2026-09-29T00:00:00Z",
-    "localDate": "2026-09-29",
+    "localDate": "<redacted>",
     "waterF": 70.54081249454015
    },
    {
     "airF": 75.7,
     "date": "2026-09-30T00:00:00Z",
-    "localDate": "2026-09-30",
+    "localDate": "<redacted>",
     "waterF": 71.23503537003154
    },
    {
     "airF": 79.5,
     "date": "2026-10-01T00:00:00Z",
-    "localDate": "2026-10-01",
+    "localDate": "<redacted>",
     "waterF": 72.0940281867287
    },
    {
     "airF": 74.3,
     "date": "2026-10-02T00:00:00Z",
-    "localDate": "2026-10-02",
+    "localDate": "<redacted>",
     "waterF": 72.68278764992313
    },
    {
     "airF": 67.2,
     "date": "2026-10-03T00:00:00Z",
-    "localDate": "2026-10-03",
+    "localDate": "<redacted>",
     "waterF": 72.62003176143004
    },
    {
     "airF": 69.2,
     "date": "2026-10-04T00:00:00Z",
-    "localDate": "2026-10-04",
+    "localDate": "<redacted>",
     "waterF": 72.76255290290133
    },
    {
     "airF": 66.9,
     "date": "2026-10-05T00:00:00Z",
-    "localDate": "2026-10-05",
+    "localDate": "<redacted>",
     "waterF": 72.53747614164021
    },
    {
     "airF": 65.7,
     "date": "2026-10-06T00:00:00Z",
-    "localDate": "2026-10-06",
+    "localDate": "<redacted>",
     "waterF": 72.3493332888926
    },
    {
     "airF": 67.1,
     "date": "2026-10-07T00:00:00Z",
-    "localDate": "2026-10-07",
+    "localDate": "<redacted>",
     "waterF": 72.27915729289226
    },
    {
     "airF": 69.7,
     "date": "2026-10-08T00:00:00Z",
-    "localDate": "2026-10-08",
+    "localDate": "<redacted>",
     "waterF": 72.42110013653196
    },
    {
     "airF": 71,
     "date": "2026-10-09T00:00:00Z",
-    "localDate": "2026-10-09",
+    "localDate": "<redacted>",
     "waterF": 72.54104312424408
    },
    {
     "airF": 63.3,
     "date": "2026-10-10T00:00:00Z",
-    "localDate": "2026-10-10",
+    "localDate": "<redacted>",
     "waterF": 72.07806124306211
    },
    {
     "airF": 66.9,
     "date": "2026-10-11T00:00:00Z",
-    "localDate": "2026-10-11",
+    "localDate": "<redacted>",
     "waterF": 72.03796973118652
    },
    {
     "airF": 72.8,
     "date": "2026-10-12T00:00:00Z",
-    "localDate": "2026-10-12",
+    "localDate": "<redacted>",
     "waterF": 72.42573745537973
    },
    {
     "airF": 76.3,
     "date": "2026-10-13T00:00:00Z",
-    "localDate": "2026-10-13",
+    "localDate": "<redacted>",
     "waterF": 73.09572108439556
    },
    {
     "airF": 79.2,
     "date": "2026-10-14T00:00:00Z",
-    "localDate": "2026-10-14",
+    "localDate": "<redacted>",
     "waterF": 73.99010318679996
    },
    {
     "airF": 78.4,
     "date": "2026-10-15T00:00:00Z",
-    "localDate": "2026-10-15",
+    "localDate": "<redacted>",
     "waterF": 74.72730189998796
    },
    {
     "airF": 59.8,
     "date": "2026-10-16T00:00:00Z",
-    "localDate": "2026-10-16",
+    "localDate": "<redacted>",
     "waterF": 73.53820372898905
    },
    {
     "airF": 52.8,
     "date": "2026-10-17T00:00:00Z",
-    "localDate": "2026-10-17",
+    "localDate": "<redacted>",
     "waterF": 71.86796539338003
    },
    {
     "airF": 53.8,
     "date": "2026-10-18T00:00:00Z",
-    "localDate": "2026-10-18",
+    "localDate": "<redacted>",
     "waterF": 70.66198650797583
    },
    {
     "airF": 55.2,
     "date": "2026-10-19T00:00:00Z",
-    "localDate": "2026-10-19",
+    "localDate": "<redacted>",
     "waterF": 69.658352722258
    },
    {
     "airF": 59.9,
     "date": "2026-10-20T00:00:00Z",
-    "localDate": "2026-10-20",
+    "localDate": "<redacted>",
     "waterF": 69.10961797725479
    },
    {
     "airF": 60.6,
     "date": "2026-10-21T00:00:00Z",
-    "localDate": "2026-10-21",
+    "localDate": "<redacted>",
     "waterF": 68.70287035930185
    },
    {
     "airF": 61.3,
     "date": "2026-10-22T00:00:00Z",
-    "localDate": "2026-10-22",
+    "localDate": "<redacted>",
     "waterF": 68.37119602696468
    },
    {
     "airF": 60.9,
     "date": "2026-10-23T00:00:00Z",
-    "localDate": "2026-10-23",
+    "localDate": "<redacted>",
     "waterF": 67.99194538453786
    },
    {
     "airF": 60.2,
     "date": "2026-10-24T00:00:00Z",
-    "localDate": "2026-10-24",
+    "localDate": "<redacted>",
     "waterF": 67.64137329992946
    },
    {
     "airF": 60.2,
     "date": "2026-10-25T00:00:00Z",
-    "localDate": "2026-10-25",
+    "localDate": "<redacted>",
     "waterF": 67.42100170293581
    },
    {
     "airF": 59.6,
     "date": "2026-10-26T00:00:00Z",
-    "localDate": "2026-10-26",
+    "localDate": "<redacted>",
     "waterF": 67.16805654967159
    },
    {
     "airF": 59.7,
     "date": "2026-10-27T00:00:00Z",
-    "localDate": "2026-10-27",
+    "localDate": "<redacted>",
     "waterF": 66.97586546020115
    },
    {
     "airF": 62.2,
     "date": "2026-10-28T00:00:00Z",
-    "localDate": "2026-10-28",
+    "localDate": "<redacted>",
     "waterF": 66.96298056878305
    },
    {
     "airF": 62.8,
     "date": "2026-10-29T00:00:00Z",
-    "localDate": "2026-10-29",
+    "localDate": "<redacted>",
     "waterF": 66.96582631759257
    },
    {
     "airF": 64.7,
     "date": "2026-10-30T00:00:00Z",
-    "localDate": "2026-10-30",
+    "localDate": "<redacted>",
     "waterF": 67.12618594900924
    },
    {
     "airF": 66.7,
     "date": "2026-10-31T00:00:00Z",
-    "localDate": "2026-10-31",
+    "localDate": "<redacted>",
     "waterF": 67.3562722135984
    },
    {
     "airF": 57.2,
     "date": "2026-11-01T00:00:00Z",
-    "localDate": "2026-11-01",
+    "localDate": "<redacted>",
     "waterF": 66.85160871437455
    },
    {
     "airF": 64.2,
     "date": "2026-11-02T00:00:00Z",
-    "localDate": "2026-11-02",
+    "localDate": "<redacted>",
     "waterF": 67.00493193008084
    },
    {
     "airF": 70,
     "date": "2026-11-03T00:00:00Z",
-    "localDate": "2026-11-03",
+    "localDate": "<redacted>",
     "waterF": 67.39782405637357
    },
    {
     "airF": 64.6,
     "date": "2026-11-04T00:00:00Z",
-    "localDate": "2026-11-04",
+    "localDate": "<redacted>",
     "waterF": 67.49906289129994
    },
    {
     "airF": 57.9,
     "date": "2026-11-05T00:00:00Z",
-    "localDate": "2026-11-05",
+    "localDate": "<redacted>",
     "waterF": 67.03244323108295
    },
    {
     "airF": 51.7,
     "date": "2026-11-06T00:00:00Z",
-    "localDate": "2026-11-06",
+    "localDate": "<redacted>",
     "waterF": 65.98253534028548
    },
    {
     "airF": 45.4,
     "date": "2026-11-07T00:00:00Z",
-    "localDate": "2026-11-07",
+    "localDate": "<redacted>",
     "waterF": 64.43408215965978
    },
    {
     "airF": 48.6,
     "date": "2026-11-08T00:00:00Z",
-    "localDate": "2026-11-08",
+    "localDate": "<redacted>",
     "waterF": 63.3671067652904
    },
    {
     "airF": 53.2,
     "date": "2026-11-09T00:00:00Z",
-    "localDate": "2026-11-09",
+    "localDate": "<redacted>",
     "waterF": 62.79185315641426
    }
   ],
-  "timeZone": "America/Chicago"
+  "timeZone": "<redacted>"
  },
  "waterTempState": {
   "kind": "modeled",
-  "lakeLocalDate": "2026-11-06",
+  "lakeLocalDate": "<redacted>",
   "lakeTimeZone": "America/Chicago",
   "measurementMaxAgeHours": 6,
-  "modelVersion": "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
+  "modelVersion": "<redacted>",
   "qualityFlags": [],
   "scoredFrom": "resolvedState",
   "scoredValueF": 65.98253534028548,

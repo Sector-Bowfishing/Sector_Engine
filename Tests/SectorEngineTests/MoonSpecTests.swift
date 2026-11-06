@@ -24,7 +24,8 @@ final class MoonSpecTests: XCTestCase {
     private static let knownNewMoon = 947182440.0   // 2000-01-06 18:14 UTC
 
     /// Fixed instants: every 3 days from 2026-11-01 for 60 days at 03:00Z (evening in US time zones), plus one minute
-    /// either side of every phase-name boundary in cycles 333 and 334 (late 2026), where implementations disagree first.
+    /// either side of every phase-name boundary in synodic cycles 333 and 334 (about 2026-12-02 to 2027-01-30), where
+    /// implementations disagree first.
     private static func instants() -> [Double] {
         var out: [Double] = []
         let start = 1793502000.0   // 2026-11-01T03:00:00Z

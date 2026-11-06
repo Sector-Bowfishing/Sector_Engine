@@ -70,8 +70,12 @@ final class PhoneContractTests: XCTestCase {
 
     private static func isType(_ v: Any, _ t: String) -> Bool {
         switch t {
-        case "int": if let d = number(v) { return d.rounded() == d } else { return false }
-        case "number": return number(v) != nil
+        case "int":
+            // An integer token: build 28 decodes these as Swift Int. "72.0" (objCType "d") is not accepted.
+            guard let n = v as? NSNumber, !isBool(v) else { return false }
+            let t = String(cString: n.objCType)
+            return t != "d" && t != "f"
+        case "number": if let d = number(v) { return d.isFinite } else { return false }
         case "string": return v is String
         case "bool": return isBool(v)
         case "date":
@@ -173,6 +177,32 @@ final class PhoneContractTests: XCTestCase {
 
     // MARK: tests
 
+    func testBuild28DecodesEveryGolden() throws {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        for f in try Self.goldenFiles() {
+            XCTAssertNoThrow(try decoder.decode(Build28.Response.self, from: Data(contentsOf: f)), f.lastPathComponent)
+        }
+    }
+
+    /// Every optional contract path is present in at least one golden, so dropping or retyping it is caught.
+    func testGoldensExerciseEveryContractPath() throws {
+        let fields = try Self.loadContract()
+        var seen = Set<String>()
+        func walk(_ v: Any, _ path: String) {
+            if v is NSNull { return }
+            if !path.isEmpty { seen.insert(path) }
+            if let o = v as? [String: Any] {
+                for (k, c) in o { walk(c, path.isEmpty ? k : "\(path).\(k)") }
+            } else if let a = v as? [Any] {
+                for e in a { walk(e, path + "[]") }
+            }
+        }
+        for f in try Self.goldenFiles() { walk(try JSONSerialization.jsonObject(with: Data(contentsOf: f)), "") }
+        let missing = Set(fields.keys).subtracting(seen).sorted()
+        XCTAssertTrue(missing.isEmpty, "contract paths with no golden evidence: \(missing)")
+    }
+
     func testThereAreGoldens() throws {
         XCTAssertGreaterThanOrEqual(try Self.goldenFiles().count, 10, "phone-contract goldens are missing")
     }
@@ -190,14 +220,15 @@ final class PhoneContractTests: XCTestCase {
         let fields = try Self.loadContract()
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        // Same settings as Sources/SectorEngineServer/main.swift.
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-        encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+        let encoder = SectorEngineAPI.makeEncoder()   // the server's own encoder (main.swift uses the same function)
         for f in try Self.goldenFiles() {
             let data = try Data(contentsOf: f)
             let response = try decoder.decode(ConditionsResponse.self, from: data)
-            let reencoded = try JSONSerialization.jsonObject(with: encoder.encode(response))
+            let bytes = try encoder.encode(response)
+            // The real released decoder: build 28's Response, vendored verbatim (Build28Response.swift).
+            XCTAssertNoThrow(try decoder.decode(Build28.Response.self, from: bytes),
+                             "\(f.lastPathComponent): iOS build 28 cannot decode the Engine's output")
+            let reencoded = try JSONSerialization.jsonObject(with: bytes)
             let errors = Self.validate(reencoded, fields)
             XCTAssertTrue(errors.isEmpty, "\(f.lastPathComponent) after Engine round trip: \(errors.prefix(5))")
             let golden = try JSONSerialization.jsonObject(with: data)
@@ -233,6 +264,9 @@ final class PhoneContractTests: XCTestCase {
             var badDate = base; badDate["tonight"] = t
             XCTAssertFalse(Self.validate(badDate, fields).isEmpty, "fractional-second date")
         }
+
+        var floaty = base; floaty["score"] = 72.5
+        XCTAssertFalse(Self.validate(floaty, fields).isEmpty, "non-integer Int")
 
         var added = base; added["tileSources"] = ["moon": ["path": "app"]]
         XCTAssertTrue(Self.validate(added, fields).isEmpty, "additive field must be allowed")

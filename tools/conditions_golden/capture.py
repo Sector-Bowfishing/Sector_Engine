@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import sys
 import time
@@ -36,18 +37,26 @@ USER_AGENT = "sector-engine-golden-capture/1"
 
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})$")
 
-# Free-text paths (contract path syntax). Everything else is kept as served.
-REDACT = {
-    "topReasons[]", "closingLine", "spawnSpeciesName",
-    "dormantFactors[].label", "dormantFactors[].reason",
-    "factors[].label", "factors[].why", "gates[].reason",
-    "whereToLook[].title", "whereToLook[].body",
-    "weather.conditionDescription",
-    "alerts[].headline", "alerts[].details", "alerts[].event", "alerts[].id",
-    "tonight.headline",
-    "nights[].topReasons[]", "nights[].factors[].detail",
-    "clarityGauges[].siteName",
+# Redaction is default-deny: every string becomes "<redacted>" (type kept) unless it is an ISO date or its path is
+# on this keep-list of enums, units, codes and identifiers that carry no prose. A new free-text field the Engine adds
+# later is therefore redacted without anyone having to remember to list it. Gauge and dam names are redacted too.
+KEEP = {
+    "band", "regime", "confidenceBand", "factors[].key", "dormantFactors[].key", "whereToLook[].kind",
+    "weather.conditionSymbol", "weather.pressureTrend",
+    "water.unit", "water.trend", "discharge.unit", "discharge.trend",
+    "generation.operatorId", "generation.windows[].timeZoneIdentifier",
+    "alerts[].severity",
+    "nights[].rating", "nights[].regime", "nights[].factors[].key",
+    "clarityRain.source",
+    "clarityGauges[].siteCode", "clarityGauges[].parameterCode", "clarityGauges[].role",
+    "clarityGauges[].unit", "clarityGauges[].trend",
+    # Engine-only enums outside the phone contract (ConditionsResponse decodes them as enums or ids)
+    "resolvedLake.id", "resolvedLake.state",
+    "waterTemp.source", "waterTempState.kind", "waterTempState.sourceKind", "waterTempState.spatialSupport",
+    "waterTempState.unit", "waterTempState.scoredFrom", "waterTempState.lakeTimeZone", "waterTempState.qualityFlags[]",
+    "clarityVisibility.confidence", "clarityVisibility.source", "clarityVisibility.model",
 }
+REDACTED = "<redacted>"
 
 
 def load_contract() -> dict:
@@ -55,10 +64,10 @@ def load_contract() -> dict:
 
 
 def _is_type(v, t: str) -> bool:
-    if t == "int":
-        return isinstance(v, int) and not isinstance(v, bool) or (isinstance(v, float) and v.is_integer())
+    if t == "int":  # an integer token; build 28 decodes these as Swift Int
+        return isinstance(v, int) and not isinstance(v, bool)
     if t == "number":
-        return isinstance(v, (int, float)) and not isinstance(v, bool)
+        return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
     if t == "string":
         return isinstance(v, str)
     if t == "bool":
@@ -132,8 +141,8 @@ def redact(doc, path: str = ""):
         return {k: redact(v, f"{path}.{k}" if path else k) for k, v in doc.items()}
     if isinstance(doc, list):
         return [redact(v, path + "[]") for v in doc]
-    if isinstance(doc, str) and path in REDACT:
-        return "<redacted>"
+    if isinstance(doc, str) and path not in KEEP and not DATE_RE.match(doc):
+        return REDACTED
     return doc
 
 
@@ -176,6 +185,21 @@ def cmd_capture(a) -> int:
     return 1 if bad else 0
 
 
+def cmd_redact(a) -> int:
+    """Rebuild the public fixtures from the private raw bodies (no network)."""
+    fields = load_contract()
+    out_dir = FIXTURES / a.date
+    out_dir.mkdir(parents=True, exist_ok=True)
+    bad = 0
+    for raw in sorted(Path(a.raw_dir).expanduser().glob("*.json")):
+        doc = json.loads(raw.read_text())
+        errs = validate(doc, fields)
+        (out_dir / raw.name).write_text(json.dumps(redact(doc), indent=1, sort_keys=True) + "\n")
+        print(f"{'OK  ' if not errs else 'BAD '}  {raw.name}")
+        bad += bool(errs)
+    return 1 if bad else 0
+
+
 def cmd_check(a) -> int:
     fields = load_contract()
     bad = 0
@@ -210,13 +234,16 @@ def main() -> int:
     c.add_argument("--raw-dir", required=True, help="private folder for unredacted bodies (never this repo)")
     c.add_argument("--date", default=time.strftime("%Y-%m-%d"))
     c.add_argument("--pause", type=float, default=1.0)
+    r = sub.add_parser("redact")
+    r.add_argument("--raw-dir", required=True)
+    r.add_argument("--date", required=True)
     k = sub.add_parser("check")
     k.add_argument("--live", action="store_true")
     k.add_argument("files", nargs="*")
     a = ap.parse_args()
-    if a.cmd == "capture" and ROOT in Path(a.raw_dir).expanduser().resolve().parents:
+    if a.cmd in ("capture", "redact") and ROOT in Path(a.raw_dir).expanduser().resolve().parents:
         ap.error("--raw-dir must be outside the repository")
-    return cmd_capture(a) if a.cmd == "capture" else cmd_check(a)
+    return {"capture": cmd_capture, "redact": cmd_redact, "check": cmd_check}[a.cmd](a)
 
 
 if __name__ == "__main__":

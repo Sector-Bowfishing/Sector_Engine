@@ -7,9 +7,11 @@ fractional-second date fails the whole response and blanks every tile.
 
 - `points-v1.json`: the 17 fixed points (15 directory lakes covering TVA, SWPA, Alabama Power, CWMS, west and north, plus
   one off-directory river point and one coastal point).
-- `<date>/<slug>.json`: one capture. Free text (reasons, prose, alert text, gauge names, the spawn species name) is
-  replaced with `"<redacted>"`, which keeps the type. This repository is public and must not carry per-lake species
-  presence. The unredacted bodies are kept privately in `Sector Research/shared/conditions-golden/<date>/`.
+- `<date>/<slug>.json`: one capture. Redaction is default-deny: every string becomes `"<redacted>"` (type kept)
+  unless it is an ISO date or on the keep-list of enums, units, codes and ids in `capture.py` (`KEEP`). So reasons,
+  prose, alert text, gauge and dam names and the spawn species name never land here; this repository is public and must
+  not carry per-lake species presence. Unredacted bodies stay private in `Sector Research/shared/conditions-golden/<date>/`;
+  `capture.py redact` rebuilds the fixtures from them without the network.
 
 Checks:
 - `Tests/SectorEngineTests/PhoneContractTests.swift` (CI `swift test`): every golden meets the contract. Every golden
@@ -27,3 +29,7 @@ Check production live against the contract (also the per-tile watch's contract p
 
 The contract changes only by adding fields, or by a new version once no released build still needs the old one
 (request logs by app version, rule 5 on #53).
+
+`synthetic/all-optionals.json` is the Guntersville golden with the two optional paths no capture contained filled in
+(`spawnSpeciesName` as `"<redacted>"`, and `nights[].moonset`). Every contract path then has evidence in at least one
+file, so the Engine cannot drop or retype an optional field unnoticed (`testGoldensExerciseEveryContractPath`).
