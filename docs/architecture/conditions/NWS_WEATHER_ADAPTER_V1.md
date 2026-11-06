@@ -13,22 +13,23 @@ Code:
 
 | Step | Request | Use | Cache |
 |---|---|---|---|
-| 1 | `GET /points/{lat},{lon}` (rounded to 0.01°) | `forecastGridData` (the NDFD gridpoint) and the `observationStations` URL | 24 h per 0.01° key, together with step 2 |
-| 2 | `GET {observationStations}` | station ids, nearest first; the first 3 are kept | with step 1 |
+| 1 | `GET /points/{lat},{lon}` (rounded to 0.01°) | `forecastGridData` (the NDFD gridpoint) and the `observationStations` URL | 24 h per 0.01° key, together with step 2; at most 5,000 entries, least recently used evicted |
+| 2 | `GET {observationStations}` | station ids, nearest first; the first 3 are kept | with step 1; an empty list is never cached |
 | 3 | `GET /stations/{id}/observations?start=now−49h&limit=500`, for 3 stations in parallel | "now", the past 48 h of the hourly series, and the pressure trend | none |
-| 4 | `GET {forecastGridData}` | the NBM-based NDFD grid: the current hour and the next 24 h | none |
+| 4 | `GET {forecastGridData}`, in parallel with steps 2–3 | the NBM-based NDFD grid: the current hour and the next 24 h | none |
 
 - Every request sends `User-Agent: Sector/1.0 (io.sector.co)`, the same as `WeatherAlertsService`, plus `Accept: application/geo+json`. It goes through `HTTP.get`, so each call writes an `[http]` upstream log line.
-- The whole reading has an 8 s budget (`withDeadline`). On a timeout, any failure that leaves no value, or a point outside NWS coverage, the result is `nil`.
-- A failed points lookup is not cached.
+- Each request has its own 2.5 s timeout (`requestTimeout`). The three sequential stages (points; then stations → observations, with the grid alongside) fit inside the 8 s budget for the whole reading (`withDeadline`).
+- A slow grid does not lose fresh observations, and a slow, failed or empty station list degrades to a grid-only reading instead of `nil`.
+- The result is `nil` only for a failed points lookup (including a point outside NWS coverage), the 8 s deadline, or a reading with no value at all. Failed lookups are not cached.
 
 ## 2. Rules
 
 - **Provenance.** Every value is an `NWSValue` with `value`, `observedAt`, `origin` (`observation` or `nbmGrid`) and `stationId`. For a grid value, `observedAt` is the start of the grid hour it is valid for.
-- **Stale rule.** An observation older than **2 h** (`observationMaxAge`) is never used as "now". The adapter takes each field from the nearest station that has a fresh observation carrying that field.
-- **Fallback.** When no station has a fresh observation, temperature, humidity and wind fall back to the grid's current hour, with `origin = nbmGrid`. Pressure and present weather have no grid fallback and stay `nil`.
-- **Never invented.** A value nobody reported stays `nil`. A trend with no past sample within 90 min of its target stays `nil`; WeatherService would report steady/0 in that case. QC flags `X` (rejected) and `B` (bad) drop the value. An unknown unit gives `nil`. QPF periods longer than one hour are not split into hourly rates.
-- **Wind.** Speed and direction always come from the same observation. A direction that is null (calm or variable) stays `nil`.
+- **Stale rule and station choice.** An observation older than **2 h** (`observationMaxAge`) is never used as "now". For each field, the newest observation carrying it across the stations wins if it is at most **75 min** old (`preferredMaxAge`; ties go to the nearer station). Only when no station has one that recent does the adapter take the nearest station's newest observation, up to the 2 h limit.
+- **Fallback.** When no station has a fresh observation, temperature, humidity and wind fall back to the grid's current hour, with `origin = nbmGrid`. `weatherCode` falls back to the sky code (0–3) of the grid's cover, also `nbmGrid`; present weather (rain, fog, storms) is never taken from the grid. Pressure has no grid fallback and stays `nil`.
+- **Never invented.** A value nobody reported stays `nil`. A trend with no past sample less than 90 min from its target stays `nil` (the same `<` as WeatherService); WeatherService would report steady/0 in that case. QC flags `X` (rejected) and `B` (bad) drop the value. An unknown unit gives `nil`. QPF periods longer than one hour are not split into hourly rates.
+- **Wind.** Speed and direction always come from the same observation. Calm (speed 0) has no direction, and a null direction (variable) stays `nil`.
 
 ## 3. Units and meaning checks for each tile
 
@@ -55,7 +56,7 @@ Code:
 
 - The output is limited to the codes WeatherService emits, because build 28 apps map exactly those. The description and SF Symbol come from `WeatherService.condition(forCode:)`.
 - WeatherService has **no day/night symbol rule**: a clear night is `sun.max.fill`. The adapter keeps that and ignores the `day`/`night` part of the icon URL. A night variant would be a change to app-visible behaviour, so it would need its own decision.
-- **Order:** a weather icon (and its text) wins. Otherwise the code comes from the grid's total cloud %, then from the sky icon, then from the text. Present weather needs a fresh observation; the grid's `weather` layer is a probability ("chance"), not an occurrence, so it is not used.
+- **Order:** a weather icon (and its text) wins. Otherwise the code comes from the grid's total cloud %, then from the sky icon, then from the text. Present weather needs a fresh observation; the grid's `weather` layer is a probability ("chance"), not an occurrence, so it is not used. With no fresh observation the code is the grid cover's sky code (0–3), marked `nbmGrid`.
 - **Cloud %:** NWS octa categories. Under 12.5 % is 0 (clear). Under 37.5 % is 1 (mainly clear). Under 87.5 % is 2 (partly cloudy; NWS "mostly cloudy" included). From 87.5 % it is 3 (overcast).
 - **Intensity** comes from the text ("Light …" and "Heavy …"). "Drizzle" turns a `rain` icon into 51/53/55. "Hail" turns a thunderstorm into 96.
 
@@ -83,7 +84,7 @@ Ice pellets (`sleet`) have no Open-Meteo code, so they map to freezing rain (66/
 ## 5. Parity comparator
 
 - `NWSWeatherParity.compare(old: WeatherReading, new: NWSWeatherReading?) -> [NWSTileParity]` returns one entry per tile: `humidity`, `pressure`, `temperature`, `sky`, `wind`.
-- Each entry has `old`, `new` and `delta` (new − old, rounded to 0.01) for the tile's primary number:
+- Each entry has `old`, `new` and `delta` (new − old, rounded to 0.01) for the tile's primary number, always present and `null` when missing:
   - Humidity: %.
   - Pressure: hPa.
   - Temperature: °F.
@@ -100,7 +101,7 @@ Ice pellets (`sleet`) have no Open-Meteo code, so they map to freezing rain (66/
 - **Anywhere outside the US.** `/points` returns 404, so the reading is `nil` and the tile must stay on Open-Meteo (spec §0 rule 2).
 - **History beyond about 7 days.** The station observations API keeps only recent data, and there is no reanalysis or archive. Trip-window weather (`WeatherService.windowConditions`, past nights) cannot move.
 - **Forecast pressure.** See §4.
-- **A guaranteed fresh "now".** Some stations lag about 2 h in the API, or never report. When that happens, temperature, humidity and wind are NBM forecast values for the current hour, and pressure and present weather are `nil`.
+- **A guaranteed fresh "now".** Some stations lag about 2 h in the API, or never report. When that happens, temperature, humidity, wind and the sky code are NBM forecast values for the current hour, and pressure is `nil`.
 - **Precipitation in the WeatherReading meaning.** The adapter does not produce `precipitation` (now) or `recentRainfall`. Those stay on Open-Meteo or MRMS.
 
 ## 7. Open-Meteo uses that remain after the five tiles move
@@ -117,6 +118,7 @@ Ice pellets (`sleet`) have no Open-Meteo code, so they map to freezing rain (66/
 
 - The adapter has not been run against live traffic or in Cloud Run. The fixtures are one moment, at three points.
 - These are untested choices for the shadow parity window to confirm or change:
-  - the 2 h stale threshold
+  - the 2 h stale threshold and the 75 min newest-wins window
+  - the 2.5 s per-request timeout
   - the 6 h SLP-offset window
   - the octa cloud thresholds against Open-Meteo's own code thresholds

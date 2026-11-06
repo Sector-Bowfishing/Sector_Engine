@@ -264,7 +264,7 @@ final class NWSWeatherServiceTests: XCTestCase {
         XCTAssertEqual(r.nwsTextDescription, "Clear and Breezy")
     }
 
-    func testGuntersvilleAllStationsStale_GridFallbackAndNoPressureOrPresentWeather() throws {
+    func testGuntersvilleAllStationsStale_GridFallbackAndNoPressure() throws {
         // K8A1 sent nothing in 50 h; KBFZ (18:15Z) and K4A6 (18:35Z) are > 2 h old.
         let r = try XCTUnwrap(try reading("guntersville"))
         XCTAssertEqual(r.temperature?.origin, .nbmGrid)
@@ -276,19 +276,26 @@ final class NWSWeatherServiceTests: XCTestCase {
         XCTAssertNil(r.pressure); XCTAssertNil(r.pressureKind)
         XCTAssertNil(r.pressureTrend); XCTAssertNil(r.pressureChange)
         XCTAssertTrue(r.pressureHistory.isEmpty)
-        XCTAssertNil(r.weatherCode); XCTAssertNil(r.conditionSymbol); XCTAssertNil(r.conditionDescription)
         XCTAssertEqual(r.cloudCover?.value, 15)
+        // No fresh observation: the sky code of the grid's own cover (15 % → 1).
+        XCTAssertEqual(r.weatherCode?.value, 1)
+        XCTAssertEqual(r.weatherCode?.origin, .nbmGrid)
+        XCTAssertEqual(r.weatherCode?.observedAt, Self.date("2026-11-06T20:00:00Z"))
+        XCTAssertEqual(r.conditionSymbol, "sun.max.fill")
+        XCTAssertEqual(r.conditionDescription, "Mainly clear")
+        XCTAssertNil(r.nwsTextDescription)
     }
 
     func testGuntersvilleWhileFresh_AltimeterWithoutSLPStaysLabelled() throws {
         let r = try XCTUnwrap(try reading("guntersville", now: Self.date("2026-11-06T19:00:00Z")))
-        XCTAssertEqual(r.temperature?.stationId, "KBFZ")          // K8A1 is empty
-        XCTAssertEqual(r.temperature?.value, 71.6)
-        XCTAssertEqual(r.humidity?.value, 50)
+        // K8A1 is empty; K4A6 (18:35Z) is newer than KBFZ (18:15Z), both within 75 min.
+        XCTAssertEqual(r.temperature?.stationId, "K4A6")
+        XCTAssertEqual(try XCTUnwrap(r.temperature?.value), 73.4, accuracy: 1e-9)
+        XCTAssertEqual(r.humidity?.value, 47)
         // AWOS: no SLP group ever, so no conversion: served as the altimeter.
         XCTAssertEqual(r.pressureKind, .altimeter)
         XCTAssertNil(r.seaLevelOffset)
-        XCTAssertEqual(try XCTUnwrap(r.pressure?.value), 1015.9166, accuracy: 1e-9)
+        XCTAssertEqual(try XCTUnwrap(r.pressure?.value), 1015.6, accuracy: 1e-9)
         XCTAssertEqual(r.pressureTrend, .steady)
         XCTAssertEqual(r.pressureTrend3h, .falling)
         XCTAssertEqual(r.weatherCode?.value, 0)
@@ -352,6 +359,47 @@ final class NWSWeatherServiceTests: XCTestCase {
         XCTAssertNil(r.weatherCode)
         XCTAssertNil(r.pressureTrend)           // no sample 12 h back
         XCTAssertNil(r.pressureChange)
+    }
+
+    func testNewestWithin75MinBeatsTheNearerStation() {
+        let now = Self.recordedAt
+        let near = obs("A", now.addingTimeInterval(-(115 * 60)), temp: 50, alt: 1010)   // 1h55m
+        let far = obs("B", now.addingTimeInterval(-(5 * 60)), temp: 52, alt: 1011)      // 5 min
+        let r = NWSWeatherService.assemble(point: point, stations: ["A", "B"],
+                                           observations: ["A": [near], "B": [far]], grid: nil, now: now)!
+        XCTAssertEqual(r.temperature?.stationId, "B")
+        XCTAssertEqual(r.pressure?.stationId, "B")
+        XCTAssertEqual(r.windSpeed?.stationId, "B")
+        // Nothing within 75 min anywhere: nearest-first up to 2 h.
+        let older = obs("B", now.addingTimeInterval(-(100 * 60)), temp: 52)
+        let r2 = NWSWeatherService.assemble(point: point, stations: ["A", "B"],
+                                            observations: ["A": [near], "B": [older]], grid: nil, now: now)!
+        XCTAssertEqual(r2.temperature?.stationId, "A")
+        // Equal timestamps: the nearer station.
+        let nearFresh = obs("A", now.addingTimeInterval(-600), temp: 50)
+        let tieB = obs("B", nearFresh.timestamp, temp: 52)
+        let r3 = NWSWeatherService.assemble(point: point, stations: ["A", "B"],
+                                            observations: ["A": [nearFresh], "B": [tieB]], grid: nil, now: now)!
+        XCTAssertEqual(r3.temperature?.stationId, "A")
+    }
+
+    func testCalmWindHasNoDirection() {
+        let now = Self.recordedAt
+        let calm = obs("A", now.addingTimeInterval(-600), wind: 0, dir: 0)
+        let r = NWSWeatherService.assemble(point: point, stations: ["A"],
+                                           observations: ["A": [calm]], grid: nil, now: now)!
+        XCTAssertEqual(r.windSpeed?.value, 0)
+        XCTAssertNil(r.windDirection)
+    }
+
+    func testTrendToleranceIsStrict() {
+        let at = Self.recordedAt
+        let series = [(at, 1010.0), (at.addingTimeInterval(-12 * 3600 - 90 * 60), 1005.0)]
+        XCTAssertNil(NWSWeatherService.pressureTendency(current: 1010, at: at, series: series,
+                                                        hours: 12, steadyHPa: 1.5))
+        let inside = [(at, 1010.0), (at.addingTimeInterval(-12 * 3600 - 89 * 60), 1005.0)]
+        XCTAssertEqual(NWSWeatherService.pressureTendency(current: 1010, at: at, series: inside,
+                                                          hours: 12, steadyHPa: 1.5)?.0, .rising)
     }
 
     func testNothingAnywhereIsNil() {
@@ -422,6 +470,71 @@ final class NWSWeatherServiceTests: XCTestCase {
         XCTAssertEqual(cached, 0)
     }
 
+    private static func slow(_ base: @escaping NWSWeatherService.Fetch,
+                             when match: @escaping @Sendable (URL) -> Bool) -> NWSWeatherService.Fetch {
+        { url in
+            if match(url) { try? await Task.sleep(nanoseconds: 30_000_000_000); return nil }
+            return await base(url)
+        }
+    }
+
+    func testSlowGridKeepsFreshObservations() async {
+        let rec = Recorder()
+        let fetch = Self.slow(Self.fixtureFetch("champlain", recorder: rec)) {
+            $0.path.hasPrefix("/gridpoints/") && !$0.path.hasSuffix("/stations")
+        }
+        let svc = NWSWeatherService(fetch: fetch, now: { Self.recordedAt })
+        let start = Date()
+        let r = await svc.reading(near: .init(latitude: 44.47, longitude: -73.3))
+        XCTAssertLessThan(Date().timeIntervalSince(start), NWSWeatherService.deadlineSeconds)
+        XCTAssertEqual(r?.temperature?.stationId, "KBTV")
+        XCTAssertEqual(r?.pressure?.stationId, "KBTV")
+        // No grid: cloud from the observation's layers, no forecast half.
+        XCTAssertEqual(r?.cloudCover?.origin, .observation)
+        XCTAssertEqual(r?.hourlyConditions.filter { $0.date > Self.recordedAt }.count, 0)
+    }
+
+    func testSlowStationsDegradeToGridOnlyAndAreNotCached() async {
+        let rec = Recorder()
+        let fetch = Self.slow(Self.fixtureFetch("champlain", recorder: rec)) { $0.path.hasSuffix("/stations") }
+        let svc = NWSWeatherService(fetch: fetch, now: { Self.recordedAt })
+        let start = Date()
+        let r = await svc.reading(near: .init(latitude: 44.47, longitude: -73.3))
+        XCTAssertLessThan(Date().timeIntervalSince(start), NWSWeatherService.deadlineSeconds)
+        XCTAssertEqual(r?.temperature?.origin, .nbmGrid)
+        XCTAssertNil(r?.pressure)
+        let cached = await svc.cachedPointsCount
+        XCTAssertEqual(cached, 0)
+    }
+
+    func testEmptyStationListIsNeverCached() async {
+        let rec = Recorder()
+        let base = Self.fixtureFetch("champlain", recorder: rec)
+        let svc = NWSWeatherService(fetch: { url in
+            if url.path.hasSuffix("/stations") { rec.add(url); return Data("{\"features\":[]}".utf8) }
+            return await base(url)
+        }, now: { Self.recordedAt })
+        let r = await svc.reading(near: .init(latitude: 44.47, longitude: -73.3))
+        XCTAssertEqual(r?.temperature?.origin, .nbmGrid)      // grid-only, not nil
+        let cached = await svc.cachedPointsCount
+        XCTAssertEqual(cached, 0)
+        _ = await svc.reading(near: .init(latitude: 44.47, longitude: -73.3))
+        XCTAssertEqual(rec.all.filter { $0.path.hasSuffix("/stations") }.count, 2)   // retried
+    }
+
+    func testPointsCacheEvictsLeastRecentlyUsed() async {
+        let rec = Recorder()
+        let svc = NWSWeatherService(fetch: Self.fixtureFetch("champlain", recorder: rec),
+                                    now: { Self.recordedAt }, cacheCapacity: 2)
+        _ = await svc.reading(near: .init(latitude: 44.47, longitude: -73.30))
+        _ = await svc.reading(near: .init(latitude: 44.48, longitude: -73.30))
+        _ = await svc.reading(near: .init(latitude: 44.47, longitude: -73.30))   // touch the first
+        _ = await svc.reading(near: .init(latitude: 44.49, longitude: -73.30))   // evicts 44.48
+        let keys = await svc.cachedPointsKeys
+        XCTAssertEqual(keys, ["44.47,-73.30", "44.49,-73.30"])
+        XCTAssertEqual(NWSWeatherService.pointsCacheCapacity, 5_000)
+    }
+
     func testDeadlineReturnsNil() async {
         let svc = NWSWeatherService(fetch: { _ in
             try? await Task.sleep(nanoseconds: 30_000_000_000)
@@ -466,10 +579,15 @@ final class NWSWeatherServiceTests: XCTestCase {
         XCTAssertTrue(p.allSatisfy { $0.oldSource == "open-meteo" && $0.newSource == "nws-nbm" })
     }
 
-    func testParityWithMissingNWSValues() {
+    func testParityWithMissingNWSValues() throws {
         let p = NWSWeatherParity.compare(old: openMeteo(), new: nil)
         XCTAssertEqual(p.count, 5)
         XCTAssertTrue(p.allSatisfy { $0.new == nil && $0.delta == nil && $0.old != nil })
+        // Explicit nulls, so every shadow line has the same keys.
+        let line = NWSWeatherParity.logLine(p[0], lakeId: nil, latR: nil, lonR: nil)
+        XCTAssertTrue(line.contains("\"new\":null"), line)
+        XCTAssertTrue(line.contains("\"delta\":null"), line)
+        XCTAssertTrue(line.contains("\"old\":61"), line)
     }
 
     func testAngleDeltaWraps() {

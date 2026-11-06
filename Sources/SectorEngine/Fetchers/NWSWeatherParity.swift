@@ -32,6 +32,26 @@ struct NWSTileParity: Equatable, Encodable, Sendable {
     /// Secondary fields, all strings or numbers, e.g. pressure trend or sky code.
     let detail: [String: ParityScalar]
 
+    enum CodingKeys: String, CodingKey {
+        case tile, old, new, delta, oldSource, newSource, newObservedAt, newOrigin, newStation, detail
+    }
+
+    /// `old`, `new` and `delta` are always present, as explicit null when
+    /// missing, so a shadow line always has the same shape.
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(tile, forKey: .tile)
+        try c.encode(old, forKey: .old)
+        try c.encode(new, forKey: .new)
+        try c.encode(delta, forKey: .delta)
+        try c.encode(oldSource, forKey: .oldSource)
+        try c.encode(newSource, forKey: .newSource)
+        try c.encodeIfPresent(newObservedAt, forKey: .newObservedAt)
+        try c.encodeIfPresent(newOrigin, forKey: .newOrigin)
+        try c.encodeIfPresent(newStation, forKey: .newStation)
+        try c.encode(detail, forKey: .detail)
+    }
+
     /// A JSON scalar for `detail`.
     enum ParityScalar: Equatable, Encodable, Sendable {
         case number(Double)

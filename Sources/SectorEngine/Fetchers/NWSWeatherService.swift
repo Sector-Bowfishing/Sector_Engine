@@ -136,6 +136,16 @@ actor NWSWeatherService {
     static let deadlineSeconds: Double = 8
     /// An observation older than this is stale: never used as "now".
     static let observationMaxAge: TimeInterval = 2 * 3600
+    /// Within this age the NEWEST observation across the stations wins; only
+    /// when no station has one this recent does nearest-first (up to
+    /// `observationMaxAge`) apply.
+    static let preferredMaxAge: TimeInterval = 75 * 60
+    /// Per-request budget. Three sequential stages (points; stations →
+    /// observations, with the grid in parallel to that chain) fit inside
+    /// `deadlineSeconds`: 2.5 + 2.5 + 2.5 = 7.5 s.
+    static let requestTimeout: Double = 2.5
+    /// Points-cache entries kept (least recently used evicted first).
+    static let pointsCacheCapacity = 5_000
     /// The points → gridpoint/stations mapping is static; refresh daily.
     static let pointsTTL: TimeInterval = 24 * 3600
     /// Nearest stations tried, in NWS's nearest-first order.
@@ -154,19 +164,23 @@ actor NWSWeatherService {
 
     private let fetch: Fetch
     private let now: @Sendable () -> Date
-    private var pointsCache: [String: (point: NWSPoint, stations: [String], at: Date)] = [:]
+    private let cacheCapacity: Int
+    private var pointsCache: [String: (point: NWSPoint, stations: [String], at: Date, used: UInt64)] = [:]
+    private var useCounter: UInt64 = 0
 
     init(fetch: @escaping Fetch = NWSWeatherService.liveFetch,
-         now: @escaping @Sendable () -> Date = { Date() }) {
+         now: @escaping @Sendable () -> Date = { Date() },
+         cacheCapacity: Int = NWSWeatherService.pointsCacheCapacity) {
         self.fetch = fetch
         self.now = now
+        self.cacheCapacity = max(1, cacheCapacity)
     }
 
     static let liveFetch: Fetch = { url in
         guard let r = try? await HTTP.get(url, headers: [
             "User-Agent": NWSWeatherService.userAgent,
             "Accept": "application/geo+json",
-        ], timeout: deadlineSeconds), r.status == 200 else { return nil }
+        ], timeout: requestTimeout), r.status == 200 else { return nil }
         return r.body
     }
 
@@ -187,33 +201,66 @@ actor NWSWeatherService {
 
     /// Number of cached points lookups (tests).
     var cachedPointsCount: Int { pointsCache.count }
+    /// Cached keys (tests).
+    var cachedPointsKeys: Set<String> { Set(pointsCache.keys) }
 
-    private func lookup(lat: Double, lon: Double) async -> (NWSPoint, [String])? {
-        let key = Self.pointsKey(lat: lat, lon: lon)
-        let t = now()
-        if let hit = pointsCache[key], t.timeIntervalSince(hit.at) < Self.pointsTTL {
-            return (hit.point, hit.stations)
+    /// `fetch` with its own `requestTimeout`: a slow upstream costs one stage,
+    /// not the whole reading.
+    static func timedFetch(_ fetch: @escaping Fetch, _ url: URL, _ name: String) async -> Data? {
+        await withDeadline(requestTimeout, name) { await fetch(url) }
+    }
+
+    private func cachedLookup(_ key: String, at t: Date) -> (NWSPoint, [String])? {
+        guard var hit = pointsCache[key], t.timeIntervalSince(hit.at) < Self.pointsTTL else { return nil }
+        useCounter += 1
+        hit.used = useCounter
+        pointsCache[key] = hit
+        return (hit.point, hit.stations)
+    }
+
+    /// Stores a complete lookup; never an empty station list (a malformed or
+    /// partial 200), so the next request tries again.
+    private func store(_ key: String, _ point: NWSPoint, _ stations: [String], at t: Date) {
+        guard !stations.isEmpty else { return }
+        if pointsCache[key] == nil, pointsCache.count >= cacheCapacity,
+           let lru = pointsCache.min(by: { $0.value.used < $1.value.used })?.key {
+            pointsCache.removeValue(forKey: lru)
         }
-        guard let url = URL(string: "https://api.weather.gov/points/\(key)"),
-              let data = await fetch(url),
-              let point = Self.decodePoint(data),
-              let stationsURL = URL(string: point.observationStations),
-              let sdata = await fetch(stationsURL) else { return nil }
-        let stations = Array(Self.decodeStations(sdata).prefix(Self.maxStations))
-        pointsCache[key] = (point, stations, t)
-        return (point, stations)
+        useCounter += 1
+        pointsCache[key] = (point, stations, t, useCounter)
     }
 
     private func fetchReading(lat: Double, lon: Double) async -> NWSWeatherReading? {
-        guard let (point, stations) = await lookup(lat: lat, lon: lon) else { return nil }
+        let key = Self.pointsKey(lat: lat, lon: lon)
         let t = now()
-        let start = Self.isoSeconds(t.addingTimeInterval(-Self.observationLookback))
         let fetch = self.fetch
+        let point: NWSPoint
+        var cachedStations: [String]?
+        if let (p, s) = cachedLookup(key, at: t) {
+            point = p; cachedStations = s
+        } else {
+            guard let url = URL(string: "https://api.weather.gov/points/\(key)"),
+                  let data = await Self.timedFetch(fetch, url, "nws-points"),
+                  let p = Self.decodePoint(data) else { return nil }
+            point = p
+        }
 
+        // The grid runs alongside the stations → observations chain, on its
+        // own timeout, so fresh observations survive a slow grid and a slow
+        // or empty station list degrades to a grid-only reading.
         async let gridData: Data? = {
             guard let url = URL(string: point.forecastGridData) else { return nil }
-            return await fetch(url)
+            return await Self.timedFetch(fetch, url, "nws-grid")
         }()
+
+        var stations = cachedStations ?? []
+        if cachedStations == nil, let url = URL(string: point.observationStations),
+           let sdata = await Self.timedFetch(fetch, url, "nws-stations") {
+            stations = Array(Self.decodeStations(sdata).prefix(Self.maxStations))
+            store(key, point, stations, at: t)
+        }
+
+        let start = Self.isoSeconds(t.addingTimeInterval(-Self.observationLookback))
         let observations: [String: [NWSObservation]] = await withTaskGroup(
             of: (String, [NWSObservation]).self) { group in
             for id in stations {
@@ -221,7 +268,8 @@ actor NWSWeatherService {
                     var c = URLComponents(string: "https://api.weather.gov/stations/\(id)/observations")
                     c?.queryItems = [URLQueryItem(name: "start", value: start),
                                      URLQueryItem(name: "limit", value: "500")]
-                    guard let url = c?.url, let d = await fetch(url) else { return (id, []) }
+                    guard let url = c?.url,
+                          let d = await Self.timedFetch(fetch, url, "nws-observations") else { return (id, []) }
                     return (id, Self.decodeObservations(d))
                 }
             }
@@ -438,8 +486,17 @@ extension NWSWeatherService {
                 now.timeIntervalSince($0.timestamp) <= observationMaxAge && $0.timestamp <= now.addingTimeInterval(600)
             })
         }
-        /// First fresh observation (nearest station, then newest) with `has`.
+        /// The newest observation with `has` across all stations when one is
+        /// within `preferredMaxAge` (ties go to the nearer station); otherwise
+        /// the nearest station's newest fresh one, up to `observationMaxAge`.
         func pick(_ has: (NWSObservation) -> Bool) -> NWSObservation? {
+            var newest: NWSObservation?
+            for (_, obs) in fresh {
+                if let o = obs.first(where: has),
+                   now.timeIntervalSince(o.timestamp) <= preferredMaxAge,
+                   newest == nil || o.timestamp > newest!.timestamp { newest = o }
+            }
+            if let newest { return newest }
             for (_, obs) in fresh { if let o = obs.first(where: has) { return o } }
             return nil
         }
@@ -464,10 +521,10 @@ extension NWSWeatherService {
         let windDirection: NWSValue<Int>?
         if let o = pick({ $0.windMph != nil }) {
             windSpeed = obsValue(o, o.windMph!)
-            windDirection = o.windDir.map { obsValue(o, Int($0.rounded()) % 360) }
+            windDirection = o.windMph! > 0 ? o.windDir.map { obsValue(o, Int($0.rounded()) % 360) } : nil
         } else {
             windSpeed = gridValue(grid?.windMph) { $0 }
-            windDirection = windSpeed == nil ? nil : gridValue(grid?.windDir) { Int($0.rounded()) % 360 }
+            windDirection = (windSpeed?.value ?? 0) > 0 ? gridValue(grid?.windDir) { Int($0.rounded()) % 360 } : nil
         }
 
         // Pressure. The API fills the METAR SLP group hours late (in the
@@ -514,11 +571,15 @@ extension NWSWeatherService {
         let skyObs = pick { $0.icon != nil || $0.textDescription != nil }
         let cloudCover = gridValue(grid?.skyCover) { $0 }
             ?? pick({ $0.layerCoverPct != nil }).map { obsValue($0, $0.layerCoverPct!) }
-        // Present weather needs a fresh observation; the grid only says "chance".
+        // Present weather needs a fresh observation; the grid only says
+        // "chance". Without one, the code is the sky code (0–3) of the grid's
+        // own cover, marked as a grid value.
         var weatherCode: NWSValue<Int>?
         if let o = skyObs, let code = NWSCondition.weatherCode(icon: o.icon, text: o.textDescription,
                                                                skyCoverPct: cloudCover?.value) {
             weatherCode = obsValue(o, code)
+        } else if skyObs == nil {
+            weatherCode = gridValue(grid?.skyCover) { NWSCondition.skyCode(percent: $0) }
         }
         let label = weatherCode.map { WeatherService.condition(forCode: $0.value) }
 
@@ -555,7 +616,7 @@ extension NWSWeatherService {
                                  hours: Int, steadyHPa: Double) -> (PressureTrend, Double)? {
         let target = at.addingTimeInterval(TimeInterval(-hours * 3600))
         guard let past = series.min(by: { abs($0.0.timeIntervalSince(target)) < abs($1.0.timeIntervalSince(target)) }),
-              abs(past.0.timeIntervalSince(target)) <= trendSampleTolerance else { return nil }
+              abs(past.0.timeIntervalSince(target)) < trendSampleTolerance else { return nil }
         let change = current - past.1
         if change > steadyHPa { return (.rising, change) }
         if change < -steadyHPa { return (.falling, change) }
