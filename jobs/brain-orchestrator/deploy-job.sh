@@ -42,16 +42,23 @@ RUNNER_LEASES="${RUNNER_LEASES:-off}"
 ORCH_ARGS_ALLOWED=(--publish-engineering-status --publish-health --run-shadow-lane)
 ARGS_FLAG=()
 if [[ -n "${ORCH_ARGS+set}" ]]; then
+  [[ "$ORCH_ARGS" != *$'\n'* && "$ORCH_ARGS" != *$'\r'* ]] || { echo "ORCH_ARGS: no newlines"; exit 1; }
   if [[ -n "$ORCH_ARGS" ]]; then
     IFS=';' read -r -a _orch_args <<< "$ORCH_ARGS"
+    _validated=""
     for x in "${_orch_args[@]}"; do
       ok=0; for y in "${ORCH_ARGS_ALLOWED[@]}"; do [[ "$x" == "$y" ]] && ok=1; done
       [[ "$ok" == "1" ]] || { echo "ORCH_ARGS: $x is not allowed (allowed: ${ORCH_ARGS_ALLOWED[*]})"; exit 1; }
+      _validated="${_validated:+$_validated;}$x"
     done
-    ARGS_FLAG=(--args="^;^$ORCH_ARGS")
+    ARGS_FLAG=(--args="^;^$_validated")                          # built from the validated elements only
+    echo "job arguments: $_validated"
   else
     ARGS_FLAG=(--args=)                                         # gcloud: an empty --args resets the arguments
+    echo "job arguments: reset to none"
   fi
+else
+  echo "job arguments: unchanged (ORCH_ARGS unset)"
 fi
 RTDB_URL="${RTDB_URL:-https://sector-brain.firebaseio.com}"
 ENGINE_URL="${ENGINE_URL:-https://sector-engine-e43utajroa-uc.a.run.app}"

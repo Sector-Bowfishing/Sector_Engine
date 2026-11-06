@@ -54,6 +54,12 @@ def test_empty_orch_args_clears_them():
     assert code == 0 and "ARG=--args=\n" in out
 
 
-@pytest.mark.parametrize("bad", ["--dry-run;--publish-health", "--publish-health;--runner-mode", "--run-now", "--publish-health,--x", "x;--force-shadow-lane"])
+@pytest.mark.parametrize("bad", ["--publish-health\n--dry-run", "\n", "--publish-health\r", "--dry-run;--publish-health", "--publish-health;--runner-mode", "--run-now", "--publish-health,--x", "x;--force-shadow-lane"])
 def test_arguments_outside_the_allowlist_are_refused(bad):
     assert run({"ORCH_ARGS": bad})[0] != 0
+
+
+def test_the_resolved_arguments_are_printed():
+    assert "job arguments: unchanged" in run({})[1]
+    assert "job arguments: reset to none" in run({"ORCH_ARGS": ""})[1]
+    assert "job arguments: --publish-health" in run({"ORCH_ARGS": "--publish-health"})[1]

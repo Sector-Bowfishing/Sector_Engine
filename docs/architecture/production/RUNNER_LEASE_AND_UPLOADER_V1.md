@@ -55,3 +55,9 @@ In the hybrid path, Pulse runs the Brain job and the Orchestrator and Publisher 
 - **`ORCH_ARGS`:** the job's arguments, `;`-separated, from an allowlist (`--publish-engineering-status`, `--publish-health`, `--run-shadow-lane`).
   - Unset leaves the deployed arguments as they are. An empty string resets them.
   - The hybrid deploy uses `ORCH_ARGS="--publish-engineering-status;--publish-health"`, so the shadow lane is off (owner choice (ii), 2026-11-06).
+- **Every deploy replaces the job's whole environment** (`--set-env-vars`), and every script default is `off`. So the hybrid deploy must restate the live switches:
+  `WIND_MEASUREMENTS=on PUBLICATION_COORDINATION=on PUBLICATION_HANDOFF=on RUNNER_LEASES=on ORCH_ARGS="--publish-engineering-status;--publish-health"`.
+  - Leaving out `WIND_MEASUREMENTS=on` silently turns the Wind measurements off.
+- **Before `RUNNER_LEASES=on` or `PUBLICATION_HANDOFF=on`,** `brain-writer` needs `roles/run.invoker` on `brain-publisher` and its `exports/runners/` grants (O5.2). Without them:
+  - every Publisher start fails with START_FAILED (requests stay pending);
+  - every Brain holds.
