@@ -443,6 +443,7 @@ public enum SectorEngineAPI {
         let context = TileRequestContext(lakeId: resolvedLake?.id, lat: lat, lon: lon)
         // Per-tile flags (conditions_tiles_v1) are read concurrently with everything else; every tile defaults to off.
         let flagsTask = Task { await TileFlagsStore.shared.current() }
+        let started = Date()
 
         // Fire the gauge snapshot and the 7-night forecast concurrently — they're
         // independent, and the forecast's own snapshot fetch coalesces onto this
@@ -464,14 +465,17 @@ public enum SectorEngineAPI {
             guard decision.servedNew, decision.model != WindForecastModel.current else {
                 return WindModelDecisionResult(decision: decision, forecast: nil)
             }
-            let f = await withDeadline(13, "forecast-wind-brain") {
+            // Never past today's 13 s forecast bound, counted from the start of the request.
+            let remaining = 13 - Date().timeIntervalSince(started)
+            guard remaining > 0.5 else { return WindModelDecisionResult(decision: decision, forecast: nil) }
+            let f = await withDeadline(remaining, "forecast-wind-brain") {
                 await ConditionsForecastService.forecast(for: coord, now: date, windModel: decision.model)
             }
             return WindModelDecisionResult(decision: decision, forecast: f ?? nil)
         }
 
         let snap = await snapTask
-        guard snap.hasAnyLiveInput else { return nil }
+        guard snap.hasAnyLiveInput else { windTask.cancel(); return nil }
         let flags = await flagsTask.value
 
         // Water temperature is resolved ONCE; the score and the response both take it.
@@ -498,7 +502,7 @@ public enum SectorEngineAPI {
         let envForecast = await forecastTask
         let wind = await windTask.value
         // The Brain's model is used only when its forecast came back; otherwise today's (env) forecast, labelled FALLBACK.
-        let windServed = wind.decision.servedNew && (wind.decision.model == WindForecastModel.current || wind.forecast != nil)
+        let windServed = ConditionsTileWiring.windServed(wind.decision, brainForecastArrived: wind.forecast != nil)
         let forecast = (windServed ? wind.forecast : nil) ?? envForecast
 
         var response = ConditionsResponse(
@@ -569,8 +573,7 @@ public enum SectorEngineAPI {
             flags: flags, context: context, providers: providers)
         resolved[.clarity] = clarity.entry
         if let served = clarity.served { response.clarityBrain = served }
-        if windServed, var entry = wind.decision.entry {
-            if response.nights.isEmpty { entry.status = TileStatus.unknown.rawValue }
+        if let entry = ConditionsTileWiring.windEntry(wind.decision, served: windServed, outlookNights: response.nights.count) {
             resolved[.windOutlookModel] = entry
         }
         response.tileSources = await TileSources.build(facts, flags: flags, context: context, resolved: resolved)

@@ -93,10 +93,15 @@ final class ConditionsTileWiringTests: XCTestCase {
 
     private func providers(reader: BrainOutputReader? = nil, nws: NWSWeatherReading? = nil, calls: WCalls = WCalls(),
                    lines: WLines = WLines(), runner: TileShadowRunner = TileShadowRunner(),
-                   breaker: TileBreakerRegistry = TileBreakerRegistry(log: { _ in })) -> ConditionsTileProviders {
-        ConditionsTileProviders(
+                   breaker: TileBreakerRegistry = TileBreakerRegistry(log: { _ in }),
+                   lakeLevelSwitch: Bool = true, nwsDelaySeconds: Double = 0) -> ConditionsTileProviders {
+        var p = ConditionsTileProviders(
             reader: reader,
-            nwsReading: { _, _ in calls.inc("nws"); return nws },
+            nwsReading: { _, _ in
+                calls.inc("nws")
+                if nwsDelaySeconds > 0 { try? await Task.sleep(nanoseconds: UInt64(nwsDelaySeconds * 1e9)) }
+                return nws
+            },
             boundDam: { b in calls.inc("boundDam"); return GenerationBindingMatch.dam(for: b, in: [Self.todayDam, Self.boundDam]).map(GenerationDamRef.init) },
             boundGeneration: { dam, _, _, current in
                 calls.inc("boundGeneration")
@@ -104,6 +109,8 @@ final class ConditionsTileWiringTests: XCTestCase {
                 return GenerationRef(value: Self.generation(dam.value, cfs: 4100))
             },
             now: { Self.now }, breaker: breaker, shadowRunner: runner, log: { lines.append($0) })
+        p.lakeLevelEligibility = LakeLevelEligibility(enabled: lakeLevelSwitch, eligibleLakeIds: LakeLevelEligibility.validatedLakeIds)
+        return p
     }
 
     /// A golden /conditions response (decoded with the Engine's own type).
@@ -292,7 +299,40 @@ final class ConditionsTileWiringTests: XCTestCase {
         XCTAssertEqual(entries[.humidity]?.status, "FALLBACK")
     }
 
+    func testWeatherShadowUsesOneRunnerSlot() async throws {
+        var r = base()
+        let lines = WLines(), runner = TileShadowRunner(maxConcurrent: 1)
+        _ = await wire(&r, flags: Self.flags(.shadow, ConditionsTileWiring.weatherTiles), context: Self.ctx(),
+                       providers: providers(nws: Self.nws(), lines: lines, runner: runner))
+        await runner.waitUntilIdle()
+        let dropped = await runner.dropped
+        XCTAssertEqual(dropped, 0, "the five weather tiles share one shadow job")
+        XCTAssertEqual(lines.all.count, 5)
+    }
+
+    func testWeatherServeWaitsOneDeadlineForAllTiles() async throws {
+        // NWS slower than the 3 s new-path deadline: every weather tile falls back together, after ONE deadline (not five).
+        var r = base()
+        let before = r
+        let started = Date()
+        let entries = await wire(&r, flags: Self.flags(.serve, ConditionsTileWiring.weatherTiles), context: Self.ctx(),
+                                 providers: providers(nws: Self.nws(), nwsDelaySeconds: 4.5))
+        let elapsed = Date().timeIntervalSince(started)
+        XCTAssertLessThan(elapsed, 4.4, "the weather step waited \(elapsed) s")
+        XCTAssertEqual(r.weather, before.weather, "no mix of sources: every tile fell back")
+        for t in ConditionsTileWiring.weatherTiles { XCTAssertEqual(entries[t]?.status, "FALLBACK", t.rawValue) }
+    }
+
     // MARK: - waterLevel
+
+    func testWaterLevelServeNeedsTheExistingLakeLevelSwitch() async throws {
+        var r = base()
+        let entries = await wire(&r, flags: Self.flags(.serve, [.waterLevel]), context: Self.ctx(Self.validatedLake),
+                                 providers: providers(reader: WReader(nodes: Self.copies(lakeId: Self.validatedLake)), lakeLevelSwitch: false))
+        XCTAssertNil(r.lakeLevel, "SECTOR_LAKE_LEVEL_OUTPUT off: the tile flag alone never opens lakeLevel")
+        XCTAssertEqual(entries[.waterLevel]?.status, r.water == nil ? "UNKNOWN" : "FALLBACK")
+        XCTAssertFalse(ConditionsTileProviders.live.lakeLevelEligibility.enabled, "the test process sets no switch")
+    }
 
     func testWaterLevelOffShadowServe() async throws {
         let lake = Self.validatedLake
@@ -507,6 +547,20 @@ final class ConditionsTileWiringTests: XCTestCase {
 
         let noReader = await ConditionsTileWiring.windOutlookModel(mode: .serve, context: Self.ctx(), providers: providers(reader: nil))
         XCTAssertEqual(noReader, .today, "no reader → env choice")
+    }
+
+    func testWindOutcomeLabelsWhatWasServed() {
+        let entry = TileSourceDTO(flag: "serve", path: "brain", source: "wind-brain", status: "AVAILABLE")
+        let brain = ConditionsTileWiring.WindModelDecision(model: "ncep_nbm_conus", servedNew: true, entry: entry)
+        let sameAsEnv = ConditionsTileWiring.WindModelDecision(model: WindForecastModel.current, servedNew: true, entry: entry)
+        // A different model is served only when its forecast came back; otherwise today's (FALLBACK via TileSources.build).
+        XCTAssertEqual(ConditionsTileWiring.windServed(brain, brainForecastArrived: true), brain.model != WindForecastModel.current || true)
+        XCTAssertEqual(ConditionsTileWiring.windServed(brain, brainForecastArrived: false), brain.model == WindForecastModel.current)
+        XCTAssertTrue(ConditionsTileWiring.windServed(sameAsEnv, brainForecastArrived: false), "env model: today's forecast already is it")
+        XCTAssertFalse(ConditionsTileWiring.windServed(.today, brainForecastArrived: true))
+        XCTAssertEqual(ConditionsTileWiring.windEntry(brain, served: true, outlookNights: 7), entry)
+        XCTAssertEqual(ConditionsTileWiring.windEntry(brain, served: true, outlookNights: 0)?.status, "UNKNOWN")
+        XCTAssertNil(ConditionsTileWiring.windEntry(brain, served: false, outlookNights: 7))
     }
 
     func testForecastTonightStaysBestMatchUnderAnyModel() {

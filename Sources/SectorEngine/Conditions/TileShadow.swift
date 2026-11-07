@@ -156,8 +156,6 @@ public enum TileShadow {
     ///   - new: the new-path provider, or nil when the tile has no new source yet.
     ///   - compare: builds the `[tile-shadow]` old/new/delta.
     ///   - shadowRunner: bounds the detached shadow computations.
-    ///   - shadowLog: when set, builds the `[tile-shadow]` line in place of `shadowLine(compare…)`, from today's value and the
-    ///     new provider's answer (nil on timeout). The weather tiles use it to log through `NWSWeatherParity`.
     public static func resolve<T: Sendable>(
         tile: TileKey,
         mode: TileMode,
@@ -169,7 +167,6 @@ public enum TileShadow {
         compare: @escaping @Sendable (T?, T?) -> TileComparison,
         breaker: TileBreakerRegistry = .shared,
         shadowRunner: TileShadowRunner = .shared,
-        shadowLog: (@Sendable (T?, TileNewValue<T>?) -> String)? = nil,
         log: @escaping @Sendable (String) -> Void = { print($0) }
     ) async -> TileServeResult<T> {
         let oldOut = oldPathEntry(oldEntry, mode: mode, oldPresent: true)
@@ -183,12 +180,8 @@ public enum TileShadow {
             let oldSource = oldEntry.source
             await shadowRunner.launch {
                 let n = await withDeadline(newPathDeadlineSeconds, "tile-shadow-\(tile.rawValue)") { await new() }
-                if let shadowLog {
-                    log(shadowLog(old, n))
-                } else {
-                    log(shadowLine(tile: tile, comparison: compare(old, n?.value), oldSource: oldSource,
-                                   newSource: n?.source ?? "timeout", context: context))
-                }
+                log(shadowLine(tile: tile, comparison: compare(old, n?.value), oldSource: oldSource,
+                               newSource: n?.source ?? "timeout", context: context))
             }
             return TileServeResult(value: old, entry: oldOut, servedNew: false)
 

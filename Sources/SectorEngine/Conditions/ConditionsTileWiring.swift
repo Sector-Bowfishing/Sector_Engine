@@ -56,6 +56,8 @@ struct ConditionsTileProviders: Sendable {
     var breaker: TileBreakerRegistry
     var shadowRunner: TileShadowRunner
     var log: @Sendable (String) -> Void
+    /// The existing lake-level gates (`SECTOR_LAKE_LEVEL_OUTPUT` + the validated list); `lakeLevel` needs them AND the flag.
+    var lakeLevelEligibility: LakeLevelEligibility = .fromEnvironment()
 
     /// The production sources. The reader comes from `BrainOutputReaderConfig` (none by default).
     static let live = ConditionsTileProviders(
@@ -164,6 +166,20 @@ enum ConditionsTileWiring {
                                  servedNew: true, entry: r.entry)
     }
 
+    /// Whether the Wind Brain's model was actually served: decided in serve, and either it is the env model (today's forecast
+    /// already runs on it) or the forecast on the Brain's model came back.
+    static func windServed(_ d: WindModelDecision, brainForecastArrived: Bool) -> Bool {
+        d.servedNew && (d.model == WindForecastModel.current || brainForecastArrived)
+    }
+
+    /// The windOutlookModel `tileSources` entry when the Brain's model was served (UNKNOWN when the outlook came back empty);
+    /// nil otherwise, so `TileSources.build` labels today's entry (FALLBACK in serve).
+    static func windEntry(_ d: WindModelDecision, served: Bool, outlookNights: Int) -> TileSourceDTO? {
+        guard served, var e = d.entry else { return nil }
+        if outlookNights == 0 { e.status = TileStatus.unknown.rawValue }
+        return e
+    }
+
     // MARK: clarity (before the score is evaluated)
 
     struct ClarityTileValue: Sendable, Equatable {
@@ -194,8 +210,7 @@ enum ConditionsTileWiring {
             },
             compare: { old, new in TileComparison.numeric(old?.centralFt, new?.centralFt) },
             breaker: providers.breaker, shadowRunner: providers.shadowRunner, log: providers.log)
-        let served = r.servedNew ? r.value?.brain : nil
-        return ClarityResult(entry: r.entry, served: served?.centralFt == nil ? nil : served)
+        return ClarityResult(entry: r.entry, served: r.servedNew ? r.value?.brain : nil)
     }
 
     // MARK: Tiles applied to the built response
@@ -382,32 +397,46 @@ enum ConditionsTileWiring {
         // No Open-Meteo base: nothing to patch, so no new source (serve reports UNKNOWN, as today's tile is blank).
         let fetchNWS = providers.nwsReading
         let shared = SharedOnce<NWSWeatherReading?> { await fetchNWS(lat, lon) }
-        let parityOld = old.map { oldReading ?? reading(from: $0, at: providers.now()) }
         let now = providers.now
+        let mode = { (t: TileKey) in modes[t] ?? .off }
+
+        // serve: ONE NWS fetch under ONE new-path deadline, shared by every served weather tile. The first tile whose breaker
+        // lets it try starts it (so an open breaker on every tile means no fetch at all); the others get the same answer at
+        // once. The tiles of a request see the same reading or all fall back together, and weather waits at most one deadline.
+        let serveReading = SharedOnce<NWSWeatherReading?> {
+            await withDeadline(TileShadow.newPathDeadlineSeconds, "nws-weather-serve") { await shared.value() } ?? nil
+        }
+
         for tile in weatherTiles {
-            let mode = modes[tile] ?? .off
             var newSource: (@Sendable () async -> TileNewValue<WeatherTileValue>)? = nil
-            if let base = old {
-                newSource = { @Sendable in nwsValue(tile, nws: await shared.value(), old: base, now: now()) }
-            }
-            // The `[tile-shadow]` line for a weather tile is NWSWeatherParity's, with its trend/code/direction detail.
-            var parityLine: (@Sendable (WeatherTileValue?, TileNewValue<WeatherTileValue>?) -> String)? = nil
-            if let reading = parityOld {
-                parityLine = { _, n in
-                    let parity = NWSWeatherParity.compare(old: reading, new: n?.value?.nws)
-                    guard let p = parity.first(where: { $0.tile == tile.rawValue }) else { return "[tile-shadow] {}" }
-                    return NWSWeatherParity.logLine(p, lakeId: context.lakeId, latR: context.latR, lonR: context.lonR)
-                }
+            // shadow tiles pass no provider: resolve serves old and labels the entry; the ONE shadow job below logs them.
+            if let base = old, mode(tile) == .serve {
+                newSource = { @Sendable in nwsValue(tile, nws: await serveReading.value(), old: base, now: now()) }
             }
             let r = await TileShadow.resolve(
-                tile: tile, mode: mode, old: old.map(WeatherTileValue.init), oldEntry: legacy[tile]!, context: context,
+                tile: tile, mode: mode(tile), old: old.map(WeatherTileValue.init), oldEntry: legacy[tile]!, context: context,
                 new: newSource,
                 compare: { _, _ in TileComparison(old: .null, new: .null) },
-                breaker: providers.breaker, shadowRunner: providers.shadowRunner,
-                shadowLog: parityLine,
-                log: providers.log)
+                breaker: providers.breaker, shadowRunner: providers.shadowRunner, log: providers.log)
             entries[tile] = r.entry
             if r.servedNew, let v = r.value, let base = served { served = apply(tile, v, to: base) }
+        }
+
+        // shadow: ONE detached job per request (one runner slot, never blocking the response) awaits the shared NWS reading
+        // under the new-path deadline and writes one NWSWeatherParity `[tile-shadow]` line per shadowed tile. A timeout logs
+        // the lines with `new` null.
+        let shadowTiles = weatherTiles.filter { mode($0) == .shadow }
+        if let base = old, !shadowTiles.isEmpty {
+            let parityOld = oldReading ?? reading(from: base, at: now())
+            let log = providers.log
+            await providers.shadowRunner.launch {
+                let n = await withDeadline(TileShadow.newPathDeadlineSeconds, "tile-shadow-weather") { await shared.value() } ?? nil
+                let parity = NWSWeatherParity.compare(old: parityOld, new: n)
+                for tile in shadowTiles {
+                    guard let p = parity.first(where: { $0.tile == tile.rawValue }) else { continue }
+                    log(NWSWeatherParity.logLine(p, lakeId: context.lakeId, latR: context.latR, lonR: context.lonR))
+                }
+            }
         }
         return (served, entries)
     }
@@ -423,8 +452,9 @@ enum ConditionsTileWiring {
                            context: TileRequestContext, providers: ConditionsTileProviders)
         async -> (entry: TileSourceDTO, served: LakeLevelOutput?) {
         let reader = providers.reader, now = providers.now
-        // The tile flag is the switch for /conditions; the validated-lake list still applies (spec §4: eligible lakes only).
-        let eligibility = LakeLevelEligibility(enabled: true, eligibleLakeIds: LakeLevelEligibility.validatedLakeIds)
+        // Every existing lake-level gate still applies: the owner's SECTOR_LAKE_LEVEL_OUTPUT switch and the validated-lake list
+        // (spec §4: eligible lakes only). The tile flag is one more gate in front of them, never a way around them.
+        let eligibility = providers.lakeLevelEligibility
         let r = await TileShadow.resolve(
             tile: .waterLevel, mode: mode, old: oldGaugeValue.map { LevelTileValue(gaugeValue: $0, lake: nil) },
             oldEntry: oldEntry, context: context,
@@ -466,8 +496,7 @@ enum ConditionsTileWiring {
             },
             compare: { old, new in TileComparison.numeric(old?.valueF, new?.valueF) },
             breaker: providers.breaker, shadowRunner: providers.shadowRunner, log: providers.log)
-        let served = r.servedNew ? r.value?.brain : nil
-        return (r.entry, served?.valueF == nil ? nil : served)
+        return (r.entry, r.servedNew ? r.value?.brain : nil)
     }
 
     // MARK: generation

@@ -54,7 +54,7 @@ public struct RTDBCustomerCopyReader: BrainOutputReader {
             }
             return (r.status, r.body)
         }
-        self.token = token ?? { await RemoteConfigREST.accessToken() }
+        self.token = token ?? { await RTDBReadToken.shared.token() }
     }
 
     /// The copy's JSON, or nil when absent (`null`). Throws on a refused path, no token, or any non-200 answer, which the
@@ -79,5 +79,27 @@ public struct RTDBCustomerCopyReader: BrainOutputReader {
         let illegal = CharacterSet(charactersIn: ".#$[]?&=%\\ ")
         guard path.rangeOfCharacter(from: illegal) == nil else { return false }
         return !path.split(separator: "/", omittingEmptySubsequences: false).contains { $0.isEmpty }
+    }
+}
+
+/// The service identity's OAuth token with the Realtime Database scopes (the same scopes `RTDBRestStore` asks for; a
+/// default-scope token is refused by RTDB), from the metadata server, cached until 120 s before it expires.
+actor RTDBReadToken {
+    static let shared = RTDBReadToken()
+    static let scopes = "https://www.googleapis.com/auth/firebase.database,https://www.googleapis.com/auth/userinfo.email"
+    /// Bounded well inside the tile's 3 s new-path deadline.
+    static let timeoutSeconds: Double = 1
+
+    private var cached: (token: String, until: Date)?
+
+    func token() async -> String? {
+        if let c = cached, c.until > Date() { return c.token }
+        guard let url = URL(string: "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token?scopes=\(Self.scopes)"),
+              let r = try? await HTTP.get(url, headers: ["Metadata-Flavor": "Google"], timeout: Self.timeoutSeconds), r.status == 200
+        else { return nil }
+        struct T: Decodable { let access_token: String; let expires_in: Double }
+        guard let t = try? JSONDecoder().decode(T.self, from: r.body) else { return nil }
+        cached = (t.access_token, Date().addingTimeInterval(t.expires_in - 120))
+        return t.access_token
     }
 }
