@@ -169,8 +169,7 @@ public enum TileShadow {
         shadowRunner: TileShadowRunner = .shared,
         log: @escaping @Sendable (String) -> Void = { print($0) }
     ) async -> TileServeResult<T> {
-        var oldOut = oldEntry
-        oldOut.flag = mode.rawValue
+        let oldOut = oldPathEntry(oldEntry, mode: mode, oldPresent: true)
 
         switch mode {
         case .off:
@@ -188,8 +187,7 @@ public enum TileShadow {
 
         case .serve:
             // Serve was on but old is served: FALLBACK (UNKNOWN when old is blank too).
-            var fallback = oldOut
-            fallback.status = old == nil ? TileStatus.unknown.rawValue : TileStatus.fallback.rawValue
+            let fallback = oldPathEntry(oldEntry, mode: .serve, oldPresent: old != nil)
             guard let new, await breaker.shouldTryNew(tile) else {
                 return TileServeResult(value: old, entry: fallback, servedNew: false)
             }
@@ -201,6 +199,19 @@ public enum TileShadow {
             guard let n, n.isServable else { return TileServeResult(value: old, entry: fallback, servedNew: false) }
             return TileServeResult(value: n.value, entry: n.entry(flag: .serve), servedNew: true)
         }
+    }
+
+    /// The `tileSources` entry when today's value is the one served: today's entry with `flag` set to `mode`, and in `serve`
+    /// the status FALLBACK (UNKNOWN when today's value is blank too). `resolve` uses this for every old-path answer; a caller
+    /// that resolves a tile before today's entry is known (the wind outlook model, decided before the forecast runs) uses it
+    /// to label the entry once it is.
+    public static func oldPathEntry(_ oldEntry: TileSourceDTO, mode: TileMode, oldPresent: Bool) -> TileSourceDTO {
+        var out = oldEntry
+        out.flag = mode.rawValue
+        if mode == .serve {
+            out.status = oldPresent ? TileStatus.fallback.rawValue : TileStatus.unknown.rawValue
+        }
+        return out
     }
 
     /// `[tile-shadow] {"tile":…,"old":…,"new":…,"delta":…,"oldSource":…,"newSource":…,"lakeId":…,"latR":…,"lonR":…}`

@@ -24,19 +24,19 @@ import XCTest
 
 final class PhoneContractTests: XCTestCase {
 
-    private static let root = URL(fileURLWithPath: #filePath)
+    static let root = URL(fileURLWithPath: #filePath)
         .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
 
-    private struct Spec { let type: String; let required: Bool }
+    struct Spec { let type: String; let required: Bool }
 
-    private static func loadContract() throws -> [String: Spec] {
+    static func loadContract() throws -> [String: Spec] {
         let url = root.appendingPathComponent("contracts/phone/conditions-phone-contract-v1.json")
         let obj = try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as! [String: Any]
         let fields = obj["fields"] as! [String: [String: Any]]
         return fields.mapValues { Spec(type: $0["type"] as! String, required: $0["required"] as! Bool) }
     }
 
-    private static func goldenFiles() throws -> [URL] {
+    static func goldenFiles() throws -> [URL] {
         let dir = root.appendingPathComponent("verification/fixtures/phone-contract")
         let fm = FileManager.default
         var out: [URL] = []
@@ -53,22 +53,22 @@ final class PhoneContractTests: XCTestCase {
 
     // MARK: validator (same rules as tools/conditions_golden/capture.py)
 
-    private static let dateRegex = try! NSRegularExpression(pattern: #"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})$"#)
+    static let dateRegex = try! NSRegularExpression(pattern: #"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})$"#)
 
     /// JSON true/false as parsed by JSONSerialization on Darwin (CFBoolean, objCType "c") and Linux (Bool or a "c"/"B" NSNumber).
-    private static func isBool(_ v: Any) -> Bool {
+    static func isBool(_ v: Any) -> Bool {
         if type(of: v) == Bool.self { return true }
         guard let n = v as? NSNumber else { return false }
         let t = String(cString: n.objCType)
         return t == "c" || t == "B"
     }
 
-    private static func number(_ v: Any) -> Double? {
+    static func number(_ v: Any) -> Double? {
         guard let n = v as? NSNumber, !isBool(v) else { return nil }
         return Double(n.description) ?? n.doubleValue
     }
 
-    private static func isType(_ v: Any, _ t: String) -> Bool {
+    static func isType(_ v: Any, _ t: String) -> Bool {
         switch t {
         case "int":
             // An integer token: build 28 decodes these as Swift Int. "72.0" (objCType "d") is not accepted.
@@ -88,7 +88,7 @@ final class PhoneContractTests: XCTestCase {
     }
 
     /// Direct child paths of `parent` ("" = root).
-    private static func children(_ fields: [String: Spec], _ parent: String) -> [String] {
+    static func children(_ fields: [String: Spec], _ parent: String) -> [String] {
         fields.keys.filter { p in
             if parent.isEmpty { return !p.contains(".") && !p.contains("[]") }
             guard p.hasPrefix(parent + ".") else { return false }
@@ -97,7 +97,7 @@ final class PhoneContractTests: XCTestCase {
         }.sorted()
     }
 
-    private static func validate(_ doc: Any, _ fields: [String: Spec]) -> [String] {
+    static func validate(_ doc: Any, _ fields: [String: Spec]) -> [String] {
         var errors: [String] = []
         func walkObject(_ obj: [String: Any], _ parent: String, _ at: String) {
             for p in children(fields, parent) {
@@ -134,7 +134,7 @@ final class PhoneContractTests: XCTestCase {
     }
 
     /// The document reduced to contract paths only, for value comparison.
-    private static func project(_ doc: Any, _ fields: [String: Spec], _ parent: String = "") -> Any {
+    static func project(_ doc: Any, _ fields: [String: Spec], _ parent: String = "") -> Any {
         if let obj = doc as? [String: Any] {
             var out: [String: Any] = [:]
             for p in children(fields, parent) {
@@ -147,7 +147,7 @@ final class PhoneContractTests: XCTestCase {
         return doc
     }
 
-    private static func projectValue(_ v: Any, _ p: String, _ fields: [String: Spec]) -> Any {
+    static func projectValue(_ v: Any, _ p: String, _ fields: [String: Spec]) -> Any {
         switch fields[p]!.type {
         case "object": return project(v, fields, p)
         case "array":
@@ -158,7 +158,7 @@ final class PhoneContractTests: XCTestCase {
         }
     }
 
-    private static func difference(_ a: Any, _ b: Any, _ path: String = "$") -> String? {
+    static func difference(_ a: Any, _ b: Any, _ path: String = "$") -> String? {
         if let x = a as? [String: Any], let y = b as? [String: Any] {
             if Set(x.keys) != Set(y.keys) { return "\(path): keys \(Set(x.keys).symmetricDifference(Set(y.keys)).sorted())" }
             for k in x.keys.sorted() { if let d = difference(x[k]!, y[k]!, "\(path).\(k)") { return d } }
