@@ -101,3 +101,37 @@ def test_a_re_run_in_the_same_cycle_reports_the_skip_already_recorded(tmp_path, 
     assert R.main(base + ["--ended-at", "2026-11-02T12:09:00Z", "--reason=-starts with a dash"]) == 0
     assert json.loads(capsys.readouterr().out)["alreadyRecorded"] is True
     assert len(RL.runner_executions(RL.orchestrator_view(LocalDirObjectStore(d)), {"wind"})) == 1
+
+
+# ------------------------------------------------------------------------------------------- Sector_Ops #51: a runner reports the fault it stopped for
+def test_fault_creates_one_record_the_watchdog_reads(tmp_path, capsys):
+    d = str(tmp_path / "store")
+    os.makedirs(d, exist_ok=True)
+    assert R.main(["fault", "--store-dir", d, "--holder", "pulse", "--brain", "water-clarity", "--kind=LEASE_RENEWAL_REFUSED",
+                   "--detail=-renew exit 3"]) == 0                         # the bridge's `=` form: a detail starting with '-' is a value
+    out = json.loads(capsys.readouterr().out)
+    key = out["faultRecord"]
+    assert key.startswith("exports/runners/pulse/faults/water-clarity/") and key.endswith("-LEASE_RENEWAL_REFUSED.json")
+    doc = json.loads(LocalDirObjectStore(d).get(key))
+    assert doc["schema"] == RL.FAULT_SCHEMA and doc["detail"] == "-renew exit 3" and doc["holder"] == "pulse"
+
+
+def test_fault_refuses_a_bad_kind_or_brain_and_writes_nothing(tmp_path, capsys):
+    d = str(tmp_path / "store")
+    os.makedirs(d, exist_ok=True)
+    assert R.main(["fault", "--store-dir", d, "--holder", "pulse", "--brain", "water-clarity", "--kind", "lower-case"]) == 2
+    assert R.main(["fault", "--store-dir", d, "--holder", "pulse", "--brain", "../x", "--kind", "OTHER"]) == 2
+    assert LocalDirObjectStore(d).list("exports/") == []
+
+
+def test_a_runner_can_create_only_its_own_fault_records():
+    from sector_brain_platform.publisher.storage import MemoryObjectStore
+    s = MemoryObjectStore()
+    view = RL.runner_view(s, "pulse")
+    now = dt.datetime(2026, 11, 7, 12, 0, tzinfo=dt.timezone.utc)
+    key = RL.record_fault(view, "pulse", "water-clarity", "UNEXPECTED_CREDENTIAL", "x" * 500, now)
+    assert key == "exports/runners/pulse/faults/water-clarity/20261107T120000Z-UNEXPECTED_CREDENTIAL.json"
+    assert len(json.loads(s.get(key))["detail"]) == 300
+    import pytest
+    with pytest.raises(Exception):
+        view.put("exports/runners/cloud/faults/water-clarity/x.json", b"{}")      # not this runner's prefix

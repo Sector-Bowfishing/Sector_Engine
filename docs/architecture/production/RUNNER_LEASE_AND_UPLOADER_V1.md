@@ -61,3 +61,25 @@ In the hybrid path, Pulse runs the Brain job and the Orchestrator and Publisher 
 - **Before `RUNNER_LEASES=on` or `PUBLICATION_HANDOFF=on`,** `brain-writer` needs `roles/run.invoker` on `brain-publisher` and its `exports/runners/` grants (O5.2). Without them:
   - every Publisher start fails with START_FAILED (requests stay pending);
   - every Brain holds.
+
+## The cycle watchdog: the O6.3 halt conditions in the system (Sector_Ops #51)
+The watch no longer depends on a laptop.
+- **Every `brain-orchestrator` cycle** checks the reviewed `sector_brain_platform/watchdog-policy.json` (`cycle_watchdog.py`). It runs right after the cycle lists the Cloud Run executions, before any decision.
+- **The checks.** Everything created before the policy's `since` is ignored:
+  - an execution of any job outside `allowedJobs`, for example a cloud `water-clarity-brain` start;
+  - a lease for another Brain, or held by anyone but the Brain's `holder`;
+  - a grant or artifact for another Brain;
+  - more artifacts than granted cycles;
+  - a publication for another Brain, one that isn't `LIVE PUBLISHED COMPLETE`, or one that wrote a lake outside the Brain's `lakes`;
+  - a quarantine, or an apply lock `HELD` longer than `lockHeldMaxMinutes`;
+  - the execution control enabling another Brain;
+  - a runner fault record (`exports/runners/{holder}/faults/`).
+- **On a trip:**
+  - it latches `exports/orchestrator/watchdog/halt.json` (`HALTED`, with the trips);
+  - it tries to pause its own Cloud Scheduler job;
+  - it prints `[watchdog] HALT …`, which the owner's alert matches.
+- **While the latch is `HALTED`, every cycle holds,** exactly like the overlap guard: nothing granted, nothing started, no Publisher start.
+- **An unreadable check** holds that cycle (`[watchdog] UNREADABLE`), but doesn't latch by itself.
+- **The execution control is not written by the cycle:** it remains owner-only (PL-16). The latch has the same effect.
+- **Owner CLI:** `tools/ops/watchdog.py show | check | clear --changed-by … --approval-ref … --reason …`. `check` is a read-only evaluation now. Clearing doesn't resume the scheduler: use `resume-orchestrator.sh` after fixing the cause.
+- **Runner faults:** `runner.py fault --brain B --holder pulse --kind KIND [--detail TEXT]` creates `exports/runners/pulse/faults/{B}/{UTC}-{KIND}.json` (`sector-runner-fault-v1`). Pulse calls it when it stops itself (Sector-Pulse self-checks). The uploader's existing create grant on `exports/runners/pulse/` covers it.
