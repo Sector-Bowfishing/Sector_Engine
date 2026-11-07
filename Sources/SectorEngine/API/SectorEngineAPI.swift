@@ -97,6 +97,10 @@ public struct ConditionsResponse: Codable, Equatable {
     public var scoreVersion: String? = nil
     /// Serving revision (Cloud Run `K_REVISION`) when known. Additive.
     public var engineRevision: String? = nil
+    /// Per tile: flag mode, path, source, status and the data's own observation time (Sector_Ops #53, conditions
+    /// consolidation spec §4). Keys: the ten `TileKey` raw values plus `moon`. Additive; nil only from callers that
+    /// build a response without it.
+    public var tileSources: [String: TileSourceDTO]? = nil
 }
 
 /// Canonical lake identity from the engine's directory — the authority the two
@@ -231,6 +235,13 @@ public struct WaterDTO: Codable, Equatable {
     public let trend: String              // rising | falling | steady
     public let change: Double             // signed, in `unit`
     public let history: [Double]          // oldest → newest, for a sparkline
+    // Additive (spec Amendment 2): the gauge this reading came from. Optional; build 28 ignores unknown keys.
+    public var siteCode: String? = nil
+    public var siteName: String? = nil
+    /// Straight-line miles from the requested coordinate to the gauge.
+    public var distanceMiles: Double? = nil
+    /// The gauge reading's own time.
+    public var observedAt: Date? = nil
 }
 
 public struct GenerationDTO: Codable, Equatable {
@@ -426,6 +437,8 @@ public enum SectorEngineAPI {
         let input = snap.engineInput(coordinate: coord, date: date, resolvedWaterTemp: waterTempState)
         // Tuning comes from Firebase Remote Config (cached; falls back to the
         // compiled defaults). Change a weight in the console → both phones see it.
+        // Per-tile flags (conditions_tiles_v1) are read concurrently with the tuning; every tile defaults to off.
+        async let tileFlagsTask = TileFlagsStore.shared.current()
         let config = await RemoteConfigStore.shared.current()
         let result = ConditionsAggregator.evaluate(input, config: config)
 
@@ -455,8 +468,8 @@ public enum SectorEngineAPI {
                 WhereToLookDTO(kind: $0.kind.rawValue, title: $0.title, body: $0.body)
             },
             weather: snap.weather.map(Self.weatherDTO),
-            water: snap.water.map(Self.waterDTO),
-            discharge: snap.discharge.map(Self.waterDTO),
+            water: snap.water.map { Self.waterDTO($0, from: coord) },
+            discharge: snap.discharge.map { Self.waterDTO($0, from: coord) },
             generation: snap.generation.map(Self.generationDTO),
             waterTempModel: snap.waterTempModel.map(Self.waterTempModelDTO),
             waterTemp: Self.waterTempDTO(state: waterTempState),
@@ -492,7 +505,41 @@ public enum SectorEngineAPI {
                                                          scoredValueF: input.waterTempF)
         response.scoreVersion = ConditionsScoreVersion.current
         response.engineRevision = ConditionsScoreVersion.engineRevision
+        response.tileSources = await TileSources.build(
+            Self.legacyTileFacts(snap, waterTempState: waterTempState, clarity: response.clarityVisibility,
+                                 outlookNights: response.nights.count),
+            flags: await tileFlagsTask,
+            context: TileRequestContext(lakeId: response.resolvedLake?.id, lat: lat, lon: lon))
         return response
+    }
+
+    /// Today's facts behind each tile, for `tileSources` (TileSources.legacy).
+    static func legacyTileFacts(_ snap: ConditionsSnapshot, waterTempState: ResolvedWaterTemperatureState,
+                                clarity: ClarityVisibilityDTO?, outlookNights: Int) -> LegacyTileFacts {
+        let g = snap.generation
+        return LegacyTileFacts(
+            weatherPresent: snap.weather != nil,
+            outlookNights: outlookNights,
+            windForecastModel: WindForecastModel.current,
+            waterPresent: snap.water != nil,
+            waterObservedAt: snap.water?.dateTime,
+            claritySource: clarity?.source,
+            turbidityObservedAt: clarity?.source == "inSituGauge" ? snap.turbidity?.dateTime : nil,
+            waterTempKind: waterTempState.kind.rawValue,
+            waterTempSourceKind: waterTempState.sourceKind.rawValue,
+            waterTempObservedAt: waterTempState.kind == .measured ? waterTempState.observedAt : nil,
+            generationPresent: g != nil,
+            generationHasReading: g.map { $0.dischargeCfs != nil || $0.reservoirElevationFt != nil
+                || $0.tailwaterElevationFt != nil || !$0.windows.isEmpty } ?? false,
+            generationObservedAt: g.flatMap { tileObservedAt(operatorID: $0.dam.operatorID, observedAt: $0.observedAt) })
+    }
+
+    /// The generation tile's `observedAt` for `tileSources`: the dam's own observation time, or nil when there is none.
+    /// Alabama Power publishes no observation time, so AlabamaPowerGenerationService stamps its FETCH time into
+    /// `observedAt` (and it wins over a CWMS fill-in); that is not an observation, so it is not reported here. The
+    /// frozen `generation.observedAt` field keeps its value.
+    static func tileObservedAt(operatorID: GenerationOperator, observedAt: Date?) -> Date? {
+        operatorID == .apc ? nil : observedAt
     }
 
     /// The canonical statement of the clarity number the score used.
@@ -581,9 +628,15 @@ public enum SectorEngineAPI {
             })
     }
 
-    private static func waterDTO(_ r: WaterLevelReading) -> WaterDTO {
-        WaterDTO(value: r.value, unit: r.unit, trend: waterTrendString(r.trend),
-                 change: r.change, history: r.history)
+    static func waterDTO(_ r: WaterLevelReading, from origin: CLLocationCoordinate2D) -> WaterDTO {
+        var dto = WaterDTO(value: r.value, unit: r.unit, trend: waterTrendString(r.trend),
+                           change: r.change, history: r.history)
+        dto.siteCode = r.siteCode
+        dto.siteName = r.siteName
+        dto.distanceMiles = r.distanceMiles ?? CLLocation(latitude: origin.latitude, longitude: origin.longitude)
+            .distance(from: CLLocation(latitude: r.latitude, longitude: r.longitude)) / 1609.34
+        dto.observedAt = r.dateTime
+        return dto
     }
 
     private static func gaugeDTO(_ r: WaterLevelReading, role: String, driving: Bool) -> GaugeDTO {
