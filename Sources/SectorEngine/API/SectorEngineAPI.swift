@@ -467,7 +467,7 @@ public enum SectorEngineAPI {
             }
             // Never past today's 13 s forecast bound, counted from the start of the request.
             let remaining = 13 - Date().timeIntervalSince(started)
-            guard remaining > 0.5 else { return WindModelDecisionResult(decision: decision, forecast: nil) }
+            guard remaining > 0.5, !Task.isCancelled else { return WindModelDecisionResult(decision: decision, forecast: nil) }
             let f = await withDeadline(remaining, "forecast-wind-brain") {
                 await ConditionsForecastService.forecast(for: coord, now: date, windModel: decision.model)
             }

@@ -331,7 +331,7 @@ final class ConditionsTileWiringTests: XCTestCase {
                                  providers: providers(reader: WReader(nodes: Self.copies(lakeId: Self.validatedLake)), lakeLevelSwitch: false))
         XCTAssertNil(r.lakeLevel, "SECTOR_LAKE_LEVEL_OUTPUT off: the tile flag alone never opens lakeLevel")
         XCTAssertEqual(entries[.waterLevel]?.status, r.water == nil ? "UNKNOWN" : "FALLBACK")
-        XCTAssertFalse(ConditionsTileProviders.live.lakeLevelEligibility.enabled, "the test process sets no switch")
+        XCTAssertFalse(LakeLevelEligibility.fromEnvironment([:]).enabled, "the existing switch defaults off")
     }
 
     func testWaterLevelOffShadowServe() async throws {
@@ -554,7 +554,7 @@ final class ConditionsTileWiringTests: XCTestCase {
         let brain = ConditionsTileWiring.WindModelDecision(model: "ncep_nbm_conus", servedNew: true, entry: entry)
         let sameAsEnv = ConditionsTileWiring.WindModelDecision(model: WindForecastModel.current, servedNew: true, entry: entry)
         // A different model is served only when its forecast came back; otherwise today's (FALLBACK via TileSources.build).
-        XCTAssertEqual(ConditionsTileWiring.windServed(brain, brainForecastArrived: true), brain.model != WindForecastModel.current || true)
+        XCTAssertTrue(ConditionsTileWiring.windServed(brain, brainForecastArrived: true))
         XCTAssertEqual(ConditionsTileWiring.windServed(brain, brainForecastArrived: false), brain.model == WindForecastModel.current)
         XCTAssertTrue(ConditionsTileWiring.windServed(sameAsEnv, brainForecastArrived: false), "env model: today's forecast already is it")
         XCTAssertFalse(ConditionsTileWiring.windServed(.today, brainForecastArrived: true))

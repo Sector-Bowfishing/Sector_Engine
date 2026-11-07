@@ -404,7 +404,8 @@ enum ConditionsTileWiring {
         // lets it try starts it (so an open breaker on every tile means no fetch at all); the others get the same answer at
         // once. The tiles of a request see the same reading or all fall back together, and weather waits at most one deadline.
         let serveReading = SharedOnce<NWSWeatherReading?> {
-            await withDeadline(TileShadow.newPathDeadlineSeconds, "nws-weather-serve") { await shared.value() } ?? nil
+            // A little inside each tile's own new-path deadline, so the first tile never times out on an answer the rest serve.
+            await withDeadline(TileShadow.newPathDeadlineSeconds - 0.2, "nws-weather-serve") { await shared.value() } ?? nil
         }
 
         for tile in weatherTiles {
