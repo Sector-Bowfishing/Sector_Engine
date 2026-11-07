@@ -440,12 +440,15 @@ def parity():
     print(f"matched {len(d)}  speed meanDiff {sd.mean():+.3f}  MAD {np.abs(sd).mean():.3f}  within0.2 {(np.abs(sd) <= 0.2).mean():.3f}")
 
 
-def cycle():
+def cycle() -> bool:
     """One pass of the loop's body: the hourly collect, then the RRFS archive check. A scheduler that starts the collector once an
-    hour (Pulse on the Mac mini, Sector_Ops #51) runs this instead of `loop`; the collected data is identical."""
+    hour (Pulse on the Mac mini, Sector_Ops #51) runs this instead of `loop`; the collected data is identical. Returns False when the
+    collect raised (the RRFS check still runs, as in `loop`), so `cycle` as a command exits 1 and the scheduler shows the failure."""
+    ok = True
     try:
         collect()
     except Exception as e:
+        ok = False
         print("collect failed", repr(e), flush=True)
     try:   # RRFS/REFS prospective archive (research only); a no-op until NOAA publishes operational cycles
         from sector_wind_research import rrfs
@@ -454,6 +457,7 @@ def cycle():
                 print("  RRFS", s, flush=True)
     except Exception as e:
         print("rrfs failed", repr(e), flush=True)
+    return ok
 
 
 def loop():
@@ -468,4 +472,6 @@ def loop():
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(); ap.add_argument("cmd", choices=["collect", "cycle", "status", "parity", "loop"]); a = ap.parse_args()
-    {"collect": collect, "cycle": cycle, "status": status, "parity": parity, "loop": loop}[a.cmd]()
+    result = {"collect": collect, "cycle": cycle, "status": status, "parity": parity, "loop": loop}[a.cmd]()
+    if a.cmd == "cycle" and result is False:
+        raise SystemExit(1)

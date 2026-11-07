@@ -8,7 +8,7 @@ def test_cycle_runs_collect_then_rrfs(monkeypatch, capsys):
     calls = []
     monkeypatch.setattr(B, "collect", lambda now=None: calls.append("collect"))
     monkeypatch.setattr(R, "collect", lambda *a, **k: calls.append("rrfs") or [{"status": "archived", "init": "x"}, {"status": "not published"}])
-    B.cycle()
+    assert B.cycle() is True
     assert calls == ["collect", "rrfs"]
     out = capsys.readouterr().out
     assert "RRFS" in out and out.count("RRFS") == 1          # 'not published' cycles are not printed, as in loop
@@ -21,5 +21,5 @@ def test_a_failed_collect_still_runs_rrfs(monkeypatch, capsys):
         raise RuntimeError("provider down")
     monkeypatch.setattr(B, "collect", boom)
     monkeypatch.setattr(R, "collect", lambda *a, **k: calls.append("rrfs") or [])
-    B.cycle()
+    assert B.cycle() is False                                 # so `cycle` exits 1 and Pulse shows the failure
     assert calls == ["rrfs"] and "collect failed" in capsys.readouterr().out
