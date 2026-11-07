@@ -1436,8 +1436,8 @@
       "lifecycle": "CALIBRATION",
       "packageStatus": "CANONICAL",
       "structuralCertification": {
-        "status": "FAIL",
-        "evidence": "Kit V1 run: 1 error (inputs/certification.json)"
+        "status": "PASS",
+        "evidence": "Kit V1 run: 51 passed (inputs/certification.json)"
       },
       "memory": [
         {
@@ -1492,6 +1492,31 @@
       "blockers": [
         "D-D"
       ],
+      "certificationProofs": {
+        "P01": "PASS",
+        "P02": "PASS",
+        "P03": "PASS",
+        "P04": "PASS",
+        "P05": "PASS",
+        "P06": "PASS",
+        "P07": "PASS",
+        "P08": "PASS",
+        "P09": "PASS",
+        "P10": "PASS",
+        "P11": "PASS",
+        "P12": "PASS",
+        "P13": "PASS",
+        "P14": "PASS",
+        "P15": "PASS",
+        "P16": "PASS",
+        "P17": "PASS",
+        "P18": "PASS",
+        "P19": "PASS"
+      },
+      "certificationMutations": {
+        "passed": 30,
+        "failed": 0
+      },
       "dataDependencies": {
         "consumes": [
           {
@@ -1522,9 +1547,9 @@
           "evidence": "brains/wind: brain.json, operating contract, runtime/, tests/, research/, contracts/ (Kit P01)"
         },
         "structuralCertification": {
-          "status": "FAIL",
-          "label": "NOT_CERTIFIED",
-          "evidence": "Kit V1 run: 1 error (inputs/certification.json)"
+          "status": "PASS",
+          "label": "KIT_V1_CERTIFIED",
+          "evidence": "Kit V1 run: 51 passed (inputs/certification.json)"
         },
         "scientificValidation": {
           "status": "BLOCKED",

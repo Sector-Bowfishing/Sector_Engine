@@ -216,13 +216,33 @@
     },
     "wind": {
       "directory": "brains/wind",
-      "status": "FAIL",
-      "proofs": {},
+      "status": "PASS",
+      "proofs": {
+        "P01": "PASS",
+        "P02": "PASS",
+        "P03": "PASS",
+        "P04": "PASS",
+        "P05": "PASS",
+        "P06": "PASS",
+        "P07": "PASS",
+        "P08": "PASS",
+        "P09": "PASS",
+        "P10": "PASS",
+        "P11": "PASS",
+        "P12": "PASS",
+        "P13": "PASS",
+        "P14": "PASS",
+        "P15": "PASS",
+        "P16": "PASS",
+        "P17": "PASS",
+        "P18": "PASS",
+        "P19": "PASS"
+      },
       "mutations": {
-        "passed": 0,
+        "passed": 30,
         "failed": 0
       },
-      "summary": "1 error"
+      "summary": "51 passed"
     }
   }
 }
