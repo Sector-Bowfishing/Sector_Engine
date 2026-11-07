@@ -46,6 +46,7 @@ from sector_brain_platform import gcp                                           
 from sector_brain_platform import orchestration as O, control_state as CS, consumption as CN, publication_trigger as PT                          # noqa: E402
 from sector_brain_platform import brain_operations as BOPS                                                            # noqa: E402
 from sector_brain_platform import execution_control as EC                                                            # noqa: E402
+from sector_brain_platform import cycle_watchdog as WD                                                                # noqa: E402
 from sector_brain_platform import engineering_status_publication as ESP                                                # noqa: E402
 from sector_brain_platform import shadow_lane as SL                                                                   # noqa: E402
 from sector_brain_platform import data_ownership as DO, publication_stage as PS, health_mirror as HM                                       # noqa: E402
@@ -494,6 +495,55 @@ def start_publisher_if_needed(handoff: dict, executions: dict, tokens: TokenProv
     return {"started": True, "execution": (op.get("metadata") or {}).get("name"), "at": iso(dt.datetime.now(dt.timezone.utc))}
 
 
+def watchdog_stage(a, executions: dict, ctl: dict, tokens: TokenProvider, now: dt.datetime, write: bool) -> dict:
+    """Sector_Ops #51: the O6.3 halt conditions, checked by the cycle itself. -> {hold, why}. A trip latches HALTED in the bucket and tries to
+    pause this job's own Cloud Scheduler trigger; the latch holds every later cycle until the owner clears it (tools/ops/watchdog.py). Prints
+    one `[watchdog] ...` line per cycle; the owner's alert matches `[watchdog] HALT ` (a new trip) and `[watchdog] UNREADABLE`."""
+    try:
+        pol = WD.load_policy()
+    except Exception as e:                                       # noqa: BLE001 - an unreadable reviewed policy is never a silent pass
+        print(f"[watchdog] UNREADABLE policy ({type(e).__name__}): holding this cycle", flush=True)
+        return {"hold": True, "why": "watchdog policy unreadable"}
+    if not pol.get("enabled") or a.local_mode or a.health_only:
+        return {"hold": False, "why": ""}
+    store = build_publication_store(a.artifact_store_dir, a.artifact_bucket)
+    if store is None:
+        print("[watchdog] SKIPPED: no artifact store configured", flush=True)
+        return {"hold": False, "why": ""}
+    try:
+        latch = WD.read_latch(store)
+    except Exception as e:                                       # noqa: BLE001
+        print(f"[watchdog] UNREADABLE latch ({type(e).__name__}): holding this cycle", flush=True)
+        return {"hold": True, "why": "watchdog latch unreadable"}
+    if latch is not None and not isinstance(latch, dict):
+        print("[watchdog] UNREADABLE latch (not a document): holding this cycle", flush=True)
+        return {"hold": True, "why": "watchdog latch malformed"}
+    if WD.is_halted(latch):
+        kinds = sorted({t.get("kind") for t in latch.get("trips") or []})
+        print(f"[watchdog] HALTED since {latch.get('at')} ({', '.join(kinds)}); only the owner clears it (tools/ops/watchdog.py clear)", flush=True)
+        return {"hold": True, "why": f"watchdog HALTED since {latch.get('at')}"}
+    res = WD.evaluate(pol, store=store, executions=executions, control=ctl, now=now, latch=latch)
+    print(WD.log_line(res), flush=True)
+    if res.tripped:
+        real = [t for t in res.trips if t.kind != "CHECK_FAILED"]
+        pause = "NOT_ATTEMPTED (dry run)"
+        if write and not a.dry_run:
+            try:
+                gcp.pause_scheduler_job(tokens, pol.get("pauseSchedulerJob") or JOB_NAME)
+                pause = "PAUSED"
+            except Exception as e:                               # noqa: BLE001 - the latch still holds every cycle
+                pause = f"FAILED: {str(e)[:160]}"
+            try:
+                WD.write_halt(store, real, cycle=f"orchestrator-{iso(now)}", now=now, scheduler_pause=pause)
+            except Exception as e:                               # noqa: BLE001 - this cycle still holds; the next one re-evaluates
+                print(f"[watchdog] latch write FAILED ({type(e).__name__}): this cycle holds, the next one re-checks", flush=True)
+        print(f"[watchdog] scheduler pause: {pause}", flush=True)
+        return {"hold": True, "why": f"watchdog tripped: {real[0].kind}"}
+    if res.unreadable:
+        return {"hold": True, "why": "watchdog could not read every check"}
+    return {"hold": False, "why": ""}
+
+
 def gate_dispatch(todo: set, deferred: list) -> set:
     """Cortex M08 in the execution path: only recognised Brain identities run; an alias or unknown identity never runs; the legacy combined package is the ONLY dispatch of its two target
     Brains (a target Brain that the legacy package already covers is not also dispatched: no double dispatch, no duplicated scientific result)."""
@@ -612,6 +662,17 @@ def main(argv=None) -> int:
         a.no_execute = True
         auto_ok, auto_why = False, f"another orchestrator cycle is running ({others[0]}): this cycle starts nothing"
         print(f"overlap guard: {auto_why}", flush=True)
+
+    # 1b. the cycle watchdog (Sector_Ops #51, O6.3 moved into the system): a latched halt, a new trip or an unreadable check holds this cycle
+    #     exactly like the overlap guard (nothing granted, started or handed to the Publisher)
+    try:
+        wd = watchdog_stage(a, executions, ctl, tokens, now, write)
+    except Exception as e:                                       # noqa: BLE001 - review of #141: the watchdog never crashes the cycle; it holds
+        print(f"[watchdog] UNREADABLE (watchdog error {type(e).__name__}): holding this cycle", flush=True)
+        wd = {"hold": True, "why": "watchdog error"}
+    if wd["hold"]:
+        a.no_execute = True
+        auto_ok, auto_why = False, wd["why"]
 
     # 2. plan: the decision model (engine mode, active/parked, dependencies, material change) says what MAY run; the legacy TIME/plan logic only
     #    describes what is stale. Parked Brains are not even asked for a plan (a plan can cost provider/Engine calls).

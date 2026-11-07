@@ -181,7 +181,7 @@
         "ops (Conditions sources panel, Sector_Ops #53)"
       ],
       "measuredBytes": null,
-      "problem": "not yet live: nothing writes it until the owner turns CONDITIONS_SOURCES_PROJECTION on; not yet a Cortex registry family (CG-3.1-16)",
+      "problem": "not yet live: nothing writes it until the owner turns CONDITIONS_SOURCES_PROJECTION on; not yet a Cortex registry family (CG-3.1-17)",
       "targetOwner": "orchestrator",
       "targetPath": "/control/conditionsSourcesV1",
       "migrationNeeded": false,
@@ -200,6 +200,91 @@
       "problem": "dead: nothing can write it",
       "targetOwner": "orchestrator(consumer)",
       "targetPath": "/requests/control/{requestId}",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/customer/lakes/{lakeKey}/level",
+      "classification": "SERVE",
+      "currentOwner": null,
+      "currentWriters": [
+        "none (PLACEHOLDER: Publisher writer drafted, not wired)"
+      ],
+      "currentReaders": [
+        "none (customer Engine reader drafted; no read access granted)"
+      ],
+      "measuredBytes": 0,
+      "problem": "PLACEHOLDER: declared, holds no data. Lake level copy (sector-customer-lake-level-v1); CUSTOMER_BRAIN_OUTPUT_PATH_V1 §6. CUSTOMER lane: Publisher-only writer, customer-Engine-only reader; Cortex family not yet declared (CG-3.1-8)",
+      "targetOwner": "platform.publisher-live",
+      "targetPath": "/customer/lakes/{lakeKey}/level",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/customer/lakes/{lakeKey}/clarity",
+      "classification": "SERVE",
+      "currentOwner": null,
+      "currentWriters": [
+        "none (PLACEHOLDER: Publisher writer drafted, not wired; switch PUBLISHER_CUSTOMER_CLARITY=1, default off)"
+      ],
+      "currentReaders": [
+        "none (customer Engine reader drafted; no read access granted)"
+      ],
+      "measuredBytes": 0,
+      "problem": "PLACEHOLDER: declared, holds no data. Water Clarity copy (sector-customer-clarity-v1); Sector_Ops #53 spec §5. CUSTOMER lane: Publisher-only writer, customer-Engine-only reader; Cortex family not yet declared (CG-3.1-8)",
+      "targetOwner": "platform.publisher-live",
+      "targetPath": "/customer/lakes/{lakeKey}/clarity",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/customer/lakes/{lakeKey}/waterTemp",
+      "classification": "SERVE",
+      "currentOwner": null,
+      "currentWriters": [
+        "none (PLACEHOLDER: Publisher writer drafted, not wired; switch PUBLISHER_CUSTOMER_WATER_TEMP=1, default off)"
+      ],
+      "currentReaders": [
+        "none (customer Engine reader drafted; no read access granted)"
+      ],
+      "measuredBytes": 0,
+      "problem": "PLACEHOLDER: declared, holds no data. Water Temp copy (sector-customer-water-temp-v1); Sector_Ops #53 spec §5. CUSTOMER lane: Publisher-only writer, customer-Engine-only reader; Cortex family not yet declared (CG-3.1-8)",
+      "targetOwner": "platform.publisher-live",
+      "targetPath": "/customer/lakes/{lakeKey}/waterTemp",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/customer/lakes/{lakeKey}/generationBinding",
+      "classification": "SERVE",
+      "currentOwner": null,
+      "currentWriters": [
+        "none (PLACEHOLDER: Publisher writer drafted, not wired; switch PUBLISHER_CUSTOMER_GENERATION_BINDING=1, default off)"
+      ],
+      "currentReaders": [
+        "none (customer Engine reader drafted; no read access granted)"
+      ],
+      "measuredBytes": 0,
+      "problem": "PLACEHOLDER: declared, holds no data. Lake dam binding copy (sector-customer-generation-binding-v1); Sector_Ops #53 spec §5. CUSTOMER lane: Publisher-only writer, customer-Engine-only reader; Cortex family not yet declared (CG-3.1-8)",
+      "targetOwner": "platform.publisher-live",
+      "targetPath": "/customer/lakes/{lakeKey}/generationBinding",
+      "migrationNeeded": false,
+      "risk": "LOW"
+    },
+    {
+      "path": "/customer/wind/outlookModel",
+      "classification": "SERVE",
+      "currentOwner": null,
+      "currentWriters": [
+        "none (PLACEHOLDER: Publisher writer drafted, not wired; switch PUBLISHER_CUSTOMER_WIND_MODEL=1, default off)"
+      ],
+      "currentReaders": [
+        "none (customer Engine reader drafted; no read access granted)"
+      ],
+      "measuredBytes": 0,
+      "problem": "PLACEHOLDER: declared, holds no data. Wind outlook-model decision (sector-customer-wind-outlook-model-v1); Sector_Ops #53 spec §5. CUSTOMER lane: Publisher-only writer, customer-Engine-only reader; Cortex family not yet declared (CG-3.1-8)",
+      "targetOwner": "platform.publisher-live",
+      "targetPath": "/customer/wind/outlookModel",
       "migrationNeeded": false,
       "risk": "LOW"
     },

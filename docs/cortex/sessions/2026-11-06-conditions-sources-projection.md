@@ -20,7 +20,7 @@ None needed. Ops already reads `/control` as a whole (`platform/security/rtdb.ru
 
 ## Findings
 - On 2026-11-06 an uncached `/conditions` call took about 9.4 s (Step 0 record), and the cache is cold at the hourly cycle. Sequentially only about 12 of 17 points fit in 120 s; with 4 at once all 17 should fit (about 5 rounds of ~10 s). Points still not reached are listed as `not attempted: probe budget exhausted`, and the rotating start means no point is starved every cycle.
-- The Cortex registry has no family for `/control/conditionsSourcesV1` (CG-3.1-16). The code names the path without a leading slash, like `control/shadowLaneV1`, so `data-check` reports no new finding; the gap is real and recorded.
+- The Cortex registry has no family for `/control/conditionsSourcesV1` (CG-3.1-17). The code names the path without a leading slash, like `control/shadowLaneV1`, so `data-check` reports no new finding; the gap is real and recorded.
 
 ## Verification
 - `brain_platform` 891, `brain-orchestrator` 206, `brain-scores` 37, `brain-publisher` 19, `tools/runner` 7, `tools/cutover` 10: all passed.

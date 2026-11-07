@@ -64,16 +64,27 @@ public actor ConditionsResponseCache {
         fresh: Bool = false,
         compute: @escaping @Sendable () async -> ConditionsResponse?
     ) async -> ConditionsResponse? {
+        await conditionsWithOutcome(lat: lat, lon: lon, ttl: ttl, fresh: fresh, compute: compute).response
+    }
+
+    /// `conditions(...)` plus whether the answer came from the cache — for the `[conditions-request]` log line
+    /// (ConditionsRequestLog). A request that joined an in-flight render waited on it, so it counts as a miss.
+    public func conditionsWithOutcome(
+        lat: Double, lon: Double,
+        ttl: TimeInterval = defaultTTL,
+        fresh: Bool = false,
+        compute: @escaping @Sendable () async -> ConditionsResponse?
+    ) async -> (response: ConditionsResponse?, cache: ConditionsRequestLog.CacheOutcome) {
         let k = key(lat, lon)
 
         // Fast path: a fresh render already sitting in the cache.
         if !fresh, let hit = cache[k], Date().timeIntervalSince(hit.at) < ttl {
-            return hit.response
+            return (hit.response, .hit)
         }
         // A render for this exact key is already running — ride it instead of
         // launching a second fan-out. (No `await` between the cache check above
         // and here, so the miss→join decision is atomic on the actor.)
-        if let running = inFlight[k] { return await running.value }
+        if let running = inFlight[k] { return (await running.value, .miss) }
 
         // Miss: compute once. Callers that arrive while we're suspended on
         // `task.value` find this task in `inFlight` and share it.
@@ -86,7 +97,7 @@ public actor ConditionsResponseCache {
             cache[k] = Entry(response: result, at: Date())
             pruneIfNeeded()
         }
-        return result
+        return (result, .miss)
     }
 
     /// Drop expired entries; if still over the cap, evict the oldest. Cheap and
