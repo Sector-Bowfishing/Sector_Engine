@@ -171,6 +171,24 @@
       "risk": "NONE"
     },
     {
+      "path": "/control/conditionsSourcesV1",
+      "classification": "CTRL",
+      "currentOwner": "orchestrator",
+      "currentWriters": [
+        "orchestrator (only with CONDITIONS_SOURCES_PROJECTION=1; default off)"
+      ],
+      "currentReaders": [
+        "ops (Conditions sources panel, Sector_Ops #53)"
+      ],
+      "measuredBytes": null,
+      "problem": "not yet live: nothing writes it until the owner turns CONDITIONS_SOURCES_PROJECTION on; not yet a Cortex registry family (CG-3.1-17)",
+      "targetOwner": "orchestrator",
+      "targetPath": "/control/conditionsSourcesV1",
+      "migrationNeeded": false,
+      "risk": "NONE",
+      "status": "NOT_VERIFIED"
+    },
+    {
       "path": "/controlRequests/pending/{id}",
       "classification": "CTRL",
       "currentOwner": null,

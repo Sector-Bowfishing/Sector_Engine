@@ -53,6 +53,7 @@ from sector_brain_platform import data_ownership as DO, publication_stage as PS,
 from sector_brain_platform import runner_lease as RL                                                                  # noqa: E402
 sys.path.insert(0, HERE)
 import control_plane as CP                                                                                            # noqa: E402
+import conditions_sources as CSP                                                                                    # noqa: E402
 
 WRITER = "brain-platform"
 JOB_NAME = "brain-orchestrator"
@@ -323,6 +324,23 @@ def score_cmd(env=None) -> list[str]:
     if env.get("WIND_MEASUREMENTS", "off") == "on":
         cmd.append("--wind-measurements")
     return cmd
+
+
+def _runner_policy_or_none() -> dict | None:
+    """The reviewed runner policy (runner-policy.json), or None when unreadable (the conditions-sources projection then says runner unknown)."""
+    try:
+        return RL.load_policy()
+    except Exception:                                            # noqa: BLE001
+        return None
+
+
+def _fresh_lease_holder(a, brain_id: str, now: dt.datetime) -> str | None:
+    """Holder of a Brain's unexpired runner lease (read-only), or None: no artifact store configured, no lease, an expired lease, or unreadable."""
+    store = build_publication_store(a.artifact_store_dir, a.artifact_bucket)
+    if store is None:
+        return None
+    lease, _ = RL.read(RL.orchestrator_view(store), brain_id)
+    return (lease or {}).get("holder") if RL.fresh(lease, now) else None
 
 
 def build_publication_store(directory: str | None, bucket: str | None = None):
@@ -932,6 +950,17 @@ def main(argv=None) -> int:
                   f" @ {es_doc['generatedFrom']['sourceCommit'][:12]}") + ("" if a.publish_engineering_status and not a.health_only else " (not published)"))
         except Exception as e:                                   # never breaks the cycle
             print(f"engineering status: FAILED {e!r}", file=sys.stderr)
+
+    # 5e. conditions sources for Sector Ops (sector-conditions-sources-v1 at control/conditionsSourcesV1, Sector_Ops #53 spec §7). Only with env
+    #     CONDITIONS_SOURCES_PROJECTION=1 (default OFF: nothing is probed, read or written); at most every 15 min; never with --health-only or
+    #     --control-only (their write sets stay what they are). Probes the Engine's GET /conditions read-only; a failed probe never breaks the cycle.
+    if CSP.enabled() and not a.health_only and not a.control_only:
+        try:
+            csp = CSP.stage(live, db, now, write=write, dry_run=a.dry_run, brains=brains, policy=_runner_policy_or_none(),
+                            lease_holder=lambda b: _fresh_lease_holder(a, b, now))
+            print(f"conditions sources: {json.dumps(csp, sort_keys=True)}", flush=True)
+        except Exception as e:                                   # never breaks the cycle
+            print(f"conditions sources: FAILED {e!r}", file=sys.stderr)
 
     # 6. record
     record = {"version": "orchestrator-v1", "lastRunAt": iso(now), "durationMs": int((time.time() - t0) * 1000),
