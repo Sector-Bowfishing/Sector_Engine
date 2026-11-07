@@ -15,8 +15,8 @@
     "evaluatedAt": "2026-10-23",
     "session": "docs/cortex/sessions/2026-10-23-research-automation.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:ae95972e94bf3b662feebe100c47ce040e6454e3b226b24825b8df6f13d74f18",
-    "certificationDigest": "sha256:ae95972e94bf3b662feebe100c47ce040e6454e3b226b24825b8df6f13d74f18",
+    "sourceDigest": "sha256:8df3461fdb2974ecf63666bf9777972dd8689a6c35011eae835100dc095c0172",
+    "certificationDigest": "sha256:8df3461fdb2974ecf63666bf9777972dd8689a6c35011eae835100dc095c0172",
     "certificationCurrent": true,
     "verificationCommit": "3e8a3857"
   },
@@ -1436,8 +1436,8 @@
       "lifecycle": "CALIBRATION",
       "packageStatus": "CANONICAL",
       "structuralCertification": {
-        "status": "PASS",
-        "evidence": "Kit V1 run: 51 passed (inputs/certification.json)"
+        "status": "FAIL",
+        "evidence": "Kit V1 run: 1 error (inputs/certification.json)"
       },
       "memory": [
         {
@@ -1492,31 +1492,6 @@
       "blockers": [
         "D-D"
       ],
-      "certificationProofs": {
-        "P01": "PASS",
-        "P02": "PASS",
-        "P03": "PASS",
-        "P04": "PASS",
-        "P05": "PASS",
-        "P06": "PASS",
-        "P07": "PASS",
-        "P08": "PASS",
-        "P09": "PASS",
-        "P10": "PASS",
-        "P11": "PASS",
-        "P12": "PASS",
-        "P13": "PASS",
-        "P14": "PASS",
-        "P15": "PASS",
-        "P16": "PASS",
-        "P17": "PASS",
-        "P18": "PASS",
-        "P19": "PASS"
-      },
-      "certificationMutations": {
-        "passed": 30,
-        "failed": 0
-      },
       "dataDependencies": {
         "consumes": [
           {
@@ -1547,9 +1522,9 @@
           "evidence": "brains/wind: brain.json, operating contract, runtime/, tests/, research/, contracts/ (Kit P01)"
         },
         "structuralCertification": {
-          "status": "PASS",
-          "label": "KIT_V1_CERTIFIED",
-          "evidence": "Kit V1 run: 51 passed (inputs/certification.json)"
+          "status": "FAIL",
+          "label": "NOT_CERTIFIED",
+          "evidence": "Kit V1 run: 1 error (inputs/certification.json)"
         },
         "scientificValidation": {
           "status": "BLOCKED",
