@@ -1,0 +1,1 @@
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-73.3,44.47]},"properties":{"gridId":"BTV","gridX":86,"gridY":56,"forecastGridData":"https://api.weather.gov/gridpoints/BTV/86,56","observationStations":"https://api.weather.gov/gridpoints/BTV/86,56/stations","timeZone":"America/New_York"}}

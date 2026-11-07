@@ -391,6 +391,16 @@ public struct BatchScore: Codable, Equatable {
 
 public enum SectorEngineAPI {
 
+    /// The one JSON encoder every customer response uses. Released apps depend on these settings: iOS 4.1.0 build 28
+    /// decodes dates with `.iso8601` (no fractional seconds), so changing them breaks shipped apps (Sector_Ops #53,
+    /// contracts/phone). PhoneContractTests encodes with this same function.
+    public static func makeEncoder() -> JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+        return encoder
+    }
+
     /// Score a coordinate for `date`: the gauge score + full breakdown + 7-night
     /// outlook + tonight's window + the live readings for the tiles. Returns nil
     /// when there's no live data to score (no weather + no gage).

@@ -20,10 +20,7 @@ let router = Router()
 router.get("health") { _, _ in "ok" }
 
 func jsonResponse<T: Encodable>(_ value: T) -> Response {
-    let encoder = JSONEncoder()
-    encoder.dateEncodingStrategy = .iso8601
-    encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
-    let data = (try? encoder.encode(value)) ?? Data()
+    let data = (try? SectorEngineAPI.makeEncoder().encode(value)) ?? Data()
     var buffer = ByteBuffer()
     buffer.writeBytes(data)
     return Response(status: .ok, headers: [.contentType: "application/json"], body: .init(byteBuffer: buffer))
