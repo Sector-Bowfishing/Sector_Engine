@@ -47,10 +47,10 @@ public struct ConditionsResponse: Codable, Equatable {
     public let whereToLook: [WhereToLookDTO]
 
     // Live readings for the tiles + window-sheet guidance (from the snapshot)
-    public let weather: WeatherDTO?
+    public var weather: WeatherDTO?
     public let water: WaterDTO?         // gage height / level
     public let discharge: WaterDTO?     // cfs
-    public let generation: GenerationDTO?
+    public var generation: GenerationDTO?
     public let waterTempModel: WaterTempModelDTO?
     /// THE water temperature — the one the score used and every surface should
     /// show: the lake's own gauge when it has one, else the model. nil when
@@ -101,6 +101,14 @@ public struct ConditionsResponse: Codable, Equatable {
     /// consolidation spec §4). Keys: the ten `TileKey` raw values plus `moon`. Additive; nil only from callers that
     /// build a response without it.
     public var tileSources: [String: TileSourceDTO]? = nil
+    /// The Lake Brain's level for the resolved lake (spec §4, `LakeLevelOutput` shape). Present only when the `waterLevel`
+    /// tile is in `serve`, the lake is validated, and its copy is AVAILABLE. Never replaces `water`. Additive.
+    public var lakeLevel: LakeLevelOutput? = nil
+    /// The Water Clarity Brain's copy (spec §4). Present only when the `clarity` tile served it. Additive.
+    public var clarityBrain: ClarityBrainOutput? = nil
+    /// The Water Temp Brain's copy (spec §4). Present only when the `waterTemp` tile served it. Never replaces
+    /// `waterTempModel`, `waterTemp` or `waterTempState`. Additive.
+    public var waterTempBrain: WaterTempBrainOutput? = nil
 }
 
 /// Canonical lake identity from the engine's directory — the authority the two
@@ -270,6 +278,10 @@ public struct GenerationDTO: Codable, Equatable {
         public let unitsAreDerived: Bool
         public let timeZoneIdentifier: String   // the DAM's zone; clients format in it
     }
+
+    /// Additive (spec §4): which binding chose this dam, `engine-registry` or `lake-brain`. Set only while the `generation`
+    /// tile is in `serve`; omitted otherwise. Build 28 ignores unknown keys.
+    public var bindingSource: String? = nil
 }
 
 /// The resolved water-temperature state — what every surface shows and what the
@@ -416,7 +428,21 @@ public enum SectorEngineAPI {
     /// outlook + tonight's window + the live readings for the tiles. Returns nil
     /// when there's no live data to score (no weather + no gage).
     public static func conditions(lat: Double, lon: Double, date: Date = Date()) async -> ConditionsResponse? {
+        await conditions(lat: lat, lon: lon, date: date, providers: .live)
+    }
+
+    /// `conditions` with the tile sources injectable (tests). Per-tile flags (`conditions_tiles_v1`) decide, tile by tile,
+    /// whether a new source is computed and whether it is served (ConditionsTileWiring). Every flag defaults to `off`, and
+    /// with every flag off no new source is called and the response is exactly today's.
+    static func conditions(lat: Double, lon: Double, date: Date, providers: ConditionsTileProviders) async -> ConditionsResponse? {
         let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+        // Nearest known lake to the scored point — the canonical identity clients dedupe + name by, and the lake the tile
+        // flags' `lakes` lists and the Brain copies are keyed on. 25 mi so a point anywhere on a long reservoir still
+        // resolves to that reservoir, not a nearer neighbour off-water.
+        let resolvedLake = LakeDirectory.nearest(to: coord, withinMiles: 25)
+        let context = TileRequestContext(lakeId: resolvedLake?.id, lat: lat, lon: lon)
+        // Per-tile flags (conditions_tiles_v1) are read concurrently with everything else; every tile defaults to off.
+        let flagsTask = Task { await TileFlagsStore.shared.current() }
 
         // Fire the gauge snapshot and the 7-night forecast concurrently — they're
         // independent, and the forecast's own snapshot fetch coalesces onto this
@@ -425,24 +451,55 @@ public enum SectorEngineAPI {
         // Bounded like the snapshot: the 7-night fetch makes its own Open-Meteo
         // call (fetchForecastResponse), so it needs the same deadline or a stuck
         // weather host would hang the whole response through this path.
+        // It always starts at once on today's (env) wind model, exactly as before the tile flags existed.
         async let forecastTask = withDeadline(13, "forecast") {
             await ConditionsForecastService.forecast(for: coord, now: date)
+        }
+        // windOutlookModel tile: the Wind Brain's decision, and — only when serve chose a model other than the env's — the
+        // forecast on that model, started as soon as the decision is known. Flag off: no read, no second forecast.
+        let windTask = Task { () -> (WindModelDecisionResult) in
+            let flags = await flagsTask.value
+            let decision = await ConditionsTileWiring.windOutlookModel(
+                mode: flags.mode(for: .windOutlookModel, lakeId: context.lakeId), context: context, providers: providers)
+            guard decision.servedNew, decision.model != WindForecastModel.current else {
+                return WindModelDecisionResult(decision: decision, forecast: nil)
+            }
+            let f = await withDeadline(13, "forecast-wind-brain") {
+                await ConditionsForecastService.forecast(for: coord, now: date, windModel: decision.model)
+            }
+            return WindModelDecisionResult(decision: decision, forecast: f ?? nil)
         }
 
         let snap = await snapTask
         guard snap.hasAnyLiveInput else { return nil }
+        let flags = await flagsTask.value
 
         // Water temperature is resolved ONCE; the score and the response both take it.
         let waterTempState = snap.resolvedWaterTemp(at: date)
-        let input = snap.engineInput(coordinate: coord, date: date, resolvedWaterTemp: waterTempState)
+        var input = snap.engineInput(coordinate: coord, date: date, resolvedWaterTemp: waterTempState)
         // Tuning comes from Firebase Remote Config (cached; falls back to the
         // compiled defaults). Change a weight in the console → both phones see it.
-        // Per-tile flags (conditions_tiles_v1) are read concurrently with the tuning; every tile defaults to off.
-        async let tileFlagsTask = TileFlagsStore.shared.current()
         let config = await RemoteConfigStore.shared.current()
+
+        // The Engine's own clarity statement, from today's input (it keeps that meaning in every flag mode).
+        let clarityVisibility = Self.clarityVisibilityDTO(input, turbidity: snap.turbidity, mrms: snap.mrms, config: config)
+        // clarity tile, before the score: in serve with the Brain copy AVAILABLE, the clarity factor runs on the copy's
+        // centralFt (this CHANGES THE SCORE). Off/shadow: the input is untouched.
+        let clarityFacts = LegacyTileFacts(claritySource: clarityVisibility.source,
+                                           turbidityObservedAt: clarityVisibility.source == "inSituGauge" ? snap.turbidity?.dateTime : nil)
+        let clarity = await ConditionsTileWiring.clarity(
+            mode: flags.mode(for: .clarity, lakeId: context.lakeId), lakeId: context.lakeId,
+            oldCentralFt: clarityVisibility.centralFt, oldEntry: TileSources.legacy(clarityFacts)[.clarity]!,
+            context: context, providers: providers)
+        if let ft = clarity.factorFt { input.clarityBrainVisibilityFt = ft }
+
         let result = ConditionsAggregator.evaluate(input, config: config)
 
-        let forecast = await forecastTask
+        let envForecast = await forecastTask
+        let wind = await windTask.value
+        // The Brain's model is used only when its forecast came back; otherwise today's (env) forecast, labelled FALLBACK.
+        let windServed = wind.decision.servedNew && (wind.decision.model == WindForecastModel.current || wind.forecast != nil)
+        let forecast = (windServed ? wind.forecast : nil) ?? envForecast
 
         var response = ConditionsResponse(
             score: result.score,
@@ -492,25 +549,38 @@ public enum SectorEngineAPI {
                 snap.clarityDischarge.flatMap { c in
                     c.siteCode == snap.discharge?.siteCode ? nil : Self.gaugeDTO(c, role: "discharge", driving: true) },
             ].compactMap { $0 },
-            // Nearest known lake to the scored point — the canonical identity clients
-            // dedupe + name by. 25 mi so a point anywhere on a long reservoir still
-            // resolves to that reservoir, not a nearer neighbour off-water.
-            resolvedLake: LakeDirectory.nearest(to: coord, withinMiles: 25).map {
+            resolvedLake: resolvedLake.map {
                 ResolvedLakeDTO(id: $0.id, name: $0.name, state: $0.state)
             },
             generatedAt: Date())
-        response.clarityVisibility = Self.clarityVisibilityDTO(input, turbidity: snap.turbidity,
-                                                               mrms: snap.mrms, config: config)
+        response.clarityVisibility = clarityVisibility
         response.waterTempState = Self.waterTempStateDTO(waterTempState, model: snap.waterTempModel,
                                                          scoredValueF: input.waterTempF)
         response.scoreVersion = ConditionsScoreVersion.current
         response.engineRevision = ConditionsScoreVersion.engineRevision
-        response.tileSources = await TileSources.build(
-            Self.legacyTileFacts(snap, waterTempState: waterTempState, clarity: response.clarityVisibility,
-                                 outlookNights: response.nights.count),
-            flags: await tileFlagsTask,
-            context: TileRequestContext(lakeId: response.resolvedLake?.id, lat: lat, lon: lon))
+
+        // The tiles applied to the built response (weather, waterLevel, waterTemp, generation), then tileSources for all.
+        let facts = Self.legacyTileFacts(snap, waterTempState: waterTempState, clarity: response.clarityVisibility,
+                                         outlookNights: response.nights.count)
+        let legacy = TileSources.legacy(facts)
+        var resolved = await ConditionsTileWiring.applyResponseTiles(
+            to: &response, legacy: legacy,
+            inputs: .init(weather: snap.weather, generation: snap.generation, lat: lat, lon: lon),
+            flags: flags, context: context, providers: providers)
+        resolved[.clarity] = clarity.entry
+        if let served = clarity.served { response.clarityBrain = served }
+        if windServed, var entry = wind.decision.entry {
+            if response.nights.isEmpty { entry.status = TileStatus.unknown.rawValue }
+            resolved[.windOutlookModel] = entry
+        }
+        response.tileSources = await TileSources.build(facts, flags: flags, context: context, resolved: resolved)
         return response
+    }
+
+    /// The windOutlookModel decision and, when it chose a model other than the env's, the forecast on that model.
+    struct WindModelDecisionResult: @unchecked Sendable {   // immutable; ConditionsForecast is a value type
+        let decision: ConditionsTileWiring.WindModelDecision
+        let forecast: ConditionsForecast?
     }
 
     /// Today's facts behind each tile, for `tileSources` (TileSources.legacy).
@@ -648,7 +718,7 @@ public enum SectorEngineAPI {
                  driving: driving)
     }
 
-    private static func generationDTO(_ g: DamGeneration) -> GenerationDTO {
+    static func generationDTO(_ g: DamGeneration) -> GenerationDTO {
         GenerationDTO(
             damName: g.dam.name, river: g.dam.river,
             operatorId: g.dam.operatorID.rawValue,

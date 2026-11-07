@@ -143,16 +143,22 @@ actor ForecastCache {
     private var inFlight: [String: Task<ConditionsForecast?, Never>] = [:]
     private let maxAge: TimeInterval = 30 * 60
 
-    private func key(_ c: CLLocationCoordinate2D) -> String {
-        String(format: "%.2f,%.2f", c.latitude, c.longitude)
+    /// The coordinate, plus the outlook wind model when it is not the process default (`WindForecastModel.current`), so a
+    /// forecast computed with the Wind Brain's model (`windOutlookModel` tile in `serve`) never answers a request that
+    /// runs on the env choice, or the reverse. With the default model the key is exactly what it always was.
+    private func key(_ c: CLLocationCoordinate2D, windModel: String?) -> String {
+        let base = String(format: "%.2f,%.2f", c.latitude, c.longitude)
+        return windModel == WindForecastModel.current ? base : base + "|" + (windModel ?? "best_match")
     }
 
-    func forecast(for coordinate: CLLocationCoordinate2D, now: Date) async -> ConditionsForecast? {
-        let k = key(coordinate)
+    func forecast(for coordinate: CLLocationCoordinate2D, now: Date,
+                  windModel: String? = WindForecastModel.current) async -> ConditionsForecast? {
+        let k = key(coordinate, windModel: windModel)
         if let hit = entries[k], now.timeIntervalSince(hit.at) < maxAge { return hit.forecast }
         if let running = inFlight[k] { return await running.value }
 
-        let task = Task { try? await ConditionsForecastService.fetchAndCompute(coordinate: coordinate, now: now) }
+        let task = Task { try? await ConditionsForecastService.fetchAndCompute(coordinate: coordinate, now: now,
+                                                                                windModel: windModel) }
         inFlight[k] = task
         let result = await task.value
         inFlight[k] = nil
@@ -248,18 +254,21 @@ final class ConditionsForecastService: ObservableObject {
     /// (see `ForecastCache`) so a warm server doesn't recompute the 7-night outlook
     /// for repeat or concurrent callers. Used by the API and the Lake Alerts weekly
     /// digest. Returns nil on any fetch failure.
-    static func forecast(for coordinate: CLLocationCoordinate2D, now: Date = Date()) async -> ConditionsForecast? {
-        await ForecastCache.shared.forecast(for: coordinate, now: now)
+    /// `windModel`: the Open-Meteo model for the outlook's FUTURE nights (nil = best_match). Defaults to the env choice
+    /// (`WindForecastModel.current`); only the `windOutlookModel` tile in `serve` passes the Wind Brain's choice.
+    static func forecast(for coordinate: CLLocationCoordinate2D, now: Date = Date(),
+                         windModel: String? = WindForecastModel.current) async -> ConditionsForecast? {
+        await ForecastCache.shared.forecast(for: coordinate, now: now, windModel: windModel)
     }
 
-    static func fetchAndCompute(coordinate: CLLocationCoordinate2D,
-                                now: Date) async throws -> ConditionsForecast {
+    static func fetchAndCompute(coordinate: CLLocationCoordinate2D, now: Date,
+                                windModel: String? = WindForecastModel.current) async throws -> ConditionsForecast {
         // Open-Meteo hourly/daily + the same water readings the gauge uses, all
         // concurrently, so the forecast shares the gauge's exact inputs.
         // The hourly forecast is ours alone; the five live readings come from
         // the SHARED snapshot the dashboard gauge also uses — same data, one
         // fetch, and the two cards can no longer disagree.
-        async let respTask = fetchForecastResponse(coordinate)
+        async let respTask = fetchForecastResponse(coordinate, windModel: windModel)
         async let snapshotTask = ConditionsSnapshotProvider.shared.snapshot(for: coordinate)
 
         let r = try await respTask
@@ -284,7 +293,8 @@ final class ConditionsForecastService: ObservableObject {
                        mrms: snap.mrms, config: config)
     }
 
-    private static func fetchForecastResponse(_ coordinate: CLLocationCoordinate2D) async throws -> ForecastResponse {
+    private static func fetchForecastResponse(_ coordinate: CLLocationCoordinate2D,
+                                              windModel: String?) async throws -> ForecastResponse {
         // Goes through WeatherService.fetchForecastData, which fails fast (15s)
         // per host and falls back to a sibling Open-Meteo instance when the
         // primary is unreachable (e.g. carrier ↔ Hetzner peering issues).
@@ -300,7 +310,8 @@ final class ConditionsForecastService: ObservableObject {
             URLQueryItem(name: "timezone", value: "auto"),
         ])
         let response = try JSONDecoder().decode(ForecastResponse.self, from: data)
-        guard let model = WindForecastModel.current else { return response }      // default: unchanged (Open-Meteo best_match by omission)
+        // default: unchanged (Open-Meteo best_match by omission). Only a model a review graded is ever sent.
+        guard let model = windModel, WindForecastModel.allowed.contains(model) else { return response }
         // Owner-gated switch (APP_WIND_SOURCE_REVIEW_V1 option 1; W1 + W1b). Only the wind changes: a second, wind-only request for the model,
         // overlaid where it has a value. Everything else stays best_match, because W1/W1b graded wind speed only. Any failure keeps best_match.
         guard let windData = try? await WeatherService.fetchForecastData(queryItems: [

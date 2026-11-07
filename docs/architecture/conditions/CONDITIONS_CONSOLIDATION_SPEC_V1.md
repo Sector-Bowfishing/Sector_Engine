@@ -169,3 +169,19 @@ Freshness: green when within `freshUntil` (class 2: within 2× the source cadenc
 - `http://localhost:3000`, only when env `SECTOR_CORS_DEV=1`
 
 Rules: the allowed origin is echoed in `Access-Control-Allow-Origin`, never `*`, and no credentials. Every response to a request with an `Origin` carries `Vary: Origin`. The preflight `OPTIONS` answers 204 with `Access-Control-Allow-Methods: GET`, `Access-Control-Allow-Headers: X-Sector-Client, Accept` and `Access-Control-Max-Age: 600`. A request without an `Origin` (the apps) is unchanged, and `OPTIONS` without an `Origin` is still 404.
+
+## Engine implementation note: tile wiring (Sector_Engine, wiring PR)
+*Added in the Engine repo only; not part of the shared spec text above.* Code: `Sources/SectorEngine/Conditions/ConditionsTileWiring.swift`.
+Every flag defaults to `off`; with every flag off no new source is called and `/conditions` is byte-for-byte today's.
+
+| Tile | `shadow` | `serve` (new only when AVAILABLE and the breaker is closed; otherwise today's answer, `tileSources` status FALLBACK) |
+|---|---|---|
+| humidity, pressure, temperature, sky, wind | NWS/NBM fetched detached (one fetch per request, shared by the five tiles); one `[tile-shadow]` line per tile from `NWSWeatherParity` | Only that tile's `weather` fields are replaced, in build 28 units. A field with no fresh NWS value keeps Open-Meteo's (pressure trend+change as a pair; weather code, SF Symbol and description as a group). No primary value → FALLBACK. Hourly series, precipitation and the score stay on Open-Meteo |
+| waterLevel | Lake Brain copy read detached; logs gauge vs elevation (no delta: different datums) | Additive `lakeLevel` only, for a lake on `LakeLevelEligibility.validatedLakeIds`. `water` is never written |
+| clarity | Brain copy read detached; logs Engine vs Brain `centralFt` | Additive `clarityBrain`, AND the clarity factor runs on its `centralFt` (`ConditionsInput.clarityBrainVisibilityFt`): **this changes the score** (factor, clarity gate, where-to-look). `clarityVisibility` keeps the Engine's own estimate |
+| waterTemp | Brain copy read detached; logs both values | Additive `waterTempBrain` only. `waterTempModel`, `waterTemp`, `waterTempState` are never written |
+| generation | Binding read detached; logs the dam each path chose (`OP:damId`); no generation fetch | When the binding names a dam the Engine's operators publish, `generation` is that dam's live generation (fetched by the Engine) with `bindingSource: lake-brain`; otherwise today's dam with `bindingSource: engine-registry`. The score keeps today's dam |
+| windOutlookModel | Wind Brain decision read detached; logs env vs Brain model | Its `nights2to7` replaces the env `SECTOR_WIND_FORECAST_MODEL` for the outlook's future nights (a second forecast, started as soon as the decision is known, only when the models differ). Tonight stays best_match (WS-5). If that forecast fails, today's forecast is served (FALLBACK) |
+
+- **Reader:** env `SECTOR_BRAIN_OUTPUT_READER=rtdb` selects a GET-only reader of `customer/...` in the sector-brain database as the service's own identity. Unset (the default) = no reader, so every Brain copy is UNKNOWN and every Brain-backed tile serves today's path. Setting it and granting the read are the owner's steps.
+- `serve` waits for the new source within the 3 s new-path deadline; `shadow` never delays the response.

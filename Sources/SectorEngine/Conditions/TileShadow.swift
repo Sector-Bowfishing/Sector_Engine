@@ -156,6 +156,8 @@ public enum TileShadow {
     ///   - new: the new-path provider, or nil when the tile has no new source yet.
     ///   - compare: builds the `[tile-shadow]` old/new/delta.
     ///   - shadowRunner: bounds the detached shadow computations.
+    ///   - shadowLog: when set, builds the `[tile-shadow]` line in place of `shadowLine(compare…)`, from today's value and the
+    ///     new provider's answer (nil on timeout). The weather tiles use it to log through `NWSWeatherParity`.
     public static func resolve<T: Sendable>(
         tile: TileKey,
         mode: TileMode,
@@ -167,10 +169,10 @@ public enum TileShadow {
         compare: @escaping @Sendable (T?, T?) -> TileComparison,
         breaker: TileBreakerRegistry = .shared,
         shadowRunner: TileShadowRunner = .shared,
+        shadowLog: (@Sendable (T?, TileNewValue<T>?) -> String)? = nil,
         log: @escaping @Sendable (String) -> Void = { print($0) }
     ) async -> TileServeResult<T> {
-        var oldOut = oldEntry
-        oldOut.flag = mode.rawValue
+        let oldOut = oldPathEntry(oldEntry, mode: mode, oldPresent: true)
 
         switch mode {
         case .off:
@@ -181,15 +183,18 @@ public enum TileShadow {
             let oldSource = oldEntry.source
             await shadowRunner.launch {
                 let n = await withDeadline(newPathDeadlineSeconds, "tile-shadow-\(tile.rawValue)") { await new() }
-                log(shadowLine(tile: tile, comparison: compare(old, n?.value), oldSource: oldSource,
-                               newSource: n?.source ?? "timeout", context: context))
+                if let shadowLog {
+                    log(shadowLog(old, n))
+                } else {
+                    log(shadowLine(tile: tile, comparison: compare(old, n?.value), oldSource: oldSource,
+                                   newSource: n?.source ?? "timeout", context: context))
+                }
             }
             return TileServeResult(value: old, entry: oldOut, servedNew: false)
 
         case .serve:
             // Serve was on but old is served: FALLBACK (UNKNOWN when old is blank too).
-            var fallback = oldOut
-            fallback.status = old == nil ? TileStatus.unknown.rawValue : TileStatus.fallback.rawValue
+            let fallback = oldPathEntry(oldEntry, mode: .serve, oldPresent: old != nil)
             guard let new, await breaker.shouldTryNew(tile) else {
                 return TileServeResult(value: old, entry: fallback, servedNew: false)
             }
@@ -201,6 +206,19 @@ public enum TileShadow {
             guard let n, n.isServable else { return TileServeResult(value: old, entry: fallback, servedNew: false) }
             return TileServeResult(value: n.value, entry: n.entry(flag: .serve), servedNew: true)
         }
+    }
+
+    /// The `tileSources` entry when today's value is the one served: today's entry with `flag` set to `mode`, and in `serve`
+    /// the status FALLBACK (UNKNOWN when today's value is blank too). `resolve` uses this for every old-path answer; a caller
+    /// that resolves a tile before today's entry is known (the wind outlook model, decided before the forecast runs) uses it
+    /// to label the entry once it is.
+    public static func oldPathEntry(_ oldEntry: TileSourceDTO, mode: TileMode, oldPresent: Bool) -> TileSourceDTO {
+        var out = oldEntry
+        out.flag = mode.rawValue
+        if mode == .serve {
+            out.status = oldPresent ? TileStatus.fallback.rawValue : TileStatus.unknown.rawValue
+        }
+        return out
     }
 
     /// `[tile-shadow] {"tile":…,"old":…,"new":…,"delta":…,"oldSource":…,"newSource":…,"lakeId":…,"latR":…,"lonR":…}`

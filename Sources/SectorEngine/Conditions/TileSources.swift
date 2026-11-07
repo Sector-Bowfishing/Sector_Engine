@@ -111,12 +111,19 @@ public enum TileSources {
     public static let moonEntry = TileSourceDTO(flag: TileMode.off.rawValue, path: TilePath.app.rawValue,
                                                 source: "moon-v1", status: TileStatus.available.rawValue)
 
-    /// The response's `tileSources`: today's entries passed through the shadow/serve step under the current flags. No tile
-    /// has a new source in this foundation, so every value is today's; a tile in `serve` reports FALLBACK.
-    public static func build(_ f: LegacyTileFacts, flags: TileFlags, context: TileRequestContext) async -> [String: TileSourceDTO] {
+    /// The response's `tileSources`: today's entries passed through the shadow/serve step under the current flags. A tile
+    /// whose new source was wired and resolved by the caller (`ConditionsTileWiring`) passes its entry in `resolved`, and
+    /// that entry is reported as is: the new path when it was served, FALLBACK when serve fell back. Any other tile has no
+    /// new source, so its value is today's; in `serve` it reports FALLBACK.
+    public static func build(_ f: LegacyTileFacts, flags: TileFlags, context: TileRequestContext,
+                             resolved: [TileKey: TileSourceDTO] = [:]) async -> [String: TileSourceDTO] {
         let legacy = Self.legacy(f)
         var out: [String: TileSourceDTO] = [moonKey: moonEntry]
         for tile in TileKey.allCases {
+            if let wired = resolved[tile] {
+                out[tile.rawValue] = wired
+                continue
+            }
             let entry = legacy[tile]!
             let present: Bool? = entry.status == TileStatus.unknown.rawValue ? nil : true
             let r = await TileShadow.resolve(tile: tile, mode: flags.mode(for: tile, lakeId: context.lakeId),

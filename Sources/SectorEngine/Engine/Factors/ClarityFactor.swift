@@ -20,6 +20,9 @@ public enum ClarityFactor {
     public static func visibilityFt(_ input: ConditionsInput,
                                     config: ConditionsConfig = .default) -> Double {
         let cfg = config.clarity
+        // The Water Clarity Brain's value, set only when the `clarity` tile is in `serve` and its copy was served
+        // (ConditionsTileWiring). nil everywhere else, so this line is a no-op with every flag off.
+        if let brain = input.clarityBrainVisibilityFt, brain.isFinite { return Swift.max(0, brain) }
         if let fnu = input.turbidityFNU {
             // The canonical conversion (VisibilityModel secchi-power-v1): the
             // same numbers this line always produced, now with a stated range.
