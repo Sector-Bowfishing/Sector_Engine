@@ -62,6 +62,9 @@ else
 fi
 RTDB_URL="${RTDB_URL:-https://sector-brain.firebaseio.com}"
 ENGINE_URL="${ENGINE_URL:-https://sector-engine-e43utajroa-uc.a.run.app}"
+# Sector Ops conditions-sources projection (Sector_Ops #53 spec §7): 0 (default, nothing probed or written) or 1. Turning it on is the owner's decision.
+CONDITIONS_SOURCES_PROJECTION="${CONDITIONS_SOURCES_PROJECTION:-0}"
+[[ "$CONDITIONS_SOURCES_PROJECTION" == "0" || "$CONDITIONS_SOURCES_PROJECTION" == "1" ]] || { echo "CONDITIONS_SOURCES_PROJECTION must be 0 or 1"; exit 1; }
 LAKE_BRAIN_ARCHIVE="${LAKE_BRAIN_ARCHIVE:-gs://sector-lake-brain}"
 BIOLOGY_BUCKET="${BIOLOGY_BUCKET:-sector-biology-private}"
 run() { if [[ "${DRY_RUN:-0}" == "1" ]]; then echo "+ $*"; else "$@"; fi; }
@@ -133,6 +136,11 @@ cp "$ROOT/providers/PROVIDERS.json" stage/providers/
 mkdir -p stage/docs/brains/scoring/evidence
 cp "$ROOT/docs/brains/scoring/wind-specialist-capability-v2.json" stage/docs/brains/scoring/
 cp "$ROOT/docs/brains/scoring/evidence/wind-measurements-evidence.json" stage/docs/brains/scoring/evidence/
+# Conditions-sources projection inputs (read only when CONDITIONS_SOURCES_PROJECTION=1): the fixed probe points, the phone contract and its validator
+mkdir -p stage/verification/fixtures/phone-contract stage/contracts/phone stage/tools/conditions_golden
+cp "$ROOT/verification/fixtures/phone-contract/points-v1.json" stage/verification/fixtures/phone-contract/
+cp "$ROOT/contracts/phone/conditions-phone-contract-v1.json" stage/contracts/phone/
+cp "$ROOT/tools/conditions_golden/capture.py" stage/tools/conditions_golden/
 # Sector Ops engineering status (engineering-status-ops-v1): the SANITIZED projection of exactly this commit, published only with
 # --publish-engineering-status (decision O-1). A stale or invalid report stages nothing: the orchestrator then publishes an explicit UNAVAILABLE
 # instead of an older status. The full internal report never enters the image.
@@ -158,7 +166,7 @@ run gcloud run jobs deploy "$JOB" --source . \
   --project "$PROJECT_ID" --region "$REGION" --service-account "$SA" \
   --tasks 1 --max-retries 0 --cpu 1 --memory 512Mi --task-timeout 30m \
   --labels "commit=$COMMIT" ${ARGS_FLAG[@]+"${ARGS_FLAG[@]}"} \
-  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=$RTDB_URL,ENGINE_URL=$ENGINE_URL,LAKE_BRAIN_ARCHIVE=$LAKE_BRAIN_ARCHIVE,BIOLOGY_BUCKET=$BIOLOGY_BUCKET,DEPLOYMENT_VERSION=brain-orchestrator@$COMMIT,ORCHESTRATOR_SCOPE=pilots,WATER_TEMP_SCOPE=pilots,WIND_MEASUREMENTS=$WIND_MEASUREMENTS,PUBLICATION_COORDINATION=$PUBLICATION_COORDINATION,PUBLICATION_HANDOFF=$PUBLICATION_HANDOFF,RUNNER_LEASES=$RUNNER_LEASES,PUBLICATION_ARTIFACT_BUCKET=$PUBLICATION_ARTIFACT_BUCKET,PUBLICATION_CUTOVER=/job/jobs/brain-orchestrator/publication-cutover.json"
+  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=$RTDB_URL,ENGINE_URL=$ENGINE_URL,LAKE_BRAIN_ARCHIVE=$LAKE_BRAIN_ARCHIVE,BIOLOGY_BUCKET=$BIOLOGY_BUCKET,DEPLOYMENT_VERSION=brain-orchestrator@$COMMIT,ORCHESTRATOR_SCOPE=pilots,WATER_TEMP_SCOPE=pilots,WIND_MEASUREMENTS=$WIND_MEASUREMENTS,PUBLICATION_COORDINATION=$PUBLICATION_COORDINATION,PUBLICATION_HANDOFF=$PUBLICATION_HANDOFF,RUNNER_LEASES=$RUNNER_LEASES,CONDITIONS_SOURCES_PROJECTION=$CONDITIONS_SOURCES_PROJECTION,PUBLICATION_ARTIFACT_BUCKET=$PUBLICATION_ARTIFACT_BUCKET,PUBLICATION_CUTOVER=/job/jobs/brain-orchestrator/publication-cutover.json"
 run gcloud run jobs add-iam-policy-binding "$JOB" --project "$PROJECT_ID" --region "$REGION" --member "serviceAccount:$SA" --role roles/run.invoker
 
 echo "▶ schedule $JOB ($CRON UTC): definition only, always left PAUSED"
