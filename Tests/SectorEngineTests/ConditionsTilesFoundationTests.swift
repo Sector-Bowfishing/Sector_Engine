@@ -96,6 +96,18 @@ final class ConditionsTilesFoundationTests: XCTestCase {
         XCTAssertEqual(RemoteConfigREST.parameter("x", inTemplate: [:]), .absent)
     }
 
+    /// The one Remote Config log line per refresh (the deploy runbook's manual check): status and counts only.
+    func testRemoteConfigRefreshLogLine() {
+        XCTAssertEqual(RemoteConfigREST.refreshLogLine(status: 200, outcome: .ok, parameters: 2, tilesFlag: true),
+                       "[remote-config] refresh outcome=ok status=200 parameters=2 conditions_tiles_v1=present")
+        XCTAssertEqual(RemoteConfigREST.refreshLogLine(status: 403, outcome: .httpError),
+                       "[remote-config] refresh outcome=http-error status=403")
+        XCTAssertEqual(RemoteConfigREST.refreshLogLine(status: nil, outcome: .noToken),
+                       "[remote-config] refresh outcome=no-token status=none")
+        XCTAssertEqual(RemoteConfigREST.refreshLogLine(status: 200, outcome: .ok, parameters: 0, tilesFlag: false),
+                       "[remote-config] refresh outcome=ok status=200 parameters=0 conditions_tiles_v1=absent")
+    }
+
     func testOneTemplateReadServesBothParameters() async {
         let clock = TestClock(t0)
         let fetches = Counter()

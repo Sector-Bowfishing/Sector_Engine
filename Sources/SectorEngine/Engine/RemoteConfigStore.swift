@@ -100,19 +100,48 @@ enum RemoteConfigREST {
         return .value(value)
     }
 
-    /// One template fetch: every parameter's default string value, or nil when unreadable.
+    /// One template fetch: every parameter's default string value, or nil when unreadable. Logs ONE `[remote-config]` line per
+    /// fetch (refreshLogLine): every failure here falls back silently to the last good / compiled values, so the log line is the
+    /// only way to see after a deploy that the runtime service account can actually read the template.
     static func fetchDefaults(projectId: String = defaultProjectId) async -> [String: String]? {
-        guard let token = await accessToken(),
-              let url = URL(string: "https://firebaseremoteconfig.googleapis.com/v1/projects/\(projectId)/remoteConfig")
+        guard let url = URL(string: "https://firebaseremoteconfig.googleapis.com/v1/projects/\(projectId)/remoteConfig")
         else { return nil }
-        do {
-            let result = try await HTTP.get(url, headers: ["Authorization": "Bearer \(token)"])
-            guard result.status == 200,
-                  let root = try JSONSerialization.jsonObject(with: result.body) as? [String: Any] else { return nil }
-            return defaults(inTemplate: root)
-        } catch {
+        guard let token = await accessToken() else {
+            print(refreshLogLine(status: nil, outcome: .noToken))
             return nil
         }
+        do {
+            let result = try await HTTP.get(url, headers: ["Authorization": "Bearer \(token)"])
+            guard result.status == 200 else {
+                print(refreshLogLine(status: result.status, outcome: .httpError))
+                return nil
+            }
+            guard let root = try? JSONSerialization.jsonObject(with: result.body) as? [String: Any] else {
+                print(refreshLogLine(status: result.status, outcome: .notJSON))
+                return nil
+            }
+            let values = defaults(inTemplate: root)
+            print(refreshLogLine(status: result.status, outcome: .ok, parameters: values.count,
+                                 tilesFlag: values[TileFlags.remoteConfigParameter] != nil))
+            return values
+        } catch {
+            print(refreshLogLine(status: nil, outcome: .transportError))
+            return nil
+        }
+    }
+
+    /// The result of one template fetch, for the log line.
+    enum RefreshOutcome: String {
+        case ok, noToken = "no-token", httpError = "http-error", notJSON = "not-json", transportError = "transport-error"
+    }
+
+    /// Pure: the single structured log line of one template fetch. Status code and counts only, never the body, a value or a token.
+    /// Example: `[remote-config] refresh outcome=ok status=200 parameters=2 conditions_tiles_v1=present`
+    static func refreshLogLine(status: Int?, outcome: RefreshOutcome, parameters: Int? = nil, tilesFlag: Bool? = nil) -> String {
+        var line = "[remote-config] refresh outcome=\(outcome.rawValue) status=\(status.map(String.init) ?? "none")"
+        if let parameters { line += " parameters=\(parameters)" }
+        if let tilesFlag { line += " \(TileFlags.remoteConfigParameter)=\(tilesFlag ? "present" : "absent")" }
+        return line
     }
 
     /// Pure: template → parameters → name → defaultValue → value, for every parameter that has a string default.

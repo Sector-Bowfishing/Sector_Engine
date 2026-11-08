@@ -19,25 +19,53 @@ key file and run nothing on a personal machine. Shared rules:
 
 ## 1. `deploy-engine.yml`: the `sector-engine` Cloud Run service
 
-Inputs: `sha` and `confirm=DEPLOY`.
+Inputs: `sha`, `confirm=DEPLOY`, and `keep_current_identity` (boolean, default false; emergency only).
+
+**Runtime identity (owner decision 2026-11-08).** The Engine runs as its own runtime service account, `sector-engine-runtime`, read from
+`GCP_SA_ENGINE_RUNTIME` (secret or variable; never printed). Its grants are in Sector_Ops `docs/deploy/WIF_DEPLOY_IAM_V1.md` step 4E-R:
+`secretAccessor` on `usgs-api-key`, and a custom role holding only `cloudconfig.configs.get` (the Remote Config template read). When the
+setting is missing, both jobs **stop before anything is built or deployed**, so a deploy cannot silently keep the old identity. Only
+`keep_current_identity` deploys without it: the revision then keeps the service's current identity.
 
 1. **build** (no token): validates the commit, builds the root `Dockerfile` and runs `scripts/linux-smoke.sh` against **that** image with
    `SMOKE_SKIP_BUILD=1` (new: it tests a prebuilt image without rebuilding it). The image is then saved as an artifact.
 2. **deploy** (WIF, `GCP_SA_ENGINE_DEPLOY`):
    1. Loads the image, checks the image ID, and pushes it to `<GCP_AR_REPO>/sector-engine/sector-engine:<sha>`.
    2. Records the revision serving now. This is the rollback target.
-   3. Runs `IMAGE=<digest ref> SKIP_LINUX_SMOKE=1 ./deploy.sh`. The new `IMAGE=` mode of `deploy.sh` follows the same flow:
-      - a no-traffic `candidate` tag labeled with the commit;
+   3. Runs `IMAGE=<digest ref> RUNTIME_SA=<runtime account> SKIP_LINUX_SMOKE=1 ./deploy.sh`. The `IMAGE=` mode of `deploy.sh` follows the
+      same flow:
+      - a no-traffic `candidate` tag labeled with the commit, running as `RUNTIME_SA` (`--service-account`); a candidate whose
+        `spec.serviceAccountName` is not `RUNTIME_SA` is **not promoted**;
       - the smoke test of the candidate (health, a real render, validation);
       - promotion to 100 %;
       - the prod re-check, which rolls back automatically if it fails;
       - `--update-secrets USGS_API_KEY=usgs-api-key:latest`;
       - the existing env is kept, and the sizing and probes are identical.
-   4. Checks that the serving revision is labeled with this commit, then runs
+   4. Checks that the serving revision is labeled with this commit and, after promotion, that its `spec.serviceAccountName` is the runtime
+      account (a mismatch fails the job, which rolls back). Then it runs
       `python3 tools/conditions_golden/capture.py --base <service url> check --live`, the phone contract at all 17 probe points.
    5. **Rollback:** on any failure or cancellation once `deploy.sh` has started, it runs `./deploy.sh --rollback <previous revision>`
       (always, to re-pin the traffic; it does not decide from the served status, which can lag a promotion still in flight) and fails the job.
-   6. The step summary shows the image digest, the revision serving before and after, and each check's outcome.
+      The rollback revision keeps its **own** identity: rolling back to a revision from before the switch runs it as the old account again.
+   6. The step summary shows the image digest, the revision serving before and after, the serving revision's identity check and each
+      check's outcome.
+
+**Runbook: manual check after every Engine deploy (the deployer has no log access).** Remote Config failures are silent to every
+automated check: the Engine falls back to its built-in weights and all-off tile flags, so the smoke tests and `capture.py` still pass. Since
+this change the server logs ONE line per Remote Config refresh (at most every 10 minutes per instance; status code and counts only, never
+the body or a value):
+
+```text
+[remote-config] refresh outcome=ok status=200 parameters=<n> conditions_tiles_v1=present|absent
+[remote-config] refresh outcome=http-error status=403        # the runtime account cannot read the template (check step 4E-R)
+[remote-config] refresh outcome=no-token status=none         # no metadata token (not on Cloud Run)
+[remote-config] refresh outcome=not-json|transport-error ...
+```
+
+After the deploy, the owner opens Cloud Logging for the new revision (filter `resource.labels.revision_name="<revision>"` and
+`textPayload:"[remote-config]"`) and confirms `outcome=ok status=200`. The first refresh happens on the first `/conditions` request, which
+the deploy's smoke test makes. Anything else: roll back (`./deploy.sh --rollback <previous revision>`), then fix the runtime account's
+grants.
 
 `IMAGE=` mode differs from the default `--source` path (still the Cloud Shell path, unchanged) in these ways:
 
@@ -123,9 +151,11 @@ need nothing more; the items marked *unverified* are listed on Sector_Ops #53.
 |---|---|---|---|
 | all | `roles/iam.workloadIdentityUser` for the provider's principal set (this repository, `refs/heads/main`, `workflow_dispatch`, the named workflow file) | the job's deployer service account | federation; minting the deployer's tokens |
 | **E** deploy-engine | `roles/run.developer` | the `sector-engine` Cloud Run **service** | describe, deploy a revision (no traffic, tag), update traffic, read revisions (`deploy.sh`, `ops/check_warm_tags.sh`) |
-| E | `roles/iam.serviceAccountUser` | the Engine **runtime** service account | deploying a revision that runs as it |
+| E | `roles/iam.serviceAccountUser` | the dedicated runtime service account `sector-engine-runtime` **only** (step 4E-R) | deploying a revision that runs as it (`--service-account`) |
 | E | `roles/artifactregistry.writer` | the Artifact Registry **repository** `sector-engine` | pushing the image |
 | E | no Secret Manager role | n/a | `--update-secrets` only references the secret; the runtime account reads it |
+| E-R runtime (not a deployer) | `roles/secretmanager.secretAccessor` | the secret `usgs-api-key` | `USGS_API_KEY` at run time |
+| E-R runtime | a custom role with only `cloudconfig.configs.get` | project | reading the Remote Config template (`conditions_config`, `conditions_tiles_v1`) |
 | **O** deploy-orchestrator | `roles/run.developer` | the `brain-orchestrator` Cloud Run **job** | describe, deploy/update, execute with `--args` overrides (dry cycle), rollback |
 | O | `roles/iam.serviceAccountUser` | the `brain-writer` service account | the job runs as it |
 | O | `roles/artifactregistry.writer` | the Artifact Registry **repository** `brain-orchestrator` | pushing the image |
@@ -145,7 +175,8 @@ need nothing more; the items marked *unverified* are listed on Sector_Ops #53.
 |---|---|
 | `tools/deploy/tests/test_conditions_tiles_flag.py` | the exact preset string; TileFlags parse mirror (fail-safe cases) and the Swift enum pin; serve refusals; strict validation; single-parameter edit; read-back detection; ETag/If-Match and `validate_only` against a fake Remote Config; idempotence; dry run |
 | `tools/deploy/tests/test_job_env.py` | snapshot, carry-forward (only the projection changes), env-file round trip, secret refusal, restore and compare |
-| `tools/deploy/tests/test_deploy_sh_image_mode.py` | `deploy.sh` `IMAGE=` flags against a fake `gcloud` in a throwaway repository: same flow, digest only, commit must be on main, default and rollback paths unchanged |
+| `tools/deploy/tests/test_deploy_sh_image_mode.py` | `deploy.sh` `IMAGE=` flags against a fake `gcloud` in a throwaway repository: same flow, digest only, commit must be on main, default and rollback paths unchanged; `RUNTIME_SA` passed as `--service-account`, a candidate with another identity not promoted, the email never printed, refused on the `--source` path |
+| `ConditionsTilesFoundationTests.testRemoteConfigRefreshLogLine` (Swift) | the `[remote-config]` line: outcome, status and counts only |
 | `jobs/brain-orchestrator/tests/test_deploy_switches_wif.py` | the whole `deploy-job.sh` against a fake `gcloud`/`docker`: no IAM or scheduler writes, the env carried exactly, prebuilt, build and carried image, refusals, a non-PAUSED scheduler fails, the default path unchanged |
 
 All run in `python-jobs-tests.yml` (`tools/deploy` added to the platform loop). None of them touches Google Cloud.

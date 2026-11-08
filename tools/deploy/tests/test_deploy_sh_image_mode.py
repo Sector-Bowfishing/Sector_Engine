@@ -21,6 +21,7 @@ case "$*" in
     else
       echo '{"status":{"latestCreatedRevisionName":"sector-engine-00001-old","url":"https://svc","traffic":[{"revisionName":"sector-engine-00001-old","percent":100}]}}'
     fi;;
+  "run revisions describe"*"serviceAccountName"*) echo "${FAKE_RUNS_AS:-}";;
   "run revisions describe"*) echo "$FAKE_SHA";;
   "run services describe"*"value(status.url)"*) echo "https://svc";;
 esac
@@ -55,7 +56,7 @@ def repo(tmp_path):
 
 def run(repo, **env):
     r, sha, tmp = repo
-    base = {k: v for k, v in os.environ.items() if k not in ("ALLOW_BRANCH_DEPLOY", "IMAGE", "SKIP_LINUX_SMOKE")}
+    base = {k: v for k, v in os.environ.items() if k not in ("ALLOW_BRANCH_DEPLOY", "IMAGE", "SKIP_LINUX_SMOKE", "RUNTIME_SA")}
     full = {**base, "PATH": f"{tmp / 'bin'}:{os.environ['PATH']}", "FAKE_LOG": str(tmp / "calls.log"), "FAKE_STATE": str(tmp / "state"),
             "FAKE_SHA": sha[:12], "SKIP_SMOKE": "1", **env}
     p = subprocess.run(["bash", str(r / "deploy.sh")], cwd=r, env=full, capture_output=True, text=True, timeout=120)
@@ -108,3 +109,33 @@ def test_rollback_path_is_unchanged(repo):
     q = subprocess.run(["bash", str(r / "deploy.sh"), "--rollback", "sector-engine-00001-old"], cwd=r, env=full, capture_output=True, text=True)
     assert q.returncode == 0
     assert any("update-traffic sector-engine" in c and "--to-revisions sector-engine-00001-old=100" in c for c in (tmp / "rb.log").read_text().splitlines())
+
+
+RUNTIME = "sector-engine-runtime@example-project.iam.gserviceaccount.com"
+
+
+def test_runtime_sa_is_passed_checked_and_never_printed(repo):
+    p, calls = run(repo, IMAGE=DIGEST, RUNTIME_SA=RUNTIME, FAKE_RUNS_AS=RUNTIME)
+    assert p.returncode == 0, p.stdout + p.stderr
+    assert f"--service-account {RUNTIME}" in next(c for c in calls if c.startswith("gcloud run deploy"))
+    assert "candidate runs as RUNTIME_SA" in p.stdout
+    assert "iam.gserviceaccount.com" not in p.stdout + p.stderr
+
+
+def test_candidate_with_another_identity_is_not_promoted(repo):
+    p, calls = run(repo, IMAGE=DIGEST, RUNTIME_SA=RUNTIME, FAKE_RUNS_AS="old-runtime@example-project.iam.gserviceaccount.com")
+    assert p.returncode != 0 and "does not run as RUNTIME_SA" in p.stdout
+    assert not [c for c in calls if "update-traffic" in c and "--to-revisions" in c]
+    assert "iam.gserviceaccount.com" not in p.stdout + p.stderr
+
+
+@pytest.mark.parametrize("env", [{"RUNTIME_SA": RUNTIME},                                  # --source path: refused
+                                 {"IMAGE": DIGEST, "RUNTIME_SA": "not-an-email"}])
+def test_runtime_sa_refusals(repo, env):
+    p, calls = run(repo, ALLOW_BRANCH_DEPLOY="1", **env)
+    assert p.returncode == 2 and not [c for c in calls if c.startswith("gcloud run deploy")]
+
+
+def test_without_runtime_sa_the_identity_flag_is_not_passed(repo):
+    p, calls = run(repo, IMAGE=DIGEST)
+    assert p.returncode == 0 and "--service-account" not in next(c for c in calls if c.startswith("gcloud run deploy"))
