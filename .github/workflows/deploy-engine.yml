@@ -12,6 +12,8 @@
 # are public). Each may be a repository SECRET instead of a variable (a secret wins and is masked in logs):
 #   GCP_WIF_PROVIDER        the WIF provider resource name
 #   GCP_SA_ENGINE_DEPLOY    the engine deployer service account
+#   GCP_SA_ENGINE_RUNTIME   the Engine's dedicated RUNTIME service account (sector-engine-runtime). The new revision runs as it, and
+#                           the run STOPS before deploying when it is not set, unless keep_current_identity is checked (emergency only).
 #   GCP_AR_REPO             the registry prefix <region>-docker.pkg.dev/<project> (no repository); the image is
 #                           <GCP_AR_REPO>/sector-engine/sector-engine:<sha>
 name: deploy-engine
@@ -26,6 +28,11 @@ on:
         description: "Type DEPLOY to deploy to production"
         required: true
         type: string
+      keep_current_identity:
+        description: "EMERGENCY ONLY: deploy without GCP_SA_ENGINE_RUNTIME, keeping the service's current runtime identity"
+        required: false
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -49,9 +56,16 @@ jobs:
       - name: Validate inputs
         env:
           CONFIRM: ${{ inputs.confirm }}
+          RUNTIME_SA: ${{ secrets.GCP_SA_ENGINE_RUNTIME || vars.GCP_SA_ENGINE_RUNTIME }}
+          KEEP_IDENTITY: ${{ inputs.keep_current_identity }}
         run: |
           [[ "$CONFIRM" == "DEPLOY" ]] || { echo "::error::confirm must be DEPLOY"; exit 1; }
           [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::sha must be a full 40-character lowercase commit"; exit 1; }
+          if [[ -z "$RUNTIME_SA" && "$KEEP_IDENTITY" != "true" ]]; then
+            echo "::error::GCP_SA_ENGINE_RUNTIME is not set: refusing to deploy with the old runtime identity. Set it, or re-run with keep_current_identity (emergency only)."
+            exit 1
+          fi
+          [[ -n "$RUNTIME_SA" ]] && echo "runtime identity: GCP_SA_ENGINE_RUNTIME" || echo "::warning::keep_current_identity: the revision keeps the service's current runtime identity"
 
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
         with:
@@ -119,6 +133,17 @@ jobs:
           got="$(docker image inspect --format '{{.Id}}' "sector-engine-local:$SHA")"
           [[ -n "$WANT_ID" && "$got" == "$WANT_ID" ]] || { echo "::error::loaded image $got is not the tested image $WANT_ID"; exit 1; }
 
+      - name: Runtime identity gate (again, in the job that deploys)
+        env:
+          RUNTIME_SA: ${{ secrets.GCP_SA_ENGINE_RUNTIME || vars.GCP_SA_ENGINE_RUNTIME }}
+          KEEP_IDENTITY: ${{ inputs.keep_current_identity }}
+        run: |
+          if [[ -z "$RUNTIME_SA" && "$KEEP_IDENTITY" != "true" ]]; then
+            echo "::error::GCP_SA_ENGINE_RUNTIME is not set: refusing to deploy with the old runtime identity. Set it, or re-run with keep_current_identity (emergency only)."
+            exit 1
+          fi
+          [[ -n "$RUNTIME_SA" ]] && echo "runtime identity: GCP_SA_ENGINE_RUNTIME" || echo "::warning::keep_current_identity: the revision keeps the service's current runtime identity"
+
       - id: auth
         name: Authenticate to Google Cloud (Workload Identity Federation)
         uses: google-github-actions/auth@c200f3691d83b41bf9bbd8638997a462592937ed  # v2.1.13
@@ -162,12 +187,14 @@ jobs:
           PROJECT_ID: ${{ steps.auth.outputs.project_id }}
           IMAGE: ${{ steps.push.outputs.image }}
           SKIP_LINUX_SMOKE: "1"     # ran in the build job on this exact image (image ID checked above)
+          RUNTIME_SA: ${{ secrets.GCP_SA_ENGINE_RUNTIME || vars.GCP_SA_ENGINE_RUNTIME }}   # empty only with keep_current_identity (gated above)
         run: ./deploy.sh
 
       - id: live
-        name: Phone contract, live, at every probe point (tools/conditions_golden/capture.py check --live)
+        name: Serving revision runs as the runtime account; phone contract, live, at every probe point (capture.py check --live)
         env:
           PROJECT_ID: ${{ steps.auth.outputs.project_id }}
+          RUNTIME_SA: ${{ secrets.GCP_SA_ENGINE_RUNTIME || vars.GCP_SA_ENGINE_RUNTIME }}
         run: |
           read -r rev url < <(gcloud run services describe "$SERVICE" --project "$PROJECT_ID" --region "$REGION" --format=json | python3 -c '
           import json, sys
@@ -176,6 +203,14 @@ jobs:
           echo "revision=$rev" >> "$GITHUB_OUTPUT"
           label="$(gcloud run revisions describe "$rev" --project "$PROJECT_ID" --region "$REGION" --format 'value(metadata.labels.commit)')"
           [[ "$label" == "${SHA:0:12}" ]] || { echo "::error::serving $rev is labeled commit=$label, expected ${SHA:0:12}"; exit 1; }
+          if [[ -n "$RUNTIME_SA" ]]; then          # post-promote: the SERVING revision's identity (the email is never printed)
+            runs_as="$(gcloud run revisions describe "$rev" --project "$PROJECT_ID" --region "$REGION" --format 'value(spec.serviceAccountName)')"
+            [[ "$runs_as" == "$RUNTIME_SA" ]] || { echo "::error::serving $rev does not run as GCP_SA_ENGINE_RUNTIME"; exit 1; }
+            echo "identity=runtime account" >> "$GITHUB_OUTPUT"
+            echo "serving $rev runs as GCP_SA_ENGINE_RUNTIME"
+          else
+            echo "identity=kept (keep_current_identity)" >> "$GITHUB_OUTPUT"
+          fi
           python3 tools/conditions_golden/capture.py --base "$url" check --live
 
       - id: rollback
@@ -210,8 +245,12 @@ jobs:
             echo "| build + Linux smoke (build job, this image ID) | ${{ needs.build.result }} |"
             echo "| push | ${{ steps.push.outcome }} |"
             echo "| deploy.sh (candidate smoke, promote, prod re-check) | ${{ steps.deploy.outcome }} |"
+            echo "| runtime identity of the serving revision | ${{ steps.live.outputs.identity || 'not checked' }} |"
             echo "| phone contract live (capture.py check --live) | ${{ steps.live.outcome }} |"
             echo "| rollback | ${{ steps.rollback.outcome }} |"
             echo
-            echo "Rollback by hand: \`./deploy.sh --rollback ${PREV:-<previous revision>}\` (Cloud Shell)."
+            echo "Rollback by hand: \`./deploy.sh --rollback ${PREV:-<previous revision>}\` (Cloud Shell). A rolled-back revision keeps its own (old) identity."
+            echo
+            echo "**Manual check (the deployer has no log access):** in Cloud Logging for the new revision, find \`[remote-config] refresh outcome=ok status=200\`."
+            echo "Any other outcome (http-error status=403, no-token, ...) means the runtime account cannot read Remote Config and the Engine is serving built-in weights and all-off tile flags."
           } >> "$GITHUB_STEP_SUMMARY"

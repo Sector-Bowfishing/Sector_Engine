@@ -42,6 +42,10 @@
 #                                     runs against IMAGE without rebuilding it, and --allow-unauthenticated is not
 #                                     passed (the deployer changes no IAM policy; the public smoke test proves the
 #                                     service is still public).
+#   IMAGE=… RUNTIME_SA=<service account email> ./deploy.sh
+#                                     IMAGE mode only: run the new revision as RUNTIME_SA (`--service-account`), and
+#                                     refuse to promote a candidate that does not run as it. The email is never printed.
+#                                     Unset: the revision keeps the service's current identity (as before).
 #
 # History: the candidate/smoke/promote flow is from fix/forecast-rain-gate (2c53d64c);
 # the traceability gate, probes, prod verification and auto-rollback are from
@@ -86,6 +90,13 @@ SECRET_FLAGS=()
 IMAGE="${IMAGE:-}"
 if [[ -n "$IMAGE" && "$IMAGE" != *@sha256:* && "${1:-}" != "--rollback" && "${1:-}" != "--check-warm-tags" ]]; then
   echo "✗ IMAGE must be a digest reference (…@sha256:…): the deployed image must be exactly the tested one."; exit 2
+fi
+RUNTIME_SA="${RUNTIME_SA:-}"
+if [[ -n "$RUNTIME_SA" && -z "$IMAGE" ]]; then
+  echo "✗ RUNTIME_SA is for IMAGE mode only (the deploy workflow); the --source path keeps the service's identity."; exit 2
+fi
+if [[ -n "$RUNTIME_SA" && ! "$RUNTIME_SA" =~ ^[a-z][a-z0-9-]{4,28}[a-z0-9]@[a-z0-9-]+\.iam\.gserviceaccount\.com$ ]]; then
+  echo "✗ RUNTIME_SA is not a service account email."; exit 2
 fi
 if [[ "${SKIP_LINUX_SMOKE:-0}" != "1" ]]; then
   if [[ -n "$IMAGE" ]]; then
@@ -231,6 +242,10 @@ trap remove_candidate_tag EXIT
 # Env vars already on the service are kept (no --set-env-vars / --clear-env-vars).
 if [[ -n "$IMAGE" ]]; then
   BUILD_FLAGS=(--image "$IMAGE")             # prebuilt and smoke-tested; no Cloud Build, no IAM policy change
+  if [[ -n "$RUNTIME_SA" ]]; then
+    BUILD_FLAGS+=(--service-account "$RUNTIME_SA")
+    echo "  runtime identity: the dedicated runtime service account (RUNTIME_SA)"
+  fi
   echo "  image: ${IMAGE##*@}"
 else
   BUILD_FLAGS=(--source . --allow-unauthenticated)
@@ -267,6 +282,11 @@ print(latest, url)')
 LABEL="$(gcloud run revisions describe "$CANDIDATE" "${GC[@]}" --format 'value(metadata.labels.commit)')"
 [[ "$LABEL" == "$SHA" ]] || { echo "✗ Revision $CANDIDATE is labeled commit=$LABEL, expected $SHA."; exit 1; }
 echo "  candidate: $CANDIDATE  $CANDIDATE_URL"
+if [[ -n "$RUNTIME_SA" ]]; then
+  RUNS_AS="$(gcloud run revisions describe "$CANDIDATE" "${GC[@]}" --format 'value(spec.serviceAccountName)')"
+  [[ "$RUNS_AS" == "$RUNTIME_SA" ]] || { echo "✗ Candidate $CANDIDATE does not run as RUNTIME_SA. Not promoting; prod is still on ${PREVIOUS:-its previous revision}."; exit 1; }
+  echo "  candidate runs as RUNTIME_SA ✓"
+fi
 
 # ── 2. Smoke test the candidate ────────────────────────────────────────────────
 if ! smoke_test "$CANDIDATE_URL" "the candidate"; then
