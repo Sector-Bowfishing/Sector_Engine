@@ -83,3 +83,36 @@ The watch no longer depends on a laptop.
 - **The execution control is not written by the cycle:** it remains owner-only (PL-16). The latch has the same effect.
 - **Owner CLI:** `tools/ops/watchdog.py show | check | clear --changed-by … --approval-ref … --reason …`. `check` is a read-only evaluation now. Clearing doesn't resume the scheduler: use `resume-orchestrator.sh` after fixing the cause.
 - **Runner faults:** `runner.py fault --brain B --holder pulse --kind KIND [--detail TEXT]` creates `exports/runners/pulse/faults/{B}/{UTC}-{KIND}.json` (`sector-runner-fault-v1`). Pulse calls it when it stops itself (Sector-Pulse self-checks). The uploader's existing create grant on `exports/runners/pulse/` covers it.
+
+## Staged hybrid moves: Lake, Water Temp, Wind (Roadmap Sector_Ops #23 section 2; Sector_Ops #51)
+The next Brains move the way Water Clarity did (O3 (b)): Pulse runs the Brain while it holds the lease, and the Orchestrator and Publisher stay in the cloud. **Nothing here is live.**
+- **One staged fragment per Brain** in `tools/ops/hybrid-stage/<brainId>.json` (`sector-hybrid-stage-v1`), holding:
+  - the runner-policy primary (`pulse`);
+  - the watchdog entry (holder and the lakes it may publish);
+  - the cutover entry (`CENTRAL`, and an `orderReviewRef` where the owner recorded one);
+  - the Pulse job;
+  - the blockers still open.
+  No runtime reads that folder (a test proves it).
+- **Readiness order:**
+  1. **`lake-brain`** (Pulse `lake-central`; L-2 order review recorded).
+  2. **`water-temp`** (Pulse `water-temp-central`). With no order review it stays on its direct writer: PL-10 drops a CENTRAL entry ahead of Wind (`CUTOVER_ORDER`).
+  3. **`wind`** (Pulse `wind-central`, entry `brains/wind/runtime/artifact_entry.py`).
+- **`python3 tools/ops/hybrid_stage.py show | check | apply --brain B --approval-ref REF [--blockers-cleared] [--write]`**
+  - `check` merges each fragment in memory and runs the real loaders (`runner_lease.load_policy`, `cycle_watchdog.load_policy`, `publication_stage.load_cutover`).
+  - `apply` prints, or with `--write` writes, the three policy changes for the owner-approved PR.
+  - It refuses a missing approvalRef, a Brain already live, and open blockers (unless `--blockers-cleared`).
+  - It never deploys, grants IAM or enables the execution control.
+- **Wind's lease-path entry** (`artifact_entry.py`):
+  - It runs the same ingest as `wind-hourly` into a LOCAL archive, then the unchanged `publish()` into a DryRunWriter.
+  - It seals ONE `wind-publication-v1` artifact with the packaged release lineage: create-only into a local store, plus `--emit` for the runner's hand-off.
+  - It never builds a database writer. It refuses a `gs://` archive or store, and an existing hand-off file.
+- **Order of a move** (each step is an owner approval):
+  1. the IAM (on Sector_Ops #51 only);
+  2. the Mac mini inputs;
+  3. the release approval;
+  4. `apply --write` in a PR;
+  5. the Orchestrator and Publisher deploys;
+  6. the execution control enabling the Brain;
+  7. one watched publish.
+
+  The watchdog entry must be live before the execution control enables the Brain. Otherwise the watchdog's control check halts the cycle.
