@@ -140,3 +140,4 @@ def test_prebuilt_digest_is_deployed_as_is_without_docker(fake):
     assert f"--image {img}" in deploy_call(calls)
     assert not [c for c in calls if c.startswith("docker")]
     assert "us-central1-docker.pkg.dev" not in r.stdout          # the registry path is not echoed (public Actions logs)
+    assert "iam.gserviceaccount.com" not in r.stdout + r.stderr  # nor a service-account email

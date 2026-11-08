@@ -13,7 +13,7 @@ key file and run nothing on a personal machine. Shared rules:
 | Deliberate start | A `confirm` input: `DEPLOY` for the two deploys, `SET` for the flag. One concurrency group per workflow, never cancelled in progress. |
 | Token only where needed | Each workflow has two jobs. The **build/validate** job has `contents: read` only and runs every build, smoke test, test and `pip install`. The **deploy/apply** job has `id-token: write` and runs only the checkout, auth, `gcloud`, the checks and the rollback. No dependency install runs in a job that can mint a Google token. |
 | Pinned actions | Every action is pinned to a full commit SHA, with its tag in a comment: `actions/checkout` v4.4.0, `google-github-actions/auth` v2.1.13, `actions/upload-artifact` v4.6.2, `actions/download-artifact` v4.3.0. `gcloud` is the one preinstalled on `ubuntu-latest`; `auth` points it at the federated credentials. |
-| No identifiers in the repository | The provider and service accounts come from repository settings: `GCP_WIF_PROVIDER`, `GCP_SA_ENGINE_DEPLOY`, `GCP_SA_ORCHESTRATOR_DEPLOY`, `GCP_SA_CONDITIONS_FLAGS`, and `GCP_AR_REPO` (the registry prefix `<region>-docker.pkg.dev/<project>`, with no repository name). The workflows never echo them. Each name may be a repository **secret** instead of a variable, and a secret wins. This repository's run logs are public, and GitHub masks secrets in logs but not variables. |
+| No identifiers in the repository or the logs | The provider and service accounts come from repository settings: `GCP_WIF_PROVIDER`, `GCP_SA_ENGINE_DEPLOY`, `GCP_SA_ORCHESTRATOR_DEPLOY`, `GCP_SA_CONDITIONS_FLAGS`, and `GCP_AR_REPO` (the registry prefix `<region>-docker.pkg.dev/<project>`, with no repository name). The workflows never echo them. Each name may be a repository **secret** instead of a variable, and a secret wins. This repository's run logs are public, and GitHub masks secrets in logs but not variables: the runner prints a `uses:` step's evaluated `with:` inputs and every step's `env:`, so a **variable** `GCP_WIF_PROVIDER` shows the project number in the log. **Owner decision:** store these as secrets. |
 | Images by digest | Images are built on the runner (no Cloud Build) and handed from the build job to the deploy job as a 1-day artifact. The deploy job checks that the image ID is unchanged, then pushes the image to Artifact Registry with the commit as its tag and deploys it **by digest**. The logs show the digest, not the registry path. |
 | Commit | `sha` is a full 40-character commit. It must be HEAD of `main` or an ancestor, and it is checked out exactly (`git rev-parse HEAD == sha`). A commit older than the scripts' new switches is refused. |
 
@@ -35,8 +35,8 @@ Inputs: `sha` and `confirm=DEPLOY`.
       - the existing env is kept, and the sizing and probes are identical.
    4. Checks that the serving revision is labeled with this commit, then runs
       `python3 tools/conditions_golden/capture.py --base <service url> check --live`, the phone contract at all 17 probe points.
-   5. **Rollback:** on any failure or cancellation after the rollback target was recorded, it runs `./deploy.sh --rollback <previous revision>`
-      (only if traffic is not already there) and fails the job.
+   5. **Rollback:** on any failure or cancellation once `deploy.sh` has started, it runs `./deploy.sh --rollback <previous revision>`
+      (always, to re-pin the traffic; it does not decide from the served status, which can lag a promotion still in flight) and fails the job.
    6. The step summary shows the image digest, the revision serving before and after, and each check's outcome.
 
 `IMAGE=` mode differs from the default `--source` path (still the Cloud Shell path, unchanged) in these ways:
@@ -64,11 +64,15 @@ Inputs: `sha` (a commit, or `current` to keep the job's current image), `project
       `IMAGE=<digest ref>`, or `CARRY_IMAGE=1` for `current`. `ORCH_ARGS` is unset, so the job's arguments stay unchanged. The lineage
       preflight and the stale-score guard still run.
    4. **Verify.** The job must now have exactly the carried env (everything as before, except `CONDITIONS_SOURCES_PROJECTION`, and
-      `DEPLOYMENT_VERSION=brain-orchestrator@<sha12>` when a new image was deployed), the intended image and unchanged arguments.
+      `DEPLOYMENT_VERSION=brain-orchestrator@<sha12>` when a new image was deployed), the intended image, unchanged arguments, the same
+      service account, and the intended `commit` label. CPU, memory, task timeout and retries are set by `deploy-job.sh` exactly as on the
+      Cloud Shell path (1 vCPU / 512 Mi / 30 m / 0 retries); they are not carried forward.
    5. **Dry cycle.** It runs `gcloud run jobs execute brain-orchestrator --args=--dry-run --wait` and requires `succeededCount >= 1` with no
-      failed or cancelled task. A dry cycle writes nothing and starts nothing.
+      failed or cancelled task. A dry cycle writes nothing and starts nothing. gcloud's progress output is filtered before it is printed,
+      because its console link carries the project number.
    6. **Rollback:** on any failure or cancellation after the preflight record, it runs `gcloud run jobs update` with the previous image, the
-      previous env (`--env-vars-file`, the whole env) and the previous `commit` label, then re-checks it, and fails the job.
+      previous env (`--env-vars-file`, the whole env) and the previous `commit` label, then re-checks it, and fails the job. A job state that
+      cannot be read counts as changed, so it restores instead of skipping.
    7. **The projection node is a MANUAL check** (it is in the step summary). The deployer has no database role, and a dry cycle writes
       nothing. `/control/conditionsSourcesV1` appears only after the owner resumes the scheduler and a real cycle runs. Read it the way the
       repository's owner tools read `/control/*` (an authenticated RTDB REST GET, as in `tools/ops/execution_control.py`). Expect
@@ -104,7 +108,9 @@ Inputs: `preset` (`off` or `weather-shadow`) and `confirm=SET`. The tool is `too
   3. It changes ONLY that parameter: `PUT ?validate_only=true`, then `PUT` with `If-Match: <etag>`, so a concurrent edit fails instead of
      being lost.
   4. It reads the template back, requires every other parameter, group and condition to be identical, and re-validates the value. It prints
-     the version **after**.
+     the version **after**. If the read-back fails and nothing but this parameter differs from the template before the run, it puts the
+     parameter back as it was, with the new ETag. If anything else changed (a concurrent edit), it does not write again and prints the
+     manual rollback instead. API errors print only the HTTP code and Google's error status, never the body.
 - **Rollback:** run the workflow again with `off`, or roll Remote Config back to the printed "before" version. The Engine picks up a change
   within its 10-minute cache.
 

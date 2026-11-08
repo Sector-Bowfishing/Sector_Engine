@@ -203,6 +203,40 @@ def verify_readback(before: dict, after: dict, preset: str) -> list[str]:
     return errs
 
 
+def restore_template(before: dict, after: dict) -> dict | None:
+    """The template that puts the parameter back as it was in `before`, or None when that is not safe: anything else differs between
+    before and after (a concurrent edit), so writing would clobber someone else's change. Pure."""
+    if without_param(before) != without_param(after):
+        return None
+    out = copy.deepcopy(after)
+    out.pop("version", None)
+    params = out.setdefault("parameters", {})
+    if PARAM in (before.get("parameters") or {}):
+        params[PARAM] = copy.deepcopy(before["parameters"][PARAM])
+    else:
+        params.pop(PARAM, None)
+        if not params:
+            out.pop("parameters")
+    return out
+
+
+def restore_after_failed_readback(url: str, token: str, before: dict, after: dict) -> None:
+    """Automatic rollback of a write whose read-back failed: only when nothing but the parameter differs; otherwise print the manual path."""
+    bv = (before.get("version") or {}).get("versionNumber", "?")
+    new = restore_template(before, after)
+    if new is None:
+        print(f"NOT RESTORED automatically (the template also changed elsewhere): roll Remote Config back to version {bv} by hand, or run preset off")
+        return
+    _, cur, etag = _request("GET", url, token)
+    if without_param(cur) != without_param(after) or current_value(cur) != current_value(after):
+        print(f"NOT RESTORED automatically (the template changed again): roll back to version {bv} by hand, or run preset off")
+        return
+    _request("PUT", url, token, new, etag)
+    _, back, _ = _request("GET", url, token)
+    ok = without_param(back) == without_param(before) and current_value(back) == current_value(before)
+    print(f"RESTORED {PARAM} to its value before this run (version {bv}): " + ("verified" if ok else "VERIFY BY HAND"))
+
+
 def version_of(template: dict) -> str:
     v = template.get("version") or {}
     return f"{v.get('versionNumber', '?')} ({v.get('updateTime', '?')}, by {((v.get('updateUser') or {}).get('email') and 'a user') or '?'})"
@@ -222,8 +256,12 @@ def _request(method: str, url: str, token: str, body: dict | None = None, etag: 
         with urllib.request.urlopen(req, timeout=30) as r:
             return r.status, json.loads(r.read() or b"{}"), r.headers.get("ETag")
     except urllib.error.HTTPError as e:
-        detail = e.read()[:500].decode(errors="replace")
-        raise RuntimeError(f"{method} remoteConfig -> HTTP {e.code}: {detail}") from None
+        # Only the code and Google's error status: an error body can name the project number, and this repository's run logs are public.
+        try:
+            status = (json.loads(e.read() or b"{}").get("error") or {}).get("status", "")
+        except ValueError:
+            status = ""
+        raise RuntimeError(f"{method} remoteConfig -> HTTP {e.code} {status}".rstrip()) from None
 
 
 def cmd_plan(a) -> int:
@@ -277,6 +315,7 @@ def cmd_apply(a) -> int:
     for e in errs:
         print("READ-BACK FAILED:", e)
     if errs:
+        restore_after_failed_readback(url, token, before, after)
         return 1
     bv = (before.get("version") or {}).get("versionNumber", "?")
     print(f"OK: {PARAM} is {a.preset}. Rollback: preset off, or roll the template back to version {bv}.")

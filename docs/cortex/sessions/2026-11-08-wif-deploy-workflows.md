@@ -31,3 +31,22 @@ granted roles. That alignment was applied. Nothing was deployed, no `gcloud` / `
 - `tools/deploy` 36 passed; `jobs/brain-orchestrator` 256 passed (incl. 12 new); `actionlint` + `shellcheck` clean on the new workflows
   (informational SC2016 only, intentional).
 - Certification digests re-recorded (separate commit).
+
+## Independent review (round 1) and fixes
+- Fixed:
+  - The engine rollback decided from the served traffic, which can lag a promotion still in flight. It now always re-pins to the previous
+    revision once deploy.sh has started.
+  - The orchestrator rollback skipped itself when `describe` failed. An unreadable state now counts as changed.
+  - The dry cycle's gcloud output carried a console link with the project number. That output is now filtered before it is printed.
+  - deploy-job.sh echoed the runtime service account's email. It now prints the account name only, and the test checks this.
+  - Remote Config error bodies were printed (they can name the project number). Now only the HTTP code and Google's error status are printed.
+  - A failed Remote Config read-back now restores the parameter, but only when nothing else in the template changed.
+  - The `pytest` install in set-conditions-tiles now runs in a venv (PEP 668).
+  - The orchestrator verify step now also checks the commit label and the service account.
+  - The new `IMAGE` check in deploy.sh no longer blocks `--rollback` / `--check-warm-tags`.
+- Owner decision, not changed: the reviewer flagged as blocking that repository **variables** print the WIF provider (project number) and
+  the service-account emails in the public run logs. The design shared across sessions fixed variables. The workflows read
+  `secrets.X || vars.X`, so storing them as secrets removes the leak without a code change.
+- Known, documented: the build job's staged engineering status reports branch `HEAD` (detached checkout); deploy.sh prints its
+  "local main differs" warning when an older main commit is deployed; deploy-job.sh resets CPU, memory and timeout to its fixed values, as
+  on the Cloud Shell path.

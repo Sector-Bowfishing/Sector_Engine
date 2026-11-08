@@ -84,7 +84,7 @@ SECRET_FLAGS=()
 # that built and tested clean on macOS aborted the Linux Swift runtime on
 # their first request (2026-09-27, 00041-00043). See scripts/linux-smoke.sh.
 IMAGE="${IMAGE:-}"
-if [[ -n "$IMAGE" && "$IMAGE" != *@sha256:* ]]; then
+if [[ -n "$IMAGE" && "$IMAGE" != *@sha256:* && "${1:-}" != "--rollback" && "${1:-}" != "--check-warm-tags" ]]; then
   echo "✗ IMAGE must be a digest reference (…@sha256:…): the deployed image must be exactly the tested one."; exit 2
 fi
 if [[ "${SKIP_LINUX_SMOKE:-0}" != "1" ]]; then

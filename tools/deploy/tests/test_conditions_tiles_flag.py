@@ -173,3 +173,39 @@ def test_apply_dry_run_writes_nothing(monkeypatch):
     monkeypatch.setenv("RC_ACCESS_TOKEN", "t")
     assert F.main(["apply", "--preset", "weather-shadow", "--project", "p", "--dry-run"]) == 0
     assert all("validate_only" in u for u in fake.puts) and F.PARAM not in fake.template["parameters"]
+
+
+def test_restore_template_only_when_nothing_else_changed():
+    after = F.apply_preset(TEMPLATE, "weather-shadow")
+    after["version"] = {"versionNumber": "42"}
+    r = F.restore_template(TEMPLATE, after)
+    assert F.PARAM not in r["parameters"] and F.without_param(r) == F.without_param(TEMPLATE)
+    other = copy.deepcopy(after)
+    other["parameters"]["conditions_config"]["defaultValue"]["value"] = "{}"
+    assert F.restore_template(TEMPLATE, other) is None
+
+
+def test_failed_readback_restores_the_previous_value(monkeypatch, capsys):
+    fake = FakeRC(TEMPLATE)
+
+    def mangling(method, url, token, body=None, etag=None):     # the server stores a different value than was sent
+        r = fake(method, url, token, body, etag)
+        if method == "PUT" and "validate_only" not in url and F.PARAM in (body.get("parameters") or {}):
+            fake.template["parameters"][F.PARAM]["defaultValue"]["value"] = "{}"
+        return r
+    monkeypatch.setattr(F, "_request", mangling)
+    monkeypatch.setenv("RC_ACCESS_TOKEN", "t")
+    assert F.main(["apply", "--preset", "weather-shadow", "--project", "p"]) == 1
+    assert F.PARAM not in fake.template["parameters"] and "RESTORED" in capsys.readouterr().out
+
+
+def test_http_error_prints_no_body(monkeypatch):
+    import io
+    import urllib.error
+
+    def boom(req, timeout):
+        raise urllib.error.HTTPError(req.full_url, 403, "x", {}, io.BytesIO(b'{"error":{"status":"PERMISSION_DENIED","message":"project 123456789012"}}'))
+    monkeypatch.setattr(F.urllib.request, "urlopen", boom)
+    with pytest.raises(RuntimeError) as e:
+        F._request("GET", "https://x", "t")
+    assert "PERMISSION_DENIED" in str(e.value) and "123456789012" not in str(e.value)

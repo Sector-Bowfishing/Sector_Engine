@@ -179,22 +179,16 @@ jobs:
           python3 tools/conditions_golden/capture.py --base "$url" check --live
 
       - id: rollback
-        name: Roll back on any failure or cancellation after the rollback target was recorded
-        if: (failure() || cancelled()) && steps.prev.outputs.revision != ''
+        name: Roll back on any failure or cancellation once deploy.sh had started
+        if: (failure() || cancelled()) && steps.prev.outputs.revision != '' && steps.deploy.outcome != 'skipped'
         env:
           PROJECT_ID: ${{ steps.auth.outputs.project_id }}
           PREV: ${{ steps.prev.outputs.revision }}
           SKIP_LINUX_SMOKE: "1"
         run: |
-          now="$(gcloud run services describe "$SERVICE" --project "$PROJECT_ID" --region "$REGION" --format=json | python3 -c '
-          import json, sys
-          t = json.load(sys.stdin)["status"]["traffic"]
-          print(max(t, key=lambda e: e.get("percent", 0)).get("revisionName", ""))')"
-          if [[ "$now" == "$PREV" ]]; then
-            echo "traffic is on $PREV (the revision serving before): nothing to roll back"
-          else
-            ./deploy.sh --rollback "$PREV"
-          fi
+          # Always re-pin, never decide from the served status: a promotion still in flight can show the old revision at 100 %.
+          # Re-pinning traffic that is already on PREV changes nothing.
+          ./deploy.sh --rollback "$PREV"
           echo "### NOT DEPLOYED: 100% of traffic on \`$PREV\`" >> "$GITHUB_STEP_SUMMARY"
           exit 1
 

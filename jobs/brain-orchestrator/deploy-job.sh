@@ -106,7 +106,7 @@ ROOT="$(git rev-parse --show-toplevel)"
 COMMIT="$(git rev-parse --short=12 HEAD)"
 
 if [[ "$SKIP_IAM" == "1" ]]; then
-  echo "▶ service account $SA: IAM SKIPPED (SKIP_IAM=1; the bindings listed above must already exist)"
+  echo "▶ service account $SA_NAME: IAM SKIPPED (SKIP_IAM=1; the bindings listed above must already exist)"
 else
 echo "▶ service account $SA"
 if ! gcloud iam service-accounts describe "$SA" --project "$PROJECT_ID" >/dev/null 2>&1; then

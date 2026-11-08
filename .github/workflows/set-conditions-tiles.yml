@@ -51,8 +51,9 @@ jobs:
           persist-credentials: false
       - name: Tool tests (TileFlags semantics, single-parameter edit, read-back, serve refusal)
         run: |
-          python3 -m pip install --quiet pytest
-          cd tools/deploy && python3 -m pytest -q tests/test_conditions_tiles_flag.py
+          python3 -m venv "$RUNNER_TEMP/venv"            # the runner's system Python may be externally managed (PEP 668)
+          "$RUNNER_TEMP/venv/bin/pip" install --quiet pytest
+          cd tools/deploy && "$RUNNER_TEMP/venv/bin/python" -m pytest -q tests/test_conditions_tiles_flag.py
       - name: Plan
         run: python3 tools/deploy/conditions_tiles_flag.py plan --preset "$PRESET"
 
