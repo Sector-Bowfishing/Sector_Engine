@@ -16,6 +16,7 @@
     "Mac mini: a LakeBrainJob release build from the snapshot commit, and publication.lakeJobBinary / lakeSeedArchive / lakePresence set",
     "knowledge release approval for lake-brain not recorded (the Publisher refuses an unapproved release)",
     "B5 decision: the first live publish's baseline acknowledgement (the Water Clarity D3 pattern)",
+    "L-H1 decision: Lake reads the shared TVA archive from its bucket, last written 2026-10-14 (the collector moved local, now Pulse on the Mac mini): point Lake at the mini's local archive (a small Lake change) or accept live TVA only",
     "owner approvals for this apply PR, the Orchestrator + Publisher deploys, and the execution control enabling lake-brain"
   ]
 }
