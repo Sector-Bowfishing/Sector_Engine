@@ -1,0 +1,22 @@
+{
+  "schema": "sector-hybrid-stage-v1",
+  "brainId": "wind",
+  "readiness": 3,
+  "note": "STAGED, not live. Nothing reads this file at runtime: it becomes live only when tools/ops/hybrid_stage.py apply writes it into the three reviewed policies in an owner-approved PR, and that PR is deployed (Orchestrator and Publisher). Wind would move like Water Clarity did: Pulse runs wind-central (brains/wind/runtime/artifact_entry.py) while it holds the lease. Wind is the hourly Brain (staleAfterHours 1.5): a sleeping or offline Mac mini means stale wind, and failover is off.",
+  "pulseJob": "wind-central",
+  "leaseObject": "exports/runners/leases/wind.json",
+  "artifactPrefix": "artifacts/wind/",
+  "cloudJob": "wind-hourly",
+  "runnerPolicy": {"primary": "pulse"},
+  "watchdog": {"holder": "pulse", "lakes": ["Guntersville_AL", "Wheeler_AL", "Wilson_AL", "Pickwick_Lake_TN"]},
+  "cutover": {"state": "CENTRAL"},
+  "blockers": [
+    "the 7-day shadow equivalence (Sector_Ops #49): where it runs (the cloud plan restarts the legacy writer, against 'no cloud runs until Pulse works'; on Pulse it needs a redesign: there is no legacy write to compare with)",
+    "archive continuity: the Mac mini's local Wind archive vs gs://sector-wind-candidate/wind/v1 (the previous-state bookkeeping)",
+    "knowledge release approval for wind not recorded; Engine #90 and a new knowledge release; the lifecycle the artifact declares",
+    "the app wind source decisions WS-1..WS-4 (customer-visible, separate)",
+    "IAM step W-H1: written on Sector_Ops #51 (private), not applied",
+    "Mac mini: power settings so the hourly cycle never sleeps (no sleep/caffeinate guidance in the O1 runbook)",
+    "owner approvals for this apply PR, the Orchestrator + Publisher deploys, and the execution control enabling wind"
+  ]
+}
