@@ -117,6 +117,26 @@ def test_a_cloud_start_of_the_legacy_job_still_halts_after_the_move():
     assert "EXECUTION_OUTSIDE_POLICY" in {t.kind for t in res.trips}
 
 
+def test_water_temp_apply_takes_the_owners_order_review(tmp_path, monkeypatch):
+    for name, src in (("runner.json", HS.RUNNER_POLICY), ("watchdog.json", HS.WATCHDOG_POLICY), ("cutover.json", HS.CUTOVER)):
+        (tmp_path / name).write_text(open(src).read())
+    monkeypatch.setattr(HS, "RUNNER_POLICY", str(tmp_path / "runner.json"))
+    monkeypatch.setattr(HS, "WATCHDOG_POLICY", str(tmp_path / "watchdog.json"))
+    monkeypatch.setattr(HS, "CUTOVER", str(tmp_path / "cutover.json"))
+    base = ["apply", "--brain", "water-temp", "--approval-ref", "owner-approval-test", "--blockers-cleared", "--write"]
+    assert HS.main(base) == 2                                                          # CUTOVER_ORDER: Wind first, or an order review
+    assert HS.main(base + ["--order-review-ref", "owner-approval-test/wt-ord"]) == 0
+    assert json.loads((tmp_path / "cutover.json").read_text())["brains"]["water-temp"]["orderReviewRef"] == "owner-approval-test/wt-ord"
+
+
+def test_lake_names_must_be_rtdb_keys(tmp_path):
+    f = json.load(open(os.path.join(HS.STAGE_DIR, "lake-brain.json")))
+    f["watchdog"]["lakes"] = ["Guntersville|AL"]
+    (tmp_path / "lake-brain.json").write_text(json.dumps(f))
+    with pytest.raises(HS.StageError):
+        HS.load_fragment(str(tmp_path / "lake-brain.json"))
+
+
 def test_merge_refuses_no_approval_and_a_brain_already_live():
     f = HS.fragments()["lake-brain"]
     with pytest.raises(HS.StageError):
@@ -136,12 +156,16 @@ def test_apply_refuses_open_blockers_and_writes_only_with_write(tmp_path, monkey
     assert HS.main(["apply", "--brain", "lake-brain", "--approval-ref", "owner-approval-test"]) == 2          # blockers open
     assert HS.main(["apply", "--brain", "nope", "--approval-ref", "x"]) == 2
     assert HS.main(["apply", "--brain", "water-temp", "--approval-ref", "x", "--blockers-cleared"]) == 2     # the order review is still missing
-    assert HS.main(["apply", "--brain", "lake-brain", "--approval-ref", "owner-approval-test", "--blockers-cleared"]) == 0
+    assert HS.main(["apply", "--brain", "lake-brain", "--approval-ref", "owner-approval-test", "--blockers-cleared"]) == 2   # L-2 not restated
+    assert HS.main(["apply", "--brain", "lake-brain", "--approval-ref", "owner-approval-test", "--blockers-cleared", "--order-review-ref", "other"]) == 2
+    L2 = ["--order-review-ref", "owner-approval-2026-11-02/sector-ops-50#L-2"]
+    assert HS.main(["apply", "--brain", "lake-brain", "--approval-ref", "owner-approval-test", "--blockers-cleared"] + L2) == 0
     assert {p.name: p.read_text() for p in tmp_path.iterdir()} == before                                     # diff only
-    assert HS.main(["apply", "--brain", "lake-brain", "--approval-ref", "owner-approval-test", "--blockers-cleared", "--write"]) == 0
+    assert HS.main(["apply", "--brain", "lake-brain", "--approval-ref", "owner-approval-test", "--blockers-cleared", "--write"] + L2) == 0
+    assert json.loads((tmp_path / "cutover.json").read_text())["brains"]["lake-brain"]["orderReviewRef"] == L2[1]
     assert RL.primary(RL.load_policy(str(tmp_path / "runner.json")), "lake-brain") == "pulse"
     assert "lake-brain" in WD.load_policy(str(tmp_path / "watchdog.json"))["brains"]
-    assert HS.main(["apply", "--brain", "lake-brain", "--approval-ref", "again", "--blockers-cleared"]) == 2   # already live
+    assert HS.main(["apply", "--brain", "lake-brain", "--approval-ref", "again", "--blockers-cleared"] + L2) == 2   # already live
 
 
 def test_check_and_show_run_against_the_committed_files(capsys):

@@ -15,6 +15,8 @@
     "archive continuity: the Mac mini's local Wind archive vs gs://sector-wind-candidate/wind/v1 (the previous-state bookkeeping)",
     "knowledge release approval for wind not recorded; Engine #90 and a new knowledge release; the lifecycle the artifact declares",
     "the app wind source decisions WS-1..WS-4 (customer-visible, separate)",
+    "W-H2 code: Wind's own change detection (brain/wind/last_publish.json) advances when the artifact is sealed; a hand-off the central path later refuses must not advance it (a commit-after-acceptance step). A run that hands nothing off already restores it",
+    "W-H3 code/decision: Wind writes lakes/{k}/profiles/wind for every nationally profiled lake (about 50), not only the 4 live lakes: the watchdog lake list must cover them (or the watchdog bounds only the live states), else the first publish halts with PUBLISH_OUTSIDE_LAKES",
     "IAM step W-H1: written on Sector_Ops #51 (private), not applied",
     "Mac mini: power settings so the hourly cycle never sleeps (no sleep/caffeinate guidance in the O1 runbook)",
     "owner approvals for this apply PR, the Orchestrator + Publisher deploys, and the execution control enabling wind"

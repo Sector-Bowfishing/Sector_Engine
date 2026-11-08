@@ -12,7 +12,7 @@ is deployed:
 
   python3 tools/ops/hybrid_stage.py show                            # every staged Brain, by readiness, with its blockers
   python3 tools/ops/hybrid_stage.py check                           # each fragment applied in memory passes the real policy loaders
-  python3 tools/ops/hybrid_stage.py apply --brain lake-brain --approval-ref REF [--blockers-cleared] [--write]
+  python3 tools/ops/hybrid_stage.py apply --brain lake-brain --approval-ref REF [--order-review-ref REF] [--blockers-cleared] [--write]
 
 `apply` without --write prints the diff only. It refuses an empty approvalRef, a Brain already in any of the three policies, and, unless
 --blockers-cleared, a fragment that still lists blockers. It never deploys, grants IAM or enables the execution control: those stay owner steps.
@@ -24,6 +24,7 @@ import copy
 import difflib
 import json
 import os
+import re
 import sys
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
@@ -34,6 +35,7 @@ WATCHDOG_POLICY = os.path.join(PLATFORM, "sector_brain_platform", "watchdog-poli
 CUTOVER = os.path.join(ROOT, "jobs", "brain-orchestrator", "publication-cutover.json")
 SCHEMA = "sector-hybrid-stage-v1"
 HOLDERS = ("pulse",)
+LAKE_KEY = re.compile(r"^[A-Za-z0-9_]{1,80}$")         # RTDB lake keys (keys.lake_key), the form the watchdog matches: never "Name|ST"
 
 if PLATFORM not in sys.path:
     sys.path.insert(0, PLATFORM)
@@ -55,8 +57,8 @@ def load_fragment(path: str) -> dict:
     wd = f.get("watchdog") or {}
     if wd.get("holder") != f["runnerPolicy"]["primary"]:
         raise StageError(f"{brain}: watchdog.holder must be the runner-policy primary")
-    if not wd.get("lakes") or not all(isinstance(x, str) and x for x in wd["lakes"]):
-        raise StageError(f"{brain}: watchdog.lakes must name the lakes the Brain may publish")
+    if not wd.get("lakes") or not all(isinstance(x, str) and LAKE_KEY.match(x) for x in wd["lakes"]):
+        raise StageError(f"{brain}: watchdog.lakes must name the lakes the Brain may publish, as RTDB lake keys (e.g. Guntersville_AL)")
     if (f.get("cutover") or {}).get("state") != "CENTRAL":
         raise StageError(f"{brain}: cutover.state must be CENTRAL")
     if f.get("leaseObject") != f"exports/runners/leases/{brain}.json" or f.get("artifactPrefix") != f"artifacts/{brain}/":
@@ -79,10 +81,21 @@ def _read(path):
     return json.load(open(path, encoding="utf-8"))
 
 
-def merged(frag: dict, approval_ref: str, runner: dict, watchdog: dict, cutover: dict) -> tuple[dict, dict, dict]:
-    """The three policies with `frag` merged in (copies; the inputs are not changed)."""
-    if not (approval_ref or "").strip():
+def merged(frag: dict, approval_ref: str, runner: dict, watchdog: dict, cutover: dict, order_review_ref: str | None = None,
+           *, require_order_restated: bool = False) -> tuple[dict, dict, dict]:
+    """The three policies with `frag` merged in (copies; the inputs are not changed). The cutover's orderReviewRef is the fragment's (the recorded
+    review) or `order_review_ref`; with require_order_restated (apply), a fragment's recorded review is used only when the owner restates it exactly."""
+    approval_ref = (approval_ref or "").strip()
+    if not approval_ref:
         raise StageError("an approvalRef is required (the owner's approval of this move)")
+    staged_review = frag["cutover"].get("orderReviewRef")
+    order_review_ref = (order_review_ref or "").strip() or None
+    if staged_review and require_order_restated and order_review_ref != staged_review:
+        raise StageError(f"{frag['brainId']} goes ahead of the recorded cutover order on the review {staged_review!r}: restate it with "
+                         f"--order-review-ref to confirm it (PL-10)")
+    if staged_review and order_review_ref and order_review_ref != staged_review:
+        raise StageError(f"--order-review-ref {order_review_ref!r} differs from the recorded review {staged_review!r}")
+    review = staged_review or order_review_ref
     brain = frag["brainId"]
     r, w, c = copy.deepcopy(runner), copy.deepcopy(watchdog), copy.deepcopy(cutover)
     if brain in (r.get("primary") or {}) or brain in (w.get("brains") or {}) or brain in (c.get("brains") or {}):
@@ -91,8 +104,8 @@ def merged(frag: dict, approval_ref: str, runner: dict, watchdog: dict, cutover:
     r.setdefault("approvals", {})[brain] = approval_ref
     w.setdefault("brains", {})[brain] = {"holder": frag["watchdog"]["holder"], "lakes": list(frag["watchdog"]["lakes"]), "approvalRef": approval_ref}
     entry = {"state": "CENTRAL", "approvalRef": approval_ref}
-    if frag["cutover"].get("orderReviewRef"):
-        entry["orderReviewRef"] = frag["cutover"]["orderReviewRef"]
+    if review:
+        entry["orderReviewRef"] = review
     c.setdefault("brains", {})[brain] = entry
     return r, w, c
 
@@ -154,6 +167,8 @@ def main(argv=None) -> int:
     p = sub.add_parser("apply")
     p.add_argument("--brain", required=True)
     p.add_argument("--approval-ref", required=True)
+    p.add_argument("--order-review-ref", default=None, help="the owner's PL-10 order review: required to restate a fragment's recorded one (Lake: L-2), "
+                                                            "or to let a Brain ahead of the recorded order (Water Temp: WT-ORD)")
     p.add_argument("--blockers-cleared", action="store_true", help="the owner confirms every listed blocker is done")
     p.add_argument("--write", action="store_true", help="write the three policy files (for the owner-approved PR); default: print the diff")
     a = ap.parse_args(argv)
@@ -197,7 +212,7 @@ def main(argv=None) -> int:
             print(f"  - {b}", file=sys.stderr)
         return 2
     try:
-        r, w, c = merged(f, a.approval_ref, runner, watchdog, cutover)
+        r, w, c = merged(f, a.approval_ref, runner, watchdog, cutover, a.order_review_ref, require_order_restated=True)
     except StageError as e:
         print(f"REFUSED: {e}", file=sys.stderr)
         return 2
