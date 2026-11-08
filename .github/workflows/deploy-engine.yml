@@ -1,0 +1,223 @@
+# Deploy the sector-engine Cloud Run service from a main commit (docs/architecture/conditions/DEPLOY_WORKFLOWS_V1.md §1).
+#
+# Manual only (workflow_dispatch). Two jobs:
+#   build   contents: read ONLY, no Google token. Checks the commit, builds the root Dockerfile on the runner and runs scripts/linux-smoke.sh
+#           against that exact image, then hands the image on as a short-lived artifact. Every build/install step runs here.
+#   deploy  id-token: write. Workload Identity Federation (no key file) as the engine deployer. Loads the image (same image ID), pushes it to
+#           Artifact Registry tagged with the commit, deploys it BY DIGEST through deploy.sh's IMAGE= mode (no-traffic `candidate` tag, smoke
+#           test, promote, prod re-check; deploy.sh rolls back itself if that fails), then checks the phone contract live at every probe point.
+#           ANY failure or cancellation after the rollback target was recorded puts traffic back on the revision that was serving before.
+#
+# Repository configuration (Settings > Secrets and variables > Actions); never hard-coded and never echoed (this repository and its run logs
+# are public). Each may be a repository SECRET instead of a variable (a secret wins and is masked in logs):
+#   GCP_WIF_PROVIDER        the WIF provider resource name
+#   GCP_SA_ENGINE_DEPLOY    the engine deployer service account
+#   GCP_AR_REPO             the registry prefix <region>-docker.pkg.dev/<project> (no repository); the image is
+#                           <GCP_AR_REPO>/sector-engine/sector-engine:<sha>
+name: deploy-engine
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: "Full 40-character commit on main to deploy (HEAD of main or an ancestor)"
+        required: true
+        type: string
+      confirm:
+        description: "Type DEPLOY to deploy to production"
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: deploy-engine-production
+  cancel-in-progress: false
+env:
+  SHA: ${{ inputs.sha }}
+  SERVICE: sector-engine
+  REGION: us-central1
+jobs:
+  build:
+    name: build and Linux-smoke the image (no Google token)
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: read
+    outputs:
+      image_id: ${{ steps.save.outputs.image_id }}
+    steps:
+      - name: Validate inputs
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          [[ "$CONFIRM" == "DEPLOY" ]] || { echo "::error::confirm must be DEPLOY"; exit 1; }
+          [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::sha must be a full 40-character lowercase commit"; exit 1; }
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          ref: ${{ inputs.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: The commit is HEAD of main or an ancestor, checked out exactly, and has deploy.sh IMAGE mode
+        run: |
+          [[ "$(git rev-parse HEAD)" == "$SHA" ]] || { echo "::error::checked out $(git rev-parse HEAD), not $SHA"; exit 1; }
+          git merge-base --is-ancestor "$SHA" origin/main || { echo "::error::$SHA is not on main"; exit 1; }
+          grep -q 'SMOKE_SKIP_BUILD=1 IMAGE=' deploy.sh || { echo "::error::deploy.sh at $SHA predates IMAGE mode"; exit 1; }
+          echo "main is at $(git rev-parse origin/main); deploying $SHA ($(git log -1 --format=%s "$SHA"))"
+
+      - name: Build the root Dockerfile on the runner
+        run: docker build -t "sector-engine-local:$SHA" .
+
+      - name: Linux smoke test of that image (scripts/linux-smoke.sh)
+        run: SMOKE_SKIP_BUILD=1 IMAGE="sector-engine-local:$SHA" ./scripts/linux-smoke.sh
+
+      - id: save
+        name: Save the tested image
+        run: |
+          echo "image_id=$(docker image inspect --format '{{.Id}}' "sector-engine-local:$SHA")" >> "$GITHUB_OUTPUT"
+          docker save "sector-engine-local:$SHA" | gzip -1 > "$RUNNER_TEMP/sector-engine-image.tar.gz"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: sector-engine-image
+          path: ${{ runner.temp }}/sector-engine-image.tar.gz
+          retention-days: 1
+          if-no-files-found: error
+
+  deploy:
+    name: push and deploy (WIF)
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          ref: ${{ inputs.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Same commit as the build job
+        run: |
+          [[ "$(git rev-parse HEAD)" == "$SHA" ]] || { echo "::error::checked out $(git rev-parse HEAD), not $SHA"; exit 1; }
+          git merge-base --is-ancestor "$SHA" origin/main || { echo "::error::$SHA is not on main"; exit 1; }
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          name: sector-engine-image
+          path: ${{ runner.temp }}/image
+
+      - name: Load the tested image (same image ID)
+        env:
+          WANT_ID: ${{ needs.build.outputs.image_id }}
+        run: |
+          gunzip -c "$RUNNER_TEMP/image/sector-engine-image.tar.gz" | docker load
+          got="$(docker image inspect --format '{{.Id}}' "sector-engine-local:$SHA")"
+          [[ -n "$WANT_ID" && "$got" == "$WANT_ID" ]] || { echo "::error::loaded image $got is not the tested image $WANT_ID"; exit 1; }
+
+      - id: auth
+        name: Authenticate to Google Cloud (Workload Identity Federation)
+        uses: google-github-actions/auth@c200f3691d83b41bf9bbd8638997a462592937ed  # v2.1.13
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER || vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_ENGINE_DEPLOY || vars.GCP_SA_ENGINE_DEPLOY }}
+
+      - id: push
+        name: Push to Artifact Registry (repository sector-engine), tagged with the commit
+        env:
+          AR: ${{ secrets.GCP_AR_REPO || vars.GCP_AR_REPO }}
+        run: |
+          gcloud --version | head -1
+          [[ "$AR" =~ ^[a-z0-9-]+-docker\.pkg\.dev/[a-z0-9-]+$ ]] || { echo "::error::GCP_AR_REPO must be <region>-docker.pkg.dev/<project> (no repository)"; exit 1; }
+          gcloud auth configure-docker "${AR%%/*}" --quiet >/dev/null 2>&1
+          ref="$AR/sector-engine/sector-engine:$SHA"
+          docker tag "sector-engine-local:$SHA" "$ref"
+          docker push --quiet "$ref" >/dev/null
+          digest_ref="$(docker inspect --format '{{range .RepoDigests}}{{println .}}{{end}}' "$ref" | grep -F "$AR/sector-engine/sector-engine@sha256:" | head -1)"
+          [[ "$digest_ref" == *@sha256:* ]] || { echo "::error::could not resolve the pushed digest"; exit 1; }
+          echo "image=$digest_ref" >> "$GITHUB_OUTPUT"
+          echo "digest=${digest_ref##*@}" >> "$GITHUB_OUTPUT"
+          echo "pushed sector-engine:$SHA ${digest_ref##*@}"
+
+      - id: prev
+        name: Record the revision serving now (rollback target)
+        env:
+          PROJECT_ID: ${{ steps.auth.outputs.project_id }}
+        run: |
+          rev="$(gcloud run services describe "$SERVICE" --project "$PROJECT_ID" --region "$REGION" --format=json | python3 -c '
+          import json, sys
+          t = json.load(sys.stdin)["status"]["traffic"]
+          print(max(t, key=lambda e: e.get("percent", 0)).get("revisionName", ""))')"
+          [[ -n "$rev" ]] || { echo "::error::no serving revision found"; exit 1; }
+          echo "revision=$rev" >> "$GITHUB_OUTPUT"
+          echo "serving before deploy: $rev"
+
+      - id: deploy
+        name: deploy.sh IMAGE mode (candidate, smoke, promote, prod re-check)
+        env:
+          PROJECT_ID: ${{ steps.auth.outputs.project_id }}
+          IMAGE: ${{ steps.push.outputs.image }}
+          SKIP_LINUX_SMOKE: "1"     # ran in the build job on this exact image (image ID checked above)
+        run: ./deploy.sh
+
+      - id: live
+        name: Phone contract, live, at every probe point (tools/conditions_golden/capture.py check --live)
+        env:
+          PROJECT_ID: ${{ steps.auth.outputs.project_id }}
+        run: |
+          read -r rev url < <(gcloud run services describe "$SERVICE" --project "$PROJECT_ID" --region "$REGION" --format=json | python3 -c '
+          import json, sys
+          s = json.load(sys.stdin)["status"]
+          print(max(s["traffic"], key=lambda e: e.get("percent", 0)).get("revisionName", ""), s["url"])')
+          echo "revision=$rev" >> "$GITHUB_OUTPUT"
+          label="$(gcloud run revisions describe "$rev" --project "$PROJECT_ID" --region "$REGION" --format 'value(metadata.labels.commit)')"
+          [[ "$label" == "${SHA:0:12}" ]] || { echo "::error::serving $rev is labeled commit=$label, expected ${SHA:0:12}"; exit 1; }
+          python3 tools/conditions_golden/capture.py --base "$url" check --live
+
+      - id: rollback
+        name: Roll back on any failure or cancellation after the rollback target was recorded
+        if: (failure() || cancelled()) && steps.prev.outputs.revision != ''
+        env:
+          PROJECT_ID: ${{ steps.auth.outputs.project_id }}
+          PREV: ${{ steps.prev.outputs.revision }}
+          SKIP_LINUX_SMOKE: "1"
+        run: |
+          now="$(gcloud run services describe "$SERVICE" --project "$PROJECT_ID" --region "$REGION" --format=json | python3 -c '
+          import json, sys
+          t = json.load(sys.stdin)["status"]["traffic"]
+          print(max(t, key=lambda e: e.get("percent", 0)).get("revisionName", ""))')"
+          if [[ "$now" == "$PREV" ]]; then
+            echo "traffic is on $PREV (the revision serving before): nothing to roll back"
+          else
+            ./deploy.sh --rollback "$PREV"
+          fi
+          echo "### NOT DEPLOYED: 100% of traffic on \`$PREV\`" >> "$GITHUB_STEP_SUMMARY"
+          exit 1
+
+      - name: Step summary
+        if: always()
+        env:
+          DIGEST: ${{ steps.push.outputs.digest }}
+          PREV: ${{ steps.prev.outputs.revision }}
+          REV: ${{ steps.live.outputs.revision }}
+        run: |
+          {
+            echo "### deploy-engine \`${SHA:0:12}\`"
+            echo
+            echo "| | |"
+            echo "|---|---|"
+            echo "| image digest | \`${DIGEST:-not pushed}\` |"
+            echo "| serving before | \`${PREV:-?}\` |"
+            echo "| serving after the checks | \`${REV:-?}\` |"
+            echo "| build + Linux smoke (build job, this image ID) | ${{ needs.build.result }} |"
+            echo "| push | ${{ steps.push.outcome }} |"
+            echo "| deploy.sh (candidate smoke, promote, prod re-check) | ${{ steps.deploy.outcome }} |"
+            echo "| phone contract live (capture.py check --live) | ${{ steps.live.outcome }} |"
+            echo "| rollback | ${{ steps.rollback.outcome }} |"
+            echo
+            echo "Rollback by hand: \`./deploy.sh --rollback ${PREV:-<previous revision>}\` (Cloud Shell)."
+          } >> "$GITHUB_STEP_SUMMARY"

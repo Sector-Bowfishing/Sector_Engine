@@ -9,9 +9,9 @@ name: python-jobs-tests
 on:
   push:
     branches: [main]
-    paths: ["jobs/**", "brains/**", "providers/**", "tools/**", "docs/cortex/**", "contracts/**", "verification/integration/test_wind_package.py", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
+    paths: ["jobs/**", "brains/**", "providers/**", "tools/**", "docs/cortex/**", "contracts/**", "verification/integration/test_wind_package.py", "contracts/conformance/**", "docs/brains/scoring/**", "deploy.sh", "scripts/linux-smoke.sh", ".github/workflows/python-jobs-tests.yml"]
   pull_request:
-    paths: ["jobs/**", "brains/**", "providers/**", "tools/**", "docs/cortex/**", "contracts/**", "verification/integration/test_wind_package.py", "contracts/conformance/**", "docs/brains/scoring/**", ".github/workflows/python-jobs-tests.yml"]
+    paths: ["jobs/**", "brains/**", "providers/**", "tools/**", "docs/cortex/**", "contracts/**", "verification/integration/test_wind_package.py", "contracts/conformance/**", "docs/brains/scoring/**", "deploy.sh", "scripts/linux-smoke.sh", ".github/workflows/python-jobs-tests.yml"]
 permissions:
   contents: read
 jobs:
@@ -28,7 +28,7 @@ jobs:
       - name: Platform suites (offline)
         run: |
           set -e
-          for d in jobs/brain_platform jobs/brain-orchestrator jobs/brain-scores jobs/brain-publisher tools/runner tools/cutover; do
+          for d in jobs/brain_platform jobs/brain-orchestrator jobs/brain-scores jobs/brain-publisher tools/runner tools/cutover tools/deploy; do
             echo "== $d"; (cd "$d" && python -m pytest -q)
           done
 

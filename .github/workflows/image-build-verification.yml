@@ -28,7 +28,7 @@ jobs:
         run: |
           mkdir -p /tmp/ctx-orch && cd /tmp/ctx-orch
           awk '/^rm -rf stage && mkdir/{on=1} on{print} /^find stage -name .test_\*\.py. -delete/{exit}' "$GITHUB_WORKSPACE/jobs/brain-orchestrator/deploy-job.sh" > stage.sh
-          ! grep -q gcloud stage.sh
+          if grep -q gcloud stage.sh; then echo "::error::the staging block must not call gcloud"; exit 1; fi
           ROOT="$GITHUB_WORKSPACE" bash -euo pipefail stage.sh
           cp "$GITHUB_WORKSPACE/jobs/brain-orchestrator/Dockerfile" .
           docker build -t verify/brain-orchestrator .
