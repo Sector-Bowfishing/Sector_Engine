@@ -209,3 +209,77 @@ def test_http_error_prints_no_body(monkeypatch):
     with pytest.raises(RuntimeError) as e:
         F._request("GET", "https://x", "t")
     assert "PERMISSION_DENIED" in str(e.value) and "123456789012" not in str(e.value)
+
+
+class _Resp:
+    """A urlopen() response: body bytes plus headers."""
+
+    def __init__(self, body: bytes, headers: dict):
+        self._body, self.headers, self.status = body, headers, 200
+
+    def read(self):
+        return self._body
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+
+def _capture(monkeypatch, body: bytes, headers: dict):
+    seen = []
+
+    def fake(req, timeout):
+        seen.append(req)
+        return _Resp(body, headers)
+    monkeypatch.setattr(F.urllib.request, "urlopen", fake)
+    return seen
+
+
+def test_every_request_asks_for_gzip(monkeypatch):
+    # Firebase: the ETag "isn't properly returned in cases where the request doesn't specify a compression type" (2026-11-09 refusal).
+    seen = _capture(monkeypatch, b"{}", {"ETag": "e"})
+    F._request("GET", "https://x", "t")
+    F._request("PUT", "https://x", "t", {"parameters": {}}, "e")
+    assert [r.get_header("Accept-encoding") for r in seen] == ["gzip", "gzip"]
+
+
+def test_gzip_body_and_etag_are_parsed(monkeypatch):
+    import gzip
+    _capture(monkeypatch, gzip.compress(json.dumps(TEMPLATE).encode()), {"ETag": "etag-41", "Content-Encoding": "gzip"})
+    status, body, etag = F._request("GET", "https://x", "t")
+    assert status == 200 and body == TEMPLATE and etag == "etag-41"
+
+
+def test_plain_body_still_works(monkeypatch):
+    _capture(monkeypatch, json.dumps(TEMPLATE).encode(), {"ETag": "etag-41"})
+    assert F._request("GET", "https://x", "t")[1:] == (TEMPLATE, "etag-41")
+
+
+def test_gzip_error_body_gives_status_only(monkeypatch):
+    import gzip
+    import io
+    import urllib.error
+    body = gzip.compress(b'{"error":{"status":"PERMISSION_DENIED","message":"project 123456789012"}}')
+
+    def boom(req, timeout):
+        raise urllib.error.HTTPError(req.full_url, 403, "x", {"Content-Encoding": "gzip"}, io.BytesIO(body))
+    monkeypatch.setattr(F.urllib.request, "urlopen", boom)
+    with pytest.raises(RuntimeError) as e:
+        F._request("GET", "https://x", "t")
+    assert "PERMISSION_DENIED" in str(e.value) and "123456789012" not in str(e.value)
+
+
+def test_missing_etag_still_refuses_and_writes_nothing(monkeypatch, capsys):
+    puts = []
+
+    def no_etag(method, url, token, body=None, etag=None):
+        if method != "GET":
+            puts.append(url)
+        return 200, copy.deepcopy(TEMPLATE), None
+    monkeypatch.setattr(F, "_request", no_etag)
+    monkeypatch.setenv("RC_ACCESS_TOKEN", "t")
+    assert F.main(["apply", "--preset", "off", "--project", "p"]) == 1
+    out = capsys.readouterr()
+    assert puts == [] and "no ETag" in out.out + out.err
