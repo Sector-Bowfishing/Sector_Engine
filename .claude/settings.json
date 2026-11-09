@@ -67,6 +67,9 @@
       "Bash(git push -f:*)",
       "Bash(git push origin main:*)",
       "Bash(git push origin Michael-Master:*)",
+      "Bash(git push -u origin main:*)",
+      "Bash(git push origin HEAD:main:*)",
+      "Bash(git push --force-with-lease:*)",
       "Bash(git reset --hard:*)",
       "Bash(git branch -D:*)",
       "Bash(git push origin --delete:*)",
@@ -86,6 +89,7 @@
       "Bash(gsutil rm:*)",
       "Bash(firebase deploy:*)",
       "Bash(rm -rf:*)",
+      "Bash(rm -fr:*)",
       "Bash(sudo:*)",
       "Bash(curl:*)"
     ]
