@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import gzip
 import json
 import os
 import sys
@@ -243,8 +244,17 @@ def version_of(template: dict) -> str:
 
 
 # ── REST ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+def _body(raw: bytes, content_encoding: str | None) -> bytes:
+    """The response body, gunzipped when the server says it is gzip-encoded."""
+    if raw and (content_encoding or "").strip().lower() == "gzip":
+        return gzip.decompress(raw)
+    return raw
+
+
 def _request(method: str, url: str, token: str, body: dict | None = None, etag: str | None = None):
-    headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+    # Accept-Encoding: gzip is REQUIRED: Firebase documents that the Remote Config ETag "isn't properly returned in cases where the request
+    # doesn't specify a compression type" (production run 2026-11-09 refused with "no ETag" without it).
+    headers = {"Authorization": f"Bearer {token}", "Accept": "application/json", "Accept-Encoding": "gzip"}
     data = None
     if body is not None:
         data = json.dumps(body).encode()
@@ -254,12 +264,13 @@ def _request(method: str, url: str, token: str, body: dict | None = None, etag: 
     req = urllib.request.Request(url, data=data, method=method, headers=headers)
     try:
         with urllib.request.urlopen(req, timeout=30) as r:
-            return r.status, json.loads(r.read() or b"{}"), r.headers.get("ETag")
+            return r.status, json.loads(_body(r.read(), r.headers.get("Content-Encoding")) or b"{}"), r.headers.get("ETag")
     except urllib.error.HTTPError as e:
         # Only the code and Google's error status: an error body can name the project number, and this repository's run logs are public.
         try:
-            status = (json.loads(e.read() or b"{}").get("error") or {}).get("status", "")
-        except ValueError:
+            raw = _body(e.read(), e.headers.get("Content-Encoding") if e.headers else None)
+            status = (json.loads(raw or b"{}").get("error") or {}).get("status", "")
+        except (ValueError, OSError, EOFError):
             status = ""
         raise RuntimeError(f"{method} remoteConfig -> HTTP {e.code} {status}".rstrip()) from None
 
