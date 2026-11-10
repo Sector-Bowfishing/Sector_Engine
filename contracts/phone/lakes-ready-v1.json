@@ -1,0 +1,65 @@
+{
+  "contractId": "sector-phone-lakes-ready-v1",
+  "version": "1.0.0",
+  "frozenOn": "2026-11-10",
+  "endpoint": "GET /lakes/ready",
+  "purpose": "The lakes with real Brain data, for the app's lake picker (Sector_Engine #156, iOS_Sector #227 ReadyLakeSource). Built only from the Publisher's CUSTOMER-lane copies (docs/architecture/data/CUSTOMER_BRAIN_OUTPUT_PATH_V1.md section 9); never from Brain INTERNAL state.",
+  "source": {
+    "engine": "Sources/SectorEngine/API/LakesReadyAPI.swift, LakesReadyResponse, encoded with SectorEngineAPI.makeEncoder (sorted keys).",
+    "golden": "verification/fixtures/phone-contract/lakes-ready-v1.golden.json (synthetic: generated from the scenario in Tests/SectorEngineTests/LakesReadyAPITests.swift; lake ids, names and centroids are from the public lake directory).",
+    "dates": "Every date is ISO 8601 UTC with seconds precision and no fractional seconds (2026-11-10T15:30:00Z), so JSONDecoder.dateDecodingStrategy = .iso8601 accepts it."
+  },
+  "types": {
+    "int": "JSON number with no fractional part",
+    "number": "JSON number",
+    "string": "JSON string",
+    "date": "ISO 8601 string, seconds precision, no fractional seconds",
+    "array": "JSON array",
+    "object": "JSON object"
+  },
+  "rule": "required=true: the key must be present and not null whenever its parent object is present. required=false: may be absent, and when present it must have the type.",
+  "fields": {
+    "version": {"type": "int", "required": true},
+    "generatedAt": {"type": "date", "required": true},
+    "lakes": {"type": "array", "required": true},
+    "lakes[].lakeId": {"type": "string", "required": true},
+    "lakes[].name": {"type": "string", "required": true},
+    "lakes[].centroid": {"type": "object", "required": true},
+    "lakes[].centroid.lat": {"type": "number", "required": true},
+    "lakes[].centroid.lon": {"type": "number", "required": true},
+    "lakes[].layers": {"type": "object", "required": true},
+    "lakes[].layers.clarity": {"type": "object", "required": false},
+    "lakes[].layers.clarity.status": {"type": "string", "required": true},
+    "lakes[].layers.clarity.asOf": {"type": "date", "required": true},
+    "lakes[].layers.waterTemp": {"type": "object", "required": false},
+    "lakes[].layers.waterTemp.status": {"type": "string", "required": true},
+    "lakes[].layers.waterTemp.asOf": {"type": "date", "required": true},
+    "lakes[].layers.level": {"type": "object", "required": false},
+    "lakes[].layers.level.status": {"type": "string", "required": true},
+    "lakes[].layers.level.asOf": {"type": "date", "required": true}
+  },
+  "meanings": {
+    "version": "Shape version, 1. A breaking change ships as a new contract (lakes-ready-v2) and a new version number, never in place.",
+    "generatedAt": "When the Engine evaluated the copies.",
+    "lakes": "Ready lakes sorted by lakeId. A lake is listed when at least one layer is ready. Empty means no lake is ready (also when the Engine has no reader): an answer, not an error.",
+    "lakes[].lakeId": "The lake directory id (Name|ST), the same id GET /lakes serves.",
+    "lakes[].name": "The directory name.",
+    "lakes[].centroid": "The directory coordinate (GET /lakes lat/lon), for Nearby sorting.",
+    "lakes[].layers": "One key per READY layer. An absent key means the layer is not ready for this lake (show it as not available; never fill in an Engine estimate).",
+    "layers.*.status": "LIVE (the copy is AVAILABLE: observed) or ESTIMATE (the copy is ESTIMATE: modeled, or a nearby-gauge trend for level). A client must treat any other value as not ready.",
+    "layers.*.asOf": "The source's own observation time, never a run or write time."
+  },
+  "statusValues": ["LIVE", "ESTIMATE"],
+  "readyRule": "A layer is ready when its CUSTOMER-lane copy passes the Engine reader for that copy (#144): schema and lakeId match, status AVAILABLE or ESTIMATE, the source time is no more than 10 minutes in the future, the request time is not after freshUntil, and the copy carries its value. level also needs SECTOR_LAKE_LEVEL_OUTPUT=1 and the lake on LakeLevelEligibility.validatedLakeIds.",
+  "layersNotInV1": {
+    "wind": "No per-lake CUSTOMER-lane copy exists (the only wind copy is the global customer/wind/outlookModel, a model choice, not a lake value). Never emitted in v1.",
+    "intelligence": "No CUSTOMER-lane copy exists. Never emitted in v1.",
+    "note": "When a copy is added, the layer appears under the same name with the same {status, asOf} shape: an additive change. Clients should decode layers as a map of optional entries and ignore unknown keys."
+  },
+  "evolution": "Additive only: new optional keys (new layers, new per-layer fields, new top-level fields) may appear at any time and clients must ignore what they do not know. Nothing listed in fields is removed, renamed, retyped or made null within v1. New status values may appear; clients treat them as not ready.",
+  "gates": {
+    "SECTOR_LAKES_READY_OUTPUT": "1 routes the endpoint. Unset (the default): no route, 404.",
+    "SECTOR_BRAIN_OUTPUT_READER": "rtdb gives the Engine its read-only customer-lane reader. Unset (the default): 200 with lakes: [].",
+    "reads": "One read of customer/lakes per minute at most (cached 60 s); statuses and freshness are evaluated on every request."
+  }
+}

@@ -33,3 +33,8 @@ The contract changes only by adding fields, or by a new version once no released
 `synthetic/all-optionals.json` is the Guntersville golden with the two optional paths no capture contained filled in
 (`spawnSpeciesName` as `"<redacted>"`, and `nights[].moonset`). Every contract path then has evidence in at least one
 file, so the Engine cannot drop or retype an optional field unnoticed (`testGoldensExerciseEveryContractPath`).
+
+`lakes-ready-v1.golden.json` is the synthetic golden for `GET /lakes/ready` (Sector_Engine #156), contract
+`contracts/phone/lakes-ready-v1.json`. It sits at the top level so the `/conditions` loaders (`<dir>/*.json`) skip it. It carries
+only directory lake ids, names and centroids, statuses and dates. Checks: `Tests/SectorEngineTests/LakesReadyAPITests.swift`
+(the Engine produces it from a fixed scenario) and `verification/test_lakes_ready_contract.py`.

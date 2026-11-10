@@ -166,6 +166,24 @@ if lakeLevelEligibility.enabled {
     }
 }
 
+// The lakes with real Brain data, for the app's lake picker (LakesReadyAPI, Sector_Engine #156).
+// Routed only where SECTOR_LAKES_READY_OUTPUT=1, so a deploy with the flag off
+// exposes no new endpoint (404, as /lake/level). Even then it fails closed: it
+// reads only the Publisher's CUSTOMER-lane copies through the configured reader
+// (SECTOR_BRAIN_OUTPUT_READER; none by default), and with no reader or no fresh
+// copy it answers 200 with an empty list.
+if LakesReadyConfig.fromEnvironment().enabled {
+    let config = LakesReadyConfig.fromEnvironment()
+    let reader: BrainOutputReader? = BrainOutputReaderConfig.reader().map { CachingBrainOutputReader($0, ttl: 60) }
+    router.get("lakes/ready") { _, _ -> Response in
+        guard let body = await LakesReadyAPI.response(config: config, reader: reader,
+                                                      levelEligibility: lakeLevelEligibility) else {
+            return Response(status: .notFound)
+        }
+        return jsonResponse(body)
+    }
+}
+
 // Each arm's current clarity state (ClarityStateAPI, Clarity Fusion Stage 2).
 // A review build: routed only where SECTOR_STAGE2_ROUTES=1, so a deploy of
 // this branch does not publish it before it is reviewed.

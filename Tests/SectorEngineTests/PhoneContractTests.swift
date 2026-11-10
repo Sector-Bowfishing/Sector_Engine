@@ -29,8 +29,8 @@ final class PhoneContractTests: XCTestCase {
 
     struct Spec { let type: String; let required: Bool }
 
-    static func loadContract() throws -> [String: Spec] {
-        let url = root.appendingPathComponent("contracts/phone/conditions-phone-contract-v1.json")
+    static func loadContract(_ file: String = "contracts/phone/conditions-phone-contract-v1.json") throws -> [String: Spec] {
+        let url = root.appendingPathComponent(file)
         let obj = try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as! [String: Any]
         let fields = obj["fields"] as! [String: [String: Any]]
         return fields.mapValues { Spec(type: $0["type"] as! String, required: $0["required"] as! Bool) }
