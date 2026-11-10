@@ -1,0 +1,32 @@
+{
+  "generatedAt": "2026-11-10T15:30:00Z",
+  "lakes": [
+    {
+      "centroid": {"lat": 41.03, "lon": -81.0},
+      "lakeId": "Berlin Lake|OH",
+      "layers": {
+        "clarity": {"asOf": "2026-11-10T14:00:00Z", "status": "LIVE"},
+        "level": {"asOf": "2026-11-10T15:00:00Z", "status": "LIVE"}
+      },
+      "name": "Berlin Lake"
+    },
+    {
+      "centroid": {"lat": 29.87, "lon": -98.25},
+      "lakeId": "Canyon Lake|TX",
+      "layers": {
+        "level": {"asOf": "2026-11-10T13:00:00Z", "status": "ESTIMATE"},
+        "waterTemp": {"asOf": "2026-11-10T12:00:00Z", "status": "ESTIMATE"}
+      },
+      "name": "Canyon Lake"
+    },
+    {
+      "centroid": {"lat": 47.8686, "lon": -114.105},
+      "lakeId": "Flathead Lake|MT",
+      "layers": {
+        "clarity": {"asOf": "2026-11-10T06:00:00Z", "status": "ESTIMATE"}
+      },
+      "name": "Flathead Lake"
+    }
+  ],
+  "version": 1
+}
