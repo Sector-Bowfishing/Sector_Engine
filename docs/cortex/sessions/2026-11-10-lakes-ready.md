@@ -23,9 +23,17 @@ Issue #156: a customer Engine endpoint listing the lakes with real Brain data fo
 - `level` keeps the Lake level gates (`SECTOR_LAKE_LEVEL_OUTPUT=1` and `validatedLakeIds`), so the picker never advertises a
   level `/lake/level` would not serve.
 
+## Independent review (round 1) and fixes
+- Blocking: none.
+- Should-fix, fixed: a failed read was cached for 60 s (now never kept); the subtree read had the 2 s per-copy bound (now 5 s);
+  the raw bytes were re-parsed and formatters rebuilt on every request (the parsed snapshot is cached; formatters built once).
+- Nits, fixed: the 10-minute future bound is documented as `/lakes/ready`'s own for `level`; env read once in `main.swift`;
+  tests for a failed-then-good read, a lossy-key copy with another lakeId, non-object copies. The open-ended cache key set
+  went away with the snapshot cache (one entry).
+
 ## Verification
 - `swift build --build-tests` + `swift test` in `swift:6.1-jammy` (Docker, image via mirror.gcr.io after Docker Hub 429s):
-  484 tests, 0 failures.
+  488 tests, 0 failures (after the review fixes).
 - pytest `verification` (45 passed, 6 skipped), `tools/architecture` (187 passed after the digest re-record), `tools/cutover`,
   `jobs/brain-orchestrator/tests`: pass. `tools/research`: 2 failures that also fail on main in this container (read-only files, root).
 - `collect_certification.py`: failing none (after installing the wind/vegetation runtime requirements into the venv).
