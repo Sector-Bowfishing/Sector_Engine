@@ -50,7 +50,7 @@
     "layers.*.asOf": "The source's own observation time, never a run or write time."
   },
   "statusValues": ["LIVE", "ESTIMATE"],
-  "readyRule": "A layer is ready when its CUSTOMER-lane copy passes the Engine reader for that copy (#144): schema and lakeId match, status AVAILABLE or ESTIMATE, the source time is no more than 10 minutes in the future, the request time is not after freshUntil, and the copy carries its value. level also needs SECTOR_LAKE_LEVEL_OUTPUT=1 and the lake on LakeLevelEligibility.validatedLakeIds.",
+  "readyRule": "A layer is ready when its CUSTOMER-lane copy passes the Engine reader for that copy (#144): schema and lakeId match, status AVAILABLE or ESTIMATE, the request time is not after freshUntil, and the copy carries its value. /lakes/ready also requires, for every layer (level included), that the source time is no more than 10 minutes in the future. level also needs SECTOR_LAKE_LEVEL_OUTPUT=1 and the lake on LakeLevelEligibility.validatedLakeIds.",
   "layersNotInV1": {
     "wind": "No per-lake CUSTOMER-lane copy exists (the only wind copy is the global customer/wind/outlookModel, a model choice, not a lake value). Never emitted in v1.",
     "intelligence": "No CUSTOMER-lane copy exists. Never emitted in v1.",
@@ -60,6 +60,6 @@
   "gates": {
     "SECTOR_LAKES_READY_OUTPUT": "1 routes the endpoint. Unset (the default): no route, 404.",
     "SECTOR_BRAIN_OUTPUT_READER": "rtdb gives the Engine its read-only customer-lane reader. Unset (the default): 200 with lakes: [].",
-    "reads": "One read of customer/lakes per minute at most (cached 60 s); statuses and freshness are evaluated on every request."
+    "reads": "One read of customer/lakes per minute at most (the parsed snapshot is cached 60 s; a failed read is not cached); statuses and freshness are evaluated on every request."
   }
 }

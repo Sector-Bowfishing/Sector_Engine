@@ -141,12 +141,13 @@ answers for any coordinate, so the Engine serves the list from the same CUSTOMER
 
 - **Route:** `GET /lakes/ready`, registered only where `SECTOR_LAKES_READY_OUTPUT=1`. Off by default: no route, `404`, as
   `/lake/level`.
-- **Reads:** one read of `customer/lakes` through the configured `BrainOutputReader` (`SECTOR_BRAIN_OUTPUT_READER`; none by default),
-  cached 60 s. Each directory lake's `clarity`, `waterTemp` and `level` copies are then evaluated by their own readers (§2, §8) against
+- **Reads:** one read of `customer/lakes` through the configured `BrainOutputReader` (`SECTOR_BRAIN_OUTPUT_READER`; none by default,
+  5 s bound for the subtree), parsed once and cached 60 s; a failed read is not cached. The subtree also carries the
+  `generationBinding` copies (customer lane), which are not parsed. Each directory lake's `clarity`, `waterTemp` and `level` copies are then evaluated by their own readers (§2, §8) against
   that snapshot, which refuses every path other than `customer/lakes/{k}/{clarity|waterTemp|level}`. Never `/lakes/*/states` or
   `/brains/*`. One subtree read replaces ~1,900 per-copy reads per request; freshness is still checked on every request.
-- **Ready rule:** a layer is ready when its reader returns `AVAILABLE` (served as `LIVE`) or `ESTIMATE`, with a source time no more
-  than 10 minutes ahead; a lake is listed when at least one layer is ready. `level` also needs gates 5 and 6 (§3). No reader, no
+- **Ready rule:** a layer is ready when its reader returns `AVAILABLE` (served as `LIVE`) or `ESTIMATE`; `/lakes/ready` also
+  requires every layer's source time (level included, whose own reader has no such bound) to be no more than 10 minutes ahead; a lake is listed when at least one layer is ready. `level` also needs gates 5 and 6 (§3). No reader, no
   copies or a failed read give `200` with `lakes: []`: the app shows "no lakes yet".
 - **Layers without a copy:** `wind` (its only copy is the global `customer/wind/outlookModel`, a model choice) and `intelligence`
   (no copy). v1 never emits them; a later copy adds them under the same name and shape (additive).

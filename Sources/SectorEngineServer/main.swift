@@ -172,11 +172,12 @@ if lakeLevelEligibility.enabled {
 // reads only the Publisher's CUSTOMER-lane copies through the configured reader
 // (SECTOR_BRAIN_OUTPUT_READER; none by default), and with no reader or no fresh
 // copy it answers 200 with an empty list.
-if LakesReadyConfig.fromEnvironment().enabled {
-    let config = LakesReadyConfig.fromEnvironment()
-    let reader: BrainOutputReader? = BrainOutputReaderConfig.reader().map { CachingBrainOutputReader($0, ttl: 60) }
+let lakesReadyConfig = LakesReadyConfig.fromEnvironment()
+if lakesReadyConfig.enabled {
+    // The whole customer/lakes subtree in one read: a longer bound than one small copy's.
+    let cache = BrainOutputReaderConfig.reader(timeoutSeconds: 5).map { LakesReadySnapshotCache(reader: $0, ttl: 60) }
     router.get("lakes/ready") { _, _ -> Response in
-        guard let body = await LakesReadyAPI.response(config: config, reader: reader,
+        guard let body = await LakesReadyAPI.response(config: lakesReadyConfig, cache: cache,
                                                       levelEligibility: lakeLevelEligibility) else {
             return Response(status: .notFound)
         }

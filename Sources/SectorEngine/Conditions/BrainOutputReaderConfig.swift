@@ -22,9 +22,12 @@ public enum BrainOutputReaderConfig {
     public static let rtdbValue = "rtdb"
 
     /// The configured reader, or nil (the default).
-    public static func reader(from env: [String: String] = ProcessInfo.processInfo.environment) -> BrainOutputReader? {
+    /// `timeoutSeconds` bounds each read (default: one small copy). `GET /lakes/ready` reads the whole `customer/lakes`
+    /// subtree and passes a longer bound.
+    public static func reader(from env: [String: String] = ProcessInfo.processInfo.environment,
+                              timeoutSeconds: Double = RTDBCustomerCopyReader.timeoutSeconds) -> BrainOutputReader? {
         guard env[envKey] == rtdbValue else { return nil }
-        return RTDBCustomerCopyReader()
+        return RTDBCustomerCopyReader(timeoutSeconds: timeoutSeconds)
     }
 }
 
@@ -45,11 +48,12 @@ public struct RTDBCustomerCopyReader: BrainOutputReader {
     let token: Token
 
     public init(databaseURL: String = BrainPlatform.databaseURL,
+                timeoutSeconds: Double = RTDBCustomerCopyReader.timeoutSeconds,
                 fetch: Fetch? = nil,
                 token: Token? = nil) {
         self.databaseURL = databaseURL
         self.fetch = fetch ?? { url, headers in
-            guard let r = try? await HTTP.get(url, headers: headers, timeout: RTDBCustomerCopyReader.timeoutSeconds) else {
+            guard let r = try? await HTTP.get(url, headers: headers, timeout: timeoutSeconds) else {
                 return nil
             }
             return (r.status, r.body)

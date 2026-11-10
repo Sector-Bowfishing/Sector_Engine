@@ -4,14 +4,16 @@
 //
 //  A lake is "ready" when at least one of its CUSTOMER-lane copies is usable right now: status not UNKNOWN and not stale.
 //  The decision is made by the existing per-copy readers (#144: ClarityBrainOutputAPI, WaterTempBrainOutputAPI and
-//  LakeLevelOutputAPI), so the freshness bounds, the future-time refusal and the status rules are exactly theirs. Nothing
+//  LakeLevelOutputAPI), so the freshness bounds and the status rules are theirs. On top, `/lakes/ready` applies the
+//  readers' 10-minute future-time bound (`BrainCopyRead.past`) to every layer's `asOf`, `level` included. Nothing
 //  here reads a Brain INTERNAL path (`/lakes/*/states`, `/brains/*`); every read goes through `BrainOutputReader` and stays
 //  under `customer/lakes`. Design note: docs/architecture/data/CUSTOMER_BRAIN_OUTPUT_PATH_V1.md §9.
 //
 //  Read pattern: ONE read of `customer/lakes` (the subtree that holds every per-lake copy), then each lake's copies are
 //  evaluated by the readers against that in-memory snapshot. Reading each directory lake's three copies would be ~1,900
-//  reads per request. The snapshot reader serves only `customer/lakes/{k}/{clarity|waterTemp|level}` and refuses any other
-//  path.
+//  reads per request. The subtree also carries the `generationBinding` copies (customer lane too); they are not parsed.
+//  The snapshot reader serves only `customer/lakes/{k}/{clarity|waterTemp|level}` and refuses any other path. The server
+//  keeps the parsed snapshot for 60 s (`LakesReadySnapshotCache`); a failed read is not kept.
 //
 //  Gates (all default OFF / fail closed):
 //    - `SECTOR_LAKES_READY_OUTPUT=1` routes the endpoint. Unset: the server registers no route (404, like `/lake/level`).
@@ -94,10 +96,32 @@ public enum LakesReadyAPI {
                                 levelEligibility: LakeLevelEligibility = .fromEnvironment(),
                                 now: Date = Date()) async -> LakesReadyResponse? {
         guard config.enabled else { return nil }
+        var snapshot: CustomerLakesSnapshot?
+        if let reader { snapshot = try? await fetchSnapshot(reader) }
+        return await response(snapshot: snapshot, levelEligibility: levelEligibility, now: now)
+    }
+
+    /// The server's form: the snapshot comes from the cache (nil cache = no reader). nil when switched off.
+    public static func response(config: LakesReadyConfig, cache: LakesReadySnapshotCache?,
+                                levelEligibility: LakeLevelEligibility = .fromEnvironment(),
+                                now: Date = Date()) async -> LakesReadyResponse? {
+        guard config.enabled else { return nil }
+        let snapshot = await cache?.snapshot()
+        return await response(snapshot: snapshot, levelEligibility: levelEligibility, now: now)
+    }
+
+    /// One read of `customer/lakes`. Throws when the read fails; nil when the subtree is absent or not an object.
+    static func fetchSnapshot(_ reader: BrainOutputReader) async throws -> CustomerLakesSnapshot? {
+        guard let data = try await reader.get(subtreePath) else { return nil }
+        return CustomerLakesSnapshot(subtree: data)
+    }
+
+    static func response(snapshot: CustomerLakesSnapshot?, levelEligibility: LakeLevelEligibility,
+                         now: Date) async -> LakesReadyResponse {
         let generatedAt = iso(now)
-        let empty = LakesReadyResponse(version: LakesReadyResponse.currentVersion, generatedAt: generatedAt, lakes: [])
-        guard let reader, let data = try? await reader.get(subtreePath),
-              let snapshot = CustomerLakesSnapshot(subtree: data) else { return empty }
+        guard let snapshot else {
+            return LakesReadyResponse(version: LakesReadyResponse.currentVersion, generatedAt: generatedAt, lakes: [])
+        }
 
         var lakes: [ReadyLake] = []
         for key in snapshot.lakeKeys {
@@ -140,10 +164,11 @@ public enum LakesReadyAPI {
 
     /// ISO 8601 UTC with no fractional seconds ("2026-11-10T12:00:00Z"), as the phone contract requires.
     static func iso(_ d: Date) -> String {
-        let f = ISO8601DateFormatter()
-        f.formatOptions = [.withInternetDateTime]
-        return f.string(from: Date(timeIntervalSince1970: d.timeIntervalSince1970.rounded(.down)))
+        isoOut.string(from: Date(timeIntervalSince1970: d.timeIntervalSince1970.rounded(.down)))
     }
+
+    /// Built once (expensive to create; thread-safe to use). Default options: internet date-time, UTC, no fractional seconds.
+    nonisolated(unsafe) static let isoOut = ISO8601DateFormatter()
 
     /// Directory lakes by their RTDB lake key, built once (the directory changes only with a deploy).
     static let directoryByKey: [String: [DirectoryLake]] =
@@ -152,7 +177,7 @@ public enum LakesReadyAPI {
 
 /// The `customer/lakes` subtree held in memory and served as a `BrainOutputReader` to the per-copy readers. It answers only
 /// `customer/lakes/{k}/{clarity|waterTemp|level}`; every other path is refused.
-struct CustomerLakesSnapshot: BrainOutputReader {
+struct CustomerLakesSnapshot: BrainOutputReader, Sendable {
     private let copies: [String: Data]
     let lakeKeys: [String]
 
@@ -182,26 +207,36 @@ struct CustomerLakesSnapshot: BrainOutputReader {
     }
 }
 
-/// Holds a reader's answers for `ttl` seconds, one fetch at a time per path, so a burst of picker opens costs one RTDB read
-/// per minute. Statuses and freshness are still evaluated on every request against the cached copies.
-public actor CachingBrainOutputReader: BrainOutputReader {
-    private let base: BrainOutputReader
+/// The parsed `customer/lakes` snapshot, kept for `ttl` seconds and fetched once at a time, so a burst of picker opens
+/// costs one RTDB read and one parse per minute. Statuses and freshness are still evaluated on every request. A failed
+/// read is not kept: the next request tries again (an absent or malformed subtree is kept, as an answer).
+public actor LakesReadySnapshotCache {
+    private let reader: BrainOutputReader
     private let ttl: TimeInterval
     private let clock: @Sendable () -> Date
-    private var entries: [String: (at: Date, task: Task<Data?, Error>)] = [:]
+    private var entry: (at: Date, task: Task<CustomerLakesSnapshot?, Error>)?
 
-    public init(_ base: BrainOutputReader, ttl: TimeInterval = 60, clock: @escaping @Sendable () -> Date = { Date() }) {
-        self.base = base
+    public init(reader: BrainOutputReader, ttl: TimeInterval = 60, clock: @escaping @Sendable () -> Date = { Date() }) {
+        self.reader = reader
         self.ttl = ttl
         self.clock = clock
     }
 
-    public func get(_ path: String) async throws -> Data? {
+    func snapshot() async -> CustomerLakesSnapshot? {
         let now = clock()
-        if let e = entries[path], now.timeIntervalSince(e.at) < ttl { return try await e.task.value }
-        let base = self.base
-        let task = Task<Data?, Error> { try await base.get(path) }
-        entries[path] = (now, task)
-        return try await task.value
+        let task: Task<CustomerLakesSnapshot?, Error>
+        if let e = entry, now.timeIntervalSince(e.at) < ttl {
+            task = e.task
+        } else {
+            let reader = self.reader
+            task = Task { try await LakesReadyAPI.fetchSnapshot(reader) }
+            entry = (now, task)
+        }
+        do {
+            return try await task.value
+        } catch {
+            if let e = entry, e.task == task { entry = nil }   // never keep a failure
+            return nil
+        }
     }
 }

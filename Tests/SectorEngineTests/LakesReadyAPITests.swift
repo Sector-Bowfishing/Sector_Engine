@@ -240,17 +240,75 @@ final class LakesReadyAPITests: XCTestCase {
 
     // MARK: cache
 
-    func testCachingReaderReadsOncePerTTL() async throws {
-        final class Clock: @unchecked Sendable { var t = Date(timeIntervalSince1970: 0) }
+    final class Clock: @unchecked Sendable { var t = Date(timeIntervalSince1970: 0) }
+
+    /// Fails while `failing` is set, then serves the subtree; counts reads.
+    final class Flaky: BrainOutputReader, @unchecked Sendable {
+        private let lock = NSLock()
+        private var _reads = 0, _failing = true
+        var reads: Int { lock.lock(); defer { lock.unlock() }; return _reads }
+        func setFailing(_ v: Bool) { lock.lock(); _failing = v; lock.unlock() }
+        private func next() -> Bool { lock.lock(); defer { lock.unlock() }; _reads += 1; return _failing }
+        func get(_ path: String) async throws -> Data? {
+            if next() { throw ReadError() }
+            return Data(LakesReadyAPITests.subtree.utf8)
+        }
+    }
+
+    func testSnapshotCacheReadsOncePerTTL() async throws {
         let clock = Clock()
-        let base = Recording(["customer/lakes": "{}"])
-        let cached = CachingBrainOutputReader(base, ttl: 60, clock: { clock.t })
-        _ = try await cached.get("customer/lakes")
-        _ = try await cached.get("customer/lakes")
-        XCTAssertEqual(base.paths.count, 1)
+        let base = Recording(["customer/lakes": Self.subtree])
+        let cache = LakesReadySnapshotCache(reader: base, ttl: 60, clock: { clock.t })
+        let a = await LakesReadyAPI.response(config: Self.on, cache: cache, levelEligibility: Self.levelOn, now: Self.now)
+        let b = await LakesReadyAPI.response(config: Self.on, cache: cache, levelEligibility: Self.levelOn, now: Self.now)
+        XCTAssertEqual(a?.lakes.count, 3)
+        XCTAssertEqual(a, b)
+        XCTAssertEqual(base.paths, ["customer/lakes"])
         clock.t = clock.t.addingTimeInterval(61)
-        _ = try await cached.get("customer/lakes")
+        _ = await cache.snapshot()
         XCTAssertEqual(base.paths.count, 2)
+    }
+
+    func testSnapshotCacheDoesNotKeepAFailedRead() async throws {
+        let flaky = Flaky()
+        let cache = LakesReadySnapshotCache(reader: flaky, ttl: 60, clock: { Date(timeIntervalSince1970: 0) })
+        let failed = await LakesReadyAPI.response(config: Self.on, cache: cache, levelEligibility: Self.levelOn, now: Self.now)
+        XCTAssertEqual(failed?.lakes, [], "a failed read is an empty list")
+        flaky.setFailing(false)
+        let ok = await LakesReadyAPI.response(config: Self.on, cache: cache, levelEligibility: Self.levelOn, now: Self.now)
+        XCTAssertEqual(ok?.lakes.count, 3, "the next request reads again within the TTL")
+        XCTAssertEqual(flaky.reads, 2)
+    }
+
+    func testFlagOffWithACacheReadsNothing() async {
+        let base = Recording(["customer/lakes": Self.subtree])
+        let cache = LakesReadySnapshotCache(reader: base)
+        let out = await LakesReadyAPI.response(config: LakesReadyConfig(enabled: false), cache: cache, now: Self.now)
+        XCTAssertNil(out)
+        XCTAssertEqual(base.paths, [])
+    }
+
+    // MARK: lossy keys and junk copies
+
+    func testACopyUnderADirectoryKeyWithAnotherLakeIdIsNotListed() async throws {
+        // Same key as "Berlin Lake|OH" (keys are lossy), different stored lakeId: the readers refuse it.
+        let key = BrainPlatform.lakeKey("Berlin Lake|OH")
+        XCTAssertEqual(BrainPlatform.lakeKey("Berlin Lake OH"), key)
+        let tree = """
+        {"\(key)": {"clarity": \(Self.clarity("Berlin Lake OH", status: "AVAILABLE", observedAt: "2026-11-10T14:00:00Z",
+                                                  freshUntil: "2026-11-10T20:00:00Z"))}}
+        """
+        let got = await run(Recording(["customer/lakes": tree]))
+        XCTAssertEqual(try XCTUnwrap(got).lakes, [])
+    }
+
+    func testNonObjectCopiesAreIgnored() async throws {
+        let k = BrainPlatform.lakeKey("Flathead Lake|MT")
+        let tree = """
+        {"\(k)": {"clarity": 5, "waterTemp": "x", "level": [1], "other": {}}, "\(BrainPlatform.lakeKey("Berlin Lake|OH"))": 7}
+        """
+        let got = await run(Recording(["customer/lakes": tree]))
+        XCTAssertEqual(try XCTUnwrap(got).lakes, [])
     }
 
     // MARK: contract and golden
