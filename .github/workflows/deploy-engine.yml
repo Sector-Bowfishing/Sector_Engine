@@ -1,6 +1,9 @@
 # Deploy the sector-engine Cloud Run service from a main commit (docs/architecture/conditions/DEPLOY_WORKFLOWS_V1.md §1).
 #
-# Manual only (workflow_dispatch). Two jobs:
+# Manual only (workflow_dispatch). Three jobs:
+#   preflight  calls ops-status.yml (gate: true) as the READ-ONLY status account (Sector_Engine#160): the newest real brain-orchestrator
+#           cycle must have succeeded within 3 h and the cycle watchdog must show no halt, or nothing is built or deployed. It replaces the
+#           owner's "cycle clean" post. skip_cycle_preflight bypasses it ONLY on an Owner action that posts the cycle check on Sector_Ops #51.
 #   build   contents: read ONLY, no Google token. Checks the commit, builds the root Dockerfile on the runner and runs scripts/linux-smoke.sh
 #           against that exact image, then hands the image on as a short-lived artifact. Every build/install step runs here.
 #   deploy  id-token: write. Workload Identity Federation (no key file) as the engine deployer. Loads the image (same image ID), pushes it to
@@ -33,6 +36,11 @@ on:
         required: false
         type: boolean
         default: false
+      skip_cycle_preflight:
+        description: "ONLY with an Owner action on Sector_Ops #51 that posts the cycle check: skip the read-only cycle preflight"
+        required: false
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -43,9 +51,27 @@ env:
   SERVICE: sector-engine
   REGION: us-central1
 jobs:
+  preflight:
+    name: cycle preflight (ops-status gate, read-only)
+    if: github.ref == 'refs/heads/main' && !inputs.skip_cycle_preflight
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/ops-status.yml
+    with:
+      gate: true
+      max_cycle_age_hours: 3
+    secrets:                       # only these two, if they are stored as secrets; otherwise the variables of the same name are used
+      GCP_WIF_PROVIDER: ${{ secrets.GCP_WIF_PROVIDER }}
+      GCP_SA_OPS_STATUS: ${{ secrets.GCP_SA_OPS_STATUS }}
+
   build:
     name: build and Linux-smoke the image (no Google token)
-    if: github.ref == 'refs/heads/main'
+    needs: preflight
+    # runs only after a passed preflight, or when the preflight was skipped on purpose (skip_cycle_preflight)
+    if: >-
+      !cancelled() && github.ref == 'refs/heads/main' &&
+      (needs.preflight.result == 'success' || (inputs.skip_cycle_preflight && needs.preflight.result == 'skipped'))
     runs-on: ubuntu-latest
     timeout-minutes: 90
     permissions:
@@ -58,6 +84,7 @@ jobs:
           CONFIRM: ${{ inputs.confirm }}
           RUNTIME_SA: ${{ secrets.GCP_SA_ENGINE_RUNTIME || vars.GCP_SA_ENGINE_RUNTIME }}
           KEEP_IDENTITY: ${{ inputs.keep_current_identity }}
+          SKIP_PREFLIGHT: ${{ inputs.skip_cycle_preflight }}
         run: |
           [[ "$CONFIRM" == "DEPLOY" ]] || { echo "::error::confirm must be DEPLOY"; exit 1; }
           [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::sha must be a full 40-character lowercase commit"; exit 1; }
@@ -66,6 +93,7 @@ jobs:
             exit 1
           fi
           [[ -n "$RUNTIME_SA" ]] && echo "runtime identity: GCP_SA_ENGINE_RUNTIME" || echo "::warning::keep_current_identity: the revision keeps the service's current runtime identity"
+          [[ "$SKIP_PREFLIGHT" == "true" ]] && echo "::warning::skip_cycle_preflight: the cycle preflight did not run; an Owner action on Sector_Ops #51 must carry the cycle check" || echo "cycle preflight: passed"
 
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
         with:
@@ -102,7 +130,8 @@ jobs:
   deploy:
     name: push and deploy (WIF)
     needs: build
-    if: github.ref == 'refs/heads/main'
+    # explicit: a skipped preflight (skip_cycle_preflight) would otherwise skip this job too
+    if: ${{ !cancelled() && github.ref == 'refs/heads/main' && needs.build.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     permissions:
@@ -242,6 +271,7 @@ jobs:
             echo "| image digest | \`${DIGEST:-not pushed}\` |"
             echo "| serving before | \`${PREV:-?}\` |"
             echo "| serving after the checks | \`${REV:-?}\` |"
+            echo "| cycle preflight (ops-status gate) | ${{ inputs.skip_cycle_preflight && 'SKIPPED by skip_cycle_preflight' || 'passed' }} |"
             echo "| build + Linux smoke (build job, this image ID) | ${{ needs.build.result }} |"
             echo "| push | ${{ steps.push.outcome }} |"
             echo "| deploy.sh (candidate smoke, promote, prod re-check) | ${{ steps.deploy.outcome }} |"
