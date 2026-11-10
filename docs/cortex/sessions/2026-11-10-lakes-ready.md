@@ -31,9 +31,15 @@ Issue #156: a customer Engine endpoint listing the lakes with real Brain data fo
   tests for a failed-then-good read, a lossy-key copy with another lakeId, non-object copies. The open-ended cache key set
   went away with the snapshot cache (one entry).
 
+## Independent review (round 2) and fixes
+- Blocking: none. Should-fix (low), fixed: shared `ISO8601DateFormatter`s are not promised thread-safe on Linux
+  corelibs-foundation, so `LakeLevelOutputAPI.isoDate` is back to main's version and `/lakes/ready` formats with the Sendable
+  `Date.ISO8601FormatStyle`. Also added: a 5 s failure TTL, and tests for coalesced concurrent reads, the failure TTL and the
+  reader timeout.
+
 ## Verification
 - `swift build --build-tests` + `swift test` in `swift:6.1-jammy` (Docker, image via mirror.gcr.io after Docker Hub 429s):
-  488 tests, 0 failures (after the review fixes).
+  490 tests, 0 failures (after both review rounds).
 - pytest `verification` (45 passed, 6 skipped), `tools/architecture` (187 passed after the digest re-record), `tools/cutover`,
   `jobs/brain-orchestrator/tests`: pass. `tools/research`: 2 failures that also fail on main in this container (read-only files, root).
 - `collect_certification.py`: failing none (after installing the wind/vegetation runtime requirements into the venv).
