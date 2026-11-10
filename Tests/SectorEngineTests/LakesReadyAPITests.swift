@@ -269,15 +269,58 @@ final class LakesReadyAPITests: XCTestCase {
         XCTAssertEqual(base.paths.count, 2)
     }
 
-    func testSnapshotCacheDoesNotKeepAFailedRead() async throws {
+    func testSnapshotCacheKeepsAFailedReadOnlyBriefly() async throws {
+        let clock = Clock()
         let flaky = Flaky()
-        let cache = LakesReadySnapshotCache(reader: flaky, ttl: 60, clock: { Date(timeIntervalSince1970: 0) })
+        let cache = LakesReadySnapshotCache(reader: flaky, ttl: 60, failureTTL: 5, clock: { clock.t })
         let failed = await LakesReadyAPI.response(config: Self.on, cache: cache, levelEligibility: Self.levelOn, now: Self.now)
         XCTAssertEqual(failed?.lakes, [], "a failed read is an empty list")
         flaky.setFailing(false)
+        clock.t = clock.t.addingTimeInterval(2)
+        _ = await cache.snapshot()
+        XCTAssertEqual(flaky.reads, 1, "within the failure TTL no new read is started")
+        clock.t = clock.t.addingTimeInterval(4)
         let ok = await LakesReadyAPI.response(config: Self.on, cache: cache, levelEligibility: Self.levelOn, now: Self.now)
-        XCTAssertEqual(ok?.lakes.count, 3, "the next request reads again within the TTL")
+        XCTAssertEqual(ok?.lakes.count, 3, "after the failure TTL, well inside the 60 s TTL, the next request reads again")
         XCTAssertEqual(flaky.reads, 2)
+    }
+
+    /// Answers after a short delay; counts reads.
+    final class Slow: BrainOutputReader, @unchecked Sendable {
+        private let lock = NSLock()
+        private var _reads = 0
+        var reads: Int { lock.lock(); defer { lock.unlock() }; return _reads }
+        private func count() { lock.lock(); _reads += 1; lock.unlock() }
+        func get(_ path: String) async throws -> Data? {
+            count()
+            try await Task.sleep(nanoseconds: 200_000_000)
+            return Data(LakesReadyAPITests.subtree.utf8)
+        }
+    }
+
+    func testConcurrentRequestsShareOneRead() async throws {
+        let slow = Slow()
+        let cache = LakesReadySnapshotCache(reader: slow)
+        let counts = await withTaskGroup(of: Int.self) { group -> [Int] in
+            for _ in 0..<8 {
+                group.addTask {
+                    await LakesReadyAPI.response(config: Self.on, cache: cache, levelEligibility: Self.levelOn, now: Self.now)?
+                        .lakes.count ?? -1
+                }
+            }
+            var out: [Int] = []
+            for await c in group { out.append(c) }
+            return out
+        }
+        XCTAssertEqual(counts, Array(repeating: 3, count: 8))
+        XCTAssertEqual(slow.reads, 1)
+    }
+
+    func testReaderTimeoutReachesTheFetch() {
+        let r = BrainOutputReaderConfig.reader(from: [BrainOutputReaderConfig.envKey: "rtdb"], timeoutSeconds: 5)
+        XCTAssertEqual((r as? RTDBCustomerCopyReader)?.timeoutSeconds, 5)
+        XCTAssertEqual((BrainOutputReaderConfig.reader(from: [BrainOutputReaderConfig.envKey: "rtdb"]) as? RTDBCustomerCopyReader)?
+            .timeoutSeconds, RTDBCustomerCopyReader.timeoutSeconds)
     }
 
     func testFlagOffWithACacheReadsNothing() async {

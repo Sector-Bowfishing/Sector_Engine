@@ -44,6 +44,8 @@ public struct RTDBCustomerCopyReader: BrainOutputReader {
     public static let timeoutSeconds: Double = 2
 
     let databaseURL: String
+    /// The bound the default fetch uses for each read.
+    let timeoutSeconds: Double
     let fetch: Fetch
     let token: Token
 
@@ -52,6 +54,7 @@ public struct RTDBCustomerCopyReader: BrainOutputReader {
                 fetch: Fetch? = nil,
                 token: Token? = nil) {
         self.databaseURL = databaseURL
+        self.timeoutSeconds = timeoutSeconds
         self.fetch = fetch ?? { url, headers in
             guard let r = try? await HTTP.get(url, headers: headers, timeout: timeoutSeconds) else {
                 return nil

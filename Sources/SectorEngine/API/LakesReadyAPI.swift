@@ -164,11 +164,9 @@ public enum LakesReadyAPI {
 
     /// ISO 8601 UTC with no fractional seconds ("2026-11-10T12:00:00Z"), as the phone contract requires.
     static func iso(_ d: Date) -> String {
-        isoOut.string(from: Date(timeIntervalSince1970: d.timeIntervalSince1970.rounded(.down)))
+        // A Sendable value-type style (no shared formatter object): UTC, "Z", no fractional seconds.
+        Date(timeIntervalSince1970: d.timeIntervalSince1970.rounded(.down)).formatted(.iso8601)
     }
-
-    /// Built once (expensive to create; thread-safe to use). Default options: internet date-time, UTC, no fractional seconds.
-    nonisolated(unsafe) static let isoOut = ISO8601DateFormatter()
 
     /// Directory lakes by their RTDB lake key, built once (the directory changes only with a deploy).
     static let directoryByKey: [String: [DirectoryLake]] =
@@ -209,33 +207,38 @@ struct CustomerLakesSnapshot: BrainOutputReader, Sendable {
 
 /// The parsed `customer/lakes` snapshot, kept for `ttl` seconds and fetched once at a time, so a burst of picker opens
 /// costs one RTDB read and one parse per minute. Statuses and freshness are still evaluated on every request. A failed
-/// read is not kept: the next request tries again (an absent or malformed subtree is kept, as an answer).
+/// read is kept only `failureTTL` seconds (an empty list meanwhile), so an outage neither pins "no lakes" for a minute nor
+/// makes every request wait on a new read. An absent or malformed subtree is an answer and is kept the full `ttl`.
 public actor LakesReadySnapshotCache {
     private let reader: BrainOutputReader
     private let ttl: TimeInterval
+    private let failureTTL: TimeInterval
     private let clock: @Sendable () -> Date
-    private var entry: (at: Date, task: Task<CustomerLakesSnapshot?, Error>)?
+    private var entry: (at: Date, task: Task<CustomerLakesSnapshot?, Error>, failed: Bool)?
 
-    public init(reader: BrainOutputReader, ttl: TimeInterval = 60, clock: @escaping @Sendable () -> Date = { Date() }) {
+    public init(reader: BrainOutputReader, ttl: TimeInterval = 60, failureTTL: TimeInterval = 5,
+                clock: @escaping @Sendable () -> Date = { Date() }) {
         self.reader = reader
         self.ttl = ttl
+        self.failureTTL = failureTTL
         self.clock = clock
     }
 
     func snapshot() async -> CustomerLakesSnapshot? {
         let now = clock()
         let task: Task<CustomerLakesSnapshot?, Error>
-        if let e = entry, now.timeIntervalSince(e.at) < ttl {
+        if let e = entry, now.timeIntervalSince(e.at) < (e.failed ? failureTTL : ttl) {
             task = e.task
         } else {
             let reader = self.reader
             task = Task { try await LakesReadyAPI.fetchSnapshot(reader) }
-            entry = (now, task)
+            entry = (now, task, false)
         }
         do {
             return try await task.value
         } catch {
-            if let e = entry, e.task == task { entry = nil }   // never keep a failure
+            // Keep the failure only briefly, and only if no newer read has replaced it meanwhile.
+            if let e = entry, e.task == task, !e.failed { entry = (clock(), task, true) }
             return nil
         }
     }

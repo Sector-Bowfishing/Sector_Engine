@@ -140,15 +140,9 @@ public enum LakeLevelOutputAPI {
     }
 
     static func isoDate(_ s: String) -> Date? {
-        if let d = plainISO.date(from: s) { return d }
-        return fractionalISO.date(from: s)
-    }
-
-    // Built once: ISO8601DateFormatter is expensive to create (notably on Linux) and thread-safe to use.
-    nonisolated(unsafe) static let plainISO = ISO8601DateFormatter()
-    nonisolated(unsafe) static let fractionalISO: ISO8601DateFormatter = {
         let f = ISO8601DateFormatter()
+        if let d = f.date(from: s) { return d }
         f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return f
-    }()
+        return f.date(from: s)
+    }
 }
