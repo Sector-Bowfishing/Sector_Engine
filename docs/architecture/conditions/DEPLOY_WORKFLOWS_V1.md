@@ -154,9 +154,9 @@ Why: cloud sessions have no Google login, so every read-only production check wa
 - **What it prints** (`tools/deploy/ops_status.py`; GET requests only, plus the Logging `entries:list` query): the last N
   `brain-orchestrator` executions (name, real or dry-run, created, completed, succeeded, failed, running), the watchdog latch state, the
   scheduler state and schedule, the Engine's serving revision and its commit label, optionally the latest `[remote-config]` lines (only text
-  that matches the known `outcome=… status=…` shape) and optionally the execution control. Never an email, a body or a token; an HTTP
+  that matches `RemoteConfigStore.refreshLogLine` exactly: outcome, status, parameter count, tile flag present/absent) and optionally the execution control. Never an email, a body or a token; an HTTP
   error prints its status code only.
-- **The gate** passes only when the newest **real** completed cycle (no `--dry-run` argument) succeeded (succeeded ≥ 1, failed 0, cancelled
+- **The gate** passes only when the newest **real** completed cycle (no `--dry-run` argument **and** created at the :50 schedule minute; any other run is `manual` and never counts) succeeded (succeeded ≥ 1, failed 0, cancelled
   0) and was created within `max_cycle_age_hours` (3 by default), **and** the watchdog latch is absent or `CLEARED`. An execution whose
   arguments are not visible is never assumed real; anything unreadable refuses.
 - **In `deploy-engine.yml`:** the `preflight` job runs the gate before `build`. A refused or failed preflight means nothing is built or

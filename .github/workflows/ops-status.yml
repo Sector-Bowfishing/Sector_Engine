@@ -43,6 +43,18 @@ on:
         required: false
         type: boolean
         default: true
+      executions:
+        required: false
+        type: number
+        default: 5
+      remote_config_log:
+        required: false
+        type: boolean
+        default: false
+      rtdb:
+        required: false
+        type: boolean
+        default: false
       max_cycle_age_hours:
         required: false
         type: number

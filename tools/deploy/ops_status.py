@@ -36,7 +36,10 @@ LATCH_KEY = "exports/orchestrator/watchdog/halt.json"          # sector_brain_pl
 RTDB = os.environ.get("BRAIN_RTDB_URL", "https://sector-brain.firebaseio.com")
 CONTROL_NODE = "control/executionControlV1"                    # sector_brain_platform.execution_control.NODE (pinned by a test)
 DRY_RUN_ARG = "--dry-run"
-RC_LINE = re.compile(r"\[remote-config\] [a-z-]+(?: [a-zA-Z0-9_]+=[a-zA-Z0-9_.-]{1,40}){0,8}")
+# exactly RemoteConfigStore.refreshLogLine: outcome, status, then optional parameters and the tile flag; nothing else is printed
+RC_LINE = re.compile(r"\[remote-config\] refresh outcome=[a-z-]{1,20} status=(?:\d{3}|none)(?: parameters=\d{1,4})?"
+                     r"(?: conditions_tiles_v1=(?:present|absent))?(?=\s|$)")
+SCHEDULE_MINUTE = int(os.environ.get("OPS_STATUS_SCHEDULE_MINUTE", "50"))   # brain-orchestrator runs `50 * * * *` UTC
 
 
 class Unreadable(Exception):
@@ -86,8 +89,14 @@ def _ts(s):
 def classify(ex: dict) -> dict:
     """One Cloud Run v2 Execution -> a leak-free row. kind is real | dry-run | unknown (args not visible: never treated as real)."""
     containers = ((ex.get("template") or {}).get("containers")) if isinstance(ex.get("template"), dict) else None
+    created = _ts(ex.get("createTime"))
     if isinstance(containers, list) and containers and all(isinstance(c, dict) and "args" in c for c in containers):
-        kind = "dry-run" if any(DRY_RUN_ARG in (c.get("args") or []) for c in containers) else "real"
+        if any(DRY_RUN_ARG in (c.get("args") or []) for c in containers):
+            kind = "dry-run"
+        elif created is not None and created.minute in (SCHEDULE_MINUTE, (SCHEDULE_MINUTE + 1) % 60):
+            kind = "real"         # no --dry-run AND started by the :50 schedule: two independent signals, so a dry run cannot pass alone
+        else:
+            kind = "manual"       # no --dry-run visible but not at the schedule minute: never counted as the real cycle
     else:
         kind = "unknown"
     running = int(ex.get("runningCount") or 0)
@@ -113,7 +122,7 @@ def gate(rows: list[dict], latch: str, now: dt.datetime, max_age_hours: float) -
     elif latch not in ("none", "CLEARED"):
         reasons.append(f"watchdog latch is {latch}")
     rows = sorted(rows, key=lambda r: _ts(r["created"]) or dt.datetime.min.replace(tzinfo=dt.timezone.utc), reverse=True)
-    candidate = next((r for r in rows if r["done"] and r["kind"] != "dry-run"), None)   # newest completed non-dry execution
+    candidate = next((r for r in rows if r["done"] and r["kind"] not in ("dry-run", "manual")), None)   # newest completed scheduled run
     if candidate is not None and candidate["kind"] == "unknown":
         reasons.append(f"cannot tell whether {candidate['name']} was a real or a dry-run cycle (no args visible)")
         return False, reasons

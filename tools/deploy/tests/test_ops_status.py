@@ -36,6 +36,8 @@ def test_classify_kinds():
     assert S.classify(ex("b", "2026-11-10T05:50:00Z", dry=True))["kind"] == "dry-run"
     assert S.classify(ex("c", "2026-11-10T05:50:00Z", args=False))["kind"] == "unknown"
     assert S.classify({"name": "d"})["kind"] == "unknown"
+    # no --dry-run visible but not started at the :50 schedule minute: never the real cycle (fails closed if overrides are hidden)
+    assert S.classify(ex("m", "2026-11-10T05:37:00Z"))["kind"] == "manual"
     assert S.classify(ex("a", "2026-11-10T05:50:00Z"))["name"] == "a"
 
 
@@ -49,6 +51,18 @@ def test_gate_skips_newer_dry_runs_and_a_running_cycle():
     r = rows(ex("dry", "2026-11-10T06:30:00Z", dry=True), ex("running", "2026-11-10T06:50:00Z", done=False),
              ex("real1", "2026-11-10T05:50:00Z"))
     assert S.gate(r, "none", NOW, 3)[0]
+
+
+def test_gate_ignores_manual_runs_and_refuses_when_only_manual_runs_exist():
+    assert S.gate(rows(ex("man", "2026-11-10T06:37:00Z"), ex("real1", "2026-11-10T05:50:00Z")), "none", NOW, 3)[0]
+    ok, why = S.gate(rows(ex("man", "2026-11-10T06:37:00Z")), "none", NOW, 3)
+    assert not ok and "no completed real" in why[0]
+
+
+def test_gate_refuses_a_cancelled_cycle():
+    e = ex("c1", "2026-11-10T05:50:00Z")
+    e["cancelledCount"] = 1
+    assert not S.gate(rows(e), "none", NOW, 3)[0]
 
 
 def test_gate_refuses_halted_or_unreadable_latch():
@@ -76,7 +90,8 @@ def test_remote_config_lines_are_filtered_to_the_known_shape():
                {"timestamp": "2026-11-10T04:00:00Z", "textPayload": "[remote-config] refresh outcome=http-error status=403 secret=ya29.AAAA/BBB"}]
     out = S.remote_config_lines(entries)
     assert out[0] == "2026-11-10T06:00:00Z [remote-config] refresh outcome=ok status=200 parameters=2 conditions_tiles_v1=present"
-    assert len(out) == 2 and "/BBB" not in out[1] and "example.com" not in " ".join(out)
+    assert len(out) == 2 and out[1].endswith("outcome=http-error status=403")
+    assert "ya29" not in " ".join(out) and "example.com" not in " ".join(out)
 
 
 class Fake:
