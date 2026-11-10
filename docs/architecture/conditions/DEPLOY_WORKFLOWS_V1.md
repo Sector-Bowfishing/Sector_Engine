@@ -142,6 +142,28 @@ Inputs: `preset` (`off` or `weather-shadow`) and `confirm=SET`. The tool is `too
 - **Rollback:** run the workflow again with `off`, or roll Remote Config back to the printed "before" version. The Engine picks up a change
   within its 10-minute cache.
 
+## 3a. `ops-status.yml`: read-only status, and the Engine deploy's cycle preflight (Sector_Engine#160)
+
+Why: cloud sessions have no Google login, so every read-only production check waited for the owner to paste Cloud Shell output.
+
+- **Account:** the read-only status account from `GCP_SA_OPS_STATUS` (secret or variable; never printed), trusted for this one workflow
+  file on `main` only. It has no write, deploy, IAM or secret role. Grants in §4.
+- **Started by:** `workflow_dispatch` (inputs `gate`, `executions`, `remote_config_log`, `rtdb`, `max_cycle_age_hours`), or
+  `deploy-engine.yml` through `workflow_call` with `gate: true`. A called reusable workflow keeps this file as its `job_workflow_ref`, so
+  one trust binding covers both.
+- **What it prints** (`tools/deploy/ops_status.py`; GET requests only, plus the Logging `entries:list` query): the last N
+  `brain-orchestrator` executions (name, real or dry-run, created, completed, succeeded, failed, running), the watchdog latch state, the
+  scheduler state and schedule, the Engine's serving revision and its commit label, optionally the latest `[remote-config]` lines (only text
+  that matches the known `outcome=… status=…` shape) and optionally the execution control. Never an email, a body or a token; an HTTP
+  error prints its status code only.
+- **The gate** passes only when the newest **real** completed cycle (no `--dry-run` argument) succeeded (succeeded ≥ 1, failed 0, cancelled
+  0) and was created within `max_cycle_age_hours` (3 by default), **and** the watchdog latch is absent or `CLEARED`. An execution whose
+  arguments are not visible is never assumed real; anything unreadable refuses.
+- **In `deploy-engine.yml`:** the `preflight` job runs the gate before `build`. A refused or failed preflight means nothing is built or
+  deployed. `skip_cycle_preflight` (default false) bypasses it only with an Owner action on Sector_Ops #51 that posts the cycle check; the
+  run then shows a warning and the step summary says the preflight was skipped. Until the status account is configured, the preflight
+  refuses with "GCP_SA_OPS_STATUS is not set".
+
 ## 4. GCP permissions per job (role names and resource types only)
 
 These are the grants of the reviewed IAM package (Sector_Ops #55). The owner applies them from Cloud Shell. The workflows are designed to
@@ -162,6 +184,12 @@ need nothing more; the items marked *unverified* are listed on Sector_Ops #53.
 | O | `roles/cloudscheduler.viewer` | project | reading the scheduler state (never changing it) |
 | O | no IAM-admin and no scheduler-admin role | n/a | hence `SKIP_IAM=1` and `SKIP_SCHEDULER_DEFINITION=1` |
 | **F** set-conditions-tiles | `roles/firebaseremoteconfig.admin` | project | reading and publishing the Remote Config template |
+| **S** ops-status (read-only) | `roles/run.viewer` | the `brain-orchestrator` Cloud Run **job** | listing its executions |
+| S | `roles/run.viewer` | the `sector-engine` Cloud Run **service** | the serving revision and its commit label |
+| S | `roles/cloudscheduler.viewer` | project | the scheduler state (scheduler roles have no per-job scope) |
+| S | `roles/logging.viewer` | project | the `[remote-config]` line (no narrower Logging role; the workflow prints only the matching line) |
+| S | `roles/storage.objectViewer` with an IAM condition on the one object `exports/orchestrator/watchdog/halt.json` | the private artifact **bucket** | the watchdog latch |
+| S, optional | `roles/firebasedatabase.viewer` | project | the execution control. Project-wide read of every RTDB instance, so it is optional; the gate does not need it |
 
 *Unverified until a first run:*
 - whether service-level `run.developer` covers `gcloud run revisions describe` for that service's revisions;
@@ -177,6 +205,7 @@ need nothing more; the items marked *unverified* are listed on Sector_Ops #53.
 | `tools/deploy/tests/test_job_env.py` | snapshot, carry-forward (only the projection changes), env-file round trip, secret refusal, restore and compare |
 | `tools/deploy/tests/test_deploy_sh_image_mode.py` | `deploy.sh` `IMAGE=` flags against a fake `gcloud` in a throwaway repository: same flow, digest only, commit must be on main, default and rollback paths unchanged; `RUNTIME_SA` passed as `--service-account`, a candidate with another identity not promoted, the email never printed, refused on the `--source` path |
 | `ConditionsTilesFoundationTests.testRemoteConfigRefreshLogLine` (Swift) | the `[remote-config]` line: outcome, status and counts only |
+| `tools/deploy/tests/test_ops_status.py` | execution classification (real, dry-run, unknown), the gate (latch, failed, stale, dry-run only, unknown args, newer failure), `[remote-config]` filtering, read-only calls, no identity in the output, the RTDB read only when asked, and the pinned latch key and control node |
 | `jobs/brain-orchestrator/tests/test_deploy_switches_wif.py` | the whole `deploy-job.sh` against a fake `gcloud`/`docker`: no IAM or scheduler writes, the env carried exactly, prebuilt, build and carried image, refusals, a non-PAUSED scheduler fails, the default path unchanged |
 
 All run in `python-jobs-tests.yml` (`tools/deploy` added to the platform loop). None of them touches Google Cloud.

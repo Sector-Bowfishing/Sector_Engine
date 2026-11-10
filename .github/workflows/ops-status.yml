@@ -1,0 +1,107 @@
+# Read-only production status for Sector Ops, and the cycle preflight that deploy-engine.yml calls (Sector_Engine#160, Sector_Ops #51).
+#
+# Manual (workflow_dispatch) or called by deploy-engine.yml (workflow_call, gate: true). One job, WIF as the READ-ONLY status account
+# GCP_SA_OPS_STATUS: run.viewer on the brain-orchestrator job and the sector-engine service, cloudscheduler.viewer, logging.viewer, object
+# read of the watchdog latch only, and (optional) RTDB read. No write, deploy, IAM or secret access. tools/deploy/ops_status.py makes GET
+# requests only (plus the Logging entries:list query) and prints names, times, counts and states: never an email, a body or a token.
+#
+# Repository configuration (never hard-coded, never echoed; a SECRET of the same name wins over a variable and is masked in logs):
+#   GCP_WIF_PROVIDER, GCP_SA_OPS_STATUS
+# The status account trusts only this file on main (attribute.workflow). When deploy-engine.yml calls it, job_workflow_ref is still this file.
+name: ops-status
+on:
+  workflow_dispatch:
+    inputs:
+      gate:
+        description: "Run the deploy-engine cycle gate (exit non-zero unless the newest real cycle succeeded and there is no halt)"
+        required: false
+        type: boolean
+        default: false
+      executions:
+        description: "How many brain-orchestrator executions to list"
+        required: false
+        type: number
+        default: 5
+      remote_config_log:
+        description: "Also print the Engine's latest [remote-config] log lines (last 3 days)"
+        required: false
+        type: boolean
+        default: false
+      rtdb:
+        description: "Also read the execution control (needs the optional RTDB read grant)"
+        required: false
+        type: boolean
+        default: false
+      max_cycle_age_hours:
+        description: "Gate: the newest real cycle must be at most this old"
+        required: false
+        type: number
+        default: 3
+  workflow_call:
+    inputs:
+      gate:
+        required: false
+        type: boolean
+        default: true
+      max_cycle_age_hours:
+        required: false
+        type: number
+        default: 3
+    secrets:
+      GCP_WIF_PROVIDER:
+        required: false
+      GCP_SA_OPS_STATUS:
+        required: false
+permissions:
+  contents: read
+jobs:
+  status:
+    name: read-only status${{ inputs.gate && ' + cycle gate' || '' }} (WIF, status account)
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: The status account is configured
+        env:
+          SA: ${{ secrets.GCP_SA_OPS_STATUS || vars.GCP_SA_OPS_STATUS }}
+        run: |
+          [[ -n "$SA" ]] || { echo "::error::GCP_SA_OPS_STATUS is not set: the read-only status account (Sector_Engine#160) is not configured yet. Nothing was read."; exit 1; }
+
+      - id: auth
+        name: Authenticate to Google Cloud (Workload Identity Federation, read-only status account)
+        uses: google-github-actions/auth@c200f3691d83b41bf9bbd8638997a462592937ed  # v2.1.13
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER || vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_OPS_STATUS || vars.GCP_SA_OPS_STATUS }}
+          token_format: access_token
+          access_token_lifetime: 600s
+          access_token_scopes: https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/firebase.database
+          create_credentials_file: false
+
+      - name: Status${{ inputs.gate && ' and cycle gate' || '' }}
+        env:
+          OPS_STATUS_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+          GATE: ${{ inputs.gate }}
+          EXECUTIONS: ${{ inputs.executions || 5 }}
+          RC_LOG: ${{ inputs.remote_config_log }}
+          RTDB: ${{ inputs.rtdb }}
+          MAX_AGE: ${{ inputs.max_cycle_age_hours || 3 }}
+        run: |
+          set -o pipefail
+          [[ "$EXECUTIONS" =~ ^[0-9]{1,2}$ ]] || { echo "::error::executions must be 1-99"; exit 1; }
+          [[ "$MAX_AGE" =~ ^[0-9]+(\.[0-9]+)?$ ]] || { echo "::error::max_cycle_age_hours must be a number"; exit 1; }
+          args=(report --executions "$EXECUTIONS")
+          [[ "$RC_LOG" == "true" ]] && args+=(--remote-config-log)
+          [[ "$RTDB" == "true" ]] && args+=(--rtdb)
+          python3 tools/deploy/ops_status.py "${args[@]}" | tee -a "$GITHUB_STEP_SUMMARY"
+          if [[ "$GATE" == "true" ]]; then
+            echo | tee -a "$GITHUB_STEP_SUMMARY"
+            python3 tools/deploy/ops_status.py gate --max-cycle-age-hours "$MAX_AGE" | grep -E '^GATE ' | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
