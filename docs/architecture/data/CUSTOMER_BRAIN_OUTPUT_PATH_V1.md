@@ -156,7 +156,7 @@ answers for any coordinate, so the Engine serves the list from the same CUSTOMER
   the public Lake Registry index (`registry/lakes.v1.json`, docs/brains/LAKE_REGISTRY_GEOMETRY_CONTRACT.md;
   `LakeRegistryExtents.swift`): lake geometry identity, not a Brain output, read without a credential, fetched at most every
   30 min with the snapshot, and given only for a published shoreline at HIGH or MEDIUM confidence whose point is not
-  `identity-risk`. A failed registry read drops `extent`, never a lake; an extent never makes a lake ready.
+  `identity-risk`. A failed registry read serves the last good index (with none, no `extent`), never drops a lake; an extent never makes a lake ready.
 - **Layers without a copy:** `wind` (its only copy is the global `customer/wind/outlookModel`, a model choice) and `intelligence`
   (no copy; its publication contract stops at CALIBRATION). Never emitted; a later per-lake copy adds them as a new layer with
   its own value fields (additive). Wind's planned value is `speedMph` plus `fromDeg` (the direction it blows FROM).

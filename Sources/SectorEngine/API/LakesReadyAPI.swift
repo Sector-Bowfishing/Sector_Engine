@@ -25,7 +25,7 @@
 //    - `SECTOR_LAKES_READY_OUTPUT=1` routes the endpoint. Unset: the server registers no route (404, like `/lake/level`).
 //    - `SECTOR_BRAIN_OUTPUT_READER` picks the reader (BrainOutputReaderConfig). Unset: no reader → `200` with no lakes.
 //    - A failed or refused read of the subtree → `200` with no lakes (the app shows "no lakes yet").
-//    - A failed registry read → the lakes are listed without `extent` (the app keeps its default reach).
+//    - A failed registry read → the last good index is served; with none, the lakes are listed without `extent`.
 //    - The `level` layer also needs the Lake level gates: `SECTOR_LAKE_LEVEL_OUTPUT=1` and the lake on `validatedLakeIds`.
 //
 //  Layers: `clarity`, `waterTemp` and `level` have CUSTOMER-lane copies. `wind` and `intelligence` have none per lake today
