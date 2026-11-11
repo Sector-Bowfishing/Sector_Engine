@@ -1,12 +1,12 @@
 {
   "contractId": "sector-phone-lakes-ready-v1",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "frozenOn": "2026-11-10",
   "endpoint": "GET /lakes/ready",
-  "purpose": "The lakes with real Brain data, for the app's lake picker (Sector_Engine #156, iOS_Sector #227 ReadyLakeSource). Built only from the Publisher's CUSTOMER-lane copies (docs/architecture/data/CUSTOMER_BRAIN_OUTPUT_PATH_V1.md section 9); never from Brain INTERNAL state.",
+  "purpose": "The lakes with real Brain data, for the app's lake picker and layer dock (Sector_Engine #156, #158; iOS_Sector #227 ReadyLakeSource). Readiness and every layer value come only from the Publisher's CUSTOMER-lane copies (docs/architecture/data/CUSTOMER_BRAIN_OUTPUT_PATH_V1.md section 9); never from Brain INTERNAL state. The extent comes from the public Lake Registry index (docs/brains/LAKE_REGISTRY_GEOMETRY_CONTRACT.md), which is lake geometry identity, not a Brain output.",
   "source": {
     "engine": "Sources/SectorEngine/API/LakesReadyAPI.swift, LakesReadyResponse, encoded with SectorEngineAPI.makeEncoder (sorted keys).",
-    "golden": "verification/fixtures/phone-contract/lakes-ready-v1.golden.json (synthetic: generated from the scenario in Tests/SectorEngineTests/LakesReadyAPITests.swift; lake ids, names and centroids are from the public lake directory).",
+    "golden": "verification/fixtures/phone-contract/lakes-ready-v1.golden.json (synthetic: generated from the scenario in Tests/SectorEngineTests/LakesReadyAPITests.swift; lake ids, names and centroids are from the public lake directory; layer values and boxes are made up).",
     "dates": "Every date is ISO 8601 UTC with seconds precision and no fractional seconds (2026-11-10T15:30:00Z), so JSONDecoder.dateDecodingStrategy = .iso8601 accepts it."
   },
   "types": {
@@ -23,17 +23,30 @@
     "generatedAt": {"type": "date", "required": true},
     "lakes": {"type": "array", "required": true},
     "lakes[].lakeId": {"type": "string", "required": true},
+    "lakes[].directoryId": {"type": "string", "required": true},
+    "lakes[].brainKey": {"type": "string", "required": true},
     "lakes[].name": {"type": "string", "required": true},
     "lakes[].centroid": {"type": "object", "required": true},
     "lakes[].centroid.lat": {"type": "number", "required": true},
     "lakes[].centroid.lon": {"type": "number", "required": true},
+    "lakes[].extent": {"type": "object", "required": false},
+    "lakes[].extent.bbox": {"type": "object", "required": true},
+    "lakes[].extent.bbox.west": {"type": "number", "required": true},
+    "lakes[].extent.bbox.south": {"type": "number", "required": true},
+    "lakes[].extent.bbox.east": {"type": "number", "required": true},
+    "lakes[].extent.bbox.north": {"type": "number", "required": true},
+    "lakes[].extent.confidence": {"type": "string", "required": true},
     "lakes[].layers": {"type": "object", "required": true},
     "lakes[].layers.clarity": {"type": "object", "required": false},
     "lakes[].layers.clarity.status": {"type": "string", "required": true},
     "lakes[].layers.clarity.asOf": {"type": "date", "required": true},
+    "lakes[].layers.clarity.valueFt": {"type": "number", "required": true},
+    "lakes[].layers.clarity.lowFt": {"type": "number", "required": false},
+    "lakes[].layers.clarity.highFt": {"type": "number", "required": false},
     "lakes[].layers.waterTemp": {"type": "object", "required": false},
     "lakes[].layers.waterTemp.status": {"type": "string", "required": true},
     "lakes[].layers.waterTemp.asOf": {"type": "date", "required": true},
+    "lakes[].layers.waterTemp.valueF": {"type": "number", "required": true},
     "lakes[].layers.level": {"type": "object", "required": false},
     "lakes[].layers.level.status": {"type": "string", "required": true},
     "lakes[].layers.level.asOf": {"type": "date", "required": true}
@@ -43,23 +56,37 @@
     "generatedAt": "When the Engine evaluated the copies.",
     "lakes": "Ready lakes sorted by lakeId. A lake is listed when at least one layer is ready. Empty means no lake is ready (also when the Engine has no reader): an answer, not an error.",
     "lakes[].lakeId": "The lake directory id (Name|ST), the same id GET /lakes serves.",
+    "lakes[].directoryId": "The app's directory id (Name|ST), as LakeDirectory, LakeRegistry and My Lakes use it. Always equal to lakeId; added so the app never maps Brain keys. Match lakes on this.",
+    "lakes[].brainKey": "The Brain RTDB lake key (every run of non-alphanumerics in the id becomes one _: Guntersville|AL -> Guntersville_AL). For diagnostics and cross-reference only: keys are lossy, so never match a lake on it.",
     "lakes[].name": "The directory name.",
     "lakes[].centroid": "The directory coordinate (GET /lakes lat/lon), for Nearby sorting.",
+    "lakes[].extent": "The lake's extent, for framing the camera and bounding the lake-wide fill. Present only when the Lake Registry has a published shoreline for the lake at HIGH or MEDIUM confidence and its directory point is not flagged identity-risk; absent otherwise (keep a default reach). An outline may be added later as a new optional key.",
+    "lakes[].extent.bbox": "The shoreline's bounding box in degrees (WGS84): west < east, south < north.",
+    "lakes[].extent.confidence": "The registry's geometryConfidence.level for that shoreline: HIGH or MEDIUM. Treat any other value as no extent.",
     "lakes[].layers": "One key per READY layer. An absent key means the layer is not ready for this lake (show it as not available; never fill in an Engine estimate).",
     "layers.*.status": "LIVE (the copy is AVAILABLE: observed) or ESTIMATE (the copy is ESTIMATE: modeled, or a nearby-gauge trend for level). A client must treat any other value as not ready.",
-    "layers.*.asOf": "The source's own observation time, never a run or write time."
+    "layers.*.asOf": "The source's own observation time, never a run or write time.",
+    "layers.clarity.valueFt": "The lake-wide water clarity in feet: the copy's centralFt (the Water Clarity Brain's clarityFt). Always present when the layer is.",
+    "layers.clarity.lowFt / highFt": "The copy's range around valueFt, in feet, when it carries one that brackets valueFt (lowFt <= valueFt <= highFt); otherwise absent.",
+    "layers.waterTemp.valueF": "The lake-wide surface water temperature in degrees F: the copy's valueF. Always present when the layer is.",
+    "layers.level": "Readiness only (status, asOf); no lake-wide value is served for level."
   },
   "statusValues": ["LIVE", "ESTIMATE"],
-  "readyRule": "A layer is ready when its CUSTOMER-lane copy passes the Engine reader for that copy (#144): schema and lakeId match, status AVAILABLE or ESTIMATE, the request time is not after freshUntil, and the copy carries its value. /lakes/ready also requires, for every layer (level included), that the source time is no more than 10 minutes in the future. level also needs SECTOR_LAKE_LEVEL_OUTPUT=1 and the lake on LakeLevelEligibility.validatedLakeIds.",
-  "layersNotInV1": {
-    "wind": "No per-lake CUSTOMER-lane copy exists (the only wind copy is the global customer/wind/outlookModel, a model choice, not a lake value). Never emitted in v1.",
-    "intelligence": "No CUSTOMER-lane copy exists. Never emitted in v1.",
-    "note": "When a copy is added, the layer appears under the same name with the same {status, asOf} shape: an additive change. Clients should decode layers as a map of optional entries and ignore unknown keys."
-  },
+  "readyRule": "A layer is ready when its CUSTOMER-lane copy passes the Engine reader for that copy (#144): schema and lakeId match, status AVAILABLE or ESTIMATE, the request time is not after freshUntil, and the copy carries its value. /lakes/ready also requires, for every layer (level included), that the source time is no more than 10 minutes in the future. level also needs SECTOR_LAKE_LEVEL_OUTPUT=1 and the lake on LakeLevelEligibility.validatedLakeIds. A layer's value comes from the same copy: a copy without a finite value is not ready (reader reason NO_VALUE), so a value is never shown without its status and asOf.",
   "evolution": "Additive only: new optional keys (new layers, new per-layer fields, new top-level fields) may appear at any time and clients must ignore what they do not know. Nothing listed in fields is removed, renamed, retyped or made null within v1. New status values may appear; clients treat them as not ready.",
   "gates": {
     "SECTOR_LAKES_READY_OUTPUT": "1 routes the endpoint. Unset (the default): no route, 404.",
     "SECTOR_BRAIN_OUTPUT_READER": "rtdb gives the Engine its read-only customer-lane reader. Unset (the default): 200 with lakes: [].",
-    "reads": "One read of customer/lakes per minute at most (the parsed snapshot is cached 60 s; a failed read is not cached); statuses and freshness are evaluated on every request."
+    "reads": "One read of customer/lakes per minute at most (the parsed snapshot is cached 60 s; a failed read is not cached); statuses and freshness are evaluated on every request.",
+    "extent": "The Lake Registry index (default https://storage.googleapis.com/sector-lake-registry/registry/lakes.v1.json, public read; SECTOR_LAKE_REGISTRY_INDEX_URL overrides) is fetched at most once per 30 minutes; a failed fetch is retried after 60 s, the last good index is served meanwhile, and with none extent is absent: never a lake dropped."
+  },
+  "revisions": [
+    {"version": "1.0.0", "date": "2026-11-10", "change": "First version (Sector_Engine #156)."},
+    {"version": "1.1.0", "date": "2026-11-11", "change": "Additive (Sector_Engine #158, iOS_Sector #227): lakes[].directoryId and lakes[].brainKey; lakes[].extent (bbox from the Lake Registry); the lake-wide value on each ready layer (clarity valueFt with optional lowFt/highFt, waterTemp valueF). No field changed meaning; response version stays 1."}
+  ],
+  "layersNotInV1": {
+    "wind": "No per-lake CUSTOMER-lane copy exists (the only wind copy is the global customer/wind/outlookModel, a model choice, not a lake value). Never emitted. Planned shape when a copy exists: {status, asOf, speedMph, fromDeg}, fromDeg = the direction the wind blows FROM, degrees true.",
+    "intelligence": "No CUSTOMER-lane copy exists (the Sector Intelligence publication contract allows lifecycles RESEARCH to CALIBRATION only). Never emitted. Planned shape when a copy exists: {status, asOf, score}.",
+    "note": "When a copy is added, the layer appears under that name as an additive change, with its fields added to this contract. Planned field names are not frozen until then. Clients should decode layers as a map of optional entries and ignore unknown keys."
   }
 }

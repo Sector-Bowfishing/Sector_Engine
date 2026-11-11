@@ -135,7 +135,7 @@ Gaps (each needs the owning Brain, then the owner):
 Registered as `PLACEHOLDER` in `publisher/paths.py` (`CUSTOMER_COPY_FAMILIES`) and the path ownership matrix. Client rules: proposed in
 `platform/security/rtdb.rules.customer-copies.PROPOSED.json` (deny every client, as today), not applied.
 
-## 9. `GET /lakes/ready`: which lakes have Brain data (Sector_Engine #156)
+## 9. `GET /lakes/ready`: which lakes have Brain data (Sector_Engine #156, #158)
 The app's lake picker (iOS_Sector #227) lists only **ready** lakes. The app may not read the Brain database, and `/conditions`
 answers for any coordinate, so the Engine serves the list from the same CUSTOMER-lane copies (`LakesReadyAPI.swift`).
 
@@ -149,15 +149,27 @@ answers for any coordinate, so the Engine serves the list from the same CUSTOMER
 - **Ready rule:** a layer is ready when its reader returns `AVAILABLE` (served as `LIVE`) or `ESTIMATE`; `/lakes/ready` also
   requires every layer's source time (level included, whose own reader has no such bound) to be no more than 10 minutes ahead; a lake is listed when at least one layer is ready. `level` also needs gates 5 and 6 (§3). No reader, no
   copies or a failed read give `200` with `lakes: []`: the app shows "no lakes yet".
+- **Values, ids and extent (#158, contract 1.1.0, additive):** each ready layer carries its lake-wide value from the same copy
+  (`clarity.valueFt` = `centralFt`, with `lowFt`/`highFt` when published; `waterTemp.valueF`); a copy without a finite value is
+  already not ready (`NO_VALUE`), so a value never appears without its status and `asOf`. `level` stays readiness only. Each lake
+  carries `directoryId` (the app's `Name|ST`, equal to `lakeId`) next to `brainKey` (the lossy RTDB key). `extent.bbox` comes from
+  the public Lake Registry index (`registry/lakes.v1.json`, docs/brains/LAKE_REGISTRY_GEOMETRY_CONTRACT.md;
+  `LakeRegistryExtents.swift`): lake geometry identity, not a Brain output, read without a credential, fetched at most every
+  30 min with the snapshot, and given only for a published shoreline at HIGH or MEDIUM confidence whose point is not
+  `identity-risk`. A failed registry read serves the last good index (with none, no `extent`), never drops a lake; an extent never makes a lake ready.
 - **Layers without a copy:** `wind` (its only copy is the global `customer/wind/outlookModel`, a model choice) and `intelligence`
-  (no copy). v1 never emits them; a later copy adds them under the same name and shape (additive).
+  (no copy; its publication contract stops at CALIBRATION). Never emitted; a later per-lake copy adds them as a new layer with
+  its own value fields (additive). Wind's planned value is `speedMph` plus `fromDeg` (the direction it blows FROM).
 - **Shape and contract:** `contracts/phone/lakes-ready-v1.json`, golden `verification/fixtures/phone-contract/lakes-ready-v1.golden.json`
   (synthetic), checked by `LakesReadyAPITests` and `verification/test_lakes_ready_contract.py`.
 
 ```json
 {"version":1,"generatedAt":"2026-11-10T15:30:00Z","lakes":[
-  {"lakeId":"Berlin Lake|OH","name":"Berlin Lake","centroid":{"lat":41.03,"lon":-81.0},
-   "layers":{"clarity":{"status":"LIVE","asOf":"2026-11-10T14:00:00Z"},"level":{"status":"LIVE","asOf":"2026-11-10T15:00:00Z"}}}]}
+  {"lakeId":"Berlin Lake|OH","directoryId":"Berlin Lake|OH","brainKey":"Berlin_Lake_OH","name":"Berlin Lake",
+   "centroid":{"lat":41.03,"lon":-81.0},
+   "extent":{"bbox":{"west":-81.08,"south":40.98,"east":-80.95,"north":41.07},"confidence":"HIGH"},
+   "layers":{"clarity":{"status":"LIVE","asOf":"2026-11-10T14:00:00Z","valueFt":2.0,"lowFt":1.0,"highFt":3.0},
+             "level":{"status":"LIVE","asOf":"2026-11-10T15:00:00Z"}}}]}
 ```
 
 Turning it on needs the owner, in addition to §5: `SECTOR_LAKES_READY_OUTPUT=1` on a deploy, the reader env and its IAM read grant,

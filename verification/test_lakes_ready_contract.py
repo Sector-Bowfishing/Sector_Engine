@@ -1,8 +1,9 @@
-"""Phone contract for GET /lakes/ready (Sector_Engine #156): the golden meets the contract; the validator catches breakage.
+"""Phone contract for GET /lakes/ready (Sector_Engine #156, #158): the golden meets the contract; the validator catches breakage.
 
 The same validator as the /conditions goldens (tools/conditions_golden/capture.py), against contracts/phone/lakes-ready-v1.json.
 The golden is synthetic (Tests/SectorEngineTests/LakesReadyAPITests.swift checks the Engine produces it byte-for-byte in
-value); this repository is public, so it may carry only directory ids, names and centroids, statuses and dates.
+value); this repository is public, so it may carry only directory ids, names and centroids, statuses, dates, and made-up
+layer values and boxes.
 """
 from __future__ import annotations
 
@@ -10,6 +11,7 @@ import copy
 import importlib.util
 import json
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,6 +23,13 @@ CONTRACT_PATH = ROOT / "contracts/phone/lakes-ready-v1.json"
 CONTRACT = json.loads(CONTRACT_PATH.read_text())
 FIELDS = CONTRACT["fields"]
 GOLDEN = json.loads((ROOT / "verification/fixtures/phone-contract/lakes-ready-v1.golden.json").read_text())
+
+sys.path.insert(0, str(ROOT / "jobs/brain_platform"))
+from sector_brain_platform.keys import lake_key  # noqa: E402  (the one lake-key algorithm, as BrainPlatform.lakeKey)
+
+LAYER_KEYS = {"clarity": ({"status", "asOf", "valueFt"}, {"lowFt", "highFt"}),
+              "waterTemp": ({"status", "asOf", "valueF"}, set()),
+              "level": ({"status", "asOf"}, set())}
 
 
 def _directory() -> dict:
@@ -65,16 +74,42 @@ def test_golden_is_synthetic_directory_data_only():
         d = directory[lake["lakeId"]]
         assert lake["name"] == d["name"]
         assert lake["centroid"] == {"lat": d["lat"], "lon": d["lon"]}
+        assert lake["directoryId"] == lake["lakeId"]
+        assert lake["brainKey"] == lake_key(lake["lakeId"])
         assert lake["layers"], "a listed lake has at least one ready layer"
         for name, layer in lake["layers"].items():
-            assert name in {"clarity", "waterTemp", "level"}, name
+            assert name in LAYER_KEYS, name
             assert layer["status"] in statuses and capture.DATE_RE.match(layer["asOf"])
-            assert set(layer) == {"status", "asOf"}
+            required, optional = LAYER_KEYS[name]
+            assert required <= set(layer) <= required | optional, (name, set(layer))
+        if "extent" in lake:
+            b, conf = lake["extent"]["bbox"], lake["extent"]["confidence"]
+            assert conf in {"HIGH", "MEDIUM"}
+            assert -180 <= b["west"] < b["east"] <= 180 and -90 <= b["south"] < b["north"] <= 90
+            assert b["west"] <= d["lon"] <= b["east"] and b["south"] <= d["lat"] <= b["north"], "a box around the lake"
+    assert any("extent" in lake for lake in GOLDEN["lakes"]) and not all("extent" in lake for lake in GOLDEN["lakes"])
 
 
 def test_wind_and_intelligence_are_documented_not_emitted():
     assert set(CONTRACT["layersNotInV1"]) >= {"wind", "intelligence"}
     assert not any(p.startswith(("lakes[].layers.wind", "lakes[].layers.intelligence")) for p in FIELDS)
+
+
+def test_contract_1_1_is_additive_over_1_0():
+    """1.1.0 (#158) only adds: every 1.0.0 path keeps its type and requiredness; the response version stays 1."""
+    v1_0 = {
+        "version": ("int", True), "generatedAt": ("date", True), "lakes": ("array", True), "lakes[].lakeId": ("string", True),
+        "lakes[].name": ("string", True), "lakes[].centroid": ("object", True), "lakes[].centroid.lat": ("number", True),
+        "lakes[].centroid.lon": ("number", True), "lakes[].layers": ("object", True),
+        **{f"lakes[].layers.{n}": ("object", False) for n in ("clarity", "waterTemp", "level")},
+        **{f"lakes[].layers.{n}.status": ("string", True) for n in ("clarity", "waterTemp", "level")},
+        **{f"lakes[].layers.{n}.asOf": ("date", True) for n in ("clarity", "waterTemp", "level")},
+    }
+    for p, (t, req) in v1_0.items():
+        assert (FIELDS[p]["type"], FIELDS[p]["required"]) == (t, req), p
+    # New keys the Engine always sends (directoryId, brainKey, a ready layer's value) are required: adding a response key is
+    # additive for a client that ignores unknown keys.
+    assert CONTRACT["version"] == "1.1.0" and GOLDEN["version"] == 1
 
 
 def test_validator_catches_breaking_changes():
@@ -95,9 +130,18 @@ def test_validator_catches_breaking_changes():
         lake0(lambda l: l.__setitem__("layers", None)),
         lake0(lambda l: l["layers"]["clarity"].pop("asOf")),
         lake0(lambda l: l["layers"]["clarity"].__setitem__("asOf", "2026-11-10T14:00:00.250Z")),
+        lake0(lambda l: l.pop("directoryId")),
+        lake0(lambda l: l.pop("brainKey")),
+        lake0(lambda l: l["layers"]["clarity"].pop("valueFt")),
+        lake0(lambda l: l["layers"]["clarity"].__setitem__("valueFt", "2.0")),
+        lake0(lambda l: l["extent"].pop("bbox")),
+        lake0(lambda l: l["extent"]["bbox"].pop("north")),
+        lake0(lambda l: l["extent"].__setitem__("bbox", [-81.08, 40.98, -80.95, 41.07])),
     ):
         assert capture.validate(doc, FIELDS), "a breaking change passed the validator"
     assert capture.validate(lake0(lambda l: l.__setitem__("layers", {})), FIELDS) == []
+    assert capture.validate(lake0(lambda l: l.pop("extent")), FIELDS) == [], "extent is optional"
+    assert capture.validate(lake0(lambda l: l["layers"]["clarity"].pop("lowFt")), FIELDS) == []
     assert capture.validate(lake0(lambda l: l["layers"].__setitem__("wind", {"status": "LIVE", "asOf": "2026-11-10T14:00:00Z"})), FIELDS) == []
     assert capture.validate({**GOLDEN, "newTopLevel": 1}, FIELDS) == [], "additive fields must be allowed"
 

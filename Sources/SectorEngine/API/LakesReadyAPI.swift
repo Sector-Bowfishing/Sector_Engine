@@ -1,13 +1,14 @@
 //
 //  LakesReadyAPI.swift
-//  Sector — `GET /lakes/ready`: the lakes with real Brain data, for the app's lake picker (Sector_Engine #156, iOS_Sector #227).
+//  Sector — `GET /lakes/ready`: the lakes with real Brain data, for the app's lake picker (Sector_Engine #156, #158;
+//  iOS_Sector #227).
 //
 //  A lake is "ready" when at least one of its CUSTOMER-lane copies is usable right now: status not UNKNOWN and not stale.
 //  The decision is made by the existing per-copy readers (#144: ClarityBrainOutputAPI, WaterTempBrainOutputAPI and
 //  LakeLevelOutputAPI), so the freshness bounds and the status rules are theirs. On top, `/lakes/ready` applies the
 //  readers' 10-minute future-time bound (`BrainCopyRead.past`) to every layer's `asOf`, `level` included. Nothing
-//  here reads a Brain INTERNAL path (`/lakes/*/states`, `/brains/*`); every read goes through `BrainOutputReader` and stays
-//  under `customer/lakes`. Design note: docs/architecture/data/CUSTOMER_BRAIN_OUTPUT_PATH_V1.md §9.
+//  here reads a Brain INTERNAL path (`/lakes/*/states`, `/brains/*`); every Brain read goes through `BrainOutputReader` and
+//  stays under `customer/lakes`. Design note: docs/architecture/data/CUSTOMER_BRAIN_OUTPUT_PATH_V1.md §9.
 //
 //  Read pattern: ONE read of `customer/lakes` (the subtree that holds every per-lake copy), then each lake's copies are
 //  evaluated by the readers against that in-memory snapshot. Reading each directory lake's three copies would be ~1,900
@@ -15,16 +16,22 @@
 //  The snapshot reader serves only `customer/lakes/{k}/{clarity|waterTemp|level}` and refuses any other path. The server
 //  keeps the parsed snapshot for 60 s (`LakesReadySnapshotCache`); a failed read is not kept.
 //
+//  Per lake (#158): `directoryId` (the app's "Name|ST", equal to `lakeId`) next to `brainKey` (the RTDB lake key); each
+//  ready layer's lake-wide value from the same copy that made it ready (clarity `valueFt`, water temp `valueF`); and
+//  `extent.bbox` from the Lake Registry index (LakeRegistryExtents.swift: public, versioned lake geometry identity, not a
+//  Brain output), present only for a registry entry with a published shoreline at HIGH or MEDIUM confidence.
+//
 //  Gates (all default OFF / fail closed):
 //    - `SECTOR_LAKES_READY_OUTPUT=1` routes the endpoint. Unset: the server registers no route (404, like `/lake/level`).
 //    - `SECTOR_BRAIN_OUTPUT_READER` picks the reader (BrainOutputReaderConfig). Unset: no reader → `200` with no lakes.
 //    - A failed or refused read of the subtree → `200` with no lakes (the app shows "no lakes yet").
+//    - A failed registry read → the last good index is served; with none, the lakes are listed without `extent`.
 //    - The `level` layer also needs the Lake level gates: `SECTOR_LAKE_LEVEL_OUTPUT=1` and the lake on `validatedLakeIds`.
 //
 //  Layers: `clarity`, `waterTemp` and `level` have CUSTOMER-lane copies. `wind` and `intelligence` have none per lake today
 //  (wind's only copy is the global `customer/wind/outlookModel`, a model choice, not a lake value; Intelligence has no
-//  copy), so v1 never emits them. A layer is present only when it is ready; an absent layer means "not yet for this lake".
-//  Contract: contracts/phone/lakes-ready-v1.json.
+//  copy), so they are never emitted. A layer is present only when it is ready; an absent layer means "not yet for this lake".
+//  Contract: contracts/phone/lakes-ready-v1.json (1.1.0: additive).
 //
 
 import Foundation
@@ -44,9 +51,25 @@ public struct LakesReadyResponse: Codable, Equatable, Sendable {
 public struct ReadyLake: Codable, Equatable, Sendable {
     /// The lake directory id ("Name|ST"), the same `id` `GET /lakes` serves.
     public let lakeId: String
+    /// The app's directory id ("Name|ST", as `LakeDirectory` and My Lakes use it). Always equal to `lakeId` (#158).
+    public let directoryId: String
+    /// The Brain RTDB lake key (`BrainPlatform.lakeKey`, "Guntersville_AL"). Lossy: match lakes on `directoryId`, never on this.
+    public let brainKey: String
     public let name: String
     public let centroid: ReadyLakeCentroid
+    /// The lake's extent from the Lake Registry. Absent when the registry has no usable shoreline for it or could not be read.
+    public let extent: ReadyLakeExtent?
     public let layers: ReadyLakeLayers
+
+    public init(lakeId: String, name: String, centroid: ReadyLakeCentroid, extent: ReadyLakeExtent?, layers: ReadyLakeLayers) {
+        self.lakeId = lakeId
+        self.directoryId = lakeId
+        self.brainKey = BrainPlatform.lakeKey(lakeId)
+        self.name = name
+        self.centroid = centroid
+        self.extent = extent
+        self.layers = layers
+    }
 }
 
 /// The directory coordinate (`GET /lakes` `lat`/`lon`).
@@ -55,13 +78,31 @@ public struct ReadyLakeCentroid: Codable, Equatable, Sendable {
     public let lon: Double
 }
 
-/// Each key is present only when that layer is ready. v1 never emits `wind` or `intelligence` (no per-lake copy exists).
+/// Each key is present only when that layer is ready. `wind` and `intelligence` are never emitted (no per-lake copy exists).
 public struct ReadyLakeLayers: Codable, Equatable, Sendable {
-    public let clarity: ReadyLayer?
-    public let waterTemp: ReadyLayer?
+    public let clarity: ReadyClarityLayer?
+    public let waterTemp: ReadyWaterTempLayer?
     public let level: ReadyLayer?
 
     public var isEmpty: Bool { clarity == nil && waterTemp == nil && level == nil }
+}
+
+/// The clarity layer: the copy's lake-wide clarity in feet (the Brain's clarityFt), with its range when the copy carries one that brackets it.
+public struct ReadyClarityLayer: Codable, Equatable, Sendable {
+    public let status: String
+    public let asOf: String
+    /// The copy's `centralFt`: the lake-wide value.
+    public let valueFt: Double
+    public let lowFt: Double?
+    public let highFt: Double?
+}
+
+/// The water temp layer: the copy's lake-wide surface temperature, °F.
+public struct ReadyWaterTempLayer: Codable, Equatable, Sendable {
+    public let status: String
+    public let asOf: String
+    /// The copy's `valueF`.
+    public let valueF: Double
 }
 
 public struct ReadyLayer: Codable, Equatable, Sendable {
@@ -93,21 +134,26 @@ public enum LakesReadyAPI {
 
     /// The response, or nil when the endpoint is switched off (the server then has no route: 404).
     public static func response(config: LakesReadyConfig, reader: BrainOutputReader?,
+                                extents: [String: ReadyLakeExtent] = [:],
                                 levelEligibility: LakeLevelEligibility = .fromEnvironment(),
                                 now: Date = Date()) async -> LakesReadyResponse? {
         guard config.enabled else { return nil }
         var snapshot: CustomerLakesSnapshot?
         if let reader { snapshot = try? await fetchSnapshot(reader) }
-        return await response(snapshot: snapshot, levelEligibility: levelEligibility, now: now)
+        return await response(snapshot: snapshot, extents: extents, levelEligibility: levelEligibility, now: now)
     }
 
-    /// The server's form: the snapshot comes from the cache (nil cache = no reader). nil when switched off.
+    /// The server's form: the snapshot comes from the cache (nil cache = no reader), the extents from the registry cache
+    /// (nil = no extents). Both are fetched at the same time. nil when switched off.
     public static func response(config: LakesReadyConfig, cache: LakesReadySnapshotCache?,
+                                extents: LakeRegistryExtentCache? = nil,
                                 levelEligibility: LakeLevelEligibility = .fromEnvironment(),
                                 now: Date = Date()) async -> LakesReadyResponse? {
         guard config.enabled else { return nil }
-        let snapshot = await cache?.snapshot()
-        return await response(snapshot: snapshot, levelEligibility: levelEligibility, now: now)
+        async let snapshot = cache?.snapshot()
+        async let byLake = extents?.extents()
+        let (s, e) = await (snapshot, byLake)
+        return await response(snapshot: s, extents: e ?? [:], levelEligibility: levelEligibility, now: now)
     }
 
     /// One read of `customer/lakes`. Throws when the read fails; nil when the subtree is absent or not an object.
@@ -116,8 +162,8 @@ public enum LakesReadyAPI {
         return CustomerLakesSnapshot(subtree: data)
     }
 
-    static func response(snapshot: CustomerLakesSnapshot?, levelEligibility: LakeLevelEligibility,
-                         now: Date) async -> LakesReadyResponse {
+    static func response(snapshot: CustomerLakesSnapshot?, extents: [String: ReadyLakeExtent],
+                         levelEligibility: LakeLevelEligibility, now: Date) async -> LakesReadyResponse {
         let generatedAt = iso(now)
         guard let snapshot else {
             return LakesReadyResponse(version: LakesReadyResponse.currentVersion, generatedAt: generatedAt, lakes: [])
@@ -130,23 +176,33 @@ public enum LakesReadyAPI {
             for lake in directoryByKey[key] ?? [] {
                 let layers = await layers(lakeId: lake.id, reader: snapshot, levelEligibility: levelEligibility, now: now)
                 guard !layers.isEmpty else { continue }
-                lakes.append(ReadyLake(lakeId: lake.id, name: lake.name,
-                                       centroid: ReadyLakeCentroid(lat: lake.lat, lon: lake.lon), layers: layers))
+                lakes.append(ReadyLake(lakeId: lake.id, name: lake.name, centroid: ReadyLakeCentroid(lat: lake.lat, lon: lake.lon),
+                                       extent: extents[lake.id], layers: layers))
             }
         }
         lakes.sort { $0.lakeId < $1.lakeId }
         return LakesReadyResponse(version: LakesReadyResponse.currentVersion, generatedAt: generatedAt, lakes: lakes)
     }
 
-    /// One lake's ready layers, each decided by its own #144 reader.
+    /// One lake's ready layers, each decided by its own #144 reader. A layer's value comes from the same copy; the readers
+    /// already refuse a copy without a finite value (`NO_VALUE`), so a ready clarity or water temp layer always has one.
     static func layers(lakeId: String, reader: BrainOutputReader, levelEligibility: LakeLevelEligibility,
                        now: Date) async -> ReadyLakeLayers {
         let c = await ClarityBrainOutputAPI.output(lakeId: lakeId, reader: reader, now: now)
         let t = await WaterTempBrainOutputAPI.output(lakeId: lakeId, reader: reader, now: now)
         let l = await LakeLevelOutputAPI.output(lakeId: lakeId, eligibility: levelEligibility, reader: reader, now: now)
-        return ReadyLakeLayers(clarity: layer(c.status, c.observedAt, now: now),
-                               waterTemp: layer(t.status, t.observedAt, now: now),
-                               level: layer(l.status, l.observationTime, now: now))
+        var clarity: ReadyClarityLayer?
+        if let r = layer(c.status, c.observedAt, now: now), let v = BrainCopyRead.finite(c.centralFt) {
+            // The range is served only when it brackets the value (low <= value <= high); a bound on the wrong side drops both.
+            var low = BrainCopyRead.finite(c.lowFt), high = BrainCopyRead.finite(c.highFt)
+            if (low.map { $0 > v } ?? false) || (high.map { $0 < v } ?? false) { low = nil; high = nil }
+            clarity = ReadyClarityLayer(status: r.status, asOf: r.asOf, valueFt: v, lowFt: low, highFt: high)
+        }
+        var waterTemp: ReadyWaterTempLayer?
+        if let r = layer(t.status, t.observedAt, now: now), let v = BrainCopyRead.finite(t.valueF) {
+            waterTemp = ReadyWaterTempLayer(status: r.status, asOf: r.asOf, valueF: v)
+        }
+        return ReadyLakeLayers(clarity: clarity, waterTemp: waterTemp, level: layer(l.status, l.observationTime, now: now))
     }
 
     /// AVAILABLE → LIVE, ESTIMATE → ESTIMATE, anything else (UNKNOWN) → not ready. A time that does not parse, or lies more
