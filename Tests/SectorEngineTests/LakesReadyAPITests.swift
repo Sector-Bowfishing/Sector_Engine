@@ -3,7 +3,9 @@
 //  SectorEngineTests
 //
 //  Sector_Engine #156: `GET /lakes/ready` lists the lakes with a usable CUSTOMER-lane copy. Flag off by default; no reader
-//  means an empty list; statuses and freshness come from the #144 readers; reads never leave `customer/lakes`. The golden
+//  means an empty list; statuses and freshness come from the #144 readers; reads never leave `customer/lakes`.
+//  #158: each lake also carries `directoryId` and `brainKey`, each ready layer its lake-wide value from the same copy, and
+//  `extent.bbox` from the Lake Registry index (synthetic index below; only usable entries give an extent). The golden
 //  response (verification/fixtures/phone-contract/lakes-ready-v1.golden.json) is synthetic and checked against
 //  contracts/phone/lakes-ready-v1.json here and in verification/test_lakes_ready_contract.py.
 //
@@ -36,15 +38,18 @@ final class LakesReadyAPITests: XCTestCase {
     static let levelOn = LakeLevelEligibility(enabled: true, eligibleLakeIds: LakeLevelEligibility.validatedLakeIds)
     static let levelOff = LakeLevelEligibility(enabled: false, eligibleLakeIds: LakeLevelEligibility.validatedLakeIds)
 
-    static func clarity(_ lakeId: String, status: String, observedAt: String, freshUntil: String) -> String {
-        """
-        {"schema":"sector-customer-clarity-v1","lakeId":"\(lakeId)","status":"\(status)","centralFt":2.0,"lowFt":1.0,"highFt":3.0,
+    static func clarity(_ lakeId: String, status: String, observedAt: String, freshUntil: String,
+                        centralFt: String = "2.0", range: Bool = true) -> String {
+        let r = range ? #","lowFt":1.0,"highFt":3.0"# : ""
+        return """
+        {"schema":"sector-customer-clarity-v1","lakeId":"\(lakeId)","status":"\(status)","centralFt":\(centralFt)\(r),
          "confidence":"medium","observedAt":"\(observedAt)","freshUntil":"\(freshUntil)","runner":"pulse","publishId":"p-1"}
         """
     }
-    static func waterTemp(_ lakeId: String, status: String, kind: String, observedAt: String, freshUntil: String) -> String {
+    static func waterTemp(_ lakeId: String, status: String, kind: String, observedAt: String, freshUntil: String,
+                          valueF: String = "60.0") -> String {
         """
-        {"schema":"sector-customer-water-temp-v1","lakeId":"\(lakeId)","status":"\(status)","valueF":60.0,"kind":"\(kind)",
+        {"schema":"sector-customer-water-temp-v1","lakeId":"\(lakeId)","status":"\(status)","valueF":\(valueF),"kind":"\(kind)",
          "observedAt":"\(observedAt)","freshUntil":"\(freshUntil)","runner":"cloud","publishId":"p-1"}
         """
     }
@@ -70,11 +75,13 @@ final class LakesReadyAPITests: XCTestCase {
           },
           "\(BrainPlatform.lakeKey(canyon))": {
             "clarity": \(clarity(canyon, status: "AVAILABLE", observedAt: "2026-11-08T12:00:00Z", freshUntil: "2026-11-09T12:00:00Z")),
-            "waterTemp": \(waterTemp(canyon, status: "ESTIMATE", kind: "modeled", observedAt: "2026-11-10T12:00:00Z", freshUntil: "2026-11-10T18:00:00Z")),
+            "waterTemp": \(waterTemp(canyon, status: "ESTIMATE", kind: "modeled", observedAt: "2026-11-10T12:00:00Z", freshUntil: "2026-11-10T18:00:00Z",
+                                    valueF: "58.4")),
             "level": \(level(canyon, status: "ESTIMATE", observationTime: "2026-11-10T13:00:00Z", freshUntil: "2026-11-11T01:00:00Z", trend: "RISING"))
           },
           "\(BrainPlatform.lakeKey(flathead))": {
-            "clarity": \(clarity(flathead, status: "ESTIMATE", observedAt: "2026-11-10T06:00:00Z", freshUntil: "2026-11-11T06:00:00Z"))
+            "clarity": \(clarity(flathead, status: "ESTIMATE", observedAt: "2026-11-10T06:00:00Z", freshUntil: "2026-11-11T06:00:00Z",
+                                  centralFt: "18.5", range: false))
           },
           "\(BrainPlatform.lakeKey(gunters))": {
             "clarity": \(clarity(gunters, status: "AVAILABLE", observedAt: "2026-11-09T06:00:00Z", freshUntil: "2026-11-10T06:00:00Z")),
@@ -91,14 +98,35 @@ final class LakesReadyAPITests: XCTestCase {
         """
     }()
 
+    /// A synthetic Lake Registry index (docs/brains/LAKE_REGISTRY_GEOMETRY_CONTRACT.md §2 shape, made-up boxes): Berlin HIGH and
+    /// Flathead MEDIUM give an extent; Canyon is LOW; Guntersville is flagged identity-risk; the others fail one check each.
+    static let registryIndex = """
+    {"schema":"sector.lake-registry/v1","geometryVersion":"v1","count":7,"lakes":[
+     {"lakeId":"Berlin Lake|OH","lakeKey":"Berlin_Lake_OH","bbox":[-81.08,40.98,-80.95,41.07],"geometry":{"source":"usgs-nhd-hr"},
+      "geometryConfidence":{"level":"HIGH","score":0.92,"reasons":[]},"pointFlag":"ok"},
+     {"lakeId":"Canyon Lake|TX","bbox":[-98.33,29.84,-98.2,29.91],"geometry":{"source":"usgs-nhd-hr"},
+      "geometryConfidence":{"level":"LOW","score":0.4,"reasons":["pool-area ratio"]},"pointFlag":"ok"},
+     {"lakeId":"Flathead Lake|MT","bbox":[-114.35,47.68,-113.95,48.12],"geometry":{"source":"usgs-nhd-hr"},
+      "geometryConfidence":{"level":"MEDIUM","score":0.75,"reasons":["x"]},"location":{"pointFlag":"off-water"}},
+     {"lakeId":"Guntersville|AL","bbox":[-86.4,34.28,-85.62,35.04],"geometry":{"source":"usgs-nhd-hr"},
+      "geometryConfidence":{"level":"HIGH","score":0.96,"reasons":[]},"pointFlag":"identity-risk"},
+     {"lakeId":"Lake Erie|OH","bbox":null,"geometry":null,"geometryConfidence":{"level":"MISSING"}},
+     {"lakeId":"Lake Martin|AL","bbox":[-85.8,32.9,-85.9,32.6],"geometry":{"source":"usgs-nhd-hr"},
+      "geometryConfidence":{"level":"HIGH"}},
+     {"lakeId":"Lake Lanier|GA","bbox":[-84.1,34.1,-83.8],"geometry":{"source":"usgs-nhd-hr"},"geometryConfidence":{"level":"HIGH"}},
+     "junk"
+    ]}
+    """
+    static let extents: [String: ReadyLakeExtent] = LakeRegistryExtents.parse(Data(registryIndex.utf8))!
+
     static func goldenURL() -> URL {
         PhoneContractTests.root.appendingPathComponent("verification/fixtures/phone-contract/lakes-ready-v1.golden.json")
     }
     static let contractFile = "contracts/phone/lakes-ready-v1.json"
 
-    func run(_ reader: BrainOutputReader?, config: LakesReadyConfig = on, level: LakeLevelEligibility = levelOn) async
-        -> LakesReadyResponse? {
-        await LakesReadyAPI.response(config: config, reader: reader, levelEligibility: level, now: Self.now)
+    func run(_ reader: BrainOutputReader?, config: LakesReadyConfig = on, level: LakeLevelEligibility = levelOn,
+             extents: [String: ReadyLakeExtent] = LakesReadyAPITests.extents) async -> LakesReadyResponse? {
+        await LakesReadyAPI.response(config: config, reader: reader, extents: extents, levelEligibility: level, now: Self.now)
     }
 
     // MARK: flag
@@ -149,16 +177,18 @@ final class LakesReadyAPITests: XCTestCase {
         let berlin = out.lakes[0]
         XCTAssertEqual(berlin.name, "Berlin Lake")
         XCTAssertEqual(berlin.centroid, ReadyLakeCentroid(lat: 41.03, lon: -81.0))
-        XCTAssertEqual(berlin.layers.clarity, ReadyLayer(status: "LIVE", asOf: "2026-11-10T14:00:00Z"), "fractional seconds dropped")
+        XCTAssertEqual(berlin.layers.clarity, ReadyClarityLayer(status: "LIVE", asOf: "2026-11-10T14:00:00Z", valueFt: 2.0,
+                                                                lowFt: 1.0, highFt: 3.0), "fractional seconds dropped")
         XCTAssertNil(berlin.layers.waterTemp, "UNKNOWN is not ready")
         XCTAssertEqual(berlin.layers.level, ReadyLayer(status: "LIVE", asOf: "2026-11-10T15:00:00Z"))
 
         let canyon = out.lakes[1]
         XCTAssertNil(canyon.layers.clarity, "stale is not ready")
-        XCTAssertEqual(canyon.layers.waterTemp, ReadyLayer(status: "ESTIMATE", asOf: "2026-11-10T12:00:00Z"))
+        XCTAssertEqual(canyon.layers.waterTemp, ReadyWaterTempLayer(status: "ESTIMATE", asOf: "2026-11-10T12:00:00Z", valueF: 58.4))
         XCTAssertEqual(canyon.layers.level, ReadyLayer(status: "ESTIMATE", asOf: "2026-11-10T13:00:00Z"))
 
-        XCTAssertEqual(out.lakes[2].layers, ReadyLakeLayers(clarity: ReadyLayer(status: "ESTIMATE", asOf: "2026-11-10T06:00:00Z"),
+        XCTAssertEqual(out.lakes[2].layers, ReadyLakeLayers(clarity: ReadyClarityLayer(status: "ESTIMATE", asOf: "2026-11-10T06:00:00Z",
+                                                                                       valueFt: 18.5, lowFt: nil, highFt: nil),
                                                             waterTemp: nil, level: nil))
         // Guntersville: stale clarity, UNKNOWN temp, and a fresh level that is not on the validated list → not listed.
         // Lake Martin: a time 90 min in the future → not listed. Not_A_Lake_XX: not in the directory → not listed.
@@ -236,6 +266,133 @@ final class LakesReadyAPITests: XCTestCase {
         let out = try XCTUnwrap(got)
         XCTAssertEqual(out.lakes.count, 3)
         XCTAssertEqual(seen.list, ["\(BrainPlatform.databaseURL)/customer/lakes.json"])
+    }
+
+    // MARK: #158: ids, values, extent
+
+    func testDirectoryIdAndBrainKeySitNextToEachOther() async throws {
+        let got = await run(Recording(["customer/lakes": Self.subtree]))
+
+        let out = try XCTUnwrap(got)
+        for lake in out.lakes {
+            XCTAssertEqual(lake.directoryId, lake.lakeId, "directoryId is the app's Name|ST id")
+            XCTAssertEqual(lake.brainKey, BrainPlatform.lakeKey(lake.lakeId))
+        }
+        XCTAssertEqual(out.lakes[0].directoryId, "Berlin Lake|OH")
+        XCTAssertEqual(out.lakes[0].brainKey, "Berlin_Lake_OH")
+    }
+
+    func testAValueIsNeverPublishedWithoutItsLayer() async throws {
+        // A copy with no finite value is refused by its reader (NO_VALUE): no layer, so no value either.
+        let k = BrainPlatform.lakeKey("Flathead Lake|MT")
+        let tree = """
+        {"\(k)": {"clarity": \(Self.clarity("Flathead Lake|MT", status: "AVAILABLE", observedAt: "2026-11-10T14:00:00Z",
+                                                 freshUntil: "2026-11-10T20:00:00Z", centralFt: "null")),
+                  "waterTemp": \(Self.waterTemp("Flathead Lake|MT", status: "AVAILABLE", kind: "measured",
+                                                  observedAt: "2026-11-10T14:00:00Z", freshUntil: "2026-11-10T20:00:00Z", valueF: "null"))}}
+        """
+        let got = await run(Recording(["customer/lakes": tree]))
+        XCTAssertEqual(try XCTUnwrap(got).lakes, [])
+    }
+
+    func testRegistryEntriesGiveAnExtentOnlyWhenEveryCheckPasses() {
+        let e = Self.extents
+        XCTAssertEqual(Set(e.keys), ["Berlin Lake|OH", "Flathead Lake|MT"])
+        XCTAssertEqual(e["Berlin Lake|OH"], ReadyLakeExtent(bbox: ReadyLakeBBox(west: -81.08, south: 40.98, east: -80.95, north: 41.07),
+                                                             confidence: "HIGH"))
+        XCTAssertEqual(e["Flathead Lake|MT"]?.confidence, "MEDIUM")
+        XCTAssertNil(LakeRegistryExtents.parse(Data("{}".utf8)), "not the index")
+        XCTAssertNil(LakeRegistryExtents.parse(Data(#"{"schema":"sector.lake-registry/v2","lakes":[]}"#.utf8)), "another schema")
+        XCTAssertNil(LakeRegistryExtents.parse(Data("not json".utf8)))
+    }
+
+    func testListedLakesCarryTheirExtentAndOthersDoNot() async throws {
+        let got = await run(Recording(["customer/lakes": Self.subtree]))
+
+        let out = try XCTUnwrap(got)
+        XCTAssertEqual(out.lakes.map { $0.extent?.confidence }, ["HIGH", nil, "MEDIUM"], "Canyon's registry entry is LOW")
+        let none = await run(Recording(["customer/lakes": Self.subtree]), extents: [:])
+        XCTAssertEqual(try XCTUnwrap(none).lakes.map(\.lakeId), out.lakes.map(\.lakeId), "no extents never means no lakes")
+        XCTAssertTrue(try XCTUnwrap(none).lakes.allSatisfy { $0.extent == nil })
+    }
+
+    func testAnExtentNeverMakesALakeReady() async throws {
+        // Every registry lake has an extent, but with no copies nothing is listed.
+        let got = await run(Recording([:]))
+        XCTAssertEqual(try XCTUnwrap(got).lakes, [])
+    }
+
+    final class Fetches: @unchecked Sendable {
+        private let lock = NSLock()
+        private var _urls: [String] = []
+        private var _fail = false
+        var urls: [String] { lock.lock(); defer { lock.unlock() }; return _urls }
+        func setFail(_ v: Bool) { lock.lock(); _fail = v; lock.unlock() }
+        func next(_ url: URL) throws -> Data {
+            lock.lock(); defer { lock.unlock() }
+            _urls.append(url.absoluteString)
+            if _fail { throw ReadError() }
+            return Data(LakesReadyAPITests.registryIndex.utf8)
+        }
+    }
+
+    func testExtentCacheFetchesOncePerTTLAndKeepsAFailureBriefly() async throws {
+        let clock = Clock()
+        let f = Fetches()
+        f.setFail(true)
+        let url = URL(string: "https://example.invalid/registry/lakes.v1.json")!
+        let cache = LakeRegistryExtentCache(url: url, ttl: 1800, failureTTL: 60, fetch: { try f.next($0) }, clock: { clock.t })
+        let failed = await cache.extents()
+        XCTAssertEqual(failed, [:])
+        f.setFail(false)
+        clock.t = clock.t.addingTimeInterval(30)
+        _ = await cache.extents()
+        XCTAssertEqual(f.urls.count, 1, "inside the failure TTL no new fetch")
+        clock.t = clock.t.addingTimeInterval(31)
+        let ok = await cache.extents()
+        XCTAssertEqual(ok, Self.extents)
+        XCTAssertEqual(f.urls, [url.absoluteString, url.absoluteString])
+        clock.t = clock.t.addingTimeInterval(1799)
+        _ = await cache.extents()
+        XCTAssertEqual(f.urls.count, 2, "inside the TTL no new fetch")
+        clock.t = clock.t.addingTimeInterval(2)
+        _ = await cache.extents()
+        XCTAssertEqual(f.urls.count, 3)
+    }
+
+    func testANonIndexDocumentIsAFailure() async {
+        let clock = Clock()
+        let cache = LakeRegistryExtentCache(url: URL(string: "https://example.invalid/x")!, fetch: { _ in Data("<html>".utf8) },
+                                            clock: { clock.t })
+        let got = await cache.extents()
+        XCTAssertEqual(got, [:])
+    }
+
+    func testServerFormJoinsTheSnapshotAndTheExtents() async throws {
+        let base = Recording(["customer/lakes": Self.subtree])
+        let snapshots = LakesReadySnapshotCache(reader: base)
+        let extents = LakeRegistryExtentCache(url: URL(string: "https://example.invalid/x")!,
+                                              fetch: { _ in Data(LakesReadyAPITests.registryIndex.utf8) })
+        let got = await LakesReadyAPI.response(config: Self.on, cache: snapshots, extents: extents, levelEligibility: Self.levelOn,
+                                               now: Self.now)
+        let direct = await run(Recording(["customer/lakes": Self.subtree]))
+        XCTAssertEqual(got, direct)
+        XCTAssertEqual(base.paths, ["customer/lakes"])
+    }
+
+    func testFlagOffFetchesNoRegistry() async {
+        let f = Fetches()
+        let extents = LakeRegistryExtentCache(url: URL(string: "https://example.invalid/x")!, fetch: { try f.next($0) })
+        let out = await LakesReadyAPI.response(config: LakesReadyConfig(enabled: false), cache: nil, extents: extents, now: Self.now)
+        XCTAssertNil(out)
+        XCTAssertEqual(f.urls, [])
+    }
+
+    func testRegistryURLDefaultsToThePublicIndex() {
+        XCTAssertEqual(LakeRegistryExtents.indexURL([:])?.absoluteString,
+                       "https://storage.googleapis.com/sector-lake-registry/registry/lakes.v1.json")
+        XCTAssertEqual(LakeRegistryExtents.indexURL([LakeRegistryExtents.envKey: "file:///tmp/lakes.v1.json"])?.absoluteString,
+                       "file:///tmp/lakes.v1.json")
     }
 
     // MARK: cache
@@ -410,6 +567,16 @@ final class LakesReadyAPITests: XCTestCase {
         XCTAssertFalse(PhoneContractTests.validate(lake0 { $0.removeValue(forKey: "centroid") }, fields).isEmpty)
         XCTAssertFalse(PhoneContractTests.validate(lake0 { $0["centroid"] = ["lat": 1.0] }, fields).isEmpty)
         XCTAssertFalse(PhoneContractTests.validate(lake0 { $0["layers"] = ["clarity": ["status": "LIVE"]] }, fields).isEmpty)
+        XCTAssertFalse(PhoneContractTests.validate(lake0 { $0.removeValue(forKey: "directoryId") }, fields).isEmpty)
+        XCTAssertFalse(PhoneContractTests.validate(lake0 { $0.removeValue(forKey: "brainKey") }, fields).isEmpty)
+        XCTAssertFalse(PhoneContractTests.validate(lake0 {
+            $0["layers"] = ["clarity": ["status": "LIVE", "asOf": "2026-11-10T14:00:00Z"]]
+        }, fields).isEmpty, "a ready clarity layer carries its value")
+        XCTAssertFalse(PhoneContractTests.validate(lake0 { $0["extent"] = ["confidence": "HIGH"] }, fields).isEmpty)
+        XCTAssertFalse(PhoneContractTests.validate(lake0 {
+            $0["extent"] = ["confidence": "HIGH", "bbox": ["west": -81.0, "south": 40.9, "east": -80.9]] as [String: Any]
+        }, fields).isEmpty)
+        XCTAssertTrue(PhoneContractTests.validate(lake0 { $0.removeValue(forKey: "extent") }, fields).isEmpty, "extent is optional")
         XCTAssertTrue(PhoneContractTests.validate(lake0 { $0["layers"] = [String: Any]() }, fields).isEmpty, "every layer is optional")
         XCTAssertTrue(PhoneContractTests.validate(lake0 { $0["newField"] = 1 }, fields).isEmpty, "additive field must be allowed")
     }

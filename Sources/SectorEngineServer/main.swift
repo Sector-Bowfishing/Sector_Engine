@@ -168,7 +168,7 @@ if lakeLevelEligibility.enabled {
     }
 }
 
-// The lakes with real Brain data, for the app's lake picker (LakesReadyAPI, Sector_Engine #156).
+// The lakes with real Brain data, for the app's lake picker (LakesReadyAPI, Sector_Engine #156, #158).
 // Routed only where SECTOR_LAKES_READY_OUTPUT=1, so a deploy with the flag off
 // exposes no new endpoint (404, as /lake/level). Even then it fails closed: it
 // reads only the Publisher's CUSTOMER-lane copies through the configured reader
@@ -178,8 +178,10 @@ let lakesReadyConfig = LakesReadyConfig.fromEnvironment()
 if lakesReadyConfig.enabled {
     // The whole customer/lakes subtree in one read: a longer bound than one small copy's.
     let cache = BrainOutputReaderConfig.reader(timeoutSeconds: 5).map { LakesReadySnapshotCache(reader: $0, ttl: 60) }
+    // Each lake's bbox from the public Lake Registry index (#158): lake geometry identity, not a Brain output; no credential.
+    let extents = LakeRegistryExtents.indexURL().map { LakeRegistryExtentCache(url: $0) }
     router.get("lakes/ready") { _, _ -> Response in
-        guard let body = await LakesReadyAPI.response(config: lakesReadyConfig, cache: cache,
+        guard let body = await LakesReadyAPI.response(config: lakesReadyConfig, cache: cache, extents: extents,
                                                       levelEligibility: lakeLevelEligibility) else {
             return Response(status: .notFound)
         }
