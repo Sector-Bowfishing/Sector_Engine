@@ -70,8 +70,9 @@ func jsonResponse<T: Encodable>(_ value: T) -> Response {
 // cache read for pull-to-refresh.
 router.get("conditions") { request, _ -> Response in
     guard let lat = request.uri.queryParameters.get("lat").flatMap({ Double(String($0)) }),
-          let lon = request.uri.queryParameters.get("lon").flatMap({ Double(String($0)) }) else {
-        return Response(status: .badRequest)
+          let lon = request.uri.queryParameters.get("lon").flatMap({ Double(String($0)) }),
+          CoordinateRange.isValid(lat: lat, lon: lon) else {
+        return Response(status: .badRequest)   // missing, unparseable or out-of-range coordinate
     }
     let fresh = request.uri.queryParameters.get("fresh").map { $0 == "1" || $0 == "true" } ?? false
     let started = ContinuousClock.now
@@ -106,8 +107,9 @@ struct BatchResult: Encodable { let results: [BatchScore] }
 router.post("conditions/batch") { request, _ -> Response in
     var body = try await request.body.collect(upTo: 64 * 1024)
     let data = body.readData(length: body.readableBytes) ?? Data()
-    guard let req = try? JSONDecoder().decode(BatchRequest.self, from: data), !req.points.isEmpty else {
-        return Response(status: .badRequest)
+    guard let req = try? JSONDecoder().decode(BatchRequest.self, from: data), !req.points.isEmpty,
+          req.points.allSatisfy({ CoordinateRange.isValid(lat: $0.lat, lon: $0.lon) }) else {
+        return Response(status: .badRequest)   // any out-of-range point rejects the whole batch
     }
     let points = req.points.prefix(50).map { (lat: $0.lat, lon: $0.lon) }   // cap the list
     let started = ContinuousClock.now
