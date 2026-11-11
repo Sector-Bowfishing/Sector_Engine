@@ -101,7 +101,7 @@ final class LakesReadyAPITests: XCTestCase {
     /// A synthetic Lake Registry index (docs/brains/LAKE_REGISTRY_GEOMETRY_CONTRACT.md §2 shape, made-up boxes): Berlin HIGH and
     /// Flathead MEDIUM give an extent; Canyon is LOW; Guntersville is flagged identity-risk; the others fail one check each.
     static let registryIndex = """
-    {"schema":"sector.lake-registry/v1","geometryVersion":"v1","count":7,"lakes":[
+    {"schema":"sector.lake-registry/v1","geometryVersion":"v1","count":8,"lakes":[
      {"lakeId":"Berlin Lake|OH","lakeKey":"Berlin_Lake_OH","bbox":[-81.08,40.98,-80.95,41.07],"geometry":{"source":"usgs-nhd-hr"},
       "geometryConfidence":{"level":"HIGH","score":0.92,"reasons":[]},"pointFlag":"ok"},
      {"lakeId":"Canyon Lake|TX","bbox":[-98.33,29.84,-98.2,29.91],"geometry":{"source":"usgs-nhd-hr"},
@@ -356,8 +356,34 @@ final class LakesReadyAPITests: XCTestCase {
         _ = await cache.extents()
         XCTAssertEqual(f.urls.count, 2, "inside the TTL no new fetch")
         clock.t = clock.t.addingTimeInterval(2)
-        _ = await cache.extents()
+        f.setFail(true)
+        let kept = await cache.extents()
         XCTAssertEqual(f.urls.count, 3)
+        XCTAssertEqual(kept, Self.extents, "a failed refresh keeps serving the last good index")
+        clock.t = clock.t.addingTimeInterval(30)
+        _ = await cache.extents()
+        XCTAssertEqual(f.urls.count, 3, "inside the failure TTL no new fetch")
+    }
+
+    func testAFileURLIsReadFromDisk() async throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("lakes-ready-registry-\(UUID().uuidString).json")
+        try Data(Self.registryIndex.utf8).write(to: url)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let got = await LakeRegistryExtentCache(url: url).extents()
+        XCTAssertEqual(got, Self.extents)
+    }
+
+    func testAClarityRangeIsServedOnlyWhenItBracketsTheValue() async throws {
+        let k = BrainPlatform.lakeKey("Flathead Lake|MT")
+        let copy = """
+        {"schema":"sector-customer-clarity-v1","lakeId":"Flathead Lake|MT","status":"AVAILABLE","centralFt":5.0,"lowFt":6.0,
+         "highFt":9.0,"observedAt":"2026-11-10T14:00:00Z","freshUntil":"2026-11-10T20:00:00Z","runner":"pulse","publishId":"p-1"}
+        """
+        let got = await run(Recording(["customer/lakes": "{\"\(k)\": {\"clarity\": \(copy)}}"]))
+        let layer = try XCTUnwrap(try XCTUnwrap(got).lakes.first?.layers.clarity)
+        XCTAssertEqual(layer.valueFt, 5.0)
+        XCTAssertNil(layer.lowFt)
+        XCTAssertNil(layer.highFt)
     }
 
     func testANonIndexDocumentIsAFailure() async {

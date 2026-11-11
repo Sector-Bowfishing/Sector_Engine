@@ -15,8 +15,9 @@
 //
 //  The index is ~1.5 MB (0.22 MB gzip). It is fetched at most once per `ttl` (30 min; the bucket says max-age 300, but the
 //  geometry is versioned and changes only with a registry rebuild), at the same time as the customer/lakes snapshot. A failed
-//  fetch is kept `failureTTL` (60 s) and means "no extents", never "no lakes". `SECTOR_LAKE_REGISTRY_INDEX_URL` points it
-//  elsewhere (a local copy, a test fixture). The outline (`geometry.displayUrl`) is not served yet.
+//  fetch is retried after `failureTTL` (60 s); meanwhile the last good index is served, or no extents if there never was one
+//  (never "no lakes"). `SECTOR_LAKE_REGISTRY_INDEX_URL` points it elsewhere (another https URL, or a `file://` local copy).
+//  The outline (`geometry.displayUrl`) is not served yet.
 //
 
 import Foundation
@@ -74,7 +75,7 @@ public enum LakeRegistryExtents {
 }
 
 /// The parsed registry index, fetched at most once per `ttl` and one fetch at a time. A failure (transport, non-2xx, or
-/// a document that is not the index) gives no extents and is kept only `failureTTL`.
+/// a document that is not the index) is retried after `failureTTL`; until then the last good index is served (none: no extents).
 public actor LakeRegistryExtentCache {
     public typealias Fetch = @Sendable (URL) async throws -> Data
 
@@ -84,6 +85,8 @@ public actor LakeRegistryExtentCache {
     private let fetch: Fetch
     private let clock: @Sendable () -> Date
     private var entry: (at: Date, task: Task<[String: ReadyLakeExtent]?, Never>, failed: Bool)?
+    /// The last index that parsed: served while a later fetch has failed, so one blip does not drop every box.
+    private var lastGood: [String: ReadyLakeExtent]?
 
     public init(url: URL, ttl: TimeInterval = 1800, failureTTL: TimeInterval = 60,
                 fetch: @escaping Fetch = LakeRegistryExtentCache.httpFetch,
@@ -95,8 +98,9 @@ public actor LakeRegistryExtentCache {
         self.clock = clock
     }
 
-    /// The Engine's HTTP client, bounded to 5 s. A non-2xx status is a failure.
+    /// The Engine's HTTP client, bounded to 5 s. A non-2xx status is a failure. A `file://` URL is read from disk.
     public static let httpFetch: Fetch = { url in
+        if url.isFileURL { return try Data(contentsOf: url) }
         let r = try await HTTP.get(url, timeout: 5)
         guard r.isSuccess else { throw BrainStoreError("lake registry index: HTTP \(r.status)") }
         return r.body
@@ -118,8 +122,9 @@ public actor LakeRegistryExtentCache {
         guard let v = await task.value else {
             // Keep the failure only briefly, and only if no newer fetch has replaced it meanwhile.
             if let e = entry, e.task == task, !e.failed { entry = (clock(), task, true) }
-            return [:]
+            return lastGood ?? [:]
         }
+        if let e = entry, e.task == task { lastGood = v }
         return v
     }
 }

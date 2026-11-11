@@ -67,7 +67,7 @@
     "layers.*.status": "LIVE (the copy is AVAILABLE: observed) or ESTIMATE (the copy is ESTIMATE: modeled, or a nearby-gauge trend for level). A client must treat any other value as not ready.",
     "layers.*.asOf": "The source's own observation time, never a run or write time.",
     "layers.clarity.valueFt": "The lake-wide water clarity in feet: the copy's centralFt (the Water Clarity Brain's clarityFt). Always present when the layer is.",
-    "layers.clarity.lowFt / highFt": "The copy's range around valueFt, in feet, when it carries one.",
+    "layers.clarity.lowFt / highFt": "The copy's range around valueFt, in feet, when it carries one that brackets valueFt (lowFt <= valueFt <= highFt); otherwise absent.",
     "layers.waterTemp.valueF": "The lake-wide surface water temperature in degrees F: the copy's valueF. Always present when the layer is.",
     "layers.level": "Readiness only (status, asOf); no lake-wide value is served for level."
   },
@@ -78,7 +78,7 @@
     "SECTOR_LAKES_READY_OUTPUT": "1 routes the endpoint. Unset (the default): no route, 404.",
     "SECTOR_BRAIN_OUTPUT_READER": "rtdb gives the Engine its read-only customer-lane reader. Unset (the default): 200 with lakes: [].",
     "reads": "One read of customer/lakes per minute at most (the parsed snapshot is cached 60 s; a failed read is not cached); statuses and freshness are evaluated on every request.",
-    "extent": "The Lake Registry index (default https://storage.googleapis.com/sector-lake-registry/registry/lakes.v1.json, public read; SECTOR_LAKE_REGISTRY_INDEX_URL overrides) is fetched at most once per 30 minutes; a failed fetch is kept 60 s and only drops extent, never a lake."
+    "extent": "The Lake Registry index (default https://storage.googleapis.com/sector-lake-registry/registry/lakes.v1.json, public read; SECTOR_LAKE_REGISTRY_INDEX_URL overrides) is fetched at most once per 30 minutes; a failed fetch is retried after 60 s, the last good index is served meanwhile, and with none extent is absent: never a lake dropped."
   },
   "revisions": [
     {"version": "1.0.0", "date": "2026-11-10", "change": "First version (Sector_Engine #156)."},

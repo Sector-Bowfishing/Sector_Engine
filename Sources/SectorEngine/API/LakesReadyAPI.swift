@@ -87,7 +87,7 @@ public struct ReadyLakeLayers: Codable, Equatable, Sendable {
     public var isEmpty: Bool { clarity == nil && waterTemp == nil && level == nil }
 }
 
-/// The clarity layer: the copy's lake-wide clarity in feet (the Brain's clarityFt), with its range when the copy carries one.
+/// The clarity layer: the copy's lake-wide clarity in feet (the Brain's clarityFt), with its range when the copy carries one that brackets it.
 public struct ReadyClarityLayer: Codable, Equatable, Sendable {
     public let status: String
     public let asOf: String
@@ -193,8 +193,10 @@ public enum LakesReadyAPI {
         let l = await LakeLevelOutputAPI.output(lakeId: lakeId, eligibility: levelEligibility, reader: reader, now: now)
         var clarity: ReadyClarityLayer?
         if let r = layer(c.status, c.observedAt, now: now), let v = BrainCopyRead.finite(c.centralFt) {
-            clarity = ReadyClarityLayer(status: r.status, asOf: r.asOf, valueFt: v,
-                                        lowFt: BrainCopyRead.finite(c.lowFt), highFt: BrainCopyRead.finite(c.highFt))
+            // The range is served only when it brackets the value (low <= value <= high); a bound on the wrong side drops both.
+            var low = BrainCopyRead.finite(c.lowFt), high = BrainCopyRead.finite(c.highFt)
+            if (low.map { $0 > v } ?? false) || (high.map { $0 < v } ?? false) { low = nil; high = nil }
+            clarity = ReadyClarityLayer(status: r.status, asOf: r.asOf, valueFt: v, lowFt: low, highFt: high)
         }
         var waterTemp: ReadyWaterTempLayer?
         if let r = layer(t.status, t.observedAt, now: now), let v = BrainCopyRead.finite(t.valueF) {

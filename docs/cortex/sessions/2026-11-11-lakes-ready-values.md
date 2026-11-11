@@ -35,6 +35,13 @@ and `directoryId` in the app's `Name|ST` format next to the Brain key. Same rule
   schema and gates, a `CUSTOMER_COPY_FAMILIES` entry and an Engine reader, or (wind only) a decision to let the Engine compute a
   lake-wide forecast with the Brain's chosen outlook model. Planned phone fields are documented in the contract, not frozen.
 
+## Independent review (round 1) and fixes
+- Blocking: none.
+- Should-fix, fixed: a failed registry refresh dropped every box (now the last good index is served until a retry succeeds);
+  `SECTOR_LAKE_REGISTRY_INDEX_URL=file://...` could not work through the HTTP client (now read from disk; tested).
+- Nits, fixed: a clarity range that does not bracket the value is dropped; fixture `count`. Not changed (stated): 30 min TTL vs
+  the bucket's 5 min max-age (the geometry is versioned); JSON booleans in a bbox (trusted source).
+
 ## Verification
 - No Swift toolchain in this container (Docker Hub, mirror.gcr.io and download.swift.org refused by the egress proxy): Swift build
   and tests run in CI (`swift-tests.yml`) on the PR.
