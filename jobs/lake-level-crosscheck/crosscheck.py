@@ -74,12 +74,13 @@ def read_cwms(office: str, name: str, now: dt.datetime, hours: int = 48, get=_ge
         raise RuntimeError(f"CWMS {name} units {d.get('units')!r}")
     out = []
     for v in d.get("values") or []:
-        # CWMS quality: bit 0 = screened; bits 1-4 flag okay/missing/questionable/rejected. Keep unscreened (0) or screened-okay only.
-        q = v[2] if len(v) >= 3 and isinstance(v[2], int) else 0
-        if q not in (0, 1, 3):
+        if not isinstance(v, list) or len(v) < 2 or not isinstance(v[0], (int, float)) or not isinstance(v[1], (int, float)):
             continue
-        if v and len(v) >= 2 and isinstance(v[1], (int, float)):
-            out.append((iso(dt.datetime.fromtimestamp(v[0] / 1000, dt.timezone.utc)), float(v[1])))
+        # CWMS quality is a bit mask: bit 0 = screened; bits 2/3/4 = missing / questionable / rejected (when screened).
+        q = v[2] if len(v) >= 3 and isinstance(v[2], int) else 0
+        if q & 1 and q & (4 | 8 | 16):
+            continue
+        out.append((iso(dt.datetime.fromtimestamp(v[0] / 1000, dt.timezone.utc)), float(v[1])))
     return out
 
 

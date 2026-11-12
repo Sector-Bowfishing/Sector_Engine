@@ -79,3 +79,10 @@ def test_summarize_skips_bad_lines_and_short_days(tmp_path):
         f.write('{"lake": "Lake Barkley|KY", "role": "engine", "obsTime": "2026-11-12T01:00:00Z", "valueFt": 1}\n')
     s = X.summarize(str(tmp_path))["Lake Barkley|KY"]
     assert s["matchedDays"] == 1 and s["shareDaysWithinTol"] == 1.0
+
+
+def test_cwms_null_entries_and_quality_bits():
+    base = int(dt.datetime(2026, 11, 11, tzinfo=dt.timezone.utc).timestamp() * 1000)
+    vals = [None, [None, 1.0, 0], [base, 1.0, 3 | 32], [base + 3600000, 2.0, -2147483645], [base + 7200000, 3.0, 9]]
+    got = X.read_cwms("LRN", "x", NOW, get=lambda u, h=None, timeout=60: {"units": "ft", "values": vals})
+    assert [v for _, v in got] == [1.0, 2.0]
