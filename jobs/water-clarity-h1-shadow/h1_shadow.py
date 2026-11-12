@@ -20,6 +20,7 @@ import argparse
 import csv
 import datetime as dt
 import glob
+import hashlib
 import io
 import json
 import os
@@ -48,9 +49,9 @@ def season(month: int) -> str:
     return "warm" if 4 <= month <= 10 else "cool"
 
 
-def directory() -> dict:
+def directory(path: str = DIRECTORY) -> dict:
     out = {}
-    for line in open(DIRECTORY):
+    for line in open(path):
         line = line.strip().rstrip(",")
         if line.startswith('{"name"'):
             try:
@@ -96,8 +97,8 @@ def h1(ld: dict[str, float], year: int, seas: str) -> dict:
     for lo in range(year - 5, year - 11, -1):
         w = [(y, v) for y, v in pts if lo <= y <= year - 1]
         if len(w) >= 5 and len({y for y, _ in w}) >= 2:
-            m = statistics.median(v for _, v in w)
-            return {"status": "ANSWER", "medianFt": round(m, 2), "band": band(m), "lakeDays": len(w), "years": [lo, year - 1]}
+            m = round(statistics.median(v for _, v in w), 2)
+            return {"status": "ANSWER", "medianFt": m, "band": band(m), "lakeDays": len(w), "years": [lo, year - 1]}
     return {"status": "UNKNOWN", "reason": "fewer than 5 lake-days over 2 years in Y-10..Y-1"}
 
 
@@ -119,37 +120,47 @@ def fetch(lat: float, lon: float, radius_mi: float, start: str, timeout: int = 6
     raise RuntimeError(f"WQP fetch failed: {last}")
 
 
-def production_bands(prod_dir: str | None) -> dict:
-    """{lakeId: (clarityFt, band, generatedAt)} from the newest water-clarity artifact under prod_dir (read-only)."""
+def production_bands(prod_dir: str | None) -> tuple[dict, str | None]:
+    """({lakeId: (clarityFt, band, generatedAt)}, artifactId) from the newest WATER-CLARITY artifact under prod_dir (read-only).
+    Only artifacts whose lineage.brainId is water-clarity count; gzip files and other Brains' artifacts are skipped."""
     if not prod_dir:
-        return {}
-    files = [f for f in glob.glob(os.path.join(prod_dir, "**", "artifact.json*"), recursive=True)]
-    if not files:
-        return {}
-    newest = max(files, key=os.path.getmtime)
-    try:
-        doc = json.load(open(newest))
-    except ValueError:
-        return {}
+        return {}, None
+    best = None
+    for f in glob.glob(os.path.join(prod_dir, "**", "artifact.json*"), recursive=True):
+        if f.endswith(".gz") or not os.path.isfile(f):
+            continue
+        try:
+            with open(f, encoding="utf-8") as fh:
+                doc = json.load(fh)
+        except (ValueError, OSError):
+            continue
+        lin = doc.get("lineage") if isinstance(doc, dict) else None
+        if not isinstance(lin, dict) or lin.get("brainId") != "water-clarity":
+            continue
+        key = (lin.get("generatedAt") or "", os.path.getmtime(f))
+        if best is None or key > best[0]:
+            best = (key, doc, lin.get("artifactId"))
+    if best is None:
+        return {}, None
     out = {}
 
     def walk(o):
         if isinstance(o, dict):
-            if "clarityFt" in o and isinstance(o.get("clarityFt"), (int, float)) and o.get("lakeId"):
+            if isinstance(o.get("clarityFt"), (int, float)) and isinstance(o.get("lakeId"), str):
                 out[o["lakeId"]] = (o["clarityFt"], band(o["clarityFt"]), (o.get("provenance") or {}).get("generatedAt"))
             for v in o.values():
                 walk(v)
         elif isinstance(o, list):
             for v in o:
                 walk(v)
-    walk(doc)
-    return out
+    walk(best[1])
+    return out, best[2]
 
 
 def run(lakes: list[str], out: str, cache: str | None, prod_dir: str | None, today: dt.date, radius_mi: float,
         fetcher=fetch, sites: dict | None = None) -> dict:
     d = directory()
-    prod = production_bands(prod_dir)
+    prod, prod_artifact = production_bands(prod_dir)
     year, seas = today.year, season(today.month)
     res = []
     for lid in lakes:
@@ -158,19 +169,22 @@ def run(lakes: list[str], out: str, cache: str | None, prod_dir: str | None, tod
         if not o:
             row.update({"status": "UNKNOWN", "reason": "not in the Engine lake directory"}); res.append(row); continue
         start = f"01-01-{year - 10}"
-        cp = os.path.join(cache, re.sub(r"[^A-Za-z0-9]+", "_", lid) + ".csv") if cache else None
+        ls = (sites or {}).get(lid)
+        sel = "sites-" + hashlib.sha256(";".join(sorted(ls)).encode()).hexdigest()[:12] if ls else f"r{radius_mi:g}mi"
+        cp = os.path.join(cache, re.sub(r"[^A-Za-z0-9]+", "_", lid) + f"_{sel}.csv") if cache else None
         text = None
         if cp and os.path.exists(cp) and (time.time() - os.path.getmtime(cp)) < 7 * 86400:
             text = open(cp).read()
         if text is None:
             try:
-                ls = (sites or {}).get(lid)
                 text = fetcher(o["lat"], o["lon"], radius_mi, start, sites=ls) if ls else fetcher(o["lat"], o["lon"], radius_mi, start)
             except RuntimeError as e:
                 row.update({"status": "UNKNOWN", "reason": str(e)[:200]}); res.append(row); continue
             if cp:
                 os.makedirs(cache, exist_ok=True)
-                open(cp, "w").write(text)
+                with open(cp + ".part", "w") as fh:
+                    fh.write(text)
+                os.replace(cp + ".part", cp)
         ld = lake_days(parse_rows(text))
         row.update({"lakeDaysOnRecord": len(ld), "seasonNow": seas, "stationSelection": "sites-file" if (sites or {}).get(lid) else f"within {radius_mi} mi",
                     "h1": {"warm": h1(ld, year, "warm"), "cool": h1(ld, year, "cool")}})
@@ -185,7 +199,7 @@ def run(lakes: list[str], out: str, cache: str | None, prod_dir: str | None, tod
         res.append(row)
     answered = [r for r in res if r.get("status") == "ANSWER"]
     doc = {"schema": SCHEMA, "rule": RULE, "lane": "SHADOW", "customerVisible": False, "generatedAt": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-           "asOf": today.isoformat(), "season": seas, "radiusMi": radius_mi, "bands": {"V0": "<1.5 ft", "V1": "1.5-<3", "V2": "3-<6", "V3": ">=6"},
+           "asOf": today.isoformat(), "season": seas, "radiusMi": radius_mi, "productionArtifact": prod_artifact, "bands": {"V0": "<1.5 ft", "V1": "1.5-<3", "V2": "3-<6", "V3": ">=6"},
            "summary": {"lakes": len(res), "answered": len(answered),
                        "comparedWithProduction": sum(1 for r in res if "comparison" in r),
                        "sameBandAsProduction": sum(1 for r in res if (r.get("comparison") or {}).get("sameBand"))},

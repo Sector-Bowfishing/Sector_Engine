@@ -49,21 +49,35 @@ def iso(t: dt.datetime) -> str:
     return t.astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def norm_time(s: str) -> str:
+    t = dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
+    return iso(t if t.tzinfo else t.replace(tzinfo=dt.timezone.utc))
+
+
 def read_nwps(lid: str, get=_get) -> list[tuple[str, float]]:
     d = get(f"https://api.water.noaa.gov/nwps/v1/gauges/{lid}/stageflow")
     o = d.get("observed") or {}
-    if (o.get("primaryUnits") or "ft") != "ft":
-        raise RuntimeError(f"NWPS {lid} units {o.get('primaryUnits')}")
-    return [(p["validTime"], float(p["primary"])) for p in o.get("data") or [] if isinstance(p.get("primary"), (int, float)) and p["primary"] > -900]
+    if o.get("primaryUnits") != "ft":
+        raise RuntimeError(f"NWPS {lid} units {o.get('primaryUnits')!r}")
+    out = []
+    for p in o.get("data") or []:
+        v, t = p.get("primary"), p.get("validTime")
+        if isinstance(v, (int, float)) and v > -900 and isinstance(t, str):
+            out.append((norm_time(t), float(v)))
+    return out
 
 
 def read_cwms(office: str, name: str, now: dt.datetime, hours: int = 48, get=_get) -> list[tuple[str, float]]:
     q = {"name": name, "office": office, "begin": iso(now - dt.timedelta(hours=hours)), "end": iso(now)}
     d = get("https://cwms-data.usace.army.mil/cwms-data/timeseries?" + urllib.parse.urlencode(q), {"Accept": "application/json;version=2"})
-    if (d.get("units") or "ft") != "ft":
-        raise RuntimeError(f"CWMS {name} units {d.get('units')}")
+    if d.get("units") != "ft":
+        raise RuntimeError(f"CWMS {name} units {d.get('units')!r}")
     out = []
     for v in d.get("values") or []:
+        # CWMS quality: bit 0 = screened; bits 1-4 flag okay/missing/questionable/rejected. Keep unscreened (0) or screened-okay only.
+        q = v[2] if len(v) >= 3 and isinstance(v[2], int) else 0
+        if q not in (0, 1, 3):
+            continue
         if v and len(v) >= 2 and isinstance(v[1], (int, float)):
             out.append((iso(dt.datetime.fromtimestamp(v[0] / 1000, dt.timezone.utc)), float(v[1])))
     return out
@@ -94,8 +108,8 @@ def collect(data: str, until: dt.datetime | None, now: dt.datetime | None = None
             for role, src in p.items():
                 try:
                     pts = read_nwps(src["lid"], get) if src["kind"] == "nwps" else read_cwms(src["office"], src["name"], now, get=get)
-                except RuntimeError as e:
-                    errors.append(f"{lake} {role}: {str(e)[:160]}"); continue
+                except Exception as e:  # one source's failure or format change must not stop the other
+                    errors.append(f"{lake} {role}: {type(e).__name__}: {str(e)[:160]}"); continue
                 for t, v in pts:
                     if (lake, role, t) in have:
                         continue
@@ -105,14 +119,15 @@ def collect(data: str, until: dt.datetime | None, now: dt.datetime | None = None
 
 
 def summarize(data: str, tol: float = 0.25) -> dict:
-    rows = {}
-    for f in glob.glob(os.path.join(data, "*.jsonl")):
+    acc = {}
+    for f in sorted(glob.glob(os.path.join(data, "*.jsonl"))):
         for line in open(f):
             try:
                 o = json.loads(line)
-            except ValueError:
+                acc.setdefault(o["lake"], {}).setdefault(o["role"], {}).setdefault(norm_time(o["obsTime"])[:13], []).append(float(o["valueFt"]))
+            except (ValueError, KeyError, TypeError):
                 continue
-            rows.setdefault(o["lake"], {}).setdefault(o["role"], {})[o["obsTime"][:13]] = o["valueFt"]
+    rows = {lk: {role: {h: statistics.mean(v) for h, v in hs.items()} for role, hs in r.items()} for lk, r in acc.items()}
     out = {}
     for lake, r in rows.items():
         e, i = r.get("engine", {}), r.get("independent", {})
@@ -137,6 +152,8 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     if a.cmd == "collect":
         until = dt.datetime.fromisoformat(a.until.replace("Z", "+00:00")) if a.until else None
+        if until is not None and until.tzinfo is None:
+            until = until.replace(tzinfo=dt.timezone.utc)
         r = collect(a.data, until)
         print(json.dumps(r))
         return 0 if r["status"] in ("OK", "WINDOW_ENDED") else 1

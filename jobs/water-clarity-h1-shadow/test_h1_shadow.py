@@ -53,7 +53,7 @@ def test_run_offline_with_fake_fetcher(tmp_path):
     assert g["status"] == "ANSWER" and g["h1"]["warm"]["band"] == "V2"
     assert doc["lakes"][1]["status"] == "UNKNOWN"
     assert json.load(open(tmp_path / "out" / "h1-shadow.json"))["summary"]["answered"] == 1
-    assert os.path.exists(tmp_path / "cache" / "Guntersville_AL.csv")
+    assert os.path.exists(tmp_path / "cache" / "Guntersville_AL_r5mi.csv")
 
 
 def test_sites_file_is_passed_to_fetcher(tmp_path):
@@ -64,3 +64,34 @@ def test_sites_file_is_passed_to_fetcher(tmp_path):
         return HDR
     doc = H.run(["Guntersville|AL"], str(tmp_path / "o"), None, None, dt.date(2026, 7, 1), 5.0, fetcher=f, sites={"Guntersville|AL": ["A-1", "B-2"]})
     assert seen["sites"] == ["A-1", "B-2"] and doc["lakes"][0]["stationSelection"] == "sites-file"
+
+
+def test_production_reads_only_water_clarity_artifacts(tmp_path):
+    d = tmp_path / "prod"
+    (d / "wind").mkdir(parents=True); (d / "wc").mkdir()
+    json.dump({"lineage": {"brainId": "wind", "generatedAt": "2026-11-12T00:00:00Z"}, "sections": [{"lakeId": "Guntersville|AL", "clarityFt": 9.9}]},
+              open(d / "wind" / "artifact.json.g1", "w"))
+    json.dump({"lineage": {"brainId": "water-clarity", "generatedAt": "2026-11-11T00:00:00Z", "artifactId": "sha256:abc"},
+               "sections": [{"lakeId": "Guntersville|AL", "clarityFt": 4.0}]}, open(d / "wc" / "artifact.json.g1", "w"))
+    (d / "wc" / "artifact.json.gz").write_bytes(b"\x1f\x8b junk")
+    bands, aid = H.production_bands(str(d))
+    assert aid == "sha256:abc" and bands["Guntersville|AL"][:2] == (4.0, "V2")
+
+
+def test_band_follows_the_rounded_median_and_y10_boundary():
+    ld = {f"{y}-06-0{i}": 1.499 for y in (2016, 2017) for i in range(1, 4)}
+    r = H.h1(ld, 2026, "warm")
+    assert r["medianFt"] == 1.5 and r["band"] == "V1" and r["years"] == [2016, 2025]
+    assert H.h1({f"2015-06-0{i}": 4.0 for i in range(1, 6)} | {f"2014-06-0{i}": 4.0 for i in range(1, 6)}, 2026, "warm")["status"] == "UNKNOWN"
+
+
+def test_cache_key_changes_with_station_selection(tmp_path):
+    calls = []
+
+    def f(*a, sites=None):
+        calls.append(sites)
+        return HDR
+    H.run(["Guntersville|AL"], str(tmp_path / "o"), str(tmp_path / "c"), None, dt.date(2026, 7, 1), 5.0, fetcher=f)
+    H.run(["Guntersville|AL"], str(tmp_path / "o"), str(tmp_path / "c"), None, dt.date(2026, 7, 1), 5.0, fetcher=f, sites={"Guntersville|AL": ["A"]})
+    H.run(["Guntersville|AL"], str(tmp_path / "o"), str(tmp_path / "c"), None, dt.date(2026, 7, 1), 5.0, fetcher=f, sites={"Guntersville|AL": ["A"]})
+    assert calls == [None, ["A"]]

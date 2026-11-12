@@ -45,3 +45,37 @@ def test_units_guard():
         assert "units" in str(e)
     else:
         raise AssertionError("expected a units error")
+
+
+def test_format_change_in_one_source_is_partial_not_fatal(tmp_path):
+    def odd(url, headers=None, timeout=60):
+        if "nwps" in url:
+            return {"observed": {"primaryUnits": "ft", "data": [{"primary": 354.7}]}}  # no validTime: skipped
+        return []                                                                       # not a dict: AttributeError
+    r = X.collect(str(tmp_path), None, NOW, get=odd)
+    assert r["status"] == "PARTIAL" and r["added"] == 0 and any("AttributeError" in e for e in r["errors"])
+
+
+def test_cwms_units_and_quality(tmp_path):
+    base = int(dt.datetime(2026, 11, 11, tzinfo=dt.timezone.utc).timestamp() * 1000)
+    assert X.read_cwms("LRN", "x", NOW, get=lambda u, h=None, timeout=60: {"units": "ft", "values": [[base, 1.0, 0], [base + 3600000, 2.0, 17]]}) == [("2026-11-11T00:00:00Z", 1.0)]
+    try:
+        X.read_cwms("LRN", "x", NOW, get=lambda u, h=None, timeout=60: {"values": []})
+    except RuntimeError as e:
+        assert "units" in str(e)
+    else:
+        raise AssertionError("missing units must fail")
+
+
+def test_naive_until_and_offset_times(tmp_path):
+    assert X.main(["collect", "--data", str(tmp_path), "--until", "2000-01-01"]) == 0
+    assert X.norm_time("2026-11-11T17:00:00-05:00") == "2026-11-11T22:00:00Z"
+
+
+def test_summarize_skips_bad_lines_and_short_days(tmp_path):
+    X.collect(str(tmp_path), None, NOW, get=fake_get)
+    with open(tmp_path / "2026-11.jsonl", "a") as f:
+        f.write('{"lake": "Lake Barkley|KY"}\n')
+        f.write('{"lake": "Lake Barkley|KY", "role": "engine", "obsTime": "2026-11-12T01:00:00Z", "valueFt": 1}\n')
+    s = X.summarize(str(tmp_path))["Lake Barkley|KY"]
+    assert s["matchedDays"] == 1 and s["shareDaysWithinTol"] == 1.0
