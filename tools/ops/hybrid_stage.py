@@ -159,6 +159,10 @@ def live_problems(frag: dict, runner: dict, watchdog: dict, cutover: dict) -> li
     review = frag["cutover"].get("orderReviewRef")
     if review and ((cutover.get("brains") or {}).get(brain) or {}).get("orderReviewRef") != review:
         probs.append(f"cutover: {brain} lost its recorded order review {review!r}")
+    refs = {"runner-policy": (runner.get("approvals") or {}).get(brain), "watchdog-policy": wd.get("approvalRef"),
+            "cutover": ((cutover.get("brains") or {}).get(brain) or {}).get("approvalRef")}
+    if not all(refs.values()) or len(set(refs.values())) != 1:
+        probs.append(f"{brain}: the three approvalRefs must be present and equal ({refs})")
     if frag["blockers"]:
         probs.append(f"{brain} is live but its fragment still lists {len(frag['blockers'])} blockers")
     return probs
@@ -204,7 +208,7 @@ def main(argv=None) -> int:
 
     if a.cmd == "show":
         for f in sorted(frags.values(), key=lambda f: f.get("readiness", 99)):
-            live = f["brainId"] in (runner.get("primary") or {})
+            live = is_live(f["brainId"], runner, watchdog, cutover)
             print(f"{f.get('readiness')}. {f['brainId']}  (Pulse job {f['pulseJob']}; {'LIVE' if live else 'staged'}; {len(f['blockers'])} blockers)")
             for b in f["blockers"]:
                 print(f"     - {b}")

@@ -80,6 +80,9 @@ def test_live_check_catches_drift_between_the_live_policies_and_the_fragment():
     assert any("order review" in p for p in HS.live_problems(f, r, w, c))
     r, w, c = committed()
     assert any("still lists" in p for p in HS.live_problems(dict(f, blockers=["x"]), r, w, c))
+    r, w, c = committed()
+    w["brains"]["lake-brain"]["approvalRef"] = "other"
+    assert any("approvalRefs" in p for p in HS.live_problems(f, r, w, c))
 
 
 def test_no_runtime_reads_the_stage_folder():
