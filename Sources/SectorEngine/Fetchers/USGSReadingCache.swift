@@ -8,7 +8,10 @@
 //     lake whose small box has no gauge doesn't re-ask USGS on every render;
 //   - last good for 6 h: when a fetch fails, the most recent non-empty answer
 //     is served instead of dropping the factor. Each reading keeps its own
-//     `dateTime`, so its age stays visible downstream;
+//     `dateTime`, so its age stays visible downstream. A box with no non-empty
+//     answer in that window keeps its last EMPTY answer instead, so a failed
+//     fetch of an empty small box falls through to the next box (as a fresh
+//     empty answer would) rather than dropping the factor;
 //   - at most `maxEntries` keys; the oldest are dropped first;
 //   - only whole answers: never one from a cancelled task or one whose
 //     names/metadata lookup failed (WaterLevelService.nearbyReadings).
@@ -39,7 +42,7 @@ actor USGSReadingCache {
         return e.readings
     }
 
-    /// The most recent NON-empty answer younger than `lastGoodFor`, for a failed fetch.
+    /// The most recent NON-empty answer younger than `lastGoodFor`, for a failed fetch; else the last empty one in that window.
     func lastGood(_ key: String, now: Date = Date()) -> [WaterLevelReading]? {
         guard let e = lastGood[key], now.timeIntervalSince(e.at) < Self.lastGoodFor else { return nil }
         return e.readings
@@ -47,7 +50,10 @@ actor USGSReadingCache {
 
     func put(_ key: String, _ readings: [WaterLevelReading], now: Date = Date()) {
         entries[key] = Entry(readings: readings, at: now)
-        if !readings.isEmpty { lastGood[key] = Entry(readings: readings, at: now) }
+        // An empty answer is kept only when there is no live non-empty one to protect (review of #139: Guntersville's
+        // 0.25° box is normally empty, and a failed refetch of it must not hide the 1° box's answer).
+        let keepsNonEmpty = lastGood[key].map { !$0.readings.isEmpty && now.timeIntervalSince($0.at) < Self.lastGoodFor } ?? false
+        if !readings.isEmpty || !keepsNonEmpty { lastGood[key] = Entry(readings: readings, at: now) }
         Self.trim(&entries)
         Self.trim(&lastGood)
     }

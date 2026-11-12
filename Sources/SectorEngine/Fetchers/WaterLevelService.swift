@@ -138,6 +138,8 @@ package final class WaterLevelService {
                                                                                      timeout: Self.usgsHopTimeout)
                     api = "ogc"
                 } catch {
+                    // A larger box cancelled because a smaller one answered is not a USGS failure: no legacy hop for it.
+                    if Task.isCancelled { throw CancellationError() }
                     api = "legacy-after-ogc-" + HTTP.errorLabel(error)
                     series = try await legacySeries(west: west, south: south, east: east, north: north,
                                                     parameterCodes: codes, siteType: siteType,
@@ -149,6 +151,11 @@ package final class WaterLevelService {
                                                 sites: sites, sitesPeriod: sitesPeriod)
             }
         } catch {
+            if Task.isCancelled {
+                print(Self.usgsLogLine(codes: codes, box: radiusDegrees, api: api, outcome: "cancelled",
+                                       series: 0, started: started))
+                throw error
+            }
             if let last = await cache.lastGood(cacheKey) {
                 print(Self.usgsLogLine(codes: codes, box: radiusDegrees, api: api, outcome: "last-good-after-" + HTTP.errorLabel(error),
                                        series: last.count, started: started))

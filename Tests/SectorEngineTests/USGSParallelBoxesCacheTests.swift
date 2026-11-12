@@ -101,6 +101,17 @@ final class USGSParallelBoxesCacheTests: XCTestCase {
         XCTAssertNil(gone)
     }
 
+    func testAnEmptyBoxKeepsItsLastEmptyAnswerWhenNothingBetterExists() async {
+        let c = USGSReadingCache(), t = Date(timeIntervalSince1970: 1_000_000)
+        await c.put("k", [], now: t)
+        let lg = await c.lastGood("k", now: t.addingTimeInterval(3600))
+        XCTAssertEqual(lg, [], "a failed refetch of an empty box falls through to the next box")
+        await c.put("k", [Self.reading("a")], now: t.addingTimeInterval(7200))
+        await c.put("k", [], now: t.addingTimeInterval(7260))
+        let kept = await c.lastGood("k", now: t.addingTimeInterval(7300))
+        XCTAssertEqual(kept?.first?.siteCode, "a", "an empty answer never replaces a live non-empty one")
+    }
+
     func testTheCacheIsCapped() async {
         let c = USGSReadingCache(), t = Date(timeIntervalSince1970: 1_000_000)
         for i in 0..<(USGSReadingCache.maxEntries + 5) { await c.put("k\(i)", [], now: t.addingTimeInterval(Double(i))) }
