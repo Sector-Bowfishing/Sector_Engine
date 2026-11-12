@@ -30,7 +30,7 @@ CONDITION_SLOTS = (("lake-brain", "lake", "lakeState"), ("water-temp", "waterTem
                    ("water-clarity", "waterClarity", "waterClarity"), ("wind", "wind", "wind"))
 _LEGACY_KIND = {"GAUGE_OBSERVED": "observed", "RAINFALL_MODELED": "modeled", "FALLBACK_NEUTRAL": "modeled", "UNAVAILABLE": "unavailable",
                 "OBSERVED": "observed", "PROXY": "proxy", "MEASURED": "measured", "MODELED": "modeled", "NOT_EVALUATED": "not_evaluated"}
-FUTURE_TOLERANCE_H = -10 / 60    # a state stamped more than 10 min ahead of now is not fresh (SI-NOW-1, Sector_Ops #51)
+FUTURE_TOLERANCE_S = 10 * 60    # a state stamped more than 10 min ahead of now is not fresh (SI-NOW-1, Sector_Ops #51)
 
 
 
@@ -89,7 +89,8 @@ def normalize_condition(brain_id: str, slot: str, field: str, snapshot: dict | N
     gen = prov.get("generatedAt") or fr.get("generatedAt") or st.get("generatedAt")
     age = bp.age_hours(gen, now)
     stale_after = (dep or {}).get("staleAfterHours")
-    future = age is not None and age < FUTURE_TOLERANCE_H          # stamped ahead of now (clock skew): its age can't be verified
+    gen_t = bp.parse_time(gen)
+    future = gen_t is not None and (gen_t - now).total_seconds() > FUTURE_TOLERANCE_S   # stamped ahead of now (clock skew): age can't be verified
     unjudged = stale_after is None                                  # no threshold in the Brain's registry: staleness can't be judged
     stale = (bool(fr.get("stale")) or bool(st.get("stale")) or future or unjudged
              or (stale_after is not None and (age is None or age > float(stale_after))))
@@ -100,7 +101,7 @@ def normalize_condition(brain_id: str, slot: str, field: str, snapshot: dict | N
     if future:
         degraded.append(f"state is stamped {-age} h in the future: age can't be verified")
     elif unjudged:
-        degraded.append("the brain's registry has no staleAfterHours: freshness can't be judged")
+        degraded.append("no staleAfterHours for this brain (not registered, or no threshold): freshness can't be judged")
     elif stale:
         degraded.append(f"state is {age if age is not None else '?'} h old" + (f" (> {stale_after} h)" if stale_after is not None else ""))
     if evidence_stale:

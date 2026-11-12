@@ -103,6 +103,11 @@ class EvaluationTests(unittest.TestCase):
         self.assertEqual(e["inputs"]["wind"]["status"], "PUBLISHED")
         self.assertIn("waterClarity", e["degradedInputs"]); self.assertNotIn("wind", e["degradedInputs"])
 
+    def test_future_tolerance_boundary_is_exactly_ten_minutes(self):
+        for ahead, expect in ((dt.timedelta(minutes=10), "PUBLISHED"), (dt.timedelta(minutes=10, seconds=1), "STALE")):
+            snap = snapshot(); snap["wind"]["provenance"]["generatedAt"] = bp.iso(NOW + ahead)
+            self.assertEqual(self.evaluate(snap)["inputs"]["wind"]["status"], expect, ahead)
+
     def test_missing_stale_after_hours_is_not_fresh(self):
         deps = copy.deepcopy(self.deps); deps["water-temp"].pop("staleAfterHours", None)
         e = ev.evaluate("Guntersville|AL", snapshot=snapshot(), fleet_row=None, presence=PRESENCE, species=SPECIES,
