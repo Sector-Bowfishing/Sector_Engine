@@ -92,7 +92,8 @@ def test_every_shipped_module_is_reachable_from_a_runtime_entrypoint():
         return next((c for c in (p + ".py", p + "/__init__.py") if c in files), None)
     # Declared runtime entrypoints. sector_wind/assessment/__main__.py (Wind V2, 2026-10-19) is the nonproduction Wind Exposure Assessment CLI
     # (`python -m sector_wind.assessment`); it is shipped but not called by the hourly job (brains/wind/tests/test_wind_exposure_assessment.py).
-    seen, stack = set(), ["main.py", "sector_wind/brain/__main__.py", "sector_wind/brain/artifact.py", "sector_wind/assessment/__main__.py"]
+    # artifact_entry.py (Sector_Ops #51, Roadmap #23 section 2) is the runner lease-path entry (Pulse wind-central, off); it is not in the Cloud Run image.
+    seen, stack = set(), ["main.py", "artifact_entry.py", "sector_wind/brain/__main__.py", "sector_wind/brain/artifact.py", "sector_wind/assessment/__main__.py"]
     while stack:
         f = stack.pop()
         if f in seen:

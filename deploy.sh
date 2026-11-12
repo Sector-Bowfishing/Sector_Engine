@@ -32,6 +32,20 @@
 #   SKIP_SMOKE=1 ./deploy.sh          deploy without the smoke test (emergencies only)
 #   ALLOW_BRANCH_DEPLOY=1 ./deploy.sh deploy from a non-main branch (emergencies only;
 #                                     the revision is still labeled with its commit)
+#   IMAGE=<registry>/<image>@sha256:<digest> ./deploy.sh
+#                                     deploy a PREBUILT image (`--image` instead of `--source`; no Cloud Build).
+#                                     Same candidate / smoke / promote / prod re-check / rollback flow, same sizing,
+#                                     probes and secrets, existing env kept. HEAD must be on origin/main (a detached
+#                                     checkout of a main commit is fine) and the image must have been built from it.
+#                                     Used by .github/workflows/deploy-engine.yml (docs/architecture/conditions/
+#                                     DEPLOY_WORKFLOWS_V1.md). Differences from the default path: the Linux smoke test
+#                                     runs against IMAGE without rebuilding it, and --allow-unauthenticated is not
+#                                     passed (the deployer changes no IAM policy; the public smoke test proves the
+#                                     service is still public).
+#   IMAGE=… RUNTIME_SA=<service account email> ./deploy.sh
+#                                     IMAGE mode only: run the new revision as RUNTIME_SA (`--service-account`), and
+#                                     refuse to promote a candidate that does not run as it. The email is never printed.
+#                                     Unset: the revision keeps the service's current identity (as before).
 #
 # History: the candidate/smoke/promote flow is from fix/forecast-rain-gate (2c53d64c);
 # the traceability gate, probes, prod verification and auto-rollback are from
@@ -73,8 +87,23 @@ SECRET_FLAGS=()
 # The Linux image has to answer every route before it ships: three revisions
 # that built and tested clean on macOS aborted the Linux Swift runtime on
 # their first request (2026-09-27, 00041-00043). See scripts/linux-smoke.sh.
+IMAGE="${IMAGE:-}"
+if [[ -n "$IMAGE" && "$IMAGE" != *@sha256:* && "${1:-}" != "--rollback" && "${1:-}" != "--check-warm-tags" ]]; then
+  echo "✗ IMAGE must be a digest reference (…@sha256:…): the deployed image must be exactly the tested one."; exit 2
+fi
+RUNTIME_SA="${RUNTIME_SA:-}"
+if [[ -n "$RUNTIME_SA" && -z "$IMAGE" ]]; then
+  echo "✗ RUNTIME_SA is for IMAGE mode only (the deploy workflow); the --source path keeps the service's identity."; exit 2
+fi
+if [[ -n "$RUNTIME_SA" && ! "$RUNTIME_SA" =~ ^[a-z][a-z0-9-]{4,28}[a-z0-9]@[a-z0-9-]+\.iam\.gserviceaccount\.com$ ]]; then
+  echo "✗ RUNTIME_SA is not a service account email."; exit 2
+fi
 if [[ "${SKIP_LINUX_SMOKE:-0}" != "1" ]]; then
-  "$(dirname "$0")/scripts/linux-smoke.sh" || { echo "✗ not deploying: the Linux smoke test failed"; exit 1; }
+  if [[ -n "$IMAGE" ]]; then
+    SMOKE_SKIP_BUILD=1 IMAGE="$IMAGE" "$(dirname "$0")/scripts/linux-smoke.sh" || { echo "✗ not deploying: the Linux smoke test failed"; exit 1; }
+  else
+    "$(dirname "$0")/scripts/linux-smoke.sh" || { echo "✗ not deploying: the Linux smoke test failed"; exit 1; }
+  fi
 fi
 
 
@@ -192,6 +221,9 @@ if [[ -n "$(git status --porcelain)" ]]; then
   exit 1
 fi
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+if [[ -n "$IMAGE" && "$BRANCH" == "HEAD" ]] && git merge-base --is-ancestor HEAD origin/main 2>/dev/null; then
+  BRANCH=main      # IMAGE mode from a detached checkout of a commit on origin/main (the workflow checks out the exact sha)
+fi
 if [[ "$BRANCH" != "main" && "${ALLOW_BRANCH_DEPLOY:-0}" != "1" ]]; then
   echo "✗ HEAD is on '$BRANCH', not main. Production deploys are built from main"
   echo "  (docs/production/PRODUCTION_LINEAGE.md). Merge first, or ALLOW_BRANCH_DEPLOY=1 for an emergency."
@@ -208,11 +240,20 @@ trap remove_candidate_tag EXIT
 
 # ── 1. Candidate: build + deploy with NO traffic ───────────────────────────────
 # Env vars already on the service are kept (no --set-env-vars / --clear-env-vars).
+if [[ -n "$IMAGE" ]]; then
+  BUILD_FLAGS=(--image "$IMAGE")             # prebuilt and smoke-tested; no Cloud Build, no IAM policy change
+  if [[ -n "$RUNTIME_SA" ]]; then
+    BUILD_FLAGS+=(--service-account "$RUNTIME_SA")
+    echo "  runtime identity: the dedicated runtime service account (RUNTIME_SA)"
+  fi
+  echo "  image: ${IMAGE##*@}"
+else
+  BUILD_FLAGS=(--source . --allow-unauthenticated)
+fi
 gcloud run deploy "$SERVICE" \
-  --source . \
+  "${BUILD_FLAGS[@]}" \
   "${GC[@]}" \
   --platform managed \
-  --allow-unauthenticated \
   --no-traffic \
   --tag candidate \
   --labels "commit=$SHA" \
@@ -241,6 +282,11 @@ print(latest, url)')
 LABEL="$(gcloud run revisions describe "$CANDIDATE" "${GC[@]}" --format 'value(metadata.labels.commit)')"
 [[ "$LABEL" == "$SHA" ]] || { echo "✗ Revision $CANDIDATE is labeled commit=$LABEL, expected $SHA."; exit 1; }
 echo "  candidate: $CANDIDATE  $CANDIDATE_URL"
+if [[ -n "$RUNTIME_SA" ]]; then
+  RUNS_AS="$(gcloud run revisions describe "$CANDIDATE" "${GC[@]}" --format 'value(spec.serviceAccountName)')"
+  [[ "$RUNS_AS" == "$RUNTIME_SA" ]] || { echo "✗ Candidate $CANDIDATE does not run as RUNTIME_SA. Not promoting; prod is still on ${PREVIOUS:-its previous revision}."; exit 1; }
+  echo "  candidate runs as RUNTIME_SA ✓"
+fi
 
 # ── 2. Smoke test the candidate ────────────────────────────────────────────────
 if ! smoke_test "$CANDIDATE_URL" "the candidate"; then
