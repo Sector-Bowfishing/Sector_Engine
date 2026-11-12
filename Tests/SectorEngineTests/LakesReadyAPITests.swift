@@ -5,7 +5,8 @@
 //  Sector_Engine #156: `GET /lakes/ready` lists the lakes with a usable CUSTOMER-lane copy. Flag off by default; no reader
 //  means an empty list; statuses and freshness come from the #144 readers; reads never leave `customer/lakes`.
 //  #158: each lake also carries `directoryId` and `brainKey`, each ready layer its lake-wide value from the same copy, and
-//  `extent.bbox` from the Lake Registry index (synthetic index below; only usable entries give an extent). The golden
+//  `extent.bbox` from the Lake Registry index (synthetic index below; only usable entries give an extent), and (1.2.0) a
+//  `wind` layer from the Engine's forecast (LakesReadyWindTests.goldenWind; tested there). The golden
 //  response (verification/fixtures/phone-contract/lakes-ready-v1.golden.json) is synthetic and checked against
 //  contracts/phone/lakes-ready-v1.json here and in verification/test_lakes_ready_contract.py.
 //
@@ -125,8 +126,10 @@ final class LakesReadyAPITests: XCTestCase {
     static let contractFile = "contracts/phone/lakes-ready-v1.json"
 
     func run(_ reader: BrainOutputReader?, config: LakesReadyConfig = on, level: LakeLevelEligibility = levelOn,
-             extents: [String: ReadyLakeExtent] = LakesReadyAPITests.extents) async -> LakesReadyResponse? {
-        await LakesReadyAPI.response(config: config, reader: reader, extents: extents, levelEligibility: level, now: Self.now)
+             extents: [String: ReadyLakeExtent] = LakesReadyAPITests.extents,
+             wind: [String: LakeWindForecast] = [:]) async -> LakesReadyResponse? {
+        await LakesReadyAPI.response(config: config, reader: reader, extents: extents, wind: wind, levelEligibility: level,
+                                     now: Self.now)
     }
 
     // MARK: flag
@@ -540,7 +543,7 @@ final class LakesReadyAPITests: XCTestCase {
     // MARK: contract and golden
 
     func testGoldenMatchesTheEngineOutput() async throws {
-        let got = await run(Recording(["customer/lakes": Self.subtree]))
+        let got = await run(Recording(["customer/lakes": Self.subtree]), wind: LakesReadyWindTests.goldenWind)
 
         let out = try XCTUnwrap(got)
         let produced = try JSONSerialization.jsonObject(with: SectorEngineAPI.makeEncoder().encode(out))
@@ -553,7 +556,7 @@ final class LakesReadyAPITests: XCTestCase {
         let golden = try JSONSerialization.jsonObject(with: Data(contentsOf: Self.goldenURL()))
         XCTAssertEqual(PhoneContractTests.validate(golden, fields), [])
         for r: BrainOutputReader? in [nil, Recording(["customer/lakes": Self.subtree])] {
-            let got = await run(r)
+            let got = await run(r, wind: LakesReadyWindTests.goldenWind)
 
             let out = try XCTUnwrap(got)
             let doc = try JSONSerialization.jsonObject(with: SectorEngineAPI.makeEncoder().encode(out))
@@ -572,7 +575,7 @@ final class LakesReadyAPITests: XCTestCase {
             else if let a = v as? [Any] { for e in a { walk(e, path + "[]") } }
         }
         walk(try JSONSerialization.jsonObject(with: Data(contentsOf: Self.goldenURL())), "")
-        seen.remove("lakes[]")
+        seen = seen.filter { !$0.hasSuffix("[]") }   // array elements ("lakes[]", "…hourly[]") are not contract paths
         XCTAssertEqual(seen, Set(fields.keys))
     }
 
@@ -599,6 +602,17 @@ final class LakesReadyAPITests: XCTestCase {
             $0["layers"] = ["clarity": ["status": "LIVE", "asOf": "2026-11-10T14:00:00Z"]]
         }, fields).isEmpty, "a ready clarity layer carries its value")
         XCTAssertFalse(PhoneContractTests.validate(lake0 { $0["extent"] = ["confidence": "HIGH"] }, fields).isEmpty)
+        XCTAssertFalse(PhoneContractTests.validate(lake0 {
+            $0["layers"] = ["wind": ["status": "ESTIMATE", "asOf": "2026-11-10T15:00:00Z", "fromDeg": 225, "hourly": [Any]()]]
+        }, fields).isEmpty, "a wind layer carries its speed")
+        XCTAssertFalse(PhoneContractTests.validate(lake0 {
+            $0["layers"] = ["wind": ["status": "ESTIMATE", "asOf": "2026-11-10T15:00:00Z", "speedMph": 9.4, "fromDeg": 225.5,
+                                     "hourly": [Any]()] as [String: Any]]
+        }, fields).isEmpty, "fromDeg is whole degrees")
+        XCTAssertFalse(PhoneContractTests.validate(lake0 {
+            $0["layers"] = ["wind": ["status": "ESTIMATE", "asOf": "2026-11-10T15:00:00Z", "speedMph": 9.4, "fromDeg": 225,
+                                     "hourly": [["time": "2026-11-10T15:00:00Z", "speedMph": 9.4]]] as [String: Any]]
+        }, fields).isEmpty, "every hour carries its direction")
         XCTAssertFalse(PhoneContractTests.validate(lake0 {
             $0["extent"] = ["confidence": "HIGH", "bbox": ["west": -81.0, "south": 40.9, "east": -80.9]] as [String: Any]
         }, fields).isEmpty)

@@ -28,10 +28,11 @@
 //    - A failed registry read → the last good index is served; with none, the lakes are listed without `extent`.
 //    - The `level` layer also needs the Lake level gates: `SECTOR_LAKE_LEVEL_OUTPUT=1` and the lake on `validatedLakeIds`.
 //
-//  Layers: `clarity`, `waterTemp` and `level` have CUSTOMER-lane copies. `wind` and `intelligence` have none per lake today
-//  (wind's only copy is the global `customer/wind/outlookModel`, a model choice, not a lake value; Intelligence has no
-//  copy), so they are never emitted. A layer is present only when it is ready; an absent layer means "not yet for this lake".
-//  Contract: contracts/phone/lakes-ready-v1.json (1.1.0: additive).
+//  Layers: `clarity`, `waterTemp` and `level` have CUSTOMER-lane copies. A layer is present only when it is ready; an absent
+//  layer means "not yet for this lake". `wind` has no per-lake copy: the Engine computes it from its forecast for each
+//  listed lake, labeled ESTIMATE (LakeWind.swift; owner approval on Sector_Ops #51, 2026-11-11). Wind never makes a lake
+//  ready. `intelligence` has no copy and is never emitted.
+//  Contract: contracts/phone/lakes-ready-v1.json (1.2.0: additive).
 //
 
 import Foundation
@@ -78,12 +79,15 @@ public struct ReadyLakeCentroid: Codable, Equatable, Sendable {
     public let lon: Double
 }
 
-/// Each key is present only when that layer is ready. `wind` and `intelligence` are never emitted (no per-lake copy exists).
+/// Each key is present only when that layer is ready. `intelligence` is never emitted (no copy exists).
 public struct ReadyLakeLayers: Codable, Equatable, Sendable {
     public let clarity: ReadyClarityLayer?
     public let waterTemp: ReadyWaterTempLayer?
     public let level: ReadyLayer?
+    /// The Engine's lake-wide wind forecast (ESTIMATE), added only to a lake that is already listed.
+    public var wind: ReadyWindLayer? = nil
 
+    /// No CUSTOMER-lane layer is ready. `wind` does not count: it is an Engine forecast, never a reason to list a lake.
     public var isEmpty: Bool { clarity == nil && waterTemp == nil && level == nil }
 }
 
@@ -131,29 +135,57 @@ public enum LakesReadyAPI {
     public static let subtreePath = "customer/lakes"
     /// The per-lake copies evaluated (node names under `customer/lakes/{k}`).
     static let copyLayers = ["clarity", "waterTemp", "level"]
+    /// How long a request waits for the wind forecasts before it answers without them (the fetch carries on).
+    public static let windBudget: Double = 4
 
     /// The response, or nil when the endpoint is switched off (the server then has no route: 404).
+    /// `wind`: each lake's wind forecast by `lakeId` (the server form fetches them through `LakeWindCache`).
     public static func response(config: LakesReadyConfig, reader: BrainOutputReader?,
                                 extents: [String: ReadyLakeExtent] = [:],
+                                wind: [String: LakeWindForecast] = [:],
                                 levelEligibility: LakeLevelEligibility = .fromEnvironment(),
                                 now: Date = Date()) async -> LakesReadyResponse? {
         guard config.enabled else { return nil }
         var snapshot: CustomerLakesSnapshot?
         if let reader { snapshot = try? await fetchSnapshot(reader) }
-        return await response(snapshot: snapshot, extents: extents, levelEligibility: levelEligibility, now: now)
+        let base = await response(snapshot: snapshot, extents: extents, levelEligibility: levelEligibility, now: now)
+        return attachWind(base, wind, now: now)
     }
 
     /// The server's form: the snapshot comes from the cache (nil cache = no reader), the extents from the registry cache
-    /// (nil = no extents). Both are fetched at the same time. nil when switched off.
+    /// (nil = no extents). Both are fetched at the same time. Then the wind for the listed lakes, from `winds` (nil = no wind),
+    /// waiting at most `windBudget` seconds. nil when switched off.
     public static func response(config: LakesReadyConfig, cache: LakesReadySnapshotCache?,
                                 extents: LakeRegistryExtentCache? = nil,
+                                winds: LakeWindCache? = nil,
+                                windBudget: Double = LakesReadyAPI.windBudget,
                                 levelEligibility: LakeLevelEligibility = .fromEnvironment(),
                                 now: Date = Date()) async -> LakesReadyResponse? {
         guard config.enabled else { return nil }
         async let snapshot = cache?.snapshot()
         async let byLake = extents?.extents()
         let (s, e) = await (snapshot, byLake)
-        return await response(snapshot: s, extents: e ?? [:], levelEligibility: levelEligibility, now: now)
+        let base = await response(snapshot: s, extents: e ?? [:], levelEligibility: levelEligibility, now: now)
+        guard let winds, !base.lakes.isEmpty else { return base }
+        let points = base.lakes.map(LakeWindPoint.of)
+        let byKey = await withDeadline(windBudget, "lakesReadyWind") { () async -> [String: LakeWindForecast]? in
+            await winds.forecasts(for: points)
+        } ?? [:]
+        var byLakeId: [String: LakeWindForecast] = [:]
+        for (lake, p) in zip(base.lakes, points) { if let f = byKey[p.key] { byLakeId[lake.lakeId] = f } }
+        return attachWind(base, byLakeId, now: now)
+    }
+
+    /// Adds each listed lake's `wind` layer from its forecast. Never adds or removes a lake.
+    static func attachWind(_ r: LakesReadyResponse, _ wind: [String: LakeWindForecast], now: Date) -> LakesReadyResponse {
+        guard !wind.isEmpty else { return r }
+        let lakes = r.lakes.map { lake -> ReadyLake in
+            guard let layer = wind[lake.lakeId]?.layer(now: now) else { return lake }
+            var layers = lake.layers
+            layers.wind = layer
+            return ReadyLake(lakeId: lake.lakeId, name: lake.name, centroid: lake.centroid, extent: lake.extent, layers: layers)
+        }
+        return LakesReadyResponse(version: r.version, generatedAt: r.generatedAt, lakes: lakes)
     }
 
     /// One read of `customer/lakes`. Throws when the read fails; nil when the subtree is absent or not an object.

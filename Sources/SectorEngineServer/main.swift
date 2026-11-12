@@ -180,8 +180,10 @@ if lakesReadyConfig.enabled {
     let cache = BrainOutputReaderConfig.reader(timeoutSeconds: 5).map { LakesReadySnapshotCache(reader: $0, ttl: 60) }
     // Each lake's bbox from the public Lake Registry index (#158): lake geometry identity, not a Brain output; no credential.
     let extents = LakeRegistryExtents.indexURL().map { LakeRegistryExtentCache(url: $0) }
+    // Each listed lake's wind (#158): the Engine's Open-Meteo forecast at the lake's point, labeled ESTIMATE (LakeWind.swift).
+    let winds = LakeWindCache()
     router.get("lakes/ready") { _, _ -> Response in
-        guard let body = await LakesReadyAPI.response(config: lakesReadyConfig, cache: cache, extents: extents,
+        guard let body = await LakesReadyAPI.response(config: lakesReadyConfig, cache: cache, extents: extents, winds: winds,
                                                       levelEligibility: lakeLevelEligibility) else {
             return Response(status: .notFound)
         }

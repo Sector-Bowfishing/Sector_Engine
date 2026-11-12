@@ -157,9 +157,14 @@ answers for any coordinate, so the Engine serves the list from the same CUSTOMER
   `LakeRegistryExtents.swift`): lake geometry identity, not a Brain output, read without a credential, fetched at most every
   30 min with the snapshot, and given only for a published shoreline at HIGH or MEDIUM confidence whose point is not
   `identity-risk`. A failed registry read serves the last good index (with none, no `extent`), never drops a lake; an extent never makes a lake ready.
-- **Layers without a copy:** `wind` (its only copy is the global `customer/wind/outlookModel`, a model choice) and `intelligence`
-  (no copy; its publication contract stops at CALIBRATION). Never emitted; a later per-lake copy adds them as a new layer with
-  its own value fields (additive). Wind's planned value is `speedMph` plus `fromDeg` (the direction it blows FROM).
+- **Wind (1.2.0, Engine-computed):** wind has no per-lake copy (its only copy is the global `customer/wind/outlookModel`, a model
+  choice). Under the owner approval on Sector_Ops #51 (2026-11-11), the Engine computes it for each LISTED lake from its own
+  Open-Meteo forecast path (`best_match`, the Wind Brain's tonight model) at one point per lake (the `extent.bbox` centre, else
+  the centroid), labeled `ESTIMATE`: `speedMph`, `fromDeg` (the direction it blows FROM), `asOf` (the current UTC hour) and
+  `hourly` (that hour and the next 12). It is the one layer that is not a copy, and it never makes a lake ready
+  (`LakeWind.swift`; one multi-location request for all due points, 30 min per point, 4 s request budget).
+- **Layer without a copy:** `intelligence` (no copy; its publication contract stops at CALIBRATION). Never emitted; a later
+  per-lake copy adds it as a new layer with its own value fields (additive).
 - **Shape and contract:** `contracts/phone/lakes-ready-v1.json`, golden `verification/fixtures/phone-contract/lakes-ready-v1.golden.json`
   (synthetic), checked by `LakesReadyAPITests` and `verification/test_lakes_ready_contract.py`.
 

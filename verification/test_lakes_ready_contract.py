@@ -1,5 +1,7 @@
 """Phone contract for GET /lakes/ready (Sector_Engine #156, #158): the golden meets the contract; the validator catches breakage.
 
+1.2.0 adds the Engine-computed wind layer (owner approval on Sector_Ops #51, 2026-11-11): always ESTIMATE, with an hourly list.
+
 The same validator as the /conditions goldens (tools/conditions_golden/capture.py), against contracts/phone/lakes-ready-v1.json.
 The golden is synthetic (Tests/SectorEngineTests/LakesReadyAPITests.swift checks the Engine produces it byte-for-byte in
 value); this repository is public, so it may carry only directory ids, names and centroids, statuses, dates, and made-up
@@ -29,7 +31,8 @@ from sector_brain_platform.keys import lake_key  # noqa: E402  (the one lake-key
 
 LAYER_KEYS = {"clarity": ({"status", "asOf", "valueFt"}, {"lowFt", "highFt"}),
               "waterTemp": ({"status", "asOf", "valueF"}, set()),
-              "level": ({"status", "asOf"}, set())}
+              "level": ({"status", "asOf"}, set()),
+              "wind": ({"status", "asOf", "speedMph", "fromDeg", "hourly"}, set())}
 
 
 def _directory() -> dict:
@@ -58,7 +61,7 @@ def test_golden_exercises_every_contract_path_and_nothing_else():
                 walk(c, path + "[]")
 
     walk(GOLDEN, "")
-    seen.discard("lakes[]")
+    seen = {p for p in seen if not p.endswith("[]")}  # array elements ("lakes[]", "...hourly[]") are not contract paths
     assert seen == set(FIELDS)
 
 
@@ -90,12 +93,30 @@ def test_golden_is_synthetic_directory_data_only():
     assert any("extent" in lake for lake in GOLDEN["lakes"]) and not all("extent" in lake for lake in GOLDEN["lakes"])
 
 
-def test_wind_and_intelligence_are_documented_not_emitted():
-    assert set(CONTRACT["layersNotInV1"]) >= {"wind", "intelligence"}
-    assert not any(p.startswith(("lakes[].layers.wind", "lakes[].layers.intelligence")) for p in FIELDS)
+def test_golden_wind_is_an_hourly_estimate():
+    """wind (1.2.0): always ESTIMATE; hourly[0] is the asOf hour with the layer's values; then later whole hours, at most 12 h on;
+    whole-degree FROM directions 0-359; one-decimal mph. Some listed lakes have it and some do not."""
+    winds = [lake["layers"]["wind"] for lake in GOLDEN["lakes"] if "wind" in lake["layers"]]
+    assert winds and len(winds) < len(GOLDEN["lakes"])
+    for w in winds:
+        assert w["status"] == "ESTIMATE"
+        assert w["asOf"].endswith(":00:00Z") and w["asOf"] <= GOLDEN["generatedAt"]
+        assert w["hourly"] and w["hourly"][0] == {"time": w["asOf"], "speedMph": w["speedMph"], "fromDeg": w["fromDeg"]}
+        times = [h["time"] for h in w["hourly"]]
+        assert times == sorted(set(times)) and all(t.endswith(":00:00Z") for t in times)
+        assert len(times) <= 13
+        for h in w["hourly"]:
+            assert isinstance(h["fromDeg"], int) and 0 <= h["fromDeg"] <= 359
+            assert h["speedMph"] >= 0 and round(h["speedMph"], 1) == h["speedMph"]
 
 
-def test_contract_1_1_is_additive_over_1_0():
+def test_intelligence_is_documented_not_emitted_and_wind_is_in_the_contract():
+    assert "intelligence" in CONTRACT["layersNotInV1"] and "wind" not in CONTRACT["layersNotInV1"]
+    assert not any(p.startswith("lakes[].layers.intelligence") for p in FIELDS)
+    assert FIELDS["lakes[].layers.wind"] == {"type": "object", "required": False}
+
+
+def test_contract_1_x_is_additive_over_1_0():
     """1.1.0 (#158) only adds: every 1.0.0 path keeps its type and requiredness; the response version stays 1."""
     v1_0 = {
         "version": ("int", True), "generatedAt": ("date", True), "lakes": ("array", True), "lakes[].lakeId": ("string", True),
@@ -109,7 +130,22 @@ def test_contract_1_1_is_additive_over_1_0():
         assert (FIELDS[p]["type"], FIELDS[p]["required"]) == (t, req), p
     # New keys the Engine always sends (directoryId, brainKey, a ready layer's value) are required: adding a response key is
     # additive for a client that ignores unknown keys.
-    assert CONTRACT["version"] == "1.1.0" and GOLDEN["version"] == 1
+    assert CONTRACT["version"] == "1.2.0" and GOLDEN["version"] == 1
+
+
+def test_contract_1_2_is_additive_over_1_1():
+    """1.2.0 (#158 wind) adds only paths under lakes[].layers.wind, the layer itself optional; every 1.1.0 path is unchanged."""
+    v1_1 = {"lakes[].directoryId": ("string", True), "lakes[].brainKey": ("string", True), "lakes[].extent": ("object", False),
+            "lakes[].extent.bbox": ("object", True), "lakes[].extent.confidence": ("string", True),
+            "lakes[].layers.clarity.valueFt": ("number", True), "lakes[].layers.clarity.lowFt": ("number", False),
+            "lakes[].layers.clarity.highFt": ("number", False), "lakes[].layers.waterTemp.valueF": ("number", True),
+            **{f"lakes[].extent.bbox.{k}": ("number", True) for k in ("west", "south", "east", "north")}}
+    for p, (t, req) in v1_1.items():
+        assert (FIELDS[p]["type"], FIELDS[p]["required"]) == (t, req), p
+    new = {p for p in FIELDS if p.startswith("lakes[].layers.wind")}
+    assert new == {"lakes[].layers.wind", *(f"lakes[].layers.wind.{k}" for k in ("status", "asOf", "speedMph", "fromDeg", "hourly")),
+                   *(f"lakes[].layers.wind.hourly[].{k}" for k in ("time", "speedMph", "fromDeg"))}
+    assert [r["version"] for r in CONTRACT["revisions"]] == ["1.0.0", "1.1.0", "1.2.0"]
 
 
 def test_validator_catches_breaking_changes():
@@ -142,7 +178,13 @@ def test_validator_catches_breaking_changes():
     assert capture.validate(lake0(lambda l: l.__setitem__("layers", {})), FIELDS) == []
     assert capture.validate(lake0(lambda l: l.pop("extent")), FIELDS) == [], "extent is optional"
     assert capture.validate(lake0(lambda l: l["layers"]["clarity"].pop("lowFt")), FIELDS) == []
-    assert capture.validate(lake0(lambda l: l["layers"].__setitem__("wind", {"status": "LIVE", "asOf": "2026-11-10T14:00:00Z"})), FIELDS) == []
+    assert capture.validate(lake0(lambda l: l["layers"].pop("wind")), FIELDS) == [], "wind is optional"
+    for mutate in (lambda w: w.pop("speedMph"), lambda w: w.pop("fromDeg"), lambda w: w.pop("hourly"),
+                   lambda w: w.__setitem__("fromDeg", 225.5), lambda w: w.__setitem__("hourly", [{"time": "2026-11-10T15:00:00Z"}]),
+                   lambda w: w.__setitem__("hourly", [1])):
+        assert capture.validate(lake0(lambda l: mutate(l["layers"]["wind"])), FIELDS), "a broken wind layer passed"
+    assert capture.validate(lake0(lambda l: l["layers"].__setitem__("intelligence", {"status": "LIVE"})), FIELDS) == [], \
+        "an unknown layer is additive"
     assert capture.validate({**GOLDEN, "newTopLevel": 1}, FIELDS) == [], "additive fields must be allowed"
 
 
