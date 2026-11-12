@@ -79,6 +79,11 @@ package final class WaterLevelService {
     // one slow gage to tentpole the whole parallel snapshot. A dropped reading
     // just degrades the score slightly; a 60s hang blocks the response.
     private let requestTimeout: TimeInterval = 12
+    /// Sector_Ops #51 F3: one USGS hop (an OGC page, its names/metadata lookup, or the legacy fallback) gets 2.5 s instead
+    /// of the 8 s HTTP cap, so one stalled hop can't use the whole 9 s fetch budget. The usual chain is one OGC page +
+    /// names (+ legacy only on failure), about 7.5 s at worst; a multi-page box (up to 5 pages) is still cut by the 9 s
+    /// budget. Healthy hops take 0.3–1.1 s (measured 2026-11-06).
+    static let usgsHopTimeout: TimeInterval = 2.5
 
     private static let isoFormatter: ISO8601DateFormatter = {
         let f = ISO8601DateFormatter()
@@ -96,11 +101,22 @@ package final class WaterLevelService {
                         sitesPeriod: String = "P2D",
                         absThreshold: Double = 0.1,
                         pctThreshold: Double = 0) async throws -> [WaterLevelReading] {
-        let west = coordinate.longitude - radiusDegrees
-        let east = coordinate.longitude + radiusDegrees
-        let south = coordinate.latitude - radiusDegrees
-        let north = coordinate.latitude + radiusDegrees
+        // F4: the box is centred on the coordinate rounded to 0.01° (≤ 0.6 km off; the smallest box is 0.25° ≈ 28 km
+        // wide), so nearby requests share one cached answer.
+        let lat = (coordinate.latitude * 100).rounded() / 100
+        let lon = (coordinate.longitude * 100).rounded() / 100
+        let west = lon - radiusDegrees
+        let east = lon + radiusDegrees
+        let south = lat - radiusDegrees
+        let north = lat + radiusDegrees
         let codes = parameterCd ?? parameterCodes
+        let cacheKey = [codes, siteType ?? "-", sites ?? "-", sitesPeriod, "\(absThreshold)", "\(pctThreshold)",
+                        String(format: "%.2f,%.2f,%.2f", lat, lon, radiusDegrees)].joined(separator: "|")
+        let cache = USGSReadingCache.shared
+        if let hit = await cache.fresh(cacheKey) {
+            print(Self.usgsLogLine(codes: codes, box: radiusDegrees, api: "cache", outcome: "ok", series: hit.count, started: Date()))
+            return hit
+        }
 
         // The USGS Water Data API first; the legacy service only while it still
         // exists (decommissioned Q1 2027), so a 429 or an outage on the new API
@@ -112,14 +128,18 @@ package final class WaterLevelService {
         let series: [USGSSeries]
         let started = Date()
         var api = "legacy"
+        var complete = true          // legacy answers carry their names inline
         do {
             if sites == nil, siteType == nil {
                 do {
-                    series = try await USGSWaterData.recentSeries(west: west, south: south, east: east, north: north,
-                                                                  parameterCodes: codes, lookback: lookbackPeriod,
-                                                                  timeout: requestTimeout)
+                    (series, complete) = try await USGSWaterData.recentSeriesChecked(west: west, south: south, east: east,
+                                                                                     north: north, parameterCodes: codes,
+                                                                                     lookback: lookbackPeriod,
+                                                                                     timeout: Self.usgsHopTimeout)
                     api = "ogc"
                 } catch {
+                    // A larger box cancelled because a smaller one answered is not a USGS failure: no legacy hop for it.
+                    if Task.isCancelled { throw CancellationError() }
                     api = "legacy-after-ogc-" + HTTP.errorLabel(error)
                     series = try await legacySeries(west: west, south: south, east: east, north: north,
                                                     parameterCodes: codes, siteType: siteType,
@@ -131,14 +151,28 @@ package final class WaterLevelService {
                                                 sites: sites, sitesPeriod: sitesPeriod)
             }
         } catch {
+            if Task.isCancelled {
+                print(Self.usgsLogLine(codes: codes, box: radiusDegrees, api: api, outcome: "cancelled",
+                                       series: 0, started: started))
+                throw error
+            }
+            if let last = await cache.lastGood(cacheKey) {
+                print(Self.usgsLogLine(codes: codes, box: radiusDegrees, api: api, outcome: "last-good-after-" + HTTP.errorLabel(error),
+                                       series: last.count, started: started))
+                return last
+            }
             print(Self.usgsLogLine(codes: codes, box: radiusDegrees, api: api, outcome: HTTP.errorLabel(error),
                                    series: 0, started: started))
             throw error
         }
         print(Self.usgsLogLine(codes: codes, box: radiusDegrees, api: api, outcome: "ok",
                                series: series.count, started: started))
-        return series.compactMap { Self.reading(from: $0, absThreshold: absThreshold,
-                                                pctThreshold: pctThreshold) }
+        let readings = series.compactMap { Self.reading(from: $0, absThreshold: absThreshold,
+                                                        pctThreshold: pctThreshold) }
+        // Only a whole answer is cached: never one from a cancelled task (a larger box cancelled because a smaller one
+        // answered, or a spent withDeadline budget) or one whose names/metadata lookup failed.
+        if complete && !Task.isCancelled { await cache.put(cacheKey, readings) }
+        return readings
     }
 
     /// One line per USGS box attempt (Sector_Ops #51 F1): which parameter, how
@@ -217,7 +251,7 @@ package final class WaterLevelService {
         // a long hang would block the response.
         let result: HTTPResult
         do {
-            result = try await HTTP.get(url)
+            result = try await HTTP.get(url, timeout: Self.usgsHopTimeout)
         } catch {
             throw WaterLevelError.requestFailed
         }
@@ -296,24 +330,27 @@ package final class WaterLevelService {
         // Progressively larger boxes. USGS caps a bBox at 25 sq° (lat × lng),
         // so 2.5° (6.25 sq°) is well within bounds. The first (small) box hits
         // for most lakes; the wider ones only run when nothing closer exists.
+        // F3 (Sector_Ops #51): all box sizes at once, decided smallest-first — the same answer the old one-after-another
+        // loop gave, without waiting for the small boxes to time out before the next one starts.
         let radii = customRadii ?? [radiusDegrees, 1.0, 2.5]
-        for radius in radii {
-            let readings = try await nearbyReadings(near: coordinate, radiusDegrees: radius,
-                                                    parameterCd: parameterCd, siteType: siteType,
-                                                    absThreshold: absThreshold, pctThreshold: pctThreshold)
+        let limit = maxMiles ?? Self.maxUsefulMiles
+        return try await Self.firstAcrossRadii(radii, fetch: { [self] radius in
+            try await self.nearbyReadings(near: coordinate, radiusDegrees: radius,
+                                          parameterCd: parameterCd, siteType: siteType,
+                                          absThreshold: absThreshold, pctThreshold: pctThreshold)
+        }, decide: { readings in
             guard let nearest = readings.min(by: {
                 origin.distance(from: CLLocation(latitude: $0.latitude, longitude: $0.longitude))
                     < origin.distance(from: CLLocation(latitude: $1.latitude, longitude: $1.longitude))
-            }) else { continue }
+            }) else { return .next }
 
             var result = nearest
             let gage = CLLocation(latitude: nearest.latitude, longitude: nearest.longitude)
             result.distanceMiles = origin.distance(from: gage) / 1609.34
             // A gage farther than this isn't your water — don't present it as fact.
-            if let d = result.distanceMiles, d > (maxMiles ?? Self.maxUsefulMiles) { return nil }
-            return result
-        }
-        return nil
+            if let d = result.distanceMiles, d > limit { return .done(nil) }
+            return .done(result)
+        })
     }
 
     /// Nearest USGS **discharge** (streamflow) gage — cfs released/flowing, the
