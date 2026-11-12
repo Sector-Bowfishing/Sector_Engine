@@ -1,8 +1,18 @@
 {
   "schema": "sector-runner-policy-v1",
-  "note": "Reviewed in git; deploying it is the approval boundary (Sector_Ops #50). Which runner is primary for each Brain, and whether an expired primary's cycle may fail over to the other runner. Failover is OFF: a dead primary means the Brain waits, never a surprise run on the other side. Making Pulse primary for a Brain, or enabling failover, is an owner decision recorded with an approvalRef. water-clarity: Pulse is primary (owner, Sector_Ops #51 O4, 2026-11-06; hybrid O3 (b): Pulse runs the Brain job, the Orchestrator and Publisher stay in the cloud).",
+  "note": "Reviewed in git; deploying it is the approval boundary (Sector_Ops #50). Which runner is primary for each Brain, and whether an expired primary's cycle may fail over to the other runner. Failover is OFF: a dead primary means the Brain waits, never a surprise run on the other side. Making Pulse primary for a Brain, or enabling failover, is an owner decision recorded with an approvalRef. water-clarity: Pulse is primary (owner, Sector_Ops #51 O4, 2026-11-06; hybrid O3 (b): Pulse runs the Brain job, the Orchestrator and Publisher stay in the cloud). lake-brain: Pulse is primary (owner, Sector_Ops #51, 2026-11-12, Lake on Pulse; same hybrid path; it is granted only once the owner enables lake-brain in the execution control).",
   "defaultPrimary": "cloud",
-  "primary": {"water-clarity": "pulse"},
-  "approvals": {"water-clarity": "owner-approval-2026-11-06/sector-ops-51-o4"},
-  "failover": {"enabled": false, "brains": [], "approvalRef": null}
+  "primary": {
+    "water-clarity": "pulse",
+    "lake-brain": "pulse"
+  },
+  "approvals": {
+    "water-clarity": "owner-approval-2026-11-06/sector-ops-51-o4",
+    "lake-brain": "owner-approval-2026-11-12/sector-ops-51-lake-on-pulse"
+  },
+  "failover": {
+    "enabled": false,
+    "brains": [],
+    "approvalRef": null
+  }
 }

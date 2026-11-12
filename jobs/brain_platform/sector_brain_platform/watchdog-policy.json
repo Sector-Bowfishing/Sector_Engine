@@ -4,9 +4,29 @@
   "enabled": true,
   "approvalRef": "owner-approval-2026-11-06/sector-ops-51-o6.3",
   "since": "2026-11-06T15:44:00Z",
-  "allowedJobs": ["brain-orchestrator", "brain-publisher"],
+  "allowedJobs": [
+    "brain-orchestrator",
+    "brain-publisher"
+  ],
   "brains": {
-    "water-clarity": {"holder": "pulse", "lakes": ["Guntersville_AL", "Lake_Hartwell_SC"]}
+    "water-clarity": {
+      "holder": "pulse",
+      "lakes": [
+        "Guntersville_AL",
+        "Lake_Hartwell_SC"
+      ]
+    },
+    "lake-brain": {
+      "holder": "pulse",
+      "lakes": [
+        "Guntersville_AL",
+        "Wheeler_AL",
+        "Wilson_AL",
+        "Pickwick_Lake_TN",
+        "Lake_Hartwell_SC"
+      ],
+      "approvalRef": "owner-approval-2026-11-12/sector-ops-51-lake-on-pulse"
+    }
   },
   "lockHeldMaxMinutes": 30,
   "pauseSchedulerJob": "brain-orchestrator"

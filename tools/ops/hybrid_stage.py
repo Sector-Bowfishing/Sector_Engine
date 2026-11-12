@@ -141,6 +141,29 @@ def verify(runner: dict, watchdog: dict, cutover: dict, brain: str) -> list[str]
     return probs
 
 
+def is_live(brain: str, runner: dict, watchdog: dict, cutover: dict) -> bool:
+    """True when the Brain is already in any of the three live policies (its fragment was applied)."""
+    return brain in (runner.get("primary") or {}) or brain in (watchdog.get("brains") or {}) or brain in (cutover.get("brains") or {})
+
+
+def live_problems(frag: dict, runner: dict, watchdog: dict, cutover: dict) -> list[str]:
+    """For an applied fragment: the live policies must make the Brain CENTRAL with its primary, carry the fragment's watchdog scope, and the fragment
+    must list no open blockers (applying it was the owner confirming they were done)."""
+    brain = frag["brainId"]
+    probs = verify(runner, watchdog, cutover, brain)
+    if (runner.get("primary") or {}).get(brain) != frag["runnerPolicy"]["primary"]:
+        probs.append(f"runner-policy: primary for {brain} differs from the fragment")
+    wd = (watchdog.get("brains") or {}).get(brain) or {}
+    if wd.get("holder") != frag["watchdog"]["holder"] or list(wd.get("lakes") or []) != list(frag["watchdog"]["lakes"]):
+        probs.append(f"watchdog-policy: {brain} holder/lakes differ from the fragment")
+    review = frag["cutover"].get("orderReviewRef")
+    if review and ((cutover.get("brains") or {}).get(brain) or {}).get("orderReviewRef") != review:
+        probs.append(f"cutover: {brain} lost its recorded order review {review!r}")
+    if frag["blockers"]:
+        probs.append(f"{brain} is live but its fragment still lists {len(frag['blockers'])} blockers")
+    return probs
+
+
 def _render(doc) -> str:
     return json.dumps(doc, indent=2) + "\n"
 
@@ -190,6 +213,11 @@ def main(argv=None) -> int:
     if a.cmd == "check":
         bad = 0
         for brain, f in frags.items():
+            if is_live(brain, runner, watchdog, cutover):            # applied in an owner-approved PR: the live policies must stand on their own
+                probs = live_problems(f, runner, watchdog, cutover)
+                print(f"{brain}: {'LIVE (applied), OK' if not probs else 'LIVE (applied), BROKEN: ' + '; '.join(probs)}")
+                bad += bool(probs)
+                continue
             try:
                 probs = verify(*merged(f, "check-only", runner, watchdog, cutover), brain)
             except StageError as e:

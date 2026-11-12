@@ -2,7 +2,7 @@
   "schema": "sector-hybrid-stage-v1",
   "brainId": "lake-brain",
   "readiness": 1,
-  "note": "STAGED, not live. Nothing reads this file at runtime: it becomes live only when tools/ops/hybrid_stage.py apply writes it into the three reviewed policies in an owner-approved PR, and that PR is deployed (Orchestrator and Publisher). Lake moves like Water Clarity did (hybrid O3 (b)): Pulse runs lake-central while it holds the lease; the cloud Orchestrator grants, reconciles and starts the central Publisher.",
+  "note": "APPLIED (Sector_Ops #51, owner approval 2026-11-12 lake-on-pulse): tools/ops/hybrid_stage.py apply wrote it into the three reviewed policies; `check` now verifies the live policies against it. Nothing reads this file at runtime. The move is live only once the Orchestrator and Publisher are deployed from this commit AND the owner enables lake-brain in the execution control (until then the cycle HOLDs lake-brain and grants nothing). The blockers it listed before the flip are in the flip PR. Lake moves like Water Clarity did (hybrid O3 (b)): Pulse runs lake-central while it holds the lease; the cloud Orchestrator grants, reconciles and starts the central Publisher.",
   "pulseJob": "lake-central",
   "leaseObject": "exports/runners/leases/lake-brain.json",
   "artifactPrefix": "artifacts/lake-brain/",
@@ -10,13 +10,5 @@
   "runnerPolicy": {"primary": "pulse"},
   "watchdog": {"holder": "pulse", "lakes": ["Guntersville_AL", "Wheeler_AL", "Wilson_AL", "Pickwick_Lake_TN", "Lake_Hartwell_SC"]},
   "cutover": {"state": "CENTRAL", "orderReviewRef": "owner-approval-2026-11-02/sector-ops-50#L-2"},
-  "blockers": [
-    "IAM step B2: written on Sector_Ops #51 (private), not applied",
-    "Sector-Pulse #10 (lake-archive-read-token) lands with B2",
-    "Mac mini: a LakeBrainJob release build from the snapshot commit, and publication.lakeJobBinary / lakeSeedArchive / lakePresence set",
-    "knowledge release approval for lake-brain not recorded (the Publisher refuses an unapproved release)",
-    "B5 decision: the first live publish's baseline acknowledgement (the Water Clarity D3 pattern)",
-    "L-H1 decision: Lake reads the shared TVA archive from its bucket, last written 2026-10-14 (the collector moved local, now Pulse on the Mac mini): point Lake at the mini's local archive (a small Lake change) or accept live TVA only",
-    "owner approvals for this apply PR, the Orchestrator + Publisher deploys, and the execution control enabling lake-brain"
-  ]
+  "blockers": []
 }
