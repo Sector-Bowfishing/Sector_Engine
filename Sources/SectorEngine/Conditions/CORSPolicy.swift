@@ -2,7 +2,8 @@
 //  CORSPolicy.swift
 //  SectorEngine
 //
-//  Browser access for the website (Sector_Ops #53 spec, "Web CORS"): `GET /conditions` and `GET /health` only, from an
+//  Browser access for the website (Sector_Ops #53 spec, "Web CORS"): `GET /conditions`, `GET /health` and `GET /lakes/ready`
+//  (the website map's ready-lakes picker; owner approval 2026-11-12 ~07:00Z, Sector_Ops #51) only, from an
 //  allow-list of the Web project's own origins. Never `*`, never credentials. A request without an `Origin` header (the
 //  apps) gets no CORS header at all, so its response is byte-for-byte what it was.
 //
@@ -29,7 +30,7 @@ public struct CORSPolicy: Equatable, Sendable {
     public static let devOrigin = "http://localhost:3000"
 
     /// The paths that answer cross-origin requests.
-    public static let paths: Set<String> = ["/conditions", "/health"]
+    public static let paths: Set<String> = ["/conditions", "/health", "/lakes/ready"]
     public static let allowMethods = "GET"
     public static let allowHeaders = "X-Sector-Client, Accept"
     public static let maxAgeSeconds = 600
