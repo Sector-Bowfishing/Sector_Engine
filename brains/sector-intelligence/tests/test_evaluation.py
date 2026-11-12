@@ -92,6 +92,26 @@ class EvaluationTests(unittest.TestCase):
         self.assertIn("DEGRADED_INPUTS", e["provenance"]["qualityFlags"])
         self.assertEqual(e["synthesis"]["inputsFresh"], 2)
 
+    def test_future_stamped_state_is_not_fresh(self):
+        snap = snapshot()
+        snap["waterClarity"]["provenance"]["generatedAt"] = bp.iso(NOW + dt.timedelta(hours=2))
+        snap["wind"]["provenance"]["generatedAt"] = bp.iso(NOW + dt.timedelta(minutes=5))    # within the 10-min tolerance
+        e = self.evaluate(snap)
+        c = e["inputs"]["waterClarity"]
+        self.assertEqual(c["status"], "STALE"); self.assertTrue(c["stale"]); self.assertEqual(c["ageHours"], -2.0)
+        self.assertTrue(any("in the future" in d for d in c["degraded"]))
+        self.assertEqual(e["inputs"]["wind"]["status"], "PUBLISHED")
+        self.assertIn("waterClarity", e["degradedInputs"]); self.assertNotIn("wind", e["degradedInputs"])
+
+    def test_missing_stale_after_hours_is_not_fresh(self):
+        deps = copy.deepcopy(self.deps); deps["water-temp"].pop("staleAfterHours", None)
+        e = ev.evaluate("Guntersville|AL", snapshot=snapshot(), fleet_row=None, presence=PRESENCE, species=SPECIES,
+                        deps=deps, cat=self.cat, serving=self.serving, now=NOW)
+        t = e["inputs"]["waterTemp"]
+        self.assertEqual(t["status"], "STALE"); self.assertTrue(t["stale"])
+        self.assertTrue(any("no staleAfterHours" in d for d in t["degraded"]))
+        self.assertEqual(e["inputs"]["lake"]["status"], "PUBLISHED")
+
     def test_nothing_published_evaluates_to_all_not_published(self):
         e = self.evaluate({}, presence=None, species=None)
         self.assertEqual(e.get("inputsUsed", {}), {})                      # empty values are stripped: absent == empty, never a silent skip
