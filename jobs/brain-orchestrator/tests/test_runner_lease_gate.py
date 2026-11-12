@@ -78,7 +78,7 @@ def test_a_pulse_primary_brain_not_enabled_in_the_execution_control_is_held_and_
     assert "wind" not in run(world, monkeypatch, ARGV, policy=PULSE, store=store, ctl_edit=edit)
     out = capsys.readouterr().out
     assert "LEASE wind" not in out and RL.read(store, "wind")[0] is None
-    assert why in out or "PAUSED" in out
+    assert why in out
 
 
 def test_dry_run_grants_nothing(world, monkeypatch, capsys):
