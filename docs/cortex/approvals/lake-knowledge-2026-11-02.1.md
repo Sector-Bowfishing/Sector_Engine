@@ -6,7 +6,7 @@
 | Release digest | `sha256:be71a8a8783bf91195f8ba7815e419dbfb99bdcd37f159cad31c04780fc5fdb1` (unchanged by this record) |
 | Approved by | Michael Cather (owner), in chat, 2026-11-12 ~07:00Z |
 | Decision | Sector_Ops #51, "Owner approval (Michael, 2026-11-12 ~07:00Z, posted by chat): Lake decisions + Ops panels deploy + Engine CORS", item 2 (M3 in the 06:52Z runner plan) |
-| Scope | **INTERNAL** and **CALIBRATION** use only (the same scope as Water Clarity's release when it moved to Pulse) |
+| Scope | **INTERNAL** and **CALIBRATION** use only. The owner approved the release without naming a scope; the runner chose this narrower reading to match Water Clarity's release when it moved to Pulse. |
 | Customer eligible | **No**. This approval does not make the release or any Lake output customer-eligible. |
 | Promotion | None. No value, score, binding, catalog entry or lifecycle state changes. |
 

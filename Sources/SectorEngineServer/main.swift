@@ -17,7 +17,7 @@ setvbuf(stdout, nil, _IOLBF, 0)
 
 let router = Router()
 
-// Browser CORS for the website (CORSPolicy): GET /conditions and GET /health only, from the Web project's own origins.
+// Browser CORS for the website (CORSPolicy): GET /conditions, /health and /lakes/ready only, from the Web project's own origins.
 // Added before every route so it wraps them (and the not-found responder, which answers the OPTIONS preflight). A
 // request without an Origin header (the apps) passes straight through, unchanged.
 struct SectorCORSMiddleware<Context: RequestContext>: RouterMiddleware {
