@@ -12,7 +12,18 @@
       "lakeId": "Berlin Lake|OH",
       "layers": {
         "clarity": {"asOf": "2026-11-10T14:00:00Z", "highFt": 3.0, "lowFt": 1.0, "status": "LIVE", "valueFt": 2.0},
-        "level": {"asOf": "2026-11-10T15:00:00Z", "status": "LIVE"}
+        "level": {"asOf": "2026-11-10T15:00:00Z", "status": "LIVE"},
+        "wind": {
+          "asOf": "2026-11-10T15:00:00Z",
+          "fromDeg": 225,
+          "hourly": [
+            {"fromDeg": 225, "speedMph": 9.4, "time": "2026-11-10T15:00:00Z"},
+            {"fromDeg": 230, "speedMph": 11.2, "time": "2026-11-10T16:00:00Z"},
+            {"fromDeg": 240, "speedMph": 12.8, "time": "2026-11-10T17:00:00Z"}
+          ],
+          "speedMph": 9.4,
+          "status": "ESTIMATE"
+        }
       },
       "name": "Berlin Lake"
     },
@@ -23,7 +34,14 @@
       "lakeId": "Canyon Lake|TX",
       "layers": {
         "level": {"asOf": "2026-11-10T13:00:00Z", "status": "ESTIMATE"},
-        "waterTemp": {"asOf": "2026-11-10T12:00:00Z", "status": "ESTIMATE", "valueF": 58.4}
+        "waterTemp": {"asOf": "2026-11-10T12:00:00Z", "status": "ESTIMATE", "valueF": 58.4},
+        "wind": {
+          "asOf": "2026-11-10T15:00:00Z",
+          "fromDeg": 160,
+          "hourly": [{"fromDeg": 160, "speedMph": 4.6, "time": "2026-11-10T15:00:00Z"}],
+          "speedMph": 4.6,
+          "status": "ESTIMATE"
+        }
       },
       "name": "Canyon Lake"
     },
