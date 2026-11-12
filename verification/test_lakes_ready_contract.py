@@ -117,7 +117,7 @@ def test_intelligence_is_documented_not_emitted_and_wind_is_in_the_contract():
 
 
 def test_contract_1_x_is_additive_over_1_0():
-    """1.1.0 (#158) only adds: every 1.0.0 path keeps its type and requiredness; the response version stays 1."""
+    """1.1.0 and 1.2.0 (#158) only add: every 1.0.0 path keeps its type and requiredness; the response version stays 1."""
     v1_0 = {
         "version": ("int", True), "generatedAt": ("date", True), "lakes": ("array", True), "lakes[].lakeId": ("string", True),
         "lakes[].name": ("string", True), "lakes[].centroid": ("object", True), "lakes[].centroid.lat": ("number", True),

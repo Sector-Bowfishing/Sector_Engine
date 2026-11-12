@@ -29,3 +29,12 @@ existing flag. Intel waits. No IAM, no deploy, no customer-copy switch; `SECTOR_
 - No Swift toolchain in this container (download.swift.org refused by the egress proxy): Swift build and tests run in CI
   (`swift-tests.yml`, macOS + Linux) on the PR.
 - pytest `verification` + `tools/architecture`: all pass. Engineering status re-recorded (`collect_certification.py`: failing none).
+
+## Independent review (round 1) and fixes
+- Blocking: none.
+- Should-fix, fixed: the contract's general `layers.*.status` / `layers.*.asOf` meanings described copies only; they now point
+  wind to `layers.wind`.
+- Nits: test docstring fixed. Not changed (stated): wind is fetched after the snapshot (points need the extents; worst cold
+  request ≈ 5 s + 4 s); unbounded-by-design cache maps (bounded by the directory); hh:59 shows the hh:00 value (documented).
+- Open (pre-existing, also affects /conditions): the fallback host `historical-forecast-api.open-meteo.com` may serve a
+  shorter future series if it wins the race; wind then degrades to absent or a shorter `hourly`, never a wrong hour.
