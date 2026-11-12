@@ -604,7 +604,10 @@ final class ConditionsTilesFoundationTests: XCTestCase {
                     "https://other-project.web.app", "null", ""] {
             XCTAssertNil(prod.allowedOrigin(bad), bad)
         }
-        XCTAssertEqual(CORSPolicy.paths, ["/conditions", "/health"])
+        XCTAssertEqual(CORSPolicy.paths, ["/conditions", "/health", "/lakes/ready"])
+        for notListed in ["/conditions/batch", "/lakes", "/lakes/ready/", "/clarity/state", "/"] {
+            XCTAssertFalse(CORSPolicy.paths.contains(notListed), notListed)
+        }
     }
 
     func testCORSHeaders() {
