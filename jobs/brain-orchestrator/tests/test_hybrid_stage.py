@@ -1,7 +1,9 @@
 """Staged hybrid moves for Lake, Water Temp and Wind (tools/ops/hybrid_stage.py; Roadmap Sector_Ops #23 section 2, Sector_Ops #51).
 
-Flags off: the staged fragments are read by no runtime, and the live policies still name Water Clarity only. Applied in memory, each fragment gives
-policies the REAL loaders accept, and the cycle watchdog then allows exactly that Brain's lease, grants, artifacts and lake-bounded publications."""
+The staged fragments are read by no runtime. Lake is APPLIED (owner, Sector_Ops #51, 2026-11-12): the live policies name Water Clarity and Lake, and
+`check` verifies Lake's live entries against its fragment. Water Temp and Wind stay staged. Applied in memory (to the policies as they were before the
+Lake flip, for Lake), each fragment gives policies the REAL loaders accept, and the cycle watchdog then allows exactly that Brain's lease, grants,
+artifacts and lake-bounded publications."""
 import datetime as dt
 import json
 import os
@@ -22,11 +24,32 @@ from sector_brain_platform.publisher.storage import MemoryObjectStore        # n
 pytestmark = [pytest.mark.watchdog]
 
 NOW = dt.datetime(2026, 11, 20, 12, 0, tzinfo=dt.timezone.utc)
-STAGED = ("lake-brain", "water-temp", "wind")
+STAGED = ("water-temp", "wind")
+APPLIED = ("lake-brain",)
+LAKE_REF = "owner-approval-2026-11-12/sector-ops-51-lake-on-pulse"
 
 
 def live():
+    """The live policies with every APPLIED Brain taken out again: the world each fragment is merged into (Lake: the policies before its flip)."""
+    r, w, c = HS._read(HS.RUNNER_POLICY), HS._read(HS.WATCHDOG_POLICY), HS._read(HS.CUTOVER)
+    for b in APPLIED:
+        r["primary"].pop(b, None)
+        r.get("approvals", {}).pop(b, None)
+        w["brains"].pop(b, None)
+        c["brains"].pop(b, None)
+    return r, w, c
+
+
+def committed():
     return HS._read(HS.RUNNER_POLICY), HS._read(HS.WATCHDOG_POLICY), HS._read(HS.CUTOVER)
+
+
+def _pre_flip_files(tmp_path, monkeypatch):
+    for name, doc in zip(("runner.json", "watchdog.json", "cutover.json"), live()):
+        (tmp_path / name).write_text(json.dumps(doc, indent=2) + "\n")
+    monkeypatch.setattr(HS, "RUNNER_POLICY", str(tmp_path / "runner.json"))
+    monkeypatch.setattr(HS, "WATCHDOG_POLICY", str(tmp_path / "watchdog.json"))
+    monkeypatch.setattr(HS, "CUTOVER", str(tmp_path / "cutover.json"))
 
 
 def put(store, key, doc):
@@ -34,10 +57,32 @@ def put(store, key, doc):
 
 
 def test_flags_off_the_live_policies_name_none_of_the_staged_brains():
-    r, w, c = live()
+    r, w, c = committed()
     for b in STAGED:
         assert b not in r["primary"] and b not in w["brains"] and b not in c["brains"]
         assert RL.primary(RL.load_policy(), b) == "cloud"
+
+
+def test_lake_is_applied_and_its_live_entries_match_its_fragment():
+    r, w, c = committed()
+    assert RL.primary(RL.load_policy(), "lake-brain") == "pulse" and r["approvals"]["lake-brain"] == LAKE_REF
+    assert w["brains"]["lake-brain"]["approvalRef"] == LAKE_REF and c["brains"]["lake-brain"]["approvalRef"] == LAKE_REF
+    assert HS.is_live("lake-brain", r, w, c) and HS.live_problems(HS.fragments()["lake-brain"], r, w, c) == []
+
+
+def test_live_check_catches_drift_between_the_live_policies_and_the_fragment():
+    f = HS.fragments()["lake-brain"]
+    r, w, c = committed()
+    w["brains"]["lake-brain"]["lakes"] = w["brains"]["lake-brain"]["lakes"] + ["Lake_Lanier_GA"]
+    assert any("holder/lakes differ" in p for p in HS.live_problems(f, r, w, c))
+    r, w, c = committed()
+    del c["brains"]["lake-brain"]["orderReviewRef"]
+    assert any("order review" in p for p in HS.live_problems(f, r, w, c))
+    r, w, c = committed()
+    assert any("still lists" in p for p in HS.live_problems(dict(f, blockers=["x"]), r, w, c))
+    r, w, c = committed()
+    w["brains"]["lake-brain"]["approvalRef"] = "other"
+    assert any("approvalRefs" in p for p in HS.live_problems(f, r, w, c))
 
 
 def test_no_runtime_reads_the_stage_folder():
@@ -47,10 +92,13 @@ def test_no_runtime_reads_the_stage_folder():
 
 def test_three_fragments_ordered_by_readiness_each_with_its_blockers():
     frags = HS.fragments()
-    assert sorted(frags) == sorted(STAGED)
+    assert sorted(frags) == sorted(STAGED + APPLIED)
     assert [b for b, _ in sorted(frags.items(), key=lambda kv: kv[1]["readiness"])] == ["lake-brain", "water-temp", "wind"]
     for f in frags.values():
-        assert f["blockers"], f"{f['brainId']} is not ready: its blockers must be listed"
+        if f["brainId"] in APPLIED:
+            assert f["blockers"] == [], f"{f['brainId']} is live: applying it confirmed its blockers were done"
+        else:
+            assert f["blockers"], f"{f['brainId']} is not ready: its blockers must be listed"
         assert f["watchdog"]["holder"] == "pulse" == f["runnerPolicy"]["primary"]
 
 
@@ -105,7 +153,7 @@ def test_the_watchdog_allows_the_staged_brain_once_applied_and_halts_outside_its
     assert [t.kind for t in res.trips] == []
     res = WD.evaluate(w, store=_lake_world(["Guntersville_AL", "Lake_Lanier_GA"]), executions=execs, control=ctl, now=NOW)
     assert [t.kind for t in res.trips] == ["PUBLISH_OUTSIDE_LAKES"]
-    live_w = HS._read(HS.WATCHDOG_POLICY)                                             # today (not applied): the same world halts
+    live_w = live()[1]                                                                # before the flip: the same world halts
     res = WD.evaluate(live_w, store=_lake_world(["Guntersville_AL"]), executions=execs, control=ctl, now=NOW)
     assert "LEASE_OUTSIDE_POLICY" in {t.kind for t in res.trips}
 
@@ -119,7 +167,7 @@ def test_a_cloud_start_of_the_legacy_job_still_halts_after_the_move():
 
 def test_water_temp_apply_takes_the_owners_order_review(tmp_path, monkeypatch):
     for name, src in (("runner.json", HS.RUNNER_POLICY), ("watchdog.json", HS.WATCHDOG_POLICY), ("cutover.json", HS.CUTOVER)):
-        (tmp_path / name).write_text(open(src).read())
+        (tmp_path / name).write_text(open(src).read())                             # the committed policies, Lake live
     monkeypatch.setattr(HS, "RUNNER_POLICY", str(tmp_path / "runner.json"))
     monkeypatch.setattr(HS, "WATCHDOG_POLICY", str(tmp_path / "watchdog.json"))
     monkeypatch.setattr(HS, "CUTOVER", str(tmp_path / "cutover.json"))
@@ -147,11 +195,9 @@ def test_merge_refuses_no_approval_and_a_brain_already_live():
 
 
 def test_apply_refuses_open_blockers_and_writes_only_with_write(tmp_path, monkeypatch, capsys):
-    for name, src in (("runner.json", HS.RUNNER_POLICY), ("watchdog.json", HS.WATCHDOG_POLICY), ("cutover.json", HS.CUTOVER)):
-        (tmp_path / name).write_text(open(src).read())
-    monkeypatch.setattr(HS, "RUNNER_POLICY", str(tmp_path / "runner.json"))
-    monkeypatch.setattr(HS, "WATCHDOG_POLICY", str(tmp_path / "watchdog.json"))
-    monkeypatch.setattr(HS, "CUTOVER", str(tmp_path / "cutover.json"))
+    _pre_flip_files(tmp_path, monkeypatch)
+    real = HS.fragments
+    monkeypatch.setattr(HS, "fragments", lambda *a: {b: (dict(f, blockers=["an open blocker"]) if b in APPLIED else f) for b, f in real(*a).items()})
     before = {p.name: p.read_text() for p in tmp_path.iterdir()}
     assert HS.main(["apply", "--brain", "lake-brain", "--approval-ref", "owner-approval-test"]) == 2          # blockers open
     assert HS.main(["apply", "--brain", "nope", "--approval-ref", "x"]) == 2
@@ -171,5 +217,5 @@ def test_apply_refuses_open_blockers_and_writes_only_with_write(tmp_path, monkey
 def test_check_and_show_run_against_the_committed_files(capsys):
     assert HS.main(["check"]) == 0
     out = capsys.readouterr().out
-    assert "lake-brain: OK" in out and "wind: OK" in out and "water-temp: OK, but needs an order review" in out
+    assert "lake-brain: LIVE (applied), OK" in out and "wind: OK" in out and "water-temp: OK, but needs an order review" in out
     assert HS.main(["show"]) == 0
