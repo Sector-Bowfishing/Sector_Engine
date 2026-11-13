@@ -4,8 +4,8 @@
   "reportId": "sector-engine-engineering-status-2026-10-22.1",
   "standards": {
     "framework": "Rehtac Cortex",
-    "version": "2.7.0",
-    "pin": "ecaef70",
+    "version": "3.1.3",
+    "pin": "8ad5469",
     "pack": "sector/engine"
   },
   "source": {
