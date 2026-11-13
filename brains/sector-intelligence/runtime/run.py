@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import copy
 import json
 import os
 import subprocess
@@ -77,9 +78,21 @@ def seal_and_store(updates: dict, *, now: dt.datetime, release: dict, consumed, 
         raise RuntimeError("artifact build produced no artifact: nothing was stored")
     ref = ArtifactWriter(store, sib.BRAIN_ID).write(built.artifact)
     if emit:
-        with open(emit, "x") as fh:
-            json.dump(built.artifact, fh, sort_keys=True)
+        # The hand-off is the STORED bytes, not a re-serialization: same bytes, same sha256 as the stored artifact (#172 review).
+        from sector_brain_platform.publisher.canonical import canonical_bytes, sha256_ref
+        art = copy.deepcopy(built.artifact)
+        art.setdefault("lineage", {})["artifactId"] = ref.artifact_id
+        data = canonical_bytes(art)
+        if sha256_ref(data) != ref.sha256:
+            raise RuntimeError("--emit: the hand-off bytes do not match the stored artifact; nothing was emitted")
+        with open(emit, "xb") as fh:
+            fh.write(data)
     return {"artifactId": ref.artifact_id, "location": ref.location, "sha256": ref.sha256, "executionId": ref.execution_id, "droppedLegacyPaths": len(built.dropped)}
+
+
+def _local_parent_exists(path: str) -> bool:
+    """A hand-off file is created only in a folder that already exists, so a run never stores an artifact and then crashes on the emit."""
+    return os.path.isdir(os.path.dirname(os.path.abspath(path)))
 
 
 def deployment_version() -> str:
@@ -145,10 +158,10 @@ def main(argv=None) -> int:
     if a.artifact and not (a.artifact_dir or a.artifact_bucket):
         print("REFUSED (nothing stored): --artifact needs --artifact-dir or --artifact-bucket", file=sys.stderr)
         return 2
-    if a.emit and (not a.artifact or "://" in a.emit or os.path.exists(a.emit)):
+    if a.emit and (not a.artifact or "://" in a.emit or os.path.exists(a.emit) or not _local_parent_exists(a.emit)):
         print("REFUSED (nothing stored): --emit needs --artifact and a new LOCAL file", file=sys.stderr)
         return 2
-    if a.emit_decision and (not a.artifact or "://" in a.emit_decision or os.path.exists(a.emit_decision)):
+    if a.emit_decision and (not a.artifact or "://" in a.emit_decision or os.path.exists(a.emit_decision) or not _local_parent_exists(a.emit_decision)):
         print("REFUSED (nothing stored): --emit-decision needs --artifact and a new LOCAL file", file=sys.stderr)
         return 2
 
