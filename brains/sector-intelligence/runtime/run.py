@@ -65,8 +65,9 @@ def runner_service(env=os.environ) -> dict | None:
             "template": {"containers": [{"image": f"runner-supplied@{digest}" if digest else "runner-supplied"}]}}
 
 
-def seal_and_store(updates: dict, *, now: dt.datetime, release: dict, consumed, store, execution_id: str | None = None) -> dict:
-    """SI-1 (a): the same update set, sealed as ONE sector-intelligence-publication-v1 artifact and stored create-only. Nothing else is written."""
+def seal_and_store(updates: dict, *, now: dt.datetime, release: dict, consumed, store, execution_id: str | None = None, emit: str | None = None) -> dict:
+    """SI-1 (a): the same update set, sealed as ONE sector-intelligence-publication-v1 artifact and stored create-only. Nothing else is written,
+    except, with `emit`, a LOCAL create-only copy of the stored artifact for a runner's hand-off (SI-A5: Pulse reads {out}/artifact.json)."""
     import uuid
     import publish_artifact as pa
     from sector_brain_platform.publisher.flat_artifact import BuildContext
@@ -75,6 +76,9 @@ def seal_and_store(updates: dict, *, now: dt.datetime, release: dict, consumed, 
     if not built.artifact:
         raise RuntimeError("artifact build produced no artifact: nothing was stored")
     ref = ArtifactWriter(store, sib.BRAIN_ID).write(built.artifact)
+    if emit:
+        with open(emit, "x") as fh:
+            json.dump(built.artifact, fh, sort_keys=True)
     return {"artifactId": ref.artifact_id, "location": ref.location, "sha256": ref.sha256, "executionId": ref.execution_id, "droppedLegacyPaths": len(built.dropped)}
 
 
@@ -135,10 +139,14 @@ def main(argv=None) -> int:
     ap.add_argument("--out", default="out")
     ap.add_argument("--no-pilot", action="store_true", help="skip the pilot evaluations (inventory-only publish)")
     ap.add_argument("--force", action="store_true", help="publish even when --plan says SKIP")
+    ap.add_argument("--emit", default=None, help="SI-A5: with --artifact, also write the sealed artifact JSON to this LOCAL file (create-only; a runner's hand-off)")
     ap.add_argument("--emit-decision", default=None, help="SI-P2: with --artifact, write the job's PUBLISH/SKIP verdict to this LOCAL file (create-only)")
     a = ap.parse_args(argv)
     if a.artifact and not (a.artifact_dir or a.artifact_bucket):
         print("REFUSED (nothing stored): --artifact needs --artifact-dir or --artifact-bucket", file=sys.stderr)
+        return 2
+    if a.emit and (not a.artifact or "://" in a.emit or os.path.exists(a.emit)):
+        print("REFUSED (nothing stored): --emit needs --artifact and a new LOCAL file", file=sys.stderr)
         return 2
     if a.emit_decision and (not a.artifact or "://" in a.emit_decision or os.path.exists(a.emit_decision)):
         print("REFUSED (nothing stored): --emit-decision needs --artifact and a new LOCAL file", file=sys.stderr)
@@ -219,7 +227,7 @@ def main(argv=None) -> int:
             from sector_brain_platform.object_bucket import GcsRestObjectStore
             store = GcsRestObjectStore(a.artifact_bucket, tokens)
         try:
-            ref = seal_and_store(updates, now=now, release=release, consumed=summary["consumed"], store=store)
+            ref = seal_and_store(updates, now=now, release=release, consumed=summary["consumed"], store=store, emit=a.emit)
         except RuntimeError as e:
             print(f"REFUSED: {e}", file=sys.stderr)
             return 2
