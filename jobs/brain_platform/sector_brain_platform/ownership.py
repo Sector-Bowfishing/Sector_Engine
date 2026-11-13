@@ -37,6 +37,16 @@ class OwnershipError(PermissionError):
     pass
 
 
+def orchestrator_owned_health(p: list) -> bool:
+    """Is this /health/brains/{id}/... or /health/sources/{id} path a family the Cortex registry (mirrored in data_ownership.json) gives the Orchestrator TODAY?
+    Option (a), owner decision 2026-11-04 (Sector_Ops #50, CG-3.1-15): a Brain's health family moves to the Orchestrator per Brain, at its CENTRAL cutover, by a registry
+    row; the guard follows the registry, so no Brain's health moves without one. Brain health stays child level (never the whole /health/brains/{id} node)."""
+    if len(p) < 3 or p[0] != "health" or p[1] not in ("brains", "sources") or (p[1] == "brains" and len(p) < 4):
+        return False
+    from .data_ownership import ORCHESTRATOR, registered_writer        # lazy: data_ownership imports this module
+    return registered_writer("/".join(p))["current"] == ORCHESTRATOR
+
+
 def source_owner(source_id: str) -> str | None:
     return SOURCE_OWNERS.get(source_id)
 
@@ -52,6 +62,8 @@ def path_allowed(brain_id: str, path: str) -> bool:
             return False                       # @external-admin families (Cortex 3.1 registry): access lists and the owner's execution-control document are never a platform write
         if root in PLATFORM_ONLY or (root == "health" and len(p) >= 2 and p[1] in ("engine", "rtdb")):
             return True
+        if root == "health" and orchestrator_owned_health(p):
+            return True                        # a Brain health family the registry moved to the Orchestrator (health_mirror derives it from published data)
         if root == "activity":
             return len(p) == 2 and f"-{PLATFORM_WRITER}-" in p[1]
         return False
@@ -104,6 +116,8 @@ def path_allowed(brain_id: str, path: str) -> bool:
     if root == "health":
         if len(p) < 3:
             return False
+        if orchestrator_owned_health(p) or (p[1] == "brains" and len(p) == 3 and orchestrator_owned_health(p + ["status"])):
+            return False                       # moved to the Orchestrator by the registry: no Brain writes it (not even the whole node)
         if p[1] == "brains":
             return p[2] == brain_id
         if p[1] == "jobs":

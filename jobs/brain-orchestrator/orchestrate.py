@@ -46,12 +46,14 @@ from sector_brain_platform import gcp                                           
 from sector_brain_platform import orchestration as O, control_state as CS, consumption as CN, publication_trigger as PT                          # noqa: E402
 from sector_brain_platform import brain_operations as BOPS                                                            # noqa: E402
 from sector_brain_platform import execution_control as EC                                                            # noqa: E402
+from sector_brain_platform import cycle_watchdog as WD                                                                # noqa: E402
 from sector_brain_platform import engineering_status_publication as ESP                                                # noqa: E402
 from sector_brain_platform import shadow_lane as SL                                                                   # noqa: E402
 from sector_brain_platform import data_ownership as DO, publication_stage as PS, health_mirror as HM                                       # noqa: E402
 from sector_brain_platform import runner_lease as RL                                                                  # noqa: E402
 sys.path.insert(0, HERE)
 import control_plane as CP                                                                                            # noqa: E402
+import conditions_sources as CSP                                                                                    # noqa: E402
 
 WRITER = "brain-platform"
 JOB_NAME = "brain-orchestrator"
@@ -81,8 +83,31 @@ EXECUTORS = {
     # same Cloud Run job (arguments baked in: `hourly --store ...`) when Wind is due. Its science and job are unchanged.
     "wind": {"kind": "cloud-run-job", "job": "wind-hourly"},
     "biological-state": {"kind": "in-process", "dir": _fish_runtime_dir(), "jobId": "biological-brain"},
-    "sector-intelligence": {"kind": "in-process", "dir": _intelligence_runtime_dir(), "jobId": "sector-intelligence-brain"},
+    "sector-intelligence": None,                                                         # set below: in-process today; artifact job only behind SI_ARTIFACT_JOB
 }
+
+
+INTELLIGENCE_JOB = "sector-intelligence-brain"
+
+
+def intelligence_executor(env=None) -> dict:
+    """Sector Intelligence's executor (SECTOR_INTELLIGENCE_JOB_PLAN_V1 SI-A2). Default: in-process (`run.py --write`), exactly as before.
+    SI_ARTIFACT_JOB=1: an artifact job (`run.py --artifact-dir/--artifact-bucket`, SI-A1) that is LEASE-ONLY. The Orchestrator grants the cycle to the
+    runner-policy primary (Pulse) and never starts a Cloud Run job for it, because none is deployed (a deploy is a separate approval). With the cloud as
+    primary it holds. Its `--plan` verdict is still asked in-process, so the decision inputs do not change. The in-process path is removed only at SI-A6.
+
+    SI-P2 option (b), owner-approved 2026-11-05 (Sector_Ops #50): with SI_JOB_PLAN=1 as well (default off), the Orchestrator no longer runs Intelligence's
+    `--plan` itself (planInProcess False): it leases the cycle on the schedule and dependency triggers alone, and the job's own `orch.plan`, computed from
+    the same reads, decides PUBLISH or SKIP. A SKIP comes back as a SKIPPED runner record (runner.py skip), a normal cycle outcome. SI_JOB_PLAN without
+    SI_ARTIFACT_JOB changes nothing: the in-process Brain keeps its plan."""
+    env = os.environ if env is None else env
+    if env.get("SI_ARTIFACT_JOB") == "1":
+        return {"kind": "cloud-run-job", "job": INTELLIGENCE_JOB, "jobId": INTELLIGENCE_JOB, "dir": _intelligence_runtime_dir(),
+                "artifactMode": True, "leaseOnly": True, "planInProcess": env.get("SI_JOB_PLAN") != "1"}
+    return {"kind": "in-process", "dir": _intelligence_runtime_dir(), "jobId": INTELLIGENCE_JOB}
+
+
+EXECUTORS["sector-intelligence"] = intelligence_executor()
 NOT_STARTED_HERE: dict = {}                     # every Brain with an executor is started only by the orchestrator (PL-15)
 
 
@@ -301,6 +326,23 @@ def score_cmd(env=None) -> list[str]:
     return cmd
 
 
+def _runner_policy_or_none() -> dict | None:
+    """The reviewed runner policy (runner-policy.json), or None when unreadable (the conditions-sources projection then says runner unknown)."""
+    try:
+        return RL.load_policy()
+    except Exception:                                            # noqa: BLE001
+        return None
+
+
+def _fresh_lease_holder(a, brain_id: str, now: dt.datetime) -> str | None:
+    """Holder of a Brain's unexpired runner lease (read-only), or None: no artifact store configured, no lease, an expired lease, or unreadable."""
+    store = build_publication_store(a.artifact_store_dir, a.artifact_bucket)
+    if store is None:
+        return None
+    lease, _ = RL.read(RL.orchestrator_view(store), brain_id)
+    return (lease or {}).get("holder") if RL.fresh(lease, now) else None
+
+
 def build_publication_store(directory: str | None, bucket: str | None = None):
     """The artifact store the publication stage uses: the private GCS bucket (PUBLICATION_ARTIFACT_BUCKET; the stage wraps it in the Orchestrator's least-privilege view and IAM
     enforces the same) or a local directory for review. None = not configured."""
@@ -356,7 +398,8 @@ def runner_grants_today(a, brain_id: str, now: dt.datetime) -> int:
 
 def regrant_cooldown_minutes(manifest: dict, brain_id: str) -> int:
     """A runner is granted a new cycle at most once per the Brain's staleness window (TIME Brains), else every 6 h, never more often than the lease TTL."""
-    hours = ((manifest.get("brains") or {}).get(brain_id) or {}).get("staleAfterHours") or 6
+    b = (manifest.get("brains") or {}).get(brain_id) or {}
+    hours = (b.get("freshness") or {}).get("staleAfterHours") or b.get("staleAfterHours") or 6   # the control manifest keeps it under freshness
     return max(RL.DEFAULT_TTL_MINUTES, int(float(hours) * 60))
 
 
@@ -450,6 +493,55 @@ def start_publisher_if_needed(handoff: dict, executions: dict, tokens: TokenProv
     except Exception as e:                                       # noqa: BLE001 - recorded; the requests stay pending for the next cycle
         return {"started": False, "reason": f"START_FAILED:{type(e).__name__}", "detail": str(e)[:200]}
     return {"started": True, "execution": (op.get("metadata") or {}).get("name"), "at": iso(dt.datetime.now(dt.timezone.utc))}
+
+
+def watchdog_stage(a, executions: dict, ctl: dict, tokens: TokenProvider, now: dt.datetime, write: bool) -> dict:
+    """Sector_Ops #51: the O6.3 halt conditions, checked by the cycle itself. -> {hold, why}. A trip latches HALTED in the bucket and tries to
+    pause this job's own Cloud Scheduler trigger; the latch holds every later cycle until the owner clears it (tools/ops/watchdog.py). Prints
+    one `[watchdog] ...` line per cycle; the owner's alert matches `[watchdog] HALT ` (a new trip) and `[watchdog] UNREADABLE`."""
+    try:
+        pol = WD.load_policy()
+    except Exception as e:                                       # noqa: BLE001 - an unreadable reviewed policy is never a silent pass
+        print(f"[watchdog] UNREADABLE policy ({type(e).__name__}): holding this cycle", flush=True)
+        return {"hold": True, "why": "watchdog policy unreadable"}
+    if not pol.get("enabled") or a.local_mode or a.health_only:
+        return {"hold": False, "why": ""}
+    store = build_publication_store(a.artifact_store_dir, a.artifact_bucket)
+    if store is None:
+        print("[watchdog] SKIPPED: no artifact store configured", flush=True)
+        return {"hold": False, "why": ""}
+    try:
+        latch = WD.read_latch(store)
+    except Exception as e:                                       # noqa: BLE001
+        print(f"[watchdog] UNREADABLE latch ({type(e).__name__}): holding this cycle", flush=True)
+        return {"hold": True, "why": "watchdog latch unreadable"}
+    if latch is not None and not isinstance(latch, dict):
+        print("[watchdog] UNREADABLE latch (not a document): holding this cycle", flush=True)
+        return {"hold": True, "why": "watchdog latch malformed"}
+    if WD.is_halted(latch):
+        kinds = sorted({t.get("kind") for t in latch.get("trips") or []})
+        print(f"[watchdog] HALTED since {latch.get('at')} ({', '.join(kinds)}); only the owner clears it (tools/ops/watchdog.py clear)", flush=True)
+        return {"hold": True, "why": f"watchdog HALTED since {latch.get('at')}"}
+    res = WD.evaluate(pol, store=store, executions=executions, control=ctl, now=now, latch=latch)
+    print(WD.log_line(res), flush=True)
+    if res.tripped:
+        real = [t for t in res.trips if t.kind != "CHECK_FAILED"]
+        pause = "NOT_ATTEMPTED (dry run)"
+        if write and not a.dry_run:
+            try:
+                gcp.pause_scheduler_job(tokens, pol.get("pauseSchedulerJob") or JOB_NAME)
+                pause = "PAUSED"
+            except Exception as e:                               # noqa: BLE001 - the latch still holds every cycle
+                pause = f"FAILED: {str(e)[:160]}"
+            try:
+                WD.write_halt(store, real, cycle=f"orchestrator-{iso(now)}", now=now, scheduler_pause=pause)
+            except Exception as e:                               # noqa: BLE001 - this cycle still holds; the next one re-evaluates
+                print(f"[watchdog] latch write FAILED ({type(e).__name__}): this cycle holds, the next one re-checks", flush=True)
+        print(f"[watchdog] scheduler pause: {pause}", flush=True)
+        return {"hold": True, "why": f"watchdog tripped: {real[0].kind}"}
+    if res.unreadable:
+        return {"hold": True, "why": "watchdog could not read every check"}
+    return {"hold": False, "why": ""}
 
 
 def gate_dispatch(todo: set, deferred: list) -> set:
@@ -571,6 +663,17 @@ def main(argv=None) -> int:
         auto_ok, auto_why = False, f"another orchestrator cycle is running ({others[0]}): this cycle starts nothing"
         print(f"overlap guard: {auto_why}", flush=True)
 
+    # 1b. the cycle watchdog (Sector_Ops #51, O6.3 moved into the system): a latched halt, a new trip or an unreadable check holds this cycle
+    #     exactly like the overlap guard (nothing granted, started or handed to the Publisher)
+    try:
+        wd = watchdog_stage(a, executions, ctl, tokens, now, write)
+    except Exception as e:                                       # noqa: BLE001 - review of #141: the watchdog never crashes the cycle; it holds
+        print(f"[watchdog] UNREADABLE (watchdog error {type(e).__name__}): holding this cycle", flush=True)
+        wd = {"hold": True, "why": "watchdog error"}
+    if wd["hold"]:
+        a.no_execute = True
+        auto_ok, auto_why = False, wd["why"]
+
     # 2. plan: the decision model (engine mode, active/parked, dependencies, material change) says what MAY run; the legacy TIME/plan logic only
     #    describes what is stale. Parked Brains are not even asked for a plan (a plan can cost provider/Engine calls).
     brains = live.get("brains") or {}
@@ -579,7 +682,7 @@ def main(argv=None) -> int:
     world = CP.load_world(live, now)
     activity = O.effective_activity(world["manifest"], world["overrides"])
     brain_plans = {b: brain_plan(b) for b, ex in EXECUTORS.items()
-                   if ex["kind"] == "in-process" and b in brains and (a.legacy_execution or activity.get(b) == "ACTIVE") and not a.health_only and not a.local_mode
+                   if (ex["kind"] == "in-process" or ex.get("planInProcess")) and b in brains and (a.legacy_execution or activity.get(b) == "ACTIVE") and not a.health_only and not a.local_mode
                    and (auto_ok and EC.brain_enabled(ctl, b) or (admin and a.run_now == b))}
     locks_now = state.get("locks") or {}
     run_now = (a.run_now, a.scope, a.requested_by) if a.run_now else None
@@ -643,6 +746,11 @@ def main(argv=None) -> int:
                     leases_granted.append(gdoc)
                 deferred.append({"brainId": b, "why": f"runner lease: {gwhy2}" + ("; the runner runs it, its execution is reconciled next cycles" if gok else "")})
                 print(f"{'LEASE' if gok else 'HOLD '} {b:20s} runner lease: {gwhy2}", flush=True)
+                continue
+            if ex.get("leaseOnly"):                              # SI-A2 artifact job: no Cloud Run job is deployed, so only a runner lease may run it
+                deferred.append({"brainId": b, "why": "artifact job (SI_ARTIFACT_JOB): lease-only and no runner lease was granted (needs --runner-leases and a "
+                                                      "non-cloud runner-policy primary); no Cloud Run job is deployed for it"})
+                print(f"HOLD {b:20s} artifact job: lease-only, not started", flush=True)
                 continue
             if a.local_mode and ex["kind"] == "in-process":       # its `run.py --write` writes the database directly: never from a runner's machine
                 deferred.append({"brainId": b, "why": "local runner mode: an in-process Brain writes the database directly and is never run from a local cycle "
@@ -730,7 +838,8 @@ def main(argv=None) -> int:
                     if ch and r.get("outputChanged", "UNKNOWN") == "UNKNOWN":
                         r["outputChanged"] = ch
             print(f"publication: {publication['state']}" + (f" ({publication.get('reason')})" if publication.get("reason") else
-                  f" collected {len(publication['reconcile']['collected'])}, missing {len(publication['reconcile']['missing'])}, failed runs {len(publication['reconcile']['failedRuns'])}; "
+                  f" collected {len(publication['reconcile']['collected'])}, missing {len(publication['reconcile']['missing'])}, failed runs {len(publication['reconcile']['failedRuns'])}, "
+                  f"skipped runs {len(publication['reconcile']['skippedRuns'])}; "
                   f"Publisher {'ARMED' if publication['armed'] else 'unarmed'}; imported from Publisher history {len(publication['importedFromPublisherHistory']['imported'])}; "
                   f"central {publication['cutover']['central']}; per Brain " + json.dumps({b: {k: v[k] for k in ('runs', 'published', 'failed', 'notRequested', 'missingArtifacts')}
                                                                                                for b, v in publication['summary']['brains'].items()}, sort_keys=True)), flush=True)
@@ -841,6 +950,17 @@ def main(argv=None) -> int:
                   f" @ {es_doc['generatedFrom']['sourceCommit'][:12]}") + ("" if a.publish_engineering_status and not a.health_only else " (not published)"))
         except Exception as e:                                   # never breaks the cycle
             print(f"engineering status: FAILED {e!r}", file=sys.stderr)
+
+    # 5e. conditions sources for Sector Ops (sector-conditions-sources-v1 at control/conditionsSourcesV1, Sector_Ops #53 spec §7). Only with env
+    #     CONDITIONS_SOURCES_PROJECTION=1 (default OFF: nothing is probed, read or written); at most every 15 min; never with --health-only or
+    #     --control-only (their write sets stay what they are). Probes the Engine's GET /conditions read-only; a failed probe never breaks the cycle.
+    if CSP.enabled() and not a.health_only and not a.control_only:
+        try:
+            csp = CSP.stage(live, db, now, write=write, dry_run=a.dry_run, brains=brains, policy=_runner_policy_or_none(),
+                            lease_holder=lambda b: _fresh_lease_holder(a, b, now))
+            print(f"conditions sources: {json.dumps(csp, sort_keys=True)}", flush=True)
+        except Exception as e:                                   # never breaks the cycle
+            print(f"conditions sources: FAILED {e!r}", file=sys.stderr)
 
     # 6. record
     record = {"version": "orchestrator-v1", "lastRunAt": iso(now), "durationMs": int((time.time() - t0) * 1000),

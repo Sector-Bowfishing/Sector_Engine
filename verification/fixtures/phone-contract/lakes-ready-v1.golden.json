@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-11-10T15:30:00Z",
+  "lakes": [
+    {
+      "brainKey": "Berlin_Lake_OH",
+      "centroid": {"lat": 41.03, "lon": -81.0},
+      "directoryId": "Berlin Lake|OH",
+      "extent": {
+        "bbox": {"east": -80.95, "north": 41.07, "south": 40.98, "west": -81.08},
+        "confidence": "HIGH"
+      },
+      "lakeId": "Berlin Lake|OH",
+      "layers": {
+        "clarity": {"asOf": "2026-11-10T14:00:00Z", "highFt": 3.0, "lowFt": 1.0, "status": "LIVE", "valueFt": 2.0},
+        "level": {"asOf": "2026-11-10T15:00:00Z", "status": "LIVE"},
+        "wind": {
+          "asOf": "2026-11-10T15:00:00Z",
+          "fromDeg": 225,
+          "hourly": [
+            {"fromDeg": 225, "speedMph": 9.4, "time": "2026-11-10T15:00:00Z"},
+            {"fromDeg": 230, "speedMph": 11.2, "time": "2026-11-10T16:00:00Z"},
+            {"fromDeg": 240, "speedMph": 12.8, "time": "2026-11-10T17:00:00Z"}
+          ],
+          "speedMph": 9.4,
+          "status": "ESTIMATE"
+        }
+      },
+      "name": "Berlin Lake"
+    },
+    {
+      "brainKey": "Canyon_Lake_TX",
+      "centroid": {"lat": 29.87, "lon": -98.25},
+      "directoryId": "Canyon Lake|TX",
+      "lakeId": "Canyon Lake|TX",
+      "layers": {
+        "level": {"asOf": "2026-11-10T13:00:00Z", "status": "ESTIMATE"},
+        "waterTemp": {"asOf": "2026-11-10T12:00:00Z", "status": "ESTIMATE", "valueF": 58.4},
+        "wind": {
+          "asOf": "2026-11-10T15:00:00Z",
+          "fromDeg": 160,
+          "hourly": [{"fromDeg": 160, "speedMph": 4.6, "time": "2026-11-10T15:00:00Z"}],
+          "speedMph": 4.6,
+          "status": "ESTIMATE"
+        }
+      },
+      "name": "Canyon Lake"
+    },
+    {
+      "brainKey": "Flathead_Lake_MT",
+      "centroid": {"lat": 47.8686, "lon": -114.105},
+      "directoryId": "Flathead Lake|MT",
+      "extent": {
+        "bbox": {"east": -113.95, "north": 48.12, "south": 47.68, "west": -114.35},
+        "confidence": "MEDIUM"
+      },
+      "lakeId": "Flathead Lake|MT",
+      "layers": {
+        "clarity": {"asOf": "2026-11-10T06:00:00Z", "status": "ESTIMATE", "valueFt": 18.5}
+      },
+      "name": "Flathead Lake"
+    }
+  ],
+  "version": 1
+}

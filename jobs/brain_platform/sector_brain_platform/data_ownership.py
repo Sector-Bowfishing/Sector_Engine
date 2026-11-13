@@ -38,8 +38,10 @@ def _families() -> list:
         out = []
         for f in mirror()["families"]:
             rx = "^" + re.sub(r"\\\{[^}]+\\\}", "[^/]+", re.escape(f["pattern"])) + "(/.*)?$"
-            out.append({**f, "rx": re.compile(rx), "depth": f["pattern"].count("/") + 0.001 * len(f["pattern"])})
-        _FAMS = sorted(out, key=lambda x: -x["depth"])           # most specific family first (fam.lakefleet-last-updated before fam.lakefleet)
+            out.append({**f, "rx": re.compile(rx), "depth": f["pattern"].count("/") + 0.001 * len(f["pattern"]), "holes": f["pattern"].count("{")})
+        # most specific family first (fam.lakefleet-last-updated before fam.lakefleet); at equal depth a literal segment beats a {placeholder}
+        # (/health/sources/noaa-mrms before /health/sources/{sourceId}: per-Brain rows the registry adds at a cutover, CG-3.1-15)
+        _FAMS = sorted(out, key=lambda x: (-x["pattern"].count("/"), x["holes"], -x["depth"]))
     return _FAMS
 
 

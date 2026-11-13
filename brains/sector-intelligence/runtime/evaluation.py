@@ -30,6 +30,7 @@ CONDITION_SLOTS = (("lake-brain", "lake", "lakeState"), ("water-temp", "waterTem
                    ("water-clarity", "waterClarity", "waterClarity"), ("wind", "wind", "wind"))
 _LEGACY_KIND = {"GAUGE_OBSERVED": "observed", "RAINFALL_MODELED": "modeled", "FALLBACK_NEUTRAL": "modeled", "UNAVAILABLE": "unavailable",
                 "OBSERVED": "observed", "PROXY": "proxy", "MEASURED": "measured", "MODELED": "modeled", "NOT_EVALUATED": "not_evaluated"}
+FUTURE_TOLERANCE_S = 10 * 60    # a state stamped more than 10 min ahead of now is not fresh (SI-NOW-1, Sector_Ops #51)
 
 
 
@@ -88,12 +89,20 @@ def normalize_condition(brain_id: str, slot: str, field: str, snapshot: dict | N
     gen = prov.get("generatedAt") or fr.get("generatedAt") or st.get("generatedAt")
     age = bp.age_hours(gen, now)
     stale_after = (dep or {}).get("staleAfterHours")
-    stale = bool(fr.get("stale")) or bool(st.get("stale")) or (stale_after is not None and (age is None or age > float(stale_after)))
+    gen_t = bp.parse_time(gen)
+    future = gen_t is not None and (gen_t - now).total_seconds() > FUTURE_TOLERANCE_S   # stamped ahead of now (clock skew): age can't be verified
+    unjudged = stale_after is None                                  # no threshold in the Brain's registry: staleness can't be judged
+    stale = (bool(fr.get("stale")) or bool(st.get("stale")) or future or unjudged
+             or (stale_after is not None and (age is None or age > float(stale_after))))
     evidence_stale = bool(st.get("evidenceStale")) or bool(fr.get("evidenceStale"))
     kind = _kind(st)
     readiness = prov.get("readiness") or (((fleet_row or {}).get("readiness") or {}).get(slot))
     degraded = []
-    if stale:
+    if future:
+        degraded.append(f"state is stamped {-age} h in the future: age can't be verified")
+    elif unjudged:
+        degraded.append("no staleAfterHours for this brain (not registered, or no threshold): freshness can't be judged")
+    elif stale:
         degraded.append(f"state is {age if age is not None else '?'} h old" + (f" (> {stale_after} h)" if stale_after is not None else ""))
     if evidence_stale:
         degraded.append("brain reports its evidence is stale")
@@ -110,8 +119,9 @@ def normalize_condition(brain_id: str, slot: str, field: str, snapshot: dict | N
 
 def normalize_biological(presence: dict | None, species: dict | None, dep: dict | None) -> dict:
     if not presence:
-        return {"brainId": "biological-state", "slot": "biology", "status": "NOT_PUBLISHED",
-                "degraded": ["no species presence published for this lake (Lake Brain)"]}
+        # Lake writes no row for an unknown presence: no record means every species' presence is UNKNOWN here, never absent.
+        return {"brainId": "biological-state", "slot": "biology", "status": "NOT_PUBLISHED", "presence": "UNKNOWN",
+                "degraded": ["no species presence record for this lake (Lake Brain): presence is UNKNOWN, not absent"]}
     rows, missing, scores = {}, [], []
     for sid, p in sorted(presence.items()):
         p = p or {}
@@ -127,10 +137,10 @@ def normalize_biological(presence: dict | None, species: dict | None, dep: dict 
                             "knowledgeRubric": k.get("rubric"), "speciesVersion": sp.get("researchVersion")})
     degraded = []
     if missing:
-        degraded.append(f"no species knowledge for {len(missing)} present species: {', '.join(missing[:4])}")
+        degraded.append(f"no species knowledge for {len(missing)} species with a presence record: {', '.join(missing[:4])}")
     immature = [sid for sid, r in rows.items() if r.get("researchMaturity") in (None, "NOT_STARTED") or r.get("assessment") == "NOT_ASSESSED"]
     if immature:
-        degraded.append(f"species knowledge not started for {len(immature)} present species")
+        degraded.append(f"species knowledge not started for {len(immature)} species with a presence record")
     pv = next((p.get("researchVersion") for p in presence.values() if isinstance(p, dict) and p.get("researchVersion")), None)
     return _strip({"brainId": "biological-state", "slot": "biology", "status": "DEGRADED" if degraded else "PUBLISHED",
                    "speciesCount": len(rows), "species": rows, "knowledgeMedian": statistics.median(scores) if scores else None,
@@ -178,7 +188,7 @@ def evaluate(lake_id: str, *, snapshot: dict | None, fleet_row: dict | None, pre
                         + (f", gust {_fmt(v.get('gustMph'), ' mph')}" if v.get("gustMph") is not None else "") + f" ({v.get('analysisProduct')})"})
     b = inputs["biology"]
     if b.get("speciesCount"):
-        drivers.append({"slot": "biology", "fact": f"{b['speciesCount']} present species; knowledge median {b.get('knowledgeMedian')} / 10 (species-v2)"})
+        drivers.append({"slot": "biology", "fact": f"{b['speciesCount']} species with a presence record (no record = unknown); knowledge median {b.get('knowledgeMedian')} / 10 (species-v2)"})
 
     for slot in degraded_inputs:
         for r in inputs[slot].get("degraded") or [f"status {inputs[slot]['status']}"]:

@@ -124,6 +124,8 @@ def _blank(brain_id: str, run_id: str, artifact_id: str | None, now: str) -> dic
             "shadow": {"checked": False}, "publication": {"requested": False, "outcome": "NOT_REQUESTED", "reason": "NOT_EVALUATED", "attempts": 0}}
 
 
+PLAN_SKIP = "PLAN_SKIP"                     # SI-P2: the Brain's own plan, run in the job, said SKIP
+
 class PublicationCoordinator:
     def __init__(self, ledger: PublicationLedger, store, *, shadow=None, live=None, cutover=(), clock=lambda: dt.datetime.now(dt.timezone.utc), max_attempts: int = MAX_ATTEMPTS,
                  backoff_minutes=BACKOFF_MIN, hold_reason: str | None = None, handoff=None):
@@ -179,6 +181,15 @@ class PublicationCoordinator:
         rec["inputLineage"] = {"inputFingerprint": lin.get("inputFingerprint"), "consumed": art.get("consumed"), "knowledgeRelease": lin.get("knowledgeRelease")}
         rec["writePath"] = VIA_PUBLISHER if ref.brain_id in self.cutover else DIRECT
         rec["publication"]["reason"] = "COLLECTED"
+        return self.ledger.put(rec)
+
+    def record_plan_skip(self, brain_id: str, run_id: str, reasons: list) -> dict:
+        """SI-P2: a runner run whose own plan said SKIP. Nothing was produced and nothing is to be published: a normal outcome, never a problem."""
+        key = PublicationLedger.key(brain_id, run_id, None)
+        rec = self.ledger.get(key) or _blank(brain_id, run_id, None, self._now())
+        rec["runStatus"] = "SKIPPED"
+        rec["artifact"] = {"state": "NOT_PRODUCED", "reason": PLAN_SKIP, "planReasons": [str(r) for r in reasons][:20]}
+        rec["publication"].update(outcome="SKIPPED", reason=PLAN_SKIP)
         return self.ledger.put(rec)
 
     def report_missing(self, brain_id: str, run_id: str, run_status: str, reason: str) -> dict:
@@ -328,8 +339,12 @@ class PublicationCoordinator:
     # ----------------------------------------------------------------------------------------------------------------------------- reconcile with Cloud Run
     def reconcile(self, executions: list, window_minutes: int = 10) -> dict:
         """Reconcile Cloud Run execution results (orchestration.execution_record dicts) with the artifacts in storage. A SUCCEEDED execution is matched to an artifact first by
-        lineage.executionId, otherwise (labelled `matchBasis: TIME_WINDOW`) by the Brain's artifact generated inside the execution window. No match = MISSING artifact."""
-        out = {"collected": [], "missing": [], "failedRuns": [], "alreadyKnown": 0}
+        lineage.executionId, otherwise (labelled `matchBasis: TIME_WINDOW`) by the Brain's artifact generated inside the execution window. No match = MISSING artifact.
+        A runner's SKIPPED execution (the Brain's own plan, run in the job, said SKIP; SI-P2: it names its runner and carries the decision) is a normal cycle
+        outcome: recorded once in the ledger (artifact NOT_PRODUCED, publication SKIPPED, reason PLAN_SKIP), listed under `skippedRuns` the cycle it is
+        first seen, never MISSING or FAILED, and no artifact is looked for. Every other non-SUCCEEDED record (including the in-process SKIPPED ones) is
+        unchanged."""
+        out = {"collected": [], "missing": [], "failedRuns": [], "skippedRuns": [], "alreadyKnown": 0}
         index: dict = {}
 
         def artifacts(brain):
@@ -349,8 +364,13 @@ class PublicationCoordinator:
             brain, run_id, status = ex.get("brainId"), ex.get("executionId"), ex.get("status")
             if not brain or not run_id or status == "RUNNING":
                 continue
-            if any(r["artifact"].get("state") in ("COLLECTED", "INVALID") for r in self.ledger.for_run(brain, run_id)):
+            if any(r["artifact"].get("state") in ("COLLECTED", "INVALID") or r["artifact"].get("reason") == PLAN_SKIP for r in self.ledger.for_run(brain, run_id)):
                 out["alreadyKnown"] += 1
+                continue
+            if status == "SKIPPED" and ex.get("runner") and isinstance(ex.get("decision"), dict):
+                reasons = list(ex["decision"].get("reasons") or [])
+                self.record_plan_skip(brain, run_id, reasons)
+                out["skippedRuns"].append({"brainId": brain, "runId": run_id, "reasons": reasons})
                 continue
             if status != "SUCCEEDED":
                 self.report_missing(brain, run_id, "FAILED", "execution did not succeed")
@@ -454,11 +474,12 @@ class PublicationCoordinator:
         """Operational summary for the control plane (PROPOSED family; see docs/cortex/CORTEX_GAPS.md): per Brain, the last run, what was produced, published and failed."""
         by = {}
         for r in self.ledger.records():
-            b = by.setdefault(r["brainId"], {"runs": 0, "produced": 0, "published": 0, "skipped": 0, "rejected": 0, "failed": 0, "notRequested": 0, "pending": 0, "missingArtifacts": 0, "problems": [],
+            b = by.setdefault(r["brainId"], {"runs": 0, "produced": 0, "published": 0, "skipped": 0, "rejected": 0, "failed": 0, "notRequested": 0, "pending": 0, "missingArtifacts": 0, "planSkipped": 0, "problems": [],
                                               "directWriter": r["writePath"] == DIRECT})
             b["runs"] += 1
             b["produced"] += r["artifact"].get("state") == "COLLECTED"
             b["missingArtifacts"] += r["artifact"].get("state") == "MISSING"
+            b["planSkipped"] += r["artifact"].get("reason") == PLAN_SKIP          # the job's own plan said SKIP (also counted in `skipped`)
             o = r["publication"]["outcome"]
             b[{"PUBLISHED": "published", "SKIPPED": "skipped", "REJECTED": "rejected", "FAILED": "failed", "NOT_REQUESTED": "notRequested", "PENDING": "pending"}[o]] += 1
             if o == "FAILED" or r["artifact"].get("state") in ("MISSING", "INVALID"):

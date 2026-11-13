@@ -183,6 +183,27 @@ def test_cloud_run_reconcile_falls_back_to_the_execution_window_and_labels_it():
     assert len(out["collected"]) == 1 and co.ledger.get(out["collected"][0])["matchBasis"] == "TIME_WINDOW"
 
 
+def test_a_skipped_run_is_a_normal_outcome_never_missing_failed_or_matched_by_time_window():
+    """SI-P2: the Brain's own plan said SKIP. Even with an artifact of the Brain inside its window, nothing is collected for it and no problem is recorded."""
+    r, co, _ = scripted_stack()
+    write(r, n=1, minutes=3, executionId="55555555-5555-4555-8555-555555555555")
+    skip = {**ex("wind-20261105T1200Z-skip", "SKIPPED", start=T0), "runner": "pulse", "decision": {"action": "SKIP", "reasons": ["no material change"]}}
+    out = co.reconcile([skip])
+    assert out["collected"] == [] and out["missing"] == [] and out["failedRuns"] == []
+    assert out["skippedRuns"] == [{"brainId": "wind", "runId": "wind-20261105T1200Z-skip", "reasons": ["no material change"]}]
+    s = co.summary()["brains"]["wind"]
+    assert s["skipped"] == 1 and s["planSkipped"] == 1 and s["runs"] == 1 and not s["missingArtifacts"] and not s["problems"] and not s["failed"]
+    again = co.reconcile([skip])                                                                 # the next cycle lists it again: known, not re-counted
+    assert again["skippedRuns"] == [] and again["alreadyKnown"] == 1 and co.summary()["brains"]["wind"]["runs"] == 1
+
+
+def test_an_in_process_skipped_record_is_handled_exactly_as_before():
+    """Review of #132: only a RUNNER's skip (it names its runner and carries the decision) is new; the Orchestrator's own SKIPPED records are unchanged."""
+    r, co, _ = scripted_stack()
+    out = co.reconcile([ex("sector-intelligence-20261105T120000Z", "SKIPPED")])
+    assert out["skippedRuns"] == [] and len(out["failedRuns"]) == 1
+
+
 def test_an_interrupted_coordinator_resumes_from_the_persisted_ledger_and_publishes_exactly_once(tmp_path):
     path = str(tmp_path / "ledger.json")
     r, co, _ = stack(cutover=("wind",), path=path)

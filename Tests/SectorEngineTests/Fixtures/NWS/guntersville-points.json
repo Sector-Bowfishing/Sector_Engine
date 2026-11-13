@@ -1,0 +1,1 @@
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-86.26,34.42]},"properties":{"gridId":"HUN","gridX":76,"gridY":30,"forecastGridData":"https://api.weather.gov/gridpoints/HUN/76,30","observationStations":"https://api.weather.gov/gridpoints/HUN/76,30/stations","timeZone":"America/Chicago"}}

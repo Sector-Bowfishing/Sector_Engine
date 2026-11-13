@@ -7,7 +7,7 @@ synthesis and changes no value. Intelligence-specific facts declared here:
   * the snapshot field and its brainVersion are Brain-authored for EVALUATED pilot lakes only (registry families, not a Publisher COPY projection);
   * lake identity fields are platform-owned; the run/process fields of `/health/brains/sector-intelligence` are Orchestrator-owned;
   * no delete family: Intelligence never deletes anything;
-  * knowledgeRelease / manifestRef / manifestSha256 are NONE; the runtime's own input fingerprint and the catalog digest are the input identity.
+  * knowledgeRelease / manifestRef / manifestSha256 are the packaged release (`knowledge-release.json`, catalog.json) passed by run.py (BR-11 e); the runtime's own input fingerprint is the input identity.
 Pure: no clock, no randomness, no I/O.
 """
 from __future__ import annotations
@@ -27,8 +27,8 @@ BRAIN = FlatBrain(
             (rf"/lakeFleet/{_LAKE}/(readiness|modelVersions)/{sib.SLOT}", "fleet"), (rf"/snapshots/{_LAKE}/latest/.+", "snapshot")),
     not_authored=(NotAuthored(rf"/lakeFleet/{_LAKE}/lakeId", "lakefleet-lakeid", "PLATFORM_OWNED", "STOP_WRITING", "Platform Lake Registry (lake identity)"),
                   NotAuthored(rf"/snapshots/{_LAKE}/latest/lakeId", "snapshot-lakeid", "PLATFORM_OWNED", "STOP_WRITING", "Platform Lake Registry (lake identity)"),
-                  NotAuthored(rf"/health/brains/{INTELLIGENCE}/.+", "health-brains-process", "LEGACY_READER_DEPENDENCY", "ORCHESTRATOR_DERIVED",
-                              "Orchestrator (execution / deployment state)")))
+                  NotAuthored(rf"/health/brains/{INTELLIGENCE}/.+", "health-brains", "LEGACY_READER_DEPENDENCY", "ORCHESTRATOR_DERIVED",
+                              "Orchestrator (derived from the published /brains/sector-intelligence, health_mirror; Sector_Ops #50 SI-A3)")))
 
 
 def input_fingerprint(updates: dict) -> str:

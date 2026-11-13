@@ -126,10 +126,6 @@
           "status": "CANONICAL"
         },
         {
-          "pattern": "/health/brains/sector-intelligence/{child}",
-          "status": "CANONICAL"
-        },
-        {
           "pattern": "/activity/{event}",
           "status": "CANONICAL"
         }

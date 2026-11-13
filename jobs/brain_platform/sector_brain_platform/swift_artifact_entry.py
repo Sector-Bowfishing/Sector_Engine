@@ -54,8 +54,9 @@ def store_for(artifact_dir: str | None, artifact_bucket: str | None):
 
 
 def main(argv, *, brain_id: str, builder, bucket_env: str, add_job_args: Callable[[argparse.ArgumentParser], None],
-         job_command: Callable[[argparse.Namespace, str], list[str]]) -> int:
-    """The CLI both Brains share. `add_job_args` declares the Brain's own job flags; `job_command(a, dir)` builds the dry-run command line."""
+         job_command: Callable[[argparse.Namespace, str], list[str]], validate: Callable[[argparse.Namespace], str | None] | None = None) -> int:
+    """The CLI both Brains share. `add_job_args` declares the Brain's own job flags; `job_command(a, dir)` builds the dry-run command line; `validate(a)` (optional)
+    returns a refusal reason for the PARSED arguments, so a check holds whatever spelling argparse accepted (abbreviations, `=` forms)."""
     ap = argparse.ArgumentParser()
     ap.add_argument("--job", default=None, help="path to the Swift job executable")
     ap.add_argument("--from-dir", default=None, help="an existing dry-run folder to seal instead of running the job")
@@ -63,7 +64,12 @@ def main(argv, *, brain_id: str, builder, bucket_env: str, add_job_args: Callabl
     add_job_args(ap)
     ap.add_argument("--artifact-bucket", default=os.environ.get(bucket_env))
     ap.add_argument("--artifact-dir", default=None)
+    ap.add_argument("--emit", default=None, help="also write the sealed artifact JSON to this LOCAL file (a runner's hand-off, e.g. Pulse's {out}/artifact.json)")
     a = ap.parse_args(argv)
+    why = validate(a) if validate else None
+    if why:
+        print(f"REFUSED (nothing stored): {why}", file=sys.stderr)
+        return 2
     if not (a.artifact_bucket or a.artifact_dir) or bool(a.job) == bool(a.from_dir):
         print("REFUSED (nothing stored): give --job or --from-dir, and --artifact-bucket or --artifact-dir", file=sys.stderr)
         return 2
@@ -84,6 +90,12 @@ def main(argv, *, brain_id: str, builder, bucket_env: str, add_job_args: Callabl
             return 2
     from .publisher.handoff import ArtifactWriter
     ref = ArtifactWriter(store_for(a.artifact_dir, a.artifact_bucket), brain_id).write(art)
+    if (a.emit or "").strip():
+        if a.emit.startswith("gs://"):
+            print("REFUSED: --emit is a local file", file=sys.stderr)
+            return 2
+        with open(a.emit, "x") as fh:                                                   # never overwrites an earlier hand-off
+            json.dump(art, fh, sort_keys=True)
     print(json.dumps({"artifactId": ref.artifact_id, "location": ref.location, "sha256": ref.sha256, "executionId": ref.execution_id,
                       "artifactSchema": ref.expected_schema}, sort_keys=True))
     return 0

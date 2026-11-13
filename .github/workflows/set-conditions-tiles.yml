@@ -1,0 +1,86 @@
+# Set the Remote Config parameter conditions_tiles_v1 to a reviewed preset (docs/architecture/conditions/DEPLOY_WORKFLOWS_V1.md §3).
+#
+# Manual only (workflow_dispatch). Two jobs:
+#   validate  contents: read ONLY, no Google token. Installs pytest, runs the tool's tests, prints the preset and its TileFlags effective modes.
+#   apply     id-token: write. WIF as the conditions-flags service account. tools/deploy/conditions_tiles_flag.py: read the template with its
+#             ETag, change ONLY conditions_tiles_v1, validate_only, write with If-Match, read back and compare every other parameter, group
+#             and condition. Prints the template version before and after (rollback = preset `off`, or a version rollback).
+#   Presets: off (deletes the parameter: every tile off) | weather-shadow (the five weather tiles in shadow). Nothing containing `serve` is
+#   ever written: a serve flip is customer-visible and approved by the owner separately.
+#
+# Repository configuration (never hard-coded, never echoed; a SECRET of the same name wins over a variable and is masked in logs):
+#   GCP_WIF_PROVIDER, GCP_SA_CONDITIONS_FLAGS
+name: set-conditions-tiles
+on:
+  workflow_dispatch:
+    inputs:
+      preset:
+        description: "conditions_tiles_v1 preset"
+        required: true
+        type: choice
+        options: ["off", "weather-shadow"]
+      confirm:
+        description: "Type SET to write Remote Config"
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: remote-config-conditions-tiles
+  cancel-in-progress: false
+env:
+  PRESET: ${{ inputs.preset }}
+jobs:
+  validate:
+    name: validate the preset (no Google token)
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Validate inputs
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          [[ "$CONFIRM" == "SET" ]] || { echo "::error::confirm must be SET"; exit 1; }
+          [[ "$PRESET" == "off" || "$PRESET" == "weather-shadow" ]] || { echo "::error::preset must be off or weather-shadow"; exit 1; }
+          [[ "$PRESET" != *serve* ]] || { echo "::error::serve is approved by the owner separately"; exit 1; }
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Tool tests (TileFlags semantics, single-parameter edit, read-back, serve refusal)
+        run: |
+          python3 -m venv "$RUNNER_TEMP/venv"            # the runner's system Python may be externally managed (PEP 668)
+          "$RUNNER_TEMP/venv/bin/pip" install --quiet pytest
+          cd tools/deploy && "$RUNNER_TEMP/venv/bin/python" -m pytest -q tests/test_conditions_tiles_flag.py
+      - name: Plan
+        run: python3 tools/deploy/conditions_tiles_flag.py plan --preset "$PRESET"
+
+  apply:
+    name: write Remote Config (WIF)
+    needs: validate
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false
+      - id: auth
+        name: Authenticate to Google Cloud (Workload Identity Federation)
+        uses: google-github-actions/auth@c200f3691d83b41bf9bbd8638997a462592937ed  # v2.1.13
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER || vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_CONDITIONS_FLAGS || vars.GCP_SA_CONDITIONS_FLAGS }}
+          token_format: access_token
+          access_token_lifetime: 600s
+          create_credentials_file: false
+      - name: Read-modify-write conditions_tiles_v1 (ETag / If-Match), read back, compare
+        env:
+          RC_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+          PROJECT_ID: ${{ steps.auth.outputs.project_id }}
+        run: python3 tools/deploy/conditions_tiles_flag.py apply --preset "$PRESET" --project "$PROJECT_ID"

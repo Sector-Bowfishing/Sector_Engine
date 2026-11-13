@@ -8,9 +8,12 @@ usage:
   python run.py --plan                       # orchestrator question: is a publish warranted?
   python run.py --dry-run --out out/         # build everything from live reads (GET only), write JSON files, no writes
   python run.py --write                      # publish (one atomic multi-path update)
+  python run.py --artifact (--artifact-dir DIR | --artifact-bucket B)   # SI-1 (a) DRAFT: seal ONE artifact, create-only; NO database write
 env:
   BRAIN_RTDB_URL (sector-brain), ENGINE_URL, BRAIN_TOKEN_MODE metadata|gcloud,
-  DEPLOYMENT_VERSION (else brain/sector-intelligence@<git sha>)
+  DEPLOYMENT_VERSION (else brain/sector-intelligence@<git sha>),
+  ENGINE_REVISION (+ optional ENGINE_IMAGE_DIGEST): a runner outside Cloud Run supplies the Engine serving revision instead of reading Cloud Run
+  (a read-only database identity cannot read it), SI_ARTIFACT_BUCKET
 """
 from __future__ import annotations
 
@@ -51,6 +54,30 @@ def cloud_run_service(tokens: bp.TokenProvider, lineage: dict) -> dict | None:
         return None
 
 
+def runner_service(env=os.environ) -> dict | None:
+    """The Engine serving revision supplied by the runner (Pulse sets ENGINE_REVISION), shaped like the Cloud Run service document so
+    engine_serving() judges it the same way. Without ENGINE_IMAGE_DIGEST the lineage cannot be verified, and engine_serving says so."""
+    rev = env.get("ENGINE_REVISION")
+    if not rev:
+        return None
+    digest = env.get("ENGINE_IMAGE_DIGEST")
+    return {"source": "runner", "trafficStatuses": [{"revision": rev, "percent": 100}],
+            "template": {"containers": [{"image": f"runner-supplied@{digest}" if digest else "runner-supplied"}]}}
+
+
+def seal_and_store(updates: dict, *, now: dt.datetime, release: dict, consumed, store, execution_id: str | None = None) -> dict:
+    """SI-1 (a): the same update set, sealed as ONE sector-intelligence-publication-v1 artifact and stored create-only. Nothing else is written."""
+    import uuid
+    import publish_artifact as pa
+    from sector_brain_platform.publisher.flat_artifact import BuildContext
+    from sector_brain_platform.publisher.handoff import ArtifactWriter
+    built = pa.build_artifact(updates, BuildContext(bp.iso(now), execution_id or str(uuid.uuid4()), deployment_version()), consumed=consumed, release=release)
+    if not built.artifact:
+        raise RuntimeError("artifact build produced no artifact: nothing was stored")
+    ref = ArtifactWriter(store, sib.BRAIN_ID).write(built.artifact)
+    return {"artifactId": ref.artifact_id, "location": ref.location, "sha256": ref.sha256, "executionId": ref.execution_id, "droppedLegacyPaths": len(built.dropped)}
+
+
 def deployment_version() -> str:
     if os.environ.get("DEPLOYMENT_VERSION"):
         return os.environ["DEPLOYMENT_VERSION"]
@@ -82,16 +109,40 @@ def read_upstream(rtdb: bp.BrainRtdb) -> dict:
     return out
 
 
+DECISION_SCHEMA = "sector-job-decision-v1"
+
+
+def emit_decision(path: str | None, decision: dict, *, artifact_id: str | None = None, forced: bool = False) -> None:
+    """SI-P2 (option b): the job's own PUBLISH/SKIP verdict, for a runner (Pulse reads {out}/decision.json). LOCAL and create-only; a SKIP names no artifact.
+    It is the same `orch.plan` verdict `--plan` prints, computed from the same reads."""
+    if not path:
+        return
+    doc = {"schema": DECISION_SCHEMA, "brainId": sib.BRAIN_ID, "action": decision.get("action"),
+           "reasons": [str(r) for r in (decision.get("reasons") or [])], "artifactId": artifact_id, "forced": forced}
+    with open(path, "x") as fh:
+        json.dump(doc, fh, sort_keys=True)
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--plan", action="store_true")
     g.add_argument("--dry-run", action="store_true")
     g.add_argument("--write", action="store_true")
+    g.add_argument("--artifact", action="store_true", help="SI-1 (a): seal one artifact into --artifact-dir / --artifact-bucket; no database write")
+    ap.add_argument("--artifact-dir", default=None)
+    ap.add_argument("--artifact-bucket", default=os.environ.get("SI_ARTIFACT_BUCKET"))
     ap.add_argument("--out", default="out")
     ap.add_argument("--no-pilot", action="store_true", help="skip the pilot evaluations (inventory-only publish)")
     ap.add_argument("--force", action="store_true", help="publish even when --plan says SKIP")
+    ap.add_argument("--emit-decision", default=None, help="SI-P2: with --artifact, write the job's PUBLISH/SKIP verdict to this LOCAL file (create-only)")
     a = ap.parse_args(argv)
+    if a.artifact and not (a.artifact_dir or a.artifact_bucket):
+        print("REFUSED (nothing stored): --artifact needs --artifact-dir or --artifact-bucket", file=sys.stderr)
+        return 2
+    if a.emit_decision and (not a.artifact or "://" in a.emit_decision or os.path.exists(a.emit_decision)):
+        print("REFUSED (nothing stored): --emit-decision needs --artifact and a new LOCAL file", file=sys.stderr)
+        return 2
 
     t0 = time.time()
     now = dt.datetime.now(dt.timezone.utc)
@@ -101,7 +152,10 @@ def main(argv=None) -> int:
     rtdb = bp.BrainRtdb(RTDB_URL, tokens, brain_id=sib.BRAIN_ID, recorder=bp.ConsumptionRecorder(sib.BRAIN_ID))   # ownership-checked; --plan/--dry-run only GET; every read is recorded as ACTUAL consumption
     published = rtdb.get(f"brains/{sib.BRAIN_ID}")
     upstream = read_upstream(rtdb)
-    serving = sib.engine_serving(cloud_run_service(tokens, cat["codeLineage"]), cat["codeLineage"], now)
+    supplied = runner_service()
+    serving = sib.engine_serving(supplied if supplied else cloud_run_service(tokens, cat["codeLineage"]), cat["codeLineage"], now)
+    if supplied:
+        serving["source"] = "runner (ENGINE_REVISION)"
     deps = {bid: sib.dependency_status(bid, cat["dependencies"][bid], upstream[bid]["registry"], upstream[bid]["health"],
                                        upstream[bid]["validationStatus"], cat, now) for bid in sib.DEPENDENCY_ORDER}
     # Pilot evaluations (Phase 9): real specialist states for the pilot lakes; a lake that cannot be
@@ -153,7 +207,24 @@ def main(argv=None) -> int:
         return 0
 
     if decision["action"] == "SKIP" and not a.force:
+        if a.artifact:
+            emit_decision(a.emit_decision, decision)
         print(json.dumps(summary | {"published": False}, indent=1))
+        return 0
+    if a.artifact:
+        if a.artifact_dir:
+            from sector_brain_platform.publisher.storage import LocalDirObjectStore
+            store = LocalDirObjectStore(a.artifact_dir)
+        else:
+            from sector_brain_platform.object_bucket import GcsRestObjectStore
+            store = GcsRestObjectStore(a.artifact_bucket, tokens)
+        try:
+            ref = seal_and_store(updates, now=now, release=release, consumed=summary["consumed"], store=store)
+        except RuntimeError as e:
+            print(f"REFUSED: {e}", file=sys.stderr)
+            return 2
+        emit_decision(a.emit_decision, decision, artifact_id=ref["artifactId"], forced=decision["action"] == "SKIP")
+        print(json.dumps(summary | {"published": False, "artifact": ref}, indent=1))
         return 0
     bp.check_schema(rtdb)
     rtdb.update(updates)
