@@ -63,3 +63,75 @@ def test_renew_and_show(tmp_path, capsys):
     capsys.readouterr()
     assert R.main(["show", "--store-dir", d, "--brain", "wind"]) == 0
     assert json.loads(capsys.readouterr().out)["lease"]["holder"] == "pulse"
+
+
+# -- skip (SI-P2): the job's own plan said SKIP, so there is no artifact ------------------------------------------------------------------------------
+def test_skip_records_a_skipped_run_for_the_held_cycle(tmp_path, capsys):
+    d, _, _ = setup(tmp_path)
+    args = ["skip", "--store-dir", d, "--brain", "wind", "--holder", "pulse", "--cycle", "c1", "--reason", "inputs unchanged", "--engine-commit", "abc"] + TIMES
+    assert R.main(args) == 0
+    out = json.loads(capsys.readouterr().out)
+    assert out == {"executionId": "c1-skip", "executionRecord": "exports/runners/pulse/executions/wind/c1-skip.json", "status": "SKIPPED"}
+    s = LocalDirObjectStore(d)
+    ex = RL.runner_executions(RL.orchestrator_view(s), {"wind"})
+    assert len(ex) == 1 and ex[0]["status"] == "SKIPPED" and ex[0]["cycleId"] == "c1"
+    assert ex[0]["decision"] == {"action": "SKIP", "reasons": ["inputs unchanged"]}
+    assert not [k for k in s.list("artifacts/")]                           # nothing handed off
+    assert R.main(args) == 0                                               # idempotent
+    kept, skipped = RL.reconcilable_executions(RL.orchestrator_view(s), {"wind"})
+    assert [e["executionId"] for e in kept] == ["c1-skip"] and skipped == []
+
+
+def test_skip_is_refused_without_the_lease_or_for_another_cycle(tmp_path):
+    d, _, _ = setup(tmp_path, lease=False)
+    assert R.main(["skip", "--store-dir", d, "--brain", "wind", "--holder", "pulse", "--cycle", "c1"] + TIMES) == 3
+    d2, _, _ = setup(tmp_path / "b")
+    assert R.main(["skip", "--store-dir", d2, "--brain", "wind", "--holder", "pulse", "--cycle", "c0"] + TIMES) == 3
+    assert R.main(["skip", "--store-dir", d2, "--brain", "wind", "--holder", "cloud", "--cycle", "c1"] + TIMES) == 3
+    assert R.main(["skip", "--store-dir", d2, "--brain", "wind", "--holder", "pulse"] + TIMES) == 2
+    assert R.main(["skip", "--store-dir", d2, "--brain", "wind", "--holder", "pulse", "--cycle", "a/b"] + TIMES) == 2
+    assert RL.runner_executions(RL.orchestrator_view(LocalDirObjectStore(d2)), {"wind"}) == []
+
+
+def test_a_re_run_in_the_same_cycle_reports_the_skip_already_recorded(tmp_path, capsys):
+    d, _, _ = setup(tmp_path)
+    base = ["skip", "--store-dir", d, "--brain", "wind", "--holder", "pulse", "--cycle", "c1", "--started-at", "2026-11-02T12:00:00Z"]
+    assert R.main(base + ["--ended-at", "2026-11-02T12:01:00Z"]) == 0
+    capsys.readouterr()
+    assert R.main(base + ["--ended-at", "2026-11-02T12:09:00Z", "--reason=-starts with a dash"]) == 0
+    assert json.loads(capsys.readouterr().out)["alreadyRecorded"] is True
+    assert len(RL.runner_executions(RL.orchestrator_view(LocalDirObjectStore(d)), {"wind"})) == 1
+
+
+# ------------------------------------------------------------------------------------------- Sector_Ops #51: a runner reports the fault it stopped for
+def test_fault_creates_one_record_the_watchdog_reads(tmp_path, capsys):
+    d = str(tmp_path / "store")
+    os.makedirs(d, exist_ok=True)
+    assert R.main(["fault", "--store-dir", d, "--holder", "pulse", "--brain", "water-clarity", "--kind=LEASE_RENEWAL_REFUSED",
+                   "--detail=-renew exit 3"]) == 0                         # the bridge's `=` form: a detail starting with '-' is a value
+    out = json.loads(capsys.readouterr().out)
+    key = out["faultRecord"]
+    assert key.startswith("exports/runners/pulse/faults/water-clarity/") and key.endswith("-LEASE_RENEWAL_REFUSED.json")
+    doc = json.loads(LocalDirObjectStore(d).get(key))
+    assert doc["schema"] == RL.FAULT_SCHEMA and doc["detail"] == "-renew exit 3" and doc["holder"] == "pulse"
+
+
+def test_fault_refuses_a_bad_kind_or_brain_and_writes_nothing(tmp_path, capsys):
+    d = str(tmp_path / "store")
+    os.makedirs(d, exist_ok=True)
+    assert R.main(["fault", "--store-dir", d, "--holder", "pulse", "--brain", "water-clarity", "--kind", "lower-case"]) == 2
+    assert R.main(["fault", "--store-dir", d, "--holder", "pulse", "--brain", "../x", "--kind", "OTHER"]) == 2
+    assert LocalDirObjectStore(d).list("exports/") == []
+
+
+def test_a_runner_can_create_only_its_own_fault_records():
+    from sector_brain_platform.publisher.storage import MemoryObjectStore
+    s = MemoryObjectStore()
+    view = RL.runner_view(s, "pulse")
+    now = dt.datetime(2026, 11, 7, 12, 0, tzinfo=dt.timezone.utc)
+    key = RL.record_fault(view, "pulse", "water-clarity", "UNEXPECTED_CREDENTIAL", "x" * 500, now)
+    assert key == "exports/runners/pulse/faults/water-clarity/20261107T120000Z-UNEXPECTED_CREDENTIAL.json"
+    assert len(json.loads(s.get(key))["detail"]) == 300
+    import pytest
+    with pytest.raises(Exception):
+        view.put("exports/runners/cloud/faults/water-clarity/x.json", b"{}")      # not this runner's prefix

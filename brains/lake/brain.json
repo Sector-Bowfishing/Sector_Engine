@@ -125,8 +125,8 @@
       "INTERNAL"
     ],
     "knowledgeLoading": {
-      "approved": "NONE",
-      "experimental": "reviewed-bindings (COMPILED_IN_BINARY, brains/lake/runtime/LakeBrain/LakeSourceBindings.swift, approval NOT_RECORDED); species-presence (PRIVATE_BUCKET_RELEASE, gs://sector-lake-brain (presence/latest.json), approval NOT_RECORDED)",
+      "approved": "reviewed-bindings (COMPILED_IN_BINARY, brains/lake/runtime/knowledge-release.json `lake-knowledge-2026-11-02.1`; APPROVED for INTERNAL and CALIBRATION use only, not customer-eligible: docs/cortex/approvals/lake-knowledge-2026-11-02.1.md)",
+      "experimental": "species-presence (PRIVATE_BUCKET_RELEASE, gs://sector-lake-brain (presence/latest.json), approval NOT_RECORDED)",
       "refuseWithoutApproved": [
         "CUSTOMER_SERVING"
       ]
@@ -149,6 +149,6 @@
       "status": "NOT_ELIGIBLE",
       "approvalRef": null
     },
-    "notes": "No APPROVED knowledge release exists (approval NOT_RECORDED): production runs are INTERNAL mode on the packaged candidate/reviewed knowledge. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
+    "notes": "The packaged knowledge release lake-knowledge-2026-11-02.1 is APPROVED for INTERNAL and CALIBRATION use only (Sector_Ops #51, owner approval 2026-11-12 ~07:00Z, item 2); it is not customer-eligible. The species-presence bucket release is still approval NOT_RECORDED. Production runs are INTERNAL mode. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
   }
 }

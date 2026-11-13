@@ -1,0 +1,388 @@
+{
+  "algorithm": {
+    "illumination": "Low-precision ephemeris (Paul Schlyter, 'How to compute planetary positions'), evaluated at the exact instant (day number d includes the UT fraction; epoch 2000 Jan 0.0 UT). Elongation psi = acos(cos(moonLon - sunLon) * cos(moonLat)); illumination = (1 + cos(180 - psi)) / 2, clamped to 0..1. Moon perturbations include evection and variation.",
+    "phaseFraction": "((t - 947182440 s) / 86400 mod 29.530588853 + 29.530588853) mod 29.530588853 / 29.530588853; 0 = new, 0.5 = full. Used for the phase NAME only, never for illumination.",
+    "phaseName": "fraction < 0.03 or >= 0.97: New moon; < 0.22 Waxing crescent; < 0.28 First quarter; < 0.47 Waxing gibbous; < 0.53 Full moon; < 0.72 Waning gibbous; < 0.78 Last quarter; else Waning crescent",
+    "waxing": "phaseFraction <= 0.5"
+  },
+  "frozenOn": "2026-11-06",
+  "implementations": {
+    "android": "Android_Sector app/src/main/java/io/sector/co/conditions/BowfishingConditions.kt; test to add",
+    "engine": "Sector_Engine Sources/SectorEngine/Engine/Astronomy.swift (MoonSpecTests)",
+    "ios": "iOS_Sector Sector/SwiftData/Models/ConditionsEngine/Astronomy.swift (same code as the Engine at v4.1.0-28); test to add",
+    "web": "Web_Sector functions/src/conditionsEngine.ts (retires in Step 1); the website moon tile moves to a TS copy that must pass these vectors"
+  },
+  "purpose": "Moon Phase is a class 3 tile (computed in the app, Sector_Ops #53). iOS, Android, Web and the Engine (darkness factor, /conditions moonIllumination) must all pass these vectors. Reference implementation: Sources/SectorEngine/Engine/Astronomy.swift.",
+  "specId": "sector-moon-v1",
+  "tolerance": {
+    "illumination": 0.0005,
+    "phaseFraction": 1e-06
+  },
+  "vectors": [
+    {
+      "at": "2026-11-01T03:00:00Z",
+      "epochSeconds": 1793502000,
+      "illumination": 0.582926,
+      "phaseFraction": 0.702335,
+      "phaseName": "Waning gibbous"
+    },
+    {
+      "at": "2026-11-04T03:00:00Z",
+      "epochSeconds": 1793761200,
+      "illumination": 0.26111,
+      "phaseFraction": 0.803925,
+      "phaseName": "Waning crescent"
+    },
+    {
+      "at": "2026-11-07T03:00:00Z",
+      "epochSeconds": 1794020400,
+      "illumination": 0.048742,
+      "phaseFraction": 0.905514,
+      "phaseName": "Waning crescent"
+    },
+    {
+      "at": "2026-11-10T03:00:00Z",
+      "epochSeconds": 1794279600,
+      "illumination": 0.008625,
+      "phaseFraction": 0.007104,
+      "phaseName": "New moon"
+    },
+    {
+      "at": "2026-11-13T03:00:00Z",
+      "epochSeconds": 1794538800,
+      "illumination": 0.132217,
+      "phaseFraction": 0.108693,
+      "phaseName": "Waxing crescent"
+    },
+    {
+      "at": "2026-11-16T03:00:00Z",
+      "epochSeconds": 1794798000,
+      "illumination": 0.370029,
+      "phaseFraction": 0.210283,
+      "phaseName": "Waxing crescent"
+    },
+    {
+      "at": "2026-11-19T03:00:00Z",
+      "epochSeconds": 1795057200,
+      "illumination": 0.660302,
+      "phaseFraction": 0.311873,
+      "phaseName": "Waxing gibbous"
+    },
+    {
+      "at": "2026-11-22T03:00:00Z",
+      "epochSeconds": 1795316400,
+      "illumination": 0.913283,
+      "phaseFraction": 0.413462,
+      "phaseName": "Waxing gibbous"
+    },
+    {
+      "at": "2026-11-25T03:00:00Z",
+      "epochSeconds": 1795575600,
+      "illumination": 0.994421,
+      "phaseFraction": 0.515052,
+      "phaseName": "Full moon"
+    },
+    {
+      "at": "2026-11-28T03:00:00Z",
+      "epochSeconds": 1795834800,
+      "illumination": 0.82778,
+      "phaseFraction": 0.616641,
+      "phaseName": "Waning gibbous"
+    },
+    {
+      "at": "2026-12-01T03:00:00Z",
+      "epochSeconds": 1796094000,
+      "illumination": 0.514528,
+      "phaseFraction": 0.718231,
+      "phaseName": "Waning gibbous"
+    },
+    {
+      "at": "2026-12-04T03:00:00Z",
+      "epochSeconds": 1796353200,
+      "illumination": 0.217143,
+      "phaseFraction": 0.81982,
+      "phaseName": "Waning crescent"
+    },
+    {
+      "at": "2026-12-07T03:00:00Z",
+      "epochSeconds": 1796612400,
+      "illumination": 0.035581,
+      "phaseFraction": 0.92141,
+      "phaseName": "Waning crescent"
+    },
+    {
+      "at": "2026-12-10T03:00:00Z",
+      "epochSeconds": 1796871600,
+      "illumination": 0.011918,
+      "phaseFraction": 0.023,
+      "phaseName": "New moon"
+    },
+    {
+      "at": "2026-12-10T07:56:41Z",
+      "epochSeconds": 1796889401,
+      "illumination": 0.016215,
+      "phaseFraction": 0.029976,
+      "phaseName": "New moon"
+    },
+    {
+      "at": "2026-12-10T07:58:41Z",
+      "epochSeconds": 1796889521,
+      "illumination": 0.016246,
+      "phaseFraction": 0.030023,
+      "phaseName": "Waxing crescent"
+    },
+    {
+      "at": "2026-12-13T03:00:00Z",
+      "epochSeconds": 1797130800,
+      "illumination": 0.141951,
+      "phaseFraction": 0.124589,
+      "phaseName": "Waxing crescent"
+    },
+    {
+      "at": "2026-12-15T22:36:15Z",
+      "epochSeconds": 1797374175,
+      "illumination": 0.371633,
+      "phaseFraction": 0.219976,
+      "phaseName": "Waxing crescent"
+    },
+    {
+      "at": "2026-12-15T22:38:15Z",
+      "epochSeconds": 1797374295,
+      "illumination": 0.371764,
+      "phaseFraction": 0.220023,
+      "phaseName": "First quarter"
+    },
+    {
+      "at": "2026-12-16T03:00:00Z",
+      "epochSeconds": 1797390000,
+      "illumination": 0.389119,
+      "phaseFraction": 0.226179,
+      "phaseName": "First quarter"
+    },
+    {
+      "at": "2026-12-17T17:07:42Z",
+      "epochSeconds": 1797527262,
+      "illumination": 0.548323,
+      "phaseFraction": 0.279976,
+      "phaseName": "First quarter"
+    },
+    {
+      "at": "2026-12-17T17:09:42Z",
+      "epochSeconds": 1797527382,
+      "illumination": 0.548466,
+      "phaseFraction": 0.280024,
+      "phaseName": "Waxing gibbous"
+    },
+    {
+      "at": "2026-12-19T03:00:00Z",
+      "epochSeconds": 1797649200,
+      "illumination": 0.692964,
+      "phaseFraction": 0.327768,
+      "phaseName": "Waxing gibbous"
+    },
+    {
+      "at": "2026-12-22T03:00:00Z",
+      "epochSeconds": 1797908400,
+      "illumination": 0.942087,
+      "phaseFraction": 0.429358,
+      "phaseName": "Waxing gibbous"
+    },
+    {
+      "at": "2026-12-23T07:47:16Z",
+      "epochSeconds": 1798012036,
+      "illumination": 0.990058,
+      "phaseFraction": 0.469976,
+      "phaseName": "Waxing gibbous"
+    },
+    {
+      "at": "2026-12-23T07:49:16Z",
+      "epochSeconds": 1798012156,
+      "illumination": 0.99009,
+      "phaseFraction": 0.470023,
+      "phaseName": "Full moon"
+    },
+    {
+      "at": "2026-12-25T02:18:43Z",
+      "epochSeconds": 1798165123,
+      "illumination": 0.98298,
+      "phaseFraction": 0.529977,
+      "phaseName": "Full moon"
+    },
+    {
+      "at": "2026-12-25T02:20:43Z",
+      "epochSeconds": 1798165243,
+      "illumination": 0.982937,
+      "phaseFraction": 0.530024,
+      "phaseName": "Waning gibbous"
+    },
+    {
+      "at": "2026-12-25T03:00:00Z",
+      "epochSeconds": 1798167600,
+      "illumination": 0.982079,
+      "phaseFraction": 0.530947,
+      "phaseName": "Waning gibbous"
+    },
+    {
+      "at": "2026-12-28T03:00:00Z",
+      "epochSeconds": 1798426800,
+      "illumination": 0.776397,
+      "phaseFraction": 0.632537,
+      "phaseName": "Waning gibbous"
+    },
+    {
+      "at": "2026-12-30T16:58:17Z",
+      "epochSeconds": 1798649897,
+      "illumination": 0.508673,
+      "phaseFraction": 0.719977,
+      "phaseName": "Waning gibbous"
+    },
+    {
+      "at": "2026-12-30T17:00:17Z",
+      "epochSeconds": 1798650017,
+      "illumination": 0.508527,
+      "phaseFraction": 0.720024,
+      "phaseName": "Last quarter"
+    },
+    {
+      "at": "2027-01-01T11:29:43Z",
+      "epochSeconds": 1798802983,
+      "illumination": 0.330838,
+      "phaseFraction": 0.779976,
+      "phaseName": "Last quarter"
+    },
+    {
+      "at": "2027-01-01T11:31:43Z",
+      "epochSeconds": 1798803103,
+      "illumination": 0.330708,
+      "phaseFraction": 0.780023,
+      "phaseName": "Waning crescent"
+    },
+    {
+      "at": "2027-01-07T02:09:18Z",
+      "epochSeconds": 1799287758,
+      "illumination": 0.006064,
+      "phaseFraction": 0.969977,
+      "phaseName": "Waning crescent"
+    },
+    {
+      "at": "2027-01-07T02:11:18Z",
+      "epochSeconds": 1799287878,
+      "illumination": 0.006045,
+      "phaseFraction": 0.970024,
+      "phaseName": "New moon"
+    },
+    {
+      "at": "2027-01-08T20:40:44Z",
+      "epochSeconds": 1799440844,
+      "illumination": 0.009355,
+      "phaseFraction": 0.029976,
+      "phaseName": "New moon"
+    },
+    {
+      "at": "2027-01-08T20:42:44Z",
+      "epochSeconds": 1799440964,
+      "illumination": 0.009379,
+      "phaseFraction": 0.030023,
+      "phaseName": "Waxing crescent"
+    },
+    {
+      "at": "2027-01-14T11:20:18Z",
+      "epochSeconds": 1799925618,
+      "illumination": 0.357022,
+      "phaseFraction": 0.219976,
+      "phaseName": "Waxing crescent"
+    },
+    {
+      "at": "2027-01-14T11:22:18Z",
+      "epochSeconds": 1799925738,
+      "illumination": 0.357158,
+      "phaseFraction": 0.220023,
+      "phaseName": "First quarter"
+    },
+    {
+      "at": "2027-01-16T05:51:45Z",
+      "epochSeconds": 1800078705,
+      "illumination": 0.540908,
+      "phaseFraction": 0.279977,
+      "phaseName": "First quarter"
+    },
+    {
+      "at": "2027-01-16T05:53:45Z",
+      "epochSeconds": 1800078825,
+      "illumination": 0.541057,
+      "phaseFraction": 0.280024,
+      "phaseName": "Waxing gibbous"
+    },
+    {
+      "at": "2027-01-21T20:31:19Z",
+      "epochSeconds": 1800563479,
+      "illumination": 0.99286,
+      "phaseFraction": 0.469976,
+      "phaseName": "Waxing gibbous"
+    },
+    {
+      "at": "2027-01-21T20:33:19Z",
+      "epochSeconds": 1800563599,
+      "illumination": 0.992888,
+      "phaseFraction": 0.470024,
+      "phaseName": "Full moon"
+    },
+    {
+      "at": "2027-01-23T15:02:46Z",
+      "epochSeconds": 1800716566,
+      "illumination": 0.981557,
+      "phaseFraction": 0.529977,
+      "phaseName": "Full moon"
+    },
+    {
+      "at": "2027-01-23T15:04:46Z",
+      "epochSeconds": 1800716686,
+      "illumination": 0.981511,
+      "phaseFraction": 0.530024,
+      "phaseName": "Waning gibbous"
+    },
+    {
+      "at": "2027-01-29T05:42:20Z",
+      "epochSeconds": 1801201340,
+      "illumination": 0.521782,
+      "phaseFraction": 0.719977,
+      "phaseName": "Waning gibbous"
+    },
+    {
+      "at": "2027-01-29T05:44:20Z",
+      "epochSeconds": 1801201460,
+      "illumination": 0.521642,
+      "phaseFraction": 0.720024,
+      "phaseName": "Last quarter"
+    },
+    {
+      "at": "2027-01-31T00:13:46Z",
+      "epochSeconds": 1801354426,
+      "illumination": 0.349098,
+      "phaseFraction": 0.779976,
+      "phaseName": "Last quarter"
+    },
+    {
+      "at": "2027-01-31T00:15:46Z",
+      "epochSeconds": 1801354546,
+      "illumination": 0.348969,
+      "phaseFraction": 0.780023,
+      "phaseName": "Waning crescent"
+    },
+    {
+      "at": "2027-02-05T14:53:20Z",
+      "epochSeconds": 1801839200,
+      "illumination": 0.010019,
+      "phaseFraction": 0.969976,
+      "phaseName": "Waning crescent"
+    },
+    {
+      "at": "2027-02-05T14:55:20Z",
+      "epochSeconds": 1801839320,
+      "illumination": 0.009993,
+      "phaseFraction": 0.970023,
+      "phaseName": "New moon"
+    }
+  ],
+  "version": "1.0.0"
+}

@@ -60,3 +60,69 @@ def test_a_failing_job_stores_nothing(tmp_path):
 def test_the_entry_has_no_database_writer():
     src = open(E.__file__).read()
     assert "BrainRtdb" not in src and "RtdbRestPublisherClient" not in src and ".update(" not in src
+
+
+@pytest.mark.parametrize("args", [["--fault", "cwms-unreachable", "--artifact-bucket", "b"], ["--fault=cwms-unreachable"],
+                                  ["--fa", "cwms-unreachable", "--artifact-bucket", "b"],                    # an argparse abbreviation (review of #117)
+                                  ["--fault", "cwms-unreachable", "--artifact-dir", "", "--artifact-bucket", "b"],   # an empty dir would fall through to the bucket
+                                  ["--fault", "cwms-unreachable", "--artifact-dir", "  "],
+                                  ["--fault", "cwms-unreachable"]])                                           # LAKE_ARTIFACT_BUCKET from the environment
+def test_a_rehearsal_fault_is_refused_unless_the_artifact_stays_local(args, capsys, monkeypatch):
+    """Sector_Ops #48 B4b: a fault-injected artifact must never reach a bucket the Publisher reads, whatever spelling argparse accepts."""
+    monkeypatch.setenv("LAKE_ARTIFACT_BUCKET", "env-bucket")
+    assert E.main(["--job", "/nonexistent/LakeBrainJob"] + args) == 2
+    assert "needs --artifact-dir" in capsys.readouterr().err
+
+
+def test_a_rehearsal_fault_is_passed_to_the_job():
+    import argparse
+    ap = argparse.ArgumentParser()
+    E._job_args(ap)
+    a = ap.parse_args(["--fault", "cwms-unreachable"])
+    a.job, a.read_rtdb = "LakeBrainJob", None
+    assert E._job_command(a, "D")[-2:] == ["--fault", "cwms-unreachable"]
+def test_seed_archive_and_presence_are_forwarded_to_the_job():
+    import argparse
+    ap = argparse.ArgumentParser()
+    E._job_args(ap)
+    a = ap.parse_args(["--seed-archive", "gs://seed", "--presence", "DIR"])
+    a.job, a.read_rtdb = "LakeBrainJob", None
+    cmd = E._job_command(a, "D")
+    assert cmd[cmd.index("--seed-archive") + 1] == "gs://seed" and cmd[cmd.index("--presence") + 1] == "DIR"
+
+
+@pytest.mark.parametrize("args", [["--artifact-bucket", "b"], ["--artifact-bucket", "b", "--seed-archive", "gs://seed"],
+                                  ["--artifact-bucket", "b", "--presence", "P"], ["--artifact-bucket", "b", "--seed-archive", " ", "--presence", "P"],
+                                  ["--artifact-dir", "", "--seed-archive", "gs://seed"], [],               # [] = LAKE_ARTIFACT_BUCKET from the environment
+                                  ["--artifact-dir", "D", "--emit", "D/artifact.json"],                  # a Pulse hand-off is publishable too
+                                  ["--artifact-dir", "D", "--em", "D/a.json", "--presence", "P"]])
+def test_a_bucket_bound_job_run_needs_the_history_archive_and_presence(args, capsys, monkeypatch):
+    """Sector_Ops #50 B4 finding: a publishable Lake artifact without them downgrades four pilots and nulls every presence summary."""
+    monkeypatch.setenv("LAKE_ARTIFACT_BUCKET", "env-bucket")
+    assert E.main(["--job", "/nonexistent/LakeBrainJob"] + args) == 2
+    assert "needs --seed-archive and --presence" in capsys.readouterr().err
+
+
+def test_a_local_rehearsal_or_a_fully_seeded_bucket_run_is_not_refused_by_the_guard():
+    import argparse
+    for extra in (["--artifact-dir", "D"], ["--artifact-bucket", "b", "--seed-archive", "gs://seed", "--presence", "P"]):
+        ap = argparse.ArgumentParser()
+        E._job_args(ap)
+        ap.add_argument("--artifact-bucket"); ap.add_argument("--artifact-dir")
+        a = ap.parse_args(extra)
+        a.job, a.from_dir, a.read_rtdb = "LakeBrainJob", None, None
+        assert E._validate(a) is None
+
+
+def test_emit_writes_the_sealed_artifact_for_a_runner_hand_off(tmp_path, capsys):
+    """Pulse's lease jobs hand off {out}/artifact.json (Sector-Pulse central.after_run); --emit writes exactly the stored artifact there, create-only."""
+    src, out = tmp_path / "dry", tmp_path / "out"
+    lay_out(GOLDEN, str(src))
+    emit = tmp_path / "artifact.json"
+    assert E.main(["--from-dir", str(src), "--artifact-dir", str(out), "--emit", str(emit)]) == 0
+    store = LocalDirObjectStore(str(out))
+    [key] = [k for k in store.list("artifacts/lake-brain/") if k.endswith("/artifact.json")]
+    art = json.loads(emit.read_text())
+    assert art["lineage"]["brainId"] == "lake-brain" and art == json.loads(store.get(key))
+    with pytest.raises(FileExistsError):
+        E.main(["--from-dir", str(src), "--artifact-dir", str(tmp_path / "out2"), "--emit", str(emit)])

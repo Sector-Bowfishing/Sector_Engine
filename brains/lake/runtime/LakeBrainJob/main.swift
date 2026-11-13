@@ -5,6 +5,7 @@
 //                      [--seed-archive gs://BUCKET] [--presence gs://BUCKET | DIR]
 //                      [--scope pilots|fleet] [--lake ID]... [--force] [--backfill] [--no-shared-tva-archive]
 //                      [--include-candidates]   (ONLY with --dry-run DIR)
+//                      [--fault cwms-unreachable]  (ONLY with --dry-run DIR: rehearsal fault injection, Sector_Ops #48 B4b)
 //    --dry-run DIR      write every Brain RTDB path as a JSON file under DIR (no database)
 //    --read-rtdb URL    with --dry-run: read the live Brain RTDB (GET only) for plan()/previous profiles
 //    --rtdb URL         write the Brain RTDB (default $SECTOR_BRAIN_RTDB_URL)
@@ -53,6 +54,16 @@ if includeCandidates {
     }
 }
 
+let faults = flags("--fault")
+if argv.contains(where: { $0.hasPrefix("--fault=") }) { refuse("write --fault NAME (two arguments); --fault=NAME is not read, so the run would be live-CWMS") }
+if argv.contains("--fault") && faults.isEmpty { refuse("--fault needs a name (cwms-unreachable)") }
+for f in faults where f != "cwms-unreachable" { refuse("unknown --fault \(f) (known: cwms-unreachable)") }
+if !faults.isEmpty {
+    guard flag("--dry-run") != nil else { refuse("--fault is valid only together with --dry-run DIR: faults never reach a live run") }
+    if argv.contains("--rtdb") { refuse("--fault is refused with --rtdb") }
+}
+let rehearsalFaults = PublicLakeLevelFeeds.RehearsalFaults(cwmsUnreachable: faults.contains("cwms-unreachable"))
+
 var options = LakeBrainRunOptions()
 options.includeCandidates = includeCandidates
 options.scope = LakeBrainRunOptions.Scope(rawValue: flag("--scope") ?? "pilots") ?? .pilots
@@ -61,6 +72,11 @@ if !lakeArgs.isEmpty { options.lakeIds = lakeArgs }
 options.force = argv.contains("--force")
 options.backfill = argv.contains("--backfill")
 options.processingVersion = env["SECTOR_ENGINE_REVISION"] ?? env["K_REVISION"] ?? env["SECTOR_ENGINE_COMMIT"]
+
+if (argv.contains("--read-rtdb") || argv.contains("--dry-run")) && flag("--dry-run") == nil {
+    // a read-only or dry-run flag must never fall through to the live writer ($SECTOR_BRAIN_RTDB_URL is set in the image)
+    refuse("--read-rtdb needs --dry-run DIR, and --dry-run needs a DIR; nothing was run")
+}
 
 var store: BrainStore? = nil
 var rest: RTDBRestStore? = nil
@@ -90,7 +106,9 @@ let presenceArchive = archive(flag("--presence")) ?? hist
 let sharedTVA = GCSLakeBrainArchive(bucket: "sector-water-temp-archive", readOnly: true)
 let shared: (String) -> LakeBrainArchive? = (argv.contains("--no-shared-tva-archive") || includeCandidates) ? { _ in nil }
     : { $0 == sharedTVA.bucket ? sharedTVA : nil }
-let feeds = PublicLakeLevelFeeds(sharedArchive: shared)
+let feeds = rehearsalFaults.cwmsUnreachable ? PublicLakeLevelFeeds(sharedArchive: shared, rehearsalFaults: rehearsalFaults)
+                                            : PublicLakeLevelFeeds(sharedArchive: shared)
+if rehearsalFaults.cwmsUnreachable { print("▶ REHEARSAL FAULT: every CWMS request fails (dry run only)") }
 if includeCandidates { print("▶ CANDIDATE DRY RUN: unreviewed bindings evaluated as if reviewed; local files only; outputs marked dryRunCandidate") }
 print("▶ archive \(hist?.uri ?? "none") · presence \(presenceArchive?.uri ?? "none") · scope \(options.scope.rawValue)\(options.force ? " · force" : "")\(options.backfill ? " · backfill" : "")")
 

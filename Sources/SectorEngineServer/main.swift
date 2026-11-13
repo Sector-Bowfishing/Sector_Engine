@@ -10,15 +10,54 @@ import Foundation
 import Hummingbird
 import SectorEngine
 
+// Line-buffered stdout (Sector_Ops #51 F1 review): on Cloud Run stdout is a pipe, so it is fully buffered by default —
+// the [engine]/[http]/[usgs] lines reached Cloud Logging in 4–8 KB batches stamped with the flush time, and lines
+// still buffered were lost when an instance was stopped (more often at min-instances 0). One write per line instead.
+setvbuf(stdout, nil, _IOLBF, 0)
+
 let router = Router()
+
+// Browser CORS for the website (CORSPolicy): GET /conditions, /health and /lakes/ready only, from the Web project's own origins.
+// Added before every route so it wraps them (and the not-found responder, which answers the OPTIONS preflight). A
+// request without an Origin header (the apps) passes straight through, unchanged.
+struct SectorCORSMiddleware<Context: RequestContext>: RouterMiddleware {
+    let policy: CORSPolicy
+
+    func handle(_ request: Request, context: Context,
+                next: (Request, Context) async throws -> Response) async throws -> Response {
+        guard CORSPolicy.paths.contains(request.uri.path), let origin = request.headers[.origin] else {
+            return try await next(request, context)
+        }
+        if request.method == .options, let headers = policy.preflightHeaders(origin: origin) {
+            var response = Response(status: .noContent)
+            Self.apply(headers, to: &response)
+            return response
+        }
+        guard request.method == .get || request.method == .head else { return try await next(request, context) }
+        var response = try await next(request, context)
+        Self.apply(policy.responseHeaders(origin: origin), to: &response)
+        return response
+    }
+
+    static func apply(_ headers: [(name: String, value: String)], to response: inout Response) {
+        for (name, value) in headers {
+            switch name {
+            case "Vary": response.headers[.vary] = value
+            case "Access-Control-Allow-Origin": response.headers[.accessControlAllowOrigin] = value
+            case "Access-Control-Allow-Methods": response.headers[.accessControlAllowMethods] = value
+            case "Access-Control-Allow-Headers": response.headers[.accessControlAllowHeaders] = value
+            case "Access-Control-Max-Age": response.headers[.accessControlMaxAge] = value
+            default: break
+            }
+        }
+    }
+}
+router.add(middleware: SectorCORSMiddleware(policy: CORSPolicy.fromEnvironment()))
 
 router.get("health") { _, _ in "ok" }
 
 func jsonResponse<T: Encodable>(_ value: T) -> Response {
-    let encoder = JSONEncoder()
-    encoder.dateEncodingStrategy = .iso8601
-    encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
-    let data = (try? encoder.encode(value)) ?? Data()
+    let data = (try? SectorEngineAPI.makeEncoder().encode(value)) ?? Data()
     var buffer = ByteBuffer()
     buffer.writeBytes(data)
     return Response(status: .ok, headers: [.contentType: "application/json"], body: .init(byteBuffer: buffer))
@@ -31,17 +70,34 @@ func jsonResponse<T: Encodable>(_ value: T) -> Response {
 // cache read for pull-to-refresh.
 router.get("conditions") { request, _ -> Response in
     guard let lat = request.uri.queryParameters.get("lat").flatMap({ Double(String($0)) }),
-          let lon = request.uri.queryParameters.get("lon").flatMap({ Double(String($0)) }) else {
-        return Response(status: .badRequest)
+          let lon = request.uri.queryParameters.get("lon").flatMap({ Double(String($0)) }),
+          CoordinateRange.isValid(lat: lat, lon: lon) else {
+        return Response(status: .badRequest)   // missing, unparseable or out-of-range coordinate
     }
     let fresh = request.uri.queryParameters.get("fresh").map { $0 == "1" || $0 == "true" } ?? false
-    guard let payload = await ConditionsResponseCache.shared.conditions(
+    let started = ContinuousClock.now
+    let (payload, cache) = await ConditionsResponseCache.shared.conditionsWithOutcome(
         lat: lat, lon: lon, fresh: fresh,
         compute: { await SectorEngineAPI.conditions(lat: lat, lon: lon) }
-    ) else {
+    )
+    // [conditions-request] (Sector_Ops #53 spec §6): one line per request, cache hits included. Client app and build
+    // from the User-Agent / X-Sector-Client headers; coordinates rounded to 0.1; no user ids.
+    print(ConditionsRequestLog.line(client: clientIdentity(request), cache: cache, ms: elapsedMs(since: started),
+                                    lat: lat, lon: lon, response: payload))
+    guard let payload else {
         return Response(status: .serviceUnavailable)   // no live data to score
     }
     return jsonResponse(payload)
+}
+
+func clientIdentity(_ request: Request) -> ClientIdentity {
+    ClientIdentity.parse(userAgent: request.headers[.userAgent],
+                         sectorClient: request.headers.first { $0.name.canonicalName == "x-sector-client" }?.value)
+}
+
+func elapsedMs(since started: ContinuousClock.Instant) -> Int {
+    let e = ContinuousClock.now - started
+    return Int(e.components.seconds * 1000 + e.components.attoseconds / 1_000_000_000_000_000)
 }
 
 // Slim score+band for many coordinates in one request — My Lakes list rings.
@@ -51,11 +107,15 @@ struct BatchResult: Encodable { let results: [BatchScore] }
 router.post("conditions/batch") { request, _ -> Response in
     var body = try await request.body.collect(upTo: 64 * 1024)
     let data = body.readData(length: body.readableBytes) ?? Data()
-    guard let req = try? JSONDecoder().decode(BatchRequest.self, from: data), !req.points.isEmpty else {
-        return Response(status: .badRequest)
+    guard let req = try? JSONDecoder().decode(BatchRequest.self, from: data), !req.points.isEmpty,
+          req.points.allSatisfy({ CoordinateRange.isValid(lat: $0.lat, lon: $0.lon) }) else {
+        return Response(status: .badRequest)   // any out-of-range point rejects the whole batch
     }
     let points = req.points.prefix(50).map { (lat: $0.lat, lon: $0.lon) }   // cap the list
+    let started = ContinuousClock.now
     let scores = await SectorEngineAPI.batch(points: Array(points))
+    // [conditions-request] with `batch: n` (spec §6 rule 5): which app builds still use the batch endpoint.
+    print(ConditionsRequestLog.batchLine(client: clientIdentity(request), points: points.count, ms: elapsedMs(since: started)))
     return jsonResponse(BatchResult(results: scores))
 }
 
@@ -90,6 +150,45 @@ router.get("hydrology") { request, _ -> Response in
         return Response(status: .notFound)
     }
     return jsonResponse(inputs)
+}
+
+// Lake Brain's level and trend for one lake (LakeLevelOutputAPI, Sector_Ops #43, #44).
+// Routed only where SECTOR_LAKE_LEVEL_OUTPUT=1, so a deploy with the flag off
+// exposes no new endpoint. Even then it fails closed: UNKNOWN unless the lake is
+// on the validated list and the Publisher's CUSTOMER-lane copy can be read. This
+// server has no reader yet (granting it one is a separate, approved IAM change),
+// so every lake answers UNKNOWN.
+let lakeLevelEligibility = LakeLevelEligibility.fromEnvironment()
+if lakeLevelEligibility.enabled {
+    router.get("lake/level") { request, _ -> Response in
+        guard let lake = request.uri.queryParameters.get("lake").map({ String($0) }), !lake.isEmpty else {
+            return Response(status: .badRequest)
+        }
+        return jsonResponse(await LakeLevelOutputAPI.output(lakeId: lake, eligibility: lakeLevelEligibility, reader: nil))
+    }
+}
+
+// The lakes with real Brain data, for the app's lake picker (LakesReadyAPI, Sector_Engine #156, #158).
+// Routed only where SECTOR_LAKES_READY_OUTPUT=1, so a deploy with the flag off
+// exposes no new endpoint (404, as /lake/level). Even then it fails closed: it
+// reads only the Publisher's CUSTOMER-lane copies through the configured reader
+// (SECTOR_BRAIN_OUTPUT_READER; none by default), and with no reader or no fresh
+// copy it answers 200 with an empty list.
+let lakesReadyConfig = LakesReadyConfig.fromEnvironment()
+if lakesReadyConfig.enabled {
+    // The whole customer/lakes subtree in one read: a longer bound than one small copy's.
+    let cache = BrainOutputReaderConfig.reader(timeoutSeconds: 5).map { LakesReadySnapshotCache(reader: $0, ttl: 60) }
+    // Each lake's bbox from the public Lake Registry index (#158): lake geometry identity, not a Brain output; no credential.
+    let extents = LakeRegistryExtents.indexURL().map { LakeRegistryExtentCache(url: $0) }
+    // Each listed lake's wind (#158): the Engine's Open-Meteo forecast at the lake's point, labeled ESTIMATE (LakeWind.swift).
+    let winds = LakeWindCache()
+    router.get("lakes/ready") { _, _ -> Response in
+        guard let body = await LakesReadyAPI.response(config: lakesReadyConfig, cache: cache, extents: extents, winds: winds,
+                                                      levelEligibility: lakeLevelEligibility) else {
+            return Response(status: .notFound)
+        }
+        return jsonResponse(body)
+    }
 }
 
 // Each arm's current clarity state (ClarityStateAPI, Clarity Fusion Stage 2).

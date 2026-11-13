@@ -10,7 +10,7 @@
   - A fresh lease of another runner is never taken.
   - An expired lease goes to a different runner only when **failover is enabled** for that Brain in the reviewed `runner-policy.json`.
 - **Renewing.** Only the **holder** renews, as a heartbeat (`renew`), and only while the lease is unexpired. An expired lease must be granted again, so a runner that lost its lease stops before it seals.
-- **Policy.** `runner-policy.json` is reviewed in git: `defaultPrimary: cloud`, no per-Brain primaries, **failover off**. Making Pulse primary for a Brain, or enabling failover, is an owner decision with an `approvalRef`.
+- **Policy.** `runner-policy.json` is reviewed in git: `defaultPrimary: cloud`, **failover off**. Since 2026-11-06 `water-clarity` = `pulse` (owner, Sector_Ops #51 O4); since the Lake flip (owner, Sector_Ops #51, 2026-11-12) also `lake-brain` = `pulse`. `approvals` records each approvalRef. Every other Brain stays on the cloud. Making Pulse primary for a Brain, or enabling failover, is an owner decision with an `approvalRef`.
 - **Orchestrator gate** (`--runner-leases` or `RUNNER_LEASES=on`, default off). Before starting a Brain's Cloud Run job, `cloud_may_start`:
   - refuses while another runner holds a fresh lease;
   - refuses whenever the policy primary is not the cloud and failover is off.
@@ -44,3 +44,75 @@ It never writes a database and never starts anything. `runner.py renew` is the h
   - **The local Publisher pass runs only with the Publisher identity:** `PUBLISHER_ACCESS_TOKEN`, mapped to the child's `BRAIN_ACCESS_TOKEN`. It never uses the orchestrator's token or a gcloud fallback.
   - **A local cycle refuses to start without an explicit `BRAIN_ACCESS_TOKEN`.**
   - **The shadow lane never runs in local mode.**
+
+## Hybrid deploy switches (Sector_Ops #51 O5.1; O3 decision (b))
+In the hybrid path, Pulse runs the Brain job and the Orchestrator and Publisher stay in Cloud Run. `jobs/brain-orchestrator/deploy-job.sh` takes three switches, all off by default:
+
+- **`RUNNER_LEASES=on`:** the cloud cycle honours `runner-policy.json`.
+  - **Every** cloud Brain's start reads the lease store first.
+  - So `brain-writer` needs its `exports/runners/` grants (O5.2) before this is on; otherwise every Brain fails closed and holds.
+- **`PUBLICATION_HANDOFF=on`** (requires `PUBLICATION_COORDINATION=on`): publication requests for CENTRAL Brains, and the `brain-publisher` start.
+- **`ORCH_ARGS`:** the job's arguments, `;`-separated, from an allowlist (`--publish-engineering-status`, `--publish-health`, `--run-shadow-lane`).
+  - Unset leaves the deployed arguments as they are. An empty string resets them.
+  - The hybrid deploy uses `ORCH_ARGS="--publish-engineering-status;--publish-health"`, so the shadow lane is off (owner choice (ii), 2026-11-06).
+- **Every deploy replaces the job's whole environment** (`--set-env-vars`), and every script default is `off`. So the hybrid deploy must restate the live switches:
+  `WIND_MEASUREMENTS=on PUBLICATION_COORDINATION=on PUBLICATION_HANDOFF=on RUNNER_LEASES=on ORCH_ARGS="--publish-engineering-status;--publish-health"`.
+  - Leaving out `WIND_MEASUREMENTS=on` silently turns the Wind measurements off.
+- **Before `RUNNER_LEASES=on` or `PUBLICATION_HANDOFF=on`,** `brain-writer` needs `roles/run.invoker` on `brain-publisher` and its `exports/runners/` grants (O5.2). Without them:
+  - every Publisher start fails with START_FAILED (requests stay pending);
+  - every Brain holds.
+
+## The cycle watchdog: the O6.3 halt conditions in the system (Sector_Ops #51)
+The watch no longer depends on a laptop.
+- **Every `brain-orchestrator` cycle** checks the reviewed `sector_brain_platform/watchdog-policy.json` (`cycle_watchdog.py`). It runs right after the cycle lists the Cloud Run executions, before any decision.
+- **The checks.** Everything created before the policy's `since` is ignored:
+  - an execution of any job outside `allowedJobs`, for example a cloud `water-clarity-brain` start;
+  - a lease for another Brain, or held by anyone but the Brain's `holder`;
+  - a grant or artifact for another Brain;
+  - more artifacts than granted cycles;
+  - a publication for another Brain, one that isn't `LIVE PUBLISHED COMPLETE`, or one that wrote a lake outside the Brain's `lakes`;
+  - a quarantine, or an apply lock `HELD` longer than `lockHeldMaxMinutes`;
+  - the execution control enabling another Brain;
+  - a runner fault record (`exports/runners/{holder}/faults/`).
+- **On a trip:**
+  - it latches `exports/orchestrator/watchdog/halt.json` (`HALTED`, with the trips);
+  - it tries to pause its own Cloud Scheduler job;
+  - it prints `[watchdog] HALT …`, which the owner's alert matches.
+- **While the latch is `HALTED`, every cycle holds,** exactly like the overlap guard: nothing granted, nothing started, no Publisher start.
+- **An unreadable check** holds that cycle (`[watchdog] UNREADABLE`), but doesn't latch by itself.
+- **The execution control is not written by the cycle:** it remains owner-only (PL-16). The latch has the same effect.
+- **Owner CLI:** `tools/ops/watchdog.py show | check | clear --changed-by … --approval-ref … --reason …`. `check` is a read-only evaluation now. Clearing doesn't resume the scheduler: use `resume-orchestrator.sh` after fixing the cause.
+- **Runner faults:** `runner.py fault --brain B --holder pulse --kind KIND [--detail TEXT]` creates `exports/runners/pulse/faults/{B}/{UTC}-{KIND}.json` (`sector-runner-fault-v1`). Pulse calls it when it stops itself (Sector-Pulse self-checks). The uploader's existing create grant on `exports/runners/pulse/` covers it.
+
+## Staged hybrid moves: Lake, Water Temp, Wind (Roadmap Sector_Ops #23 section 2; Sector_Ops #51)
+The next Brains move the way Water Clarity did (O3 (b)): Pulse runs the Brain while it holds the lease, and the Orchestrator and Publisher stay in the cloud. **Nothing here is live.**
+- **One staged fragment per Brain** in `tools/ops/hybrid-stage/<brainId>.json` (`sector-hybrid-stage-v1`), holding:
+  - the runner-policy primary (`pulse`);
+  - the watchdog entry (holder and the lakes it may publish);
+  - the cutover entry (`CENTRAL`, and an `orderReviewRef` where the owner recorded one);
+  - the Pulse job;
+  - the blockers still open.
+  No runtime reads that folder (a test proves it).
+- **Readiness order:**
+  1. **`lake-brain`** (Pulse `lake-central`; L-2 order review recorded).
+  2. **`water-temp`** (Pulse `water-temp-central`). With no order review it stays on its direct writer: PL-10 drops a CENTRAL entry ahead of Wind (`CUTOVER_ORDER`).
+  3. **`wind`** (Pulse `wind-central`, entry `brains/wind/runtime/artifact_entry.py`).
+- **`python3 tools/ops/hybrid_stage.py show | check | apply --brain B --approval-ref REF [--blockers-cleared] [--write]`**
+  - `check` merges each fragment in memory and runs the real loaders (`runner_lease.load_policy`, `cycle_watchdog.load_policy`, `publication_stage.load_cutover`).
+  - `apply` prints, or with `--write` writes, the three policy changes for the owner-approved PR.
+  - It refuses a missing approvalRef, a Brain already live, and open blockers (unless `--blockers-cleared`).
+  - It never deploys, grants IAM or enables the execution control.
+- **Wind's lease-path entry** (`artifact_entry.py`):
+  - It runs the same ingest as `wind-hourly` into a LOCAL archive, then the unchanged `publish()` into a DryRunWriter.
+  - It seals ONE `wind-publication-v1` artifact with the packaged release lineage: create-only into a local store, plus `--emit` for the runner's hand-off.
+  - It never builds a database writer. It refuses a `gs://` archive or store, and an existing hand-off file.
+- **Order of a move** (each step is an owner approval):
+  1. the IAM (on Sector_Ops #51 only);
+  2. the Mac mini inputs;
+  3. the release approval;
+  4. `apply --write` in a PR;
+  5. the Orchestrator and Publisher deploys;
+  6. the execution control enabling the Brain;
+  7. one watched publish.
+
+  The watchdog entry must be live before the execution control enables the Brain. Otherwise the watchdog's control check halts the cycle.
