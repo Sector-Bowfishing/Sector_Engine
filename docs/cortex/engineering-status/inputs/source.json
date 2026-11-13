@@ -6,7 +6,7 @@
   "evaluatedCommit": "25e786cf",
   "evaluatedAt": "2026-10-23",
   "session": "docs/cortex/sessions/2026-10-23-research-automation.md",
-  "cortexVersion": "2.7.0",
+  "cortexVersion": "3.1.3",
   "cortexPack": "sector/engine",
   "structuralCertification": {
     "biological-state": {
