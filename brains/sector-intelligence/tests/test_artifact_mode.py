@@ -9,6 +9,7 @@ import intelligence_support as S
 import run
 import sector_intelligence_brain as sib
 import test_sector_intelligence_brain as T
+from sector_brain_platform.publisher.canonical import sha256_ref
 from sector_brain_platform.publisher.storage import LocalDirObjectStore
 
 
@@ -81,7 +82,8 @@ def test_emit_writes_exactly_the_stored_artifact_create_only(tmp_path):
     """SI-A5: Pulse's lease jobs hand off {out}/artifact.json; --emit writes exactly the stored artifact there, create-only."""
     store, emit = LocalDirObjectStore(tmp_path / "store"), tmp_path / "artifact.json"
     ref = run.seal_and_store(S.run_updates(), now=S.NOW, release=S.release(), consumed=None, store=store, execution_id=S.uid(8), emit=str(emit))
-    assert json.loads(emit.read_text()) == json.loads(store.get(ref["location"]))
+    assert emit.read_bytes() == store.get(ref["location"])                                     # the same BYTES, not just the same JSON
+    assert sha256_ref(emit.read_bytes()) == ref["sha256"]
     with pytest.raises(FileExistsError):
         run.seal_and_store(S.run_updates(), now=S.NOW, release=S.release(), consumed=None, store=LocalDirObjectStore(tmp_path / "s2"), emit=str(emit))
 
@@ -107,3 +109,12 @@ def test_emit_refuses_an_existing_file(capsys, monkeypatch, tmp_path):
     (tmp_path / "artifact.json").write_text("{}")
     assert run.main(["--artifact", "--artifact-dir", str(tmp_path / "d"), "--emit", str(tmp_path / "artifact.json")]) == 2
     assert (tmp_path / "artifact.json").read_text() == "{}" and not (tmp_path / "d").exists()
+
+
+@pytest.mark.parametrize("flag", ["--emit", "--emit-decision"])
+def test_a_hand_off_into_a_missing_folder_is_refused_before_anything_is_stored(flag, capsys, monkeypatch, tmp_path):
+    """#172 review: a missing parent folder used to crash AFTER the artifact was stored, leaving no hand-off; now nothing starts."""
+    monkeypatch.delenv("SI_ARTIFACT_BUCKET", raising=False)
+    assert run.main(["--artifact", "--artifact-dir", str(tmp_path / "d"), flag, str(tmp_path / "missing" / "out.json")]) == 2
+    assert "a new LOCAL file" in capsys.readouterr().err
+    assert sorted(p.name for p in tmp_path.iterdir()) == []
