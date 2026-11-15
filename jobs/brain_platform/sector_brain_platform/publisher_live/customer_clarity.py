@@ -1,4 +1,4 @@
-"""The Publisher's CUSTOMER-lane Water Clarity copy, `customer/lakes/{k}/clarity` (Sector_Ops #53 spec §5). DRAFT, NOT WIRED.
+"""The Publisher's CUSTOMER-lane Water Clarity copy, `customer/lakes/{k}/clarity` (Sector_Ops #53 spec §5). Wired by customer_lane.py after a verified publication, behind its switch (default off).
 
 Schema sector-customer-clarity-v1: {schema, lakeId, status, centralFt, lowFt, highFt, confidence, observedAt, freshUntil, runner, publishId}.
 Source: the Water Clarity Brain's published per-lake state (`lakes/{k}/states/waterClarity` in its write set). Gates, all fail closed:

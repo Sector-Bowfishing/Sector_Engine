@@ -1,4 +1,4 @@
-"""The Publisher's CUSTOMER-lane copy of Lake level and trend (design note docs/architecture/data/CUSTOMER_BRAIN_OUTPUT_PATH_V1.md §3, §6; Sector_Ops #47 item 5). DRAFT.
+"""The Publisher's CUSTOMER-lane copy of Lake level and trend (design note docs/architecture/data/CUSTOMER_BRAIN_OUTPUT_PATH_V1.md §3, §6; Sector_Ops #47 item 5).
 
 The customer Engine reads only `/customer/lakes/{lakeKey}/level` (schema sector-customer-lake-level-v1), never Lake's INTERNAL state. This module is the Publisher-side writer:
 from one Lake publication's write set it plans the copy updates, applying the Brain-side gates 1-4 of the design note. Pure: no clock (the caller passes `now`), no I/O.
@@ -10,8 +10,9 @@ from one Lake publication's write set it plans the copy updates, applying the Br
 
 A lake that had a copy and stops passing gets `status: UNKNOWN` written over it (never a stale value left standing). Nothing else from the INTERNAL record is copied.
 
-NOT WIRED: the LivePublisher does not call this yet. Wiring it into Lake's atomic apply needs Lake CENTRAL (cutover), the CUSTOMER-lane family declared in Cortex (CG-3.1-8)
-and the owner's approval; until then nothing writes `/customer/`.
+Wired by customer_lane.py: after a verified Lake publication the Publisher job writes this copy in one separate, key-guarded update, only when
+PUBLISHER_CUSTOMER_LAKE_LEVEL is set (absent = nothing; "1" = on, the owner's flip; anything else = withdraw once with UNKNOWN). It is not part of
+Lake's atomic apply. The CUSTOMER-lane family still has to be declared in Cortex (CG-3.1-8) before the owner turns it on.
 """
 from __future__ import annotations
 
