@@ -12,8 +12,9 @@ Switches (passed in as `env`; this package never reads the environment, test_pub
   "1" = on. Any other value = off: nothing new is computed and every stored copy of that kind is withdrawn once with status UNKNOWN.
   ABSENT = not configured: the lane does nothing at all for that Brain (no read, no write), which is the default and today's behaviour.
 
-The gates are the planners' own (readiness BETA or higher, publication, freshness, source kind). Nothing here relaxes them. In particular a
-modeled Water Temp state still gets no copy (customer_water_temp GAP: an owner decision, Sector_Ops #51 P4).
+The gates are the planners' own (readiness BETA or higher, publication, freshness, source kind). Nothing here relaxes them. A modeled
+Water Temp state is copied as `status: ESTIMATE` with no range, valid for its lake-local day (customer_water_temp; owner approval P4,
+Sector_Ops #51, 2026-11-15).
 """
 from __future__ import annotations
 
