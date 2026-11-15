@@ -4,7 +4,7 @@
 GET only. The token comes from $BRAIN_ACCESS_TOKEN (Michael's own gcloud token, or a read-only identity's) and is never printed or stored.
 Captures hold live data, so they are written OUTSIDE any git checkout (this repository is public), owner-readable only, and never committed.
 
-  capture   --brain lake-brain --out DIR                          whole-fleet fingerprint + health + scores + publication node  -> DIR/fingerprints.json
+  capture   --brain lake-brain --out DIR                          every root fingerprinted (per lake at slot level) + health + score + publication  -> DIR/fingerprints.json
   wait      --brain lake-brain --since-publish-id ID [--timeout-min N]   poll /brains/{id}/publication until its publishId changes (prints the new id)
   evaluate  --brain lake-brain --before DIR --after DIR --record record.json --out FILE   X08 / X11 / X12 verdicts (exit 0 only if all PASS)
 
@@ -14,8 +14,11 @@ What each check means here (docs/architecture/production/PRODUCTION_EXIT_GATE_V1
        Brain owns but the record did not write is FAIL; a change nobody owns is REVIEW. Other writers keep running between captures, so their
        changes are listed, not failed.
   X11  /health/brains/{id} after the publish is not blanked, and is not HEALTHY while it reports stale lakes or reasons.
-  X12  /scores/{id} is unchanged in value, scoreType, scoreVersion and basis, and the record wrote nothing under /scores.
-The verdict is INCONCLUSIVE unless exactly this publish happened between the captures (before = the record's previousPublishId, after = its publishId).
+  X11  (cont.) HEALTHY with staleLakeCount > 0 is legitimate under Lake's own rule (reviewed lakes only), so it is reported, not failed.
+  X12  /scores/{id} is unchanged in value, scoreVersion, uncapped and basis, and the record wrote nothing under /scores. No score to compare = INCONCLUSIVE.
+The verdict is INCONCLUSIVE unless: the record is this Brain's, LIVE, PUBLISHED and COMPLETE; exactly this publish happened between the captures (before = the record's
+previousPublishId, or no publication at all when it has none; after = its publishId); and each capture saw the same COMPLETE, non-pending publication node at its start
+and end. Scope: every root is fingerprinted, except that per-lake snapshots cover snapshots/{k}/latest only (listed in the output).
 Nothing here writes, pauses, resumes, deploys or grants anything.
 """
 from __future__ import annotations
@@ -36,13 +39,17 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "..", "jobs", "brain_platform"))
 
 from sector_brain_platform.keys import BRAINS                       # noqa: E402
+from sector_brain_platform.ownership import LAKE_BRAIN_ONLY_FLEET, PLATFORM_ONLY, SCORER_CHILDREN   # noqa: E402
 
 RTDB_URL = "https://sector-brain.firebaseio.com"
 SCHEMA = "sector-exit-watch-v1"
 FLEET_ROOTS = ("lakes", "lakeFleet", "snapshots")                    # per-lake nodes; snapshots/{k}/latest only
+PER_CHILD_ROOTS = {"brains": 1, "validation": 0, "sources": 0}       # root -> fingerprint depth below each child
+ROOT_DEPTH = {"health": 3}                                           # health/brains/{id}/<field>; every other root: 2
 SLOT_PARENTS = {"states", "profiles", "slots", "readiness", "modelVersions"}   # lakes/{k}/<parent>/<slot>, lakeFleet/{k}/<parent>/<slot>
-#: Fleet children owned by one Brain outside the slot pattern (registry.LAKE_FLEET_CHILDREN).
-FLEET_ONLY = {"riverSystem": "lake-brain"}
+#: Fleet children owned by one Brain outside the slot pattern (ownership.LAKE_BRAIN_ONLY_FLEET), and Lake's lake-state-v1 children of /lakes/{k}.
+FLEET_ONLY = {f: "lake-brain" for f in LAKE_BRAIN_ONLY_FLEET}
+LAKE_NODE_ONLY = {"brain": "lake-brain", "speciesPresence": "lake-brain"}
 
 
 def _sha(obj) -> str:
@@ -53,13 +60,22 @@ def inside_git(path: str) -> bool:
     d = os.path.abspath(path)
     while not os.path.isdir(d):
         d = os.path.dirname(d)
-    return subprocess.run(["git", "-C", d, "rev-parse", "--show-toplevel"], capture_output=True).returncode == 0
+    r = subprocess.run(["git", "-C", d, "rev-parse", "--show-toplevel"], capture_output=True, text=True)
+    return r.returncode == 0 or "dubious ownership" in (r.stderr or "")      # a refused repository is still a repository
+
+
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *a, **k):          # never re-send the token to another host
+        return None
+
+
+_OPENER = urllib.request.build_opener(_NoRedirect)
 
 
 def get(url: str, path: str, token: str, shallow: bool = False, timeout: int = 60):
     q = "?shallow=true" if shallow else ""
     req = urllib.request.Request(f"{url.rstrip('/')}/{urllib.parse.quote(path)}.json{q}", headers={"Authorization": f"Bearer {token}"}, method="GET")
-    with urllib.request.urlopen(req, timeout=timeout) as r:
+    with _OPENER.open(req, timeout=timeout) as r:
         return json.loads(r.read().decode())
 
 
@@ -95,13 +111,17 @@ def owner(path: str, slots=None, sources=None) -> str | None:
     if p[0] in ("lakes", "lakeFleet") and len(p) >= 3:
         if p[2] in SLOT_PARENTS and len(p) >= 4:
             return slots.get(p[3])
-        return FLEET_ONLY.get(p[2])
+        return (FLEET_ONLY if p[0] == "lakeFleet" else LAKE_NODE_ONLY).get(p[2])
     if p[0] == "snapshots" and len(p) >= 4 and p[2] == "latest":
         if p[3] == "brainVersions" and len(p) >= 5:
             return p[4] if p[4] in BRAINS else None
         return slots.get(p[3])
     if p[0] == "brains" and len(p) >= 2:
-        return "publisher:" + p[1] if len(p) >= 3 and p[2] in ("publication", "certification") else p[1]
+        if len(p) >= 3 and p[2] in ("publication", "certification"):
+            return "publisher:" + p[1]
+        if len(p) >= 3 and p[2] in SCORER_CHILDREN:
+            return "scorer"
+        return p[1]
     if p[0] == "validation" and len(p) >= 2:
         return p[1]
     if p[0] == "sources" and len(p) >= 2:
@@ -110,16 +130,29 @@ def owner(path: str, slots=None, sources=None) -> str | None:
         return "orchestrator"
     if p[0] == "scores":
         return "scorer"
+    if p[0] in PLATFORM_ONLY:
+        return "platform:" + p[0]
     return None
 
 
 # ------------------------------------------------------------------------------------------------------------------------------------ capture
 def capture(brain: str, fetch, workers: int = 8) -> dict:
-    keys = sorted((fetch("lakeFleet", shallow=True) or {}).keys())
-    jobs = [(f"lakes/{k}", 2) for k in keys] + [(f"lakeFleet/{k}", 2) for k in keys] + [(f"snapshots/{k}/latest", 2) for k in keys]
-    jobs += [(f"brains/{b}", 1) for b in sorted((fetch("brains", shallow=True) or {}).keys())]
-    jobs += [(f"validation/{b}", 0) for b in sorted((fetch("validation", shallow=True) or {}).keys())]
-    jobs += [(f"sources/{s}", 0) for s in sorted((fetch("sources", shallow=True) or {}).keys())]
+    pub_start = fetch(f"brains/{brain}/publication")
+    roots = sorted((fetch("", shallow=True) or {}).keys())
+    keys = set()
+    for r in FLEET_ROOTS:
+        keys |= set((fetch(r, shallow=True) or {}).keys()) if r in roots else set()
+    keys = sorted(keys)
+    jobs = []
+    for r in roots:
+        if r == "lakes" or r == "lakeFleet":
+            jobs += [(f"{r}/{k}", 2) for k in keys]
+        elif r == "snapshots":
+            jobs += [(f"snapshots/{k}/latest", 2) for k in keys]
+        elif r in PER_CHILD_ROOTS:
+            jobs += [(f"{r}/{c}", PER_CHILD_ROOTS[r]) for c in sorted((fetch(r, shallow=True) or {}).keys())]
+        else:
+            jobs.append((r, ROOT_DEPTH.get(r, 2)))
 
     def one(job):
         path, depth = job
@@ -128,9 +161,11 @@ def capture(brain: str, fetch, workers: int = 8) -> dict:
     with cf.ThreadPoolExecutor(workers) as ex:
         for part in ex.map(one, jobs):
             prints.update(part)
-    return {"schema": SCHEMA, "brain": brain, "capturedAt": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "lakeCount": len(keys),
-            "fingerprints": prints, "health": fetch(f"health/brains/{brain}"), "score": fetch(f"scores/{brain}"),
-            "publication": fetch(f"brains/{brain}/publication")}
+    out = {"schema": SCHEMA, "brain": brain, "capturedAt": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "lakeCount": len(keys),
+           "roots": roots, "scope": "every root; per-lake snapshots/{k}/latest only", "fingerprints": prints,
+           "health": fetch(f"health/brains/{brain}"), "score": fetch(f"scores/{brain}"), "publicationAtStart": pub_start}
+    out["publication"] = fetch(f"brains/{brain}/publication")
+    return out
 
 
 # ----------------------------------------------------------------------------------------------------------------------------------- evaluate
@@ -143,7 +178,15 @@ def _covered(path: str, written) -> bool:
     return False
 
 
-SCORE_KEYS = ("value", "scoreType", "scoreVersion", "basis")
+SCORE_KEYS = ("value", "scoreVersion", "uncapped", "basis")
+
+
+def _settled(c: dict) -> bool:
+    """The capture saw one COMPLETE, non-pending publication node at its start and its end (or none at all)."""
+    a, b = c.get("publicationAtStart"), c.get("publication")
+    if a != b:
+        return False
+    return b is None or (isinstance(b, dict) and b.get("status") == "COMPLETE" and not b.get("pending"))
 
 
 def evaluate(brain: str, before: dict, after: dict, record: dict) -> dict:
@@ -152,8 +195,18 @@ def evaluate(brain: str, before: dict, after: dict, record: dict) -> dict:
     pub_before, pub_after = (before.get("publication") or {}).get("publishId"), (after.get("publication") or {}).get("publishId")
     window = {"publishId": pid, "previousPublishId": prev, "publicationBefore": pub_before, "publicationAfter": pub_after,
               "beforeAt": before.get("capturedAt"), "afterAt": after.get("capturedAt")}
-    exact = bool(pid) and pub_after == pid and pub_before != pid and (prev is None or pub_before == prev)
+    problems = []
+    if record.get("brainId") != brain:
+        problems.append(f"record brainId {record.get('brainId')!r} is not {brain!r}")
+    if not (record.get("live") is True and record.get("result") == "PUBLISHED" and record.get("status") == "COMPLETE"):
+        problems.append(f"record is not LIVE PUBLISHED COMPLETE (live={record.get('live')}, result={record.get('result')}, status={record.get('status')})")
+    if not (pid and pub_after == pid and pub_before != pid and pub_before == prev):
+        problems.append("the captures do not bracket exactly this publish (before must be the record's previousPublishId, after its publishId)")
+    if not (_settled(before) and _settled(after)):
+        problems.append("a capture overlapped a publish (publication node changed, pending or not COMPLETE during the capture)")
+    exact = not problems
     window["exactlyThisPublish"] = exact
+    window["problems"] = problems
 
     fb, fa = before["fingerprints"], after["fingerprints"]
     changed = sorted(p for p in set(fb) | set(fa) if fb.get(p) != fa.get(p))
@@ -171,25 +224,32 @@ def evaluate(brain: str, before: dict, after: dict, record: dict) -> dict:
             others.setdefault(o, []).append(p)
     x08 = "FAIL" if own else "REVIEW" if unowned else "PASS"
 
-    h = after.get("health") or {}
-    stale = h.get("staleLakeCount")
-    wrongly_healthy = h.get("status") == "HEALTHY" and (bool(stale) or bool(h.get("reasons")))
+    h = after.get("health") if isinstance(after.get("health"), dict) else {}
+    wrongly_healthy = h.get("status") == "HEALTHY" and bool(h.get("reasons"))
     x11 = "FAIL" if (not h or not h.get("status") or wrongly_healthy) else "PASS"
 
-    sb, sa = before.get("score") or {}, after.get("score") or {}
-    score_written = [w for w in written if w.strip("/").split("/")[0] == "scores"]
+    sb = before.get("score") if isinstance(before.get("score"), dict) else {}
+    sa = after.get("score") if isinstance(after.get("score"), dict) else {}
+    score_written = [w for w in written if w.strip("/").split("/")[0] == "scores"
+                     or (w.strip("/").split("/")[0] == "brains" and len(w.strip("/").split("/")) >= 3 and w.strip("/").split("/")[2] in SCORER_CHILDREN)]
     score_same = {k: sb.get(k) for k in SCORE_KEYS} == {k: sa.get(k) for k in SCORE_KEYS}
-    x12 = "PASS" if score_same and not score_written else "FAIL"
+    if score_written or (sb and not score_same):
+        x12 = "FAIL"
+    elif sb.get("value") is None or sb.get("scoreVersion") is None:
+        x12 = "INCONCLUSIVE"                          # nothing to compare: never a PASS
+    else:
+        x12 = "PASS"
 
     checks = {"X08": x08, "X11": x11, "X12": x12}
     if not exact:
         checks = {k: "INCONCLUSIVE" for k in checks}
-    return {"schema": SCHEMA, "brain": brain, "window": window, "checks": checks,
+    return {"schema": SCHEMA, "brain": brain, "window": window, "checks": checks, "scope": {"before": before.get("roots"), "after": after.get("roots")},
             "X08": {"changed": len(changed), "inWriteSet": len(changed) - len(own) - len(unowned) - sum(len(v) for v in others.values()),
                     "ownOutsideWriteSet": own[:50], "ownOutsideWriteSetCount": len(own), "unowned": unowned[:50], "unownedCount": len(unowned),
                     "otherWriters": {o: {"count": len(v), "sample": v[:5]} for o, v in sorted(others.items())}},
             "X11": {"before": {k: (before.get("health") or {}).get(k) for k in ("status", "staleLakeCount", "reasons")},
-                    "after": {k: h.get(k) for k in ("status", "staleLakeCount", "reasons")}, "blanked": not h, "wronglyHealthy": wrongly_healthy},
+                    "after": {k: h.get(k) for k in ("status", "staleLakeCount", "reasons")}, "blanked": not h, "wronglyHealthy": wrongly_healthy,
+                    "refreshed": before.get("health") != after.get("health")},
             "X12": {"before": {k: sb.get(k) for k in SCORE_KEYS}, "after": {k: sa.get(k) for k in SCORE_KEYS}, "recordWroteScores": score_written}}
 
 
@@ -223,6 +283,9 @@ def main(argv=None, fetch_raw=get, sleep=time.sleep) -> int:
         if inside_git(a.out):
             print(f"REFUSED: {a.out} is inside a git checkout; evidence stays private", file=sys.stderr)
             return 2
+        if os.path.exists(a.out):
+            print(f"REFUSED: {a.out} exists (evidence is never overwritten)", file=sys.stderr)
+            return 2
         load = lambda d: json.load(open(os.path.join(d, "fingerprints.json"), encoding="utf-8"))   # noqa: E731
         res = evaluate(a.brain, load(a.before), load(a.after), json.load(open(a.record, encoding="utf-8")))
         _private_dump(a.out, res)
@@ -246,7 +309,11 @@ def main(argv=None, fetch_raw=get, sleep=time.sleep) -> int:
             return 2
         deadline = time.monotonic() + a.timeout_min * 60
         while True:
-            cur = (fetch(f"brains/{a.brain}/publication") or {}).get("publishId")
+            try:
+                cur = (fetch(f"brains/{a.brain}/publication") or {}).get("publishId")
+            except OSError as e:                       # URLError/HTTPError/timeouts: one transient error must not end a long wait
+                print(f"retrying after a read error: {type(e).__name__}", file=sys.stderr)
+                cur = None
             if cur and cur != a.since_publish_id:
                 print(cur)
                 return 0
