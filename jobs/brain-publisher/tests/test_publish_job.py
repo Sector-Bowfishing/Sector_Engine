@@ -239,3 +239,63 @@ def test_sector_intelligence_packaged_release_stages_and_resolves_against_its_ow
     assert PackagedReleaseResolver(staged, "sector-intelligence", require_approved=True)(*triple) is (rel["approvalStatus"] == "APPROVED")
     assert PackagedReleaseResolver(staged, "sector-intelligence", require_approved=False)(triple[0], triple[1], "sha256:" + "0" * 64) is False
     assert "sector-intelligence" not in json.load(open(os.path.join(REPO, "jobs", "brain-orchestrator", "publication-cutover.json")))["brains"]
+
+
+# ---- CUSTOMER-lane copies (publisher_live/customer_lane.py; Sector_Ops #51 P1) ---------------------------------------------------------------------------
+
+def test_without_a_customer_lane_the_report_is_unchanged(tmp_path):
+    a, b = World(), World()
+    a.produce(); b.produce()
+    plain = a.run(cutover(tmp_path), live=True)
+    wired = b.run(cutover(tmp_path), live=True, customer_lane=lambda brain, res: None)       # a lane that is not configured for the Brain
+    strip = lambda rep: json.loads(json.dumps(rep).replace(rep["brains"]["wind"]["results"][0]["publishId"], "P"))   # publish ids are random per world
+    assert strip(plain) == strip(wired) and "customerCopies" not in wired["brains"]["wind"]["results"][0]
+
+
+def test_the_lane_runs_only_after_a_live_publication_and_its_report_is_attached(tmp_path):
+    seen = []
+    w = World(); w.produce()
+    lane = lambda brain, res: seen.append((brain, res.result.value)) or {"copy": "x", "written": 0}
+    assert w.run(cutover(tmp_path), live=False, customer_lane=lane)["brains"]["wind"]["results"][0].get("customerCopies") is None and seen == []
+    rep = w.run(cutover(tmp_path), live=True, customer_lane=lane)
+    assert seen == [("wind", "PUBLISHED")] and rep["brains"]["wind"]["results"][0]["customerCopies"] == {"copy": "x", "written": 0}
+
+
+def test_a_customer_copy_failure_is_reported_and_never_undoes_the_publication(tmp_path):
+    w = World(); w.produce()
+    def boom(brain, res):
+        raise RuntimeError("database refused")
+    rep = w.run(cutover(tmp_path), live=True, customer_lane=boom)
+    r = rep["brains"]["wind"]["results"][0]
+    assert rep["published"] == 1 and r["applied"] is True and r["customerCopies"]["error"].startswith("RuntimeError")
+    assert {"kind": "CUSTOMER_COPY_FAILED", "brainId": "wind", "why": r["customerCopies"]["error"]} in rep["problems"]
+    assert w.rtdb.get("brains/wind/publication")["status"] == "COMPLETE"
+
+
+def test_customer_switches_are_read_only_when_set_and_no_switch_means_no_lane():
+    assert J.customer_env({}) == {} and J.make_customer_lane({}, lambda b: None, runner_for=lambda b: "cloud") is None
+    env = J.customer_env({"PUBLISHER_CUSTOMER_CLARITY": "1", "PUBLISHER_CUSTOMER_WIND_MODEL": "1", "OTHER": "x"})
+    assert env == {"PUBLISHER_CUSTOMER_CLARITY": "1"}                                       # only the three wired copies
+    assert J.make_customer_lane(env, lambda b: None, runner_for=lambda b: "pulse")("wind", object()) is None
+
+
+def test_the_customer_lane_database_refuses_any_key_but_the_brains_own_copy():
+    class Db:
+        def __init__(self): self.sent = []
+        def get(self, p): return None
+        def update(self, u): self.sent.append(u)
+    raw = Db()
+    db = J._CustomerLaneDb(raw, "water-clarity")
+    db.update({"customer/lakes/Wheeler_AL/clarity": {"status": "UNKNOWN"}})
+    for bad in ({"customer/lakes/Wheeler_AL/waterTemp": {}}, {"brains/water-clarity/status": "BETA"}, {"lakes/Wheeler_AL/states/waterClarity": {}}):
+        with pytest.raises(PermissionError):
+            db.update(bad)
+    assert raw.sent == [{"customer/lakes/Wheeler_AL/clarity": {"status": "UNKNOWN"}}]
+
+
+def test_the_deploy_passes_customer_switches_only_when_set_and_only_0_or_1():
+    sh = open(os.path.join(JOB, "deploy-job.sh"), encoding="utf-8").read()
+    assert "for v in PUBLISHER_CUSTOMER_LAKE_LEVEL PUBLISHER_CUSTOMER_CLARITY PUBLISHER_CUSTOMER_WATER_TEMP; do" in sh
+    assert '[[ -z "${!v+x}" ]] && continue' in sh and '[[ "${!v}" == "0" || "${!v}" == "1" ]]' in sh
+    assert "DEPLOYMENT_VERSION=brain-publisher@$COMMIT$CUSTOMER_ENV" in sh
+    assert not re.search(r"PUBLISHER_CUSTOMER_\w+=1", sh)                                  # nothing turns a copy on by default

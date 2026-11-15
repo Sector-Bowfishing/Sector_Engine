@@ -66,10 +66,18 @@ PUBLISHER_MODE="${PUBLISHER_MODE:-dry-run}"
 ARGS="--max-artifacts;${MAX_ARTIFACTS:-4}"
 [[ "$PUBLISHER_MODE" == "live" ]] && ARGS="$ARGS;--live"
 COMMIT="$(git -C "$REPO_ROOT" rev-parse --short=12 HEAD)"
+# CUSTOMER-lane copy switches (publisher_live/customer_lane.py): passed through ONLY when set here, and only as 0 or 1. Unset = not
+# configured = the job never reads or writes customer/ (the default). 1 = on (needs the owner's flip); 0 = off, withdrawing any stored copy once.
+CUSTOMER_ENV=""
+for v in PUBLISHER_CUSTOMER_LAKE_LEVEL PUBLISHER_CUSTOMER_CLARITY PUBLISHER_CUSTOMER_WATER_TEMP; do
+  [[ -z "${!v+x}" ]] && continue
+  [[ "${!v}" == "0" || "${!v}" == "1" ]] || { echo "$v must be 0 or 1 (or unset)" >&2; exit 2; }
+  CUSTOMER_ENV="$CUSTOMER_ENV,$v=${!v}"
+done
 
 gcloud iam service-accounts describe "$SA" --project "$PROJECT_ID" >/dev/null || { echo "service account $SA missing (create it in the approved identity step)" >&2; exit 2; }
 
-echo "▶ job $JOB (mode $PUBLISHER_MODE; commit $COMMIT)"
+echo "▶ job $JOB (mode $PUBLISHER_MODE; commit $COMMIT; customer copies: ${CUSTOMER_ENV:-not configured})"
 CONTEXT="$(mktemp -d)"
 trap 'rm -rf "$CONTEXT"' EXIT
 stage_context "$CONTEXT"
@@ -80,7 +88,7 @@ gcloud run jobs deploy "$JOB" --source . \
   --tasks 1 --max-retries 0 --cpu 1 --memory 1Gi --task-timeout 20m \
   --labels "commit=$COMMIT,mode=$PUBLISHER_MODE" \
   --args="^;^$ARGS" \
-  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=https://sector-brain.firebaseio.com,PUBLICATION_ARTIFACT_BUCKET=$ARTIFACT_BUCKET,DEPLOYMENT_VERSION=brain-publisher@$COMMIT"
+  --set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=https://sector-brain.firebaseio.com,PUBLICATION_ARTIFACT_BUCKET=$ARTIFACT_BUCKET,DEPLOYMENT_VERSION=brain-publisher@$COMMIT$CUSTOMER_ENV"
 
 echo
 echo "✅ deployed (no scheduler: brain-orchestrator starts it). Admin run (needs its own approval): gcloud run jobs execute $JOB --project $PROJECT_ID --region $REGION --args=--admin-ref,<approval> --wait"
