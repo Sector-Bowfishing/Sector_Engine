@@ -79,10 +79,10 @@ def test_hourly_run_off_by_default(tmp_path, monkeypatch):
 
 
 def test_exceed_equals_research_exceed():
-    import forcing_eval                      # research tools are on the pytest path
+    # Golden values taken from brains/wind/research/tools/forcing_eval.exceed (the W-NOW-1..3 rule) on the same curve.
     pts = [(3.6011, 0.9), (5.6588, 0.7), (8.7456, 0.4), (11.3177, 0.1), (4.0, 0.5), (6.0, 0.75), (12.0, 0.9)]
-    for T in (2.0, 6.7056, 11.0, 50.0):
-        assert pw15.exceed(pts, T) == forcing_eval.exceed(pts, T)
+    for T, want in ((2.0, 0.5001527311099386), (6.7056, 0.1), (11.0, 0.1), (50.0, 0.05)):
+        assert abs(pw15.exceed(pts, T) - want) < 1e-9
 
 
 def test_shadow_error_never_fails_the_run(tmp_path, monkeypatch):
