@@ -14,6 +14,10 @@
     "wind": {
       "state": "CENTRAL",
       "approvalRef": "owner-approval-PENDING/sector-ops-51-wind"
+    },
+    "water-temp": {
+      "state": "CENTRAL",
+      "approvalRef": "owner-approval-PENDING/sector-ops-51-water-temp"
     }
   }
 }
