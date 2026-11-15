@@ -32,6 +32,7 @@ import os
 import subprocess
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -44,8 +45,10 @@ from sector_brain_platform.ownership import LAKE_BRAIN_ONLY_FLEET, PLATFORM_ONLY
 RTDB_URL = "https://sector-brain.firebaseio.com"
 SCHEMA = "sector-exit-watch-v1"
 FLEET_ROOTS = ("lakes", "lakeFleet", "snapshots")                    # per-lake nodes; snapshots/{k}/latest only
-PER_CHILD_ROOTS = {"brains": 1, "validation": 0, "sources": 0}       # root -> fingerprint depth below each child
-ROOT_DEPTH = {"health": 3}                                           # health/brains/{id}/<field>; every other root: 2
+PER_CHILD_ROOTS = {"brains": 1, "validation": 0, "sources": 0, "activity": 0, "health": 2, "jobs": 1}   # root -> depth below each child (one GET per child)
+ROOT_DEPTH: dict[str, int] = {}                                      # every other root: one GET, depth 2
+#: Roots no Brain publish may change: a change there is REVIEW, never an "other writer".
+WATCHED_ROOTS = {"access", "control"}
 SLOT_PARENTS = {"states", "profiles", "slots", "readiness", "modelVersions"}   # lakes/{k}/<parent>/<slot>, lakeFleet/{k}/<parent>/<slot>
 #: Fleet children owned by one Brain outside the slot pattern (ownership.LAKE_BRAIN_ONLY_FLEET), and Lake's lake-state-v1 children of /lakes/{k}.
 FLEET_ONLY = {f: "lake-brain" for f in LAKE_BRAIN_ONLY_FLEET}
@@ -130,6 +133,13 @@ def owner(path: str, slots=None, sources=None) -> str | None:
         return "orchestrator"
     if p[0] == "scores":
         return "scorer"
+    if p[0] in WATCHED_ROOTS:
+        return None
+    if p[0] == "activity" and len(p) >= 2:
+        for b in BRAINS:                              # event ids name their writer: ...-{brainId}-...
+            if f"-{b}-" in p[1]:
+                return b
+        return None
     if p[0] in PLATFORM_ONLY:
         return "platform:" + p[0]
     return None
@@ -178,7 +188,7 @@ def _covered(path: str, written) -> bool:
     return False
 
 
-SCORE_KEYS = ("value", "scoreVersion", "uncapped", "basis")
+SCORE_KEYS = ("value", "scoreVersion", "basis")          # the gate's criterion; `uncapped` may move under an unchanged value and is only reported
 
 
 def _settled(c: dict) -> bool:
@@ -250,7 +260,8 @@ def evaluate(brain: str, before: dict, after: dict, record: dict) -> dict:
             "X11": {"before": {k: (before.get("health") or {}).get(k) for k in ("status", "staleLakeCount", "reasons")},
                     "after": {k: h.get(k) for k in ("status", "staleLakeCount", "reasons")}, "blanked": not h, "wronglyHealthy": wrongly_healthy,
                     "refreshed": before.get("health") != after.get("health")},
-            "X12": {"before": {k: sb.get(k) for k in SCORE_KEYS}, "after": {k: sa.get(k) for k in SCORE_KEYS}, "recordWroteScores": score_written}}
+            "X12": {"before": {k: sb.get(k) for k in SCORE_KEYS + ("uncapped",)}, "after": {k: sa.get(k) for k in SCORE_KEYS + ("uncapped",)},
+                    "recordWroteScores": score_written}}
 
 
 # --------------------------------------------------------------------------------------------------------------------------------------- main
@@ -311,7 +322,13 @@ def main(argv=None, fetch_raw=get, sleep=time.sleep) -> int:
         while True:
             try:
                 cur = (fetch(f"brains/{a.brain}/publication") or {}).get("publishId")
-            except OSError as e:                       # URLError/HTTPError/timeouts: one transient error must not end a long wait
+            except urllib.error.HTTPError as e:
+                if e.code in (401, 403):
+                    print(f"REFUSED: the database answered {e.code}; the token has expired or lacks access. Mint a new one and re-run wait", file=sys.stderr)
+                    return 4
+                print(f"retrying after a read error: HTTP {e.code}", file=sys.stderr)
+                cur = None
+            except OSError as e:                       # URLError/timeouts: one transient error must not end a long wait
                 print(f"retrying after a read error: {type(e).__name__}", file=sys.stderr)
                 cur = None
             if cur and cur != a.since_publish_id:

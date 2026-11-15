@@ -184,13 +184,13 @@ def test_owner_map():
 def test_changes_outside_the_old_scope_are_seen(monkeypatch, tmp_path):
     before = cap(LIVE, tmp_path, "b", monkeypatch)
     t = published(LIVE)
-    t["control"]["execution"]["state"] = "PAUSED"                        # a platform root
+    t["control"]["execution"]["state"] = "PAUSED"                        # a watched root
     t["lakes"]["Ghost_XX"] = {"states": {"lake": {"levelFt": 1}}}         # a lake with no lakeFleet row
     t["lakes"]["Other_TX"]["speciesPresence"] = {"gar": True}             # Lake-owned lake-state-v1 child
     r = W.evaluate("lake-brain", before, cap(t, tmp_path, "a", monkeypatch), RECORD)
     assert r["checks"]["X08"] == "FAIL"
     assert set(r["X08"]["ownOutsideWriteSet"]) == {"lakes/Ghost_XX/states/lake", "lakes/Other_TX/speciesPresence/gar"}
-    assert r["X08"]["otherWriters"]["platform:control"]["count"] == 1
+    assert r["X08"]["unowned"] == ["control/execution/state"]                # a watched root: never an "other writer"
 
 
 def test_an_unowned_change_is_review_never_pass(monkeypatch, tmp_path):
@@ -274,3 +274,37 @@ def test_wait_survives_a_transient_read_error(monkeypatch, capsys):
         return fetcher(v)(url, path, token, shallow)
     assert W.main(["wait", "--brain", "lake-brain", "--since-publish-id", "p1"], fetch_raw=f, sleep=lambda _: None) == 0
     assert capsys.readouterr().out.strip() == "p2"
+
+
+def test_activity_events_are_owned_by_their_writer_and_watched_roots_need_review(monkeypatch, tmp_path):
+    t0 = copy.deepcopy(LIVE)
+    t0["activity"] = {"e1-wind-1": {"x": 1}}
+    t0["access"] = {"m": {"role": "master"}}
+    before = cap(t0, tmp_path, "b", monkeypatch)
+    t = published(t0)
+    t["activity"]["e2-wind-2"] = {"x": 2}
+    r = W.evaluate("lake-brain", before, cap(t, tmp_path, "a", monkeypatch), RECORD)
+    assert r["checks"]["X08"] == "PASS" and r["X08"]["otherWriters"]["wind"]["count"] == 1
+    t["activity"]["e3-lake-brain-3"] = {"x": 3}
+    r = W.evaluate("lake-brain", before, cap(t, tmp_path, "a2", monkeypatch), RECORD)
+    assert r["checks"]["X08"] == "FAIL" and r["X08"]["ownOutsideWriteSet"] == ["activity/e3-lake-brain-3"]
+    t = published(t0)
+    t["access"]["m"]["role"] = "user"
+    assert W.evaluate("lake-brain", before, cap(t, tmp_path, "a3", monkeypatch), RECORD)["checks"]["X08"] == "REVIEW"
+
+
+def test_uncapped_alone_does_not_fail_x12(monkeypatch, tmp_path):
+    before = cap(LIVE, tmp_path, "b", monkeypatch)
+    t = published(LIVE)
+    t["scores"]["lake-brain"]["uncapped"] = 7.4
+    r = W.evaluate("lake-brain", before, cap(t, tmp_path, "a", monkeypatch), RECORD)
+    assert r["checks"]["X12"] == "PASS" and r["X12"]["after"]["uncapped"] == 7.4
+
+
+def test_wait_stops_on_an_expired_token(monkeypatch):
+    import urllib.error
+    monkeypatch.setenv("BRAIN_ACCESS_TOKEN", "t")
+
+    def f(url, path, token, shallow=False):
+        raise urllib.error.HTTPError(url, 401, "Unauthorized", {}, None)
+    assert W.main(["wait", "--brain", "lake-brain", "--since-publish-id", "p1"], fetch_raw=f, sleep=lambda _: None) == 4
