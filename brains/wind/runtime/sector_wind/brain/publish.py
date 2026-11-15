@@ -117,8 +117,12 @@ def prune_activity(writer, now):
 
 
 def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict | None = None,
-            directory: list[dict] | None = None, engine_url: str = ENGINE_URL, mode: str = "scheduled") -> dict:
-    """mode: 'scheduled' (inside the wind-hourly Cloud Run Job) or 'manual' (an operator run; data will not refresh on its own)."""
+            directory: list[dict] | None = None, engine_url: str = ENGINE_URL, mode: str = "scheduled", previous=None) -> dict:
+    """mode: 'scheduled' (inside the wind-hourly Cloud Run Job) or 'manual' (an operator run; data will not refresh on its own).
+
+    previous: None (default, unchanged) reads Wind's own bookkeeping brain/wind/last_publish.json from the store. A callable
+    previous(keys, national) -> dict replaces it with the previous state derived from what is LIVE (W-H2, Sector_Ops #51 D2): in artifact
+    mode only a hand-off the Publisher accepted ever reaches the database, so "previous" means "accepted". A raise from it fails the run."""
     t0 = time.time(); now = (now or datetime.now(timezone.utc)).replace(microsecond=0); now_iso = C.iso(now)
     rep = {"ok": False, "errors": [], "lakes": {}, "writes": 0}
     dep = deployment_version(); proc = f"{DECODER_VERSION} + {C.BRAIN_VERSION} @ {dep}"
@@ -135,9 +139,9 @@ def publish(store, cfg, writer, now: datetime | None = None, run_summary: dict |
             rep["errors"].append(f"health write: {e2!r}")
         return rep
 
-    last = store.get_json("brain/wind/last_publish.json") or {}
     manifest = store.get_json("fetch/national/MANIFEST.json")
     national = national_profiled(manifest, directory)
+    last = (previous(keys, national) if previous is not None else store.get_json("brain/wind/last_publish.json")) or {}
 
     # ── 1. per-lake state + snapshot (one atomic update each) ─────────────────────────────────
     readiness: dict[str, str] = {}; kinds = {"analysis": 0, "forecast": 0, "unavailable": 0}; stale_lakes = 0
