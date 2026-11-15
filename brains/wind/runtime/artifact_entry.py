@@ -8,8 +8,8 @@ The same steps as the wind-hourly Cloud Run job, with the database writer replac
   3. `artifact.build_artifacts` seals it as ONE `wind-publication-v1` bundle (publish-artifact-v2) with the packaged knowledge release's lineage;
   4. it is stored create-only in a LOCAL artifact store (--artifact-dir) and, with --emit, written to a LOCAL hand-off file (never overwritten).
 
-  python artifact_entry.py --store local:DIR --artifact-dir DIR [--emit FILE] [--skip-ingest] [--execution-id UUID]
-env: SECTOR_ENGINE_COMMIT (code version recorded in the lineage)
+  python artifact_entry.py --store local:DIR --artifact-dir DIR [--emit FILE] [--skip-ingest] [--execution-id UUID] [--read-rtdb [--rtdb-url URL]]
+env: SECTOR_ENGINE_COMMIT (code version recorded in the lineage); with --read-rtdb, BRAIN_ACCESS_TOKEN (the runner's READ token, GET only)
 
 NO database write, no bucket write, no gs:// store. The artifact reaches the central path only through the runner's own upload (`tools/runner/runner.py
 upload`, lease-checked). The Publisher refuses it until Wind's knowledge release has an approval record (knowledge-release.json `approval`), Wind is
@@ -17,8 +17,9 @@ CENTRAL in publication-cutover.json and the execution control enables Wind: each
 
 Exit 0 = artifact stored (its reference is printed as JSON); 2 = refused (nothing stored); 3 = the run produced no publishable artifact (nothing stored);
 1 = an unexpected error (nothing handed off). Ingest errors do not stop the seal (as in the cloud job, which publishes and then exits 1); they are printed.
-On every path that hands nothing off, Wind's own bookkeeping (brain/wind/last_publish.json) is put back as it was. KNOWN GAP before Wind can move
-(staged blocker W-H2): a stored artifact the central path later refuses still advances it; that needs a commit-after-acceptance step.
+On every path that hands nothing off, Wind's own bookkeeping (brain/wind/last_publish.json) is put back as it was. W-H2 (Sector_Ops #51 decision D2):
+with --read-rtdb the previous state is read from the LIVE Brain database (GET only, sector_wind.brain.live_previous), so a hand-off the central path
+later refuses can never advance it; the local file is then only a cache. A read error seals nothing (exit 3). Off unless the runner passes the flag.
 """
 from __future__ import annotations
 
@@ -45,7 +46,7 @@ def _iso(t: dt.datetime) -> str:
 
 
 def build(store, cfg, *, now: dt.datetime, run_summary: dict | None, execution_id: str, code_version: str, release: dict | None,
-          directory: list | None = None):
+          directory: list | None = None, previous=None):
     """(publishReport, BuildResult): Wind's own write set through a DryRunWriter, sealed with the release's lineage. Never touches a database."""
     import hashlib
     from sector_wind.brain import artifact as A
@@ -56,6 +57,8 @@ def build(store, cfg, *, now: dt.datetime, run_summary: dict | None, execution_i
     kwargs = {"now": now, "run_summary": run_summary}
     if directory is not None:
         kwargs["directory"] = directory
+    if previous is not None:
+        kwargs["previous"] = previous
     rep = safe_publish(store, cfg, writer, **kwargs)
     ev_sha = hashlib.sha256(open(EVIDENCE, "rb").read()).hexdigest() if os.path.exists(EVIDENCE) else "NONE"
     kr, mref, msha = lineage_triple(release)
@@ -71,6 +74,9 @@ def main(argv=None) -> int:
     ap.add_argument("--emit", default=None, help="also write the sealed artifact JSON to this LOCAL file (a runner's hand-off, e.g. Pulse's {out}/artifact.json)")
     ap.add_argument("--skip-ingest", action="store_true", help="seal what the store already holds (tests, a re-seal); no fetch")
     ap.add_argument("--execution-id", default=None, help="UUIDv4 of this run (default: a new one)")
+    ap.add_argument("--read-rtdb", action="store_true",
+                    help="W-H2: read the previous state from the LIVE Brain database (GET only, BRAIN_ACCESS_TOKEN), not the local bookkeeping")
+    ap.add_argument("--rtdb-url", default=None, help="with --read-rtdb: the Brain database URL (default: the platform's Brain RTDB)")
     ap.add_argument("--now", default=None, help=f"TESTS ONLY (needs {TEST_CLOCK_ENV}=1 and --skip-ingest): the run time to seal at, ISO-8601 UTC")
     a = ap.parse_args(argv)
 
@@ -108,6 +114,14 @@ def main(argv=None) -> int:
     except Exception as e:                                   # noqa: BLE001
         print(f"REFUSED (nothing stored): knowledge release: {type(e).__name__}: {e}", file=sys.stderr)
         return 2
+    previous = None
+    if a.read_rtdb:
+        from sector_brain_platform import BRAIN_RTDB_URL, BrainRtdb, TokenProvider
+        from sector_wind.brain.live_previous import live_previous
+        previous = live_previous(BrainRtdb(a.rtdb_url or BRAIN_RTDB_URL, TokenProvider()))
+    elif a.rtdb_url:
+        print("REFUSED (nothing stored): --rtdb-url needs --read-rtdb", file=sys.stderr)
+        return 2
     store = open_store(a.store)
     res = None
     if not a.skip_ingest:
@@ -121,7 +135,8 @@ def main(argv=None) -> int:
     stored = False
     try:
         rep, built = build(store, cfg, now=now, run_summary=res, execution_id=execution_id,
-                           code_version=f"{BRAIN_ID}@{os.environ.get('SECTOR_ENGINE_COMMIT', 'unknown')}"[:40], release=release)
+                           code_version=f"{BRAIN_ID}@{os.environ.get('SECTOR_ENGINE_COMMIT', 'unknown')}"[:40], release=release,
+                           previous=previous)
         print(json.dumps({"publishReport": {k: rep.get(k) for k in ("ok", "errors", "writes", "readinessCounts")},
                           "ingestErrors": (res or {}).get("errors") or []}, default=str)[:2000])
         if not rep.get("ok") or not built.artifact:
