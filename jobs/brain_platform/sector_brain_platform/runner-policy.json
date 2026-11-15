@@ -4,11 +4,13 @@
   "defaultPrimary": "cloud",
   "primary": {
     "water-clarity": "pulse",
-    "lake-brain": "pulse"
+    "lake-brain": "pulse",
+    "wind": "pulse"
   },
   "approvals": {
     "water-clarity": "owner-approval-2026-11-06/sector-ops-51-o4",
-    "lake-brain": "owner-approval-2026-11-12/sector-ops-51-lake-on-pulse"
+    "lake-brain": "owner-approval-2026-11-12/sector-ops-51-lake-on-pulse",
+    "wind": "owner-approval-PENDING/sector-ops-51-wind"
   },
   "failover": {
     "enabled": false,
