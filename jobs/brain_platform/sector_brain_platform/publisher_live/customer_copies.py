@@ -1,4 +1,4 @@
-"""Shared pieces of the conditions-consolidation CUSTOMER-lane copy writers (Sector_Ops #53, spec §5). DRAFT, NOT WIRED.
+"""Shared pieces of the conditions-consolidation CUSTOMER-lane copy writers (Sector_Ops #53, spec §5). clarity, waterTemp (and the level copy) are wired by customer_lane.py; generationBinding and the wind outlookModel are not wired.
 
 The four new copies (clarity, waterTemp, generationBinding, wind outlookModel) follow the Lake level copy exactly
 (customer_lake_level.py; design note docs/architecture/data/CUSTOMER_BRAIN_OUTPUT_PATH_V1.md): a pure planner per copy that
