@@ -86,7 +86,7 @@ def mutation_cases(spec):
     r = dataclasses.replace
     cases = [
         ("lifecycle_drift", P.p03_identity_lifecycle_publisher_state, r(spec, lifecycle="PRODUCTION")),
-        ("cutover_status_drift", P.p03_identity_lifecycle_publisher_state, r(spec, cutover_status="CUTOVER_COMPLETE")),
+        ("cutover_status_drift", P.p03_identity_lifecycle_publisher_state, r(spec, cutover_status="SHADOW" if spec.cutover_status != "SHADOW" else "CUTOVER_COMPLETE")),
         ("workspace_drift", P.p03_identity_lifecycle_publisher_state, r(spec, workspace_id="some-other-workspace")),
         ("authorized_consumers_drift", P.p03_identity_lifecycle_publisher_state, r(spec, authorized_consumers=tuple(spec.authorized_consumers) + ("unknown-consumer",))),
         ("undeclared_extra_consume", P.p06_declared_dependencies_exact, r(spec, consumes=tuple(spec.consumes) + ({"kind": "signal", "signalId": "invented-signal"},))),

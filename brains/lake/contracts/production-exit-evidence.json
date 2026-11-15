@@ -1,0 +1,86 @@
+{
+  "standard": "production-exit-gate-v1",
+  "brainId": "lake-brain",
+  "checks": {
+    "X01": {
+      "status": "PASS",
+      "mode": "OFFLINE",
+      "evidenceRef": "Sector_Engine c57054a brains/lake/tests/test_lake_kit_certification.py (BRAIN_CERT_KIT_V1 proofs P07, P11; re-run 2026-11-15)"
+    },
+    "X02": {
+      "status": "PASS",
+      "mode": "OFFLINE",
+      "evidenceRef": "Sector_Engine c57054a brains/lake/tests/test_lake_kit_certification.py (BRAIN_CERT_KIT_V1 proofs P03, P12; re-run 2026-11-15)"
+    },
+    "X03": {
+      "status": "PASS",
+      "mode": "OFFLINE",
+      "evidenceRef": "Sector_Engine c57054a brains/lake/tests/test_lake_kit_certification.py (BRAIN_CERT_KIT_V1 proofs P05, P12; re-run 2026-11-15)"
+    },
+    "X04": {
+      "status": "PASS",
+      "mode": "OFFLINE",
+      "evidenceRef": "Sector_Engine c57054a brains/lake/tests/test_lake_kit_certification.py (BRAIN_CERT_KIT_V1 proofs P13, P15, P16 + tests/test_declared_write_set.py; re-run 2026-11-15)"
+    },
+    "X05": {
+      "status": "PASS",
+      "mode": "OFFLINE",
+      "evidenceRef": "Sector_Engine c57054a brains/lake/tests/test_lake_kit_certification.py (BRAIN_CERT_KIT_V1 proofs P07, P08; re-run 2026-11-15)"
+    },
+    "X06": {
+      "status": "PASS",
+      "mode": "OFFLINE",
+      "evidenceRef": "Sector_Engine c57054a brains/lake/tests/test_lake_kit_certification.py (BRAIN_CERT_KIT_V1 proofs P08; re-run 2026-11-15)"
+    },
+    "X07": {
+      "status": "PASS",
+      "mode": "LIVE",
+      "evidenceRef": "sector-ops#51 comment 6857465258 (Lake M6 first live publish 2026-11-13, publishId f42933d1; private): one live Publisher pass, PUBLISHED COMPLETE, readback shows the change"
+    },
+    "X08": {
+      "status": "NOT_RUN",
+      "mode": "LIVE",
+      "evidenceRef": "NOT_RUN: pending, see Sector_Ops #51 morning batch (2026-11-15) (whole-fleet before/after export diff for the first publish)"
+    },
+    "X09": {
+      "status": "NOT_RUN",
+      "mode": "LIVE",
+      "evidenceRef": "NOT_RUN: pending, see Sector_Ops #51 morning batch (2026-11-15) (forced mid-write failure on a NON-production database)"
+    },
+    "X10": {
+      "status": "PASS",
+      "mode": "LIVE",
+      "evidenceRef": "sector-ops#51 comment 6857465258 (Lake M6 first live publish 2026-11-13, publishId f42933d1; private): publicationNodeMatches true, planMatchesRecord true"
+    },
+    "X11": {
+      "status": "NOT_RUN",
+      "mode": "LIVE",
+      "evidenceRef": "NOT_RUN: pending, see Sector_Ops #51 morning batch (2026-11-15) (health check after the first publish)"
+    },
+    "X12": {
+      "status": "NOT_RUN",
+      "mode": "LIVE",
+      "evidenceRef": "NOT_RUN: pending, see Sector_Ops #51 morning batch (2026-11-15) (score before/after check)"
+    },
+    "X13": {
+      "status": "NOT_RUN",
+      "mode": "LIVE",
+      "evidenceRef": "NOT_RUN: pending, see Sector_Ops #51 morning batch (2026-11-15) (rollback rehearsal on a NON-production database)"
+    },
+    "X14": {
+      "status": "PASS",
+      "mode": "OFFLINE",
+      "evidenceRef": "Sector_Engine brains/lake/tests/test_legacy_writer_retired.py (Swift writer retired in this change) + exit_gate.legacy_write_sites(brains/lake) empty"
+    },
+    "X15": {
+      "status": "PASS",
+      "mode": "LIVE",
+      "evidenceRef": "sector-ops#51 comment 6857465258 (Lake M6 first live publish 2026-11-13, publishId f42933d1; private): 75 planned paths read back, 0 mismatches"
+    },
+    "X16": {
+      "status": "NOT_RUN",
+      "mode": "LIVE",
+      "evidenceRef": "NOT_RUN: pending, see Sector_Ops #51 morning batch (2026-11-15) (waits on the identity split, Sector_Ops #19)"
+    }
+  }
+}

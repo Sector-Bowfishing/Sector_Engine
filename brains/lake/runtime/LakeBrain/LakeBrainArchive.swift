@@ -148,4 +148,4 @@ extension LakeLevelCalendar {
     static func isDayString(_ day: String) -> Bool { day.count == 10 && doy365(day) != nil }
 }
 
-// ReadThroughDryRunStore moved to SectorEngine (BrainRTDBStore.swift), shared with the Water Temperature job (Sector_Ops #50 WT-P2).
+// ReadThroughDryRunStore moved to SectorEngine (the shared Brain store module), shared with the Water Temperature job (Sector_Ops #50 WT-P2).

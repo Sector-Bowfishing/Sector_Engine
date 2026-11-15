@@ -1,14 +1,15 @@
 //
 //  LakeBrainJob — one run of the Lake Brain (no schedule; on demand)
 //
-//  usage: LakeBrainJob [--dry-run DIR | --rtdb URL] [--archive gs://BUCKET | --archive DIR]
+//  usage: LakeBrainJob --dry-run DIR [--read-rtdb URL] [--archive gs://BUCKET | --archive DIR]
 //                      [--seed-archive gs://BUCKET] [--presence gs://BUCKET | DIR]
 //                      [--scope pilots|fleet] [--lake ID]... [--force] [--backfill] [--no-shared-tva-archive]
 //                      [--include-candidates]   (ONLY with --dry-run DIR)
 //                      [--fault cwms-unreachable]  (ONLY with --dry-run DIR: rehearsal fault injection, Sector_Ops #48 B4b)
 //    --dry-run DIR      write every Brain RTDB path as a JSON file under DIR (no database)
 //    --read-rtdb URL    with --dry-run: read the live Brain RTDB (GET only) for plan()/previous profiles
-//    --rtdb URL         write the Brain RTDB (default $SECTOR_BRAIN_RTDB_URL)
+//    (--rtdb URL)       RETIRED (B6, Sector_Ops #48/#51): Lake publishes only through the central Publisher from the
+//                       artifact that runtime/artifact_entry.py seals; this job never writes the Brain RTDB.
 //    --archive X        history/baselines store; gs://… or a local directory (default: none)
 //    --seed-archive X   read-only fallback for --archive (dry runs start from the real bucket)
 //    --presence X       where presence/latest.json lives (private; default: --archive)
@@ -45,6 +46,10 @@ func refuse(_ message: String) -> Never {
     exit(2)
 }
 
+if argv.contains("--rtdb") || argv.contains(where: { $0.hasPrefix("--rtdb=") }) {
+    refuse("--rtdb is retired (B6): Lake publishes only through the central Publisher; use --dry-run DIR [--read-rtdb URL]")
+}
+
 let includeCandidates = argv.contains("--include-candidates")
 if includeCandidates {
     guard flag("--dry-run") != nil else { refuse("--include-candidates is valid only together with --dry-run DIR") }
@@ -74,7 +79,7 @@ options.backfill = argv.contains("--backfill")
 options.processingVersion = env["SECTOR_ENGINE_REVISION"] ?? env["K_REVISION"] ?? env["SECTOR_ENGINE_COMMIT"]
 
 if (argv.contains("--read-rtdb") || argv.contains("--dry-run")) && flag("--dry-run") == nil {
-    // a read-only or dry-run flag must never fall through to the live writer ($SECTOR_BRAIN_RTDB_URL is set in the image)
+    // a read-only or dry-run flag must never fall through to a database write (B6: there is none left)
     refuse("--read-rtdb needs --dry-run DIR, and --dry-run needs a DIR; nothing was run")
 }
 
@@ -89,12 +94,9 @@ if let dir = flag("--dry-run") {
         store = LocalDirectoryStore(directory: dir, brainId: LakeBrainSpec.brainId)
         print("▶ dry run → \(dir)")
     }
-} else if let url = flag("--rtdb") ?? env["SECTOR_BRAIN_RTDB_URL"] {
-    rest = try RTDBRestStore(databaseURL: url, brainId: LakeBrainSpec.brainId); store = rest
-    print("▶ Brain RTDB → \(url)")
 } else {
-    FileHandle.standardError.write(Data("LakeBrainJob: give --dry-run DIR or --rtdb URL (or SECTOR_BRAIN_RTDB_URL)\n".utf8))
-    exit(2)
+    // B6: the direct database writer is retired. A run without --dry-run DIR is refused, whatever the image environment says.
+    refuse("give --dry-run DIR (the direct --rtdb writer is retired: Lake publishes only through the central Publisher)")
 }
 
 var hist = archive(flag("--archive") ?? (includeCandidates ? flag("--dry-run").map { $0 + "/_archive" } : nil))

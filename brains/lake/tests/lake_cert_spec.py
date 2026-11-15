@@ -40,6 +40,7 @@ _BRAIN = json.load(open(os.path.join(REPO, "brains", "lake", "brain.json"), enco
 
 SPEC = BrainCertSpec(
     brain_id="lake-brain", directory="lake", repo_root=REPO, lifecycle="CALIBRATION", workspace_id="lake-brain",
+    cutover_status="CUTOVER_COMPLETE",          # B6 (Sector_Ops #48/#51); brain.json and the exit record must agree
     authorized_consumers=("ops", "sector-intelligence", "depth", "vegetation"), runtime_kind="job",
     consumes=tuple(_BRAIN["consumes"]), providers=tuple(p["providerId"] for p in _BRAIN["providers"]),
     required_files=("brain.json", "BRAIN_OPERATING_CONTRACT.md", "README.md", "contracts/lake-publication-v1.json", "contracts/describe_contract.py",
