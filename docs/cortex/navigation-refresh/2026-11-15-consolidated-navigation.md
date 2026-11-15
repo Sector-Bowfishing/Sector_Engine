@@ -153,6 +153,7 @@ Customer path:
    ──► behind flags: /lakes/ready, /lake/level ──► CUSTOMER-lane copies only (BrainOutputReader)
 ```
 
+- **Pulse-side jobs at HEAD [V]:** the SHADOW lane `jobs/water-clarity-h1-shadow/h1_shadow.py` (`jobs/water-clarity-h1-shadow/README.md`) writes a local file only; the 30-day read-only collector `jobs/lake-level-crosscheck/crosscheck.py` (`jobs/lake-level-crosscheck/README.md`) compares Lake Barkley with an independent USACE gauge and appends local JSON lines only.
 - **Images:** `brain-jobs` (root `Dockerfile`, `jobs/brain-image-build.sh`) carries `LakeBrainJob` and `WaterTempBrainJob`; `sector-engine` is built from the same `Dockerfile` by `.github/workflows/deploy-engine.yml` / `deploy.sh`; `brain-orchestrator` is staged by `jobs/brain-orchestrator/deploy-job.sh` (platform, Fish and Intelligence runtimes under legacy job names, scorer, rubrics, `brains/*/brain.json`, the cutover document); `brain-publisher` by `jobs/brain-publisher/deploy-job.sh`.
 
 ### D.2 Planned but NOT implemented (at HEAD)
@@ -232,7 +233,7 @@ Every backtick-quoted, repository-relative path in this report (sections Changes
 
 | Result | Count |
 |---|---|
-| Resolved to an existing file or directory | **338** |
+| Resolved to an existing file or directory | **342** |
 | Missing | **0** |
 | Templated, not checkable literally | **12** (`brains/<dir>/…`, `brains/*/…`, `.github/workflows/*.yml`); each resolves for every package it names |
 
