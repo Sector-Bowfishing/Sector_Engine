@@ -3,6 +3,7 @@
   python main.py hourly   --store local:/path            # latest NBM cycle + last hour of RTMA-RU + METAR
   python main.py backfill --store local:/path --start 2026-09-22 --end 2026-10-05 [--leads 1,3,6,12]
   python main.py validate --store local:/path --start ... --end ...
+  python main.py pw15     --store local:/path            # risky-night flag shadow: record the last 24 h of synoptic NBM cycles (no output; needs WIND_PW15_SHADOW=1)
   python main.py status   --store local:/path --start ... --end ...
 
 Default store is local. A gs:// store refuses to open without SECTOR_WIND_GCS_APPROVED=yes
@@ -21,7 +22,7 @@ def day(s):
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["hourly", "backfill", "validate", "status", "milestone"])
+    ap.add_argument("cmd", choices=["hourly", "backfill", "validate", "status", "milestone", "pw15"])
     ap.add_argument("--store", default="local:./archive")
     ap.add_argument("--start"); ap.add_argument("--end")
     ap.add_argument("--leads", default=None)
@@ -31,6 +32,24 @@ def main(argv=None):
     cfg = load_config(); store = open_store(a.store)
     leads = [int(x) for x in a.leads.split(",")] if a.leads else DEFAULT_LEADS
     now = datetime.now(timezone.utc)
+    if a.cmd == "pw15":
+        from sector_wind import points, pw15
+        if not pw15.enabled():
+            print("REFUSED: set WIND_PW15_SHADOW=1 to record the shadow", file=sys.stderr); return 2
+        newest = latest_nbm_cycle(now); out = {}
+        if newest:
+            t = newest - timedelta(hours=newest.hour % 6)
+            for _ in range(4):                               # the last 24 h of synoptic cycles (qmd probability fields exist only there)
+                key = f"pw15-shadow/{t:%Y%m%d%H}.json.gz"
+                o = store.get_json(key) if store.exists(key) else None
+                if not (o and o.get("status") == "complete"):
+                    try:
+                        out[t.isoformat()] = pw15.ingest_pw15_shadow(store, points.load_points(), t)
+                    except Exception as e:
+                        out[t.isoformat()] = {"status": "error", "error": repr(e)[:200]}
+                t -= timedelta(hours=6)
+        store.flush_ledger()
+        print(json.dumps(out, default=str)); return 1 if any(v.get("status") == "error" for v in out.values()) else 0
     if a.cmd == "hourly":
         from sector_wind.live import run_hourly
         try:
