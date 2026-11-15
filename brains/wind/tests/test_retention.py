@@ -49,3 +49,9 @@ def test_refusals(tmp_path):
     assert R.main(["--store", "gs://sector-wind-candidate/wind/v1"]) == 2
     assert R.main(["--store", f"local:{tmp_path / 'nope'}"]) == 2
     assert R.main(["--store", f"local:{tmp_path}", "--keep-days", "0"]) == 2
+
+
+def test_reachable_through_main(tmp_path):
+    import main as M
+    _tree(tmp_path)
+    assert M.main(["retention", "--store", f"local:{tmp_path}", "--now", "2026-11-15T12:00:00Z"]) == 0

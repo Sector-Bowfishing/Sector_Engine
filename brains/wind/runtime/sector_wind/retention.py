@@ -1,4 +1,4 @@
-"""Wind archive retention on a runner's LOCAL store (Wind cutover plan, Sector_Ops #51 approvals 6889559418 / 6889677881). DRY RUN by default.
+"""Wind archive retention on a runner's LOCAL store (Wind cutover plan, Sector_Ops #51). DRY RUN by default.
 
 The local Wind archive grows every hour and was never pruned. Rule (plan, "Retention"):
   * PRUNE raw forcing cutouts older than --keep-days (default 30), dated by the key itself, not the file time:
@@ -7,10 +7,10 @@ The local Wind archive grows every hour and was never pruned. Rule (plan, "Reten
   * KEEP everything else forever: fetch tables and manifests (fetch/), Wind's derived state (brain/, latest/), grids/, metar/ (truth for the
     7-day comparison and validation), runs/ and the ledger.
 
-  python -m sector_wind.retention --store local:DIR [--keep-days 30] [--now ISO] [--apply]
+  python main.py retention --store local:DIR [--keep-days 30] [--now ISO] [--apply]
 
 Without --apply it only lists what it would delete. Local stores only (a bucket archive is refused). It deletes files only under the three raw
-prefixes, and empty folders left behind there. Running it on a schedule (a Pulse maintenance job on the Mac mini) is a separate owner step.
+prefixes, and empty folders left behind there. Running it on a schedule (a runner maintenance job) is a separate owner step.
 """
 from __future__ import annotations
 
