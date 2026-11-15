@@ -42,7 +42,7 @@
   "researchWorkspace": {"workspaceId": "water-clarity"},
   "score": {"type": "ENGINE_READINESS_SCORE", "path": "/scores/water-clarity", "rubricRef": "docs/brains/scoring/frozen-scores.json"},
   "customerIntegrationMode": "none",
-  "publisherRequired": {"required": true, "cutoverStatus": "SHADOW"},
+  "publisherRequired": {"required": true, "cutoverStatus": "CUTOVER_COMPLETE"},
   "authorizedConsumers": ["ops", "sector-intelligence"],
   "tests": ["brains/water-clarity/tests"],
   "dataBudget": {"maxTrackedFileBytes": 1048576, "exceptions": []},

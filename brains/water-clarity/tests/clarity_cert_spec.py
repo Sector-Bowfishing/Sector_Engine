@@ -28,7 +28,7 @@ def changed_artifact(n, generated_at):
 
 
 SPEC = BrainCertSpec(
-    brain_id="water-clarity", directory="water-clarity", release_lineage=tuple(S.pa.release_lineage().values()), repo_root=S.REPO, lifecycle="CALIBRATION", workspace_id="water-clarity",
+    brain_id="water-clarity", directory="water-clarity", release_lineage=tuple(S.pa.release_lineage().values()), repo_root=S.REPO, lifecycle="CALIBRATION", workspace_id="water-clarity", cutover_status="CUTOVER_COMPLETE",
     authorized_consumers=("ops", "sector-intelligence"),
     consumes=({"kind": "registry", "registry": "lakes", "contractId": "registry.lakes", "minVersion": "1.0.0", "requirement": "REQUIRED"},),
     providers=(),
@@ -46,6 +46,7 @@ SPEC = BrainCertSpec(
     allowed_write_sites=frozenset(),          # X14: the direct writer is retired; the runtime has no database write site (the Publisher is the only writer)
     builder_module="runtime/publish_artifact.py",
     local_path_regex=r"/Users/|/home/[a-z]|\bDesktop/|Sector[ _]Research|Sector_Research_Data|~/|expanduser|SECTOR_RESEARCH_ROOT|water-clarity/(sources|datasets|analysis)",
-    arch_findings=(("clarity_brain.py", 8),), baseline_entry_basenames=("clarity_brain.py",), score_baseline_substring="water-clarity=8.0/10",
+    arch_findings=(("clarity_brain.py", 8), ("brain_platform.py", 10), ("run.py", 10), ("deploy-job.sh", 10)),
+    baseline_entry_basenames=("clarity_brain.py", "brain_platform.py", "run.py", "deploy-job.sh"), score_baseline_substring="water-clarity=8.0/10",
     artifact_factory=artifact, changed_artifact_factory=changed_artifact,
 )
