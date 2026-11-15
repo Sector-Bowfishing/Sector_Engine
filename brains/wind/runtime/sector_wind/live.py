@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, timezone
 
 from . import DECODER_VERSION, SCHEMA
 from .ingest import (DEFAULT_LEADS, ingest_metar_day, ingest_nbm_cycle, ingest_rtma, latest_nbm_cycle)
-from . import points
+from . import points, pw15
 from .sample import iso
 
 NBM_CATCHUP_H = 4
@@ -68,6 +68,14 @@ def run_hourly(store, cfg: dict, now: datetime | None = None, leads=DEFAULT_LEAD
                     summary["nbmPoints"] = points.ingest_nbm_points(store, points.load_points(), newest, POINT_LEADS)
             except Exception as e:
                 summary["errors"].append(f"NBM points {iso(newest)}: {e!r}")
+        # Risky-night flag shadow (pw15.py): off unless WIND_PW15_SHADOW=1; newest synoptic (00/06/12/18Z) cycle at or before the newest NBM cycle.
+        if pw15.enabled():
+            syn = newest - timedelta(hours=newest.hour % 6)
+            try:
+                if not _complete(store, f"pw15-shadow/{syn:%Y%m%d%H}.json.gz"):
+                    summary["pw15Shadow"] = pw15.ingest_pw15_shadow(store, points.load_points(), syn)
+            except Exception as e:
+                summary["errors"].append(f"pW15 shadow {iso(syn)}: {e!r}")
     else:
         summary["errors"].append("no NBM cycle published in the last 4 h")
     # RTMA-RU: every quarter-hour of the last few hours that is published and missing.
