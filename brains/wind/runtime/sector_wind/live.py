@@ -9,12 +9,15 @@ from datetime import datetime, timedelta, timezone
 
 from . import DECODER_VERSION, SCHEMA
 from .ingest import (DEFAULT_LEADS, ingest_metar_day, ingest_nbm_cycle, ingest_rtma, latest_nbm_cycle)
+from . import points
 from .sample import iso
 
 NBM_CATCHUP_H = 4
 RTMA_CATCHUP_H = 3
 BUNDLE_NBM_CYCLES = 3
 BUNDLE_RTMA_HOURS = 13
+# Point forecasts: tonight and tomorrow night only (W1 graded about a 24 h lead).
+POINT_LEADS = list(range(1, 37))
 
 
 def _nbm_key(lake, t):
@@ -58,6 +61,13 @@ def run_hourly(store, cfg: dict, now: datetime | None = None, leads=DEFAULT_LEAD
             except Exception as e:
                 summary["errors"].append(f"NBM {iso(c)}: {e!r}")
         summary["newestNbmAlreadyArchived"] = iso(newest) in summary["nbmSkipped"]
+        # Point forecasts beyond the grid lakes (points.py): off unless WIND_NBM_POINTS=1, newest cycle only.
+        if points.enabled():
+            try:
+                if not _complete(store, f"nbm-points/{newest:%Y%m%d%H}.json.gz"):
+                    summary["nbmPoints"] = points.ingest_nbm_points(store, points.load_points(), newest, POINT_LEADS)
+            except Exception as e:
+                summary["errors"].append(f"NBM points {iso(newest)}: {e!r}")
     else:
         summary["errors"].append("no NBM cycle published in the last 4 h")
     # RTMA-RU: every quarter-hour of the last few hours that is published and missing.

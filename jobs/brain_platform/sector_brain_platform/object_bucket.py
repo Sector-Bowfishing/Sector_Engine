@@ -68,6 +68,22 @@ class GcsRestObjectStore:
             raise StorageError(f"generation {key} -> {st}: {body[:160]!r}")
         return int(json.loads(body)["generation"])
 
+    def list_created(self, prefix):
+        """[(name, timeCreated)] under `prefix` (the cycle watchdog skips old history before reading anything)."""
+        out, token = [], None
+        while True:
+            q = {"prefix": prefix, "fields": "items(name,timeCreated),nextPageToken"}
+            if token:
+                q["pageToken"] = token
+            st, body = self._call("GET", f"{API}/storage/v1/b/{self.bucket}/o?" + urllib.parse.urlencode(q))
+            if not 200 <= st < 300:
+                raise StorageError(f"list {prefix} -> {st}: {body[:160]!r}")
+            d = json.loads(body or b"{}")
+            out += [(i["name"], i.get("timeCreated", "")) for i in d.get("items", [])]
+            token = d.get("nextPageToken")
+            if not token:
+                return out
+
     def list(self, prefix):
         names, token = [], None
         while True:

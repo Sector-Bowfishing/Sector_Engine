@@ -9,6 +9,9 @@ commit-pinned Engine snapshot, with a credential that can only do what is listed
       verifies the locally sealed artifact (lineage present, canonical form), requires this runner to hold a fresh lease for the Brain, stores it create-only
       under artifacts/{brainId}/ with the Brain's ArtifactWriter (the same call Cloud Run jobs make), reads it back by digest, then creates the runner
       execution record the Orchestrator reconciles. Exit 0 = stored and verified; 3 = no lease; 4 = refused artifact; 5 = readback mismatch.
+  runner.py fault --brain B --holder pulse --kind KIND [--detail TEXT] (--bucket | --store-dir)
+      Sector_Ops #51: the runner stopped itself for a fault; creates exports/runners/{holder}/faults/{B}/{UTC}-{KIND}.json (sector-runner-fault-v1).
+      The Orchestrator's cycle watchdog latches a halt on it and the owner is alerted.
   runner.py skip --brain B --holder pulse --cycle C --started-at T --ended-at T [--reason R ...] [--engine-commit SHA] (--bucket | --store-dir)
       SI-P2: the Brain's own plan, run inside the job, said SKIP, so there is no artifact. Requires this runner to hold a fresh lease for the Brain AND for
       cycle C, then creates a SKIPPED execution record (no artifact, the decision instead) under the id "{C}-skip". The Orchestrator counts it as a normal
@@ -106,7 +109,7 @@ def skip(a, store) -> int:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=("show", "renew", "grant", "upload", "skip"))
+    ap.add_argument("cmd", choices=("show", "renew", "grant", "upload", "skip", "fault"))
     ap.add_argument("--bucket", default=None)
     ap.add_argument("--store-dir", default=None)
     ap.add_argument("--brain", default=None)
@@ -117,6 +120,8 @@ def main(argv=None) -> int:
     ap.add_argument("--ended-at", default=None)
     ap.add_argument("--engine-commit", default=None)
     ap.add_argument("--reason", action="append", default=None)
+    ap.add_argument("--kind", default=None, help="fault: the fault kind, [A-Z_]{3,40}")
+    ap.add_argument("--detail", default="", help="fault: a short description (at most 300 characters kept)")
     a = ap.parse_args(argv)
     store = _store(a)
     if a.cmd == "show":
@@ -137,6 +142,18 @@ def main(argv=None) -> int:
         except RL.LeaseBusy as e:
             print(f"NOT GRANTED: {e}", file=sys.stderr)
             return 3
+    if a.cmd == "fault":
+        # Sector_Ops #51: the runner stopped itself for a fault and reports it; the Orchestrator's cycle watchdog halts the system on it
+        try:
+            key = RL.record_fault(RL.runner_view(store, a.holder), a.holder, a.brain, a.kind, a.detail, _now())
+        except ValueError as e:
+            print(f"REFUSED: {e}", file=sys.stderr)
+            return 2
+        except RL.PreconditionFailed:                        # the same fault, same second: already reported
+            print(json.dumps({"faultRecord": None, "kind": a.kind, "alreadyRecorded": True}, sort_keys=True))
+            return 0
+        print(json.dumps({"faultRecord": key, "kind": a.kind}, sort_keys=True))
+        return 0
     if a.cmd == "skip":
         if not (a.brain and a.holder and a.cycle and a.started_at and a.ended_at) or "/" in a.cycle:
             print("REFUSED: skip needs --brain, --holder, --cycle (no '/'), --started-at and --ended-at", file=sys.stderr)

@@ -1,0 +1,1302 @@
+{
+  "version": "wind-points-v1",
+  "note": "Point forecast lakes (Sector_Ops #45): the W1 sample lakes whose night speed passed W1 (MAE <= 3.5 mph, |bias| <= 2.0 mph) at the nearest ASOS/AWOS station within 10 km. The point is that station, where the forecast was graded: not lake-surface wind, no exposure, speed and gust only. Excluded: the 8 W1 sample lakes that failed, and lakes W1 did not sample.",
+  "evidence": {
+    "preregistration": "W1 point wind (Sector_Ops #30), frozen 2026-11-01",
+    "resultsSha256": "5da7c169c6ff61d5994cb57768fcd28cff0484f8353f30711fe205f9c2cbf372",
+    "verdict": "SUPPORTED",
+    "sampleLakes": 150,
+    "passed": 142,
+    "window": "valid 2025-11-01 to 2026-09-30, night hours, ~24 h lead"
+  },
+  "excludedFailed": [
+    "Big Stone Lake|SD",
+    "Boysen Reservoir|WY",
+    "Lake Mohave|NV",
+    "Owasco Lake|NY",
+    "Palisades Reservoir|ID",
+    "Ross Barnett Reservoir|MS",
+    "Skaneateles Lake|NY",
+    "Utah Lake|UT"
+  ],
+  "points": {
+    "Almanor|CA": {
+      "station": "O05",
+      "lat": 40.2865,
+      "lon": -121.2427,
+      "stationKm": 1.3,
+      "w1NightMaeMph": 2.64,
+      "w1NightBiasMph": 0.12,
+      "w1NightHours": 3823
+    },
+    "American Falls Reservoir|ID": {
+      "station": "PIH",
+      "lat": 42.9098,
+      "lon": -112.5959,
+      "stationKm": 5.4,
+      "w1NightMaeMph": 3.29,
+      "w1NightBiasMph": -0.26,
+      "w1NightHours": 3876
+    },
+    "Banks Lake|WA": {
+      "station": "3W7",
+      "lat": 47.922,
+      "lon": -119.083,
+      "stationKm": 0.15,
+      "w1NightMaeMph": 3.18,
+      "w1NightBiasMph": 1.48,
+      "w1NightHours": 3808
+    },
+    "Barren River Lake|KY": {
+      "station": "GLW",
+      "lat": 37.0318,
+      "lon": -85.9538,
+      "stationKm": 8.17,
+      "w1NightMaeMph": 1.79,
+      "w1NightBiasMph": 0.31,
+      "w1NightHours": 3815
+    },
+    "Beaver|AR": {
+      "station": "ROG",
+      "lat": 36.3724,
+      "lon": -94.107,
+      "stationKm": 3.22,
+      "w1NightMaeMph": 2.31,
+      "w1NightBiasMph": 0.43,
+      "w1NightHours": 3838
+    },
+    "Blue Marsh Lake|PA": {
+      "station": "RDG",
+      "lat": 40.3785,
+      "lon": -75.9652,
+      "stationKm": 5.51,
+      "w1NightMaeMph": 2.69,
+      "w1NightBiasMph": -0.31,
+      "w1NightHours": 3885
+    },
+    "Blue Mesa Reservoir|CO": {
+      "station": "GUC",
+      "lat": 38.5339,
+      "lon": -106.933,
+      "stationKm": 8.49,
+      "w1NightMaeMph": 2.94,
+      "w1NightBiasMph": 0.05,
+      "w1NightHours": 3761
+    },
+    "Bull Shoals Lake|AR": {
+      "station": "BPK",
+      "lat": 36.37,
+      "lon": -92.47,
+      "stationKm": 4.25,
+      "w1NightMaeMph": 2.04,
+      "w1NightBiasMph": 0.33,
+      "w1NightHours": 3483
+    },
+    "Burt Lake|MI": {
+      "station": "PLN",
+      "lat": 45.5709,
+      "lon": -84.7967,
+      "stationKm": 9.21,
+      "w1NightMaeMph": 2.76,
+      "w1NightBiasMph": 0.19,
+      "w1NightHours": 3467
+    },
+    "Calcasieu Lake|LA": {
+      "station": "UXL",
+      "lat": 30.1314,
+      "lon": -93.3761,
+      "stationKm": 7.51,
+      "w1NightMaeMph": 2.17,
+      "w1NightBiasMph": 0.09,
+      "w1NightHours": 3544
+    },
+    "Canandaigua Lake|NY": {
+      "station": "IUA",
+      "lat": 42.9089,
+      "lon": -77.3252,
+      "stationKm": 5.13,
+      "w1NightMaeMph": 2.94,
+      "w1NightBiasMph": 1.41,
+      "w1NightHours": 3840
+    },
+    "Candlewood Lake|CT": {
+      "station": "DXR",
+      "lat": 41.37,
+      "lon": -73.48,
+      "stationKm": 6.29,
+      "w1NightMaeMph": 2.54,
+      "w1NightBiasMph": 0.95,
+      "w1NightHours": 3352
+    },
+    "Cayuga Lake|NY": {
+      "station": "ITH",
+      "lat": 42.491,
+      "lon": -76.4584,
+      "stationKm": 4.37,
+      "w1NightMaeMph": 2.6,
+      "w1NightBiasMph": 0.29,
+      "w1NightHours": 3753
+    },
+    "Center Hill Lake|TN": {
+      "station": "SRB",
+      "lat": 36.0559,
+      "lon": -85.5307,
+      "stationKm": 6.28,
+      "w1NightMaeMph": 1.95,
+      "w1NightBiasMph": 0.38,
+      "w1NightHours": 3801
+    },
+    "Cheat Lake|WV": {
+      "station": "MGW",
+      "lat": 39.6429,
+      "lon": -79.9163,
+      "stationKm": 4.4,
+      "w1NightMaeMph": 2.07,
+      "w1NightBiasMph": 0.26,
+      "w1NightHours": 3875
+    },
+    "Cherry Creek Reservoir|CO": {
+      "station": "APA",
+      "lat": 39.57,
+      "lon": -104.85,
+      "stationKm": 6.31,
+      "w1NightMaeMph": 3.03,
+      "w1NightBiasMph": -0.98,
+      "w1NightHours": 3902
+    },
+    "Chickamauga Lake|TN": {
+      "station": "2A0",
+      "lat": 35.4817,
+      "lon": -84.9322,
+      "stationKm": 0.68,
+      "w1NightMaeMph": 1.56,
+      "w1NightBiasMph": 0.08,
+      "w1NightHours": 3676
+    },
+    "Claytor Lake|VA": {
+      "station": "PSK",
+      "lat": 37.1374,
+      "lon": -80.6785,
+      "stationKm": 7.59,
+      "w1NightMaeMph": 2.41,
+      "w1NightBiasMph": 0.06,
+      "w1NightHours": 3870
+    },
+    "Conneaut Lake|PA": {
+      "station": "GKJ",
+      "lat": 41.6265,
+      "lon": -80.2147,
+      "stationKm": 6.79,
+      "w1NightMaeMph": 2.24,
+      "w1NightBiasMph": 0.33,
+      "w1NightHours": 3840
+    },
+    "Coralville Lake|IA": {
+      "station": "IOW",
+      "lat": 41.6394,
+      "lon": -91.5445,
+      "stationKm": 9.59,
+      "w1NightMaeMph": 2.77,
+      "w1NightBiasMph": 0.43,
+      "w1NightHours": 3853
+    },
+    "Crab Orchard Lake|IL": {
+      "station": "MWA",
+      "lat": 37.755,
+      "lon": -89.0111,
+      "stationKm": 4.38,
+      "w1NightMaeMph": 2.44,
+      "w1NightBiasMph": 0.48,
+      "w1NightHours": 2876
+    },
+    "Dale Hollow Lake|TN": {
+      "station": "8A3",
+      "lat": 36.4121,
+      "lon": -85.3116,
+      "stationKm": 9.31,
+      "w1NightMaeMph": 2.6,
+      "w1NightBiasMph": -0.96,
+      "w1NightHours": 3373
+    },
+    "Deep Creek Lake|MD": {
+      "station": "2G4",
+      "lat": 39.5803,
+      "lon": -79.3394,
+      "stationKm": 2.79,
+      "w1NightMaeMph": 2.68,
+      "w1NightBiasMph": 0.19,
+      "w1NightHours": 3708
+    },
+    "Deer Creek Reservoir|UT": {
+      "station": "HCR",
+      "lat": 40.47,
+      "lon": -111.43,
+      "stationKm": 3.63,
+      "w1NightMaeMph": 2.71,
+      "w1NightBiasMph": -0.13,
+      "w1NightHours": 3856
+    },
+    "Devils Lake|ND": {
+      "station": "DVL",
+      "lat": 48.1146,
+      "lon": -98.9083,
+      "stationKm": 1.21,
+      "w1NightMaeMph": 2.78,
+      "w1NightBiasMph": 0.29,
+      "w1NightHours": 3843
+    },
+    "Douthat Lake|VA": {
+      "station": "HSP",
+      "lat": 37.9514,
+      "lon": -79.8339,
+      "stationKm": 5.68,
+      "w1NightMaeMph": 3.43,
+      "w1NightBiasMph": -0.19,
+      "w1NightHours": 3705
+    },
+    "Eagle Creek Reservoir|IN": {
+      "station": "EYE",
+      "lat": 39.825,
+      "lon": -86.2958,
+      "stationKm": 0.36,
+      "w1NightMaeMph": 2.47,
+      "w1NightBiasMph": 0.44,
+      "w1NightHours": 3872
+    },
+    "Eagle Nest Lake|NM": {
+      "station": "AXX",
+      "lat": 36.422,
+      "lon": -105.2899,
+      "stationKm": 8.32,
+      "w1NightMaeMph": 3.21,
+      "w1NightBiasMph": 0.18,
+      "w1NightHours": 3780
+    },
+    "East Lake Tohopekaliga|FL": {
+      "station": "ISM",
+      "lat": 28.29,
+      "lon": -81.44,
+      "stationKm": 2.8,
+      "w1NightMaeMph": 2.17,
+      "w1NightBiasMph": 0.61,
+      "w1NightHours": 3870
+    },
+    "El Dorado Lake|KS": {
+      "station": "EQA",
+      "lat": 37.7741,
+      "lon": -96.8176,
+      "stationKm": 6.79,
+      "w1NightMaeMph": 2.52,
+      "w1NightBiasMph": 0.24,
+      "w1NightHours": 3876
+    },
+    "Elephant Butte Reservoir|NM": {
+      "station": "TCS",
+      "lat": 33.2367,
+      "lon": -107.2681,
+      "stationKm": 5.49,
+      "w1NightMaeMph": 3.07,
+      "w1NightBiasMph": 0.16,
+      "w1NightHours": 3775
+    },
+    "Eufaula / W.F. George|AL": {
+      "station": "EUF",
+      "lat": 31.9513,
+      "lon": -85.1289,
+      "stationKm": 2.16,
+      "w1NightMaeMph": 1.61,
+      "w1NightBiasMph": -0.04,
+      "w1NightHours": 3937
+    },
+    "Falcon Lake|TX": {
+      "station": "APY",
+      "lat": 26.9688,
+      "lon": -99.2489,
+      "stationKm": 5.62,
+      "w1NightMaeMph": 2.24,
+      "w1NightBiasMph": 0.7,
+      "w1NightHours": 3316
+    },
+    "Fern Ridge Reservoir|OR": {
+      "station": "EUG",
+      "lat": 44.1246,
+      "lon": -123.212,
+      "stationKm": 4.85,
+      "w1NightMaeMph": 2.58,
+      "w1NightBiasMph": 0.32,
+      "w1NightHours": 3881
+    },
+    "Flaming Gorge Reservoir|WY": {
+      "station": "40U",
+      "lat": 40.9861,
+      "lon": -109.6785,
+      "stationKm": 2.1,
+      "w1NightMaeMph": 2.94,
+      "w1NightBiasMph": -0.49,
+      "w1NightHours": 2094
+    },
+    "Fort Loudoun Lake|TN": {
+      "station": "DKX",
+      "lat": 35.9638,
+      "lon": -83.8737,
+      "stationKm": 0.21,
+      "w1NightMaeMph": 2.3,
+      "w1NightBiasMph": 1.78,
+      "w1NightHours": 3815
+    },
+    "Geist Reservoir|IN": {
+      "station": "UMP",
+      "lat": 39.935,
+      "lon": -86.045,
+      "stationKm": 5.7,
+      "w1NightMaeMph": 2.15,
+      "w1NightBiasMph": 0.15,
+      "w1NightHours": 3827
+    },
+    "Grand Lake o' the Cherokees|OK": {
+      "station": "1K8",
+      "lat": 36.5464,
+      "lon": -95.0135,
+      "stationKm": 1.9,
+      "w1NightMaeMph": 2.41,
+      "w1NightBiasMph": -0.02,
+      "w1NightHours": 3834
+    },
+    "Green River Lake|KY": {
+      "station": "AAS",
+      "lat": 37.3569,
+      "lon": -85.3151,
+      "stationKm": 4.56,
+      "w1NightMaeMph": 2.37,
+      "w1NightBiasMph": 0.7,
+      "w1NightHours": 3815
+    },
+    "Griffin|FL": {
+      "station": "LEE",
+      "lat": 28.82,
+      "lon": -81.81,
+      "stationKm": 2.39,
+      "w1NightMaeMph": 2.18,
+      "w1NightBiasMph": 0.46,
+      "w1NightHours": 3879
+    },
+    "Hamilton|AR": {
+      "station": "HOT",
+      "lat": 34.478,
+      "lon": -93.0962,
+      "stationKm": 0.87,
+      "w1NightMaeMph": 2.34,
+      "w1NightBiasMph": -0.64,
+      "w1NightHours": 3639
+    },
+    "Havasu|AZ": {
+      "station": "HII",
+      "lat": 34.5711,
+      "lon": -114.3583,
+      "stationKm": 3.11,
+      "w1NightMaeMph": 3.16,
+      "w1NightBiasMph": 0.21,
+      "w1NightHours": 3826
+    },
+    "Hebgen Lake|MT": {
+      "station": "WYS",
+      "lat": 44.6884,
+      "lon": -111.1176,
+      "stationKm": 3.83,
+      "w1NightMaeMph": 2.2,
+      "w1NightBiasMph": -0.68,
+      "w1NightHours": 1537
+    },
+    "Herrington Lake|KY": {
+      "station": "DVK",
+      "lat": 37.5779,
+      "lon": -84.7697,
+      "stationKm": 9.4,
+      "w1NightMaeMph": 2.02,
+      "w1NightBiasMph": 0.3,
+      "w1NightHours": 3744
+    },
+    "Higgins Lake|MI": {
+      "station": "HTL",
+      "lat": 44.3598,
+      "lon": -84.6711,
+      "stationKm": 7.41,
+      "w1NightMaeMph": 2.23,
+      "w1NightBiasMph": 0.32,
+      "w1NightHours": 3739
+    },
+    "High Rock Lake|NC": {
+      "station": "EXX",
+      "lat": 35.7811,
+      "lon": -80.3038,
+      "stationKm": 4.51,
+      "w1NightMaeMph": 1.31,
+      "w1NightBiasMph": -0.02,
+      "w1NightHours": 3803
+    },
+    "Istokpoga|FL": {
+      "station": "SEF",
+      "lat": 27.4547,
+      "lon": -81.3416,
+      "stationKm": 3.55,
+      "w1NightMaeMph": 2.24,
+      "w1NightBiasMph": -1.1,
+      "w1NightHours": 3319
+    },
+    "Jamestown Reservoir|ND": {
+      "station": "JMS",
+      "lat": 46.93,
+      "lon": -98.68,
+      "stationKm": 1.97,
+      "w1NightMaeMph": 2.84,
+      "w1NightBiasMph": 0.26,
+      "w1NightHours": 3879
+    },
+    "John Redmond Reservoir|KS": {
+      "station": "UKL",
+      "lat": 38.3025,
+      "lon": -95.725,
+      "stationKm": 5.81,
+      "w1NightMaeMph": 2.31,
+      "w1NightBiasMph": -0.26,
+      "w1NightHours": 3829
+    },
+    "Jordan Lake|NC": {
+      "station": "TTA",
+      "lat": 35.5764,
+      "lon": -79.1034,
+      "stationKm": 7.22,
+      "w1NightMaeMph": 1.77,
+      "w1NightBiasMph": 0.57,
+      "w1NightHours": 3816
+    },
+    "Kerr Reservoir (Buggs Island)|VA": {
+      "station": "W63",
+      "lat": 36.5958,
+      "lon": -78.5601,
+      "stationKm": 0.84,
+      "w1NightMaeMph": 1.83,
+      "w1NightBiasMph": -0.21,
+      "w1NightHours": 3836
+    },
+    "Keuka Lake|NY": {
+      "station": "PEO",
+      "lat": 42.6441,
+      "lon": -77.0529,
+      "stationKm": 0.92,
+      "w1NightMaeMph": 2.67,
+      "w1NightBiasMph": 0.15,
+      "w1NightHours": 3866
+    },
+    "Keystone Lake|OK": {
+      "station": "OWP",
+      "lat": 36.1753,
+      "lon": -96.1518,
+      "stationKm": 7.43,
+      "w1NightMaeMph": 2.51,
+      "w1NightBiasMph": 1.52,
+      "w1NightHours": 2860
+    },
+    "Lake Bemidji|MN": {
+      "station": "BJI",
+      "lat": 47.5094,
+      "lon": -94.9337,
+      "stationKm": 4.64,
+      "w1NightMaeMph": 2.32,
+      "w1NightBiasMph": 0.56,
+      "w1NightHours": 3850
+    },
+    "Lake Charlevoix|MI": {
+      "station": "CVX",
+      "lat": 45.3047,
+      "lon": -85.2747,
+      "stationKm": 1.76,
+      "w1NightMaeMph": 2.47,
+      "w1NightBiasMph": 0.26,
+      "w1NightHours": 3867
+    },
+    "Lake Chesdin|VA": {
+      "station": "PTB",
+      "lat": 37.1838,
+      "lon": -77.5074,
+      "stationKm": 4.32,
+      "w1NightMaeMph": 1.85,
+      "w1NightBiasMph": 0.26,
+      "w1NightHours": 3655
+    },
+    "Lake Cumberland|KY": {
+      "station": "SME",
+      "lat": 37.0536,
+      "lon": -84.6156,
+      "stationKm": 2.25,
+      "w1NightMaeMph": 2.21,
+      "w1NightBiasMph": 0.72,
+      "w1NightHours": 3869
+    },
+    "Lake Dunmore|VT": {
+      "station": "6B0",
+      "lat": 43.9855,
+      "lon": -73.0955,
+      "stationKm": 6.77,
+      "w1NightMaeMph": 2.62,
+      "w1NightBiasMph": 1.28,
+      "w1NightHours": 3886
+    },
+    "Lake Erie|PA": {
+      "station": "ERI",
+      "lat": 42.08,
+      "lon": -80.18,
+      "stationKm": 9.35,
+      "w1NightMaeMph": 2.61,
+      "w1NightBiasMph": 0.16,
+      "w1NightHours": 3668
+    },
+    "Lake Fork Reservoir|TX": {
+      "station": "JDD",
+      "lat": 32.7422,
+      "lon": -95.4965,
+      "stationKm": 7.93,
+      "w1NightMaeMph": 1.96,
+      "w1NightBiasMph": 0.19,
+      "w1NightHours": 3788
+    },
+    "Lake Freeman|IN": {
+      "station": "MCX",
+      "lat": 40.7088,
+      "lon": -86.7668,
+      "stationKm": 0.39,
+      "w1NightMaeMph": 2.77,
+      "w1NightBiasMph": 1.31,
+      "w1NightHours": 3815
+    },
+    "Lake Granby|CO": {
+      "station": "GNB",
+      "lat": 40.0904,
+      "lon": -105.9113,
+      "stationKm": 6.0,
+      "w1NightMaeMph": 2.96,
+      "w1NightBiasMph": 0.18,
+      "w1NightHours": 3753
+    },
+    "Lake Greenwood|SC": {
+      "station": "GRD",
+      "lat": 34.25,
+      "lon": -82.16,
+      "stationKm": 5.68,
+      "w1NightMaeMph": 2.23,
+      "w1NightBiasMph": -0.31,
+      "w1NightHours": 3693
+    },
+    "Lake Hartwell|SC": {
+      "station": "TOC",
+      "lat": 34.5928,
+      "lon": -83.2964,
+      "stationKm": 3.78,
+      "w1NightMaeMph": 2.17,
+      "w1NightBiasMph": -0.65,
+      "w1NightHours": 3871
+    },
+    "Lake Hickory|NC": {
+      "station": "HKY",
+      "lat": 35.7412,
+      "lon": -81.3896,
+      "stationKm": 1.67,
+      "w1NightMaeMph": 2.22,
+      "w1NightBiasMph": -0.05,
+      "w1NightHours": 3838
+    },
+    "Lake Keowee|SC": {
+      "station": "CEU",
+      "lat": 34.6719,
+      "lon": -82.8868,
+      "stationKm": 5.91,
+      "w1NightMaeMph": 2.28,
+      "w1NightBiasMph": -0.04,
+      "w1NightHours": 3822
+    },
+    "Lake Marion|SC": {
+      "station": "MNI",
+      "lat": 33.5871,
+      "lon": -80.2087,
+      "stationKm": 0.58,
+      "w1NightMaeMph": 1.68,
+      "w1NightBiasMph": 0.2,
+      "w1NightHours": 3844
+    },
+    "Lake McConaughy|NE": {
+      "station": "OGA",
+      "lat": 41.1195,
+      "lon": -101.7697,
+      "stationKm": 9.81,
+      "w1NightMaeMph": 3.46,
+      "w1NightBiasMph": 0.69,
+      "w1NightHours": 3844
+    },
+    "Lake Memphremagog|VT": {
+      "station": "EFK",
+      "lat": 44.8888,
+      "lon": -72.2292,
+      "stationKm": 1.98,
+      "w1NightMaeMph": 2.52,
+      "w1NightBiasMph": -0.12,
+      "w1NightHours": 3705
+    },
+    "Lake Mendota|WI": {
+      "station": "MSN",
+      "lat": 43.1406,
+      "lon": -89.3453,
+      "stationKm": 3.08,
+      "w1NightMaeMph": 2.55,
+      "w1NightBiasMph": 0.32,
+      "w1NightHours": 3883
+    },
+    "Lake Monona|WI": {
+      "station": "MSN",
+      "lat": 43.1406,
+      "lon": -89.3453,
+      "stationKm": 5.63,
+      "w1NightMaeMph": 2.55,
+      "w1NightBiasMph": 0.32,
+      "w1NightHours": 3883
+    },
+    "Lake Moultrie|SC": {
+      "station": "MKS",
+      "lat": 33.1855,
+      "lon": -80.0362,
+      "stationKm": 3.04,
+      "w1NightMaeMph": 1.75,
+      "w1NightBiasMph": 0.37,
+      "w1NightHours": 3836
+    },
+    "Lake Murray (OK)|OK": {
+      "station": "1F0",
+      "lat": 34.147,
+      "lon": -97.1226,
+      "stationKm": 2.34,
+      "w1NightMaeMph": 2.58,
+      "w1NightBiasMph": 1.18,
+      "w1NightHours": 3876
+    },
+    "Lake Norman|NC": {
+      "station": "SVH",
+      "lat": 35.765,
+      "lon": -80.9539,
+      "stationKm": 6.89,
+      "w1NightMaeMph": 1.9,
+      "w1NightBiasMph": 0.03,
+      "w1NightHours": 3623
+    },
+    "Lake Oahe|ND": {
+      "station": "MBG",
+      "lat": 45.5464,
+      "lon": -100.4078,
+      "stationKm": 2.65,
+      "w1NightMaeMph": 3.21,
+      "w1NightBiasMph": 0.37,
+      "w1NightHours": 3794
+    },
+    "Lake Powell|UT": {
+      "station": "PGA",
+      "lat": 36.9261,
+      "lon": -111.4484,
+      "stationKm": 1.73,
+      "w1NightMaeMph": 2.46,
+      "w1NightBiasMph": 0.15,
+      "w1NightHours": 3909
+    },
+    "Lake Quinsigamond|MA": {
+      "station": "ORH",
+      "lat": 42.2673,
+      "lon": -71.8757,
+      "stationKm": 9.7,
+      "w1NightMaeMph": 2.44,
+      "w1NightBiasMph": 0.17,
+      "w1NightHours": 3867
+    },
+    "Lake Robinson|SC": {
+      "station": "HVS",
+      "lat": 34.4031,
+      "lon": -80.1192,
+      "stationKm": 2.26,
+      "w1NightMaeMph": 2.33,
+      "w1NightBiasMph": 1.33,
+      "w1NightHours": 3843
+    },
+    "Lake Roosevelt (FDR)|WA": {
+      "station": "3W7",
+      "lat": 47.922,
+      "lon": -119.083,
+      "stationKm": 7.26,
+      "w1NightMaeMph": 3.18,
+      "w1NightBiasMph": 1.48,
+      "w1NightHours": 3808
+    },
+    "Lake Russell (R.B. Russell)|GA": {
+      "station": "EBA",
+      "lat": 34.0954,
+      "lon": -82.8175,
+      "stationKm": 1.78,
+      "w1NightMaeMph": 2.0,
+      "w1NightBiasMph": 0.89,
+      "w1NightHours": 3850
+    },
+    "Lake Sakakawea|ND": {
+      "station": "N60",
+      "lat": 47.6458,
+      "lon": -101.4394,
+      "stationKm": 0.83,
+      "w1NightMaeMph": 3.36,
+      "w1NightBiasMph": 0.47,
+      "w1NightHours": 3729
+    },
+    "Lake Shafer|IN": {
+      "station": "MCX",
+      "lat": 40.7088,
+      "lon": -86.7668,
+      "stationKm": 8.12,
+      "w1NightMaeMph": 2.77,
+      "w1NightBiasMph": 1.31,
+      "w1NightHours": 3815
+    },
+    "Lake Sharpe|SD": {
+      "station": "PIR",
+      "lat": 44.3827,
+      "lon": -100.286,
+      "stationKm": 4.66,
+      "w1NightMaeMph": 2.95,
+      "w1NightBiasMph": 0.34,
+      "w1NightHours": 3872
+    },
+    "Lake St. Clair|MI": {
+      "station": "MTC",
+      "lat": 42.6083,
+      "lon": -82.8355,
+      "stationKm": 1.5,
+      "w1NightMaeMph": 2.6,
+      "w1NightBiasMph": 0.41,
+      "w1NightHours": 3693
+    },
+    "Lake Strom Thurmond (Clarks Hill)|SC": {
+      "station": "HQU",
+      "lat": 33.5297,
+      "lon": -82.5164,
+      "stationKm": 5.35,
+      "w1NightMaeMph": 1.18,
+      "w1NightBiasMph": 0.17,
+      "w1NightHours": 3858
+    },
+    "Lake Superior|WI": {
+      "station": "4R5",
+      "lat": 46.7887,
+      "lon": -90.7587,
+      "stationKm": 7.29,
+      "w1NightMaeMph": 2.46,
+      "w1NightBiasMph": 1.29,
+      "w1NightHours": 3702
+    },
+    "Lake Tahoe|NV": {
+      "station": "TVL",
+      "lat": 38.8939,
+      "lon": -119.9953,
+      "stationKm": 4.06,
+      "w1NightMaeMph": 2.57,
+      "w1NightBiasMph": 0.32,
+      "w1NightHours": 3844
+    },
+    "Lake Taneycomo|MO": {
+      "station": "BBG",
+      "lat": 36.5321,
+      "lon": -93.2005,
+      "stationKm": 7.25,
+      "w1NightMaeMph": 2.31,
+      "w1NightBiasMph": 0.34,
+      "w1NightHours": 3081
+    },
+    "Lake Tawakoni|TX": {
+      "station": "GVT",
+      "lat": 33.0678,
+      "lon": -96.0653,
+      "stationKm": 9.16,
+      "w1NightMaeMph": 2.44,
+      "w1NightBiasMph": 0.41,
+      "w1NightHours": 3479
+    },
+    "Lake Winnebago|WI": {
+      "station": "OSH",
+      "lat": 43.9844,
+      "lon": -88.557,
+      "stationKm": 1.81,
+      "w1NightMaeMph": 2.7,
+      "w1NightBiasMph": 0.61,
+      "w1NightHours": 3894
+    },
+    "Lake Winnipesaukee|NH": {
+      "station": "LCI",
+      "lat": 43.5735,
+      "lon": -71.4215,
+      "stationKm": 1.36,
+      "w1NightMaeMph": 2.68,
+      "w1NightBiasMph": 0.66,
+      "w1NightHours": 3759
+    },
+    "Lake Zoar|CT": {
+      "station": "OXC",
+      "lat": 41.4741,
+      "lon": -73.1354,
+      "stationKm": 8.35,
+      "w1NightMaeMph": 2.58,
+      "w1NightBiasMph": 0.43,
+      "w1NightHours": 3783
+    },
+    "Lanier (Sidney Lanier)|GA": {
+      "station": "GVL",
+      "lat": 34.2719,
+      "lon": -83.8303,
+      "stationKm": 3.41,
+      "w1NightMaeMph": 2.09,
+      "w1NightBiasMph": 0.17,
+      "w1NightHours": 3684
+    },
+    "Leech Lake|MN": {
+      "station": "Y49",
+      "lat": 47.1595,
+      "lon": -94.6453,
+      "stationKm": 0.99,
+      "w1NightMaeMph": 2.17,
+      "w1NightBiasMph": -0.07,
+      "w1NightHours": 3632
+    },
+    "Lewis and Clark Lake|SD": {
+      "station": "YKN",
+      "lat": 42.9167,
+      "lon": -97.3859,
+      "stationKm": 9.75,
+      "w1NightMaeMph": 2.97,
+      "w1NightBiasMph": 0.28,
+      "w1NightHours": 3856
+    },
+    "Logan Martin|AL": {
+      "station": "PLR",
+      "lat": 33.5588,
+      "lon": -86.2491,
+      "stationKm": 1.37,
+      "w1NightMaeMph": 1.97,
+      "w1NightBiasMph": 1.45,
+      "w1NightHours": 3537
+    },
+    "Long Pond (Lakeville)|MA": {
+      "station": "TAN",
+      "lat": 41.8756,
+      "lon": -71.0211,
+      "stationKm": 8.62,
+      "w1NightMaeMph": 1.7,
+      "w1NightBiasMph": 0.26,
+      "w1NightHours": 3771
+    },
+    "Manasquan Reservoir|NJ": {
+      "station": "BLM",
+      "lat": 40.18,
+      "lon": -74.13,
+      "stationKm": 5.38,
+      "w1NightMaeMph": 2.44,
+      "w1NightBiasMph": -0.3,
+      "w1NightHours": 3194
+    },
+    "Mansfield Hollow Lake|CT": {
+      "station": "IJD",
+      "lat": 41.7419,
+      "lon": -72.1836,
+      "stationKm": 1.01,
+      "w1NightMaeMph": 2.13,
+      "w1NightBiasMph": 0.37,
+      "w1NightHours": 3859
+    },
+    "Moosehead Lake|ME": {
+      "station": "GNR",
+      "lat": 45.4622,
+      "lon": -69.5953,
+      "stationKm": 0.0,
+      "w1NightMaeMph": 2.96,
+      "w1NightBiasMph": 0.16,
+      "w1NightHours": 3823
+    },
+    "Moses Lake|WA": {
+      "station": "MWH",
+      "lat": 47.2086,
+      "lon": -119.3191,
+      "stationKm": 3.37,
+      "w1NightMaeMph": 2.56,
+      "w1NightBiasMph": 0.49,
+      "w1NightHours": 3875
+    },
+    "Mosquito Creek Lake|OH": {
+      "station": "YNG",
+      "lat": 41.2544,
+      "lon": -80.6739,
+      "stationKm": 8.69,
+      "w1NightMaeMph": 2.15,
+      "w1NightBiasMph": 0.44,
+      "w1NightHours": 3900
+    },
+    "Mullett Lake|MI": {
+      "station": "SLH",
+      "lat": 45.6537,
+      "lon": -84.5193,
+      "stationKm": 8.73,
+      "w1NightMaeMph": 2.32,
+      "w1NightBiasMph": 0.12,
+      "w1NightHours": 3833
+    },
+    "Newfound Lake|NH": {
+      "station": "1P1",
+      "lat": 43.7792,
+      "lon": -71.7537,
+      "stationKm": 8.85,
+      "w1NightMaeMph": 2.08,
+      "w1NightBiasMph": 0.12,
+      "w1NightHours": 3839
+    },
+    "Ninigret Pond|RI": {
+      "station": "WST",
+      "lat": 41.3497,
+      "lon": -71.7989,
+      "stationKm": 8.36,
+      "w1NightMaeMph": 2.89,
+      "w1NightBiasMph": 1.6,
+      "w1NightHours": 3761
+    },
+    "Norris Lake|TN": {
+      "station": "JAU",
+      "lat": 36.3341,
+      "lon": -84.163,
+      "stationKm": 1.75,
+      "w1NightMaeMph": 1.53,
+      "w1NightBiasMph": -0.22,
+      "w1NightHours": 3050
+    },
+    "Oconee|GA": {
+      "station": "CPP",
+      "lat": 33.598,
+      "lon": -83.1382,
+      "stationKm": 9.91,
+      "w1NightMaeMph": 2.03,
+      "w1NightBiasMph": -0.63,
+      "w1NightHours": 3837
+    },
+    "Okeechobee|FL": {
+      "station": "OBE",
+      "lat": 27.2628,
+      "lon": -80.8498,
+      "stationKm": 7.65,
+      "w1NightMaeMph": 2.08,
+      "w1NightBiasMph": 0.25,
+      "w1NightHours": 3823
+    },
+    "Old Hickory Lake|TN": {
+      "station": "XNX",
+      "lat": 36.3751,
+      "lon": -86.4084,
+      "stationKm": 1.83,
+      "w1NightMaeMph": 2.55,
+      "w1NightBiasMph": 1.27,
+      "w1NightHours": 2808
+    },
+    "Oneida Lake|NY": {
+      "station": "SYR",
+      "lat": 43.1112,
+      "lon": -76.1063,
+      "stationKm": 9.94,
+      "w1NightMaeMph": 2.77,
+      "w1NightBiasMph": 0.23,
+      "w1NightHours": 3904
+    },
+    "Ouachita (L. Ouachita)|AR": {
+      "station": "MWT",
+      "lat": 34.5467,
+      "lon": -93.5781,
+      "stationKm": 2.61,
+      "w1NightMaeMph": 1.19,
+      "w1NightBiasMph": 0.11,
+      "w1NightHours": 3679
+    },
+    "Patterson Lake|ND": {
+      "station": "DIK",
+      "lat": 46.7973,
+      "lon": -102.8019,
+      "stationKm": 6.94,
+      "w1NightMaeMph": 2.83,
+      "w1NightBiasMph": 0.39,
+      "w1NightHours": 3824
+    },
+    "Percy Priest Lake|TN": {
+      "station": "MQY",
+      "lat": 36.009,
+      "lon": -86.5201,
+      "stationKm": 1.28,
+      "w1NightMaeMph": 2.58,
+      "w1NightBiasMph": 0.37,
+      "w1NightHours": 3741
+    },
+    "Pontoosuc Lake|MA": {
+      "station": "PSF",
+      "lat": 42.4272,
+      "lon": -73.2892,
+      "stationKm": 7.4,
+      "w1NightMaeMph": 2.79,
+      "w1NightBiasMph": 0.06,
+      "w1NightHours": 3657
+    },
+    "Quabbin Reservoir|MA": {
+      "station": "ORE",
+      "lat": 42.5701,
+      "lon": -72.2886,
+      "stationKm": 5.23,
+      "w1NightMaeMph": 2.35,
+      "w1NightBiasMph": 0.43,
+      "w1NightHours": 3807
+    },
+    "Rainy Lake|MN": {
+      "station": "INL",
+      "lat": 48.5595,
+      "lon": -93.3956,
+      "stationKm": 6.87,
+      "w1NightMaeMph": 2.26,
+      "w1NightBiasMph": 0.4,
+      "w1NightHours": 3693
+    },
+    "Rangeley Lake|ME": {
+      "station": "8B0",
+      "lat": 44.9919,
+      "lon": -70.6646,
+      "stationKm": 2.97,
+      "w1NightMaeMph": 2.48,
+      "w1NightBiasMph": -0.23,
+      "w1NightHours": 2930
+    },
+    "Sangchris Lake|IL": {
+      "station": "TAZ",
+      "lat": 39.5342,
+      "lon": -89.3278,
+      "stationKm": 9.04,
+      "w1NightMaeMph": 2.51,
+      "w1NightBiasMph": -0.68,
+      "w1NightHours": 1975
+    },
+    "Sardis Lake|MS": {
+      "station": "UOX",
+      "lat": 34.3843,
+      "lon": -89.5368,
+      "stationKm": 9.51,
+      "w1NightMaeMph": 1.97,
+      "w1NightBiasMph": 0.07,
+      "w1NightHours": 3613
+    },
+    "Saylorville Lake|IA": {
+      "station": "IKV",
+      "lat": 41.6878,
+      "lon": -93.5695,
+      "stationKm": 8.64,
+      "w1NightMaeMph": 2.7,
+      "w1NightBiasMph": 0.18,
+      "w1NightHours": 3822
+    },
+    "Seminole|GA": {
+      "station": "BGE",
+      "lat": 30.9716,
+      "lon": -84.6369,
+      "stationKm": 8.7,
+      "w1NightMaeMph": 2.18,
+      "w1NightBiasMph": 0.46,
+      "w1NightHours": 3895
+    },
+    "Seneca Lake|NY": {
+      "station": "PEO",
+      "lat": 42.6441,
+      "lon": -77.0529,
+      "stationKm": 9.21,
+      "w1NightMaeMph": 2.67,
+      "w1NightBiasMph": 0.15,
+      "w1NightHours": 3866
+    },
+    "South Holston Lake|VA": {
+      "station": "VJI",
+      "lat": 36.6871,
+      "lon": -82.0333,
+      "stationKm": 7.63,
+      "w1NightMaeMph": 2.56,
+      "w1NightBiasMph": 0.42,
+      "w1NightHours": 3835
+    },
+    "Sutton Lake|WV": {
+      "station": "48I",
+      "lat": 38.687,
+      "lon": -80.6518,
+      "stationKm": 1.23,
+      "w1NightMaeMph": 1.62,
+      "w1NightBiasMph": 1.04,
+      "w1NightHours": 3755
+    },
+    "Table Rock Lake|MO": {
+      "station": "FWB",
+      "lat": 36.6985,
+      "lon": -93.4022,
+      "stationKm": 3.23,
+      "w1NightMaeMph": 2.36,
+      "w1NightBiasMph": -0.06,
+      "w1NightHours": 3865
+    },
+    "Tims Ford Lake|TN": {
+      "station": "BGF",
+      "lat": 35.1775,
+      "lon": -86.0662,
+      "stationKm": 4.57,
+      "w1NightMaeMph": 2.03,
+      "w1NightBiasMph": -0.42,
+      "w1NightHours": 2187
+    },
+    "Tippecanoe Lake|IN": {
+      "station": "ASW",
+      "lat": 41.2747,
+      "lon": -85.8401,
+      "stationKm": 6.64,
+      "w1NightMaeMph": 2.42,
+      "w1NightBiasMph": 0.3,
+      "w1NightHours": 3805
+    },
+    "Tohopekaliga (Toho)|FL": {
+      "station": "ISM",
+      "lat": 28.29,
+      "lon": -81.44,
+      "stationKm": 2.8,
+      "w1NightMaeMph": 2.17,
+      "w1NightBiasMph": 0.61,
+      "w1NightHours": 3870
+    },
+    "Torch Lake|MI": {
+      "station": "ACB",
+      "lat": 44.9886,
+      "lon": -85.1984,
+      "stationKm": 6.84,
+      "w1NightMaeMph": 1.56,
+      "w1NightBiasMph": 0.27,
+      "w1NightHours": 3806
+    },
+    "Trinity|CA": {
+      "station": "O86",
+      "lat": 40.9828,
+      "lon": -122.6937,
+      "stationKm": 0.17,
+      "w1NightMaeMph": 2.7,
+      "w1NightBiasMph": -1.21,
+      "w1NightHours": 3846
+    },
+    "Truman Lake|MO": {
+      "station": "GLY",
+      "lat": 38.3566,
+      "lon": -93.6842,
+      "stationKm": 4.59,
+      "w1NightMaeMph": 2.43,
+      "w1NightBiasMph": 0.05,
+      "w1NightHours": 3784
+    },
+    "Wagamons Pond|DE": {
+      "station": "GED",
+      "lat": 38.6892,
+      "lon": -75.3589,
+      "stationKm": 9.83,
+      "w1NightMaeMph": 2.44,
+      "w1NightBiasMph": 0.24,
+      "w1NightHours": 3625
+    },
+    "Walker Lake|NV": {
+      "station": "HTH",
+      "lat": 38.5448,
+      "lon": -118.6315,
+      "stationKm": 9.36,
+      "w1NightMaeMph": 3.3,
+      "w1NightBiasMph": -0.55,
+      "w1NightHours": 3192
+    },
+    "Wallowa Lake|OR": {
+      "station": "JSY",
+      "lat": 45.3595,
+      "lon": -117.2538,
+      "stationKm": 3.63,
+      "w1NightMaeMph": 2.68,
+      "w1NightBiasMph": 0.66,
+      "w1NightHours": 3818
+    },
+    "Walter F. George / Eufaula|GA": {
+      "station": "EUF",
+      "lat": 31.9513,
+      "lon": -85.1289,
+      "stationKm": 2.16,
+      "w1NightMaeMph": 1.61,
+      "w1NightBiasMph": -0.04,
+      "w1NightHours": 3937
+    },
+    "Washoe Lake|NV": {
+      "station": "CXP",
+      "lat": 39.1923,
+      "lon": -119.7326,
+      "stationKm": 5.91,
+      "w1NightMaeMph": 2.46,
+      "w1NightBiasMph": 0.24,
+      "w1NightHours": 3832
+    },
+    "Watts Bar Lake|TN": {
+      "station": "RKW",
+      "lat": 35.9223,
+      "lon": -84.6897,
+      "stationKm": 8.05,
+      "w1NightMaeMph": 2.25,
+      "w1NightBiasMph": -0.47,
+      "w1NightHours": 3754
+    },
+    "West Point|GA": {
+      "station": "LGC",
+      "lat": 33.0089,
+      "lon": -85.0726,
+      "stationKm": 4.21,
+      "w1NightMaeMph": 1.88,
+      "w1NightBiasMph": 1.1,
+      "w1NightHours": 3420
+    },
+    "Winnapaug Pond|RI": {
+      "station": "WST",
+      "lat": 41.3497,
+      "lon": -71.7989,
+      "stationKm": 1.62,
+      "w1NightMaeMph": 2.89,
+      "w1NightBiasMph": 1.6,
+      "w1NightHours": 3761
+    },
+    "Yellow Creek Lake|PA": {
+      "station": "IDI",
+      "lat": 40.6322,
+      "lon": -79.1055,
+      "stationKm": 6.42,
+      "w1NightMaeMph": 2.6,
+      "w1NightBiasMph": 0.26,
+      "w1NightHours": 3606
+    },
+    "Yellowstone Lake|WY": {
+      "station": "P60",
+      "lat": 44.5444,
+      "lon": -110.4211,
+      "stationKm": 0.21,
+      "w1NightMaeMph": 1.85,
+      "w1NightBiasMph": 0.18,
+      "w1NightHours": 3709
+    },
+    "Youghiogheny River Lake|MD": {
+      "station": "2G4",
+      "lat": 39.5803,
+      "lon": -79.3394,
+      "stationKm": 7.57,
+      "w1NightMaeMph": 2.68,
+      "w1NightBiasMph": 0.19,
+      "w1NightHours": 3708
+    }
+  }
+}

@@ -78,6 +78,16 @@ enum USGSWaterData {
     static func recentSeries(west: Double, south: Double, east: Double, north: Double,
                              parameterCodes: String, lookback: String,
                              timeout: TimeInterval) async throws -> [USGSSeries] {
+        try await recentSeriesChecked(west: west, south: south, east: east, north: north,
+                                      parameterCodes: parameterCodes, lookback: lookback, timeout: timeout).series
+    }
+
+    /// `recentSeries` plus whether its decoration is complete (Sector_Ops #51 F4 review): `false` when the names or
+    /// sensor-metadata lookup failed or was cancelled, so the series carry placeholder names or no Primary-sensor pick.
+    /// A caller that caches the answer skips an incomplete one.
+    static func recentSeriesChecked(west: Double, south: Double, east: Double, north: Double,
+                                    parameterCodes: String, lookback: String,
+                                    timeout: TimeInterval) async throws -> (series: [USGSSeries], complete: Bool) {
         var url: URL? = continuousURL(west: west, south: south, east: east, north: north,
                                       parameterCodes: parameterCodes, lookback: lookback)
         var observations: [Observation] = []
@@ -104,7 +114,8 @@ enum USGSWaterData {
         async let newMeta = seriesMetadata(missingMeta, timeout: timeout)
         let names = await cache.addNames(await newNames)
         let meta = await cache.addMeta(await newMeta)
-        return assemble(grouped, names: names, metadata: meta)
+        let complete = grouped.allSatisfy { names[$0.siteCode] != nil } && missingMeta.allSatisfy { meta[$0] != nil }
+        return (assemble(grouped, names: names, metadata: meta), complete)
     }
 
     private actor Cache {

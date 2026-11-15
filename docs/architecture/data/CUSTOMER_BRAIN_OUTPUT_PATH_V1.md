@@ -108,3 +108,74 @@ the full internal record at the customer boundary.
 - Which screen shows the level, and its wording beyond the chip and the limitation line.
 - Any other Brain's customer path. Each follows this pattern with its own copy and eligibility rule.
 - The registry's `customerIntegrationMode` for Lake. It changes only when the output is turned on.
+
+## 8. Conditions consolidation copies (Sector_Ops #53, spec §5)
+Four more CUSTOMER-lane copies follow §3 and §6 exactly: a pure Publisher planner per copy (Brain-side gates; `status: UNKNOWN`
+written once over a copy that stops passing) and a read-only Engine reader per copy (every gate fails closed to UNKNOWN with a
+reason; freshness checked again on every request). Each Publisher writer also sits behind its own env switch, **default off**.
+Nothing is wired: no writer is called by the LivePublisher, no reader is called by `/conditions`, and there is no reader identity.
+Review fixes (#144): a switch turned off withdraws every live copy once with `status: UNKNOWN` (reason `NOT_ENABLED`); a source time more
+than 10 minutes in the future is refused by writers and readers; clarity freshness is `min(freshUntil, evaluationTime + staleAfterHours)`
+so a new run cannot make an old evaluation look fresh; a generation binding is `STALE` 30 days after its review time.
+
+| Copy | Schema | Publisher writer (switch) | Source | Engine reader |
+|---|---|---|---|---|
+| `/customer/lakes/{k}/clarity` | `sector-customer-clarity-v1` | `customer_clarity.py` (`PUBLISHER_CUSTOMER_CLARITY=1`) | Water Clarity state; observed → AVAILABLE, modeled → ESTIMATE; `observedAt` = the state's `evaluationTime` | `ClarityBrainOutputAPI` → `clarityBrain` |
+| `/customer/lakes/{k}/waterTemp` | `sector-customer-water-temp-v1` | `customer_water_temp.py` (`PUBLISHER_CUSTOMER_WATER_TEMP=1`) | Water Temp state; `measured` only; `freshUntil` = `lastObservationAt` + the Brain's `staleAfterHours` | `WaterTempBrainOutputAPI` → `waterTempBrain` |
+| `/customer/lakes/{k}/generationBinding` | `sector-customer-generation-binding-v1` | `customer_generation_binding.py` (`PUBLISHER_CUSTOMER_GENERATION_BINDING=1`) | Lake reviewed bindings contract, proposed `damBinding` per record | `GenerationBindingOutputAPI` |
+| `/customer/wind/outlookModel` | `sector-customer-wind-outlook-model-v1` | `customer_wind_outlook_model.py` (`PUBLISHER_CUSTOMER_WIND_MODEL=1`) | Wind `activeProductionModel.outlookModel` (proposed); stale after 14 days | `WindOutlookModelOutputAPI` |
+
+Gaps (each needs the owning Brain, then the owner):
+- **Water Temp modeled lakes** carry no source observation time, so they get no copy (`NO_OBSERVATION_TIME`); the spec's
+  `kind: modeled` ESTIMATE needs the Brain to publish the model's valid time.
+- **Lake dam bindings** are not published. `reviewed-lake-bindings-v1` binds lakes to pool-level sources, not to a generating dam,
+  so every lake gets `NO_DAM_BINDING` and the Engine keeps `TailwaterRegistry`.
+- **Wind outlook decision** is not published, so the writer writes nothing (`NO_PUBLICATION`) and the Engine keeps the env path.
+
+Registered as `PLACEHOLDER` in `publisher/paths.py` (`CUSTOMER_COPY_FAMILIES`) and the path ownership matrix. Client rules: proposed in
+`platform/security/rtdb.rules.customer-copies.PROPOSED.json` (deny every client, as today), not applied.
+
+## 9. `GET /lakes/ready`: which lakes have Brain data (Sector_Engine #156, #158)
+The app's lake picker (iOS_Sector #227) lists only **ready** lakes. The app may not read the Brain database, and `/conditions`
+answers for any coordinate, so the Engine serves the list from the same CUSTOMER-lane copies (`LakesReadyAPI.swift`).
+
+- **Route:** `GET /lakes/ready`, registered only where `SECTOR_LAKES_READY_OUTPUT=1`. Off by default: no route, `404`, as
+  `/lake/level`.
+- **Reads:** one read of `customer/lakes` through the configured `BrainOutputReader` (`SECTOR_BRAIN_OUTPUT_READER`; none by default,
+  5 s bound for the subtree), parsed once and cached 60 s; a failed read is not cached. The subtree also carries the
+  `generationBinding` copies (customer lane), which are not parsed. Each directory lake's `clarity`, `waterTemp` and `level` copies are then evaluated by their own readers (§2, §8) against
+  that snapshot, which refuses every path other than `customer/lakes/{k}/{clarity|waterTemp|level}`. Never `/lakes/*/states` or
+  `/brains/*`. One subtree read replaces ~1,900 per-copy reads per request; freshness is still checked on every request.
+- **Ready rule:** a layer is ready when its reader returns `AVAILABLE` (served as `LIVE`) or `ESTIMATE`; `/lakes/ready` also
+  requires every layer's source time (level included, whose own reader has no such bound) to be no more than 10 minutes ahead; a lake is listed when at least one layer is ready. `level` also needs gates 5 and 6 (§3). No reader, no
+  copies or a failed read give `200` with `lakes: []`: the app shows "no lakes yet".
+- **Values, ids and extent (#158, contract 1.1.0, additive):** each ready layer carries its lake-wide value from the same copy
+  (`clarity.valueFt` = `centralFt`, with `lowFt`/`highFt` when published; `waterTemp.valueF`); a copy without a finite value is
+  already not ready (`NO_VALUE`), so a value never appears without its status and `asOf`. `level` stays readiness only. Each lake
+  carries `directoryId` (the app's `Name|ST`, equal to `lakeId`) next to `brainKey` (the lossy RTDB key). `extent.bbox` comes from
+  the public Lake Registry index (`registry/lakes.v1.json`, docs/brains/LAKE_REGISTRY_GEOMETRY_CONTRACT.md;
+  `LakeRegistryExtents.swift`): lake geometry identity, not a Brain output, read without a credential, fetched at most every
+  30 min with the snapshot, and given only for a published shoreline at HIGH or MEDIUM confidence whose point is not
+  `identity-risk`. A failed registry read serves the last good index (with none, no `extent`), never drops a lake; an extent never makes a lake ready.
+- **Wind (1.2.0, Engine-computed):** wind has no per-lake copy (its only copy is the global `customer/wind/outlookModel`, a model
+  choice). Under the owner approval on Sector_Ops #51 (2026-11-11), the Engine computes it for each LISTED lake from its own
+  Open-Meteo forecast path (`best_match`, the Wind Brain's tonight model) at one point per lake (the `extent.bbox` centre, else
+  the centroid), labeled `ESTIMATE`: `speedMph`, `fromDeg` (the direction it blows FROM), `asOf` (the current UTC hour) and
+  `hourly` (that hour and the next 12). It is the one layer that is not a copy, and it never makes a lake ready
+  (`LakeWind.swift`; one multi-location request for all due points, 30 min per point, 4 s request budget).
+- **Layer without a copy:** `intelligence` (no copy; its publication contract stops at CALIBRATION). Never emitted; a later
+  per-lake copy adds it as a new layer with its own value fields (additive).
+- **Shape and contract:** `contracts/phone/lakes-ready-v1.json`, golden `verification/fixtures/phone-contract/lakes-ready-v1.golden.json`
+  (synthetic), checked by `LakesReadyAPITests` and `verification/test_lakes_ready_contract.py`.
+
+```json
+{"version":1,"generatedAt":"2026-11-10T15:30:00Z","lakes":[
+  {"lakeId":"Berlin Lake|OH","directoryId":"Berlin Lake|OH","brainKey":"Berlin_Lake_OH","name":"Berlin Lake",
+   "centroid":{"lat":41.03,"lon":-81.0},
+   "extent":{"bbox":{"west":-81.08,"south":40.98,"east":-80.95,"north":41.07},"confidence":"HIGH"},
+   "layers":{"clarity":{"status":"LIVE","asOf":"2026-11-10T14:00:00Z","valueFt":2.0,"lowFt":1.0,"highFt":3.0},
+             "level":{"status":"LIVE","asOf":"2026-11-10T15:00:00Z"}}}]}
+```
+
+Turning it on needs the owner, in addition to §5: `SECTOR_LAKES_READY_OUTPUT=1` on a deploy, the reader env and its IAM read grant,
+and the Publisher copy switches (`PUBLISHER_CUSTOMER_*`). Nothing in this build sets any of them.

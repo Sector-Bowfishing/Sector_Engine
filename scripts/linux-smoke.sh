@@ -13,6 +13,8 @@
 #
 #   ./scripts/linux-smoke.sh              build, run, check (exit 1 on failure)
 #   SMOKE_PORT=8093 IMAGE=… ./scripts/linux-smoke.sh
+#   SMOKE_SKIP_BUILD=1 IMAGE=<built image> ./scripts/linux-smoke.sh
+#                                         test an image that is already built (deploy.sh IMAGE= mode, the deploy workflow)
 #
 # Upstream feeds can be down (Open-Meteo black-holes from some networks), so a
 # /conditions 503 counts as an answer; a dead container, a dropped
@@ -31,9 +33,14 @@ if ! docker info >/dev/null 2>&1; then
   exit 2
 fi
 
-echo "▶ building the Cloud Run image on Linux ($IMAGE)"
-if ! docker build -q -t "$IMAGE" . >/dev/null; then
-  echo "✗ docker build failed" >&2; exit 1
+if [[ "${SMOKE_SKIP_BUILD:-0}" == "1" ]]; then
+  echo "▶ testing the prebuilt image ($IMAGE)"
+  docker image inspect "$IMAGE" >/dev/null 2>&1 || { echo "✗ image $IMAGE is not present locally" >&2; exit 1; }
+else
+  echo "▶ building the Cloud Run image on Linux ($IMAGE)"
+  if ! docker build -q -t "$IMAGE" . >/dev/null; then
+    echo "✗ docker build failed" >&2; exit 1
+  fi
 fi
 docker run -d --name "$NAME" -p "$PORT:8080" -e SECTOR_STAGE2_ROUTES=1 -e SECTOR_CURRENT_CLARITY_ROUTES=1 "$IMAGE" >/dev/null
 trap 'docker rm -f "$NAME" >/dev/null 2>&1' EXIT

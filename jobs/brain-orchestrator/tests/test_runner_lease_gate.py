@@ -22,7 +22,7 @@ PULSE = {**CLOUD, "primary": {"wind": "pulse"}}
 ARGV = ["--runner-leases", "--artifact-store-dir", "x"]
 
 
-def run(world, monkeypatch, argv, policy=CLOUD, store=None, lease_holder=None):
+def run(world, monkeypatch, argv, policy=CLOUD, store=None, lease_holder=None, ctl_edit=None):
     setup, calls = world
     store = store if store is not None else MemoryObjectStore()
     monkeypatch.setattr(OR, "build_publication_store", lambda d, b=None: store if (d or b) else None)
@@ -31,6 +31,8 @@ def run(world, monkeypatch, argv, policy=CLOUD, store=None, lease_holder=None):
         RL.grant(RL.orchestrator_view(store), {**policy, "primary": {"wind": lease_holder}}, "wind", lease_holder, "c0", dt.datetime.now(dt.timezone.utc))
     ctl = enabled_control()
     ctl["brains"]["water-temp"]["enabled"] = False                           # same world as test_enabled_runs_only_due_and_enabled_brains: only Wind is due
+    if ctl_edit:
+        ctl_edit(ctl)
     t = stale_world(ctl)
     t["brains"]["water-clarity"]["lastSuccessfulRun"] = ago(1)
     t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(1)
@@ -62,6 +64,21 @@ def test_pulse_primary_is_granted_the_lease_and_never_started_in_the_cloud(world
     assert lease["holder"] == "pulse" and lease["grantedBy"] == "orchestrator"
     assert "wind" not in run(world, monkeypatch, ARGV, policy=PULSE, store=store)
     assert "CYCLE_IN_PROGRESS:pulse" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("edit, why", [
+    (lambda c: c["brains"]["wind"].update(enabled=False), "wind is not enabled in the execution control"),
+    (lambda c: c["brains"].pop("wind"), "wind is not enabled in the execution control"),
+    (lambda c: c.update(state="PAUSED", reason="owner pause"), "global execution control is PAUSED"),
+])
+def test_a_pulse_primary_brain_not_enabled_in_the_execution_control_is_held_and_never_granted(world, monkeypatch, capsys, edit, why):
+    """The invariant the Lake flip (Sector_Ops #51, 2026-11-12) relies on: EC.gate runs before grant_to_primary, so a Pulse-primary Brain that the
+    owner has not enabled (or a PAUSED control) gets no lease and no cloud start."""
+    store = MemoryObjectStore()
+    assert "wind" not in run(world, monkeypatch, ARGV, policy=PULSE, store=store, ctl_edit=edit)
+    out = capsys.readouterr().out
+    assert "LEASE wind" not in out and RL.read(store, "wind")[0] is None
+    assert why in out
 
 
 def test_dry_run_grants_nothing(world, monkeypatch, capsys):
@@ -168,3 +185,20 @@ def test_a_recent_grant_is_not_repeated_and_counts_against_the_daily_cap(world, 
     assert "wind" not in run(world, monkeypatch, ARGV, policy=PULSE, store=store)
     assert "GRANTED_RECENTLY:pulse" in capsys.readouterr().out
     assert OR.runner_grants_today(type("A", (), {"artifact_store_dir": "x", "artifact_bucket": None})(), "wind", dt.datetime.now(dt.timezone.utc)) == 1
+
+
+def test_regrant_cooldown_reads_the_staleness_window_from_the_control_manifest():
+    """Sector_Ops #51 prep: the control manifest keeps staleAfterHours under `freshness`. Reading it at the top level gave every Brain the 6 h default, so
+    Water Clarity (26 h) would have been granted up to four cycles a day while nothing was published."""
+    man = OR.O.load_manifest()
+    assert OR.regrant_cooldown_minutes(man, "water-clarity") == 26 * 60
+    assert OR.regrant_cooldown_minutes(man, "lake-brain") == 26 * 60
+    assert OR.regrant_cooldown_minutes(man, "water-temp") == 6 * 60
+    assert OR.regrant_cooldown_minutes(man, "wind") == 90                                      # 1.5 h, above the 20 min lease TTL
+
+
+def test_regrant_cooldown_defaults_and_floor():
+    assert OR.regrant_cooldown_minutes({"brains": {"x": {}}}, "x") == 360                     # no window: 6 h
+    assert OR.regrant_cooldown_minutes({"brains": {}}, "missing") == 360
+    assert OR.regrant_cooldown_minutes({"brains": {"x": {"staleAfterHours": 3}}}, "x") == 180   # a top-level value is still honoured
+    assert OR.regrant_cooldown_minutes({"brains": {"x": {"freshness": {"staleAfterHours": 0.1}}}}, "x") == RL.DEFAULT_TTL_MINUTES   # never below the lease TTL

@@ -9,3 +9,7 @@ __pycache__/
 
 # Claude Code machine-local settings (Rehtac Cortex activation; never commit)
 .claude/settings.local.json
+
+# google-github-actions/auth writes its short-lived credentials file into the workspace (deploy workflows); never commit it,
+# and deploy.sh's clean-tree gate must not count it
+gha-creds-*.json

@@ -9,6 +9,7 @@ import intelligence_support as S
 import run
 import sector_intelligence_brain as sib
 import test_sector_intelligence_brain as T
+from sector_brain_platform.publisher.canonical import sha256_ref
 from sector_brain_platform.publisher.storage import LocalDirObjectStore
 
 
@@ -75,3 +76,45 @@ def test_a_built_artifact_declares_the_packaged_release_and_the_resolver_accepts
     approved = S.release().get("approvalStatus") == "APPROVED"
     assert approved is False                                                                # NOT_RECORDED today: the owner records it (SI-A5)
     assert PackagedReleaseResolver(runtime, "sector-intelligence", require_approved=True)(*declared) is False
+
+
+def test_emit_writes_exactly_the_stored_artifact_create_only(tmp_path):
+    """SI-A5: Pulse's lease jobs hand off {out}/artifact.json; --emit writes exactly the stored artifact there, create-only."""
+    store, emit = LocalDirObjectStore(tmp_path / "store"), tmp_path / "artifact.json"
+    ref = run.seal_and_store(S.run_updates(), now=S.NOW, release=S.release(), consumed=None, store=store, execution_id=S.uid(8), emit=str(emit))
+    assert emit.read_bytes() == store.get(ref["location"])                                     # the same BYTES, not just the same JSON
+    assert sha256_ref(emit.read_bytes()) == ref["sha256"]
+    with pytest.raises(FileExistsError):
+        run.seal_and_store(S.run_updates(), now=S.NOW, release=S.release(), consumed=None, store=LocalDirObjectStore(tmp_path / "s2"), emit=str(emit))
+
+
+def test_without_emit_nothing_local_is_written(tmp_path):
+    store = LocalDirObjectStore(tmp_path / "store")
+    run.seal_and_store(S.run_updates(), now=S.NOW, release=S.release(), consumed=None, store=store, execution_id=S.uid(9))
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["store"]
+
+
+@pytest.mark.parametrize("args", [["--dry-run", "--emit", "X/artifact.json"],                              # without --artifact
+                                  ["--artifact", "--artifact-dir", "D", "--emit", "gs://b/artifact.json"]])  # not local
+def test_emit_is_refused_before_anything_is_read(args, capsys, monkeypatch, tmp_path):
+    monkeypatch.delenv("SI_ARTIFACT_BUCKET", raising=False)
+    monkeypatch.chdir(tmp_path)
+    assert run.main(args) == 2
+    assert "--emit needs --artifact and a new LOCAL file" in capsys.readouterr().err
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_emit_refuses_an_existing_file(capsys, monkeypatch, tmp_path):
+    monkeypatch.delenv("SI_ARTIFACT_BUCKET", raising=False)
+    (tmp_path / "artifact.json").write_text("{}")
+    assert run.main(["--artifact", "--artifact-dir", str(tmp_path / "d"), "--emit", str(tmp_path / "artifact.json")]) == 2
+    assert (tmp_path / "artifact.json").read_text() == "{}" and not (tmp_path / "d").exists()
+
+
+@pytest.mark.parametrize("flag", ["--emit", "--emit-decision"])
+def test_a_hand_off_into_a_missing_folder_is_refused_before_anything_is_stored(flag, capsys, monkeypatch, tmp_path):
+    """#172 review: a missing parent folder used to crash AFTER the artifact was stored, leaving no hand-off; now nothing starts."""
+    monkeypatch.delenv("SI_ARTIFACT_BUCKET", raising=False)
+    assert run.main(["--artifact", "--artifact-dir", str(tmp_path / "d"), flag, str(tmp_path / "missing" / "out.json")]) == 2
+    assert "a new LOCAL file" in capsys.readouterr().err
+    assert sorted(p.name for p in tmp_path.iterdir()) == []

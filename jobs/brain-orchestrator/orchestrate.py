@@ -46,12 +46,14 @@ from sector_brain_platform import gcp                                           
 from sector_brain_platform import orchestration as O, control_state as CS, consumption as CN, publication_trigger as PT                          # noqa: E402
 from sector_brain_platform import brain_operations as BOPS                                                            # noqa: E402
 from sector_brain_platform import execution_control as EC                                                            # noqa: E402
+from sector_brain_platform import cycle_watchdog as WD                                                                # noqa: E402
 from sector_brain_platform import engineering_status_publication as ESP                                                # noqa: E402
 from sector_brain_platform import shadow_lane as SL                                                                   # noqa: E402
 from sector_brain_platform import data_ownership as DO, publication_stage as PS, health_mirror as HM                                       # noqa: E402
 from sector_brain_platform import runner_lease as RL                                                                  # noqa: E402
 sys.path.insert(0, HERE)
 import control_plane as CP                                                                                            # noqa: E402
+import conditions_sources as CSP                                                                                    # noqa: E402
 
 WRITER = "brain-platform"
 JOB_NAME = "brain-orchestrator"
@@ -324,6 +326,23 @@ def score_cmd(env=None) -> list[str]:
     return cmd
 
 
+def _runner_policy_or_none() -> dict | None:
+    """The reviewed runner policy (runner-policy.json), or None when unreadable (the conditions-sources projection then says runner unknown)."""
+    try:
+        return RL.load_policy()
+    except Exception:                                            # noqa: BLE001
+        return None
+
+
+def _fresh_lease_holder(a, brain_id: str, now: dt.datetime) -> str | None:
+    """Holder of a Brain's unexpired runner lease (read-only), or None: no artifact store configured, no lease, an expired lease, or unreadable."""
+    store = build_publication_store(a.artifact_store_dir, a.artifact_bucket)
+    if store is None:
+        return None
+    lease, _ = RL.read(RL.orchestrator_view(store), brain_id)
+    return (lease or {}).get("holder") if RL.fresh(lease, now) else None
+
+
 def build_publication_store(directory: str | None, bucket: str | None = None):
     """The artifact store the publication stage uses: the private GCS bucket (PUBLICATION_ARTIFACT_BUCKET; the stage wraps it in the Orchestrator's least-privilege view and IAM
     enforces the same) or a local directory for review. None = not configured."""
@@ -379,7 +398,8 @@ def runner_grants_today(a, brain_id: str, now: dt.datetime) -> int:
 
 def regrant_cooldown_minutes(manifest: dict, brain_id: str) -> int:
     """A runner is granted a new cycle at most once per the Brain's staleness window (TIME Brains), else every 6 h, never more often than the lease TTL."""
-    hours = ((manifest.get("brains") or {}).get(brain_id) or {}).get("staleAfterHours") or 6
+    b = (manifest.get("brains") or {}).get(brain_id) or {}
+    hours = (b.get("freshness") or {}).get("staleAfterHours") or b.get("staleAfterHours") or 6   # the control manifest keeps it under freshness
     return max(RL.DEFAULT_TTL_MINUTES, int(float(hours) * 60))
 
 
@@ -473,6 +493,55 @@ def start_publisher_if_needed(handoff: dict, executions: dict, tokens: TokenProv
     except Exception as e:                                       # noqa: BLE001 - recorded; the requests stay pending for the next cycle
         return {"started": False, "reason": f"START_FAILED:{type(e).__name__}", "detail": str(e)[:200]}
     return {"started": True, "execution": (op.get("metadata") or {}).get("name"), "at": iso(dt.datetime.now(dt.timezone.utc))}
+
+
+def watchdog_stage(a, executions: dict, ctl: dict, tokens: TokenProvider, now: dt.datetime, write: bool) -> dict:
+    """Sector_Ops #51: the O6.3 halt conditions, checked by the cycle itself. -> {hold, why}. A trip latches HALTED in the bucket and tries to
+    pause this job's own Cloud Scheduler trigger; the latch holds every later cycle until the owner clears it (tools/ops/watchdog.py). Prints
+    one `[watchdog] ...` line per cycle; the owner's alert matches `[watchdog] HALT ` (a new trip) and `[watchdog] UNREADABLE`."""
+    try:
+        pol = WD.load_policy()
+    except Exception as e:                                       # noqa: BLE001 - an unreadable reviewed policy is never a silent pass
+        print(f"[watchdog] UNREADABLE policy ({type(e).__name__}): holding this cycle", flush=True)
+        return {"hold": True, "why": "watchdog policy unreadable"}
+    if not pol.get("enabled") or a.local_mode or a.health_only:
+        return {"hold": False, "why": ""}
+    store = build_publication_store(a.artifact_store_dir, a.artifact_bucket)
+    if store is None:
+        print("[watchdog] SKIPPED: no artifact store configured", flush=True)
+        return {"hold": False, "why": ""}
+    try:
+        latch = WD.read_latch(store)
+    except Exception as e:                                       # noqa: BLE001
+        print(f"[watchdog] UNREADABLE latch ({type(e).__name__}): holding this cycle", flush=True)
+        return {"hold": True, "why": "watchdog latch unreadable"}
+    if latch is not None and not isinstance(latch, dict):
+        print("[watchdog] UNREADABLE latch (not a document): holding this cycle", flush=True)
+        return {"hold": True, "why": "watchdog latch malformed"}
+    if WD.is_halted(latch):
+        kinds = sorted({t.get("kind") for t in latch.get("trips") or []})
+        print(f"[watchdog] HALTED since {latch.get('at')} ({', '.join(kinds)}); only the owner clears it (tools/ops/watchdog.py clear)", flush=True)
+        return {"hold": True, "why": f"watchdog HALTED since {latch.get('at')}"}
+    res = WD.evaluate(pol, store=store, executions=executions, control=ctl, now=now, latch=latch)
+    print(WD.log_line(res), flush=True)
+    if res.tripped:
+        real = [t for t in res.trips if t.kind != "CHECK_FAILED"]
+        pause = "NOT_ATTEMPTED (dry run)"
+        if write and not a.dry_run:
+            try:
+                gcp.pause_scheduler_job(tokens, pol.get("pauseSchedulerJob") or JOB_NAME)
+                pause = "PAUSED"
+            except Exception as e:                               # noqa: BLE001 - the latch still holds every cycle
+                pause = f"FAILED: {str(e)[:160]}"
+            try:
+                WD.write_halt(store, real, cycle=f"orchestrator-{iso(now)}", now=now, scheduler_pause=pause)
+            except Exception as e:                               # noqa: BLE001 - this cycle still holds; the next one re-evaluates
+                print(f"[watchdog] latch write FAILED ({type(e).__name__}): this cycle holds, the next one re-checks", flush=True)
+        print(f"[watchdog] scheduler pause: {pause}", flush=True)
+        return {"hold": True, "why": f"watchdog tripped: {real[0].kind}"}
+    if res.unreadable:
+        return {"hold": True, "why": "watchdog could not read every check"}
+    return {"hold": False, "why": ""}
 
 
 def gate_dispatch(todo: set, deferred: list) -> set:
@@ -593,6 +662,17 @@ def main(argv=None) -> int:
         a.no_execute = True
         auto_ok, auto_why = False, f"another orchestrator cycle is running ({others[0]}): this cycle starts nothing"
         print(f"overlap guard: {auto_why}", flush=True)
+
+    # 1b. the cycle watchdog (Sector_Ops #51, O6.3 moved into the system): a latched halt, a new trip or an unreadable check holds this cycle
+    #     exactly like the overlap guard (nothing granted, started or handed to the Publisher)
+    try:
+        wd = watchdog_stage(a, executions, ctl, tokens, now, write)
+    except Exception as e:                                       # noqa: BLE001 - review of #141: the watchdog never crashes the cycle; it holds
+        print(f"[watchdog] UNREADABLE (watchdog error {type(e).__name__}): holding this cycle", flush=True)
+        wd = {"hold": True, "why": "watchdog error"}
+    if wd["hold"]:
+        a.no_execute = True
+        auto_ok, auto_why = False, wd["why"]
 
     # 2. plan: the decision model (engine mode, active/parked, dependencies, material change) says what MAY run; the legacy TIME/plan logic only
     #    describes what is stale. Parked Brains are not even asked for a plan (a plan can cost provider/Engine calls).
@@ -870,6 +950,17 @@ def main(argv=None) -> int:
                   f" @ {es_doc['generatedFrom']['sourceCommit'][:12]}") + ("" if a.publish_engineering_status and not a.health_only else " (not published)"))
         except Exception as e:                                   # never breaks the cycle
             print(f"engineering status: FAILED {e!r}", file=sys.stderr)
+
+    # 5e. conditions sources for Sector Ops (sector-conditions-sources-v1 at control/conditionsSourcesV1, Sector_Ops #53 spec §7). Only with env
+    #     CONDITIONS_SOURCES_PROJECTION=1 (default OFF: nothing is probed, read or written); at most every 15 min; never with --health-only or
+    #     --control-only (their write sets stay what they are). Probes the Engine's GET /conditions read-only; a failed probe never breaks the cycle.
+    if CSP.enabled() and not a.health_only and not a.control_only:
+        try:
+            csp = CSP.stage(live, db, now, write=write, dry_run=a.dry_run, brains=brains, policy=_runner_policy_or_none(),
+                            lease_holder=lambda b: _fresh_lease_holder(a, b, now))
+            print(f"conditions sources: {json.dumps(csp, sort_keys=True)}", flush=True)
+        except Exception as e:                                   # never breaks the cycle
+            print(f"conditions sources: FAILED {e!r}", file=sys.stderr)
 
     # 6. record
     record = {"version": "orchestrator-v1", "lastRunAt": iso(now), "durationMs": int((time.time() - t0) * 1000),

@@ -31,7 +31,7 @@ print("  ", (raw or {}).get("state"), "approvalRef", (raw or {}).get("approvalRe
 sys.exit(0 if ok else 1)
 EOF
 echo "▶ 2. schedule audit"
-python3 "$ROOT/jobs/brain-orchestrator/check_preproduction_schedules.py" || { echo "refusing: schedule audit failed"; exit 1; }
+CLOUDSDK_CORE_PROJECT="$PROJECT_ID" REGION="$REGION" python3 "$ROOT/jobs/brain-orchestrator/check_preproduction_schedules.py" || { echo "refusing: schedule audit failed"; exit 1; }
 if gcloud scheduler jobs list --location "$REGION" --project "$PROJECT_ID" --format='value(name.basename(),state)' | grep -E '^(wind-hourly|lake-brain-ledger-daily)\s+ENABLED'; then
   echo "refusing: a deprecated per-Brain scheduler is ENABLED"; exit 1
 fi

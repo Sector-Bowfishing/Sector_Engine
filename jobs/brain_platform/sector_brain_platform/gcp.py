@@ -53,6 +53,11 @@ def _call(method: str, url: str, tokens: TokenProvider, body: dict | None = None
         raise GcpError(f"{method} {url.split('?')[0]}: {e}") from e
 
 
+def pause_scheduler_job(tokens: TokenProvider, job: str, project: str = PROJECT, region: str = REGION) -> dict:
+    """Pause one Cloud Scheduler job (the cycle watchdog pausing its own trigger, Sector_Ops #51). Needs cloudscheduler.jobs.pause."""
+    return _call("POST", f"{SCHEDULER_V1}/projects/{project}/locations/{region}/jobs/{job}:pause", tokens, body={})
+
+
 def list_scheduler_jobs(tokens: TokenProvider, project: str = PROJECT, region: str = REGION) -> list[dict]:
     out, token = [], None
     while True:

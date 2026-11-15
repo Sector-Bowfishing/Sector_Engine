@@ -1,7 +1,15 @@
 {
   "schema": "sector-publication-cutover-v1",
-  "note": "Reviewed in git; deploying this file is the approval boundary. DIRECT_WRITE (the default for any Brain not listed) is always allowed and is the rollback. water-clarity: owner-approved pilot 2026-10-29, published through the central Publisher; its direct RTDB writer is retired (identity is database read-only).",
+  "note": "Reviewed in git; deploying this file is the approval boundary. DIRECT_WRITE (the default for any Brain not listed) is always allowed and is the rollback. water-clarity: owner-approved pilot 2026-10-29, published through the central Publisher; its direct RTDB writer is retired (identity is database read-only). lake-brain: owner-approved move to Pulse (Sector_Ops #51, 2026-11-12), L-2 order review; its direct writer (the cloud lake-brain job) stays paused and is retired in B6.",
   "brains": {
-    "water-clarity": {"state": "CENTRAL", "approvalRef": "owner-approval-2026-10-29/water-clarity-pilot"}
+    "water-clarity": {
+      "state": "CENTRAL",
+      "approvalRef": "owner-approval-2026-10-29/water-clarity-pilot"
+    },
+    "lake-brain": {
+      "state": "CENTRAL",
+      "approvalRef": "owner-approval-2026-11-12/sector-ops-51-lake-on-pulse",
+      "orderReviewRef": "owner-approval-2026-11-02/sector-ops-50#L-2"
+    }
   }
 }

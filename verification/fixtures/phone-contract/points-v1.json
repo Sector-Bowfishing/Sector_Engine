@@ -1,0 +1,22 @@
+{
+  "purpose": "Fixed /conditions points for the phone-contract goldens (Sector_Ops #53). Directory coordinates from GET /lakes; two off-directory points. Chosen to exercise each upstream: TVA, SWPA, Alabama Power, CWMS, tide, west, north, no-dam.",
+  "points": [
+    {"slug": "guntersville-al", "lakeId": "Guntersville|AL", "lat": 34.42, "lon": -86.26, "why": "TVA generation; Clarity pilot lake"},
+    {"slug": "wheeler-al", "lakeId": "Wheeler|AL", "lat": 34.63, "lon": -87.03, "why": "TVA"},
+    {"slug": "pickwick-tn", "lakeId": "Pickwick Lake|TN", "lat": 35.05, "lon": -88.2, "why": "TVA"},
+    {"slug": "kentucky-lake-tn", "lakeId": "Kentucky Lake|TN", "lat": 36.2, "lon": -88.05, "why": "TVA, large main-stem"},
+    {"slug": "chickamauga-tn", "lakeId": "Chickamauga Lake|TN", "lat": 35.4, "lon": -85.05, "why": "TVA"},
+    {"slug": "hartwell-sc", "lakeId": "Lake Hartwell|SC", "lat": 34.5, "lon": -82.85, "why": "CWMS SAS; Clarity pilot lake"},
+    {"slug": "lake-martin-al", "lakeId": "Lake Martin|AL", "lat": 32.7, "lon": -85.92, "why": "Alabama Power"},
+    {"slug": "lanier-ga", "lakeId": "Lanier (Sidney Lanier)|GA", "lat": 34.22, "lon": -84.07, "why": "CWMS SAM"},
+    {"slug": "table-rock-mo", "lakeId": "Table Rock Lake|MO", "lat": 36.6, "lon": -93.31, "why": "SWPA"},
+    {"slug": "norfork-ar", "lakeId": "Norfork|AR", "lat": 36.35, "lon": -92.24, "why": "SWPA / CWMS SWL"},
+    {"slug": "okeechobee-fl", "lakeId": "Okeechobee|FL", "lat": 26.94, "lon": -80.8, "why": "CWMS SAJ, subtropical"},
+    {"slug": "lake-fork-tx", "lakeId": "Lake Fork Reservoir|TX", "lat": 32.83, "lon": -95.55, "why": "no generation feed"},
+    {"slug": "toledo-bend-tx", "lakeId": "Toledo Bend Reservoir|TX", "lat": 31.35, "lon": -93.75, "why": "border lake"},
+    {"slug": "champlain-vt", "lakeId": "Lake Champlain|VT", "lat": 44.47, "lon": -73.3, "why": "north, natural lake"},
+    {"slug": "havasu-az", "lakeId": "Havasu|AZ", "lat": 34.45, "lon": -114.35, "why": "west, Mountain time"},
+    {"slug": "mississippi-memphis", "lakeId": null, "lat": 35.15, "lon": -90.07, "why": "off-directory river point"},
+    {"slug": "mobile-bay-al", "lakeId": null, "lat": 30.55, "lon": -87.95, "why": "off-directory coastal (tide)"}
+  ]
+}

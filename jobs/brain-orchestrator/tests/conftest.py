@@ -24,3 +24,27 @@ def _scenario_manifest(request, monkeypatch):
         return
     real = O.load_manifest
     monkeypatch.setattr(O, "load_manifest", lambda path=PRE_ACTIVATION: real(path))
+
+
+# Sector_Ops #51: the cycle watchdog checks the live system against the committed watchdog-policy.json. Scenario tests build their own fake worlds
+# (other Brains' executions, other leases), which that policy would rightly halt on, so the watchdog is off for them. Tests of the watchdog itself
+# are marked `watchdog` and run it with the policy they give.
+def _watchdog_marker(config):
+    config.addinivalue_line("markers", "watchdog: run the cycle watchdog (otherwise it is disabled for scenario tests)")
+
+
+_prev_configure = pytest_configure
+
+
+def pytest_configure(config):  # noqa: F811 - extends the configure above
+    _prev_configure(config)
+    _watchdog_marker(config)
+
+
+@pytest.fixture(autouse=True)
+def _watchdog_off(request, monkeypatch):
+    if request.node.get_closest_marker("watchdog"):
+        return
+    from sector_brain_platform import cycle_watchdog as WD
+    real = WD.load_policy
+    monkeypatch.setattr(WD, "load_policy", lambda path=None: {**real(path), "enabled": False})

@@ -55,7 +55,8 @@ let package = Package(
                 .product(name: "NIOCore", package: "swift-nio"),
             ],
             path: "Sources/ClarityPrecompute"),
-        .testTarget(name: "SectorEngineTests", dependencies: ["SectorEngine"], path: "Tests/SectorEngineTests"),
+        .testTarget(name: "SectorEngineTests", dependencies: ["SectorEngine", .product(name: "AsyncHTTPClient", package: "async-http-client")],
+                    path: "Tests/SectorEngineTests"),
         .testTarget(name: "LakeBrainTests", dependencies: ["SectorEngine", "LakeBrain"], path: "brains/lake/tests/swift"),
         .testTarget(name: "WaterTemperatureBrainTests", dependencies: ["SectorEngine", "WaterTemperatureBrain"], path: "brains/water-temperature/tests/swift"),
     ]

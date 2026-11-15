@@ -1,0 +1,309 @@
+# Deploy the brain-orchestrator Cloud Run JOB from a main commit, carrying its live configuration forward and setting only
+# CONDITIONS_SOURCES_PROJECTION (docs/architecture/conditions/DEPLOY_WORKFLOWS_V1.md §2).
+#
+# Manual only (workflow_dispatch). Two jobs:
+#   build   contents: read ONLY, no Google token. Stages the image context exactly as deploy-job.sh does (its staging block, as
+#           image-build-verification.yml runs it), builds it on the runner and hands it on as a short-lived artifact.
+#           Skipped when sha is `current` (an env-only change that redeploys the job's current image).
+#   deploy  id-token: write. WIF as the orchestrator deployer. Preflight: the scheduler must be PAUSED (deploy-job.sh always leaves it
+#           PAUSED and resuming is owner-only, so an ENABLED scheduler STOPS the run before anything changes); the job's current image, env
+#           and commit label are recorded. Then deploy-job.sh with SKIP_IAM=1 SKIP_SCHEDULER_DEFINITION=1 CARRY_ENV=1 (ORCH_ARGS unset: the
+#           job's arguments are unchanged), a check that the job now has exactly the carried env and the intended image, and one dry cycle
+#           (`gcloud run jobs execute brain-orchestrator --args=--dry-run --wait`). Any failure or cancellation after the record puts the
+#           previous image, env and commit label back.
+#
+# Repository configuration (never hard-coded, never echoed; a SECRET of the same name wins over a variable and is masked in logs):
+#   GCP_WIF_PROVIDER, GCP_SA_ORCHESTRATOR_DEPLOY, GCP_AR_REPO (<region>-docker.pkg.dev/<project>; the image is
+#   <GCP_AR_REPO>/brain-orchestrator/brain-orchestrator:<sha>)
+name: deploy-orchestrator
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: "Full 40-character commit on main to build and deploy, or `current` to keep the job's current image (env-only change)"
+        required: true
+        type: string
+      projection:
+        description: "CONDITIONS_SOURCES_PROJECTION (every other env value is carried forward unchanged)"
+        required: true
+        type: choice
+        options: ["0", "1"]
+      confirm:
+        description: "Type DEPLOY to deploy to production"
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: deploy-orchestrator-production
+  cancel-in-progress: false
+env:
+  JOB: brain-orchestrator
+  REGION: us-central1
+  SHA_INPUT: ${{ inputs.sha }}
+  PROJECTION: ${{ inputs.projection }}
+jobs:
+  build:
+    name: stage and build the image (no Google token)
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      sha: ${{ steps.which.outputs.sha }}
+      mode: ${{ steps.which.outputs.mode }}
+      image_id: ${{ steps.save.outputs.image_id }}
+    steps:
+      - id: which
+        name: Validate inputs
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+          MAIN_SHA: ${{ github.sha }}
+        run: |
+          [[ "$CONFIRM" == "DEPLOY" ]] || { echo "::error::confirm must be DEPLOY"; exit 1; }
+          [[ "$PROJECTION" == "0" || "$PROJECTION" == "1" ]] || { echo "::error::projection must be 0 or 1"; exit 1; }
+          if [[ "$SHA_INPUT" == "current" ]]; then
+            echo "mode=carry-image" >> "$GITHUB_OUTPUT"; echo "sha=$MAIN_SHA" >> "$GITHUB_OUTPUT"      # scripts from main HEAD; image unchanged
+          elif [[ "$SHA_INPUT" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "mode=build" >> "$GITHUB_OUTPUT"; echo "sha=$SHA_INPUT" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::sha must be a full 40-character lowercase commit, or current"; exit 1
+          fi
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          ref: ${{ steps.which.outputs.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: The commit is HEAD of main or an ancestor, checked out exactly, and has the deploy switches
+        env:
+          SHA: ${{ steps.which.outputs.sha }}
+        run: |
+          [[ "$(git rev-parse HEAD)" == "$SHA" ]] || { echo "::error::checked out $(git rev-parse HEAD), not $SHA"; exit 1; }
+          git merge-base --is-ancestor "$SHA" origin/main || { echo "::error::$SHA is not on main"; exit 1; }
+          grep -q 'CARRY_ENV="${CARRY_ENV:-0}"' jobs/brain-orchestrator/deploy-job.sh && [[ -f tools/deploy/job_env.py ]] \
+            || { echo "::error::deploy-job.sh at $SHA predates SKIP_IAM / CARRY_ENV"; exit 1; }
+
+      - name: Stage the context with deploy-job.sh's own staging block (no gcloud in it) and build
+        if: steps.which.outputs.mode == 'build'
+        env:
+          SHA: ${{ steps.which.outputs.sha }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/ctx-orch" && cd "$RUNNER_TEMP/ctx-orch"
+          awk '/^rm -rf stage && mkdir/{on=1} on{print} /^find stage -name .test_\*\.py. -delete/{exit}' "$GITHUB_WORKSPACE/jobs/brain-orchestrator/deploy-job.sh" > stage.sh
+          if grep -q gcloud stage.sh; then echo "::error::the staging block must not call gcloud"; exit 1; fi
+          ROOT="$GITHUB_WORKSPACE" bash -euo pipefail stage.sh
+          rm stage.sh
+          cp "$GITHUB_WORKSPACE/jobs/brain-orchestrator/Dockerfile" .
+          docker build -t "brain-orchestrator-local:$SHA" .
+          docker run --rm --entrypoint python -w /job/jobs/sector-intelligence-brain "brain-orchestrator-local:$SHA" -c "import run; r, c, s = run.load_knowledge(); print(r['releaseId'])"
+
+      - id: save
+        if: steps.which.outputs.mode == 'build'
+        name: Save the image
+        env:
+          SHA: ${{ steps.which.outputs.sha }}
+        run: |
+          echo "image_id=$(docker image inspect --format '{{.Id}}' "brain-orchestrator-local:$SHA")" >> "$GITHUB_OUTPUT"
+          docker save "brain-orchestrator-local:$SHA" | gzip -1 > "$RUNNER_TEMP/brain-orchestrator-image.tar.gz"
+
+      - if: steps.which.outputs.mode == 'build'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: brain-orchestrator-image
+          path: ${{ runner.temp }}/brain-orchestrator-image.tar.gz
+          retention-days: 1
+          if-no-files-found: error
+
+  deploy:
+    name: preflight, deploy, dry cycle (WIF)
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      SHA: ${{ needs.build.outputs.sha }}
+      MODE: ${{ needs.build.outputs.mode }}
+      STATE: ${{ github.workspace }}/../deploy-state
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          ref: ${{ needs.build.outputs.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Same commit as the build job
+        run: |
+          [[ "$(git rev-parse HEAD)" == "$SHA" ]] || { echo "::error::checked out $(git rev-parse HEAD), not $SHA"; exit 1; }
+          git merge-base --is-ancestor "$SHA" origin/main || { echo "::error::$SHA is not on main"; exit 1; }
+          mkdir -p "$STATE"
+
+      - if: env.MODE == 'build'
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          name: brain-orchestrator-image
+          path: ${{ runner.temp }}/image
+
+      - if: env.MODE == 'build'
+        name: Load the built image (same image ID)
+        env:
+          WANT_ID: ${{ needs.build.outputs.image_id }}
+        run: |
+          gunzip -c "$RUNNER_TEMP/image/brain-orchestrator-image.tar.gz" | docker load
+          got="$(docker image inspect --format '{{.Id}}' "brain-orchestrator-local:$SHA")"
+          [[ -n "$WANT_ID" && "$got" == "$WANT_ID" ]] || { echo "::error::loaded image $got is not the built image $WANT_ID"; exit 1; }
+
+      - id: auth
+        name: Authenticate to Google Cloud (Workload Identity Federation)
+        uses: google-github-actions/auth@c200f3691d83b41bf9bbd8638997a462592937ed  # v2.1.13
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER || vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_ORCHESTRATOR_DEPLOY || vars.GCP_SA_ORCHESTRATOR_DEPLOY }}
+
+      - id: preflight
+        name: "Preflight: scheduler PAUSED (else STOP), record the current image, env and commit"
+        env:
+          PROJECT_ID: ${{ steps.auth.outputs.project_id }}
+        run: |
+          gcloud --version | head -1
+          sched="$(gcloud scheduler jobs describe "$JOB" --project "$PROJECT_ID" --location "$REGION" --format 'value(state)')"
+          echo "scheduler=$sched" >> "$GITHUB_OUTPUT"
+          echo "scheduler $JOB: $sched"
+          if [[ "$sched" != "PAUSED" ]]; then
+            echo "::error::the scheduler is $sched. A deploy leaves it PAUSED and resuming is owner-only, so this run STOPS before deploying. Nothing was changed. Pause it deliberately first (owner), then re-run."
+            echo "### STOPPED before deploy: scheduler \`$JOB\` is **$sched** (nothing changed)" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          gcloud run jobs describe "$JOB" --project "$PROJECT_ID" --region "$REGION" --format=json > "$STATE/before-describe.json"
+          python3 tools/deploy/job_env.py snapshot --describe "$STATE/before-describe.json" --out "$STATE/before.json"
+          python3 tools/deploy/job_env.py restore --snapshot "$STATE/before.json" --out "$STATE/restore.yaml"
+          echo "recorded=1" >> "$GITHUB_OUTPUT"
+
+      - id: push
+        if: env.MODE == 'build'
+        name: Push to Artifact Registry (repository brain-orchestrator), tagged with the commit
+        env:
+          AR: ${{ secrets.GCP_AR_REPO || vars.GCP_AR_REPO }}
+        run: |
+          [[ "$AR" =~ ^[a-z0-9-]+-docker\.pkg\.dev/[a-z0-9-]+$ ]] || { echo "::error::GCP_AR_REPO must be <region>-docker.pkg.dev/<project> (no repository)"; exit 1; }
+          gcloud auth configure-docker "${AR%%/*}" --quiet >/dev/null 2>&1
+          ref="$AR/brain-orchestrator/brain-orchestrator:$SHA"
+          docker tag "brain-orchestrator-local:$SHA" "$ref"
+          docker push --quiet "$ref" >/dev/null
+          digest_ref="$(docker inspect --format '{{range .RepoDigests}}{{println .}}{{end}}' "$ref" | grep -F "$AR/brain-orchestrator/brain-orchestrator@sha256:" | head -1)"
+          [[ "$digest_ref" == *@sha256:* ]] || { echo "::error::could not resolve the pushed digest"; exit 1; }
+          echo "image=$digest_ref" >> "$GITHUB_OUTPUT"
+          echo "digest=${digest_ref##*@}" >> "$GITHUB_OUTPUT"
+          echo "pushed brain-orchestrator:$SHA ${digest_ref##*@}"
+
+      - id: deploy
+        name: deploy-job.sh (SKIP_IAM, SKIP_SCHEDULER_DEFINITION, CARRY_ENV; ORCH_ARGS unset)
+        env:
+          PROJECT_ID: ${{ steps.auth.outputs.project_id }}
+          PUSHED: ${{ steps.push.outputs.image }}
+        run: |
+          export SKIP_IAM=1 SKIP_SCHEDULER_DEFINITION=1 CARRY_ENV=1 CONDITIONS_SOURCES_PROJECTION="$PROJECTION"
+          if [[ "$MODE" == "build" ]]; then export IMAGE="$PUSHED"; else export CARRY_IMAGE=1; fi
+          bash jobs/brain-orchestrator/deploy-job.sh
+
+      - id: verify
+        name: The job has exactly the carried env and the intended image
+        env:
+          PROJECT_ID: ${{ steps.auth.outputs.project_id }}
+          PUSHED: ${{ steps.push.outputs.image }}
+        run: |
+          gcloud run jobs describe "$JOB" --project "$PROJECT_ID" --region "$REGION" --format=json > "$STATE/after-describe.json"
+          python3 tools/deploy/job_env.py snapshot --describe "$STATE/after-describe.json" --out "$STATE/after.json"
+          if [[ "$MODE" == "build" ]]; then
+            want_image="$PUSHED"; dv=(--deployment-version "brain-orchestrator@${SHA:0:12}")
+          else
+            want_image="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["image"])' "$STATE/before.json")"; dv=()
+          fi
+          python3 tools/deploy/job_env.py carry --snapshot "$STATE/before.json" --projection "$PROJECTION" "${dv[@]}" --out "$STATE/expected.yaml"
+          python3 tools/deploy/job_env.py compare --snapshot "$STATE/after.json" --env "$STATE/expected.yaml" --image "$want_image"
+          python3 - "$STATE/before.json" "$STATE/after.json" "$MODE" "${SHA:0:12}" <<'EOF'
+          import json, sys
+          b, a = (json.load(open(p)) for p in sys.argv[1:3])
+          mode, sha12 = sys.argv[3:5]
+          assert a["args"] == b["args"], f"job arguments changed: {b['args']} -> {a['args']}"
+          assert a["serviceAccount"] == b["serviceAccount"], "the job's service account changed"
+          want = sha12 if mode == "build" else b["commit"]
+          assert a["commit"] == want, f"commit label {a['commit']!r}, want {want!r}"
+          print("job arguments, service account and commit label as intended:", a["args"], a["commit"])
+          EOF
+
+      - id: dry
+        name: "Dry cycle: gcloud run jobs execute brain-orchestrator --args=--dry-run --wait"
+        env:
+          PROJECT_ID: ${{ steps.auth.outputs.project_id }}
+        run: |
+          # gcloud's progress output carries a console link with the project number: keep it out of this public log.
+          rc=0
+          gcloud run jobs execute "$JOB" --project "$PROJECT_ID" --region "$REGION" --args=--dry-run --wait --format=json > "$STATE/dry.json" 2> "$STATE/dry.err" || rc=$?
+          sed -E 's#https://[^ ]*##g; s/project=[0-9]+/project=<redacted>/g; s/projects\/[0-9]+/projects\/<redacted>/g' "$STATE/dry.err" | grep -v '^\s*$' || true
+          [[ $rc -eq 0 ]] || { echo "::error::the dry cycle failed (gcloud exit $rc)"; exit 1; }
+          python3 - "$STATE/dry.json" <<'EOF'
+          import json, sys
+          e = json.load(open(sys.argv[1]))
+          st = e.get("status") or {}
+          name = (e.get("metadata") or {}).get("name", "?")
+          ok, failed = int(st.get("succeededCount") or 0), int(st.get("failedCount") or 0) + int(st.get("cancelledCount") or 0)
+          print(f"dry cycle execution {name}: succeeded {ok}, failed/cancelled {failed}")
+          sys.exit(0 if ok >= 1 and failed == 0 else 1)
+          EOF
+
+      - id: rollback
+        name: Put the previous image, env and commit label back on any failure or cancellation
+        if: (failure() || cancelled()) && steps.preflight.outputs.recorded == '1'
+        env:
+          PROJECT_ID: ${{ steps.auth.outputs.project_id }}
+        run: |
+          prev_image="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["image"])' "$STATE/before.json")"
+          prev_commit="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["commit"])' "$STATE/before.json")"
+          # A failed read counts as "changed": restore rather than guess.
+          if gcloud run jobs describe "$JOB" --project "$PROJECT_ID" --region "$REGION" --format=json > "$STATE/now-describe.json" \
+             && python3 tools/deploy/job_env.py snapshot --describe "$STATE/now-describe.json" --out "$STATE/now.json" \
+             && python3 tools/deploy/job_env.py compare --snapshot "$STATE/now.json" --env "$STATE/restore.yaml" --image "$prev_image" \
+             && python3 -c 'import json,sys; sys.exit(json.load(open(sys.argv[1]))["commit"] != sys.argv[2])' "$STATE/now.json" "$prev_commit"; then
+            echo "the job still has its previous image and env: nothing to roll back"
+          else
+            gcloud run jobs update "$JOB" --project "$PROJECT_ID" --region "$REGION" --image "$prev_image" \
+              --env-vars-file "$STATE/restore.yaml" ${prev_commit:+--update-labels "commit=$prev_commit"} --quiet
+            gcloud run jobs describe "$JOB" --project "$PROJECT_ID" --region "$REGION" --format=json > "$STATE/now-describe.json"
+            python3 tools/deploy/job_env.py snapshot --describe "$STATE/now-describe.json" --out "$STATE/now.json"
+            python3 tools/deploy/job_env.py compare --snapshot "$STATE/now.json" --env "$STATE/restore.yaml" --image "$prev_image"
+            echo "### ROLLED BACK: previous image, env and commit label restored" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit 1
+
+      - name: Step summary
+        if: always()
+        env:
+          DIGEST: ${{ steps.push.outputs.digest }}
+          SCHED: ${{ steps.preflight.outputs.scheduler }}
+        run: |
+          {
+            echo "### deploy-orchestrator \`${SHA:0:12}\` ($MODE), CONDITIONS_SOURCES_PROJECTION=$PROJECTION"
+            echo
+            echo "| | |"
+            echo "|---|---|"
+            echo "| scheduler before | ${SCHED:-?} (must be PAUSED; never changed by this workflow) |"
+            echo "| image digest | \`${DIGEST:-unchanged (current image)}\` |"
+            echo "| build (build job) | ${{ needs.build.result }} |"
+            echo "| deploy-job.sh | ${{ steps.deploy.outcome }} |"
+            echo "| env carried, only the projection changed; args unchanged | ${{ steps.verify.outcome }} |"
+            echo "| dry cycle | ${{ steps.dry.outcome }} |"
+            echo "| rollback | ${{ steps.rollback.outcome }} |"
+            echo
+            if [[ "$PROJECTION" == "1" ]]; then
+              echo "**/control/conditionsSourcesV1 is NOT checked here** (the deployer has no database role, and a dry cycle writes nothing)."
+              echo "It is written by the first real cycle after the owner resumes the scheduler. Manual check (owner, Cloud Shell):"
+              echo '`curl -sS --max-time 20 -H "Authorization: Bearer $(gcloud auth print-access-token)" "https://sector-brain.firebaseio.com/control/conditionsSourcesV1.json" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d and d.get(\"schema\"), d and d.get(\"generatedAt\"), d and d.get(\"contractOk\"))"`'
+              echo "Expect schema \`sector-conditions-sources-v1\`, a recent generatedAt and \`contractOk: true\`."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,17 @@
+{
+ "purpose": "SYNTHETIC additive /conditions fields (CONDITIONS_CONSOLIDATION_SPEC_V1 \u00a74 tileSources) merged into a redacted 2026-11-06 golden by test_conditions_sources.py. Not a capture: no Engine sends tileSources yet. Values are invented test data. fetchedAt (Engine) and publishedAt (Brain copy) feed the projection fetchedAt (\u00a77 Amendment 1).",
+ "engineRevision": "sector-engine-00042-abc",
+ "tileSources": {
+  "humidity":         {"flag": "serve", "path": "engine", "source": "nws-nbm", "status": "AVAILABLE", "observedAt": "2026-11-06T20:00:00Z", "breaker": "closed", "fetchedAt": "2026-11-06T20:02:00Z"},
+  "pressure":         {"flag": "shadow", "path": "engine", "source": "open-meteo", "status": "AVAILABLE", "observedAt": "2026-11-06T20:00:00Z", "breaker": "closed", "fetchedAt": "2026-11-06T20:02:00Z"},
+  "temperature":      {"flag": "off", "path": "engine", "source": "open-meteo", "status": "AVAILABLE", "observedAt": "2026-11-06T20:00:00Z", "fetchedAt": "2026-11-06T20:02:00Z"},
+  "sky":              {"flag": "serve", "path": "engine", "source": "open-meteo", "status": "FALLBACK", "observedAt": "2026-11-06T20:00:00Z", "breaker": "open", "fetchedAt": "2026-11-06T20:02:00Z"},
+  "wind":             {"flag": "off", "path": "engine", "source": "open-meteo", "status": "AVAILABLE", "observedAt": "2026-11-06T20:00:00Z", "fetchedAt": "2026-11-06T20:02:00Z"},
+  "windOutlookModel": {"flag": "serve", "path": "brain", "source": "wind-brain", "status": "AVAILABLE", "observedAt": "2026-11-06T18:00:00Z", "freshUntil": "2026-11-07T00:00:00Z", "runner": "cloud", "publishId": "aaaa1111", "publishedAt": "2026-11-06T18:10:00Z"},
+  "waterLevel":       {"flag": "serve", "path": "brain", "source": "lake-brain", "status": "AVAILABLE", "observedAt": "2026-11-06T19:00:00Z", "freshUntil": "2026-11-06T20:30:00Z", "runner": "pulse", "publishId": "7def2674", "publishedAt": "2026-11-06T19:05:00Z"},
+  "clarity":          {"flag": "shadow", "path": "brain", "source": "water-clarity-brain", "status": "AVAILABLE", "observedAt": "2026-11-05T12:00:00Z", "freshUntil": "2026-11-06T14:00:00Z", "runner": "pulse", "publishId": "bbbb2222", "publishedAt": "2026-11-05T13:00:00Z"},
+  "waterTemp":        {"flag": "off", "path": "engine", "source": "water-temp-model", "status": "ESTIMATE", "observedAt": "2026-11-06T20:00:00Z", "fetchedAt": "2026-11-06T20:02:00Z"},
+  "generation":       {"flag": "off", "path": "engine", "source": "tva-restapi", "status": "AVAILABLE", "observedAt": "2026-11-06T19:00:00Z", "fetchedAt": "2026-11-06T20:02:00Z"},
+  "moon":             {"flag": "off", "path": "app", "source": "moon-v1", "status": "AVAILABLE"}
+ }
+}

@@ -112,6 +112,12 @@ public struct ConditionsInput: Equatable {
     public var hasTurbidityGage: Bool
     public var forecastDayIndex: Int         // 0 = tonight, …, 7 = far out
 
+    /// Conditions consolidation, `clarity` tile in `serve` only (Sector_Ops #53, spec §1): the Water Clarity Brain's
+    /// customer copy `centralFt`, used by `ClarityFactor.visibilityFt` in place of the Engine's own estimate. nil (the
+    /// default, and always with the flag `off` or `shadow`) leaves the clarity factor exactly as before. Setting it
+    /// CHANGES THE SCORE: the clarity factor, the clarity gate and where-to-look all read `visibilityFt`.
+    public var clarityBrainVisibilityFt: Double? = nil
+
     public init(date: Date,
                 latitude: Double,
                 longitude: Double,
