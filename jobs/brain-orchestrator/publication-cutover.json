@@ -10,6 +10,10 @@
       "state": "CENTRAL",
       "approvalRef": "owner-approval-2026-11-12/sector-ops-51-lake-on-pulse",
       "orderReviewRef": "owner-approval-2026-11-02/sector-ops-50#L-2"
+    },
+    "wind": {
+      "state": "CENTRAL",
+      "approvalRef": "owner-approval-PENDING/sector-ops-51-wind"
     }
   }
 }
