@@ -21,6 +21,10 @@ def day(s):
 
 
 def main(argv=None):
+    args = list(sys.argv[1:] if argv is None else argv)
+    if args[:1] == ["retention"]:                       # archive retention on a runner's LOCAL store (dry run by default; its own options)
+        from sector_wind import retention
+        return retention.main(args[1:])
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["hourly", "backfill", "validate", "status", "milestone", "pw15"])
     ap.add_argument("--store", default="local:./archive")
