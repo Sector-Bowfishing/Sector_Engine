@@ -127,3 +127,13 @@ def test_cutover_complete_is_refused_without_a_passing_exit_record(tmp_path, bra
     d, _ = _clone(tmp_path / "e", brain, "BOGUS")
     with pytest.raises(AssertionError):
         g.cutover_guard(d)
+
+
+COMMITTED_BRAINS = sorted(d for d in os.listdir(os.path.join(REPO, "brains")) if not d.startswith("_") and os.path.isfile(os.path.join(REPO, "brains", d, "brain.json")))
+
+
+@pytest.mark.parametrize("brain", COMMITTED_BRAINS)
+def test_every_committed_brain_passes_its_cutover_guard(brain):
+    """The committed state itself: a Brain that claims CUTOVER_IN_PROGRESS / CUTOVER_COMPLETE must carry a PASSing exit record (all 16 checks), and
+    CUTOVER_COMPLETE must also have no legacy writer left. A flip PR with any check still NOT_RUN fails here, by design."""
+    g.cutover_guard(os.path.join(REPO, "brains", brain))

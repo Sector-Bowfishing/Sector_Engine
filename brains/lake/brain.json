@@ -73,7 +73,7 @@
   "customerIntegrationMode": "none",
   "publisherRequired": {
     "required": true,
-    "cutoverStatus": "SHADOW"
+    "cutoverStatus": "CUTOVER_COMPLETE"
   },
   "authorizedConsumers": [
     "ops",
