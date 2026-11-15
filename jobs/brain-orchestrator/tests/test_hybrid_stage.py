@@ -24,8 +24,8 @@ from sector_brain_platform.publisher.storage import MemoryObjectStore        # n
 pytestmark = [pytest.mark.watchdog]
 
 NOW = dt.datetime(2026, 11, 20, 12, 0, tzinfo=dt.timezone.utc)
-STAGED = ("water-temp", "sector-intelligence", "wind")
-APPLIED = ("lake-brain",)
+STAGED = ("water-temp", "wind")
+APPLIED = ("lake-brain", "sector-intelligence")
 LAKE_REF = "owner-approval-2026-11-12/sector-ops-51-lake-on-pulse"
 
 
@@ -221,13 +221,11 @@ def test_check_and_show_run_against_the_committed_files(capsys):
     assert HS.main(["show"]) == 0
 
 
-def test_sector_intelligence_needs_an_order_review_before_it_can_be_central():
-    """SI is step 5 (publishes last): CENTRAL ahead of Wind and Water Temp needs the owner's SI-ORD review, like Water Temp's WT-ORD."""
-    merged = HS.merged(HS.fragments()["sector-intelligence"], "owner-approval-test", *live())
-    probs = HS.verify(*merged, "sector-intelligence")
-    assert len(probs) == 1 and "CUTOVER_ORDER" in probs[0] and "wind" in probs[0] and "water-temp" in probs[0]
-    _, _, c = merged
-    c["brains"]["sector-intelligence"]["orderReviewRef"] = "owner-approval-test/si-ord"
-    assert HS.verify(merged[0], merged[1], c, "sector-intelligence") == []
-    assert RL.primary(merged[0], "sector-intelligence") == "pulse"
-    assert RL.primary(merged[0], "water-clarity") == "pulse"                         # Water Clarity is untouched
+def test_sector_intelligence_is_applied_ahead_of_wind_and_water_temp_only_on_its_order_review():
+    """DRAFT flip: SI is step 5 (publishes last); it is CENTRAL ahead of Wind and Water Temp only on the owner's SI-ORD review (PENDING until merged)."""
+    r, w, c = committed()
+    assert c["brains"]["sector-intelligence"]["orderReviewRef"] == "owner-approval-PENDING/sector-ops-51#SI-ORD"
+    assert HS.is_live("sector-intelligence", r, w, c) and HS.live_problems(HS.fragments()["sector-intelligence"], r, w, c) == []
+    c2 = {**c, "brains": {**c["brains"], "sector-intelligence": {k: v for k, v in c["brains"]["sector-intelligence"].items() if k != "orderReviewRef"}}}
+    assert any("CUTOVER_ORDER" in p for p in HS.verify(r, w, c2, "sector-intelligence"))
+    assert RL.primary(RL.load_policy(), "sector-intelligence") == "pulse" and RL.primary(RL.load_policy(), "water-clarity") == "pulse"

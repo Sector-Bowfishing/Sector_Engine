@@ -26,10 +26,10 @@ def test_committed_policy_makes_only_water_clarity_and_lake_pulse_primary_and_ke
     """Sector_Ops #51 O4 (owner, 2026-11-06): water-clarity primary = pulse; lake-brain primary = pulse (owner, Sector_Ops #51, 2026-11-12, Lake on
     Pulse); failover OFF. Every other Brain stays on the cloud."""
     p = RL.load_policy()
-    assert p["defaultPrimary"] == "cloud" and p["primary"] == {"water-clarity": "pulse", "lake-brain": "pulse"}
+    assert p["defaultPrimary"] == "cloud" and p["primary"] == {"water-clarity": "pulse", "lake-brain": "pulse", "sector-intelligence": "pulse"}
     assert p["failover"] == {"enabled": False, "brains": [], "approvalRef": None}
     assert RL.primary(p, "water-clarity") == "pulse" and RL.primary(p, "lake-brain") == "pulse"
-    assert all(RL.primary(p, b) == "cloud" for b in ("wind", "water-temp", "sector-intelligence", "fish"))
+    assert all(RL.primary(p, b) == "cloud" for b in ("wind", "water-temp", "fish")) and RL.primary(p, "sector-intelligence") == "pulse"
     assert not any(RL.failover_enabled(p, b) for b in ("water-clarity", "wind", "lake-brain", "water-temp", "sector-intelligence"))
 
 

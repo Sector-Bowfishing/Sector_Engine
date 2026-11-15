@@ -78,9 +78,10 @@ def test_with_the_cloud_as_primary_it_holds(cycle, artifact_mode, monkeypatch, c
     assert RL.read(store, SI)[0] is None
 
 
-def test_the_shipped_runner_policy_gives_pulse_nothing():
-    """Making Pulse Intelligence's primary is an owner decision recorded in runner-policy.json (SI-A5); this change does not make it."""
-    assert SI not in (RL.load_policy().get("primary") or {})
+def test_the_shipped_runner_policy_makes_pulse_primary_only_on_the_owner_approval():
+    """Making Pulse Intelligence's primary is an owner decision recorded in runner-policy.json (SI-A5): the DRAFT flip records it with a PENDING ref."""
+    pol = RL.load_policy()
+    assert (pol.get("primary") or {}).get(SI) == "pulse" and (pol.get("approvals") or {}).get(SI) == "owner-approval-PENDING/sector-ops-51-sector-intelligence"
 
 
 def test_artifact_mode_still_asks_intelligence_for_its_plan(cycle, monkeypatch):
