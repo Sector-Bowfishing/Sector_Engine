@@ -21,7 +21,7 @@ LIVE = {
     "sources": {"cwms": {"lastFetchAt": "t0"}},
     "health": {"brains": {"lake-brain": {"status": "HEALTHY", "staleLakeCount": 0}}},
     "scores": {"lake-brain": {"value": 7.0, "scoreVersion": "v1", "uncapped": 7.2, "basis": "b"}, "wind": {"value": 5.0, "scoreVersion": "v1"}},
-    "control": {"execution": {"state": "ENABLED"}},
+    "control": {"executionControlV1": {"state": "ENABLED"}, "fleet": {"Other_TX": {"n": 1}}},
 }
 
 
@@ -184,13 +184,13 @@ def test_owner_map():
 def test_changes_outside_the_old_scope_are_seen(monkeypatch, tmp_path):
     before = cap(LIVE, tmp_path, "b", monkeypatch)
     t = published(LIVE)
-    t["control"]["execution"]["state"] = "PAUSED"                        # a watched root
+    t["control"]["executionControlV1"]["state"] = "PAUSED"               # a watched external-admin path
     t["lakes"]["Ghost_XX"] = {"states": {"lake": {"levelFt": 1}}}         # a lake with no lakeFleet row
     t["lakes"]["Other_TX"]["speciesPresence"] = {"gar": True}             # Lake-owned lake-state-v1 child
     r = W.evaluate("lake-brain", before, cap(t, tmp_path, "a", monkeypatch), RECORD)
     assert r["checks"]["X08"] == "FAIL"
     assert set(r["X08"]["ownOutsideWriteSet"]) == {"lakes/Ghost_XX/states/lake", "lakes/Other_TX/speciesPresence/gar"}
-    assert r["X08"]["unowned"] == ["control/execution/state"]                # a watched root: never an "other writer"
+    assert r["X08"]["unowned"] == ["control/executionControlV1/state"]      # watched: never an "other writer"
 
 
 def test_an_unowned_change_is_review_never_pass(monkeypatch, tmp_path):
@@ -308,3 +308,15 @@ def test_wait_stops_on_an_expired_token(monkeypatch):
     def f(url, path, token, shallow=False):
         raise urllib.error.HTTPError(url, 401, "Unauthorized", {}, None)
     assert W.main(["wait", "--brain", "lake-brain", "--since-publish-id", "p1"], fetch_raw=f, sleep=lambda _: None) == 4
+
+
+def test_orchestrator_control_projections_and_scorer_events_are_other_writers(monkeypatch, tmp_path):
+    t0 = copy.deepcopy(LIVE)
+    t0["activity"] = {"e1-wind-1": {"x": 1}}
+    before = cap(t0, tmp_path, "b", monkeypatch)
+    t = published(t0)
+    t["control"]["fleet"]["Other_TX"]["n"] = 2
+    t["activity"]["e9-brain-platform-1"] = {"type": "score.changed"}
+    r = W.evaluate("lake-brain", before, cap(t, tmp_path, "a", monkeypatch), RECORD)
+    assert r["checks"]["X08"] == "PASS"
+    assert r["X08"]["otherWriters"]["orchestrator"]["count"] == 1 and r["X08"]["otherWriters"]["scorer"]["count"] == 1

@@ -40,15 +40,15 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "..", "jobs", "brain_platform"))
 
 from sector_brain_platform.keys import BRAINS                       # noqa: E402
-from sector_brain_platform.ownership import LAKE_BRAIN_ONLY_FLEET, PLATFORM_ONLY, SCORER_CHILDREN   # noqa: E402
+from sector_brain_platform.ownership import LAKE_BRAIN_ONLY_FLEET, PLATFORM_ONLY, PLATFORM_WRITER, SCORER_CHILDREN   # noqa: E402
 
 RTDB_URL = "https://sector-brain.firebaseio.com"
 SCHEMA = "sector-exit-watch-v1"
 FLEET_ROOTS = ("lakes", "lakeFleet", "snapshots")                    # per-lake nodes; snapshots/{k}/latest only
 PER_CHILD_ROOTS = {"brains": 1, "validation": 0, "sources": 0, "activity": 0, "health": 2, "jobs": 1}   # root -> depth below each child (one GET per child)
 ROOT_DEPTH: dict[str, int] = {}                                      # every other root: one GET, depth 2
-#: Roots no Brain publish may change: a change there is REVIEW, never an "other writer".
-WATCHED_ROOTS = {"access", "control"}
+#: External-admin paths no cycle or publish may change: a change there is REVIEW, never an "other writer". The rest of /control is the Orchestrator's projection.
+WATCHED = ("access", "control/executionControlV1")
 SLOT_PARENTS = {"states", "profiles", "slots", "readiness", "modelVersions"}   # lakes/{k}/<parent>/<slot>, lakeFleet/{k}/<parent>/<slot>
 #: Fleet children owned by one Brain outside the slot pattern (ownership.LAKE_BRAIN_ONLY_FLEET), and Lake's lake-state-v1 children of /lakes/{k}.
 FLEET_ONLY = {f: "lake-brain" for f in LAKE_BRAIN_ONLY_FLEET}
@@ -133,13 +133,15 @@ def owner(path: str, slots=None, sources=None) -> str | None:
         return "orchestrator"
     if p[0] == "scores":
         return "scorer"
-    if p[0] in WATCHED_ROOTS:
+    if any("/".join(p) == w or "/".join(p).startswith(w + "/") or w.startswith("/".join(p) + "/") for w in WATCHED):
         return None
+    if p[0] == "control":
+        return "orchestrator"
     if p[0] == "activity" and len(p) >= 2:
         for b in BRAINS:                              # event ids name their writer: ...-{brainId}-...
             if f"-{b}-" in p[1]:
                 return b
-        return None
+        return "scorer" if f"-{PLATFORM_WRITER}-" in p[1] else None
     if p[0] in PLATFORM_ONLY:
         return "platform:" + p[0]
     return None
