@@ -17,6 +17,8 @@ case "$*" in
     case "$FAKE_DESCRIBE_MODE" in
       missing) echo "ERROR: (gcloud.run.jobs.describe) Cannot find job [brain-publisher]." >&2; exit 1;;
       error) echo "ERROR: (gcloud.run.jobs.describe) PERMISSION_DENIED" >&2; exit 1;;
+      location) echo "ERROR: (gcloud.run.jobs.describe) NOT_FOUND: Location us-centrl1 not found." >&2; exit 1;;
+      badjson) echo "{";;
       *) cat "$FAKE_DESCRIBE";;
     esac;;
   "iam service-accounts describe"*) exit 0;;
@@ -83,4 +85,26 @@ def test_any_other_describe_error_refuses_the_deploy(tmp_path):
 
 def test_a_live_value_other_than_0_or_1_refuses_the_deploy(tmp_path):
     r, deploy, sw = run(tmp_path, {"PUBLISHER_CUSTOMER_CLARITY": "yes"})
+    assert r.returncode == 2 and deploy == []
+    assert "pass PUBLISHER_CUSTOMER_CLARITY=0 or PUBLISHER_CUSTOMER_CLARITY=1 explicitly" in r.stderr
+
+
+def test_one_switch_passed_and_another_carried_in_the_same_deploy(tmp_path):
+    r, deploy, sw = run(tmp_path, {"PUBLISHER_CUSTOMER_CLARITY": "1", "PUBLISHER_CUSTOMER_LAKE_LEVEL": "1"}, PUBLISHER_CUSTOMER_CLARITY="0")
+    assert r.returncode == 0, r.stderr
+    assert sw == {"PUBLISHER_CUSTOMER_CLARITY": "0", "PUBLISHER_CUSTOMER_LAKE_LEVEL": "1"}
+
+
+def test_a_not_found_error_that_is_not_the_job_refuses_the_deploy(tmp_path):
+    r, deploy, sw = run(tmp_path, mode="location")
+    assert r.returncode == 2 and deploy == []
+
+
+def test_malformed_describe_output_refuses_the_deploy(tmp_path):
+    r, deploy, sw = run(tmp_path, mode="badjson")
+    assert r.returncode == 2 and deploy == []
+
+
+def test_a_secret_backed_switch_refuses_the_deploy(tmp_path):
+    r, deploy, sw = run(tmp_path, {"PUBLISHER_CUSTOMER_CLARITY": None})
     assert r.returncode == 2 and deploy == []
