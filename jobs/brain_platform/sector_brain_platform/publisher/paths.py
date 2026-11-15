@@ -123,10 +123,12 @@ def foreign_owner(path: str, submitter: str) -> str | None:
 
 #: CUSTOMER-lane copies (design note docs/architecture/data/CUSTOMER_BRAIN_OUTPUT_PATH_V1.md §6; Sector_Ops #53 spec §5). Writer: the Publisher
 #: (platform.publisher-live) only, through the Publisher's customer_*.py copy planners; reader: the customer Engine only, read-only. PLACEHOLDER:
-#: declared, holds no data (every writer is a draft, not wired, and the four #53 copies sit behind default-off switches). They belong to no
+#: declared, holds no data. level, clarity and waterTemp are wired into the live Publisher (customer_lane.py, Sector_Engine #187)
+#: behind PUBLISHER_CUSTOMER_LAKE_LEVEL / _CLARITY / _WATER_TEMP, all absent (off) by default; generationBinding and wind/outlookModel are
+#: drafts, not wired, behind their own default-off switches. They belong to no
 #: Brain's SchemaSpec, so no Brain artifact can target them. The Cortex CUSTOMER-lane family is not declared yet (CG-3.1-8).
 CUSTOMER_COPY_FAMILIES = (
-    PathFamily("/customer/lakes/{k}/level", {"k": lake_key_check}, "PLACEHOLDER", "sector-customer-lake-level-v1; writer customer_lake_level.py"),
+    PathFamily("/customer/lakes/{k}/level", {"k": lake_key_check}, "PLACEHOLDER", "sector-customer-lake-level-v1; PUBLISHER_CUSTOMER_LAKE_LEVEL=1 (default off)"),
     PathFamily("/customer/lakes/{k}/clarity", {"k": lake_key_check}, "PLACEHOLDER", "sector-customer-clarity-v1; PUBLISHER_CUSTOMER_CLARITY=1 (default off)"),
     PathFamily("/customer/lakes/{k}/waterTemp", {"k": lake_key_check}, "PLACEHOLDER", "sector-customer-water-temp-v1; PUBLISHER_CUSTOMER_WATER_TEMP=1 (default off)"),
     PathFamily("/customer/lakes/{k}/generationBinding", {"k": lake_key_check}, "PLACEHOLDER",
