@@ -34,7 +34,7 @@ def test_exceed_matches_frozen_rule():
 
 
 def test_local_night_uses_standard_clock():
-    assert pw15.local_night(datetime(2026, 11, 2, 3, tzinfo=timezone.utc), -100.0)     # 21 local
+    assert pw15.local_night(datetime(2026, 11, 2, 3, tzinfo=timezone.utc), -100.0)     # 20 local
     assert not pw15.local_night(datetime(2026, 11, 2, 18, tzinfo=timezone.utc), -100.0)
 
 
@@ -76,3 +76,21 @@ def test_hourly_run_off_by_default(tmp_path, monkeypatch):
     monkeypatch.setenv("WIND_PW15_SHADOW", "1")
     s = live.run_hourly(LocalStore(str(tmp_path)), cfg, now)
     assert calls == [datetime(2026, 11, 2, 0, tzinfo=timezone.utc)] and s["pw15Shadow"]["status"] == "complete"
+
+
+def test_exceed_equals_research_exceed():
+    import forcing_eval                      # research tools are on the pytest path
+    pts = [(3.6011, 0.9), (5.6588, 0.7), (8.7456, 0.4), (11.3177, 0.1), (4.0, 0.5), (6.0, 0.75), (12.0, 0.9)]
+    for T in (2.0, 6.7056, 11.0, 50.0):
+        assert pw15.exceed(pts, T) == forcing_eval.exceed(pts, T)
+
+
+def test_shadow_error_never_fails_the_run(tmp_path, monkeypatch):
+    monkeypatch.setattr(live, "latest_nbm_cycle", lambda now=None, max_back_h=4: datetime(2026, 11, 2, 3, tzinfo=timezone.utc))
+    for n, r in (("ingest_nbm_cycle", lambda *a: {}), ("ingest_rtma", lambda *a: {}), ("ingest_metar_day", lambda *a: 0), ("write_latest_bundle", lambda *a: {})):
+        monkeypatch.setattr(live, n, r)
+    def boom(*a): raise RuntimeError("x")
+    monkeypatch.setattr(pw15, "ingest_pw15_shadow", boom)
+    monkeypatch.setenv("WIND_PW15_SHADOW", "1")
+    s = live.run_hourly(LocalStore(str(tmp_path)), {"lakes": {"g": {"bbox": [-86.5, 34.3, -85.6, 34.9]}}}, datetime(2026, 11, 2, 4, 5, tzinfo=timezone.utc))
+    assert s["errors"] == [] and "pw15ShadowError" in s

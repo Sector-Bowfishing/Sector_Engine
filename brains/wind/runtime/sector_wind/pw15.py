@@ -27,6 +27,7 @@ ENV_FLAG = "WIND_PW15_SHADOW"
 MPH = 0.44704
 T15 = 15 * MPH          # m/s
 P_STAR = 0.15           # frozen; never tuned here
+EXPECT_THR = (3.6011, 5.6588, 8.7456, 11.3177)   # NBM v5.0 qmd WIND exceedance thresholds, m/s (W-NOW-3 arm B)
 LEADS = (1, 3, 6, 12, 18)   # the leads W-NOW-3 pre-registered
 
 
@@ -58,6 +59,8 @@ def _qmd_fields(qurl: str, f: int):
                  if x.var == "WIND" and x.level == LEVEL and step in x.step and x.tail.startswith("prob >")], key=lambda z: z[0])
     if len(pr) < 4:
         raise DecodeError("qmd prob thresholds missing")
+    if any(abs(t - e) > 0.001 for (t, _), e in zip(pr[:4], EXPECT_THR)):   # a changed release must not silently change the curve
+        raise DecodeError(f"qmd thresholds changed: {[t for t, _ in pr[:4]]}")
     probs = [(thr, decode(fetch(qurl, (e.start, e.end)))) for thr, e in pr[:4]]
     lv = {}
     for l in (50, 75, 90):

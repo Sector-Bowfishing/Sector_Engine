@@ -75,7 +75,7 @@ def run_hourly(store, cfg: dict, now: datetime | None = None, leads=DEFAULT_LEAD
                 if not _complete(store, f"pw15-shadow/{syn:%Y%m%d%H}.json.gz"):
                     summary["pw15Shadow"] = pw15.ingest_pw15_shadow(store, points.load_points(), syn)
             except Exception as e:
-                summary["errors"].append(f"pW15 shadow {iso(syn)}: {e!r}")
+                summary["pw15ShadowError"] = f"{iso(syn)}: {e!r}"   # shadow only: never fails the production run
     else:
         summary["errors"].append("no NBM cycle published in the last 4 h")
     # RTMA-RU: every quarter-hour of the last few hours that is published and missing.
