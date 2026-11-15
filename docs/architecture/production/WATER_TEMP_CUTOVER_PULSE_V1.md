@@ -27,7 +27,7 @@
 **What it is.** The TVA discharge archive (Nickajack, Guntersville, Wheeler, Wilson, Pickwick: hourly observed and predicted data) used to be written hourly by the cloud job `water-temp-tva-archive` into `gs://sector-water-temp-archive/water-temp/tva/`. That job is **paused**, and the bucket was last written **2026-10-14**. Since then the collector has run on Pulse. The MacBook history was merged into it on 2026-11-08 (`merge_archive.py`, 97 hours added), and it lives on the Mac mini at:
 
 ```
-~/Library/Application Support/SectorPulse/job-data/water-temp-tva-archive/archive/water-temp/tva/
+<pulse-job-data>/water-temp-tva-archive/archive/water-temp/tva/
 ```
 
 **Why upload it.**
@@ -43,23 +43,7 @@ gs://sector-water-temp-archive/water-temp/tva-snapshots/2026-11-pulse/
 ```
 The bucket's daily files up to 2026-10-14 stay as they are. The snapshot is the complete merged archive. Folding it into `water-temp/tva/` would be a separate, later step, done with `merge_archive.py` semantics, not a blind copy.
 
-**Commands (Michael; nothing is run here).** There are two parts, because the archive is on the Mac mini and Michael's Google login is in Cloud Shell.
-
-*Part 1, on the Mac mini (Terminal): pack and checksum. Read-only on the archive.*
-```
-A="$HOME/Library/Application Support/SectorPulse/job-data/water-temp-tva-archive/archive"
-du -sh "$A/water-temp/tva"
-cd "$A" && tar -czf ~/Desktop/tva-archive-2026-11.tgz water-temp/tva && shasum -a 256 ~/Desktop/tva-archive-2026-11.tgz
-```
-
-*Part 2, in Cloud Shell: upload the file (⋮ → Upload), check the checksum, then copy create-only.*
-```
-shasum -a 256 ~/tva-archive-2026-11.tgz          # must match Part 1
-mkdir -p ~/tva && tar -xzf ~/tva-archive-2026-11.tgz -C ~/tva
-gcloud storage cp --recursive --no-clobber ~/tva/water-temp/tva/* gs://sector-water-temp-archive/water-temp/tva-snapshots/2026-11-pulse/
-gcloud storage du -s gs://sector-water-temp-archive/water-temp/tva-snapshots/2026-11-pulse/
-```
-`--no-clobber` refuses to replace anything. The new prefix is empty, so every file is new.
+**Commands (Michael; nothing is run here).** There are two parts: a pack-and-checksum on the Mac mini (read-only on the archive), then a create-only `gcloud storage cp --no-clobber` to the new prefix from Cloud Shell. The exact commands are on Sector_Ops #51 ("WT TVA upload commands (for Michael)"), not here, because they name local paths on the Mac mini.
 
 **Cost:** pennies; it's tens of MB on Standard storage.
 
@@ -80,7 +64,7 @@ gcloud storage du -s gs://sector-water-temp-archive/water-temp/tva-snapshots/202
 6. **M3:** record the knowledge release approval.
 7. **M4:** one approved change that merges #129 (G3), the Cortex pin and the flip PR, with the real approvalRef, `--blockers-cleared` and, if chosen, the WT-ORD order review.
 8. **M5:** deploy the Orchestrator and the Publisher from `main`, restating every live switch.
-9. **M6:** the first-publish baseline acknowledgement (the Lake `lake-first-publish.sh` pattern).
+9. **M6:** the first-publish baseline acknowledgement (the first-publish run sheet on Sector_Ops #51 (built on `jobs/brain_platform/sector_brain_platform/publisher_live/baseline.py`)).
 10. **M7:** `execution_control.py enable … --brains water-clarity,lake-brain,water-temp` (plus `wind` if it's live).
 11. **M8/M9:** the watched first publish, then a 2-cycle watch (about 12 h).
 12. **Retire the direct writer** (the B6 pattern) after 3 clean days, with `CUTOVER_COMPLETE`.

@@ -21,7 +21,7 @@ Identity, bucket and IAM details stay in the private Sector_Ops #51 (step W-H1),
 **The gap.** `publish()` keeps Wind's own previous state in `brain/wind/last_publish.json`: readiness per lake, `profileShas` (used to skip unchanged national profiles), `lastSuccessfulRun` and the last errors. In artifact mode that file advances when the artifact is **sealed**. If the central path later refuses the hand-off (quarantine, lease lost, Publisher refusal), the next run believes the refused write already happened. It then skips profiles that never reached the database, and fires (or skips) readiness events against a state that was never published. `artifact_entry.py` already restores the file on every path that hands nothing off. The gap is a hand-off that is stored and then refused.
 
 **Proposed fix (recommended): derive the previous state from what is live, not from a local file.**
-- In artifact mode, Wind reads its previous state from the database through the existing **read-only** identity, the same `brain-rtdb-read-token` Lake and Water Clarity already use (GET only):
+- In artifact mode, Wind reads its previous state from the database through the existing **read-only** identity, the same Pulse read-token Keychain entry (see Sector_Ops #51) that Lake and Water Clarity already use, exposed to the job as `$SECTOR_BRAIN_ACCESS_TOKEN` (GET only):
   - the per-lake readiness Wind last published;
   - each national profile's `tableSha256`;
   - the registry's `lastSuccessfulRun`.
@@ -94,7 +94,7 @@ The cloud plan would restart the legacy `wind-hourly` writer to compare against,
 5. **M3:** record Wind's knowledge release approval.
 6. **M4:** merge the flip PR (draft today; it needs the real approvalRef and `--blockers-cleared` once 1–5 are done).
 7. **M5:** deploy the Orchestrator and the Publisher from `main`, restating every live switch.
-8. **M6:** the first-publish baseline acknowledgement (the Lake `lake-first-publish.sh` pattern).
+8. **M6:** the first-publish baseline acknowledgement (the first-publish run sheet on Sector_Ops #51 (built on `jobs/brain_platform/sector_brain_platform/publisher_live/baseline.py`)).
 9. **M7:** `execution_control.py enable … --brains water-clarity,lake-brain,wind`.
 10. **M8/M9:** the watched first publish, then a 6-cycle watch.
 11. **B6-equivalent:** retire the `wind-hourly` direct writer after 3 clean days, with `CUTOVER_COMPLETE`.
