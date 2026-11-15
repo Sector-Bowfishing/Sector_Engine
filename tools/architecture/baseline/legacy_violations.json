@@ -321,6 +321,36 @@
       "plannedMigrationPhase": "D-14b: extract a shared, non-customer Swift library (fetchers, LakeDirectory, Swift Brain platform) out of SectorEngine (Package.swift change; decision-required)",
       "status": "LEGACY_BASELINE",
       "carriedFrom": "Sources/SectorEngine/Brain/WaterTemperatureBrainRunner.swift"
+    },
+    {
+      "key": "10|brains/water-clarity/runtime/brain_platform.py|direct sector-brain writer in a Brain already cut over to the Publisher",
+      "invariant": 10,
+      "path": "brains/water-clarity/runtime/brain_platform.py",
+      "owner": "Water Clarity Brain",
+      "reason": "Invariant 10 matches any Brain RTDB URL mention, read or write. BRAIN_RTDB_URL constant re-exported for the GET-only previous-state read; the module has no write site (exit gate X14, legacy_write_sites empty).",
+      "plannedMigrationPhase": "Architecture: narrow invariant 10 to write sites (follow-up); no runtime change needed",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "brains/water-clarity/runtime/brain_platform.py"
+    },
+    {
+      "key": "10|brains/water-clarity/runtime/run.py|direct sector-brain writer in a Brain already cut over to the Publisher",
+      "invariant": 10,
+      "path": "brains/water-clarity/runtime/run.py",
+      "owner": "Water Clarity Brain",
+      "reason": "Invariant 10 matches any Brain RTDB URL mention, read or write. --rtdb-url / BRAIN_RTDB_URL is the GET-only previous-state read ('never written'); the direct writer was retired (X14).",
+      "plannedMigrationPhase": "Architecture: narrow invariant 10 to write sites (follow-up); no runtime change needed",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "brains/water-clarity/runtime/run.py"
+    },
+    {
+      "key": "10|brains/water-clarity/deploy/deploy-job.sh|direct sector-brain writer in a Brain already cut over to the Publisher",
+      "invariant": 10,
+      "path": "brains/water-clarity/deploy/deploy-job.sh",
+      "owner": "Water Clarity Brain",
+      "reason": "Invariant 10 matches any Brain RTDB URL mention, read or write. the read-only job identity and BRAIN_RTDB_URL for the GET-only read; the job never writes the Brain RTDB (comment + read-only role).",
+      "plannedMigrationPhase": "Architecture: narrow invariant 10 to write sites (follow-up); no runtime change needed",
+      "status": "LEGACY_BASELINE",
+      "carriedFrom": "brains/water-clarity/deploy/deploy-job.sh"
     }
   ]
 }
