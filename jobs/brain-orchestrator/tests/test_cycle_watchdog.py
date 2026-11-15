@@ -212,7 +212,9 @@ def test_the_committed_policy_matches_the_approved_o6_scope():
     assert pol["enabled"] and pol["allowedJobs"] == ["brain-orchestrator", "brain-publisher"]
     assert pol["brains"] == {"water-clarity": {"holder": "pulse", "lakes": ["Guntersville_AL", "Lake_Hartwell_SC"]},
                              "lake-brain": {"holder": "pulse", "lakes": ["Guntersville_AL", "Wheeler_AL", "Wilson_AL", "Pickwick_Lake_TN", "Lake_Hartwell_SC"],
-                                            "approvalRef": "owner-approval-2026-11-12/sector-ops-51-lake-on-pulse"}}
+                                            "approvalRef": "owner-approval-2026-11-12/sector-ops-51-lake-on-pulse"},
+                             "water-temp": {"holder": "pulse", "lakes": ["Guntersville_AL", "Wheeler_AL", "Wilson_AL", "Pickwick_Lake_TN", "Lake_Hartwell_SC"],
+                                            "approvalRef": "owner-approval-PENDING/sector-ops-51-water-temp-on-pulse"}}
     assert pol["approvalRef"].startswith("owner-approval-")
 
 
