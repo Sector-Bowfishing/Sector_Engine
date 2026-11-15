@@ -1,0 +1,86 @@
+{
+  "standard": "production-exit-gate-v1",
+  "brainId": "water-clarity",
+  "checks": {
+    "X01": {
+      "status": "PASS",
+      "mode": "OFFLINE",
+      "evidenceRef": "Sector_Engine c57054a brains/water-clarity/tests/test_clarity_live_parity.py + tools/brain_certification/tests/test_exit_gate.py (re-run 2026-11-15: 11 + 13 passed)"
+    },
+    "X02": {
+      "status": "PASS",
+      "mode": "OFFLINE",
+      "evidenceRef": "Sector_Engine c57054a brains/water-clarity/tests/test_clarity_live_parity.py + tools/brain_certification/tests/test_exit_gate.py (re-run 2026-11-15: 11 + 13 passed)"
+    },
+    "X03": {
+      "status": "PASS",
+      "mode": "OFFLINE",
+      "evidenceRef": "Sector_Engine c57054a brains/water-clarity/tests/test_clarity_live_parity.py + tools/brain_certification/tests/test_exit_gate.py (re-run 2026-11-15: 11 + 13 passed)"
+    },
+    "X04": {
+      "status": "PASS",
+      "mode": "OFFLINE",
+      "evidenceRef": "Sector_Engine c57054a brains/water-clarity/tests/test_clarity_live_parity.py + tools/brain_certification/tests/test_exit_gate.py (re-run 2026-11-15: 11 + 13 passed)"
+    },
+    "X05": {
+      "status": "PASS",
+      "mode": "OFFLINE",
+      "evidenceRef": "Sector_Engine c57054a brains/water-clarity/tests/test_clarity_live_parity.py + tools/brain_certification/tests/test_exit_gate.py (re-run 2026-11-15: 11 + 13 passed)"
+    },
+    "X06": {
+      "status": "PASS",
+      "mode": "OFFLINE",
+      "evidenceRef": "Sector_Engine c57054a brains/water-clarity/tests/test_clarity_live_parity.py + tools/brain_certification/tests/test_exit_gate.py (re-run 2026-11-15: 11 + 13 passed)"
+    },
+    "X07": {
+      "status": "PASS",
+      "mode": "LIVE",
+      "evidenceRef": "sector-ops#51 comment 6691082338 (O6.1 first live hybrid publish 2026-11-06, publishId 7def2674; private): published 1, verify --expect-changes exit 0, 8 paths written, readback shows the change"
+    },
+    "X08": {
+      "status": "PASS",
+      "mode": "LIVE",
+      "evidenceRef": "sector-ops#51 comment 6691082338 (O6.1 first live hybrid publish 2026-11-06, publishId 7def2674; private): whole-fleet post-vs-pre diff, 6 values changed, all on the two pilot lakes, plus the publication node"
+    },
+    "X09": {
+      "status": "NOT_RUN",
+      "mode": "LIVE",
+      "evidenceRef": "NOT_RUN: pending, see Sector_Ops #51 p9 morning batch (2026-11-15) (forced mid-write failure on a NON-production database)"
+    },
+    "X10": {
+      "status": "PASS",
+      "mode": "LIVE",
+      "evidenceRef": "sector-ops#51 comment 6691082338 (O6.1 first live hybrid publish 2026-11-06, publishId 7def2674; private): publication node matches the record (LIVE PUBLISHED COMPLETE, previousPublishId, knowledge release, lifecycle)"
+    },
+    "X11": {
+      "status": "PASS",
+      "mode": "LIVE",
+      "evidenceRef": "sector-ops#51 comment 6691082338 (O6.1 first live hybrid publish 2026-11-06, publishId 7def2674; private) and sector-ops#51 comments 6702435032, 6751308169 (O6.3 3-day watch, latch null, clean 2026-11-09; private): health node unchanged by the publish; health mirror owns /health/brains/water-clarity"
+    },
+    "X12": {
+      "status": "PASS",
+      "mode": "LIVE",
+      "evidenceRef": "sector-ops#51 comment 6691082338 (O6.1 first live hybrid publish 2026-11-06, publishId 7def2674; private): score 8.0 FROZEN unchanged; /scores written only by the scorer"
+    },
+    "X13": {
+      "status": "NOT_RUN",
+      "mode": "LIVE",
+      "evidenceRef": "NOT_RUN: pending, see Sector_Ops #51 p9 morning batch (2026-11-15) (rollback rehearsal on a NON-production database)"
+    },
+    "X14": {
+      "status": "PASS",
+      "mode": "OFFLINE",
+      "evidenceRef": "Sector_Engine c57054a exit_gate.legacy_write_sites(brains/water-clarity) == no write sites, no whole-node keys (test_water_clarity_legacy_writer_is_retired_in_code)"
+    },
+    "X15": {
+      "status": "PASS",
+      "mode": "LIVE",
+      "evidenceRef": "sector-ops#51 comment 6691082338 (O6.1 first live hybrid publish 2026-11-06, publishId 7def2674; private): 0 live hash mismatches on every planned path"
+    },
+    "X16": {
+      "status": "NOT_RUN",
+      "mode": "LIVE",
+      "evidenceRef": "NOT_RUN: pending, see Sector_Ops #51 p9 morning batch (2026-11-15) (waits on the identity split, Sector_Ops #19)"
+    }
+  }
+}

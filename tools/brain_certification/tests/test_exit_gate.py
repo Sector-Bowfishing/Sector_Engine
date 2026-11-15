@@ -9,6 +9,7 @@ from brain_cert_kit import exit_gate as g
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 BRAINS = ("wind", "fish", "water-clarity")
+SHADOW_BRAINS = ("wind", "fish")            # Water Clarity left this list with its CUTOVER_COMPLETE flip (WATER_CLARITY_CUTOVER_COMPLETE_V1)
 LEGACY_WRITERS = ("wind", "fish")            # Brains whose runtime still carries a direct write site (Water Clarity's was retired: X14)
 
 
@@ -41,7 +42,7 @@ def test_complete_record_passes_and_every_single_defect_blocks():
     assert g.evaluate(None)["verdict"] == "BLOCKED" and g.evaluate({})["verdict"] == "BLOCKED"
 
 
-@pytest.mark.parametrize("brain", BRAINS)
+@pytest.mark.parametrize("brain", SHADOW_BRAINS)
 def test_current_brains_are_shadow_and_the_gate_is_not_yet_claimable(brain):
     d = os.path.join(REPO, "brains", brain)
     assert g.cutover_guard(d)["gate"] == "NOT_REQUIRED_WHILE_SHADOW"
@@ -127,3 +128,13 @@ def test_cutover_complete_is_refused_without_a_passing_exit_record(tmp_path, bra
     d, _ = _clone(tmp_path / "e", brain, "BOGUS")
     with pytest.raises(AssertionError):
         g.cutover_guard(d)
+
+
+COMMITTED_BRAINS = sorted(d for d in os.listdir(os.path.join(REPO, "brains")) if not d.startswith("_") and os.path.isfile(os.path.join(REPO, "brains", d, "brain.json")))
+
+
+@pytest.mark.parametrize("brain", COMMITTED_BRAINS)
+def test_every_committed_brain_passes_its_cutover_guard(brain):
+    """The committed state itself: a Brain that claims CUTOVER_IN_PROGRESS / CUTOVER_COMPLETE must carry a PASSing exit record (all 16 checks), and
+    CUTOVER_COMPLETE must also have no legacy writer left. A flip PR with any check still NOT_RUN fails here, by design."""
+    g.cutover_guard(os.path.join(REPO, "brains", brain))
