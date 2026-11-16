@@ -202,10 +202,40 @@ def wt_plan(u=WT_GOLDEN, previous=None, readiness="BETA", now=WT_NOW):
 def test_water_temp_measured_is_available_with_the_brains_own_freshness():
     writes, why = wt_plan()
     assert WT.stale_after_hours(WT_GOLDEN) == 6
-    assert writes == {WT.copy_path("Guntersville|AL"): {"schema": "sector-customer-water-temp-v1", "lakeId": "Guntersville|AL", "status": "AVAILABLE",
+    assert writes[WT.copy_path("Guntersville|AL")] == {"schema": "sector-customer-water-temp-v1", "lakeId": "Guntersville|AL", "status": "AVAILABLE",
                       "valueF": 80.6, "kind": "measured", "observedAt": "2026-07-15T01:00:00Z", "freshUntil": "2026-07-15T07:00:00Z",
-                      "runner": "pulse", "publishId": "7def2674"}}
-    assert why == {"Guntersville|AL": "AVAILABLE", "Lake Hartwell|SC": "NO_OBSERVATION_TIME", "Wheeler|AL": "NO_OBSERVATION_TIME"}   # the modeled gap
+                      "runner": "pulse", "publishId": "7def2674"}
+    assert why == {"Guntersville|AL": "AVAILABLE", "Lake Hartwell|SC": "ESTIMATE", "Wheeler|AL": "ESTIMATE"}
+
+
+def test_water_temp_modeled_is_an_estimate_for_its_lake_local_day_only():
+    """Owner approval P4 (Sector_Ops #51, 2026-11-15): the approved launch "Estimate" is copied as ESTIMATE, kind modeled, no range,
+    timed by the model's lake-local day (never the Brain's run time)."""
+    writes, _ = wt_plan()
+    assert writes[WT.copy_path("Wheeler|AL")] == {"schema": "sector-customer-water-temp-v1", "lakeId": "Wheeler|AL", "status": "ESTIMATE",
+                                                  "valueF": 80, "kind": "modeled", "observedAt": "2026-07-14T05:00:00Z",
+                                                  "freshUntil": "2026-07-15T05:00:00Z", "runner": "pulse", "publishId": "7def2674"}
+    assert not any(k in c for c in writes.values() for k in ("lowF", "highF", "rangeF", "band"))         # no range is ever copied
+    nextday = dt.datetime(2026, 7, 15, 5, 0, tzinfo=dt.timezone.utc)                                      # local midnight: the day is over
+    assert wt_plan(now=nextday)[1]["Wheeler|AL"] == "STALE"
+    early = dt.datetime(2026, 7, 14, 4, 59, tzinfo=dt.timezone.utc)                                       # before the local day starts
+    assert wt_plan(now=early)[1]["Wheeler|AL"] == "STALE"
+
+
+@pytest.mark.parametrize("change,reason", [
+    ({"lakeLocalDate": None}, "NO_OBSERVATION_TIME"),
+    ({"lakeTimeZone": None}, "NO_OBSERVATION_TIME"),
+    ({"lakeTimeZone": "Mars/Olympus"}, "NO_OBSERVATION_TIME"),
+    ({"lakeLocalDate": "2026-07-13"}, "STALE"),
+    ({"currentTempF": None}, "NO_VALUE"),
+    ({"stale": True}, "STALE"),
+    ({"evidenceStale": True}, "STALE"),
+])
+def test_water_temp_modeled_estimate_fails_closed(change, reason):
+    u = copy.deepcopy(WT_GOLDEN)
+    u["lakes/Wheeler_AL/states/waterTemp"].update(change)
+    assert wt_plan(u)[1]["Wheeler|AL"] == reason
+    assert WT.copy_path("Wheeler|AL") not in wt_plan(u)[0]
 
 
 @pytest.mark.parametrize("change,reason", [
@@ -222,16 +252,16 @@ def test_water_temp_each_failing_gate_writes_no_copy(change, reason):
     u = copy.deepcopy(WT_GOLDEN)
     u["lakes/Guntersville_AL/states/waterTemp"].update(change)
     writes, why = wt_plan(u)
-    assert writes == {} and why["Guntersville|AL"] == reason
+    assert WT.copy_path("Guntersville|AL") not in writes and why["Guntersville|AL"] == reason
 
 
 def test_water_temp_without_the_brains_stale_rule_writes_nothing_and_below_beta_clears():
     u = copy.deepcopy(WT_GOLDEN)
     del u["brains/water-temp"]
-    assert wt_plan(u)[0] == {} and wt_plan(u)[1]["Guntersville|AL"] == "STALE"
+    assert WT.copy_path("Guntersville|AL") not in wt_plan(u)[0] and wt_plan(u)[1]["Guntersville|AL"] == "STALE"
     before = wt_plan()[0]
     cleared = wt_plan(previous=before, readiness="CALIBRATION")[0]
-    assert {p: c["status"] for p, c in cleared.items()} == {WT.copy_path("Guntersville|AL"): "UNKNOWN"}
+    assert {p: c["status"] for p, c in cleared.items()} == {WT.copy_path(x): "UNKNOWN" for x in ("Guntersville|AL", "Lake Hartwell|SC", "Wheeler|AL")}
 
 
 # ---------- generation binding ----------

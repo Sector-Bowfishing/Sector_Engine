@@ -24,10 +24,10 @@ from sector_brain_platform.publisher.storage import MemoryObjectStore        # n
 pytestmark = [pytest.mark.watchdog]
 
 NOW = dt.datetime(2026, 11, 20, 12, 0, tzinfo=dt.timezone.utc)
-STAGED = ("wind",)
+STAGED = ("sector-intelligence", "wind")
 APPLIED = ("lake-brain", "water-temp")
 LAKE_REF = "owner-approval-2026-11-12/sector-ops-51-lake-on-pulse"
-WT_REF = "owner-approval-PENDING/sector-ops-51-water-temp-on-pulse"
+WT_REF = "owner-approval-2026-11-16/sector-ops-51-b1-b5"
 WT_ORD = "owner-approval-2026-11-15/sector-ops-51#WT-ORD"
 
 
@@ -100,10 +100,10 @@ def test_no_runtime_reads_the_stage_folder():
     assert [p for p in out if not p.startswith("jobs/brain-orchestrator/tests/")] == []
 
 
-def test_three_fragments_ordered_by_readiness_each_with_its_blockers():
+def test_fragments_ordered_by_readiness_each_with_its_blockers():
     frags = HS.fragments()
     assert sorted(frags) == sorted(STAGED + APPLIED)
-    assert [b for b, _ in sorted(frags.items(), key=lambda kv: kv[1]["readiness"])] == ["lake-brain", "water-temp", "wind"]
+    assert [b for b, _ in sorted(frags.items(), key=lambda kv: kv[1]["readiness"])] == ["lake-brain", "water-temp", "sector-intelligence", "wind"]
     for f in frags.values():
         if f["brainId"] in APPLIED:
             assert f["blockers"] == [], f"{f['brainId']} is live: applying it confirmed its blockers were done"
@@ -227,3 +227,15 @@ def test_check_and_show_run_against_the_committed_files(capsys):
     out = capsys.readouterr().out
     assert "lake-brain: LIVE (applied), OK" in out and "wind: OK" in out and "water-temp: LIVE (applied), OK" in out
     assert HS.main(["show"]) == 0
+
+
+def test_sector_intelligence_needs_an_order_review_before_it_can_be_central():
+    """SI is step 5 (publishes last): CENTRAL ahead of Wind and Water Temp needs the owner's SI-ORD review, like Water Temp's WT-ORD."""
+    merged = HS.merged(HS.fragments()["sector-intelligence"], "owner-approval-test", *live())
+    probs = HS.verify(*merged, "sector-intelligence")
+    assert len(probs) == 1 and "CUTOVER_ORDER" in probs[0] and "wind" in probs[0] and "water-temp" in probs[0]
+    _, _, c = merged
+    c["brains"]["sector-intelligence"]["orderReviewRef"] = "owner-approval-test/si-ord"
+    assert HS.verify(merged[0], merged[1], c, "sector-intelligence") == []
+    assert RL.primary(merged[0], "sector-intelligence") == "pulse"
+    assert RL.primary(merged[0], "water-clarity") == "pulse"                         # Water Clarity is untouched

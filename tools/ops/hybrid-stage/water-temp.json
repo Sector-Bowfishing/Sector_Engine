@@ -2,7 +2,7 @@
   "schema": "sector-hybrid-stage-v1",
   "brainId": "water-temp",
   "readiness": 2,
-  "note": "APPLIED in the DRAFT flip (Sector_Ops #51; approvalRef PENDING until the owner's M4 approval): tools/ops/hybrid_stage.py apply wrote it into the three reviewed policies; `check` verifies the live policies against it. Nothing reads this file at runtime. The move is live only once the Orchestrator and Publisher are deployed from this commit AND the owner enables water-temp in the execution control. Before the Orchestrator deploy, publishes/water-temp/_locks/ must hold no quarantine and no HELD apply lock. Water Temp goes ahead of Wind by the owner's order review WT-ORD (D1, Sector_Ops #51, 2026-11-15). Water Temp moves like Water Clarity did: Pulse runs water-temp-central while it holds the lease.",
+  "note": "APPLIED in the flip PR (Sector_Ops #51; approvalRef owner-approval-2026-11-16/sector-ops-51-b1-b5, owner approval B1-B5): tools/ops/hybrid_stage.py apply wrote it into the three reviewed policies; `check` verifies the live policies against it. Nothing reads this file at runtime. The move is live only once the Orchestrator and Publisher are deployed from this commit AND the owner enables water-temp in the execution control. Before the Orchestrator deploy, publishes/water-temp/_locks/ must hold no quarantine and no HELD apply lock. Water Temp goes ahead of Wind by the owner's order review WT-ORD (D1, Sector_Ops #51, 2026-11-15). Water Temp moves like Water Clarity did: Pulse runs water-temp-central while it holds the lease.",
   "pulseJob": "water-temp-central",
   "leaseObject": "exports/runners/leases/water-temp.json",
   "artifactPrefix": "artifacts/water-temp/",

@@ -9,8 +9,11 @@ One execution = one bounded pass, started by brain-orchestrator (no schedule of 
   4. publish             the existing LivePublisher, one instance per Brain (its own LiveAuthorization, release resolver and key guard); without --live it runs dry_run():
                          the identical preparation, nothing written anywhere
   5. outcome             the Publisher's immutable history (publishes/), which the Orchestrator imports; a JSON report on stdout (and --out)
+  6. customer copies     only with --live and only for a Brain whose PUBLISHER_CUSTOMER_* switch is set (absent = nothing, the default): after a verified
+                         publication, that Brain's CUSTOMER-lane copy (customer/lakes/{k}/level | clarity | waterTemp) in one separate, key-guarded update
+                         (publisher_live/customer_lane.py). A copy failure is reported and never undoes the publication.
 
-The job writes only publishes/ in the artifact store and only the producing Brain's validated paths in the Brain database. It never writes /scores, /control, /health, /jobs,
+The job writes only publishes/ in the artifact store, the producing Brain's validated paths in the Brain database, and (step 6, switch set) that Brain's own customer copy. It never writes /scores, /control, /health, /jobs,
 never builds an artifact, never runs a Brain and never changes a schedule. Release approval is required (PackagedReleaseResolver require_approved=True); there is no exception flag.
 
 usage:
@@ -44,9 +47,10 @@ def _iso(t):
 
 
 def run_pass(*, store, control: dict, cutover_path: str | None, make_publisher, live: bool, max_artifacts: int = DEFAULT_MAX, admin_ref: str | None = None,
-             clock=lambda: dt.datetime.now(dt.timezone.utc)) -> dict:
+             clock=lambda: dt.datetime.now(dt.timezone.utc), customer_lane=None) -> dict:
     """The whole pass with every client injected. `store` is the raw artifact store (wrapped here in the Publisher job's view); `make_publisher(brain_id)` returns a LivePublisher
-    whose history uses the same view. Returns the report; raises nothing for a single bad request (it becomes a problem entry)."""
+    whose history uses the same view. `customer_lane(brain_id, result)` (optional) runs after a live PUBLISHED/RECOVERED result and returns a small
+    report or None (lane not configured for that Brain: nothing is added). Returns the report; raises nothing for a single bad request (it becomes a problem entry)."""
     view = PR.publisher_job_view(store)
     report = {"schema": "sector-publisher-pass-v1", "startedAt": _iso(clock()), "mode": "LIVE" if live else "DRY_RUN", "adminRef": admin_ref,
               "executionControl": {"state": control.get("state"), "reason": control.get("reason")}, "brains": {}, "problems": [], "published": 0}
@@ -79,8 +83,17 @@ def run_pass(*, store, control: dict, cutover_path: str | None, make_publisher, 
             except Exception as e:                                             # noqa: BLE001 - unknown outcome: recorded, never counted as published
                 out["results"].append({"artifactId": ref.artifact_id, "result": "ERROR", "detail": f"{type(e).__name__}: {str(e)[:200]}"})
                 continue
-            out["results"].append({"artifactId": ref.artifact_id, "result": res.result.value, "codes": list(res.codes or []), "publishId": res.publish_id,
-                                   "updatePaths": len(res.updates or {}), "applied": bool(live and res.result.value in ("PUBLISHED", "RECOVERED"))})
+            entry = {"artifactId": ref.artifact_id, "result": res.result.value, "codes": list(res.codes or []), "publishId": res.publish_id,
+                     "updatePaths": len(res.updates or {}), "applied": bool(live and res.result.value in ("PUBLISHED", "RECOVERED"))}
+            if customer_lane is not None and entry["applied"]:
+                try:
+                    lane = customer_lane(brain, res)
+                except Exception as e:                                         # noqa: BLE001 - a copy failure never undoes a verified publication
+                    lane = {"error": f"{type(e).__name__}: {str(e)[:200]}"}
+                    report["problems"].append({"kind": "CUSTOMER_COPY_FAILED", "brainId": brain, "why": lane["error"]})
+                if lane is not None:
+                    entry["customerCopies"] = lane
+            out["results"].append(entry)
             report["published"] += 1 if live and res.result.value in ("PUBLISHED", "RECOVERED") else 0
     report["status"] = report.get("status") or "DONE"
     report["finishedAt"] = _iso(clock())
@@ -97,6 +110,41 @@ class _ReadOnlyRtdb:
 
     def update(self, updates):
         raise PermissionError("brain-publisher dry run: no database write")
+
+
+def customer_env(environ=os.environ) -> dict:
+    """The CUSTOMER-lane switches that are SET in the job's environment (absent stays absent: the lane is not configured for that Brain)."""
+    from sector_brain_platform.publisher_live import customer_lane as CL
+    names = sorted({e[1] for e in CL.LANE.values()})
+    return {k: environ[k] for k in names if k in environ}
+
+
+class _CustomerLaneDb:
+    """Reads through the job's reader; writes only the Brain's own customer copy keys (customer_lane.key_allowed), never anything else."""
+    def __init__(self, db, brain_id):
+        self._db, self.brain_id = db, brain_id
+
+    def get(self, path):
+        return self._db.get(path)
+
+    def update(self, updates):
+        from sector_brain_platform.publisher_live import customer_lane as CL
+        CL.assert_keys(self.brain_id, updates)
+        return self._db.update(updates)
+
+
+def make_customer_lane(env: dict, db_for, *, runner_for, clock=lambda: dt.datetime.now(dt.timezone.utc)):
+    """-> customer_lane(brain_id, result) for run_pass, or None when no switch is set at all (the default: byte-identical to before)."""
+    from sector_brain_platform.publisher_live import customer_lane as CL
+    if not env:
+        return None
+
+    def lane(brain_id, res):
+        if not CL.configured(brain_id, env):
+            return None
+        return CL.write_pass(brain_id, res.updates or {}, res.record or {}, rtdb=_CustomerLaneDb(db_for(brain_id), brain_id), env=env,
+                             runner=runner_for(brain_id), now=clock())
+    return lane
 
 
 def _release_dir(brain_id: str) -> str:
@@ -138,7 +186,15 @@ def main(argv=None) -> int:
         db = RtdbRestPublisherClient(RTDB_URL, brain_id=brain_id, tokens=tokens, armed=True) if a.live else _ReadOnlyRtdb(reader)
         return LivePublisher(default_registry(), PublishHistory(view), db, LiveAuthorization(BrainAuthorization(brain_id, cut[brain_id]["approvalRef"])),
                              release_resolver=PackagedReleaseResolver(_release_dir(brain_id), brain_id, require_approved=True))
-    report = run_pass(store=store, control=control, cutover_path=CUTOVER, make_publisher=make_publisher, live=a.live, max_artifacts=a.max_artifacts, admin_ref=a.admin_ref)
+    lane = None
+    if a.live:
+        from sector_brain_platform import runner_lease as RL
+        from sector_brain_platform.rtdb import BrainRtdb as _Raw
+        policy = RL.load_policy()
+        raw = _Raw(RTDB_URL, tokens, brain_id=None)
+        lane = make_customer_lane(customer_env(), lambda _b: raw, runner_for=lambda b: RL.primary(policy, b))
+    report = run_pass(store=store, control=control, cutover_path=CUTOVER, make_publisher=make_publisher, live=a.live, max_artifacts=a.max_artifacts, admin_ref=a.admin_ref,
+                      customer_lane=lane)
     report["deploymentVersion"] = os.environ.get("DEPLOYMENT_VERSION")
     if a.out:
         with open(a.out, "w", encoding="utf-8") as fh:
