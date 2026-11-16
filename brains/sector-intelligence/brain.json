@@ -55,7 +55,7 @@
         "loader": "brains/sector-intelligence/runtime/run.py load_knowledge",
         "verification": "sector_brain_platform.knowledge_release: per-file sha256 and bytes plus release digest",
         "lineage": "knowledgeRelease, manifestRef and manifestSha256 in the shadow artifact lineage; release id and digest in the run summary",
-        "approval": "NOT_RECORDED",
+        "approval": "APPROVED",
         "onUnavailable": "REFUSE"
       }
     ],
@@ -70,8 +70,8 @@
       "INTERNAL"
     ],
     "knowledgeLoading": {
-      "approved": "NONE",
-      "experimental": "intelligence-catalog (PACKAGED_IN_IMAGE, brains/sector-intelligence/runtime/knowledge-release.json, approval NOT_RECORDED)",
+      "approved": "intelligence-catalog (PACKAGED_IN_IMAGE, brains/sector-intelligence/runtime/knowledge-release.json `sector-intelligence-knowledge-2026-10-20.1`; APPROVED for INTERNAL and CALIBRATION use only, not customer-eligible: docs/cortex/approvals/sector-intelligence-knowledge-2026-10-20.1.md)",
+      "experimental": "NONE",
       "refuseWithoutApproved": [
         "CUSTOMER_SERVING"
       ]
@@ -91,6 +91,6 @@
       "status": "NOT_ELIGIBLE",
       "approvalRef": null
     },
-    "notes": "No APPROVED knowledge release exists (approval NOT_RECORDED): production runs are INTERNAL mode on the packaged candidate/reviewed knowledge. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
+    "notes": "The packaged knowledge release sector-intelligence-knowledge-2026-10-20.1 is APPROVED for INTERNAL and CALIBRATION use only (Sector_Ops #51, owner-approval-2026-11-16/sector-ops-51-b1-b5, item B4); it is not customer-eligible and approves no combined score (launch answer: factors only). Production runs are INTERNAL mode. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
   }
 }
