@@ -1,14 +1,14 @@
 # Approval record: `sector-intelligence-knowledge-2026-10-20.1`
 
-> **DRAFT: not yet approved.** This record is prepared ahead of time. It takes effect only when Michael says "approve the Sector Intelligence knowledge release" and the `Approved by` and `Decision` rows below are filled in from his Sector_Ops #51 owner approval. Do not merge before that.
+> **APPROVED** by Michael on 2026-11-16 (Sector_Ops #51, owner approval B1–B5, item B4). Factors only; no combined score.
 
 | Field | Value |
 |---|---|
 | Release | `sector-intelligence-knowledge-2026-10-20.1` (Sector Intelligence catalog, `PACKAGED_IN_IMAGE`) |
 | Contents | One file: `brains/sector-intelligence/runtime/catalog.json` (sha256 `71d5f2d6…401f221e5e`, 11,559 bytes) |
 | Release digest | `sha256:c295f528cf00b68987f023b45f1becaa5a2b1fdd872477497951bffa6df7c8ce` (unchanged by this record) |
-| Approved by | PENDING (Michael Cather, owner, in chat) |
-| Decision | PENDING (Sector_Ops #51 owner approval, the release step of the Sector Intelligence switch-on) |
+| Approved by | Michael Cather (owner), in chat, 2026-11-16 ~03:38Z |
+| Decision | `owner-approval-2026-11-16/sector-ops-51-b1-b5`, item B4 (Sector_Ops #51 comment 6906604228) |
 | Scope | **INTERNAL** and **CALIBRATION** use only, the same as the Water Clarity, Lake and Water Temp releases when they moved to Pulse. |
 | Customer eligible | **No**. This approval does not make the release or any Sector Intelligence output customer-eligible. |
 | Promotion | None. No score, weight, band, binding, catalog entry or lifecycle state changes. |

@@ -113,7 +113,13 @@ the full internal record at the customer boundary.
 Four more CUSTOMER-lane copies follow §3 and §6 exactly: a pure Publisher planner per copy (Brain-side gates; `status: UNKNOWN`
 written once over a copy that stops passing) and a read-only Engine reader per copy (every gate fails closed to UNKNOWN with a
 reason; freshness checked again on every request). Each Publisher writer also sits behind its own env switch, **default off**.
-Nothing is wired: no writer is called by the LivePublisher, no reader is called by `/conditions`, and there is no reader identity.
+**Publisher wiring (Sector_Ops #51 P1):** `publisher_live/customer_lane.py` wires the level, clarity and waterTemp writers into the Publisher
+job (`jobs/brain-publisher/publish_job.py`, step 6). After a verified live publication of `lake-brain`, `water-clarity` or `water-temp`, the job
+plans that Brain's copy with its planner and writes it in one separate update that a key guard limits to `customer/lakes/{k}/{copy}` for that
+Brain's own copy. It is not part of the Brain's atomic publication, and a copy failure is reported (`CUSTOMER_COPY_FAILED`) without undoing it.
+Switches: `PUBLISHER_CUSTOMER_LAKE_LEVEL`, `PUBLISHER_CUSTOMER_CLARITY`, `PUBLISHER_CUSTOMER_WATER_TEMP`; **absent = nothing read or written (the
+default)**, `1` = on (the owner's flip), anything else = withdraw once with UNKNOWN. `deploy-job.sh` passes a switch only when it is set, and only
+as `0` or `1`. The generationBinding and wind outlookModel writers stay unwired, and no Engine reader is enabled by this.
 Review fixes (#144): a switch turned off withdraws every live copy once with `status: UNKNOWN` (reason `NOT_ENABLED`); a source time more
 than 10 minutes in the future is refused by writers and readers; clarity freshness is `min(freshUntil, evaluationTime + staleAfterHours)`
 so a new run cannot make an old evaluation look fresh; a generation binding is `STALE` 30 days after its review time.
@@ -121,13 +127,14 @@ so a new run cannot make an old evaluation look fresh; a generation binding is `
 | Copy | Schema | Publisher writer (switch) | Source | Engine reader |
 |---|---|---|---|---|
 | `/customer/lakes/{k}/clarity` | `sector-customer-clarity-v1` | `customer_clarity.py` (`PUBLISHER_CUSTOMER_CLARITY=1`) | Water Clarity state; observed → AVAILABLE, modeled → ESTIMATE; `observedAt` = the state's `evaluationTime` | `ClarityBrainOutputAPI` → `clarityBrain` |
-| `/customer/lakes/{k}/waterTemp` | `sector-customer-water-temp-v1` | `customer_water_temp.py` (`PUBLISHER_CUSTOMER_WATER_TEMP=1`) | Water Temp state; `measured` only; `freshUntil` = `lastObservationAt` + the Brain's `staleAfterHours` | `WaterTempBrainOutputAPI` → `waterTempBrain` |
+| `/customer/lakes/{k}/waterTemp` | `sector-customer-water-temp-v1` | `customer_water_temp.py` (`PUBLISHER_CUSTOMER_WATER_TEMP=1`) | Water Temp state; `measured` → AVAILABLE, `freshUntil` = `lastObservationAt` + the Brain's `staleAfterHours`; `modeled` → ESTIMATE (owner P4), no range, valid for its lake-local day only | `WaterTempBrainOutputAPI` → `waterTempBrain` |
 | `/customer/lakes/{k}/generationBinding` | `sector-customer-generation-binding-v1` | `customer_generation_binding.py` (`PUBLISHER_CUSTOMER_GENERATION_BINDING=1`) | Lake reviewed bindings contract, proposed `damBinding` per record | `GenerationBindingOutputAPI` |
 | `/customer/wind/outlookModel` | `sector-customer-wind-outlook-model-v1` | `customer_wind_outlook_model.py` (`PUBLISHER_CUSTOMER_WIND_MODEL=1`) | Wind `activeProductionModel.outlookModel` (proposed); stale after 14 days | `WindOutlookModelOutputAPI` |
 
 Gaps (each needs the owning Brain, then the owner):
-- **Water Temp modeled lakes** carry no source observation time, so they get no copy (`NO_OBSERVATION_TIME`); the spec's
-  `kind: modeled` ESTIMATE needs the Brain to publish the model's valid time.
+- **Water Temp modeled lakes: closed** (owner approval P4, Sector_Ops #51, 2026-11-15). The approved launch "Estimate" is copied as
+  `status: ESTIMATE`, `kind: modeled`, with no range. Its time is the model's own valid day (`lakeLocalDate` in `lakeTimeZone`): `observedAt` =
+  the start of that local day, `freshUntil` = its end. A missing or unknown date or zone, or a day that is not the lake's current day, gets no copy.
 - **Lake dam bindings** are not published. `reviewed-lake-bindings-v1` binds lakes to pool-level sources, not to a generating dam,
   so every lake gets `NO_DAM_BINDING` and the Engine keeps `TailwaterRegistry`.
 - **Wind outlook decision** is not published, so the writer writes nothing (`NO_PUBLICATION`) and the Engine keeps the env path.
