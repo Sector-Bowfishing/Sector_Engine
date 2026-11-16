@@ -1,7 +1,7 @@
 {
  "schema": "sector-data-ownership-mirror-v1",
  "note": "Engine-side mirror of the Cortex data-ownership columns (families: pattern, domain, status, writer, targetWriter) and of the nine target Brains. Cortex is the authority and is never edited from here; tests compare this mirror with Cortex when it is present (CORTEX_HOME). Refresh with `python3 -m sector_brain_platform.data_ownership --sync <cortex projects/sector/shared/data>`.",
- "cortexVersionAtSync": "3.1.2 (ecaef70)",
+ "cortexVersionAtSync": "3.1.5 (f364c55)",
  "registryAsOf": "2026-10-23",
  "families": [
   {
@@ -416,6 +416,51 @@
    "scope": "per-brain",
    "status": "NOT_VERIFIED",
    "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.customer-lake-level",
+   "pattern": "/customer/lakes/{lakeKey}/level",
+   "domain": "domain-output",
+   "scope": "per-lake",
+   "status": "PROPOSED",
+   "writer": "platform.publisher-live",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.customer-lake-clarity",
+   "pattern": "/customer/lakes/{lakeKey}/clarity",
+   "domain": "domain-output",
+   "scope": "per-lake",
+   "status": "PROPOSED",
+   "writer": "platform.publisher-live",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.customer-lake-water-temp",
+   "pattern": "/customer/lakes/{lakeKey}/waterTemp",
+   "domain": "domain-output",
+   "scope": "per-lake",
+   "status": "PROPOSED",
+   "writer": "platform.publisher-live",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.customer-lake-generation-binding",
+   "pattern": "/customer/lakes/{lakeKey}/generationBinding",
+   "domain": "domain-output",
+   "scope": "per-lake",
+   "status": "PROPOSED",
+   "writer": "platform.publisher-live",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.customer-wind-outlook-model",
+   "pattern": "/customer/wind/outlookModel",
+   "domain": "domain-output",
+   "scope": "global",
+   "status": "PROPOSED",
+   "writer": "platform.publisher-live",
    "targetWriter": null
   }
  ],

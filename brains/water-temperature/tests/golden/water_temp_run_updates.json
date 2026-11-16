@@ -84,7 +84,7 @@
       "modeled" : "MODELED — surface-energy-balance-v2 value for the lake-local today; no observation correction.",
       "unavailable" : "UNKNOWN — no fresh measurement and no model value. Never filled in."
     },
-    "status" : "CALIBRATION",
+    "status" : "BETA",
     "supportedLakeCount" : 621,
     "version" : "1.0",
     "versions" : [

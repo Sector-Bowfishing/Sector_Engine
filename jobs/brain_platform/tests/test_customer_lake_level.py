@@ -115,3 +115,12 @@ def test_the_engine_reader_accepts_what_the_publisher_writes():
     assert isinstance(c["schema"], str) and isinstance(c["lakeId"], str) and isinstance(c["status"], str)
     assert isinstance(c["elevationFt"], float) and isinstance(c["observationTime"], str) and isinstance(c["freshUntil"], str)
     assert c["schema"] == "sector-customer-lake-level-v1"
+
+
+def test_lake_publishes_beta_so_its_own_readiness_passes_gate_1():
+    """P3 (Sector_Ops #51, owner approval 2026-11-15): Lake's registry status is BETA, so gate 1 passes on the readiness the
+    Brain itself publishes, with no override."""
+    readiness = GOLDEN["brains/lake-brain"]["status"]
+    assert readiness == "BETA" and C.ready(readiness)
+    writes, why = plan(readiness=readiness)
+    assert writes and why[GUNTERSVILLE] == "AVAILABLE"

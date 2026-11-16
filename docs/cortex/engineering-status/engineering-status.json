@@ -4,8 +4,8 @@
   "reportId": "sector-engine-engineering-status-2026-10-22.1",
   "standards": {
     "framework": "Rehtac Cortex",
-    "version": "3.1.3",
-    "pin": "8ad5469",
+    "version": "3.1.5",
+    "pin": "f364c55",
     "pack": "sector/engine"
   },
   "source": {
@@ -15,8 +15,8 @@
     "evaluatedAt": "2026-10-23",
     "session": "docs/cortex/sessions/2026-10-23-research-automation.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:a39d5d9dc287743b6b6252f3a5731a696b8102f87a44e1d2632365f27c6d8b22",
-    "certificationDigest": "sha256:a39d5d9dc287743b6b6252f3a5731a696b8102f87a44e1d2632365f27c6d8b22",
+    "sourceDigest": "sha256:aec446263aeefbc0ed1599426a11b352e9f626b57267fcbb8099bd6b27c7cfea",
+    "certificationDigest": "sha256:aec446263aeefbc0ed1599426a11b352e9f626b57267fcbb8099bd6b27c7cfea",
     "certificationCurrent": true,
     "verificationCommit": "3e8a3857"
   },
@@ -742,7 +742,7 @@
           {
             "id": "intelligence-catalog",
             "store": "PACKAGED_IN_IMAGE",
-            "approval": "NOT_RECORDED",
+            "approval": "APPROVED",
             "onUnavailable": "REFUSE"
           }
         ],
@@ -1335,7 +1335,7 @@
           {
             "id": "model",
             "store": "PACKAGED_IN_IMAGE",
-            "approval": "NOT_RECORDED",
+            "approval": "APPROVED",
             "onUnavailable": "NOT_APPLICABLE"
           }
         ],
