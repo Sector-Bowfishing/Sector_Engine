@@ -24,9 +24,11 @@ from sector_brain_platform.publisher.storage import MemoryObjectStore        # n
 pytestmark = [pytest.mark.watchdog]
 
 NOW = dt.datetime(2026, 11, 20, 12, 0, tzinfo=dt.timezone.utc)
-STAGED = ("water-temp", "sector-intelligence", "wind")
-APPLIED = ("lake-brain",)
+STAGED = ("sector-intelligence", "wind")
+APPLIED = ("lake-brain", "water-temp")
 LAKE_REF = "owner-approval-2026-11-12/sector-ops-51-lake-on-pulse"
+WT_REF = "owner-approval-2026-11-16/sector-ops-51-b1-b5"
+WT_ORD = "owner-approval-2026-11-15/sector-ops-51#WT-ORD"
 
 
 def live():
@@ -68,6 +70,14 @@ def test_lake_is_applied_and_its_live_entries_match_its_fragment():
     assert RL.primary(RL.load_policy(), "lake-brain") == "pulse" and r["approvals"]["lake-brain"] == LAKE_REF
     assert w["brains"]["lake-brain"]["approvalRef"] == LAKE_REF and c["brains"]["lake-brain"]["approvalRef"] == LAKE_REF
     assert HS.is_live("lake-brain", r, w, c) and HS.live_problems(HS.fragments()["lake-brain"], r, w, c) == []
+
+
+def test_water_temp_is_applied_ahead_of_wind_with_the_owners_order_review():
+    r, w, c = committed()
+    assert RL.primary(RL.load_policy(), "water-temp") == "pulse" and r["approvals"]["water-temp"] == WT_REF
+    assert w["brains"]["water-temp"]["approvalRef"] == WT_REF and c["brains"]["water-temp"]["approvalRef"] == WT_REF
+    assert c["brains"]["water-temp"]["orderReviewRef"] == WT_ORD
+    assert HS.is_live("water-temp", r, w, c) and HS.live_problems(HS.fragments()["water-temp"], r, w, c) == []
 
 
 def test_live_check_catches_drift_between_the_live_policies_and_the_fragment():
@@ -120,13 +130,14 @@ def test_applied_in_memory_the_real_loaders_make_it_central_with_pulse_primary(b
     assert RL.primary(pol, "water-clarity") == "pulse"                               # Water Clarity is untouched
 
 
-def test_water_temp_needs_an_order_review_before_it_can_be_central():
-    merged = HS.merged(HS.fragments()["water-temp"], "owner-approval-test", *live())
+def test_water_temp_carries_the_recorded_wt_ord_order_review():
+    """Without the owner's WT-ORD review Water Temp would be refused (CUTOVER_ORDER: Wind first); the fragment now records it (D1, 2026-11-15)."""
+    f = HS.fragments()["water-temp"]
+    merged = HS.merged(dict(f, cutover={"state": "CENTRAL"}), "owner-approval-test", *live())
     probs = HS.verify(*merged, "water-temp")
     assert len(probs) == 1 and "CUTOVER_ORDER" in probs[0] and "wind" in probs[0]
-    _, _, c = merged
-    c["brains"]["water-temp"]["orderReviewRef"] = "owner-approval-test/wt-ord"      # what the owner's WT-ORD decision adds
-    assert HS.verify(merged[0], merged[1], c, "water-temp") == []
+    merged = HS.merged(f, "owner-approval-test", *live())
+    assert merged[2]["brains"]["water-temp"]["orderReviewRef"] == WT_ORD and HS.verify(*merged, "water-temp") == []
 
 
 def test_lake_carries_the_recorded_l2_order_review():
@@ -166,15 +177,12 @@ def test_a_cloud_start_of_the_legacy_job_still_halts_after_the_move():
 
 
 def test_water_temp_apply_takes_the_owners_order_review(tmp_path, monkeypatch):
-    for name, src in (("runner.json", HS.RUNNER_POLICY), ("watchdog.json", HS.WATCHDOG_POLICY), ("cutover.json", HS.CUTOVER)):
-        (tmp_path / name).write_text(open(src).read())                             # the committed policies, Lake live
-    monkeypatch.setattr(HS, "RUNNER_POLICY", str(tmp_path / "runner.json"))
-    monkeypatch.setattr(HS, "WATCHDOG_POLICY", str(tmp_path / "watchdog.json"))
-    monkeypatch.setattr(HS, "CUTOVER", str(tmp_path / "cutover.json"))
+    _pre_flip_files(tmp_path, monkeypatch)                                             # the policies before the Water Temp (and Lake) flips
     base = ["apply", "--brain", "water-temp", "--approval-ref", "owner-approval-test", "--blockers-cleared", "--write"]
-    assert HS.main(base) == 2                                                          # CUTOVER_ORDER: Wind first, or an order review
-    assert HS.main(base + ["--order-review-ref", "owner-approval-test/wt-ord"]) == 0
-    assert json.loads((tmp_path / "cutover.json").read_text())["brains"]["water-temp"]["orderReviewRef"] == "owner-approval-test/wt-ord"
+    assert HS.main(base) == 2                                                          # the recorded WT-ORD must be restated
+    assert HS.main(base + ["--order-review-ref", "other"]) == 2
+    assert HS.main(base + ["--order-review-ref", WT_ORD]) == 0
+    assert json.loads((tmp_path / "cutover.json").read_text())["brains"]["water-temp"]["orderReviewRef"] == WT_ORD
 
 
 def test_lake_names_must_be_rtdb_keys(tmp_path):
@@ -201,7 +209,7 @@ def test_apply_refuses_open_blockers_and_writes_only_with_write(tmp_path, monkey
     before = {p.name: p.read_text() for p in tmp_path.iterdir()}
     assert HS.main(["apply", "--brain", "lake-brain", "--approval-ref", "owner-approval-test"]) == 2          # blockers open
     assert HS.main(["apply", "--brain", "nope", "--approval-ref", "x"]) == 2
-    assert HS.main(["apply", "--brain", "water-temp", "--approval-ref", "x", "--blockers-cleared"]) == 2     # the order review is still missing
+    assert HS.main(["apply", "--brain", "water-temp", "--approval-ref", "x", "--blockers-cleared"]) == 2     # the order review is not restated
     assert HS.main(["apply", "--brain", "lake-brain", "--approval-ref", "owner-approval-test", "--blockers-cleared"]) == 2   # L-2 not restated
     assert HS.main(["apply", "--brain", "lake-brain", "--approval-ref", "owner-approval-test", "--blockers-cleared", "--order-review-ref", "other"]) == 2
     L2 = ["--order-review-ref", "owner-approval-2026-11-02/sector-ops-50#L-2"]
@@ -217,7 +225,7 @@ def test_apply_refuses_open_blockers_and_writes_only_with_write(tmp_path, monkey
 def test_check_and_show_run_against_the_committed_files(capsys):
     assert HS.main(["check"]) == 0
     out = capsys.readouterr().out
-    assert "lake-brain: LIVE (applied), OK" in out and "wind: OK" in out and "water-temp: OK, but needs an order review" in out
+    assert "lake-brain: LIVE (applied), OK" in out and "wind: OK" in out and "water-temp: LIVE (applied), OK" in out
     assert HS.main(["show"]) == 0
 
 
