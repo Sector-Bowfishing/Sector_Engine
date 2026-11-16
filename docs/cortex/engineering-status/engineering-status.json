@@ -4,8 +4,8 @@
   "reportId": "sector-engine-engineering-status-2026-10-22.1",
   "standards": {
     "framework": "Rehtac Cortex",
-    "version": "3.1.3",
-    "pin": "8ad5469",
+    "version": "3.1.5",
+    "pin": "f364c55",
     "pack": "sector/engine"
   },
   "source": {
@@ -15,8 +15,8 @@
     "evaluatedAt": "2026-10-23",
     "session": "docs/cortex/sessions/2026-10-23-research-automation.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:4d2d9db07f787a2897f26df5f6810a0f7b3f6625cdae838a10666becb58fc907",
-    "certificationDigest": "sha256:4d2d9db07f787a2897f26df5f6810a0f7b3f6625cdae838a10666becb58fc907",
+    "sourceDigest": "sha256:0e7824a1932974e9bdaa53616480906c9edb31ffa1e42f001c7b5b153a47efef",
+    "certificationDigest": "sha256:0e7824a1932974e9bdaa53616480906c9edb31ffa1e42f001c7b5b153a47efef",
     "certificationCurrent": true,
     "verificationCommit": "3e8a3857"
   },
