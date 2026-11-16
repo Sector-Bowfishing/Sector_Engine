@@ -68,6 +68,7 @@ ARGS="--max-artifacts;${MAX_ARTIFACTS:-4}"
 COMMIT="$(git -C "$REPO_ROOT" rev-parse --short=12 HEAD)"
 # CUSTOMER-lane copy switches (publisher_live/customer_lane.py): passed through ONLY when set here, and only as 0 or 1. Unset = not
 # configured = the job never reads or writes customer/ (the default). 1 = on (needs the owner's flip); 0 = off, withdrawing any stored copy once.
+# A switch already set on the live job is carried when not passed (below), so once set it stays 0 or 1; "unset" is only for a job that never had it.
 CUSTOMER_ENV=""
 for v in PUBLISHER_CUSTOMER_LAKE_LEVEL PUBLISHER_CUSTOMER_CLARITY PUBLISHER_CUSTOMER_WATER_TEMP; do
   [[ -z "${!v+x}" ]] && continue
@@ -77,9 +78,37 @@ done
 
 gcloud iam service-accounts describe "$SA" --project "$PROJECT_ID" >/dev/null || { echo "service account $SA missing (create it in the approved identity step)" >&2; exit 2; }
 
+# Carry (Sector_Ops #51, comment 6895061367): --set-env-vars replaces the job's whole env list, so a redeploy made for another reason
+# (Water Temp, Sector Intelligence, Wind, Lake B6) would silently turn an enabled CUSTOMER lane off. A switch already set on the live job
+# is therefore KEPT, with its live value, when this deploy does not pass it. A switch passed here (0 or 1) always wins. No live job yet =
+# nothing to carry; any other describe error stops the deploy.
+DESC_ERR="$(mktemp)"
+trap 'rm -f "$DESC_ERR"' EXIT
+if LIVE_DESC="$(gcloud run jobs describe "$JOB" --project "$PROJECT_ID" --region "$REGION" --format=json 2>"$DESC_ERR")"; then
+  CARRIED="$(printf '%s' "$LIVE_DESC" | python3 -c '
+import json, sys
+passed = set(sys.argv[1].split(",")) - {""}
+c = json.load(sys.stdin)["spec"]["template"]["spec"]["template"]["spec"]["containers"][0]
+env = {e["name"]: e.get("value") for e in c.get("env", [])}
+out = ""
+for k in ("PUBLISHER_CUSTOMER_LAKE_LEVEL", "PUBLISHER_CUSTOMER_CLARITY", "PUBLISHER_CUSTOMER_WATER_TEMP"):
+    if k in env and k not in passed:
+        if env[k] not in ("0", "1"):
+            sys.exit(f"the live job has {k}={env[k]!r}; pass {k}=0 or {k}=1 explicitly")
+        out += f",{k}={env[k]}"
+print(out)
+' "$(echo "$CUSTOMER_ENV" | tr ',' '\n' | cut -d= -f1 | paste -sd, -)")" || { echo "cannot read the live job's customer switches" >&2; exit 2; }
+  [[ -n "$CARRIED" ]] && echo "carried from the live job (not passed here): ${CARRIED#,}"
+  CUSTOMER_ENV="$CUSTOMER_ENV$CARRIED"
+elif grep -qF "Cannot find job [$JOB]" "$DESC_ERR"; then       # only gcloud's job-missing message; a bad region/project or a missing gcloud refuses
+  echo "no live $JOB job: no customer switches to carry"
+else
+  cat "$DESC_ERR" >&2; echo "cannot describe the live $JOB job; refusing to deploy without knowing its customer switches" >&2; exit 2
+fi
+
 echo "▶ job $JOB (mode $PUBLISHER_MODE; commit $COMMIT; customer copies: ${CUSTOMER_ENV:-not configured})"
 CONTEXT="$(mktemp -d)"
-trap 'rm -rf "$CONTEXT"' EXIT
+trap 'rm -rf "$CONTEXT" "$DESC_ERR"' EXIT
 stage_context "$CONTEXT"
 cd "$CONTEXT"
 gcloud run jobs deploy "$JOB" --source . \

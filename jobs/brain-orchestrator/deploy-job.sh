@@ -28,7 +28,7 @@
 set -euo pipefail
 # Recorded before the defaults below: with CARRY_ENV=1 these switches would be silently ignored, so setting one is refused.
 EXPLICIT_SWITCHES=""
-for _v in WIND_MEASUREMENTS PUBLICATION_COORDINATION PUBLICATION_HANDOFF RUNNER_LEASES PUBLICATION_ARTIFACT_BUCKET RTDB_URL ENGINE_URL LAKE_BRAIN_ARCHIVE BIOLOGY_BUCKET; do
+for _v in WIND_MEASUREMENTS PUBLICATION_COORDINATION PUBLICATION_HANDOFF RUNNER_LEASES SI_ARTIFACT_JOB PUBLICATION_ARTIFACT_BUCKET RTDB_URL ENGINE_URL LAKE_BRAIN_ARCHIVE BIOLOGY_BUCKET; do
   [[ -n "${!_v+set}" ]] && EXPLICIT_SWITCHES="$EXPLICIT_SWITCHES $_v"
 done
 PROJECTION_SET="${CONDITIONS_SOURCES_PROJECTION+set}"
@@ -70,6 +70,12 @@ PUBLICATION_HANDOFF="${PUBLICATION_HANDOFF:-off}"
 [[ "$PUBLICATION_HANDOFF" == "off" || "$PUBLICATION_COORDINATION" == "on" ]] || { echo "PUBLICATION_HANDOFF=on needs PUBLICATION_COORDINATION=on"; exit 1; }
 RUNNER_LEASES="${RUNNER_LEASES:-off}"
 [[ "$RUNNER_LEASES" == "on" || "$RUNNER_LEASES" == "off" ]] || { echo "RUNNER_LEASES must be on or off"; exit 1; }
+# Sector Intelligence as a lease-only artifact job (SI-A2, SECTOR_INTELLIGENCE_JOB_PLAN_V1). OFF unless the deploy is approved with SI_ARTIFACT_JOB=on.
+#   on   the job environment gets SI_ARTIFACT_JOB=1: orchestrate.py runs Sector Intelligence only as a lease-only artifact job (needs RUNNER_LEASES=on).
+#   off  (default) the variable is not set at all: the in-process Brain and the job's environment are exactly as before.
+SI_ARTIFACT_JOB="${SI_ARTIFACT_JOB:-off}"
+[[ "$SI_ARTIFACT_JOB" == "on" || "$SI_ARTIFACT_JOB" == "off" ]] || { echo "SI_ARTIFACT_JOB must be on or off"; exit 1; }
+[[ "$SI_ARTIFACT_JOB" == "off" || "$RUNNER_LEASES" == "on" ]] || { echo "SI_ARTIFACT_JOB=on needs RUNNER_LEASES=on (the artifact job is lease-only)"; exit 1; }
 # ORCH_ARGS: the job's container arguments, ';'-separated, from an allowlist. Unset (the default) = the deploy leaves the job's current arguments as they are.
 # Set it to the empty string ("") to clear them. Example (hybrid, shadow lane off): ORCH_ARGS="--publish-engineering-status;--publish-health"
 ORCH_ARGS_ALLOWED=(--publish-engineering-status --publish-health --run-shadow-lane)
@@ -202,6 +208,7 @@ echo "▶ job $JOB"
 BUILD_FLAGS=(--source .)
 LABEL_COMMIT="$COMMIT"
 ENV_FLAGS=(--set-env-vars "BRAIN_TOKEN_MODE=metadata,BRAIN_RTDB_URL=$RTDB_URL,ENGINE_URL=$ENGINE_URL,LAKE_BRAIN_ARCHIVE=$LAKE_BRAIN_ARCHIVE,BIOLOGY_BUCKET=$BIOLOGY_BUCKET,DEPLOYMENT_VERSION=brain-orchestrator@$COMMIT,ORCHESTRATOR_SCOPE=pilots,WATER_TEMP_SCOPE=pilots,WIND_MEASUREMENTS=$WIND_MEASUREMENTS,PUBLICATION_COORDINATION=$PUBLICATION_COORDINATION,PUBLICATION_HANDOFF=$PUBLICATION_HANDOFF,RUNNER_LEASES=$RUNNER_LEASES,CONDITIONS_SOURCES_PROJECTION=$CONDITIONS_SOURCES_PROJECTION,PUBLICATION_ARTIFACT_BUCKET=$PUBLICATION_ARTIFACT_BUCKET,PUBLICATION_CUTOVER=/job/jobs/brain-orchestrator/publication-cutover.json")
+[[ "$SI_ARTIFACT_JOB" == "off" ]] || ENV_FLAGS=(--set-env-vars "${ENV_FLAGS[1]},SI_ARTIFACT_JOB=1")   # only when on: an off deploy keeps the same key set
 CARRY_DIR=""
 if [[ "$CARRY_ENV" == "1" ]]; then
   CARRY_DIR="$(mktemp -d)"
