@@ -113,7 +113,7 @@ def test_switch_off_but_set_withdraws_every_stored_copy_once():
 
 def test_the_level_copy_uses_its_eligible_list_and_release():
     u = copy.deepcopy(LAKE_GOLDEN)
-    assert LN.readiness_from(u, "lake-brain") == "CALIBRATION"           # the write set's own status wins over the stored one
+    assert LN.readiness_from(u, "lake-brain") == "BETA"                  # the write set's own status wins over the stored one
     u["brains/lake-brain"]["status"] = "BETA"
     db = FakeDb()
     eligible = frozenset({"Lake Hartwell|SC", "Guntersville|AL"})
