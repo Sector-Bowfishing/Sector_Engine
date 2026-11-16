@@ -18,9 +18,14 @@ WHAT IT DOES (Brain `wind`, SYNTHETIC artifacts only: lake keys `rehearsal_lake_
   X09   publish C (40 lakes) with a small update limit so it applies in chunks, MANIFEST-LAST; the client fails the 2nd data chunk BEFORE sending it (the
         same fault point as the repo's fake-client proof). Assert: the publication marker is the previous release (only `pending` added), the head did not
         move, every key outside the one chunk that landed is unchanged, a different artifact cannot jump the interrupted one, and resuming C completes it.
-  Writes an evidence JSON (inputs, per-step results, readback digests; no values, no credentials) to docs/cortex/evidence/.
+  Writes an evidence JSON (inputs, per-step results, readback digests; no values, no credentials) to docs/cortex/evidence/, also when a run errors.
 
-It never deletes anything except the paths B added (that is the rollback under test). Moving the exit-gate rows from NOT_RUN stays Michael's call.
+Every synthetic value carries a per-run label, so X09's comparison covers keys whose prior value differs from what C would write (counted in the evidence).
+Fault mode `definite-before-send`: the database never sees an interrupted request; a sent request whose reply is lost is NOT rehearsed here.
+
+WHAT IT LEAVES ON THE DEV DATABASE: besides the `rehearsal_lake_*` lakes it writes the wind registry and health nodes (`brains/wind/*`,
+`health/brains/wind/*`, `sources/noaa-nbm-v5`, `health/sources/noaa-nbm-v5`, `validation/wind`), and C stays the current release. It never deletes
+anything except the paths B added (that is the rollback under test). Moving the exit-gate rows from NOT_RUN stays Michael's call.
 
   python tools/ops/dev_rehearsal.py --database-url URL --approval-ref REF [--bucket NAME] [--out-dir DIR]
 """
@@ -31,8 +36,10 @@ import datetime as dt
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
+import urllib.parse
 import uuid
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -74,9 +81,16 @@ def _norm_url(url: str) -> str:
     return (url or "").strip().rstrip("/")
 
 
+def _host(url: str) -> str:
+    return (urllib.parse.urlsplit(_norm_url(url).lower()).hostname or "").rstrip(".")
+
+
+PRODUCTION_HOSTS = frozenset(_host(u) for u in PRODUCTION_BRAIN_DATABASES)
+
+
 def _never_production(url: str) -> None:
-    u = _norm_url(url)
-    if u in PRODUCTION_BRAIN_DATABASES or any(db in u for db in RT.APP_DATABASES):
+    u, h = _norm_url(url), _host(url)
+    if h in PRODUCTION_HOSTS or u.lower() in PRODUCTION_BRAIN_DATABASES or any(db in u.lower() for db in RT.APP_DATABASES):
         raise Refused(f"refused: {u!r} is a production Brain or app database")
 
 
@@ -108,6 +122,7 @@ class FaultOnUpdate:
 
     def __init__(self, inner, fail_on: int):
         self.inner, self.fail_on, self.calls = inner, fail_on, 0
+        self.sent: list = []                       # key sets of the updates that were passed to the database (observed, not computed)
 
     def get(self, path):
         return self.inner.get(path)
@@ -116,6 +131,7 @@ class FaultOnUpdate:
         self.calls += 1
         if self.calls == self.fail_on:
             raise RtdbDefiniteFailure(f"rehearsal: forced failure on update call {self.calls} (not sent)")
+        self.sent.append(sorted(k.lstrip("/") for k in updates))
         return self.inner.update(updates)
 
 
@@ -124,22 +140,22 @@ def _lakes(n):
     return tuple(f"rehearsal_lake_{i:03d}" for i in range(n))
 
 
-def _sections(speed, lakes, stamp):
+def _sections(speed, lakes, stamp, label):
     muts = []
     for k in lakes:
-        muts += [{"op": "SET", "path": f"/lakes/{k}/states/wind", "value": {"kind": "modeled", "windMS": speed, "inputAgeHours": 1.5, "generatedAt": stamp}},
-                 {"op": "SET", "path": f"/lakeFleet/{k}/slots/wind", "value": {"readiness": "CALIBRATION", "stale": False}}]
+        muts += [{"op": "SET", "path": f"/lakes/{k}/states/wind", "value": {"kind": "modeled", "windMS": speed, "inputAgeHours": 1.5, "generatedAt": stamp, "rehearsalRun": label}},
+                 {"op": "SET", "path": f"/lakeFleet/{k}/slots/wind", "value": {"readiness": "CALIBRATION", "stale": False, "rehearsalRun": label}}]
     lake = {"artifactSchema": LAKE_SCHEMA, "scope": LAKE_SCOPE, "freshness": {"freshnessStatus": "FRESH"}, "mutations": muts}
     registry = {"artifactSchema": "wind-registry-v1", "mutations": [
-        {"op": "SET", "path": f"/brains/{BRAIN}/version", "value": "dev-rehearsal"},
+        {"op": "SET", "path": f"/brains/{BRAIN}/version", "value": f"dev-rehearsal-{label}"},
         {"op": "SET", "path": f"/brains/{BRAIN}/status", "value": "CALIBRATION"},
         {"op": "SET", "path": f"/brains/{BRAIN}/updatedAt", "value": stamp},
         {"op": "SET", "path": f"/brains/{BRAIN}/lastSuccessfulRun", "value": stamp},
         {"op": "SET", "path": f"/health/brains/{BRAIN}/status", "value": "HEALTHY"},
         {"op": "SET", "path": f"/health/brains/{BRAIN}/staleLakeCount", "value": 0},
-        {"op": "SET", "path": f"/validation/{BRAIN}", "value": {"status": "NOT_VALIDATED"}}]}
+        {"op": "SET", "path": f"/validation/{BRAIN}", "value": {"status": "NOT_VALIDATED", "rehearsalRun": label}}]}
     source = {"artifactSchema": "wind-source-registry-v1", "mutations": [
-        {"op": "SET", "path": "/sources/noaa-nbm-v5", "value": {"provider": "synthetic-rehearsal", "latestObservationAt": stamp}},
+        {"op": "SET", "path": "/sources/noaa-nbm-v5", "value": {"provider": f"synthetic-rehearsal-{label}", "latestObservationAt": stamp}},
         {"op": "SET", "path": "/health/sources/noaa-nbm-v5", "value": {"status": "HEALTHY", "lastFetchAt": stamp, "latencyMs": 120, "failures24h": 0}}]}
     return [lake, registry, source]
 
@@ -148,9 +164,9 @@ def _iso(t):
     return t.astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def synthetic_artifact(*, speed, lakes, generated_at, new_id):
+def synthetic_artifact(*, speed, lakes, generated_at, new_id, label):
     stamp = _iso(generated_at)
-    return seal_bundle(brain_id=BRAIN, bundle_id="wind-publication-v1", sections=_sections(speed, lakes, stamp), lifecycle="CALIBRATION",
+    return seal_bundle(brain_id=BRAIN, bundle_id="wind-publication-v1", sections=_sections(speed, lakes, stamp, label), lifecycle="CALIBRATION",
                        review_status="UNREVIEWED", validation_status="NOT_VALIDATED", generated_at=stamp, execution_id=new_id(),
                        code_version="dev-rehearsal", input_fingerprint="sha256:" + "00" * 32, artifact_id=new_id())
 
@@ -185,13 +201,14 @@ def rehearse(rtdb, store, *, approval_ref: str, clock, new_id) -> dict:
     live = publisher(rtdb)
     writer = ArtifactWriter(store, BRAIN)
     t0 = clock()
+    run = new_id().split("-")[-1][-8:]                                                       # per-run label on every synthetic value
     ev = {"checks": {}, "steps": []}
 
     def step(name, result, **extra):
         ev["steps"].append({"step": name, "result": getattr(result, "value", result), **extra})
 
     # seed: previous release A
-    ref_a = writer.write(synthetic_artifact(speed=4.2, lakes=_lakes(2), generated_at=t0 - dt.timedelta(minutes=40), new_id=new_id))
+    ref_a = writer.write(synthetic_artifact(speed=4.2, lakes=_lakes(2), generated_at=t0 - dt.timedelta(minutes=40), new_id=new_id, label=f"{run}-A"))
     prior = rtdb.get(PUB)
     ev["priorPublicationArtifactId"] = prior.get("artifactId") if isinstance(prior, dict) else None
     live.acknowledge_baseline(ref_a, approval_ref=approval_ref)
@@ -202,7 +219,7 @@ def rehearse(rtdb, store, *, approval_ref: str, clock, new_id) -> dict:
         return ev
 
     # X13: rollback restores the pre-cutover state
-    ref_b = writer.write(synthetic_artifact(speed=8.0, lakes=_lakes(2) + ("rehearsal_lake_extra",), generated_at=t0 - dt.timedelta(minutes=30), new_id=new_id))
+    ref_b = writer.write(synthetic_artifact(speed=8.0, lakes=_lakes(2) + ("rehearsal_lake_extra",), generated_at=t0 - dt.timedelta(minutes=30), new_id=new_id, label=f"{run}-B"))
     plan_b = live.dry_run(ref_b).updates or {}
     keys13 = sorted(set(_data_keys(out_a.updates)) | set(_data_keys(plan_b)))
     pre13 = snapshot(rtdb, keys13)
@@ -226,23 +243,24 @@ def rehearse(rtdb, store, *, approval_ref: str, clock, new_id) -> dict:
                            "preCutoverDigest": digest(pre13), "afterRollbackDigest": digest(post13), "differingKeys": diff13[:50]}
 
     # X09: forced mid-write failure leaves the prior state intact (manifest-last)
-    ref_c = writer.write(synthetic_artifact(speed=6.0, lakes=_lakes(40), generated_at=t0 - dt.timedelta(minutes=20), new_id=new_id))
+    ref_c = writer.write(synthetic_artifact(speed=6.0, lakes=_lakes(40), generated_at=t0 - dt.timedelta(minutes=20), new_id=new_id, label=f"{run}-C"))
     small = publisher(rtdb, CHUNK_LIMIT)
     plan_c = small.dry_run(ref_c).updates or {}
     chunks = AP.chunk_updates(plan_c, PUB, CHUNK_LIMIT) if plan_c else []
-    landed = sorted(chunks[0]) if chunks else []
     keys09 = sorted(set(_data_keys(plan_c)) | set(keys13))
     pre09, pub_pre = snapshot(rtdb, keys09), rtdb.get(PUB) or {}
     head_pre = history.head(BRAIN, LAKE_SCHEMA, LAKE_SCOPE)
     faulty = FaultOnUpdate(rtdb, FAIL_ON_UPDATE)
     out_c = publisher(faulty, CHUNK_LIMIT).publish(ref_c)
+    landed = sorted({k for sent in faulty.sent for k in sent if k in plan_c and k != PUB})          # observed: the data keys that reached the database
     step("X09.publishC.faulted", out_c.result, artifactId=ref_c.artifact_id, updateCalls=faulty.calls, chunks=len(chunks))
     post09, pub_post = snapshot(rtdb, keys09), rtdb.get(PUB) or {}
     head_post = history.head(BRAIN, LAKE_SCHEMA, LAKE_SCOPE)
     untouched = [k for k in keys09 if k not in landed]
     diff09 = differing(pre09, post09, untouched)
+    meaningful = [k for k in untouched if k in plan_c and not AP.canonical_equal(pre09.get(k), plan_c[k])]                # keys C would have changed
     pub_rest_same = AP.canonical_equal({k: v for k, v in pub_post.items() if k != "pending"}, {k: v for k, v in pub_pre.items() if k != "pending"})
-    jump = small.publish(writer.write(synthetic_artifact(speed=5.0, lakes=_lakes(3), generated_at=t0 - dt.timedelta(minutes=15), new_id=new_id)))
+    jump = small.publish(writer.write(synthetic_artifact(speed=5.0, lakes=_lakes(3), generated_at=t0 - dt.timedelta(minutes=15), new_id=new_id, label=f"{run}-D")))
     step("X09.otherArtifactWhileInterrupted", jump.result)
     resumed = small.publish(ref_c)
     step("X09.resumeC", resumed.result, mode=resumed.mode, calls=resumed.calls)
@@ -252,10 +270,12 @@ def rehearse(rtdb, store, *, approval_ref: str, clock, new_id) -> dict:
            "only_pending_added": pub_rest_same and (pub_post.get("pending") or {}).get("artifactId") == ref_c.artifact_id,
            "head_unchanged": head_post == head_pre,
            "untouched_keys_identical": not diff09,
+           "comparison_is_meaningful": len(meaningful) > 0,
            "different_artifact_refused": jump.result is LiveResult.PRECONDITION_FAILED,
            "resume_completes": resumed.result is LiveResult.PUBLISHED and resumed.mode == "CHUNKED"
            and pub_done.get("artifactId") == ref_c.artifact_id and "pending" not in pub_done}
-    ev["checks"]["X09"] = {"status": "PASS" if all(x09.values()) else "FAIL", "assertions": x09, "keysCompared": len(untouched),
+    ev["checks"]["X09"] = {"status": "PASS" if all(x09.values()) else "FAIL", "assertions": x09, "faultMode": "definite-before-send",
+                           "keysCompared": len(untouched), "keysCWouldChange": len(meaningful),
                            "nonAuthoritativeKeysLanded": len(landed), "beforeDigest": digest({k: pre09[k] for k in untouched}),
                            "afterFailureDigest": digest({k: post09[k] for k in untouched}), "differingKeys": diff09[:50]}
     return ev
@@ -299,7 +319,10 @@ def main(argv=None, *, allowed_databases=None, allowed_buckets=None, make_client
         print(str(e), file=sys.stderr)
         return 2
     started = dt.datetime.now(dt.timezone.utc)
-    ev = rehearse(rtdb, store, approval_ref=a.approval_ref, clock=lambda: dt.datetime.now(dt.timezone.utc), new_id=lambda: str(uuid.uuid4()))
+    try:
+        ev = rehearse(rtdb, store, approval_ref=a.approval_ref, clock=lambda: dt.datetime.now(dt.timezone.utc), new_id=lambda: str(uuid.uuid4()))
+    except Exception as e:                                                                       # noqa: BLE001 - record the failed run, then fail
+        ev = {"error": re.sub(r"access_token=[^&\s'\"]+", "access_token=REDACTED", f"{type(e).__name__}: {str(e)[:300]}"), "checks": {c: {"status": "NOT_RUN", "reason": "run errored"} for c in ("X09", "X13")}}
     ev = {"standard": STANDARD, "brainId": BRAIN, "database": url, "objectStore": f"gs://{bucket}" if bucket else "memory", "approvalRef": a.approval_ref,
           "gitCommit": _git_commit(), "startedAt": _iso(started), "finishedAt": _iso(dt.datetime.now(dt.timezone.utc)), **ev}
     os.makedirs(a.out_dir, exist_ok=True)

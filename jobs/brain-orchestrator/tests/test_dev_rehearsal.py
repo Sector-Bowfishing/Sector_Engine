@@ -41,7 +41,8 @@ def test_the_hard_coded_lists_are_empty_so_every_database_is_refused_today():
             DR.guard_database(url)
 
 
-@pytest.mark.parametrize("url", ["https://sector-brain.firebaseio.com", "https://sector-brain.firebaseio.com/",
+@pytest.mark.parametrize("url", ["https://sector-brain.firebaseio.com", "https://sector-brain.firebaseio.com/", "HTTPS://Sector-Brain.firebaseio.com",
+                                 "https://sector-brain.firebaseio.com./",
                                  "https://sector-9393c-default-rtdb.firebaseio.com", "https://sector-dev-1f4d0.firebaseio.com"])
 def test_production_and_app_databases_are_refused_even_when_listed(url):
     with pytest.raises(DR.Refused):
@@ -65,6 +66,7 @@ def test_x09_and_x13_pass_on_a_correct_database(store):
     assert ev["checks"]["X09"]["status"] == "PASS", ev["checks"]["X09"]
     x09 = ev["checks"]["X09"]
     assert x09["beforeDigest"] == x09["afterFailureDigest"] and x09["nonAuthoritativeKeysLanded"] > 0
+    assert x09["faultMode"] == "definite-before-send" and x09["keysCWouldChange"] > 0
     assert ev["checks"]["X13"]["preCutoverDigest"] == ev["checks"]["X13"]["afterRollbackDigest"]
     assert [s["step"] for s in ev["steps"]] == ["seed.publishA", "X13.publishB", "X13.rollbackB", "X09.publishC.faulted",
                                                 "X09.otherArtifactWhileInterrupted", "X09.resumeC"]
@@ -122,3 +124,22 @@ def test_the_cli_writes_evidence_with_no_values(tmp_path):
     assert ev["standard"] == "dev-rehearsal-v1" and ev["database"] == FAKE_DEV and ev["objectStore"] == "memory"
     assert {c: v["status"] for c, v in ev["checks"].items()} == {"X09": "PASS", "X13": "PASS"}
     assert "windMS" not in f.read_text()                                     # digests and key counts, never the data
+
+
+def test_x09_on_a_rerun_still_compares_keys_whose_value_c_would_change():
+    rtdb = FakeRtdb()
+    _run(rtdb)
+    ev = DR.rehearse(rtdb, MemoryObjectStore(), approval_ref="approval/test/rehearsal", clock=lambda: T, new_id=_ids_offset(7000))
+    assert ev["checks"]["X09"]["keysCWouldChange"] >= 0.9 * ev["checks"]["X09"]["keysCompared"]
+
+
+def test_a_run_that_errors_still_writes_evidence_without_the_token(tmp_path):
+    class Boom(FakeRtdb):
+        def get(self, path):
+            raise RuntimeError("GET https://x.invalid/a.json?access_token=SECRETVALUE -> None")
+    rc = DR.main(["--database-url", FAKE_DEV, "--approval-ref", "approval/test", "--out-dir", str(tmp_path)],
+                 allowed_databases={FAKE_DEV}, make_clients=lambda url, bucket: (Boom(), MemoryObjectStore()))
+    (f,) = list(tmp_path.iterdir())
+    body = f.read_text()
+    assert rc == 1 and "RuntimeError" in body and "SECRETVALUE" not in body
+    assert {c: v["status"] for c, v in json.loads(body)["checks"].items()} == {"X09": "NOT_RUN", "X13": "NOT_RUN"}
