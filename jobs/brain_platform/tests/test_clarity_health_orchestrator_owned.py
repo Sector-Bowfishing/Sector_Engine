@@ -6,15 +6,19 @@ from sector_brain_platform import data_ownership as DO, health_mirror as HM
 from sector_brain_platform.ownership import PLATFORM_WRITER, OwnershipError, assert_owned, path_allowed
 
 CLARITY_SOURCES = ("sentinel-2-l2a", "usgs-nwis-turbidity", "noaa-mrms")
+WATER_TEMP_SOURCES = ("open-meteo-forecast", "usace-cwms-water-temp", "usgs-nwis-00010")      # Water Temp G3 (DRAFT, Sector_Ops #52)
 
 
 def test_the_registry_gives_the_orchestrator_clarity_health_and_only_clarity_health():
     assert DO.registered_writer("/health/brains/water-clarity/status")["current"] == DO.ORCHESTRATOR
     for s in CLARITY_SOURCES:
         assert DO.registered_writer(f"/health/sources/{s}")["current"] == DO.ORCHESTRATOR
-    for other in ("wind", "lake-brain", "water-temp", "sector-intelligence", "water-clarity-x"):
+    assert DO.registered_writer("/health/brains/water-temp/status")["current"] == DO.ORCHESTRATOR
+    for s in WATER_TEMP_SOURCES:
+        assert DO.registered_writer(f"/health/sources/{s}")["current"] == DO.ORCHESTRATOR
+    for other in ("wind", "lake-brain", "sector-intelligence", "water-clarity-x", "water-temp-x"):
         assert DO.registered_writer(f"/health/brains/{other}/status")["current"] == f"brain:{other}"
-    assert DO.registered_writer("/health/sources/usgs-nwis-00010")["current"] == "@owning-brain"
+    assert DO.registered_writer("/health/sources/tva-restapi")["current"] == "@owning-brain"
 
 
 def test_the_platform_guard_follows_the_registry():
@@ -23,9 +27,12 @@ def test_the_platform_guard_follows_the_registry():
     assert not path_allowed(PLATFORM_WRITER, "health/brains/water-clarity")                # child level, never the whole node
     for s in CLARITY_SOURCES:
         assert path_allowed(PLATFORM_WRITER, f"health/sources/{s}")
-    for other in ("wind", "lake-brain", "water-temp", "sector-intelligence", "biological-state"):
+    assert path_allowed(PLATFORM_WRITER, "health/brains/water-temp/status") and not path_allowed(PLATFORM_WRITER, "health/brains/water-temp")
+    for s in WATER_TEMP_SOURCES:
+        assert path_allowed(PLATFORM_WRITER, f"health/sources/{s}")
+    for other in ("wind", "lake-brain", "sector-intelligence", "biological-state"):
         assert not path_allowed(PLATFORM_WRITER, f"health/brains/{other}/status")           # no registry row: not moved
-    for s in ("usgs-nwis-00010", "tva-restapi", "noaa-nbm-v5", "unknown-source"):
+    for s in ("tva-restapi", "noaa-nbm-v5", "unknown-source"):
         assert not path_allowed(PLATFORM_WRITER, f"health/sources/{s}")
     assert not path_allowed(PLATFORM_WRITER, "health/jobs/water-clarity")
     assert not path_allowed(PLATFORM_WRITER, "health/brains")
@@ -37,7 +44,10 @@ def test_no_brain_writes_a_moved_health_family():
     for s in CLARITY_SOURCES:
         assert not path_allowed("water-clarity", f"health/sources/{s}")
     assert path_allowed("lake-brain", "health/brains/lake-brain/status")                   # unchanged for every Brain not moved
-    assert path_allowed("water-temp", "health/sources/usgs-nwis-00010")
+    assert not path_allowed("water-temp", "health/brains/water-temp/status") and not path_allowed("water-temp", "health/brains/water-temp")
+    for s in WATER_TEMP_SOURCES:
+        assert not path_allowed("water-temp", f"health/sources/{s}")
+    assert path_allowed("lake-brain", "health/sources/tva-restapi")
 
 
 def test_the_ownership_audit_stays_clean():

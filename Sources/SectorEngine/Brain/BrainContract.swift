@@ -144,8 +144,9 @@ public enum BrainOwnership {
     public static let platformWriter = "brain-platform"
     /// Brain health families the Cortex registry moved to the Orchestrator (option a, owner decision 2026-11-04, CG-3.1-15): literal rows of
     /// jobs/brain_platform/sector_brain_platform/data_ownership.json (the Python guard reads them from the registry; contracts/conformance/ownership.json keeps both equal).
-    static let orchestratorHealthBrains: Set<String> = ["water-clarity"]
-    static let orchestratorHealthSources: Set<String> = ["sentinel-2-l2a", "usgs-nwis-turbidity", "noaa-mrms"]
+    static let orchestratorHealthBrains: Set<String> = ["water-clarity", "water-temp"]   // water-temp: Water Temp G3 (Sector_Ops #52), DRAFT
+    static let orchestratorHealthSources: Set<String> = ["sentinel-2-l2a", "usgs-nwis-turbidity", "noaa-mrms",
+                                                               "open-meteo-forecast", "usace-cwms-water-temp", "usgs-nwis-00010"]
 
     /// /health/brains/{id}/{child} (child level) or /health/sources/{id} of a family the registry gives the Orchestrator.
     static func orchestratorOwnedHealth(_ p: [String]) -> Bool {

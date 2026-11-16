@@ -24,9 +24,11 @@ def test_lifecycle_status_is_never_published_as_health():
 
 def test_every_child_the_legacy_job_writes_is_either_derived_or_retired():
     import json, os
+    # The direct (pre-cutover) writer's BrainHealthRecord children, as recorded in the golden before G3-2 (Sector_Ops #52): the golden is now the
+    # artifact-mode write set, which carries no health/* path at all.
+    legacy = {"durationMs", "errorCount", "lastRun", "lastSuccess", "staleLakeCount", "status"} | {"latestError"}   # latestError: the failure path
     golden = os.path.join(os.path.dirname(__file__), "..", "..", "..", "brains", "water-temperature", "tests", "golden", "water_temp_run_updates.json")
-    u = json.load(open(golden))
-    legacy = set((u.get("updates", u))[f"health/brains/{WATER_TEMP}"]) | {"latestError"}     # latestError: the failure path (BrainHealthRecord)
+    assert not [k for k in json.load(open(golden)) if k.startswith("health/")]
     spec = HM.SPECS[WATER_TEMP]
     assert legacy == set(spec["registryChildren"]) | set(spec["retireChildren"]), legacy
 

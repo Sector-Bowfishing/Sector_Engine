@@ -25,6 +25,10 @@ public struct WaterTemperatureBrainRunOptions: Sendable {
     public var chunkSize: Int = 50
     /// Cloud Run revision / engine commit of the code that ran.
     public var processingVersion: String? = nil
+    /// CENTRAL artifact mode (Sector_Ops #52 G3-2, as Water Clarity's X14): the run emits NO `health/*` path. `/health/brains/water-temp`, its job health
+    /// and `/health/sources/{id}` are Orchestrator-derived from what the Publisher published (health_mirror); the job never writes them, its failure path
+    /// included. Off by default: the direct writer is unchanged until Water Temp's approved CENTRAL cutover.
+    public var artifactMode: Bool = false
     public init() {}
 }
 
@@ -167,6 +171,7 @@ public enum WaterTemperatureBrainRunner {
                 tail["sources/\(id)"] = try BrainJSON.encode(rec.0)
                 tail["health/sources/\(id)"] = try BrainJSON.encode(rec.1)
             }
+            if options.artifactMode { tail = tail.filter { !$0.key.hasPrefix("health/") } }      // Orchestrator-derived after cutover (G3-2)
             for e in activity(previous: previous, current: registry, now: finished) { tail["activity/\(e.id)"] = try BrainJSON.encode(e) }
             try await store.update(tail)
             try? await pruneActivity(store: store, now: finished)
@@ -302,7 +307,12 @@ public enum WaterTemperatureBrainRunner {
     static func writeFailure(store: BrainStore, message: String, now: Date, options: WaterTemperatureBrainRunOptions, t0: Date) async throws {
         let at = BrainPlatform.iso(now)
         let prev = (try? await store.get("health/brains/\(WaterTemperatureBrain.brainId)")).flatMap { try? JSONDecoder().decode(BrainHealthRecord.self, from: $0) }
-        try await store.update([
+        try await store.update(failureWrites(message: message, at: at, now: now, prev: prev, options: options, t0: t0))
+    }
+
+    /// The failure write set. In artifact mode it carries no `health/*` path (G3-2); the run's FAILED state stays in the Brain's own registry fields.
+    static func failureWrites(message: String, at: String, now: Date, prev: BrainHealthRecord?, options: WaterTemperatureBrainRunOptions, t0: Date) throws -> [String: Data] {
+        var w: [String: Data] = [
             "health/brains/\(WaterTemperatureBrain.brainId)": try BrainJSON.encode(BrainHealthRecord(
                 status: "FAILED", lastRun: BrainPlatform.iso(t0), lastSuccess: prev?.lastSuccess, durationMs: Int(now.timeIntervalSince(t0) * 1000),
                 staleLakeCount: prev?.staleLakeCount ?? 0, errorCount: (prev?.errorCount ?? 0) + 1, latestError: message,
@@ -312,7 +322,9 @@ public enum WaterTemperatureBrainRunner {
             "activity/\(BrainActivity.eventId(at: now, brainId: WaterTemperatureBrain.brainId, n: 0))": try BrainJSON.encode(BrainActivityEvent(
                 id: BrainActivity.eventId(at: now, brainId: WaterTemperatureBrain.brainId, n: 0), at: at, kind: "run.failed",
                 title: "Water temp brain run failed: \(message.prefix(160))", brainId: WaterTemperatureBrain.brainId, lakeId: nil, severity: "critical")),
-        ])
+        ]
+        if options.artifactMode { w = w.filter { !$0.key.hasPrefix("health/") } }
+        return w
     }
 }
 
