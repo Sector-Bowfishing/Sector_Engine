@@ -1,14 +1,14 @@
 # Approval record: `water-temp-knowledge-2026-11-03.1`
 
-> **DRAFT: not yet approved.** This record is prepared ahead of time. It takes effect only when Michael says "approve the Water Temp knowledge release" and the `Approved by` and `Decision` rows below are filled in from his Sector_Ops #51 owner approval. Do not merge before that.
+> **APPROVED** by Michael on 2026-11-16 (Sector_Ops #51, owner approval B1–B5, item B2).
 
 | Field | Value |
 |---|---|
 | Release | `water-temp-knowledge-2026-11-03.1` (Water Temp Brain model definition, `PACKAGED_IN_IMAGE`) |
 | Contents | One file: `brains/water-temperature/runtime/WaterTemperatureBrain/WaterTemperatureBrain.swift` (sha256 `84cd6002…3883087`, 22,429 bytes) |
 | Release digest | `sha256:9e1bb9e23392cc1775c675b8853ecf5e60528fe23c78118626008ae1871ef280` (unchanged by this record) |
-| Approved by | PENDING (Michael Cather, owner, in chat) |
-| Decision | PENDING (Sector_Ops #51 owner approval, step M3 of the Water Temp cutover) |
+| Approved by | Michael Cather (owner), in chat, 2026-11-16 ~03:38Z |
+| Decision | `owner-approval-2026-11-16/sector-ops-51-b1-b5`, item B2 (Sector_Ops #51 comment 6906604228) |
 | Scope | **INTERNAL** and **CALIBRATION** use only, the same as the Water Clarity and Lake releases when they moved to Pulse. |
 | Customer eligible | **No**. This approval does not make the release or any Water Temp output customer-eligible. |
 | Promotion | None. No value, band, score, binding, catalog entry or lifecycle state changes. |

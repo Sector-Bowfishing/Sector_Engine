@@ -208,7 +208,7 @@
       "classification": "SERVE",
       "currentOwner": null,
       "currentWriters": [
-        "none (PLACEHOLDER: Publisher writer drafted, not wired)"
+        "none yet (PLACEHOLDER: Publisher writer wired via customer_lane.py, #187; switch PUBLISHER_CUSTOMER_LAKE_LEVEL=1, default off)"
       ],
       "currentReaders": [
         "none (customer Engine reader drafted; no read access granted)"
@@ -225,7 +225,7 @@
       "classification": "SERVE",
       "currentOwner": null,
       "currentWriters": [
-        "none (PLACEHOLDER: Publisher writer drafted, not wired; switch PUBLISHER_CUSTOMER_CLARITY=1, default off)"
+        "none (PLACEHOLDER: Publisher writer wired via customer_lane.py, #187; switch PUBLISHER_CUSTOMER_CLARITY=1, default off)"
       ],
       "currentReaders": [
         "none (customer Engine reader drafted; no read access granted)"
@@ -242,7 +242,7 @@
       "classification": "SERVE",
       "currentOwner": null,
       "currentWriters": [
-        "none (PLACEHOLDER: Publisher writer drafted, not wired; switch PUBLISHER_CUSTOMER_WATER_TEMP=1, default off)"
+        "none (PLACEHOLDER: Publisher writer wired via customer_lane.py, #187, modeled lakes copied as ESTIMATE with no range; switch PUBLISHER_CUSTOMER_WATER_TEMP=1, default off)"
       ],
       "currentReaders": [
         "none (customer Engine reader drafted; no read access granted)"
