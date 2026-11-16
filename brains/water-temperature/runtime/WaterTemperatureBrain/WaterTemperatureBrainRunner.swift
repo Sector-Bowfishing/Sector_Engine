@@ -196,7 +196,7 @@ public enum WaterTemperatureBrainRunner {
             lastSuccessfulRun: lastError == nil ? BrainPlatform.iso(now) : nil, lastError: lastError,
             deploymentVersion: options.processingVersion,
             breakdowns: fullFleet ? ["stateKind": result.kindCounts, "sourceKind": sourceKind, "directoryTempSource": directoryTempSource] : nil,
-            status: "CALIBRATION",     // brain status (contract §3): internal, unscheduled, Level-4 unvalidated
+            status: "BETA",            // brain status (contract §3): BETA per owner approval B1 (Sector_Ops #51, 2026-11-16); per-lake readiness stays CALIBRATION, Level-4 unvalidated
             versions: [
                 .init(version: WaterTemperatureBrain.modelVersion, date: "2026-09-23", note: "Production model (global 17-gauge calibration). Shown = scored and lake-local date since 2026-10-07 (Stage 2E).", status: "CURRENT"),
                 .init(version: "V2 candidate: M0 + Stage 3C.1 Arm A KF [x,b] + operational state", date: "2026-10-11", note: "Research candidate. Frozen, NOT promoted, not running. Protected Level-4 validation blocked by insufficient truth.", status: "RESEARCH"),

@@ -81,9 +81,15 @@ def test_switch_on_writes_only_the_brains_own_copies_with_readiness_from_the_wri
     assert db.gets == ["customer/lakes"]                         # readiness came from the write set: no extra status read
 
 
+def wt_calibration():
+    u = copy.deepcopy(WT_GOLDEN)
+    u["brains/water-temp"]["status"] = "CALIBRATION"
+    return u
+
+
 def test_below_beta_writes_nothing_new():
     db = FakeDb()
-    rep = LN.write_pass("water-temp", WT_GOLDEN, RECORD, rtdb=db, env={"PUBLISHER_CUSTOMER_WATER_TEMP": "1"}, runner="pulse", now=WT_NOW)
+    rep = LN.write_pass("water-temp", wt_calibration(), RECORD, rtdb=db, env={"PUBLISHER_CUSTOMER_WATER_TEMP": "1"}, runner="pulse", now=WT_NOW)
     assert rep["readiness"] == "CALIBRATION" and rep["written"] == 0 and db.updates == []
 
 
@@ -140,3 +146,13 @@ def test_a_refused_key_never_reaches_the_database(monkeypatch):
     with pytest.raises(PermissionError):
         LN.write_pass("water-temp", wt_beta(), RECORD, rtdb=db, env={"PUBLISHER_CUSTOMER_WATER_TEMP": "1"}, runner="pulse", now=WT_NOW)
     assert db.updates == []
+
+
+def test_water_temp_publishes_beta_so_its_own_readiness_passes_the_gate():
+    """B1 (Sector_Ops #51, owner-approval-2026-11-16/sector-ops-51-b1-b5): Water Temp's registry status is BETA, so the
+    lane gate passes on the readiness the Brain itself publishes. Per-lake readiness stays CALIBRATION; modeled values
+    go out only as ESTIMATE."""
+    assert LN.readiness_from(WT_GOLDEN, "water-temp") == "BETA"
+    db = FakeDb()
+    rep = LN.write_pass("water-temp", WT_GOLDEN, RECORD, rtdb=db, env={"PUBLISHER_CUSTOMER_WATER_TEMP": "1"}, runner="pulse", now=WT_NOW)
+    assert rep["readiness"] == "BETA" and rep["written"] > 0
