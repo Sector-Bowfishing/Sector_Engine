@@ -1,7 +1,7 @@
 {
  "schema": "sector-data-ownership-mirror-v1",
  "note": "Engine-side mirror of the Cortex data-ownership columns (families: pattern, domain, status, writer, targetWriter) and of the nine target Brains. Cortex is the authority and is never edited from here; tests compare this mirror with Cortex when it is present (CORTEX_HOME). Refresh with `python3 -m sector_brain_platform.data_ownership --sync <cortex projects/sector/shared/data>`.",
- "cortexVersionAtSync": "3.1.5 (f364c55)",
+ "cortexVersionAtSync": "3.1.6 (a785035)",
  "registryAsOf": "2026-10-23",
  "families": [
   {
@@ -106,6 +106,42 @@
   {
    "id": "fam.health-sources-noaa-mrms",
    "pattern": "/health/sources/noaa-mrms",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.health-brains-water-temp",
+   "pattern": "/health/brains/water-temp",
+   "domain": "health-control-jobs",
+   "scope": "per-brain",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.health-sources-open-meteo-forecast",
+   "pattern": "/health/sources/open-meteo-forecast",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.health-sources-usace-cwms-water-temp",
+   "pattern": "/health/sources/usace-cwms-water-temp",
+   "domain": "health-control-jobs",
+   "scope": "global",
+   "status": "CANONICAL",
+   "writer": "platform.orchestrator",
+   "targetWriter": null
+  },
+  {
+   "id": "fam.health-sources-usgs-nwis-00010",
+   "pattern": "/health/sources/usgs-nwis-00010",
    "domain": "health-control-jobs",
    "scope": "global",
    "status": "CANONICAL",

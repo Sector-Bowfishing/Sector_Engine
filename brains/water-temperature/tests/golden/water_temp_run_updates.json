@@ -108,37 +108,6 @@
       }
     ]
   },
-  "health/brains/water-temp" : {
-    "durationMs" : 0,
-    "errorCount" : 0,
-    "lastRun" : "2026-07-15T03:00:00Z",
-    "lastSuccess" : "2026-07-15T03:00:00Z",
-    "staleLakeCount" : 29,
-    "status" : "HEALTHY"
-  },
-  "health/jobs/water-temp-brain" : {
-    "displayName" : "Water Temperature Brain",
-    "durationMs" : 0,
-    "kind" : "cloud-run-job",
-    "lastRun" : "2026-07-15T03:00:00Z",
-    "lastSuccess" : "2026-07-15T03:00:00Z",
-    "running" : false,
-    "schedule" : "orchestrator-started when stale (no scheduler)",
-    "status" : "HEALTHY"
-  },
-  "health/sources/open-meteo-forecast" : {
-    "failuresLastRun" : 0,
-    "lastFetchAt" : "2026-07-15T03:00:00Z",
-    "status" : "HEALTHY"
-  },
-  "health/sources/usace-cwms-water-temp" : {
-    "lastFetchAt" : "2026-07-15T03:00:00Z",
-    "status" : "UNKNOWN"
-  },
-  "health/sources/usgs-nwis-00010" : {
-    "lastFetchAt" : "2026-07-15T03:00:00Z",
-    "status" : "UNKNOWN"
-  },
   "lakeFleet/Guntersville_AL/lakeId" : "Guntersville|AL",
   "lakeFleet/Guntersville_AL/modelVersions/waterTemp" : "surface-energy-balance-v2 (17-gauge calibration 2026-09-23; k=0.09)",
   "lakeFleet/Guntersville_AL/readiness/waterTemp" : "CALIBRATION",
