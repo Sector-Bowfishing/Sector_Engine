@@ -110,6 +110,12 @@ run() { if [[ "${DRY_RUN:-0}" == "1" ]]; then echo "+ $*"; else "$@"; fi; }
 cd "$(dirname "$0")"
 ROOT="$(git rev-parse --show-toplevel)"
 COMMIT="$(git rev-parse --short=12 HEAD)"
+# SI_ARTIFACT_JOB guard (Sector_Ops #51, owner approval 2026-11-16): while this commit's cutover says sector-intelligence is CENTRAL, an
+# explicit-env deploy must set SI_ARTIFACT_JOB=on, or Sector Intelligence quietly goes back in-process and bypasses the Publisher.
+# (A CARRY_ENV=1 deploy is checked below, against the env it actually carries.)
+if [[ "$CARRY_ENV" == "0" ]]; then
+  python3 "$ROOT/tools/deploy/si_artifact_guard.py" --cutover publication-cutover.json --switch "$SI_ARTIFACT_JOB" || exit 1
+fi
 
 if [[ "$SKIP_IAM" == "1" ]]; then
   echo "▶ service account $SA_NAME: IAM SKIPPED (SKIP_IAM=1; the bindings listed above must already exist)"
@@ -224,6 +230,7 @@ if [[ "$CARRY_ENV" == "1" ]]; then
   fi
   python3 "$ROOT/tools/deploy/job_env.py" carry --snapshot "$CARRY_DIR/snapshot.json" --projection "$CONDITIONS_SOURCES_PROJECTION" \
     ${DV_ARGS[@]+"${DV_ARGS[@]}"} --out "$CARRY_DIR/env.yaml"
+  python3 "$ROOT/tools/deploy/si_artifact_guard.py" --cutover publication-cutover.json --env-yaml "$CARRY_DIR/env.yaml" || exit 1
   ENV_FLAGS=(--env-vars-file "$CARRY_DIR/env.yaml")
   trap 'rm -rf stage "$CARRY_DIR"' EXIT
 fi

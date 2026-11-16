@@ -14,8 +14,15 @@ SCRIPT = os.path.join(HERE, "..", "deploy-job.sh")
 ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 HEAD = subprocess.run(["git", "-C", ROOT, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
 
+# The SI_ARTIFACT_JOB guard (tools/deploy/si_artifact_guard.py): once this commit's cutover lists sector-intelligence as CENTRAL, a live job
+# carries SI_ARTIFACT_JOB=1 and an explicit-env deploy must set SI_ARTIFACT_JOB=on, so the fixtures follow the committed cutover.
+with open(os.path.join(HERE, "..", "publication-cutover.json")) as _fh:
+    SI_CENTRAL = (json.load(_fh)["brains"].get("sector-intelligence") or {}).get("state") == "CENTRAL"
+SI_ON = {"SI_ARTIFACT_JOB": "on", "RUNNER_LEASES": "on"} if SI_CENTRAL else {}
 LIVE_ENV = {"BRAIN_TOKEN_MODE": "metadata", "RUNNER_LEASES": "on", "PUBLICATION_COORDINATION": "on", "PUBLICATION_HANDOFF": "on",
             "CONDITIONS_SOURCES_PROJECTION": "0", "DEPLOYMENT_VERSION": "brain-orchestrator@" + HEAD[:12], "ORCHESTRATOR_SCOPE": "pilots"}
+if SI_CENTRAL:
+    LIVE_ENV["SI_ARTIFACT_JOB"] = "1"
 LIVE_IMAGE = "us-central1-docker.pkg.dev/p/cloud-run-source-deploy/brain-orchestrator@sha256:" + "c" * 64
 
 FAKE_GCLOUD = r'''#!/usr/bin/env bash
@@ -57,7 +64,7 @@ def fake(tmp_path):
 def run(fake, **env):
     clean = {k: v for k, v in os.environ.items() if k not in (
         "WIND_MEASUREMENTS", "PUBLICATION_COORDINATION", "PUBLICATION_HANDOFF", "RUNNER_LEASES", "ORCH_ARGS", "CONDITIONS_SOURCES_PROJECTION",
-        "IMAGE", "CARRY_ENV", "CARRY_IMAGE", "SKIP_IAM", "SKIP_SCHEDULER_DEFINITION", "DRY_RUN")}
+        "IMAGE", "CARRY_ENV", "CARRY_IMAGE", "SKIP_IAM", "SKIP_SCHEDULER_DEFINITION", "DRY_RUN", "SI_ARTIFACT_JOB")}
     full = {**clean, "PATH": f"{fake / 'bin'}:{os.environ['PATH']}", "FAKE_LOG": str(fake / "calls.log"), "FAKE_DESCRIBE": str(fake / "describe.json"),
             "FAKE_COMMIT": HEAD[:12], "FAKE_SCHED_STATE": "PAUSED", "FAKE_ENVFILE": str(fake / "deployed-env.yaml"),
             "FAKE_IMAGE": env.get("IMAGE", ""), **env}
@@ -123,7 +130,7 @@ def test_secret_env_is_refused(fake):
 
 
 def test_default_path_is_unchanged(fake):
-    r, calls = run(fake, DRY_RUN="1")
+    r, calls = run(fake, DRY_RUN="1", **SI_ON)
     assert r.returncode == 0, r.stdout + r.stderr
     out = r.stdout
     assert "+ gcloud run jobs deploy brain-orchestrator --source ." in out and "--set-env-vars BRAIN_TOKEN_MODE=metadata," in out
@@ -141,3 +148,19 @@ def test_prebuilt_digest_is_deployed_as_is_without_docker(fake):
     assert not [c for c in calls if c.startswith("docker")]
     assert "us-central1-docker.pkg.dev" not in r.stdout          # the registry path is not echoed (public Actions logs)
     assert "iam.gserviceaccount.com" not in r.stdout + r.stderr  # nor a service-account email
+
+
+@pytest.mark.skipif(not SI_CENTRAL, reason="the guard only refuses once the committed cutover lists sector-intelligence as CENTRAL")
+def test_si_central_refuses_an_explicit_env_deploy_without_si_artifact_job(fake):
+    r, calls = run(fake, DRY_RUN="1", RUNNER_LEASES="on")
+    assert r.returncode != 0 and "REFUSED" in r.stdout + r.stderr
+    assert not [c for c in calls if c.startswith("gcloud run jobs deploy")] and "+ gcloud run jobs deploy" not in r.stdout
+
+
+@pytest.mark.skipif(not SI_CENTRAL, reason="the guard only refuses once the committed cutover lists sector-intelligence as CENTRAL")
+def test_si_central_refuses_a_carried_env_without_si_artifact_job(fake):
+    env = {k: v for k, v in LIVE_ENV.items() if k != "SI_ARTIFACT_JOB"}
+    (fake / "describe.json").write_text(json.dumps(describe(env)))
+    r, calls = run(fake, **WIF, CARRY_IMAGE="1")
+    assert r.returncode != 0 and "REFUSED" in r.stdout + r.stderr
+    assert not [c for c in calls if c.startswith("gcloud run jobs deploy")]
