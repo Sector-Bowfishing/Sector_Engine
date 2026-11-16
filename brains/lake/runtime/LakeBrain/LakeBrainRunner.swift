@@ -477,7 +477,7 @@ public enum LakeBrainRunner {
             brainId: LakeBrainSpec.brainId, displayName: LakeBrainSpec.displayName, domain: "lake",
             question: "What does Sector know about this particular lake: its water level now, against its own history and operator guide, and which fish are recorded there?",
             version: LakeBrainSpec.brainVersion, schemaVersion: BrainPlatform.schemaVersion, enabled: true,
-            health: result.health, status: LakeBrainReadiness.calibration.rawValue,
+            health: result.health, status: LakeBrainReadiness.beta.rawValue,
             supportedLakeCount: LakeSourceBindings.reviewed.count, directoryLakeCount: LakeDirectory.all.count,
             readinessCounts: readiness, staleLakeCount: result.lakes.filter { $0.state?.freshness.stale == true }.count,
             staleAfterHours: LakeBrainSpec.staleAfterHours, lastSuccessfulRun: BrainPlatform.iso(now), lastError: nil,

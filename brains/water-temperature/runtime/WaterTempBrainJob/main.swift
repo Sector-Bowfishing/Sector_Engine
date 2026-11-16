@@ -7,6 +7,7 @@
 //    --read-rtdb URL  with --dry-run: read the live Brain RTDB (GET only) for the previous state; writes still go to DIR
 //    --lake ID      one canonical lake id, e.g. "Guntersville|AL" (repeatable); per-lake nodes only
 //    --limit N      the first N directory lakes; per-lake nodes only
+//    --artifact-mode  with --dry-run (CENTRAL artifact entry, Sector_Ops #52 G3-2): emit no health/* path; health is Orchestrator-derived
 //
 //  Runs the production water-temperature path (sensor → nearby USGS gauge →
 //  surface-energy-balance-v2 → WaterTemperatureResolver) for each lake and
@@ -29,9 +30,11 @@ options.limit = flag("--limit").flatMap(Int.init)
 options.concurrency = flag("--concurrency").flatMap(Int.init) ?? 6
 options.processingVersion = env["SECTOR_ENGINE_REVISION"] ?? env["K_REVISION"] ?? env["SECTOR_ENGINE_COMMIT"]
 
-if (argv.contains("--read-rtdb") || argv.contains("--dry-run")) && flag("--dry-run") == nil {
+options.artifactMode = argv.contains("--artifact-mode")
+
+if (argv.contains("--read-rtdb") || argv.contains("--dry-run") || options.artifactMode) && flag("--dry-run") == nil {
     // a read-only or dry-run flag must never fall through to the live writer ($SECTOR_BRAIN_RTDB_URL is set in the image)
-    FileHandle.standardError.write(Data("WaterTempBrainJob: --read-rtdb needs --dry-run DIR, and --dry-run needs a DIR; nothing was run\n".utf8))
+    FileHandle.standardError.write(Data("WaterTempBrainJob: --read-rtdb and --artifact-mode need --dry-run DIR, and --dry-run needs a DIR; nothing was run\n".utf8))
     exit(2)
 }
 

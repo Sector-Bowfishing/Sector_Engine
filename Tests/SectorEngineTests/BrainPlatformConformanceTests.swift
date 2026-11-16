@@ -182,13 +182,18 @@ final class BrainPlatformConformanceTests: XCTestCase {
 
     func testFailureWritesAreOwnedAndComplete() throws {
         let now = Date(timeIntervalSince1970: 1_791_806_400)
-        let w = try BrainFailure.writes(brainId: "water-temp", message: "boom", now: now, started: now.addingTimeInterval(-5), jobId: "water-temp-brain")
-        XCTAssertNoThrow(try BrainOwnership.check(w, brainId: "water-temp"))
-        XCTAssertEqual(String(decoding: w["health/brains/water-temp/status"]!, as: UTF8.self), "\"FAILED\"")
-        XCTAssertEqual(String(decoding: w["health/brains/water-temp/durationMs"]!, as: UTF8.self), "5000")
+        // A Brain that still writes its own health (Lake: mirrored only once it is CENTRAL) gets a complete, owned failure write set.
+        let w = try BrainFailure.writes(brainId: "lake-brain", message: "boom", now: now, started: now.addingTimeInterval(-5), jobId: "lake-brain")
+        XCTAssertNoThrow(try BrainOwnership.check(w, brainId: "lake-brain"))
+        XCTAssertEqual(String(decoding: w["health/brains/lake-brain/status"]!, as: UTF8.self), "\"FAILED\"")
+        XCTAssertEqual(String(decoding: w["health/brains/lake-brain/durationMs"]!, as: UTF8.self), "5000")
         let evKey = try XCTUnwrap(w.keys.first { $0.hasPrefix("activity/") })
         let ev = try JSONDecoder().decode(BrainActivityEvent.self, from: w[evKey]!)
-        XCTAssertEqual(ev.kind, "run.failed"); XCTAssertEqual(ev.severity, "critical"); XCTAssertEqual(ev.brainId, "water-temp")
+        XCTAssertEqual(ev.kind, "run.failed"); XCTAssertEqual(ev.severity, "critical"); XCTAssertEqual(ev.brainId, "lake-brain")
+        // Water Temp G3: its health family is Orchestrator-owned, so the generic failure writer's health paths are refused for it.
+        let wt = try BrainFailure.writes(brainId: "water-temp", message: "boom", now: now, started: now.addingTimeInterval(-5), jobId: "water-temp-brain")
+        XCTAssertThrowsError(try BrainOwnership.check(wt, brainId: "water-temp"))
+        XCTAssertNoThrow(try BrainOwnership.check(wt.filter { !$0.key.hasPrefix("health/") }, brainId: "water-temp"))
         XCTAssertEqual(evKey, "activity/\(ev.id)")
     }
 }
