@@ -379,6 +379,6 @@ def test_a_dry_run_cycle_writes_nothing_to_the_artifact_store(stack):
 
 def test_the_shipped_cutover_document_is_valid_and_lists_water_clarity_lake_and_water_temp():
     cut, problems = PS.load_cutover(os.path.join(HERE, "..", "publication-cutover.json"))
-    assert problems == [] and {b: e["state"] for b, e in cut.items()} == {"water-clarity": "CENTRAL", "lake-brain": "CENTRAL", "water-temp": "CENTRAL"}
+    assert problems == [] and {b: e["state"] for b, e in cut.items()} == {"water-clarity": "CENTRAL", "lake-brain": "CENTRAL", "water-temp": "CENTRAL", "sector-intelligence": "CENTRAL"}
     assert cut["water-temp"]["orderReviewRef"] == "owner-approval-2026-11-15/sector-ops-51#WT-ORD"
     assert cut["lake-brain"]["orderReviewRef"] == "owner-approval-2026-11-02/sector-ops-50#L-2"
