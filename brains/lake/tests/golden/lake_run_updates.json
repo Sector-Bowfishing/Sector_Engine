@@ -129,7 +129,7 @@
       "PROXY" : "A nearby gage height or river stage. Trend only: never a level state, percentile or pool difference.",
       "UNAVAILABLE" : "No reading from any reviewed source."
     },
-    "status" : "CALIBRATION",
+    "status" : "BETA",
     "supportedLakeCount" : 5,
     "version" : "1.0.0",
     "versions" : [
