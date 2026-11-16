@@ -1,7 +1,7 @@
 """tools/ops/dev_rehearsal.py (Sector_Engine #198, owner approval B5): the X09/X13 rehearsal, proven here against FAKE clients only.
 
 The real run is Michael's, against the non-production Brain database once a reviewed PR lists it. These tests prove the guard refuses everything
-today, and that the rehearsal reports PASS on a correct database and FAIL when atomicity or rollback is broken."""
+except the one listed dev Brain database, and that the rehearsal reports PASS on a correct database and FAIL when atomicity or rollback is broken."""
 import datetime as dt
 import itertools
 import json
@@ -34,11 +34,41 @@ def _run(rtdb, store=None):
     return DR.rehearse(rtdb, store or MemoryObjectStore(), approval_ref="approval/test/rehearsal", clock=lambda: T, new_id=_ids())
 
 
-def test_the_hard_coded_lists_are_empty_so_every_database_is_refused_today():
-    assert DR.DEV_BRAIN_DATABASES == frozenset() and DR.DEV_BUCKETS == frozenset()
-    for url in (FAKE_DEV, "https://sector-brain-dev.firebaseio.com", "https://anything.example"):
-        with pytest.raises(DR.Refused):
-            DR.guard_database(url)
+DEV = "https://sector-brain-dev.firebaseio.com"
+
+
+def test_the_hard_coded_list_holds_only_the_dedicated_dev_brain_database():
+    assert DR.DEV_BRAIN_DATABASES == frozenset({DEV}) and DR.DEV_BUCKETS == frozenset()
+    assert DR.RT.accepted_url(DEV)
+
+
+@pytest.mark.parametrize("url", [DEV, DEV + "/", "  " + DEV + "  "])
+def test_the_dedicated_dev_brain_database_is_allowed(url):
+    assert DR.guard_database(url) == DEV
+
+
+@pytest.mark.parametrize("url", [
+    "https://sector-brain.firebaseio.com",                 # production Brain
+    "https://sector-9393c-default-rtdb.firebaseio.com",    # production app
+    "https://sector-dev-1f4d0.firebaseio.com",             # dev APP database: a copy of prod with real user records
+    "https://sector-brain-dev.firebaseio.com.evil",        # lookalikes
+    "https://sector-brain-devx.firebaseio.com",
+    "https://sector-brain-dev.firebaseio.com.evil.com",
+    "http://sector-brain-dev.firebaseio.com",
+    "https://sector-brain-dev.firebaseio.com/brains",
+    "https://evil.example/https://sector-brain-dev.firebaseio.com",
+    FAKE_DEV, "https://anything.example",
+])
+def test_everything_else_is_refused_by_the_hard_coded_list(url):
+    with pytest.raises(DR.Refused):
+        DR.guard_database(url)
+
+
+def test_the_cli_refuses_the_dev_app_database_before_building_any_client(tmp_path):
+    built = []
+    rc = DR.main(["--database-url", "https://sector-dev-1f4d0.firebaseio.com", "--approval-ref", "x", "--out-dir", str(tmp_path)],
+                 make_clients=lambda *a: built.append(a))
+    assert rc == 2 and built == [] and list(tmp_path.iterdir()) == []
 
 
 @pytest.mark.parametrize("url", ["https://sector-brain.firebaseio.com", "https://sector-brain.firebaseio.com/", "HTTPS://Sector-Brain.firebaseio.com",
