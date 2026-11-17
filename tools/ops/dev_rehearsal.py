@@ -5,8 +5,8 @@ Owner approval B5 (Sector_Ops #51, `owner-approval-2026-11-16/sector-ops-51-b1-b
 against the non-production Brain database named by the read-only instance check (Sector_Ops #51 comment 6890459402, item 1).
 
 WHAT IT REFUSES
-  * Any database URL that is not listed in DEV_BRAIN_DATABASES below. The list is hard-coded and EMPTY in this change, so today the tool refuses every
-    database. A reviewed PR adds the one non-production instance once the check names it. There is no override flag.
+  * Any database URL that is not EXACTLY listed in DEV_BRAIN_DATABASES below. It holds one instance: `sector-brain-dev`, the dedicated, empty,
+    locked-rules non-production Brain database Michael created on 2026-11-16 (Sector_Ops #51). There is no override flag.
   * The production Brain database and both app databases, even if someone lists them (checked at import and again at run time).
   * Any bucket not listed in DEV_BUCKETS (also empty). Without --bucket the Publisher's control objects (_heads, _baseline, records, locks) live in memory
     for the run; the exit gate scopes X09/X13 to Publisher-owned RTDB paths, so the RTDB half is what this rehearses.
@@ -65,8 +65,9 @@ CHUNK_LIMIT = 2500                     # bytes: forces C into several chunks (sa
 FAIL_ON_UPDATE = 3                     # update call 1 = pending marker, 2 = data chunk 1, 3 = data chunk 2 -> fails before it is sent
 EVIDENCE_DIR = os.path.join(ROOT, "docs", "cortex", "evidence")
 
-#: The ONLY databases this tool will touch. Empty until the read-only instance check names the non-production Brain database; a reviewed PR adds it.
-DEV_BRAIN_DATABASES: frozenset = frozenset()
+#: The ONLY databases this tool will touch: the dedicated non-production Brain instance (Sector_Ops #51, owner action 2026-11-16).
+#: Never the shared dev APP database `sector-dev-1f4d0`: it is a copy of production with real user records (CURRENT_DATA_INVENTORY.md).
+DEV_BRAIN_DATABASES: frozenset = frozenset({"https://sector-brain-dev.firebaseio.com"})
 #: The ONLY buckets it may use for the Publisher's control objects. Empty: control objects stay in memory unless a reviewed PR adds a dev bucket.
 DEV_BUCKETS: frozenset = frozenset()
 
@@ -94,8 +95,10 @@ def _never_production(url: str) -> None:
         raise Refused(f"refused: {u!r} is a production Brain or app database")
 
 
-for _u in DEV_BRAIN_DATABASES:          # a production URL can never be listed: fail at import, before any run
+for _u in DEV_BRAIN_DATABASES:          # a production URL can never be listed, and every listed one must pass the platform's own writer check: fail at import
     _never_production(_u)
+    if not RT.accepted_url(_u):
+        raise Refused(f"refused: {_u!r} does not pass rtdb.accepted_url")
 
 
 def guard_database(url: str, allowed=None) -> str:
