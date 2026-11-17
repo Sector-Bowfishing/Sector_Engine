@@ -208,13 +208,20 @@ def test_the_lock_paths_are_the_publishers_own():
 
 
 def test_the_committed_policy_matches_the_approved_o6_scope():
+    # SI-WD (a), Sector_Ops #51 2026-11-16: Sector Intelligence writes every lake in the Engine's directory, so its list is the whole directory.
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "tools", "ops"))
+    import si_watchdog_lakes as SL
+    SI_LAKES = SL.lake_list(json.load(open(SL.GOLDEN)))
+    assert len(SI_LAKES) > 600
     pol = WD.load_policy()
     assert pol["enabled"] and pol["allowedJobs"] == ["brain-orchestrator", "brain-publisher"]
     assert pol["brains"] == {"water-clarity": {"holder": "pulse", "lakes": ["Guntersville_AL", "Lake_Hartwell_SC"]},
                              "lake-brain": {"holder": "pulse", "lakes": ["Guntersville_AL", "Wheeler_AL", "Wilson_AL", "Pickwick_Lake_TN", "Lake_Hartwell_SC"],
                                             "approvalRef": "owner-approval-2026-11-12/sector-ops-51-lake-on-pulse"},
                              "water-temp": {"holder": "pulse", "lakes": ["Guntersville_AL", "Wheeler_AL", "Wilson_AL", "Pickwick_Lake_TN", "Lake_Hartwell_SC"],
-                                            "approvalRef": "owner-approval-2026-11-16/sector-ops-51-b1-b5"}}
+                                            "approvalRef": "owner-approval-2026-11-16/sector-ops-51-b1-b5"},
+                             "sector-intelligence": {"holder": "pulse", "lakes": SI_LAKES,
+                                                     "approvalRef": "owner-approval-2026-11-16/sector-ops-51-b1-b5"}}
     assert pol["approvalRef"].startswith("owner-approval-")
 
 

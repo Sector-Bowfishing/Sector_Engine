@@ -238,7 +238,8 @@ def test_sector_intelligence_packaged_release_stages_and_resolves_against_its_ow
     assert PackagedReleaseResolver(staged, "sector-intelligence", require_approved=False)(*triple) is True
     assert PackagedReleaseResolver(staged, "sector-intelligence", require_approved=True)(*triple) is (rel["approvalStatus"] == "APPROVED")
     assert PackagedReleaseResolver(staged, "sector-intelligence", require_approved=False)(triple[0], triple[1], "sha256:" + "0" * 64) is False
-    assert "sector-intelligence" not in json.load(open(os.path.join(REPO, "jobs", "brain-orchestrator", "publication-cutover.json")))["brains"]
+    shipped = json.load(open(os.path.join(REPO, "jobs", "brain-orchestrator", "publication-cutover.json")))["brains"].get("sector-intelligence")
+    assert shipped is None or shipped["approvalRef"].startswith("owner-approval-")       # only an owner approval puts it there
 
 
 # ---- CUSTOMER-lane copies (publisher_live/customer_lane.py; Sector_Ops #51 P1) ---------------------------------------------------------------------------
