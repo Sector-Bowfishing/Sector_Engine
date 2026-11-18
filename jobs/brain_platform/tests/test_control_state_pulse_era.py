@@ -92,3 +92,18 @@ def test_runners_lives_in_summary_and_its_clock_fields_are_volatile():
     assert CS.changed_paths(a, b) == {}
     c = {"summary": {"runners": {"pulse": {"available": True, "stale": True, "ageMinutes": 30.0}}}}
     assert "control/orchestratorV1/summary" in CS.changed_paths(c, b)
+
+
+def test_pulse_view_drops_non_finite_numbers_so_the_rtdb_write_still_serializes():
+    # json.loads reads NaN, Infinity and 1e999 (overflow -> inf); the RTDB client serializes with allow_nan=False, so any of them
+    # reaching the control-plane write would lose the whole /control/orchestratorV1 update for every cycle.
+    raw = (b'{"schema": "' + PSV.SCHEMA.encode() + b'", "generatedAt": "2026-11-18T17:57:00Z", "pulseVersion": "1.4.0", '
+           b'"uptimeSeconds": NaN, "jobs": [{"id": "ok-job", "enabled": true, "lastExitCode": 1e999, "lastResult": "SUCCEEDED"}, '
+           b'{"id": "neg-job", "lastExitCode": -Infinity}]}')
+    v = PSV.build_view(raw, NOW)["pulse"]
+    assert v["available"] is True and v["pulseVersion"] == "1.4.0"
+    assert "uptimeSeconds" not in v
+    assert v["jobs"]["ok-job"] == {"enabled": True, "lastResult": "SUCCEEDED"}
+    assert v["jobs"]["neg-job"] == {}
+    json.dumps({"runners": PSV.build_view(raw, NOW)}, allow_nan=False)   # would raise ValueError before the fix
+    assert PSV.build_view(status(uptimeSeconds=12.5), NOW)["pulse"]["uptimeSeconds"] == 12.5   # finite floats still pass

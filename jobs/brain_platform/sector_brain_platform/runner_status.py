@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import math
 import re
 
 from .timeutil import iso, parse_time
@@ -32,8 +33,11 @@ def _clean(v):
     """Scalars only: booleans, numbers, and short plain text (no slashes, so no paths or URLs can pass through)."""
     if isinstance(v, bool) or v is None:
         return v
-    if isinstance(v, (int, float)):
+    if isinstance(v, int):
         return v
+    if isinstance(v, float):
+        # NaN / inf (and 1e999, which json.loads reads as inf) would make the RTDB write fail (allow_nan=False): drop them.
+        return v if math.isfinite(v) else None
     if isinstance(v, str) and _TEXT.fullmatch(v):
         return v
     return None
