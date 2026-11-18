@@ -51,6 +51,7 @@ from sector_brain_platform import engineering_status_publication as ESP         
 from sector_brain_platform import shadow_lane as SL                                                                   # noqa: E402
 from sector_brain_platform import data_ownership as DO, publication_stage as PS, health_mirror as HM                                       # noqa: E402
 from sector_brain_platform import runner_lease as RL                                                                  # noqa: E402
+from sector_brain_platform import runner_status as PSV                                                                  # noqa: E402
 sys.path.insert(0, HERE)
 import control_plane as CP                                                                                            # noqa: E402
 import conditions_sources as CSP                                                                                    # noqa: E402
@@ -341,6 +342,27 @@ def _fresh_lease_holder(a, brain_id: str, now: dt.datetime) -> str | None:
         return None
     lease, _ = RL.read(RL.orchestrator_view(store), brain_id)
     return (lease or {}).get("holder") if RL.fresh(lease, now) else None
+
+
+def runner_display_state(a, manifest: dict, now: dt.datetime) -> tuple[dict | None, dict | None]:
+    """Sector Ops display only (never a decision): each Brain's runner lease and the runner status view (runner_status.py), both read through
+    the Orchestrator's existing read of exports/runners/. (None, None) when runner leases are off or no artifact store is configured; a read
+    failure is reported inside the view, never raised."""
+    if not getattr(a, "runner_leases", False):
+        return None, None
+    try:
+        store = build_publication_store(a.artifact_store_dir, a.artifact_bucket)
+    except Exception:                                            # noqa: BLE001
+        return None, None
+    if store is None:
+        return None, None
+    view, leases = RL.orchestrator_view(store), {}
+    for bid in sorted(manifest.get("brains") or {}):
+        try:
+            leases[bid], _ = RL.read(view, bid)
+        except Exception:                                        # noqa: BLE001 - one unreadable lease never hides the others
+            leases[bid] = None
+    return {k: v for k, v in leases.items() if v}, PSV.read_view(view, now)
 
 
 def build_publication_store(directory: str | None, bucket: str | None = None):
@@ -873,11 +895,12 @@ def main(argv=None) -> int:
         for r in exec_records:                                   # downstream decisions of a Brain that just ran
             r["downstream"] = [{"brainId": d["brainId"], "decision": d["decision"]} for d in ev2["decisions"]
                                if d["trigger"] == "DEPENDENCY_CHANGED" and r["brainId"] in [c["id"] for c in manifest["brains"][d["brainId"]].get("dependencies", [])]]
+        leases_cp, runners_cp = runner_display_state(a, manifest, now)
         state_cp = CS.build_control_state(manifest, ctx2["mode"], now, registries=world2["registries"], health=world2["health"], scores=live.get("scores") or {},
                                           jobs=records, evaluation=ev2, prev=world["prev"], new_executions=exec_records + cloud_execs,
                                           locks={**locks_now, **locks}, trigger=a.trigger, duration_ms=int((time.time() - t0) * 1000),
                                           overrides=rq["overrides"], requests=rq["requests"], scheduler_states=CP.scheduler_states(tokens),
-                                          plans=brain_plans, ctx=ctx2, overview_brains=world2.get("overviewBrains"))
+                                          plans=brain_plans, ctx=ctx2, overview_brains=world2.get("overviewBrains"), leases=leases_cp, runners=runners_cp)
         if a.emit_control_state:
             json.dump(state_cp, open(a.emit_control_state, "w"), indent=1, sort_keys=True)
         cp_paths = CS.changed_paths(state_cp, world["prev"])
