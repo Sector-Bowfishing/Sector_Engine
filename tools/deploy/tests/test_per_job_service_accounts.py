@@ -7,7 +7,6 @@ import stat
 import subprocess
 
 import pytest
-import yaml
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 FAKE_GCLOUD = r'''#!/usr/bin/env bash
@@ -87,11 +86,10 @@ def test_lake_bucket_grants_are_no_broader_than_the_identity_split_script():
 
 
 def test_orchestrator_workflow_refuses_another_identity_and_restores_the_account_on_rollback():
-    wf = yaml.safe_load(open(os.path.join(ROOT, ".github/workflows/deploy-orchestrator.yml")))
-    steps = {s.get("id"): s for s in wf["jobs"]["deploy"]["steps"] if s.get("id")}
-    pre = steps["preflight"]["run"]
+    wf = open(os.path.join(ROOT, ".github/workflows/deploy-orchestrator.yml")).read()      # plain text: no YAML dependency in CI
+    pre = wf[wf.index("- id: preflight"):wf.index("- id: push")]
     assert '"${cur_sa%%@*}" != "brain-orchestrator"' in pre and "exit 1" in pre
-    rb = steps["rollback"]["run"]
+    rb = wf[wf.index("- id: rollback"):wf.index("- name: Step summary")]
     assert 'prev_sa="$(python3' in rb and '${prev_sa:+--service-account "$prev_sa"}' in rb
     assert '["serviceAccount"] != sys.argv[2]' in rb
-    assert 'a["serviceAccount"] == b["serviceAccount"]' in steps["verify"]["run"]
+    assert 'a["serviceAccount"] == b["serviceAccount"]' in wf[wf.index("- id: verify"):wf.index("- id: dry")]
