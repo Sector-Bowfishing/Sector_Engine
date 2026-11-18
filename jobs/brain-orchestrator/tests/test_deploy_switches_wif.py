@@ -31,7 +31,7 @@ case "$*" in
   *"--format=value(metadata.labels.commit)"*) echo "${FAKE_COMMIT}";;
   "run jobs describe"*"--format=json"*) cat "$FAKE_DESCRIBE";;
   "scheduler jobs describe"*"value(state)"*) echo "${FAKE_SCHED_STATE}";;
-  "iam service-accounts describe"*) exit 0;;
+  "iam service-accounts describe"*) [[ -n "${FAKE_SA_MISSING:-}" && "$*" == *"${FAKE_SA_MISSING}"* ]] && exit 1; exit 0;;
   "run jobs deploy"*) for a in "$@"; do case "$a" in --env-vars-file) nxt=1;; *) [[ -n "${nxt:-}" ]] && cp "$a" "$FAKE_ENVFILE" && nxt=;; esac; done;;
 esac
 exit 0
@@ -64,7 +64,7 @@ def fake(tmp_path):
 def run(fake, **env):
     clean = {k: v for k, v in os.environ.items() if k not in (
         "WIND_MEASUREMENTS", "PUBLICATION_COORDINATION", "PUBLICATION_HANDOFF", "RUNNER_LEASES", "ORCH_ARGS", "CONDITIONS_SOURCES_PROJECTION",
-        "IMAGE", "CARRY_ENV", "CARRY_IMAGE", "SKIP_IAM", "SKIP_SCHEDULER_DEFINITION", "DRY_RUN", "SI_ARTIFACT_JOB")}
+        "IMAGE", "CARRY_ENV", "CARRY_IMAGE", "SKIP_IAM", "SKIP_SCHEDULER_DEFINITION", "DRY_RUN", "SI_ARTIFACT_JOB", "SA_NAME", "SCHEDULER_SA_NAME", "FAKE_SA_MISSING")}
     full = {**clean, "PATH": f"{fake / 'bin'}:{os.environ['PATH']}", "FAKE_LOG": str(fake / "calls.log"), "FAKE_DESCRIBE": str(fake / "describe.json"),
             "FAKE_COMMIT": HEAD[:12], "FAKE_SCHED_STATE": "PAUSED", "FAKE_ENVFILE": str(fake / "deployed-env.yaml"),
             "FAKE_IMAGE": env.get("IMAGE", ""), **env}
@@ -84,7 +84,9 @@ def test_wif_path_builds_on_the_runner_carries_env_and_touches_no_iam_or_schedul
     img = "us-central1-docker.pkg.dev/p/sector-engine/brain-orchestrator:" + HEAD
     r, calls = run(fake, **WIF, IMAGE=img)
     assert r.returncode == 0, r.stdout + r.stderr
-    assert not [c for c in calls if "iam" in c.split(" --")[0] or "add-iam-policy-binding" in c], calls
+    # the only IAM call is the read-only existence check of the job's own account (fail closed, identity split)
+    assert not [c for c in calls if ("iam" in c.split(" --")[0] and not c.startswith("gcloud iam service-accounts describe brain-orchestrator@"))
+                or "add-iam-policy-binding" in c], calls
     assert not [c for c in calls if c.startswith("gcloud scheduler jobs") and " describe " not in f" {c} "], calls
     assert f"docker build -t {img} ." in calls and f"docker push {img}" in calls
     dep = deploy_call(calls)
@@ -134,7 +136,12 @@ def test_default_path_is_unchanged(fake):
     assert r.returncode == 0, r.stdout + r.stderr
     out = r.stdout
     assert "+ gcloud run jobs deploy brain-orchestrator --source ." in out and "--set-env-vars BRAIN_TOKEN_MODE=metadata," in out
-    assert "+ gcloud projects add-iam-policy-binding" in out and "+ gcloud run jobs add-iam-policy-binding brain-orchestrator" in out
+    # identity split (Sector_Ops #19): the job runs as its own account; its IAM belongs to the identity-split scripts, so the default path adds
+    # no project binding; the scheduler still calls the job as brain-writer (decision (c), 2026-11-18)
+    assert "--service-account brain-orchestrator@sector-9393c.iam.gserviceaccount.com" in out
+    assert "+ gcloud projects add-iam-policy-binding" not in out and "brain-writer@sector-9393c.iam.gserviceaccount.com --role roles/firebasedatabase.admin" not in out
+    assert "+ gcloud run jobs add-iam-policy-binding brain-orchestrator --project sector-9393c --region us-central1 --member serviceAccount:brain-writer@sector-9393c.iam.gserviceaccount.com --role roles/run.invoker" in out
+    assert "--oauth-service-account-email brain-writer@sector-9393c.iam.gserviceaccount.com" in out
     assert "+ gcloud scheduler jobs update http brain-orchestrator" in out     # the pause's DRY_RUN echo goes to /dev/null, as before
     assert '|| run gcloud scheduler jobs pause "$JOB"' in open(SCRIPT).read()
     assert not [c for c in calls if c.startswith("docker")]
@@ -164,3 +171,27 @@ def test_si_central_refuses_a_carried_env_without_si_artifact_job(fake):
     r, calls = run(fake, **WIF, CARRY_IMAGE="1")
     assert r.returncode != 0 and "REFUSED" in r.stdout + r.stderr
     assert not [c for c in calls if c.startswith("gcloud run jobs deploy")]
+
+
+def test_legacy_shared_account_only_when_named_explicitly(fake):
+    r, calls = run(fake, DRY_RUN="1", SA_NAME="brain-writer", **SI_ON)
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert "--service-account brain-writer@sector-9393c.iam.gserviceaccount.com" in r.stdout
+    assert "+ gcloud projects add-iam-policy-binding" in r.stdout
+
+
+@pytest.mark.parametrize("mode", ["wif", "manual"])
+def test_missing_account_fails_closed_and_never_falls_back(fake, mode):
+    extra = WIF if mode == "wif" else SI_ON
+    r, calls = run(fake, IMAGE="us-central1-docker.pkg.dev/p/r/brain-orchestrator:" + HEAD[:12], FAKE_SA_MISSING="brain-orchestrator@", **extra)
+    assert r.returncode != 0
+    assert "does not exist" in r.stdout and "never falls back to brain-writer" in r.stdout
+    assert not [c for c in calls if c.startswith("gcloud run jobs deploy")], calls
+    assert not [c for c in calls if "brain-writer" in c and "--service-account" in c], calls
+    assert not [c for c in calls if c.startswith("gcloud iam service-accounts create")], calls
+
+
+def test_wif_path_deploys_as_brain_orchestrator(fake):
+    r, calls = run(fake, IMAGE="us-central1-docker.pkg.dev/p/r/brain-orchestrator:" + HEAD[:12], **WIF)
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert "--service-account brain-orchestrator@sector-9393c.iam.gserviceaccount.com" in deploy_call(calls)

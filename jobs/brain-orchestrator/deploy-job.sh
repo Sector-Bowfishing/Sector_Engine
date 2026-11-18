@@ -4,7 +4,10 @@
 # 1 vCPU / 512 Mi, single task, hourly Cloud Scheduler wake-up at :50 UTC (after wind-hourly at :05 and the
 # TVA archive at :20, so a cycle sees the hour's Brain publishes).
 #
-# Service account `brain-writer` (shared by lake-brain, water-temp-brain and this job):
+# Service account (identity split, Sector_Ops #19, owner approval 2026-11-18): this job runs as its OWN account `brain-orchestrator`.
+# The account and its grants are created by Michael's identity-split scripts (S7); this script never creates it and never falls back
+# to the old shared `brain-writer` account: a missing account FAILS CLOSED. The Cloud Scheduler still calls the job as `brain-writer`
+# (SCHEDULER_SA_NAME, decision (c) of 2026-11-18). The legacy grants below apply only to an explicit SA_NAME=brain-writer deploy:
 #   roles/firebasedatabase.admin   project-wide (RTDB IAM is project-wide; the client refuses the app databases)
 #   roles/run.viewer               read jobs / executions / services for /jobs
 #   roles/cloudscheduler.viewer    read schedules for /jobs
@@ -50,8 +53,10 @@ fi
 PROJECT_ID="${PROJECT_ID:-sector-9393c}"
 REGION="${REGION:-us-central1}"
 JOB="${JOB:-brain-orchestrator}"
-SA_NAME="${SA_NAME:-brain-writer}"
+SA_NAME="${SA_NAME:-brain-orchestrator}"
 SA="$SA_NAME@$PROJECT_ID.iam.gserviceaccount.com"
+SCHEDULER_SA_NAME="${SCHEDULER_SA_NAME:-brain-writer}"        # the Cloud Scheduler's caller identity (unchanged by the identity split)
+SCHEDULER_SA="$SCHEDULER_SA_NAME@$PROJECT_ID.iam.gserviceaccount.com"
 CRON="${CRON:-50 * * * *}"
 # Wind three measurements (wind-specialist-capability-v2, adopted 2026-10-19): OFF unless the deploy is approved with WIND_MEASUREMENTS=on.
 WIND_MEASUREMENTS="${WIND_MEASUREMENTS:-off}"
@@ -117,13 +122,34 @@ if [[ "$CARRY_ENV" == "0" ]]; then
   python3 "$ROOT/tools/deploy/si_artifact_guard.py" --cutover publication-cutover.json --switch "$SI_ARTIFACT_JOB" || exit 1
 fi
 
+# Fail closed: the job's account must already exist. Never create it here, never fall back to another account.
+if [[ "${DRY_RUN:-0}" != "1" ]] && ! gcloud iam service-accounts describe "$SA" --project "$PROJECT_ID" >/dev/null 2>&1; then
+  echo "✗ service account $SA does not exist (or cannot be read): refusing to deploy. Create it with the identity-split scripts (Sector_Ops #19) first; this script never falls back to brain-writer."; exit 1
+fi
+# Live-identity guard (Sector_Ops #19 review): never move a job that still runs as the shared brain-writer account onto a new account
+# by accident (a routine redeploy). The identity-split scripts switch it; set ALLOW_SA_SWITCH=1 only to do that switch on purpose.
+# Fail closed: a describe error other than NOT_FOUND (the job's first deploy) stops the deploy; it is never read as "no account".
+CUR_SA=""
+if [[ "${DRY_RUN:-0}" != "1" ]]; then
+  _sa_err="$(mktemp)"
+  if ! CUR_SA="$(gcloud run jobs describe "$JOB" --project "$PROJECT_ID" --region "$REGION" --format='value(spec.template.spec.template.spec.serviceAccountName)' 2>"$_sa_err")"; then
+    if grep -qiE 'NOT_FOUND|Cannot find job|could not be found|cannot be found|was not found' "$_sa_err"; then
+      CUR_SA=""   # first deploy of this job: nothing to protect yet
+    else
+      echo "✗ cannot read which account $JOB runs as ($(tail -1 "$_sa_err")): refusing to deploy. The live-identity guard fails closed."; rm -f "$_sa_err"; exit 1
+    fi
+  fi
+  rm -f "$_sa_err"
+fi
+if [[ "${DRY_RUN:-0}" != "1" && "$CUR_SA" == "brain-writer@$PROJECT_ID.iam.gserviceaccount.com" && "$SA" != "$CUR_SA" && "${ALLOW_SA_SWITCH:-0}" != "1" ]]; then
+  echo "✗ $JOB still runs as brain-writer: refusing to move it to $SA_NAME on a routine deploy. Run the identity-split script (Sector_Ops #19), or set ALLOW_SA_SWITCH=1 to switch on purpose."; exit 1
+fi
 if [[ "$SKIP_IAM" == "1" ]]; then
   echo "▶ service account $SA_NAME: IAM SKIPPED (SKIP_IAM=1; the bindings listed above must already exist)"
+elif [[ "$SA_NAME" != "brain-writer" ]]; then
+  echo "▶ service account $SA_NAME: IAM owned by the identity-split scripts (Sector_Ops #19); this script adds no binding for it"
 else
-echo "▶ service account $SA"
-if ! gcloud iam service-accounts describe "$SA" --project "$PROJECT_ID" >/dev/null 2>&1; then
-  run gcloud iam service-accounts create "$SA_NAME" --project "$PROJECT_ID" --display-name "Sector Brain RTDB writer (Brain jobs + orchestrator)"
-fi
+echo "▶ service account $SA (legacy shared account, explicit SA_NAME=brain-writer)"
 for role in roles/firebasedatabase.admin roles/run.viewer roles/cloudscheduler.viewer; do
   run gcloud projects add-iam-policy-binding "$PROJECT_ID" --member "serviceAccount:$SA" --role "$role" --condition=None --quiet
 done
@@ -252,8 +278,8 @@ run gcloud run jobs deploy "$JOB" "${BUILD_FLAGS[@]}" \
   --tasks 1 --max-retries 0 --cpu 1 --memory 512Mi --task-timeout 30m \
   --labels "commit=$LABEL_COMMIT" ${ARGS_FLAG[@]+"${ARGS_FLAG[@]}"} \
   "${ENV_FLAGS[@]}"
-if [[ "$SKIP_IAM" != "1" ]]; then
-  run gcloud run jobs add-iam-policy-binding "$JOB" --project "$PROJECT_ID" --region "$REGION" --member "serviceAccount:$SA" --role roles/run.invoker
+if [[ "$SKIP_IAM" != "1" ]]; then     # the scheduler's caller starts this job
+  run gcloud run jobs add-iam-policy-binding "$JOB" --project "$PROJECT_ID" --region "$REGION" --member "serviceAccount:$SCHEDULER_SA" --role roles/run.invoker
 fi
 
 echo "▶ schedule $JOB ($CRON UTC): definition only, always left PAUSED"
@@ -265,11 +291,11 @@ if [[ "$SKIP_SCHEDULER_DEFINITION" == "1" ]]; then
   echo "  SKIP_SCHEDULER_DEFINITION=1: definition not created, updated or paused; reading its state only"
 elif gcloud scheduler jobs describe "$JOB" --project "$PROJECT_ID" --location "$REGION" >/dev/null 2>&1; then
   run gcloud scheduler jobs update http "$JOB" --project "$PROJECT_ID" --location "$REGION" \
-    --schedule "$CRON" --time-zone UTC --uri "$RUN_URI" --http-method POST --oauth-service-account-email "$SA" \
+    --schedule "$CRON" --time-zone UTC --uri "$RUN_URI" --http-method POST --oauth-service-account-email "$SCHEDULER_SA" \
     --max-retry-attempts 0 --attempt-deadline 180s
 else
   run gcloud scheduler jobs create http "$JOB" --project "$PROJECT_ID" --location "$REGION" \
-    --schedule "$CRON" --time-zone UTC --uri "$RUN_URI" --http-method POST --oauth-service-account-email "$SA" \
+    --schedule "$CRON" --time-zone UTC --uri "$RUN_URI" --http-method POST --oauth-service-account-email "$SCHEDULER_SA" \
     --max-retry-attempts 0 --attempt-deadline 180s
 fi
 [[ "$SKIP_SCHEDULER_DEFINITION" == "1" ]] || run gcloud scheduler jobs pause "$JOB" --project "$PROJECT_ID" --location "$REGION" >/dev/null 2>&1 || true

@@ -182,6 +182,14 @@ jobs:
           gcloud run jobs describe "$JOB" --project "$PROJECT_ID" --region "$REGION" --format=json > "$STATE/before-describe.json"
           python3 tools/deploy/job_env.py snapshot --describe "$STATE/before-describe.json" --out "$STATE/before.json"
           python3 tools/deploy/job_env.py restore --snapshot "$STATE/before.json" --out "$STATE/restore.yaml"
+          # Identity split (Sector_Ops #19): deploy-job.sh deploys as brain-orchestrator and never changes a job's identity silently here.
+          cur_sa="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["serviceAccount"])' "$STATE/before.json")"
+          if [[ "${cur_sa%%@*}" != "brain-orchestrator" ]]; then
+            echo "::error::the job runs as ${cur_sa%%@*}, not brain-orchestrator. Switch it with the identity-split script first (owner). Nothing was changed."
+            echo "### STOPPED before deploy: the job's service account is not brain-orchestrator (nothing changed)" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          # recorded=1 only after every preflight stop, so a preflight STOP never triggers the rollback step (no write on a "nothing changed" path).
           echo "recorded=1" >> "$GITHUB_OUTPUT"
 
       - id: push
@@ -258,26 +266,29 @@ jobs:
           EOF
 
       - id: rollback
-        name: Put the previous image, env and commit label back on any failure or cancellation
+        name: Put the previous image, env, commit label and service account back on any failure or cancellation
         if: (failure() || cancelled()) && steps.preflight.outputs.recorded == '1'
         env:
           PROJECT_ID: ${{ steps.auth.outputs.project_id }}
         run: |
           prev_image="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["image"])' "$STATE/before.json")"
           prev_commit="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["commit"])' "$STATE/before.json")"
+          prev_sa="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["serviceAccount"])' "$STATE/before.json")"
           # A failed read counts as "changed": restore rather than guess.
           if gcloud run jobs describe "$JOB" --project "$PROJECT_ID" --region "$REGION" --format=json > "$STATE/now-describe.json" \
              && python3 tools/deploy/job_env.py snapshot --describe "$STATE/now-describe.json" --out "$STATE/now.json" \
              && python3 tools/deploy/job_env.py compare --snapshot "$STATE/now.json" --env "$STATE/restore.yaml" --image "$prev_image" \
-             && python3 -c 'import json,sys; sys.exit(json.load(open(sys.argv[1]))["commit"] != sys.argv[2])' "$STATE/now.json" "$prev_commit"; then
+             && python3 -c 'import json,sys; sys.exit(json.load(open(sys.argv[1]))["commit"] != sys.argv[2])' "$STATE/now.json" "$prev_commit" \
+             && python3 -c 'import json,sys; sys.exit(json.load(open(sys.argv[1]))["serviceAccount"] != sys.argv[2])' "$STATE/now.json" "$prev_sa"; then
             echo "the job still has its previous image and env: nothing to roll back"
           else
             gcloud run jobs update "$JOB" --project "$PROJECT_ID" --region "$REGION" --image "$prev_image" \
+              ${prev_sa:+--service-account "$prev_sa"} \
               --env-vars-file "$STATE/restore.yaml" ${prev_commit:+--update-labels "commit=$prev_commit"} --quiet
             gcloud run jobs describe "$JOB" --project "$PROJECT_ID" --region "$REGION" --format=json > "$STATE/now-describe.json"
             python3 tools/deploy/job_env.py snapshot --describe "$STATE/now-describe.json" --out "$STATE/now.json"
             python3 tools/deploy/job_env.py compare --snapshot "$STATE/now.json" --env "$STATE/restore.yaml" --image "$prev_image"
-            echo "### ROLLED BACK: previous image, env and commit label restored" >> "$GITHUB_STEP_SUMMARY"
+            echo "### ROLLED BACK: previous image, env, commit label and service account restored" >> "$GITHUB_STEP_SUMMARY"
           fi
           exit 1
 
