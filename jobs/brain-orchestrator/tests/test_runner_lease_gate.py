@@ -195,6 +195,7 @@ def test_regrant_cooldown_reads_the_staleness_window_from_the_control_manifest()
     assert OR.regrant_cooldown_minutes(man, "lake-brain") == 26 * 60
     assert OR.regrant_cooldown_minutes(man, "water-temp") == 6 * 60
     assert OR.regrant_cooldown_minutes(man, "wind") == 90                                      # 1.5 h, above the 20 min lease TTL
+    assert OR.regrant_cooldown_minutes(man, "sector-intelligence") == 6 * 60                  # INPUT_CHANGED (owner approval 2026-11-18) still at most one grant per 6 h
 
 
 def test_regrant_cooldown_defaults_and_floor():

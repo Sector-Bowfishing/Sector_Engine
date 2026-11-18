@@ -172,6 +172,32 @@ def test_parked_brains_do_not_wake_automatically_but_manual_is_allowed():
     assert O.decide_brain("water-temp", "RECOVERY", ctx(m, s))["decision"] in ("SKIP_PARKED", "BLOCKED_POLICY")
 
 
+def test_sector_intelligence_acts_on_its_own_plan_but_stays_bounded():
+    """Sector_Ops #51 (owner approval 2026-11-18, "approve SI trigger fix"): on the COMMITTED manifest Sector Intelligence accepts INPUT_CHANGED, so its own
+    --plan PUBLISH verdict starts it (Pulse primary: the cycle grants the lease). Before this it accepted only MANUAL/DEPENDENCY_CHANGED/ADMIN, and once
+    upstream Brains published through Pulse -> Publisher their registry fingerprints stopped moving: it never ran on its own. Still bounded by the
+    execution control (enabled flag, per-day cap) and the re-grant cooldown (test_runner_lease_gate)."""
+    from sector_brain_platform import execution_control as EC
+    m = committed_manifest()
+    assert m["brains"]["sector-intelligence"]["allowedTriggers"] == ["MANUAL", "INPUT_CHANGED", "DEPENDENCY_CHANGED", "ADMIN"]
+    for bid, b in m["brains"].items():                                        # only Sector Intelligence changed
+        if bid != "sector-intelligence" and bid != "biological-state":
+            assert "INPUT_CHANGED" not in b["allowedTriggers"], bid
+    act = O.effective_activity(m)
+    assert act["sector-intelligence"] == "ACTIVE"
+    d = O.decide_brain("sector-intelligence", "INPUT_CHANGED", ctx(m, fresh_states(m), activity=act))
+    assert d["decision"] == "RUN" and d["trigger"] == "INPUT_CHANGED"
+    assert O.decide_brain("sector-intelligence", "INPUT_CHANGED", ctx(m, fresh_states(m), activity={**act, "sector-intelligence": "PARKED"}))["decision"] == "SKIP_PARKED"
+    assert O.decide_brain("sector-intelligence", "INPUT_CHANGED", ctx(m, fresh_states(m), activity=act, mode="PRODUCTION"))["decision"] == "BLOCKED_POLICY"
+    lim = {"maxRunsPerDay": 24, "maxRetries": 2, "maxConcurrency": 1, "maxCostPerDay": 1.0}
+    on = {"state": "ENABLED", "maxStartsPerCycle": 2, "brains": {"sector-intelligence": {"enabled": True, "limits": lim}}}
+    assert EC.gate(on, "sector-intelligence", "INPUT_CHANGED", admin=None, starts_this_cycle=0, runs_today=0)[0] is True
+    assert EC.gate(on, "sector-intelligence", "INPUT_CHANGED", admin=None, starts_this_cycle=0, runs_today=24)[0] is False     # per-day cap
+    off = copy.deepcopy(on); off["brains"]["sector-intelligence"]["enabled"] = False
+    assert EC.gate(off, "sector-intelligence", "INPUT_CHANGED", admin=None, starts_this_cycle=0, runs_today=0)[0] is False     # not enabled
+    paused = {**on, "state": "PAUSED", "reason": "test"}
+    assert EC.gate(paused, "sector-intelligence", "INPUT_CHANGED", admin=None, starts_this_cycle=0, runs_today=0)[0] is False
+
 def test_maintenance_runs_only_approved_operations_and_never_expands_downstream():
     m = manifest(); s = fresh_states(m)
     assert O.decide_brain("lake-brain", "VALIDATION", ctx(m, s))["decision"] == "RUN"        # the ledger capture
