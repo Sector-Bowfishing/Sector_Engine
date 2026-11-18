@@ -126,6 +126,12 @@ fi
 if [[ "${DRY_RUN:-0}" != "1" ]] && ! gcloud iam service-accounts describe "$SA" --project "$PROJECT_ID" >/dev/null 2>&1; then
   echo "✗ service account $SA does not exist (or cannot be read): refusing to deploy. Create it with the identity-split scripts (Sector_Ops #19) first; this script never falls back to brain-writer."; exit 1
 fi
+# Live-identity guard (Sector_Ops #19 review): never move a job that still runs as the shared brain-writer account onto a new account
+# by accident (a routine redeploy). The identity-split scripts switch it; set ALLOW_SA_SWITCH=1 only to do that switch on purpose.
+CUR_SA="$(gcloud run jobs describe "$JOB" --project "$PROJECT_ID" --region "$REGION" --format='value(spec.template.spec.template.spec.serviceAccountName)' 2>/dev/null || true)"
+if [[ "${DRY_RUN:-0}" != "1" && "$CUR_SA" == "brain-writer@$PROJECT_ID.iam.gserviceaccount.com" && "$SA" != "$CUR_SA" && "${ALLOW_SA_SWITCH:-0}" != "1" ]]; then
+  echo "✗ $JOB still runs as brain-writer: refusing to move it to $SA_NAME on a routine deploy. Run the identity-split script (Sector_Ops #19), or set ALLOW_SA_SWITCH=1 to switch on purpose."; exit 1
+fi
 if [[ "$SKIP_IAM" == "1" ]]; then
   echo "▶ service account $SA_NAME: IAM SKIPPED (SKIP_IAM=1; the bindings listed above must already exist)"
 elif [[ "$SA_NAME" != "brain-writer" ]]; then

@@ -14,6 +14,7 @@ echo "gcloud $*" >> "$FAKE_LOG"
 case "$*" in
   "iam service-accounts describe"*) [[ -n "${FAKE_SA_MISSING:-}" && "$*" == *"${FAKE_SA_MISSING}"* ]] && exit 1; exit 0;;
   "scheduler jobs describe"*) exit 1;;
+  "run jobs describe"*) [[ -n "${FAKE_CUR_SA:-}" ]] && echo "$FAKE_CUR_SA"; exit 0;;
 esac
 exit 0
 '''
@@ -35,7 +36,7 @@ def fake(tmp_path):
 
 
 def run(fake, script, **env):
-    clean = {k: v for k, v in os.environ.items() if k not in ("SA_NAME", "INVOKER_SA_NAME", "DRY_RUN", "IMAGE", "FAKE_SA_MISSING")}
+    clean = {k: v for k, v in os.environ.items() if k not in ("SA_NAME", "INVOKER_SA_NAME", "DRY_RUN", "IMAGE", "FAKE_SA_MISSING", "FAKE_CUR_SA", "ALLOW_SA_SWITCH")}
     full = {**clean, "PATH": f"{fake / 'bin'}:{os.environ['PATH']}", "FAKE_LOG": str(fake / "calls.log"),
             "IMAGE": "us-central1-docker.pkg.dev/p/r/brain-jobs:abc123", **env}
     r = subprocess.run(["bash", os.path.join(ROOT, script)], env=full, capture_output=True, text=True, timeout=120)
@@ -96,3 +97,34 @@ def test_orchestrator_workflow_refuses_another_identity_and_restores_the_account
     assert 'prev_sa="$(python3' in rb and '${prev_sa:+--service-account "$prev_sa"}' in rb
     assert '["serviceAccount"] != sys.argv[2]' in rb
     assert 'a["serviceAccount"] == b["serviceAccount"]' in wf[wf.index("- id: verify"):wf.index("- id: dry")]
+
+
+@pytest.mark.parametrize("brain", sorted(JOBS))
+def test_refuses_to_move_a_job_still_on_brain_writer(fake, brain):
+    script, job, _acct = JOBS[brain]
+    r, calls = run(fake, script, FAKE_CUR_SA=f"brain-writer{P}")
+    assert r.returncode != 0
+    assert "still runs as brain-writer" in r.stdout + r.stderr
+    assert not [c for c in calls if c.startswith(f"gcloud run jobs deploy {job} ")], calls
+
+
+@pytest.mark.parametrize("brain", sorted(JOBS))
+def test_allow_sa_switch_moves_it_on_purpose(fake, brain):
+    script, job, acct = JOBS[brain]
+    r, calls = run(fake, script, FAKE_CUR_SA=f"brain-writer{P}", ALLOW_SA_SWITCH="1")
+    assert r.returncode == 0, r.stdout + r.stderr
+    dep = next(c for c in calls if c.startswith(f"gcloud run jobs deploy {job} "))
+    assert f"--service-account {acct}{P}" in dep
+
+
+@pytest.mark.parametrize("brain", sorted(JOBS))
+def test_redeploy_on_its_own_account_is_not_blocked(fake, brain):
+    script, job, acct = JOBS[brain]
+    r, _calls = run(fake, script, FAKE_CUR_SA=f"{acct}{P}")
+    assert r.returncode == 0, r.stdout + r.stderr
+
+
+def test_orchestrator_deploy_script_has_the_live_identity_guard():
+    s = open(os.path.join(ROOT, "jobs/brain-orchestrator/deploy-job.sh")).read()
+    assert "ALLOW_SA_SWITCH" in s and "still runs as brain-writer" in s
+    assert s.index("still runs as brain-writer") < s.index("gcloud run jobs deploy")
