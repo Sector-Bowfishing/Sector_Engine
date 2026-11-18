@@ -12,7 +12,7 @@ from . import operational_truth as OT
 from .timeutil import age_hours, iso, parse_time
 
 SECTIONS = ("summary", "brains", "edges", "jobs", "schedules", "executions", "decisions", "latestDecisions", "health", "cost", "blockers", "graph", "overrides", "requests")
-VOLATILE = ("lastEvaluatedAt", "asOf", "syncedAt", "ageHours", "durationMs")   # ageHours moves every evaluation; `stale` carries the decision
+VOLATILE = ("lastEvaluatedAt", "asOf", "syncedAt", "ageHours", "durationMs", "ageMinutes", "checkedAt")   # ageHours moves every evaluation; `stale` carries the decision
 NODE = "control/orchestratorV1"
 HEARTBEAT_HOURS = 6        # an unchanged control plane refreshes only its summary timestamp this often
 
@@ -109,14 +109,51 @@ def merge_decisions(prev_latest: dict, prev_recent: dict, decisions: list[dict],
     return latest, {x["decisionId"]: x for x in items[:limit]}
 
 
+def publication_view(reg: dict) -> dict | None:
+    """The Publisher's live record for a Brain (`brains/{id}/publication`, written by the Pulse -> Publisher path), or None. Display only."""
+    p = (reg or {}).get("publication")
+    if not isinstance(p, dict):
+        return None
+    keep = ("publishId", "result", "status", "live", "publishedAt", "generatedAt", "artifactId", "knowledgeRelease")
+    v = {k: p.get(k) for k in keep if p.get(k) is not None}
+    return v or None
+
+
+def newest_success(reg: dict) -> tuple[str | None, str | None]:
+    """(lastSuccessfulRun, basis): the newest of the registry's own lastSuccessfulRun and a live, COMPLETE, PUBLISHED Publisher publication.
+    The Pulse -> Publisher path publishes a Brain's data without rewriting the registry's lastSuccessfulRun, so the registry alone goes stale."""
+    reg = reg or {}
+    cands = []
+    if parse_time(reg.get("lastSuccessfulRun")):
+        cands.append((parse_time(reg["lastSuccessfulRun"]), reg["lastSuccessfulRun"], reg.get("lastSuccessfulRunBasis")))
+    p = publication_view(reg) or {}
+    if p.get("live") is True and p.get("result") == "PUBLISHED" and p.get("status") == "COMPLETE" and parse_time(p.get("publishedAt")):
+        cands.append((parse_time(p["publishedAt"]), p["publishedAt"], "PUBLICATION"))
+    if not cands:
+        return None, reg.get("lastSuccessfulRunBasis")
+    _, at, basis = max(cands, key=lambda c: c[0])
+    return at, basis
+
+
+def runner_view(lease: dict | None, now: dt.datetime) -> dict | None:
+    """Who runs this Brain's cycles (the runner lease, exports/runners/leases/{id}.json), display only. None = no lease (the cloud jobs)."""
+    if not isinstance(lease, dict) or not lease.get("holder"):
+        return None
+    until = parse_time(lease.get("leaseUntil"))
+    return _strip({"holder": lease.get("holder"), "cycleId": lease.get("cycleId"), "grantedAt": lease.get("grantedAt"),
+                   "heartbeatAt": lease.get("heartbeatAt"), "leaseUntil": lease.get("leaseUntil"),
+                   "held": bool(until and now <= until)})
+
+
 def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registries: dict, health: dict, scores: dict, jobs: dict, evaluation: dict,
                         prev: dict | None = None, new_executions: list[dict] | None = None, locks: dict | None = None, trigger: str = "SCHEDULE",
                         duration_ms: int | None = None, overrides: dict | None = None, out_fps: dict | None = None, requests: dict | None = None,
                         scheduler_states: dict | None = None, plans: dict | None = None, ctx: dict | None = None,
-                        overview_brains: dict | None = None) -> dict:
+                        overview_brains: dict | None = None, leases: dict | None = None, runners: dict | None = None) -> dict:
     """plans = each in-process Brain's own --plan verdict this cycle (VERSION freshness); ctx = the decision context (current own inputs and
     the input fingerprint each Brain last processed: FINGERPRINT freshness); overview_brains = /control/overview/brains (lastDataUpdate and
-    healthReasons are computed there from /lakeFleet and /sources, which this plane does not read). All optional: absent -> UNKNOWN / omitted."""
+    healthReasons are computed there from /lakeFleet and /sources, which this plane does not read); leases = {brainId: runner lease} and
+    runners = the runner_status view (display only: neither changes a decision). All optional: absent -> UNKNOWN / omitted."""
     prev = prev or {}
     registries = O.with_job_success(manifest, registries, jobs)     # a scoped orchestrator-started job's own success counts (same as the decision)
     graph = O.validate_graph(manifest)
@@ -146,7 +183,7 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
         bl = [d for d in bl if d["decision"] != "BLOCKED_POLICY" or d["trigger"] != "SCHEDULE"]
         for d in bl:
             blockers.append({"brainId": bid, "decision": d["decision"], "trigger": d["trigger"], "reason": d["reason"], "since": d.get("since")})
-        last_run = reg.get("lastSuccessfulRun")
+        last_run, last_basis = newest_success(reg)
         ageh = age_hours(last_run, now) if last_run else None
         sh = (b.get("freshness") or {}).get("staleAfterHours")
         nd = (jobs.get((b.get("schedule") or {}).get("scheduler") or "", {}) or {}).get("nextScheduledAt") if enabled else None
@@ -170,7 +207,8 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
             "executionMode": execution_mode(b, enabled), "scheduleClass": (b.get("schedule") or {}).get("class"),
             "exception": {k: v for k, v in ((b.get("schedule") or {}).get("exception") or {}).items() if k in ("gate", "stop", "maxMonthlyUsd", "approvedAt")},
             "lastRun": last_run, "lastResult": (lastx or {}).get("status") or h.get("status"), "nextDue": nd,
-            "lastSuccessfulRunBasis": reg.get("lastSuccessfulRunBasis"),
+            "lastSuccessfulRunBasis": last_basis,
+            "lastPublication": publication_view(reg), "runner": runner_view((leases or {}).get(bid), now),
             # lastRun (kept for compatibility) == lastSuccessfulRun; the four timestamps answer different questions (operational_truth)
             "lastSuccessfulRun": last_run, "lastExecution": last_exec, "lastDataUpdate": ov.get("lastDataUpdate"),
             "lastScoreEvaluation": sc.get("scoreUpdatedAt"),
@@ -208,6 +246,8 @@ def build_control_state(manifest: dict, mode: str, now: dt.datetime, *, registri
         "scheduler": _strip({"state": "ENABLED" if _job_enabled(jobs, "brain-orchestrator", scheduler_states) else ("PAUSED" if _job_enabled(jobs, "brain-orchestrator", scheduler_states) is False else None),
                              "cron": ((jobs or {}).get("brain-orchestrator") or {}).get("cron")}),
         "graphValid": not graph["errors"], "customerPublication": False if mode == "PRE_PRODUCTION" else None,
+        # display only (runner_status.py): what the registered runner outside Cloud Run reports. An additive summary field: no new section.
+        "runners": runners if runners is not None else ((prev.get("summary") or {}).get("runners")),
     })
     edge_out = {}
     for e in O.edges(manifest):
