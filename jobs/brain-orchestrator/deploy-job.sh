@@ -128,7 +128,19 @@ if [[ "${DRY_RUN:-0}" != "1" ]] && ! gcloud iam service-accounts describe "$SA" 
 fi
 # Live-identity guard (Sector_Ops #19 review): never move a job that still runs as the shared brain-writer account onto a new account
 # by accident (a routine redeploy). The identity-split scripts switch it; set ALLOW_SA_SWITCH=1 only to do that switch on purpose.
-CUR_SA="$(gcloud run jobs describe "$JOB" --project "$PROJECT_ID" --region "$REGION" --format='value(spec.template.spec.template.spec.serviceAccountName)' 2>/dev/null || true)"
+# Fail closed: a describe error other than NOT_FOUND (the job's first deploy) stops the deploy; it is never read as "no account".
+CUR_SA=""
+if [[ "${DRY_RUN:-0}" != "1" ]]; then
+  _sa_err="$(mktemp)"
+  if ! CUR_SA="$(gcloud run jobs describe "$JOB" --project "$PROJECT_ID" --region "$REGION" --format='value(spec.template.spec.template.spec.serviceAccountName)' 2>"$_sa_err")"; then
+    if grep -qiE 'NOT_FOUND|could not be found|cannot be found|was not found' "$_sa_err"; then
+      CUR_SA=""   # first deploy of this job: nothing to protect yet
+    else
+      echo "✗ cannot read which account $JOB runs as ($(tail -1 "$_sa_err")): refusing to deploy. The live-identity guard fails closed."; rm -f "$_sa_err"; exit 1
+    fi
+  fi
+  rm -f "$_sa_err"
+fi
 if [[ "${DRY_RUN:-0}" != "1" && "$CUR_SA" == "brain-writer@$PROJECT_ID.iam.gserviceaccount.com" && "$SA" != "$CUR_SA" && "${ALLOW_SA_SWITCH:-0}" != "1" ]]; then
   echo "✗ $JOB still runs as brain-writer: refusing to move it to $SA_NAME on a routine deploy. Run the identity-split script (Sector_Ops #19), or set ALLOW_SA_SWITCH=1 to switch on purpose."; exit 1
 fi

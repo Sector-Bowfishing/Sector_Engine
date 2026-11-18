@@ -14,7 +14,8 @@ echo "gcloud $*" >> "$FAKE_LOG"
 case "$*" in
   "iam service-accounts describe"*) [[ -n "${FAKE_SA_MISSING:-}" && "$*" == *"${FAKE_SA_MISSING}"* ]] && exit 1; exit 0;;
   "scheduler jobs describe"*) exit 1;;
-  "run jobs describe"*) [[ -n "${FAKE_CUR_SA:-}" ]] && echo "$FAKE_CUR_SA"; exit 0;;
+  "run jobs describe"*) [[ -n "${FAKE_DESCRIBE_ERR:-}" ]] && { echo "$FAKE_DESCRIBE_ERR" >&2; exit 1; }
+                       [[ -n "${FAKE_CUR_SA:-}" ]] && echo "$FAKE_CUR_SA"; exit 0;;
 esac
 exit 0
 '''
@@ -36,7 +37,7 @@ def fake(tmp_path):
 
 
 def run(fake, script, **env):
-    clean = {k: v for k, v in os.environ.items() if k not in ("SA_NAME", "INVOKER_SA_NAME", "DRY_RUN", "IMAGE", "FAKE_SA_MISSING", "FAKE_CUR_SA", "ALLOW_SA_SWITCH")}
+    clean = {k: v for k, v in os.environ.items() if k not in ("SA_NAME", "INVOKER_SA_NAME", "DRY_RUN", "IMAGE", "FAKE_SA_MISSING", "FAKE_CUR_SA", "ALLOW_SA_SWITCH", "FAKE_DESCRIBE_ERR", "SI_ARTIFACT_JOB", "RUNNER_LEASES")}
     full = {**clean, "PATH": f"{fake / 'bin'}:{os.environ['PATH']}", "FAKE_LOG": str(fake / "calls.log"),
             "IMAGE": "us-central1-docker.pkg.dev/p/r/brain-jobs:abc123", **env}
     r = subprocess.run(["bash", os.path.join(ROOT, script)], env=full, capture_output=True, text=True, timeout=120)
@@ -128,3 +129,46 @@ def test_orchestrator_deploy_script_has_the_live_identity_guard():
     s = open(os.path.join(ROOT, "jobs/brain-orchestrator/deploy-job.sh")).read()
     assert "ALLOW_SA_SWITCH" in s and "still runs as brain-writer" in s
     assert s.index("still runs as brain-writer") < s.index("gcloud run jobs deploy")
+
+
+@pytest.mark.parametrize("brain", sorted(JOBS))
+def test_unreadable_current_account_fails_closed(fake, brain):
+    script, job, _acct = JOBS[brain]
+    r, calls = run(fake, script, FAKE_DESCRIBE_ERR="ERROR: (gcloud.run.jobs.describe) PERMISSION_DENIED: caller lacks run.jobs.get")
+    assert r.returncode != 0
+    assert "live-identity guard fails closed" in r.stdout + r.stderr
+    assert not [c for c in calls if c.startswith(f"gcloud run jobs deploy {job} ")], calls
+
+
+@pytest.mark.parametrize("brain", sorted(JOBS))
+def test_first_deploy_not_found_proceeds(fake, brain):
+    script, job, acct = JOBS[brain]
+    r, calls = run(fake, script, FAKE_DESCRIBE_ERR="ERROR: (gcloud.run.jobs.describe) NOT_FOUND: Resource 'x' was not found")
+    assert r.returncode == 0, r.stdout + r.stderr
+    dep = next(c for c in calls if c.startswith(f"gcloud run jobs deploy {job} "))
+    assert f"--service-account {acct}{P}" in dep
+
+
+# The Orchestrator script: behavioural check of the live-identity guard against the same fake gcloud. A run that gets PAST the guard
+# reaches the next step (the lineage preflight, which then stops on the fake's data); the guard's own refusals never deploy.
+ORCH = "jobs/brain-orchestrator/deploy-job.sh"
+PAST_GUARD = "lineage preflight"
+
+
+@pytest.mark.parametrize("case,env,passes,msg", [
+    ("own account", {"FAKE_CUR_SA": f"brain-orchestrator{P}"}, True, None),
+    ("brain-writer", {"FAKE_CUR_SA": f"brain-writer{P}"}, False, "still runs as brain-writer"),
+    ("switch on purpose", {"FAKE_CUR_SA": f"brain-writer{P}", "ALLOW_SA_SWITCH": "1"}, True, None),
+    ("describe error", {"FAKE_DESCRIBE_ERR": "ERROR: (gcloud.run.jobs.describe) PERMISSION_DENIED"}, False, "live-identity guard fails closed"),
+    ("first deploy", {"FAKE_DESCRIBE_ERR": "ERROR: (gcloud.run.jobs.describe) NOT_FOUND: Resource was not found"}, True, None),
+])
+def test_orchestrator_live_identity_guard(fake, case, env, passes, msg):
+    r, calls = run(fake, ORCH, SI_ARTIFACT_JOB="on", RUNNER_LEASES="on", **env)
+    out = r.stdout + r.stderr
+    assert not [c for c in calls if c.startswith("gcloud run jobs deploy brain-orchestrator")], (case, calls)
+    if passes:
+        assert PAST_GUARD in out, (case, out[-2000:])
+        assert "still runs as brain-writer" not in out and "fails closed" not in out, case
+    else:
+        assert r.returncode != 0 and msg in out, (case, out[-2000:])
+        assert PAST_GUARD not in out, case
