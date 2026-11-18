@@ -182,7 +182,6 @@ jobs:
           gcloud run jobs describe "$JOB" --project "$PROJECT_ID" --region "$REGION" --format=json > "$STATE/before-describe.json"
           python3 tools/deploy/job_env.py snapshot --describe "$STATE/before-describe.json" --out "$STATE/before.json"
           python3 tools/deploy/job_env.py restore --snapshot "$STATE/before.json" --out "$STATE/restore.yaml"
-          echo "recorded=1" >> "$GITHUB_OUTPUT"
           # Identity split (Sector_Ops #19): deploy-job.sh deploys as brain-orchestrator and never changes a job's identity silently here.
           cur_sa="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["serviceAccount"])' "$STATE/before.json")"
           if [[ "${cur_sa%%@*}" != "brain-orchestrator" ]]; then
@@ -190,6 +189,8 @@ jobs:
             echo "### STOPPED before deploy: the job's service account is not brain-orchestrator (nothing changed)" >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
+          # recorded=1 only after every preflight stop, so a preflight STOP never triggers the rollback step (no write on a "nothing changed" path).
+          echo "recorded=1" >> "$GITHUB_OUTPUT"
 
       - id: push
         if: env.MODE == 'build'

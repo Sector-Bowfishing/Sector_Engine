@@ -89,6 +89,9 @@ def test_orchestrator_workflow_refuses_another_identity_and_restores_the_account
     wf = open(os.path.join(ROOT, ".github/workflows/deploy-orchestrator.yml")).read()      # plain text: no YAML dependency in CI
     pre = wf[wf.index("- id: preflight"):wf.index("- id: push")]
     assert '"${cur_sa%%@*}" != "brain-orchestrator"' in pre and "exit 1" in pre
+    # every preflight STOP comes before recorded=1, so a STOP never arms the rollback step
+    assert pre.count('echo "recorded=1"') == 1
+    assert pre.index('echo "recorded=1"') > pre.rindex("exit 1")
     rb = wf[wf.index("- id: rollback"):wf.index("- name: Step summary")]
     assert 'prev_sa="$(python3' in rb and '${prev_sa:+--service-account "$prev_sa"}' in rb
     assert '["serviceAccount"] != sys.argv[2]' in rb
