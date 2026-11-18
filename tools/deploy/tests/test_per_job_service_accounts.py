@@ -140,10 +140,16 @@ def test_unreadable_current_account_fails_closed(fake, brain):
     assert not [c for c in calls if c.startswith(f"gcloud run jobs deploy {job} ")], calls
 
 
+# The real message gcloud prints for a missing job (surface/run/jobs/describe.py) is "Cannot find job [x]."; keep both shapes.
+NOT_FOUND_MESSAGES = ["ERROR: (gcloud.run.jobs.describe) Cannot find job [x].",
+                      "ERROR: (gcloud.run.jobs.describe) NOT_FOUND: Resource 'x' was not found"]
+
+
 @pytest.mark.parametrize("brain", sorted(JOBS))
-def test_first_deploy_not_found_proceeds(fake, brain):
+@pytest.mark.parametrize("msg", NOT_FOUND_MESSAGES)
+def test_first_deploy_not_found_proceeds(fake, brain, msg):
     script, job, acct = JOBS[brain]
-    r, calls = run(fake, script, FAKE_DESCRIBE_ERR="ERROR: (gcloud.run.jobs.describe) NOT_FOUND: Resource 'x' was not found")
+    r, calls = run(fake, script, FAKE_DESCRIBE_ERR=msg)
     assert r.returncode == 0, r.stdout + r.stderr
     dep = next(c for c in calls if c.startswith(f"gcloud run jobs deploy {job} "))
     assert f"--service-account {acct}{P}" in dep
@@ -161,6 +167,7 @@ PAST_GUARD = "lineage preflight"
     ("switch on purpose", {"FAKE_CUR_SA": f"brain-writer{P}", "ALLOW_SA_SWITCH": "1"}, True, None),
     ("describe error", {"FAKE_DESCRIBE_ERR": "ERROR: (gcloud.run.jobs.describe) PERMISSION_DENIED"}, False, "live-identity guard fails closed"),
     ("first deploy", {"FAKE_DESCRIBE_ERR": "ERROR: (gcloud.run.jobs.describe) NOT_FOUND: Resource was not found"}, True, None),
+    ("first deploy (real gcloud text)", {"FAKE_DESCRIBE_ERR": "ERROR: (gcloud.run.jobs.describe) Cannot find job [brain-orchestrator]."}, True, None),
 ])
 def test_orchestrator_live_identity_guard(fake, case, env, passes, msg):
     r, calls = run(fake, ORCH, SI_ARTIFACT_JOB="on", RUNNER_LEASES="on", **env)

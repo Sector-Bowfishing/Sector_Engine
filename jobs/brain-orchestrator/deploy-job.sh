@@ -133,7 +133,7 @@ CUR_SA=""
 if [[ "${DRY_RUN:-0}" != "1" ]]; then
   _sa_err="$(mktemp)"
   if ! CUR_SA="$(gcloud run jobs describe "$JOB" --project "$PROJECT_ID" --region "$REGION" --format='value(spec.template.spec.template.spec.serviceAccountName)' 2>"$_sa_err")"; then
-    if grep -qiE 'NOT_FOUND|could not be found|cannot be found|was not found' "$_sa_err"; then
+    if grep -qiE 'NOT_FOUND|Cannot find job|could not be found|cannot be found|was not found' "$_sa_err"; then
       CUR_SA=""   # first deploy of this job: nothing to protect yet
     else
       echo "✗ cannot read which account $JOB runs as ($(tail -1 "$_sa_err")): refusing to deploy. The live-identity guard fails closed."; rm -f "$_sa_err"; exit 1
