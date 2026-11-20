@@ -327,7 +327,16 @@ public enum LakeBrainRunner {
         guard let store else { result.durationMs = Int(Date().timeIntervalSince(t0) * 1000); return result }
 
         do {
-            for r in out { try await store.update(try lakePaths(r, presence: presence)) }
+            // Each lake's update is its own atomic write; one failed lake no longer stops the others (review of the 189-lake batch,
+            // 2026-11-20). Any failure still fails the run below, so the registry/health tail is not written over a partial run.
+            var lakeWriteErrors: [String] = []
+            for r in out {
+                do { try await store.update(try lakePaths(r, presence: presence)) }
+                catch { lakeWriteErrors.append("\(r.lakeId): \(error)") }
+            }
+            if !lakeWriteErrors.isEmpty {
+                throw LakeBrainWriteError(failures: lakeWriteErrors, written: out.count - lakeWriteErrors.count)
+            }
             let finished = Date()
             result.durationMs = Int(finished.timeIntervalSince(t0) * 1000)
             guard options.lakeIds == nil else { await appendLedger(&result, lakes: lakes, store: store, archive: archive, options: options, now: now); return result }
@@ -583,5 +592,15 @@ extension Optional {
     func asyncMap<U>(_ f: (Wrapped) async -> U) async -> U? {
         guard let x = self else { return nil }
         return await f(x)
+    }
+}
+
+
+/// One or more lakes' writes failed; the other lakes were written (each lake is its own update).
+struct LakeBrainWriteError: Error, CustomStringConvertible {
+    let failures: [String]
+    let written: Int
+    var description: String {
+        "\(failures.count) lake write(s) failed, \(written) written: " + failures.prefix(5).joined(separator: "; ") + (failures.count > 5 ? "; ..." : "")
     }
 }

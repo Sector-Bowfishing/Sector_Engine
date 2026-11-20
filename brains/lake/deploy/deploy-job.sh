@@ -54,7 +54,7 @@ run gcloud run jobs deploy "$JOB" --image "$IMAGE" \
   --project "$PROJECT_ID" --region "$REGION" --service-account "$SA" \
   --command /app/LakeBrainJob \
   --args="--rtdb,$RTDB_URL,--archive,gs://$ARCHIVE_BUCKET,--scope,pilots" \
-  --tasks 1 --max-retries 0 --cpu 1 --memory 1Gi --task-timeout 15m \
+  --tasks 1 --max-retries 0 --cpu 1 --memory 1Gi --task-timeout 60m \
   --labels "commit=$COMMIT" \
   --set-env-vars "SECTOR_BRAIN_RTDB_URL=$RTDB_URL,SECTOR_ENGINE_COMMIT=$COMMIT"
 run gcloud run jobs add-iam-policy-binding "$JOB" --project "$PROJECT_ID" --region "$REGION" --member "serviceAccount:$INVOKER_SA" --role roles/run.invoker

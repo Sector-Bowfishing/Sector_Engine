@@ -1,0 +1,24 @@
+# TEMPORARY (Sector_Engine #211): regenerates the Lake Swift fixtures on Linux and uploads them; removed before merge.
+name: tmp-regen-lake-fixtures
+on:
+  pull_request:
+    paths: ["brains/lake/**", ".github/workflows/tmp-regen-lake-fixtures.yml"]
+permissions:
+  contents: read
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    container: swift:6.1-jammy
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift build --build-tests
+      - run: SECTOR_WRITE_BRAIN_FIXTURES=1 swift test --skip-build --filter "LakePublicationFixtureTests|LakeReviewedBindingsExportTests"
+      - run: LEDGER_REGEN_GOLDEN=1 swift test --skip-build --filter testGoldenLedgerMatchesCheckedInFixture
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lake-fixtures
+          path: |
+            brains/lake/tests/golden/lake_run_updates.json
+            brains/lake/contracts/reviewed-lake-bindings-v1.json
+            jobs/lake-brain/ledger/fixtures/sample_ledger.jsonl
