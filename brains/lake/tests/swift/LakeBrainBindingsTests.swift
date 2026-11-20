@@ -27,26 +27,34 @@ final class LakeBrainBindingsTests: XCTestCase {
         return try XCTUnwrap(JSONSerialization.jsonObject(with: d) as? [String: Any])
     }
 
-    // MARK: (a) the gate with the real (empty) accepted batch
+    // MARK: (a) the gate with the committed accepted batch (owner direction 2026-11-20, Sector_Ops #51 comment 7049169954)
 
-    func testWithoutAnAcceptedBatchNoGeneratedBindingIsReviewed() {
+    func testTheCommittedAcceptedBatchIsExactlyWhatIsReviewed() throws {
         XCTAssertTrue(LakeGeneratedBindings.loadErrors.isEmpty, "\(LakeGeneratedBindings.loadErrors)")
-        XCTAssertTrue(LakeGeneratedBindings.acceptedLakeIds.isEmpty, "accepted_batch.json is created only after Michael's review")
-        XCTAssertFalse(LakeSourceBindings.generated.isEmpty)
-        XCTAssertTrue(LakeSourceBindings.generated.allSatisfy { $0.status == .candidate })
-        // `reviewed` is the list a run publishes from: the five hand-written pilots and nothing else.
-        XCTAssertEqual(Set(LakeSourceBindings.reviewed.map(\.lakeId)),
-                       ["Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN", "Lake Hartwell|SC"])
+        let d = try Data(contentsOf: repoData("accepted_batch.json"))
+        let doc = try XCTUnwrap(JSONSerialization.jsonObject(with: d) as? [String: Any])
+        let fileIds = Set(try XCTUnwrap(doc["lakeIds"] as? [String]))
+        XCTAssertTrue((doc["approvalRef"] as? String)?.hasPrefix("owner-") == true, "an accepted batch carries the owner's approvalRef")
+        XCTAssertEqual(LakeGeneratedBindings.acceptedLakeIds, fileIds)
+        XCTAssertFalse(fileIds.isEmpty)
+        let handIds = Set(LakeSourceBindings.handWritten.map(\.lakeId))
+        XCTAssertTrue(fileIds.isDisjoint(with: handIds), "the hand-written pilots are already REVIEWED and stay hand-written")
+        // `reviewed` is the list a run publishes from: the five hand-written pilots plus the accepted generated rows.
+        XCTAssertEqual(Set(LakeSourceBindings.reviewed.map(\.lakeId)), handIds.union(fileIds))
         XCTAssertTrue(LakeSourceBindings.reviewed.allSatisfy { $0.status == .reviewed })
-        XCTAssertEqual(LakeSourceBindings.version, LakeSourceBindings.baseVersion, "an empty batch adds no version suffix")
+        XCTAssertTrue(LakeSourceBindings.version.hasPrefix(LakeSourceBindings.baseVersion + "+accepted.\(fileIds.count)."))
+        // lakes that failed the two-gauge comparison stay CANDIDATE
+        for id in ["Brookville Lake|IN", "Sumner Lake|NM"] {
+            XCTAssertFalse(fileIds.contains(id), id)
+            XCTAssertNil(LakeSourceBindings.reviewedBinding(for: id), id)
+            XCTAssertEqual(LakeSourceBindings.binding(for: id)?.status, .candidate, id)
+        }
         // hand-written first: the pilot row is the hand-written one, not the generated record
         let hartwell = LakeSourceBindings.binding(for: "Lake Hartwell|SC")
         XCTAssertEqual(hartwell?.status, .reviewed)
         XCTAssertEqual(hartwell?.live.first?.provider, .cwms, "the hand-written Hartwell has the CWMS pool first")
-        let handIds = Set(LakeSourceBindings.handWritten.map(\.lakeId))
         for g in LakeSourceBindings.generated where !handIds.contains(g.lakeId) {
-            XCTAssertNil(LakeSourceBindings.reviewedBinding(for: g.lakeId), g.lakeId)
-            XCTAssertEqual(LakeSourceBindings.binding(for: g.lakeId)?.status, .candidate)
+            XCTAssertEqual(g.status == .reviewed, fileIds.contains(g.lakeId), g.lakeId)
         }
     }
 
