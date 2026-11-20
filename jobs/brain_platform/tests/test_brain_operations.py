@@ -89,3 +89,13 @@ def test_overlay_keeps_the_static_dimensions_and_marks_unknown_brains():
 def test_absent_evidence_is_omitted_never_published_as_null():
     for out in (live(DEPTH, {}, shadow=None), live(WT, {}), live(FISH, {}, plan=None)):
         assert None not in out["internalOperation"].values() and "reason" not in out.get("inputFreshness", {})
+
+
+def test_expected_interval_is_the_run_cadence_with_the_orchestrators_fallback():
+    """freshness.dueAfterHours (Lake, 2026-11-20) is the expected interval; an invalid value falls back to staleAfterHours exactly as orchestration.due()."""
+    row = {"lastExecution": {"at": T(2), "status": "SUCCEEDED"}, "lastSuccessfulRun": T(2)}
+    lake = {**WT, "freshness": {"staleAfterHours": 6, "dueAfterHours": 2.5}}
+    assert live(lake, row)["internalOperation"]["expectedIntervalHours"] == 2.5
+    for bad in (0, -1, True, "2"):
+        b = {**WT, "freshness": {"staleAfterHours": 6, "dueAfterHours": bad}}
+        assert live(b, row)["internalOperation"]["expectedIntervalHours"] == 6

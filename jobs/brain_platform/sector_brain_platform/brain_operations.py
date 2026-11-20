@@ -17,6 +17,7 @@ from __future__ import annotations
 import datetime as dt
 
 from .timeutil import iso, parse_time
+from . import orchestration as O
 
 RUNTIME = ("READY", "NOT_READY", "NOT_VERIFIED")
 INTERNAL = ("NOT_DEPLOYED", "SHADOW", "ACTIVE", "DEGRADED", "PAUSED", "FAILED", "NOT_VERIFIED")
@@ -87,8 +88,7 @@ def live(brain_id: str, b: dict, row: dict | None, *, scheduler_states: dict | N
         io["lastSuccessfulRunBasis"] = row["lastSuccessfulRunBasis"]
     activity = row.get("activityState") or b.get("activityState")
     if kind == "TIME":
-        f = b.get("freshness") or {}
-        iv = float(f.get("dueAfterHours") or f.get("staleAfterHours"))       # the run cadence when the manifest sets one
+        iv = float(O.due_after_hours(b))                                     # the run cadence (dueAfterHours, else staleAfterHours; same fallback as the Orchestrator)
         io["expectedIntervalHours"] = iv
         # the Brain counts as executed within its interval when its last success is fresh, even if the last attempt was a no-op skip
         succ_age = _age_h(row.get("lastSuccessfulRun"), now)
