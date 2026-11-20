@@ -33,15 +33,16 @@ FLEET = {"lake-a": {"slots": {"lake": {"lastUpdatedAt": iso(6)}, "waterClarity":
 def test_lake_policy_is_the_manifest_and_reports_the_declared_rule():
     p = OT.effective_policy(MB["lake-brain"], LAKE_REG)
     assert p["source"] == "ORCHESTRATOR_MANIFEST" and p["model"] == "TIME" and p["staleAfterHours"] == MB["lake-brain"]["freshness"]["staleAfterHours"]
-    assert p["declaredStaleAfterHours"] == 3 and p.get("note")
+    # Since 2026-11-20 (owner approval, Sector_Ops #51) the manifest runs Lake every 3 h, the Brain's own declared rule, so no difference to report.
+    assert p["staleAfterHours"] == 3 and p.get("declaredStaleAfterHours", 3) == 3
 
 
 def test_both_planes_give_lake_the_same_verdict():
     ov = C.brain_summary("lake-brain", LAKE_REG, LAKE_HEALTH, None, None, {}, NOW, manifest_brain=MB["lake-brain"], sources=SOURCES, source_health={})
     st = build(registries={"lake-brain": LAKE_REG}, health={"lake-brain": LAKE_HEALTH})["brains"]["lake-brain"]["freshness"]
-    assert ov["freshness"]["verdict"] == st["verdict"] == "FRESH"          # 5 h old under the 26 h operating policy; was stale (3 h) on one plane only
-    assert ov["stale"] is False and st["stale"] is False and ov["staleAfterHours"] == st["staleAfterHours"]
-    assert ov["freshness"]["declaredStaleAfterHours"] == st["declaredStaleAfterHours"] == 3
+    assert ov["freshness"]["verdict"] == st["verdict"] == "STALE"          # 5 h old under the 3 h policy (2026-11-20): both planes agree
+    assert ov["stale"] is True and st["stale"] is True and ov["staleAfterHours"] == st["staleAfterHours"] == 3
+    assert ov["freshness"].get("declaredStaleAfterHours", 3) == st.get("declaredStaleAfterHours", 3) == 3
 
 
 def test_time_verdicts_and_missing_evidence_is_unknown():
