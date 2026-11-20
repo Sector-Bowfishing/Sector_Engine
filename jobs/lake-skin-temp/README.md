@@ -21,16 +21,24 @@ values come from real observations, not estimates).
 
 ## Credentials
 
-An **Earthdata Login user token** (urs.earthdata.nasa.gov → Generate Token; valid 60 days) in the environment variable
-`EARTHDATA_TOKEN`. Pulse passes it from its Keychain item `earthdata-token` (service `com.rehtac.sectorpulse`). The token is
-sent only to `*.earthdata.nasa.gov` / `*.earthdatacloud.nasa.gov` over HTTPS (never to the signed S3 redirect), and is never
-printed, logged or written. Granule search (NASA CMR) is public and gets no token. Regenerate the token before it expires.
+The job gets its own Earthdata bearer token every run, so nothing is renewed by hand.
+
+- Pulse passes Michael's Earthdata Login username and password from the Mac mini Keychain (generic password, service
+  `sector-earthdata`, account = the username) as `EARTHDATA_USERNAME` / `EARTHDATA_PASSWORD`.
+- The job calls `GET https://urs.earthdata.nasa.gov/api/users/tokens` and reuses a token with at least 2 days left; otherwise
+  `POST /api/users/token` creates one (Earthdata tokens last 60 days; an account holds at most 2). Basic auth goes only to
+  `urs.earthdata.nasa.gov` over HTTPS, and redirects from it are never followed.
+- The token lives in memory for the run only. It is sent only to `*.earthdata.nasa.gov` / `*.earthdatacloud.nasa.gov` over
+  HTTPS (download redirects are followed by hand, so it never reaches the signed S3 URL), and is never written, logged or
+  printed. Pulse also redacts both values from the run logs.
+- `EARTHDATA_TOKEN`, if set, overrides all of this (handy for a one-off run).
+- Granule search (NASA CMR) is public and gets no credential.
 
 ## Run
 
 ```bash
 pip install -r requirements.txt   # numpy, h5py (wheels)
-export EARTHDATA_TOKEN=...        # Pulse does this from the Keychain
+export EARTHDATA_USERNAME=... EARTHDATA_PASSWORD=...   # Pulse does this from the Keychain (or EARTHDATA_TOKEN=...)
 python3 skin_temp.py --out /tmp/skin/out --archive /tmp/skin/archive --cache /tmp/skin/cache               # catch up the last 14 days
 python3 skin_temp.py --out /tmp/skin/out --archive /tmp/skin/archive --cache /tmp/skin/cache --date 2026-11-10
 python3 skin_temp.py --out /tmp/skin/out --archive /tmp/skin/archive --cache /tmp/skin/cache --search-only  # count granules, no token needed

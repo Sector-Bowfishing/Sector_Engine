@@ -17,9 +17,12 @@ Per lake and per granule (one satellite, one night):
     (missed cloud edges read cold);
   * the lake's reading is the median of the remaining pixels, only when at least --min-pixels remain.
 
-Credentials: an Earthdata Login user token in the environment variable EARTHDATA_TOKEN (Pulse passes it from its Keychain
-item `earthdata-token`). The token is sent only to *.earthdata.nasa.gov and *.earthdatacloud.nasa.gov hosts, never printed,
-logged or written. Granule search (NASA CMR) is public and needs no token.
+Credentials: the job gets its own Earthdata bearer token each run, so nothing needs renewing by hand. Pulse passes the
+Earthdata Login username and password (Keychain item service `sector-earthdata`) as EARTHDATA_USERNAME / EARTHDATA_PASSWORD;
+the job asks urs.earthdata.nasa.gov for a still-valid user token (GET /api/users/tokens) or a new one (POST /api/users/token),
+with HTTP basic auth sent only to that host over HTTPS. The token lives in memory for the run and is never written, logged or
+printed; it is sent only to *.earthdata.nasa.gov and *.earthdatacloud.nasa.gov. EARTHDATA_TOKEN, if set, overrides all of this.
+Granule search (NASA CMR) is public and gets no credential.
 
 usage:
   skin_temp.py --out DIR --archive DIR --cache DIR [--date YYYY-MM-DD | --days-back N] [--products VNP21A1N,VJ121A1N]
@@ -54,6 +57,9 @@ VERSION = "002"
 # Continental US, Alaska and Hawaii: the directory's extent (CMR bounding box west,south,east,north).
 SEARCH_BOX = "-180,15,-60,72"
 TOKEN_HOSTS = (".earthdata.nasa.gov", ".earthdatacloud.nasa.gov")
+URS = "https://urs.earthdata.nasa.gov"
+URS_HOST = "urs.earthdata.nasa.gov"
+TOKEN_MIN_DAYS_LEFT = 2
 USER_AGENT = "SectorPulse-lake-skin-temp/1 (research; contact via Sector Bowfishing)"
 
 # MODIS/VIIRS sinusoidal grid (identical for the 1 km VIIRS L3 tiles): 36 x 18 tiles of 1200 x 1200 cells.
@@ -378,6 +384,64 @@ def http_get(url: str, token: str | None, dest: str | None = None, tries: int = 
     raise RuntimeError(f"download failed from {host}: {type(last_err).__name__} {getattr(last_err, 'code', '')}".strip())
 
 
+def _basic_allowed(url: str) -> bool:
+    u = urllib.parse.urlparse(url)
+    return u.scheme == "https" and (u.hostname or "").lower() == URS_HOST
+
+
+def _urs_call(method: str, path: str, username: str, password: str, opener=None) -> object:
+    """One Earthdata Login API call with basic auth; refuses any URL that is not https://urs.earthdata.nasa.gov."""
+    url = URS + path
+    if not _basic_allowed(url):
+        raise RuntimeError("refusing to send Earthdata credentials off urs.earthdata.nasa.gov")
+    import base64  # noqa: PLC0415
+    auth = base64.b64encode(f"{username}:{password}".encode()).decode()
+    req = urllib.request.Request(url, method=method, data=b"" if method == "POST" else None,
+                                 headers={"User-Agent": USER_AGENT, "Accept": "application/json"})
+    req.add_unredirected_header("Authorization", f"Basic {auth}")
+    opener = opener or urllib.request.build_opener(_NoRedirect)  # a redirect would carry the password elsewhere: never follow
+    try:
+        resp = opener.open(req, timeout=60)
+    except urllib.error.HTTPError as e:
+        raise RuntimeError(f"Earthdata Login {method} {path}: HTTP {e.code}") from None
+    except (urllib.error.URLError, TimeoutError, OSError) as e:
+        raise RuntimeError(f"Earthdata Login {method} {path}: {type(e).__name__}") from None
+    return json.loads(resp.read() or b"null")
+
+
+def _expiry(tok: dict) -> dt.date | None:
+    raw = str(tok.get("expiration_date") or "")
+    for fmt in ("%m/%d/%Y", "%Y-%m-%d"):
+        try:
+            return dt.datetime.strptime(raw[:10], fmt).date()
+        except ValueError:
+            continue
+    return None
+
+
+def earthdata_token(env: dict | None = None, today: dt.date | None = None, call=None) -> str | None:
+    """The bearer token for this run: EARTHDATA_TOKEN if set, else a still-valid user token from Earthdata Login (reused) or
+    a new one. Returns None when no credential is configured. Never logs the token or the password."""
+    env = os.environ if env is None else env
+    if env.get("EARTHDATA_TOKEN"):
+        return env["EARTHDATA_TOKEN"]
+    user, pw = env.get("EARTHDATA_USERNAME"), env.get("EARTHDATA_PASSWORD")
+    if not user or not pw:
+        return None
+    call = call or _urs_call
+    today = today or dt.datetime.now(dt.timezone.utc).date()
+    tokens = call("GET", "/api/users/tokens", user, pw) or []
+    valid = [t for t in tokens if isinstance(t, dict) and t.get("access_token")
+             and (_expiry(t) or today) >= today + dt.timedelta(days=TOKEN_MIN_DAYS_LEFT)]
+    if valid:
+        return max(valid, key=lambda t: _expiry(t) or today)["access_token"]
+    made = call("POST", "/api/users/token", user, pw) or {}
+    tok = made.get("access_token") if isinstance(made, dict) else None
+    if not tok:
+        raise RuntimeError("Earthdata Login returned no token (the account may already hold its maximum of tokens)")
+    return tok
+
+
 def cmr_granules(product: str, day: dt.date, tiles: set[str], fetch=http_get) -> list[dict]:
     """Public CMR search for one product and one day, filtered to the tiles the lakes need."""
     q = {"short_name": product, "version": VERSION, "page_size": "2000",
@@ -458,10 +522,17 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--today", help=argparse.SUPPRESS)
     a = ap.parse_args(argv)
 
-    token = os.environ.get("EARTHDATA_TOKEN") or None
-    if not token and not a.search_only:
-        print("EARTHDATA_TOKEN is not set (Pulse passes it from the Keychain item 'earthdata-token')", file=sys.stderr)
-        return 2
+    token = None
+    if not a.search_only:
+        try:
+            token = earthdata_token()
+        except RuntimeError as e:
+            print(f"[skin-temp] {e}", file=sys.stderr)
+            return 3
+        if not token:
+            print("no Earthdata credential: set EARTHDATA_USERNAME/EARTHDATA_PASSWORD (Pulse passes them from the Keychain "
+                  "item 'sector-earthdata') or EARTHDATA_TOKEN", file=sys.stderr)
+            return 2
     only = {x.strip() for x in a.lakes.split(",") if x.strip()} or None
     polys = load_polygons(a.polygons, only)
     lake_windows_map = {lake: lake_windows(p) for lake, p in polys.items()}

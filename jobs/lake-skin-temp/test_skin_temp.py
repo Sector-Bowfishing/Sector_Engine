@@ -214,10 +214,11 @@ def test_one_bad_tile_does_not_sink_the_run(tmp_path):
 
 
 def test_main_refuses_without_token_and_never_echoes_it(monkeypatch, tmp_path, capsys):
-    monkeypatch.delenv("EARTHDATA_TOKEN", raising=False)
+    for k in ("EARTHDATA_TOKEN", "EARTHDATA_USERNAME", "EARTHDATA_PASSWORD"):
+        monkeypatch.delenv(k, raising=False)
     rc = S.main(["--out", str(tmp_path / "o"), "--archive", str(tmp_path / "a"), "--cache", str(tmp_path / "c")])
     assert rc == 2
-    assert "EARTHDATA_TOKEN is not set" in capsys.readouterr().err
+    assert "no Earthdata credential" in capsys.readouterr().err
 
 
 def test_http_get_error_message_never_contains_the_token(monkeypatch):
@@ -266,3 +267,112 @@ def test_read_granule_hdf5_layout(tmp_path):
     assert t["lstK"][1, 1] == pytest.approx(290.0) and np.isnan(t["lstK"][0, 0])
     assert t["qa"][1, 1] == S.QA_GOOD and t["qa"][0, 0] == S.QA_CLOUD
     assert t["viewTimeH"][1, 1] == pytest.approx(1.5) and np.isnan(t["viewTimeH"][0, 0])
+
+
+# ---------------------------------------------------------------- Earthdata token acquisition
+TODAY = dt.date(2026, 11, 20)
+USER, PW = "angler-test", "PASSWORD-VALUE-987654"
+
+
+def _fake_urs(tokens=None, created=None, log=None):
+    def call(method, path, user, pw):
+        assert (user, pw) == (USER, PW)
+        (log if log is not None else []).append((method, path))
+        if method == "GET":
+            return tokens or []
+        return created
+    return call
+
+
+def test_env_token_override_wins_and_makes_no_call():
+    def call(*a):
+        raise AssertionError("no Earthdata Login call when EARTHDATA_TOKEN is set")
+    env = {"EARTHDATA_TOKEN": "OVERRIDE", "EARTHDATA_USERNAME": USER, "EARTHDATA_PASSWORD": PW}
+    assert S.earthdata_token(env, TODAY, call=call) == "OVERRIDE"
+
+
+def test_reuses_a_valid_token_and_ignores_expiring_ones():
+    log = []
+    tokens = [{"access_token": "OLD", "expiration_date": "11/21/2026"},   # expires tomorrow: too close
+              {"access_token": "GOOD", "expiration_date": "01/10/2027"}]
+    tok = S.earthdata_token({"EARTHDATA_USERNAME": USER, "EARTHDATA_PASSWORD": PW}, TODAY, call=_fake_urs(tokens, log=log))
+    assert tok == "GOOD" and log == [("GET", "/api/users/tokens")]
+
+
+def test_creates_a_token_when_none_or_all_expired():
+    log = []
+    tokens = [{"access_token": "DEAD", "expiration_date": "11/01/2026"}]
+    tok = S.earthdata_token({"EARTHDATA_USERNAME": USER, "EARTHDATA_PASSWORD": PW}, TODAY,
+                            call=_fake_urs(tokens, {"access_token": "NEW", "expiration_date": "01/19/2027"}, log))
+    assert tok == "NEW" and log == [("GET", "/api/users/tokens"), ("POST", "/api/users/token")]
+    log = []
+    assert S.earthdata_token({"EARTHDATA_USERNAME": USER, "EARTHDATA_PASSWORD": PW}, TODAY,
+                             call=_fake_urs([], {"access_token": "NEW2"}, log)) == "NEW2"
+
+
+def test_no_credentials_returns_none_and_failed_create_raises():
+    assert S.earthdata_token({}, TODAY) is None
+    with pytest.raises(RuntimeError, match="no token"):
+        S.earthdata_token({"EARTHDATA_USERNAME": USER, "EARTHDATA_PASSWORD": PW}, TODAY, call=_fake_urs([], {}))
+
+
+def test_basic_auth_only_to_urs_over_https():
+    assert S._basic_allowed("https://urs.earthdata.nasa.gov/api/users/tokens")
+    assert not S._basic_allowed("http://urs.earthdata.nasa.gov/api/users/tokens")
+    assert not S._basic_allowed("https://data.lpdaac.earthdatacloud.nasa.gov/x")
+    assert not S._basic_allowed("https://urs.earthdata.nasa.gov.evil.example/api")
+
+
+def test_urs_call_sends_basic_auth_to_urs_and_never_follows_redirects(monkeypatch):
+    seen = []
+
+    class Resp:
+        def read(self):
+            return b'[{"access_token": "T", "expiration_date": "01/01/2027"}]'
+
+    class Opener:
+        def open(self, req, timeout=0):
+            seen.append((req.full_url, req.get_method(), req.unredirected_hdrs.get("Authorization", "")))
+            return Resp()
+
+    out = S._urs_call("GET", "/api/users/tokens", USER, PW, opener=Opener())
+    assert out[0]["access_token"] == "T"
+    (url, method, auth) = seen[0]
+    assert url == "https://urs.earthdata.nasa.gov/api/users/tokens" and method == "GET" and auth.startswith("Basic ")
+
+    class Redirecting:
+        def open(self, req, timeout=0):
+            raise S.urllib.error.HTTPError(req.full_url, 302, "Found", {"Location": "https://elsewhere.example/"}, None)
+
+    with pytest.raises(RuntimeError) as e:
+        S._urs_call("GET", "/api/users/tokens", USER, PW, opener=Redirecting())
+    assert PW not in str(e.value) and USER not in str(e.value)
+
+
+def test_main_never_prints_token_or_password(monkeypatch, tmp_path, capsys):
+    monkeypatch.delenv("EARTHDATA_TOKEN", raising=False)
+    monkeypatch.setenv("EARTHDATA_USERNAME", USER)
+    monkeypatch.setenv("EARTHDATA_PASSWORD", PW)
+    monkeypatch.setattr(S, "_urs_call", _fake_urs([], {"access_token": "BEARER-SECRET-123456"}))
+    monkeypatch.setattr(S, "run_day", lambda day, *a, **k: {"date": day.isoformat(), "products": {}, "readings": []})
+    monkeypatch.setattr(S, "load_polygons", lambda *a, **k: {"Square|AL": square(34.4, -86.2, 0.08)})
+    rc = S.main(["--out", str(tmp_path / "o"), "--archive", str(tmp_path / "a"), "--cache", str(tmp_path / "c"),
+                 "--today", "2026-11-20", "--days-back", "1"])
+    assert rc == 0
+    cap = capsys.readouterr()
+    blob = cap.out + cap.err + (tmp_path / "o" / "lake-skin-temp.json").read_text()
+    for secret in ("BEARER-SECRET-123456", PW):
+        assert secret not in blob
+
+
+def test_main_reports_earthdata_failure_without_secrets(monkeypatch, tmp_path, capsys):
+    monkeypatch.delenv("EARTHDATA_TOKEN", raising=False)
+    monkeypatch.setenv("EARTHDATA_USERNAME", USER)
+    monkeypatch.setenv("EARTHDATA_PASSWORD", PW)
+
+    def boom(*a):
+        raise RuntimeError("Earthdata Login GET /api/users/tokens: HTTP 401")
+    monkeypatch.setattr(S, "_urs_call", boom)
+    rc = S.main(["--out", str(tmp_path / "o"), "--archive", str(tmp_path / "a"), "--cache", str(tmp_path / "c")])
+    assert rc == 3
+    assert PW not in capsys.readouterr().err
