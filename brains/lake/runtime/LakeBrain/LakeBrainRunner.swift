@@ -25,6 +25,9 @@ public struct LakeBrainRunOptions: Sendable {
     public var concurrency: Int = 3
     /// Ignore plan() and recompute every lake in scope.
     public var force = false
+    /// Tests only: restrict the pilots scope to the five hand-written rows while still writing the registry/health tail, so the
+    /// publication fixture (tests/golden/lake_run_updates.json) stays the pilots' write set when accepted generated rows exist.
+    public var handWrittenOnly = false
     /// Pull full operator history (decades of CWMS daily) instead of the recent tail.
     public var backfill = false
     public var processingVersion: String? = nil
@@ -279,6 +282,10 @@ public enum LakeBrainRunner {
             lakes = LakeDirectory.all.filter { options.includeCandidates ? LakeSourceBindings.binding(for: $0.id) != nil
                                                                          : LakeSourceBindings.reviewedBinding(for: $0.id) != nil }
         case .fleet: lakes = LakeDirectory.all
+        }
+        if options.handWrittenOnly {
+            let hand = Set(LakeSourceBindings.handWritten.map(\.lakeId))
+            lakes = lakes.filter { hand.contains($0.id) }
         }
         if let only = options.lakeIds { lakes = lakes.filter { only.contains($0.id) } }
 
