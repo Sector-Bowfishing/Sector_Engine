@@ -21,7 +21,7 @@ final class ConditionsTileWiringTests: XCTestCase {
     static func iso(_ d: Date) -> String { ISO8601DateFormatter().string(from: d) }
     static let lake = "Guntersville|AL"
     /// On LakeLevelEligibility.validatedLakeIds.
-    static let validatedLake = "Tygart Lake|WV"
+    static let validatedLake = "Sutton Lake|WV"
 
     static func ctx(_ lakeId: String? = lake) -> TileRequestContext { TileRequestContext(lakeId: lakeId, lat: 34.4321, lon: -86.2549) }
 
@@ -362,7 +362,7 @@ final class ConditionsTileWiringTests: XCTestCase {
     }
 
     func testWaterLevelServeFallsBackOffTheValidatedListAndWithoutReader() async throws {
-        let unlisted = "Lake Hartwell|SC"                                  // not on validatedLakeIds (Guntersville is, as operator-only)
+        let unlisted = "Brookville Lake|IN"                                // not on validatedLakeIds: failed the two-gauge check, no reviewed binding
         for (lake, reader) in [(unlisted, WReader(nodes: Self.copies(lakeId: unlisted))), (Self.validatedLake, nil)] as [(String, WReader?)] {
             var r = base()
             let entries = await wire(&r, flags: Self.flags(.serve, [.waterLevel]), context: Self.ctx(lake),

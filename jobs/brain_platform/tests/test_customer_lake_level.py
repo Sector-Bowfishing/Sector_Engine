@@ -26,7 +26,25 @@ def test_the_publisher_list_is_the_engine_validated_list():
     s = open(os.path.join(ROOT, "Sources", "SectorEngine", "API", "LakeLevelOutputAPI.swift")).read()
     block = s[s.index("validatedLakeIds"):]
     swift = set(re.findall(r'"([^"]+)"', block[block.index("[") + 1:block.index("]")]))
-    assert C.eligible_lake_ids() == swift and len(swift) == 34
+    assert C.eligible_lake_ids() == swift and len(swift) == 194
+
+
+def test_the_list_is_exactly_lakes_reviewed_set():
+    # Owner approval 2026-11-20 20:01Z (Sector_Ops #51): every lake with a REVIEWED binding (5 pilots + accepted_batch.json), no others.
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("lake_level_eligible", os.path.join(ROOT, "tools", "ops", "lake_level_eligible.py"))
+    g = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(g)
+    assert g.problems(g.derived()) == []
+    assert set(g.pilot_ids()) == {"Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN", "Lake Hartwell|SC"}
+    ids = C.eligible_lake_ids()
+    assert ids == set(g.pilot_ids()) | set(g.accepted_ids())
+    # Failed the two-gauge check, held or excluded: never listed.
+    held = json.load(open(os.path.join(ROOT, "jobs", "lake-brain", "review", "held_lakes.json"), encoding="utf-8"))
+    held_ids = set(held["coordinateFlagged"]) | set(held["seriesMismatch"]) | set(held["providerTerms"])
+    assert held_ids
+    for lake in {"Brookville Lake|IN", "Sumner Lake|NM", "Tygart Lake|WV", "Kentucky Lake|KY"} | held_ids:
+        assert lake not in ids, lake
 
 
 def test_operator_only_lakes_match_the_engine_and_are_listed():
