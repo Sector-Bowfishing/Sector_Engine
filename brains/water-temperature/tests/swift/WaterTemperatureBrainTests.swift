@@ -217,6 +217,23 @@ final class WaterTemperatureBrainTests: XCTestCase {
         }
     }
 
+    func testArtifactModePartialRunPublishesTheRegistryWithoutFleetFields() async throws {
+        let store = RecordingStore()
+        var o = WaterTemperatureBrainRunOptions(); o.lakeIds = ["NoSuchLake|ZZ"]; o.artifactMode = true   // Pulse's pilot-list path, offline
+        _ = await WaterTemperatureBrainRunner.run(store: store, options: o, now: now)
+        let all = store.updates.reduce(into: [String: Data]()) { acc, u in for (k, v) in u { acc[k] = v } }
+        let reg = try XCTUnwrap(all["brains/\(WaterTemperatureBrain.brainId)"], "artifact-mode partial runs publish the registry")
+        let obj = try XCTUnwrap(JSONSerialization.jsonObject(with: reg) as? [String: Any])
+        XCTAssertEqual(obj["status"] as? String, "BETA")
+        XCTAssertEqual(obj["staleAfterHours"] as? Double, Double(WaterTemperatureBrain.staleAfterHours))
+        XCTAssertNotNil(obj["lastSuccessfulRun"])
+        for fleetOnly in ["readinessCounts", "staleLakeCount", "breakdowns"] {
+            XCTAssertNil(obj[fleetOnly], "\(fleetOnly) describes the whole fleet and must not be written by a partial run")
+        }
+        XCTAssertFalse(all.keys.contains { $0.hasPrefix("sources/") }, "source records stay with full runs")
+        XCTAssertFalse(all.keys.contains { $0.hasPrefix("health/") }, "artifact mode writes no health (G3-2)")
+    }
+
     func testStoreFailureIsReportedNotThrown() async {
         let store = RecordingStore(); store.fail = true
         var o = WaterTemperatureBrainRunOptions(); o.lakeIds = ["NoSuchLake|ZZ"]

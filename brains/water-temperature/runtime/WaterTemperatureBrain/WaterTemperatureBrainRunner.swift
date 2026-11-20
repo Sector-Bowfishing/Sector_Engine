@@ -154,7 +154,12 @@ public enum WaterTemperatureBrainRunner {
             let fullFleet = options.lakeIds == nil && options.limit == nil
             // A partial run (one lake, a sample) writes per-lake nodes only; the registry,
             // health and sources describe the whole fleet and are left to full runs.
-            guard fullFleet else { return result }
+            // Exception: an artifact-mode run (the Publisher path, e.g. Pulse's 5-lake pilot list) still publishes the
+            // registry so status, version, staleAfterHours and lastSuccessfulRun reach /brains/water-temp. Its fleet-only
+            // fields (readinessCounts, staleLakeCount, breakdowns) are nil, so the Publisher's child-level SETs leave the
+            // stored values alone; sources/* (fleet input counts) are still left to full runs. (Lake already does this for
+            // `--scope pilots`.)
+            guard fullFleet || options.artifactMode else { return result }
             let registry = registryEntry(result: result, now: finished, options: options, fullFleet: fullFleet, lastError: nil)
             var tail: [String: Data] = [
                 "brains/\(WaterTemperatureBrain.brainId)": try BrainJSON.encode(registry),
@@ -167,7 +172,7 @@ public enum WaterTemperatureBrainRunner {
                     status: result.health, lastRun: BrainPlatform.iso(t0), lastSuccess: BrainPlatform.iso(finished),
                     durationMs: result.durationMs, latestError: nil, running: false)),
             ]
-            for (id, rec) in sourceRecords(inputs: inputs, now: finished) {
+            for (id, rec) in (fullFleet ? sourceRecords(inputs: inputs, now: finished) : [:]) {
                 tail["sources/\(id)"] = try BrainJSON.encode(rec.0)
                 tail["health/sources/\(id)"] = try BrainJSON.encode(rec.1)
             }
