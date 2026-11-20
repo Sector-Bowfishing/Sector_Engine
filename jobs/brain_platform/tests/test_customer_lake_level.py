@@ -26,7 +26,16 @@ def test_the_publisher_list_is_the_engine_validated_list():
     s = open(os.path.join(ROOT, "Sources", "SectorEngine", "API", "LakeLevelOutputAPI.swift")).read()
     block = s[s.index("validatedLakeIds"):]
     swift = set(re.findall(r'"([^"]+)"', block[block.index("[") + 1:block.index("]")]))
-    assert C.eligible_lake_ids() == swift and len(swift) == 30
+    assert C.eligible_lake_ids() == swift and len(swift) == 34
+
+
+def test_operator_only_lakes_match_the_engine_and_are_listed():
+    s = open(os.path.join(ROOT, "Sources", "SectorEngine", "API", "LakeLevelOutputAPI.swift")).read()
+    block = s[s.index("operatorOnlyLakeIds: Set<String>"):]
+    swift = set(re.findall(r'"([^"]+)"', block[block.index("[") + 1:block.index("]")]))
+    d = json.load(open(C.ELIGIBLE_FILE, encoding="utf-8"))
+    assert set(d["operatorOnlyLakeIds"]) == swift == {"Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN"}
+    assert swift <= C.eligible_lake_ids()
 
 
 def test_an_eligible_observed_lake_gets_exactly_the_schema_fields():
@@ -43,7 +52,7 @@ def test_an_eligible_observed_lake_gets_exactly_the_schema_fields():
 def test_only_eligible_lakes_get_a_copy():
     writes, why = plan()
     assert set(writes) == {C.copy_path(HARTWELL), C.copy_path(GUNTERSVILLE)}
-    assert why["Wheeler|AL"] == "NOT_VALIDATED_HERE" and why["Pickwick Lake|TN"] == "NOT_VALIDATED_HERE"
+    assert why["Wheeler|AL"] == "NOT_VALIDATED_HERE" and why["Pickwick Lake|TN"] == "NOT_VALIDATED_HERE"   # the fixture's own ELIGIBLE set
 
 
 @pytest.mark.parametrize("readiness", ["CALIBRATION", "PROFILED", "DEGRADED", "BLOCKED", None, "beta"])

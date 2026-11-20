@@ -65,7 +65,7 @@ final class LakesReadyAPITests: XCTestCase {
     /// The golden scenario: every status the readers know, plus stale, future-dated, unvalidated and off-directory copies.
     static let subtree: String = {
         let berlin = "Berlin Lake|OH", canyon = "Canyon Lake|TX", flathead = "Flathead Lake|MT"
-        let gunters = "Guntersville|AL", martin = "Lake Martin|AL"
+        let gunters = "Lake Hartwell|SC", martin = "Lake Martin|AL"
         return """
         {
           "\(BrainPlatform.lakeKey(berlin))": {
@@ -193,7 +193,7 @@ final class LakesReadyAPITests: XCTestCase {
         XCTAssertEqual(out.lakes[2].layers, ReadyLakeLayers(clarity: ReadyClarityLayer(status: "ESTIMATE", asOf: "2026-11-10T06:00:00Z",
                                                                                        valueFt: 18.5, lowFt: nil, highFt: nil),
                                                             waterTemp: nil, level: nil))
-        // Guntersville: stale clarity, UNKNOWN temp, and a fresh level that is not on the validated list → not listed.
+        // Lake Hartwell: stale clarity, UNKNOWN temp, and a fresh level that is not on the validated list → not listed.
         // Lake Martin: a time 90 min in the future → not listed. Not_A_Lake_XX: not in the directory → not listed.
     }
 

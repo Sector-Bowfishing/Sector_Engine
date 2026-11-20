@@ -43,12 +43,15 @@ final class LakeLevelOutputTests: XCTestCase {
 
     func testValidatedListMatchesTheLakeBetaResult() async {
         let ids = LakeLevelEligibility.validatedLakeIds
-        XCTAssertEqual(ids.count, 30)
-        // Same-instrument passes, failures, abstentions and the home lakes stay off.
+        XCTAssertEqual(ids.count, 34)
+        // Same-instrument passes, failures and abstentions stay off.
         for lake in ["Bluestone Lake|WV", "Tappan Lake|OH", "Brookville Lake|IN", "Cagles Mill Lake|IN", "Navajo Reservoir|NM",
-                     "Sumner Lake|NM", "Kentucky Lake|KY", "Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN"] {
+                     "Sumner Lake|NM", "Kentucky Lake|KY", "Lake Hartwell|SC"] {
             XCTAssertFalse(ids.contains(lake), lake)
         }
+        // The 4 TVA mainstem lakes are listed as operator-only (owner decision 2026-11-20), and only they are.
+        XCTAssertEqual(LakeLevelEligibility.operatorOnlyLakeIds, ["Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN"])
+        XCTAssertTrue(LakeLevelEligibility.operatorOnlyLakeIds.isSubset(of: ids))
         // Every listed id is a directory lake.
         let directory = Set(LakeDirectory.all.map(\.id))
         XCTAssertTrue(ids.isSubset(of: directory), "\(ids.subtracting(directory))")

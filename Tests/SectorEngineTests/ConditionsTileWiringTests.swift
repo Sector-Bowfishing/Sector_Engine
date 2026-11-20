@@ -362,7 +362,8 @@ final class ConditionsTileWiringTests: XCTestCase {
     }
 
     func testWaterLevelServeFallsBackOffTheValidatedListAndWithoutReader() async throws {
-        for (lake, reader) in [(Self.lake, WReader(nodes: Self.copies())), (Self.validatedLake, nil)] as [(String, WReader?)] {
+        let unlisted = "Lake Hartwell|SC"                                  // not on validatedLakeIds (Guntersville is, as operator-only)
+        for (lake, reader) in [(unlisted, WReader(nodes: Self.copies(lakeId: unlisted))), (Self.validatedLake, nil)] as [(String, WReader?)] {
             var r = base()
             let entries = await wire(&r, flags: Self.flags(.serve, [.waterLevel]), context: Self.ctx(lake),
                                      providers: providers(reader: reader))

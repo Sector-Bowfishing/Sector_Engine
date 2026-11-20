@@ -67,7 +67,7 @@ public struct LakeLevelEligibility: Sendable {
     }
 
     /// Lakes that passed the frozen Lake Beta validation V1 (scored once 2026-11-02; Sector_Ops #34, #44) and that the owner
-    /// approved on Sector_Ops #45. Excluded: the 7 lakes whose check gauge is the same instrument, the 4 failures and every
+    /// approved on Sector_Ops #45, plus the 4 TVA mainstem lakes the owner approved as operator-only on 2026-11-20. Excluded: the 7 lakes whose check gauge is the same instrument, the 4 failures and every
     /// abstention. Being listed opens nothing by itself: the flag, the reader and a fresh Publisher copy are still required.
     public static let validatedLakeIds: Set<String> = [
         // Class A (18)
@@ -79,7 +79,13 @@ public struct LakeLevelEligibility: Sendable {
         "Bighorn Lake|WY", "Boysen Reservoir|WY", "Cecil M. Harden Lake|IN", "Cedar Creek Reservoir|TX", "Glendo Reservoir|WY",
         "Keyhole Reservoir|WY", "Lake Powell|UT", "Lake Roosevelt (FDR)|WA", "Lake Tschida|ND", "Monroe Lake|IN", "Patoka Lake|IN",
         "Sam Rayburn Reservoir|TX",
+        // Operator-only (4): TVA mainstem lakes with no independent second gauge; the level is TVA's own reading.
+        // Owner decision 2026-11-20 (Sector_Ops #45): TVA is a credible source. Review: docs/brains/LAKE_BRAIN_TVA_OPERATOR_ONLY_REVIEW.md
+        "Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN",
     ]
+
+    /// The listed lakes whose level has no independent check: the operator's own reading (TVA). Credit the source in the app.
+    public static let operatorOnlyLakeIds: Set<String> = ["Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN"]
 }
 
 public enum LakeLevelOutputAPI {
