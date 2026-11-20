@@ -10,7 +10,7 @@ values come from real observations, not estimates).
 - **Products:** `VNP21A1N` (Suomi NPP), `VJ121A1N` (NOAA-20), `VJ221A1N` (NOAA-21), collection 002, NASA LP DAAC. Each is one
   satellite's night pass per day, so a clear night can give up to three readings per lake.
 - **Per lake:** cells whose whole 1 km footprint lies inside the lake outline (`jobs/lake-surface/polygons.geojson.gz`; no mixed
-  shore pixel), mandatory QA `00` only, cells within `--cloud-buffer-px` (default 2) of a cloudy or not-produced cell dropped,
+  shore pixel), mandatory QA `00` and cloud flag `00` only, raw LST below the valid floor (150 K) dropped, cells within `--cloud-buffer-px` (default 2) of a cloudy or not-produced cell dropped,
   then the median of what is left if at least `--min-pixels` (default 3) remain. Readings at or below 273.15 K carry
   `possibleIce: true`.
 - **Coverage at 1 km:** 313 of the 599 outlined lakes have at least 3 pure-water cells (Guntersville 53, Hartwell 29); 68 have
@@ -42,14 +42,16 @@ export EARTHDATA_USERNAME=... EARTHDATA_PASSWORD=...   # Pulse does this from th
 python3 skin_temp.py --out /tmp/skin/out --archive /tmp/skin/archive --cache /tmp/skin/cache               # catch up the last 14 days
 python3 skin_temp.py --out /tmp/skin/out --archive /tmp/skin/archive --cache /tmp/skin/cache --date 2026-11-10
 python3 skin_temp.py --out /tmp/skin/out --archive /tmp/skin/archive --cache /tmp/skin/cache --search-only  # count granules, no token needed
+python3 skin_temp.py --out /tmp/skin/out --archive /tmp/skin/archive --cache /tmp/skin/cache --start 2018-01-01 --end 2018-12-31 --lakes "..."  # backfill (WT-SAT-1 training)
 python -m pytest -q                                                                                     # offline tests
 ```
 
 Output:
 - `{archive}/YYYY/YYYY-MM-DD.json`: one file per night, `schema lake-skin-temp-v1`, every lake reading per product
   (`status OK | CLOUDY_OR_SPARSE | NO_WATER_CELLS`, `skinTempK`, `skinTempF`, `iqrK`, `goodCells`, `waterCells`,
-  `goodFraction`, `possibleIce`, `viewTimeLocalSolarH`). `complete: false` days (a tile missing or failed) are re-run on the
-  next night; complete days are skipped.
+  `goodFraction`, `possibleIce`, `viewTimeLocalSolarH`), plus per product `tilesLoaded` / `tilesNeeded` / `complete`
+  (and `searchFailed` when the search itself failed). A night is `complete` when every product loaded every needed tile.
+  Re-runs skip complete products (no re-download) and merge per product, keeping whichever result loaded more tiles.
 - `{out}/lake-skin-temp.json`: the run summary (lakes, days, granule counts, seconds).
 
 ## Expected run time (estimate, to be measured in the one-week dry run)

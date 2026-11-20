@@ -12,7 +12,8 @@ pre-registered check WT-SAT-1 (docs/brains/WATER_TEMP_SAT_1_PREREGISTRATION_DRAF
 Per lake and per granule (one satellite, one night):
   * pixels: 1 km sinusoidal grid cells whose whole footprint (centre and all four corners) lies inside the lake outline
     (jobs/lake-surface/polygons.geojson.gz): no mixed land/water shore pixel;
-  * quality: mandatory QA bits 0-1 == 00 ("good") only;
+  * quality: mandatory QA bits 0-1 == 00 ("good") and cloud flag bits 4-5 == 00 only; raw LST below the valid floor
+    (7500 = 150 K) is dropped;
   * cloud distance: a pixel within --cloud-buffer-px cells of a cloudy or not-produced cell (QA 10 / 11) is dropped
     (missed cloud edges read cold);
   * the lake's reading is the median of the remaining pixels, only when at least --min-pixels remain.
@@ -25,7 +26,7 @@ printed; it is sent only to *.earthdata.nasa.gov and *.earthdatacloud.nasa.gov. 
 Granule search (NASA CMR) is public and gets no credential.
 
 usage:
-  skin_temp.py --out DIR --archive DIR --cache DIR [--date YYYY-MM-DD | --days-back N] [--products VNP21A1N,VJ121A1N]
+  skin_temp.py --out DIR --archive DIR --cache DIR [--date YYYY-MM-DD | --start YYYY-MM-DD --end YYYY-MM-DD | --days-back N] [--products VNP21A1N,VJ121A1N]
                [--lakes "Guntersville|AL,..."] [--polygons FILE] [--cloud-buffer-px 2] [--min-pixels 3] [--keep-downloads]
                [--search-only]
 """
@@ -69,7 +70,7 @@ TILE_PX = 1200
 PIX_M = TILE_M / TILE_PX
 
 QA_GOOD, QA_OTHER, QA_CLOUD, QA_NOT_PRODUCED = 0, 1, 2, 3
-LST_SCALE, LST_FILL = 0.02, 0
+LST_SCALE, LST_FILL, LST_VALID_MIN = 0.02, 0, 7500   # raw 7500 = 150 K, the product's valid_range floor
 FREEZE_K = 273.15
 
 
@@ -165,7 +166,7 @@ def bbox(polys: list[list[np.ndarray]]):
 
 
 def _erode(mask: np.ndarray, px: int = 1) -> np.ndarray:
-    """A cell survives only if every cell within px (8-neighbourhood) is also set; outside the array counts as unset."""
+    """(Test helper; the job itself uses the pure-water footprint rule.) A cell survives only if every cell within px (8-neighbourhood) is also set; outside the array counts as unset."""
     out = mask.copy()
     if px <= 0:
         return out
@@ -235,7 +236,22 @@ def lake_windows(polys: list[list[np.ndarray]]) -> list[dict]:
 
 # ----------------------------------------------------------------------------------------------- extraction
 def qa_mandatory(qc: np.ndarray) -> np.ndarray:
+    """Mandatory QA (QC bits 0-1): 00 good, 01 other quality, 10 cloud, 11 not produced."""
     return np.asarray(qc).astype(np.int64) & 0b11
+
+
+def qa_cloud_flag(qc: np.ndarray) -> np.ndarray:
+    """Cloud flag (QC bits 4-5); anything but 00 marks the cell as cloud-affected."""
+    return (np.asarray(qc).astype(np.int64) >> 4) & 0b11
+
+
+def qa_good(qc: np.ndarray) -> np.ndarray:
+    return (qa_mandatory(qc) == QA_GOOD) & (qa_cloud_flag(qc) == 0)
+
+
+def qa_cloudy(qc: np.ndarray) -> np.ndarray:
+    m = qa_mandatory(qc)
+    return (m == QA_CLOUD) | (m == QA_NOT_PRODUCED) | (qa_cloud_flag(qc) != 0)
 
 
 def k_to_f(k: float) -> float:
@@ -245,7 +261,7 @@ def k_to_f(k: float) -> float:
 def extract_lake(windows: list[dict], tiles: dict[str, dict], cloud_buffer_px: int = 2, min_pixels: int = 3) -> dict:
     """Combine one granule's tiles into one reading for one lake.
 
-    tiles: {tileId: {"lstK": float array (NaN where missing), "qa": int array, "viewTimeH": float array or None}}
+    tiles: {tileId: {"lstK": float array (NaN where missing or out of range), "qc": raw QC int array, "viewTimeH": float array or None}}
     """
     values, times = [], []
     water_cells = good_cells = 0
@@ -257,11 +273,10 @@ def extract_lake(windows: list[dict], tiles: dict[str, dict], cloud_buffer_px: i
         seen_tile = True
         sl = (slice(w["r0"], w["r1"] + 1), slice(w["c0"], w["c1"] + 1))
         lst = t["lstK"][sl]
-        qa = t["qa"][sl]
-        cloud = (qa == QA_CLOUD) | (qa == QA_NOT_PRODUCED)
-        near_cloud = _dilate(cloud, cloud_buffer_px)
+        qc = t["qc"][sl]
+        near_cloud = _dilate(qa_cloudy(qc), cloud_buffer_px)
         water = w["water"]
-        ok = water & (qa == QA_GOOD) & ~near_cloud & np.isfinite(lst)
+        ok = water & qa_good(qc) & ~near_cloud & np.isfinite(lst)
         water_cells += int(water.sum())
         good_cells += int(ok.sum())
         values.extend(lst[ok].tolist())
@@ -312,8 +327,10 @@ def read_granule(path: str) -> dict:
         scale = float(np.ravel(lst_ds.attrs.get("scale_factor", [LST_SCALE]))[0])
         offset = float(np.ravel(lst_ds.attrs.get("add_offset", [0.0]))[0])
         fill = np.ravel(lst_ds.attrs.get("_FillValue", [LST_FILL]))[0]
-        lst = np.where(raw == fill, np.nan, raw * scale + offset)
-        qa = qa_mandatory(found["qc"][()])
+        vr = np.ravel(lst_ds.attrs.get("valid_range", [LST_VALID_MIN, 65535]))
+        lo, hi = float(vr[0]), float(vr[-1])
+        lst = np.where((raw == fill) | (raw < lo) | (raw > hi), np.nan, raw * scale + offset)
+        qc = np.asarray(found["qc"][()]).astype(np.int64)
         vt = None
         if "view_time" in found:
             vds = found["view_time"]
@@ -321,10 +338,18 @@ def read_granule(path: str) -> dict:
             vscale = float(np.ravel(vds.attrs.get("scale_factor", [0.1]))[0])
             vfill = np.ravel(vds.attrs.get("_FillValue", [255]))[0]
             vt = np.where(vraw == vfill, np.nan, vraw * vscale)
-    return {"lstK": lst, "qa": qa, "viewTimeH": vt}
+    return {"lstK": lst, "qc": qc, "viewTimeH": vt}
 
 
 GRANULE_TILE = re.compile(r"\.(h\d{2}v\d{2})\.")
+GRANULE_DAY = re.compile(r"\.A(\d{4})(\d{3})\.")
+
+
+def granule_day(name: str) -> dt.date | None:
+    m = GRANULE_DAY.search(name)
+    if not m:
+        return None
+    return dt.date(int(m.group(1)), 1, 1) + dt.timedelta(days=int(m.group(2)) - 1)
 
 
 def granule_tile(name: str) -> str | None:
@@ -357,20 +382,27 @@ def http_get(url: str, token: str | None, dest: str | None = None, tries: int = 
                 try:
                     resp = opener.open(req, timeout=timeout)
                 except urllib.error.HTTPError as e:
-                    if e.code in (301, 302, 303, 307, 308) and e.headers.get("Location"):
-                        cur = urllib.parse.urljoin(cur, e.headers["Location"])
+                    loc = e.headers.get("Location") if e.headers else None
+                    if e.code in (301, 302, 303, 307, 308) and loc:
+                        e.close()
+                        cur = urllib.parse.urljoin(cur, loc)
                         continue
                     raise
-                if dest is None:
-                    return resp.read()
-                tmp = dest + ".part"
-                with open(tmp, "wb") as out:
-                    while True:
-                        chunk = resp.read(1 << 20)
-                        if not chunk:
-                            break
-                        out.write(chunk)
-                os.replace(tmp, dest)
+                with resp:
+                    if dest is None:
+                        return resp.read()
+                    tmp = dest + ".part"
+                    try:
+                        with open(tmp, "wb") as out:
+                            while True:
+                                chunk = resp.read(1 << 20)
+                                if not chunk:
+                                    break
+                                out.write(chunk)
+                        os.replace(tmp, dest)
+                    finally:
+                        if os.path.exists(tmp):
+                            os.remove(tmp)
                 return None
             raise RuntimeError("too many redirects")
         except (urllib.error.URLError, TimeoutError, RuntimeError, OSError) as e:
@@ -450,8 +482,9 @@ def cmr_granules(product: str, day: dt.date, tiles: set[str], fetch=http_get) ->
     entries = json.loads(body)["feed"].get("entry", [])
     out = []
     for e in entries:
-        tile = granule_tile(e.get("producer_granule_id") or e.get("title") or "")
-        if tile is None or tile not in tiles:
+        name = e.get("producer_granule_id") or e.get("title") or ""
+        tile = granule_tile(name)
+        if tile is None or tile not in tiles or granule_day(name) != day:
             continue
         href = next((l["href"] for l in e.get("links", [])
                      if l.get("href", "").startswith("https://") and l.get("href", "").endswith((".h5", ".hdf"))
@@ -463,30 +496,43 @@ def cmr_granules(product: str, day: dt.date, tiles: set[str], fetch=http_get) ->
 
 # ----------------------------------------------------------------------------------------------- run
 def run_day(day: dt.date, products: list[str], lake_windows_map: dict[str, list[dict]], cache: str, token: str | None,
-            cloud_buffer_px: int, min_pixels: int, keep: bool, search_only: bool, fetch=http_get, reader=read_granule) -> dict:
+            cloud_buffer_px: int, min_pixels: int, keep: bool, search_only: bool, fetch=http_get, reader=read_granule,
+            skip: set[str] | None = None) -> dict:
+    """One night. Per product: search, download the needed tiles, extract every lake. A product in `skip` (already complete in
+    the archive) is not touched. A failed search or tile marks that product incomplete; the night carries on."""
     tiles_needed = {w["tile"] for ws in lake_windows_map.values() for w in ws}
     readings: list[dict] = []
     products_seen: dict[str, dict] = {}
     for product in products:
-        granules = cmr_granules(product, day, tiles_needed, fetch=fetch)
-        products_seen[product] = {"granules": len(granules), "tilesNeeded": len(tiles_needed)}
+        if skip and product in skip:
+            continue
+        info = {"tilesNeeded": len(tiles_needed), "granules": 0, "tilesLoaded": 0, "failedTiles": 0, "complete": False}
+        products_seen[product] = info
+        try:
+            granules = cmr_granules(product, day, tiles_needed, fetch=fetch)
+        except Exception as e:  # noqa: BLE001  one product's search failure must not sink the night
+            info["searchFailed"] = True
+            print(f"[skin-temp] {product} search failed: {type(e).__name__}", file=sys.stderr)
+            continue
+        info["granules"] = len(granules)
         if search_only or not granules:
             continue
         loaded: dict[str, dict] = {}
-        failed = 0
         for g in granules:
             path = os.path.join(cache, g["name"])
             try:
                 if not os.path.exists(path):
                     fetch(g["url"], token, dest=path)
                 loaded[g["tile"]] = reader(path)
-            except Exception as e:  # one bad tile must not sink the night
-                failed += 1
+            except Exception as e:  # noqa: BLE001  one bad tile must not sink the night
+                info["failedTiles"] += 1
                 print(f"[skin-temp] {product} {g['tile']}: {e}", file=sys.stderr)
             finally:
-                if not keep and os.path.exists(path):
-                    os.remove(path)
-        products_seen[product]["failedTiles"] = failed
+                for f in (path + ".part",) + (() if keep else (path,)):
+                    if os.path.exists(f):
+                        os.remove(f)
+        info["tilesLoaded"] = len(loaded)
+        info["complete"] = len(loaded) >= len(tiles_needed)
         for lake, ws in lake_windows_map.items():
             rec = extract_lake(ws, loaded, cloud_buffer_px=cloud_buffer_px, min_pixels=min_pixels)
             if rec["status"] == "NO_TILE":
@@ -496,13 +542,39 @@ def run_day(day: dt.date, products: list[str], lake_windows_map: dict[str, list[
     return {"date": day.isoformat(), "products": products_seen, "readings": readings}
 
 
-def _day_complete(path: str) -> bool:
-    """A day is skipped only once every product delivered every needed tile; a partial day is re-run on the next night."""
+def merge_day(old: dict | None, new: dict) -> dict:
+    """Combine a re-run with the archived night product by product: a product's new result replaces the old one only when it
+    loaded at least as many tiles, so a worse partial re-run never overwrites a better earlier result."""
+    old_products = (old or {}).get("products", {})
+    old_readings = (old or {}).get("readings", [])
+    products = dict(old_products)
+    keep_new = set()
+    for p, info in new["products"].items():
+        prev = old_products.get(p)
+        if prev is None or info.get("tilesLoaded", 0) >= prev.get("tilesLoaded", 0):
+            products[p] = info
+            keep_new.add(p)
+    readings = [r for r in old_readings if r.get("product") not in keep_new]
+    readings += [r for r in new["readings"] if r.get("product") in keep_new]
+    return {"date": new["date"], "products": products, "readings": readings}
+
+
+def _load_day(path: str) -> dict | None:
     try:
         with open(path) as f:
-            return bool(json.load(f).get("complete"))
+            return json.load(f)
     except (OSError, ValueError):
-        return False
+        return None
+
+
+def _day_complete(path: str) -> bool:
+    """A day is skipped only once every product delivered every needed tile; a partial day is re-run on the next night."""
+    doc = _load_day(path)
+    return bool(doc and doc.get("complete"))
+
+
+def _complete_products(doc: dict | None) -> set[str]:
+    return {p for p, v in ((doc or {}).get("products") or {}).items() if v.get("complete")}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -511,6 +583,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--archive", required=True, help="durable per-day files: {archive}/YYYY/YYYY-MM-DD.json")
     ap.add_argument("--cache", required=True, help="download scratch (deleted after extraction unless --keep-downloads)")
     ap.add_argument("--date", help="one UTC date (YYYY-MM-DD); default: catch up --days-back days not yet archived")
+    ap.add_argument("--start", help="backfill: first UTC date (YYYY-MM-DD), with --end; incomplete days only")
+    ap.add_argument("--end", help="backfill: last UTC date (YYYY-MM-DD), inclusive")
     ap.add_argument("--days-back", type=int, default=14, help="catch-up window ending yesterday (UTC); the daily grids land about 6-10 days late")
     ap.add_argument("--products", default=",".join(DEFAULT_PRODUCTS))
     ap.add_argument("--lakes", default="", help="comma-separated lake ids (default: every lake with an outline)")
@@ -542,8 +616,15 @@ def main(argv: list[str] | None = None) -> int:
     today = dt.date.fromisoformat(a.today) if a.today else dt.datetime.now(dt.timezone.utc).date()
     if a.date:
         days = [dt.date.fromisoformat(a.date)]
+    elif a.start or a.end:
+        if not (a.start and a.end):
+            print("--start and --end go together", file=sys.stderr)
+            return 2
+        d0, d1 = dt.date.fromisoformat(a.start), dt.date.fromisoformat(a.end)
+        days = [d0 + dt.timedelta(days=k) for k in range((d1 - d0).days + 1)]
     else:
         days = [today - dt.timedelta(days=k) for k in range(a.days_back, 0, -1)]
+    if not a.date:
         days = [d for d in days if not _day_complete(os.path.join(a.archive, str(d.year), f"{d.isoformat()}.json"))]
     for d in (a.out, a.archive, a.cache):
         os.makedirs(d, exist_ok=True)
@@ -553,26 +634,27 @@ def main(argv: list[str] | None = None) -> int:
                "lakes": len(lake_windows_map), "lakesWithoutWaterCells": no_cells, "days": []}
     products = [p.strip() for p in a.products.split(",") if p.strip()]
     for day in days:
+        path = os.path.join(a.archive, str(day.year), f"{day.isoformat()}.json")
+        old = _load_day(path)
         res = run_day(day, products, lake_windows_map, a.cache, token, a.cloud_buffer_px, a.min_pixels,
-                      a.keep_downloads, a.search_only)
-        ok = sum(1 for r in res["readings"] if r["status"] == "OK")
-        lakes_ok = len({r["lakeId"] for r in res["readings"] if r["status"] == "OK"})
-        summary["days"].append({"date": res["date"], "products": res["products"], "okReadings": ok, "lakesWithReading": lakes_ok})
-        if not a.search_only and any(v.get("granules") for v in res["products"].values()):
-            ydir = os.path.join(a.archive, str(day.year))
-            os.makedirs(ydir, exist_ok=True)
-            complete = all(v.get("granules", 0) >= v.get("tilesNeeded", 0) and not v.get("failedTiles")
-                           for v in res["products"].values())
-            doc = {"schema": SCHEMA, "date": res["date"], "complete": complete, "products": res["products"],
-                   "readings": res["readings"],
-                   "rules": {"qa": "mandatory QA 00 only", "shore": "whole 1 km footprint inside the outline", "cloudBufferPx": a.cloud_buffer_px,
+                      a.keep_downloads, a.search_only, skip=_complete_products(old))
+        merged = merge_day(old, res)
+        lakes_ok = len({r["lakeId"] for r in merged["readings"] if r["status"] == "OK"})
+        summary["days"].append({"date": res["date"], "products": res["products"], "lakesWithReading": lakes_ok})
+        if not a.search_only and any(v.get("tilesLoaded") for v in merged["products"].values()):
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            complete = all(merged["products"].get(p, {}).get("complete") for p in products)
+            doc = {"schema": SCHEMA, "date": merged["date"], "complete": complete, "products": merged["products"],
+                   "readings": merged["readings"],
+                   "rules": {"qa": "mandatory QA 00 and cloud flag 00 only", "validRawMin": LST_VALID_MIN,
+                             "shore": "whole 1 km footprint inside the outline", "cloudBufferPx": a.cloud_buffer_px,
                              "minPixels": a.min_pixels, "statistic": "median"}}
-            tmp = os.path.join(ydir, f".{res['date']}.json.part")
+            tmp = os.path.join(os.path.dirname(path), f".{merged['date']}.json.part")
             with open(tmp, "w") as f:
                 json.dump(doc, f, separators=(",", ":"))
-            os.replace(tmp, os.path.join(ydir, f"{res['date']}.json"))
+            os.replace(tmp, path)
         print(f"[skin-temp] {res['date']}: {lakes_ok} lakes with a reading "
-              f"({', '.join(f'{p}:{v.get('granules', 0)}' for p, v in res['products'].items())} granules)")
+              f"({', '.join(f'{p}:{v.get('tilesLoaded', 0)}/{v.get('tilesNeeded', 0)}' for p, v in res['products'].items())} tiles)")
     summary["seconds"] = round(time.time() - started, 1)
     with open(os.path.join(a.out, "lake-skin-temp.json"), "w") as f:
         json.dump(summary, f, indent=1)
