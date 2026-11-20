@@ -9,9 +9,10 @@
     "record": "docs/cortex/approvals/lake-knowledge-2026-11-02.1.md",
     "scope": [
       "INTERNAL",
-      "CALIBRATION"
+      "CALIBRATION",
+      "CUSTOMER"
     ],
-    "customerEligible": false
+    "customerEligible": true
   },
   "files": [
     {
