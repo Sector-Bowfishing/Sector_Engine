@@ -41,13 +41,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install pytest numpy requests google-cloud-storage
+      - run: pip install pytest numpy requests google-cloud-storage h5py==3.16.0
       - name: Brain and job suites (offline)
         run: |
           set -e
           for d in jobs/lake-surface-dispatch \
                    jobs/water-temp-tva-archive \
-                   jobs/water-clarity-h1-shadow jobs/lake-level-crosscheck \
+                   jobs/water-clarity-h1-shadow jobs/lake-level-crosscheck jobs/lake-skin-temp \
                    jobs/lake-brain/bindings jobs/lake-brain/ledger jobs/lake-brain/validation jobs/lake-brain/review; do
             echo "== $d"; (cd "$d" && python -m pytest -q)
           done

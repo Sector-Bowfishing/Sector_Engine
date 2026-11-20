@@ -308,7 +308,7 @@ def test_accepted_batch_file_is_not_committed_with_ids():
     p = os.path.join(I.DEFAULT_OUT, "accepted_batch.json")
     if os.path.exists(p):
         doc = json.load(open(p))
-        owner = isinstance(doc, dict) and str(doc.get("approvalRef", "")).startswith(("owner-approval-", "owner-direction-")) and doc.get("lakeIds")
+        owner = isinstance(doc, dict) and doc.get("approvalRef") == "owner-direction-2026-11-20/sector-ops-51-7049169954" and doc.get("lakeIds")
         assert doc == [] or owner or os.environ.get("LAKE_BRAIN_REVIEW_DONE") == "1"
 
 

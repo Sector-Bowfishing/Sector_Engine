@@ -215,13 +215,17 @@ def test_the_committed_policy_matches_the_approved_o6_scope():
     assert len(SI_LAKES) > 600
     pol = WD.load_policy()
     assert pol["enabled"] and pol["allowedJobs"] == ["brain-orchestrator", "brain-publisher"]
-    assert pol["brains"] == {"water-clarity": {"holder": "pulse", "lakes": ["Guntersville_AL", "Lake_Hartwell_SC"]},
-                             "lake-brain": {"holder": "pulse", "lakes": ["Guntersville_AL", "Wheeler_AL", "Wilson_AL", "Pickwick_Lake_TN", "Lake_Hartwell_SC"],
-                                            "approvalRef": "owner-approval-2026-11-12/sector-ops-51-lake-on-pulse"},
-                             "water-temp": {"holder": "pulse", "lakes": ["Guntersville_AL", "Wheeler_AL", "Wilson_AL", "Pickwick_Lake_TN", "Lake_Hartwell_SC"],
-                                            "approvalRef": "owner-approval-2026-11-16/sector-ops-51-b1-b5"},
+    # All-lakes rollout (owner direction 2026-11-20, Sector_Ops #51 comment 7049169954): Clarity, Water Temp and Lake may publish any directory lake.
+    import brain_watchdog_lakes as BL
+    scope = BL.SCOPE_REF
+    assert pol["brains"] == {"water-clarity": {"holder": "pulse", "lakes": SI_LAKES, "lakesScopeRef": scope},
+                             "lake-brain": {"holder": "pulse", "lakes": SI_LAKES,
+                                            "approvalRef": "owner-approval-2026-11-12/sector-ops-51-lake-on-pulse", "lakesScopeRef": scope},
+                             "water-temp": {"holder": "pulse", "lakes": SI_LAKES,
+                                            "approvalRef": "owner-approval-2026-11-16/sector-ops-51-b1-b5", "lakesScopeRef": scope},
                              "sector-intelligence": {"holder": "pulse", "lakes": SI_LAKES,
                                                      "approvalRef": "owner-approval-2026-11-16/sector-ops-51-b1-b5"}}
+    assert BL.problems(pol, SI_LAKES) == []
     assert pol["approvalRef"].startswith("owner-approval-")
 
 

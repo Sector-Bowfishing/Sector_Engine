@@ -41,7 +41,7 @@ final class LakeBrainBindingsTests: XCTestCase {
         let d = try Data(contentsOf: repoData("accepted_batch.json"))
         let doc = try XCTUnwrap(JSONSerialization.jsonObject(with: d) as? [String: Any])
         let fileIds = Set(try XCTUnwrap(doc["lakeIds"] as? [String]))
-        XCTAssertTrue((doc["approvalRef"] as? String)?.hasPrefix("owner-") == true, "an accepted batch carries the owner's approvalRef")
+        XCTAssertEqual(doc["approvalRef"] as? String, "owner-direction-2026-11-20/sector-ops-51-7049169954", "an accepted batch carries the owner's approvalRef")
         XCTAssertEqual(LakeGeneratedBindings.acceptedLakeIds, fileIds)
         XCTAssertFalse(fileIds.isEmpty)
         let handIds = Set(LakeSourceBindings.handWritten.map(\.lakeId))
