@@ -156,3 +156,66 @@ def test_water_temp_publishes_beta_so_its_own_readiness_passes_the_gate():
     db = FakeDb()
     rep = LN.write_pass("water-temp", WT_GOLDEN, RECORD, rtdb=db, env={"PUBLISHER_CUSTOMER_WATER_TEMP": "1"}, runner="pulse", now=WT_NOW)
     assert rep["readiness"] == "BETA" and rep["written"] > 0
+
+
+# ---------- staleAfterHours fallback (2026-11-20: live Clarity copies all STALE) ----------
+# A publication re-sends only the sections whose output changed. An unchanged registry section (staleAfterHours) is therefore absent from
+# the write set, and every copy failed the freshness gate (live: reasons {STALE: 2}, written 0). The lane now reads the stored value, like
+# the readiness fallback; missing there too keeps today's fail-closed STALE.
+CL_BASELINE = json.load(open(os.path.join(ROOT, "brains", "water-clarity", "tests", "golden", "clarity_science_baseline.json")))
+CL_NOW = dt.datetime(2026, 10, 12, 12, 0, tzinfo=dt.timezone.utc)
+CL_ON = {"PUBLISHER_CUSTOMER_CLARITY": "1"}
+
+
+def cl_states_only():
+    """A Clarity write set like the live one: lake states only, no /brains/water-clarity registry children."""
+    u = {}
+    for n in ("gaugeFalling", "guntersvilleRain"):
+        for k, v in CL_BASELINE["scenarios"][n]["lakeWrites"].items():
+            u[k.lstrip("/")] = copy.deepcopy(v)
+    return u
+
+
+def test_clarity_without_stale_hours_in_the_write_set_uses_the_stored_value():
+    db = FakeDb({"brains": {"water-clarity": {"status": "BETA", "staleAfterHours": CL_BASELINE["registry"]["staleAfterHours"]}}})
+    rep = LN.write_pass("water-clarity", cl_states_only(), RECORD, rtdb=db, env=CL_ON, runner="pulse", now=CL_NOW)
+    assert "brains/water-clarity/staleAfterHours" in db.gets
+    assert rep["written"] == 2 and "STALE" not in rep["reasons"]
+    assert all(c["status"] in ("AVAILABLE", "ESTIMATE") for c in db.updates[0].values())
+
+
+def test_clarity_with_no_stale_hours_anywhere_stays_stale():
+    db = FakeDb({"brains": {"water-clarity": {"status": "BETA"}}})
+    rep = LN.write_pass("water-clarity", cl_states_only(), RECORD, rtdb=db, env=CL_ON, runner="pulse", now=CL_NOW)
+    assert rep["written"] == 0 and rep["reasons"] == {"STALE": 2} and db.updates == []
+
+
+@pytest.mark.parametrize("bad", ["26", 0, -1, None, True])
+def test_an_invalid_stored_stale_hours_stays_stale(bad):
+    db = FakeDb({"brains": {"water-clarity": {"status": "BETA", "staleAfterHours": bad}}})
+    rep = LN.write_pass("water-clarity", cl_states_only(), RECORD, rtdb=db, env=CL_ON, runner="pulse", now=CL_NOW)
+    assert rep["written"] == 0 and rep["reasons"] == {"STALE": 2}
+
+
+def test_the_write_set_value_wins_and_the_stored_value_is_not_read():
+    u = cl_states_only()
+    u["brains/water-clarity/staleAfterHours"] = CL_BASELINE["registry"]["staleAfterHours"]
+    db = FakeDb({"brains": {"water-clarity": {"status": "BETA", "staleAfterHours": 0.0001}}})
+    rep = LN.write_pass("water-clarity", u, RECORD, rtdb=db, env=CL_ON, runner="pulse", now=CL_NOW)
+    assert rep["written"] == 2 and "brains/water-clarity/staleAfterHours" not in db.gets
+
+
+def test_water_temp_without_stale_hours_in_the_write_set_uses_the_stored_value():
+    u = wt_beta()
+    hours = u["brains/water-temp"].pop("staleAfterHours")
+    db = FakeDb({"brains": {"water-temp": {"staleAfterHours": hours}}})
+    rep = LN.write_pass("water-temp", u, RECORD, rtdb=db, env={"PUBLISHER_CUSTOMER_WATER_TEMP": "1"}, runner="pulse", now=WT_NOW)
+    assert rep["written"] == 3 and rep["statuses"] == {"AVAILABLE": 1, "ESTIMATE": 2}
+    none = LN.write_pass("water-temp", u, RECORD, rtdb=FakeDb(), env={"PUBLISHER_CUSTOMER_WATER_TEMP": "1"}, runner="pulse", now=WT_NOW)
+    assert none["statuses"] == {"ESTIMATE": 2} and none["reasons"].get("STALE") == 1     # the observed copy needs the threshold; modeled ones use the lake-local day
+
+
+def test_switch_off_reads_no_stale_hours():
+    db = FakeDb({"brains": {"water-clarity": {"status": "BETA", "staleAfterHours": 26}}})
+    LN.write_pass("water-clarity", cl_states_only(), RECORD, rtdb=db, env={"PUBLISHER_CUSTOMER_CLARITY": "0"}, runner="pulse", now=CL_NOW)
+    assert "brains/water-clarity/staleAfterHours" not in db.gets

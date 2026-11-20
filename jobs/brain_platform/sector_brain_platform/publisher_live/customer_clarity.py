@@ -76,12 +76,15 @@ def unknown_copy(lake_id: str, *, runner: str, publish_id: str) -> dict:
     return {"schema": SCHEMA, "lakeId": lake_id, "status": "UNKNOWN", "runner": CC.check_runner(runner), "publishId": publish_id}
 
 
-def plan(updates: dict, previous: dict, *, readiness: str | None, runner: str, publish_id: str, now: dt.datetime, env) -> tuple[dict, dict]:
+def plan(updates: dict, previous: dict, *, readiness: str | None, runner: str, publish_id: str, now: dt.datetime, env,
+         stored_stale_hours=None) -> tuple[dict, dict]:
     """-> ({copyPath: copy}, {lakeId: reason}). `previous` = {copyPath: copy} as stored now."""
     states = CC.states_at(updates, SLOT)
     if not CC.enabled(COPY, env):
         return CC.withdraw(previous, lambda lid: unknown_copy(lid, runner=runner, publish_id=publish_id))
     hours = CC.stale_after_hours(updates, BRAIN_KEY)
+    if CC._num(hours) is None:                   # not in this write set (an unchanged registry section is not re-sent): the stored value
+        hours = stored_stale_hours
     return CC.plan_lakes(states, previous, path_for=copy_path,
                          copy_for=lambda lid: copy_for(states.get(lid), lid, readiness=readiness, stale_hours=hours, runner=runner,
                                                        publish_id=publish_id, now=now),

@@ -92,7 +92,7 @@ def previous_from(stored, brain_id: str) -> dict:
 
 
 def plan(brain_id: str, updates: dict, previous: dict, *, readiness, runner: str, publish_id: str, source_release: str, now: dt.datetime,
-         env, eligible=None) -> tuple[dict, dict]:
+         env, eligible=None, stored_stale_hours=None) -> tuple[dict, dict]:
     """-> ({copyPath: copy}, {lakeId: reason}) for one verified publication of `brain_id`. Pure. Not configured -> ({}, {})."""
     if not configured(brain_id, env):
         return {}, {}
@@ -103,7 +103,8 @@ def plan(brain_id: str, updates: dict, previous: dict, *, readiness, runner: str
         return LV.plan(updates, previous, readiness=readiness, eligible=LV.eligible_lake_ids() if eligible is None else eligible,
                        source_release=source_release, now=now)
     mod = CL if name == CL.COPY else WT
-    return mod.plan(updates, previous, readiness=readiness, runner=runner, publish_id=publish_id, now=now, env=env)
+    return mod.plan(updates, previous, readiness=readiness, runner=runner, publish_id=publish_id, now=now, env=env,
+                    stored_stale_hours=stored_stale_hours)
 
 
 def write_pass(brain_id: str, result_updates: dict, record: dict, *, rtdb, env, runner: str, now: dt.datetime, eligible=None) -> dict | None:
@@ -116,9 +117,16 @@ def write_pass(brain_id: str, result_updates: dict, record: dict, *, rtdb, env, 
     if readiness is None:
         st = rtdb.get(f"brains/{brain_id}/status")
         readiness = st if isinstance(st, str) else None
+    stored_hours = None
+    if copy_name(brain_id) in (CL.COPY, WT.COPY) and switched_on(brain_id, env) \
+            and CC._num(CC.stale_after_hours(result_updates, f"brains/{brain_id}")) is None:
+        # A publication re-sends only the sections that changed, so an unchanged registry section (staleAfterHours) is absent from the write set.
+        # Read the stored value, exactly like the readiness fallback above. Missing or invalid there too -> the planners' STALE gate, as before.
+        stored_hours = rtdb.get(f"brains/{brain_id}/staleAfterHours")
     previous = previous_from(rtdb.get("customer/lakes"), brain_id)
     writes, reasons = plan(brain_id, result_updates, previous, readiness=readiness, runner=runner, publish_id=record.get("publishId") or "",
-                           source_release=record.get("knowledgeRelease") or "NONE", now=now, env=env, eligible=eligible)
+                           source_release=record.get("knowledgeRelease") or "NONE", now=now, env=env, eligible=eligible,
+                           stored_stale_hours=stored_hours)
     assert_keys(brain_id, writes)
     if writes:
         rtdb.update(writes)
