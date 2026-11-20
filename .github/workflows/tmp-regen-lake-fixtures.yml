@@ -15,6 +15,10 @@ jobs:
       - run: swift build --build-tests
       - run: SECTOR_WRITE_BRAIN_FIXTURES=1 swift test --skip-build --filter "LakePublicationFixtureTests|LakeReviewedBindingsExportTests"
       - run: LEDGER_REGEN_GOLDEN=1 swift test --skip-build --filter testGoldenLedgerMatchesCheckedInFixture
+      - run: |
+          for f in brains/lake/tests/golden/lake_run_updates.json brains/lake/contracts/reviewed-lake-bindings-v1.json jobs/lake-brain/ledger/fixtures/sample_ledger.jsonl; do
+            echo "BEGIN-FIXTURE $f"; gzip -9c "$f" | base64 -w0; echo; echo "END-FIXTURE $f"; sha256sum "$f"
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: lake-fixtures
