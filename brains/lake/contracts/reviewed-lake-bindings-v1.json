@@ -1,12 +1,821 @@
 {
-  "bindingVersion" : "bindings-2026-10-13.1",
+  "bindingVersion" : "bindings-2026-10-13.1+accepted.189.ac62647d",
   "owner" : "lake-brain",
   "reviewed" : [
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Abiquiu Lake|NM",
+      "liveSourceIds" : [
+        "a2w:SPA:Abiquiu:Abiquiu.Elev.Inst.15Minutes.0.DCP-rev",
+        "cwms:SPA:Abiquiu.Elev.Inst.15Minutes.0.DCP-rev",
+        "nwps:ABIN5:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Alcova Reservoir|WY",
+      "liveSourceIds" : [
+        "rise:114",
+        "nwps:ALCW4:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Allatoona|GA",
+      "liveSourceIds" : [
+        "a2w:SAM:Allatoona:Allatoona.Elev.Inst.15Minutes.0.Raw-USGS",
+        "cwms:SAM:Allatoona.Elev.Inst.1Hour.0.Raw-USGS",
+        "usgs:02393500:00062"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Alum Creek Lake|OH",
+      "liveSourceIds" : [
+        "a2w:LRH:AlumCr:AlumCr-Lake.Elev.Inst.15Minutes.0.OBS",
+        "cwms:LRH:AlumCr-Lake.Elev.Inst.15Minutes.0.OBS",
+        "nwps:ACRO1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Angostura Reservoir|SD",
+      "liveSourceIds" : [
+        "rise:106",
+        "nwps:ANGS2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Arkabutla Lake|MS",
+      "liveSourceIds" : [
+        "cwms:MVK:Arkabutla Lake.Elev.Inst.1Hour.0.Guide Curve"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Badin Lake|NC",
+      "liveSourceIds" : [
+        "nwps:BADN7:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Bankhead|AL",
+      "liveSourceIds" : [
+        "cwms:SAM:Bankhead.Elev.Inst.15Minutes.0.Raw-USGS",
+        "a2w:SAM:Bankhead:Bankhead.Elev.Inst.15Minutes.0.Raw-USGS"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Barren River Lake|KY",
+      "liveSourceIds" : [
+        "a2w:LRL:Barren:Barren.Elev.Inst.0.0.lrldlb-rev",
+        "cwms:LRL:Barren.Elev.Inst.0.0.lrldlb-raw",
+        "cwms:LRL:Barren-Lake.Elev.Inst.15Minutes.0.USGS-rev"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Beltzville Lake|PA",
+      "liveSourceIds" : [
+        "a2w:NAP:Beltzville:Beltzville.Elev.Inst.15Minutes.0.Rev-DCP-88",
+        "cwms:NAP:Beltzville.Elev.Inst.15Minutes.0.Rev-DCP",
+        "nwps:PRYP1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Berlin Lake|OH",
+      "liveSourceIds" : [
+        "a2w:LRP:Berlin:Berlin-Lake.Elev.Inst.1Hour.0.OBS",
+        "cwms:LRP:Berlin-Lake.Elev.Inst.1Hour.0.RESOPS",
+        "nwps:BRLO1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Bighorn Lake|WY",
+      "liveSourceIds" : [
+        "rise:164",
+        "cwms:NWDM:YETL.Elev.Inst.1Hour.0.Best-NWO",
+        "nwps:BHRM8:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Bluestone Lake|WV",
+      "liveSourceIds" : [
+        "cwms:LRH:Bluestone-Lake.Elev.Inst.15Minutes.0.OBS",
+        "usgs:03179800:62614"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Box Butte Reservoir|NE",
+      "liveSourceIds" : [
+        "rise:142",
+        "nwps:BOXN1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Boysen Reservoir|WY",
+      "liveSourceIds" : [
+        "rise:196",
+        "a2w:NWO:BOYN:BOYN.Elev.Inst.1Hour.0.Best-NWO",
+        "cwms:NWDM:BOYN.Elev.Inst.1Hour.0.Raw-USBR"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Branched Oak Lake|NE",
+      "liveSourceIds" : [
+        "cwms:NWDM:SC18.Elev.Inst.1Hour.0.Best-NWO",
+        "nwps:RAYN1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Broken Bow Lake|OK",
+      "liveSourceIds" : [
+        "cwms:SWL:Broken_Bow_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Buckeye Lake|OH",
+      "liveSourceIds" : [
+        "usgs:395540082291600:62614",
+        "nwps:BCLO1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Burnsville Lake|WV",
+      "liveSourceIds" : [
+        "cwms:LRH:Burnsville-Lake.Elev.Inst.15Minutes.0.OBS",
+        "nwps:BRNW2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Caesar Creek Lake|OH",
+      "liveSourceIds" : [
+        "a2w:LRL:CaesarCreek:CaesarCreek.Elev.Inst.0.0.lrldlb-rev",
+        "cwms:LRL:CaesarCreek.Elev.Inst.0.0.lrldlb-raw",
+        "nwps:CCLO1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Canton Lake|OK",
+      "liveSourceIds" : [
+        "nwps:CNLO2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Canyon Ferry Lake|MT",
+      "liveSourceIds" : [
+        "a2w:NWO:CAFE:CAFE.Elev.Inst.1Hour.0.Best-NWO",
+        "cwms:NWDM:CAFE.Elev.Inst.1Hour.0.Best-NWO",
+        "nwps:CYNM8:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Carlyle Lake|IL",
+      "liveSourceIds" : [
+        "cwms:MVS:Carlyle Lk-Kaskaskia.Elev.Inst.30Minutes.0.lrgsShef-raw",
+        "nwps:CAYI2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Carters|GA",
+      "liveSourceIds" : [
+        "a2w:SAM:Carters:Carters.Elev.Inst.15Minutes.0.Raw-USGS",
+        "cwms:SAM:Carters.Elev.Inst.15Minutes.0.Raw-USGS",
+        "usgs:02381400:00062"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Cave Run Lake|KY",
+      "liveSourceIds" : [
+        "a2w:LRL:CaveRun:CaveRun.Elev.Inst.0.0.lrldlb-rev",
+        "cwms:LRL:CaveRun.Elev.Inst.0.0.lrldlb-raw",
+        "nwps:CRLK2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Cedar Creek Reservoir|TX",
+      "liveSourceIds" : [
+        "a2w:SWF:TRNT2:TRNT2.Elev.Inst.15Minutes.0.Decodes-Rev",
+        "cwms:SWF:TRNT2.Elev.Inst.15Minutes.0.Decodes-Rev",
+        "usgs:08063010:62614"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Center Hill Lake|TN",
+      "liveSourceIds" : [
+        "a2w:LRN:CEHT1:CEHT1-CENTER_HILL.Elev-Pool.Inst.1Hour.0.man-rev",
+        "cwms:LRN:CEHT1-CENTER_HILL.Elev-Pool.Inst.15Minutes.0.dcp-rev",
+        "tva:CEHT1"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Chatfield Reservoir|CO",
+      "liveSourceIds" : [
+        "a2w:NWO:CHFI:CHFI.Elev.Inst.1Hour.0.Best-NWO",
+        "cwms:NWDM:CHFI.Elev.Inst.1Hour.0.Best-NWO",
+        "nwps:CFDC2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Cheat Lake|WV",
+      "liveSourceIds" : [
+        "usgs:03071590:62614",
+        "nwps:LLPW2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Cheney Reservoir|KS",
+      "liveSourceIds" : [
+        "rise:133978",
+        "nwps:CHNK1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Cherry Creek Reservoir|CO",
+      "liveSourceIds" : [
+        "a2w:NWO:CHCR:CHCR.Elev.Inst.1Hour.0.Best-NWO",
+        "cwms:NWDM:CHCR.Elev.Inst.1Hour.0.Best-NWO",
+        "nwps:EGDC2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Clarks Hill / J.S. Thurmond|GA",
+      "liveSourceIds" : [
+        "usgs:02193900:00062"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Claytor Lake|VA",
+      "liveSourceIds" : [
+        "cwms:LRH:Claytor-Lake.Elev.Inst.15Minutes.0.OBS",
+        "nwps:CLLV2:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Clinton Lake|KS",
+      "liveSourceIds" : [
+        "a2w:NWK:CLIN:CLIN.Elev.Inst.1Hour.0.Best-NWK",
+        "cwms:NWDM:CLIN.Elev.Inst.1Hour.0.Best-NWK",
+        "cwms:SWT:CLND.Elev.Inst.1Hour.0.Ccp-Rev"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Cochiti Lake|NM",
+      "liveSourceIds" : [
+        "a2w:SPA:Cochiti:Cochiti.Elev.Inst.15Minutes.0.DCP-rev",
+        "cwms:SPA:Cochiti.Elev.Inst.15Minutes.0.DCP-rev",
+        "nwps:COCN5:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Coeur d'Alene|ID",
+      "liveSourceIds" : [
+        "a2w:NWS:COEI:COEI.Elev-Forebay.Inst.0.0.CBT-REV",
+        "cwms:NWDP:COEI.Elev-Forebay.Inst.0.0.CBT-REV"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Columbus Lake|MS",
+      "liveSourceIds" : [
+        "usgs:02441390:72020"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Conchas Lake|NM",
+      "liveSourceIds" : [
+        "a2w:SPA:Conchas:Conchas.Elev.Inst.15Minutes.0.DCP-rev",
+        "cwms:SPA:Conchas.Elev.Inst.15Minutes.0.DCP-rev",
+        "nwps:CNCN5:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Coralville Lake|IA",
+      "liveSourceIds" : [
+        "a2w:MVR:CRVI4:CRVI4.Elev-Pool.Inst.30Minutes.0.rev",
+        "cwms:MVR:CRVI4.Elev-Pool.Inst.30Minutes.0.rev",
+        "nwps:CRVI4:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Crab Orchard Lake|IL",
+      "liveSourceIds" : [
+        "nwps:CODI2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Cross Lake|LA",
+      "liveSourceIds" : [
+        "cwms:MVK:Cross Lake.Elev.Inst.15Minutes.0.DCP-rev",
+        "a2w:MVK:Cross Lake:Cross Lake.Elev.Inst.15Minutes.0.DCP-rev",
+        "nwps:CRLL1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Dale Hollow Lake|TN",
+      "liveSourceIds" : [
+        "a2w:LRN:DLHT1:DLHT1-DALE_HOLLOW.Elev-Pool.Inst.1Hour.0.man-rev",
+        "cwms:LRN:DLHT1-DALE_HOLLOW.Elev-Pool.Inst.15Minutes.0.dcp-rev",
+        "tva:DLHT1"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "DeGray|AR",
+      "liveSourceIds" : [
+        "a2w:MVK:Degray Lake:Degray Lake.Elev.Inst.1Hour.0.DCP-rev",
+        "cwms:MVK:Degray Lake.Elev.Inst.1Hour.0.DCP-rev",
+        "nwps:DGDA4:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Deep Creek Lake|MD",
+      "liveSourceIds" : [
+        "usgs:03075871:00062",
+        "nwps:THYM2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Don Pedro|CA",
+      "liveSourceIds" : [
+        "cwms:SPK:Don Pedro.Elev.Inst.~1Day.0.MANUAL"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Douglas Lake|TN",
+      "liveSourceIds" : [
+        "tva:DUGT1",
+        "nwps:DUGT1:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Eagle Creek Reservoir|IN",
+      "liveSourceIds" : [
+        "usgs:03353450:62614",
+        "nwps:ECRI3:HPIR2"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "El Dorado Lake|KS",
+      "liveSourceIds" : [
+        "a2w:SWT:ELDR:ELDR.Elev.Inst.1Hour.0.Ccp-Rev",
+        "cwms:SWT:ELDR.Elev.Inst.30Minutes.0.Ccp-Rev",
+        "nwps:EDRK1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "El Vado Lake|NM",
+      "liveSourceIds" : [
+        "rise:336"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Enid Lake|MS",
+      "liveSourceIds" : [
+        "cwms:MVK:Enid Lake.Elev.Inst.1Hour.0.Guide Curve",
+        "nwps:ENDM6:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Eufaula / W.F. George|AL",
+      "liveSourceIds" : [
+        "usgs:0234296910:62614"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Falls Lake|NC",
+      "liveSourceIds" : [
+        "a2w:SAW:NEU FLP:NEU FLP.Elev.Inst.15Minutes.0.USGS-raw",
+        "usgs:02087182:00062",
+        "nwps:NUDN7:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Fern Ridge Reservoir|OR",
+      "liveSourceIds" : [
+        "a2w:NWP:FRN:FRN.Elev-Forebay.Inst.0.0.MIXED-REV",
+        "cwms:NWDP:FRN.Elev-Forebay.Inst.0.0.MIXED-REV",
+        "usgs:14168000:62614"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Flannagan Reservoir|VA",
+      "liveSourceIds" : [
+        "nwps:FLAV2:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Flathead Lake|MT",
+      "liveSourceIds" : [
+        "a2w:NWS:KER:KER.Elev-Forebay.Inst.~1Day.0.CBT-REV",
+        "cwms:NWDP:KER.Elev-Forebay.Inst.~1Day.0.CBT-REV",
+        "nwps:KERM8:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Fontenelle Reservoir|WY",
+      "liveSourceIds" : [
+        "rise:349"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Fort Gibson Lake|OK",
+      "liveSourceIds" : [
+        "cwms:SWT:FGIB.Elev.Inst.30Minutes.0.Ccp-Rev",
+        "nwps:GIBO2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Fort Loudoun Lake|TN",
+      "liveSourceIds" : [
+        "tva:FLDT1",
+        "nwps:FLDT1:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Fresno Reservoir|MT",
+      "liveSourceIds" : [
+        "rise:355",
+        "cwms:NWDM:FDMT.Elev.Inst.1Hour.0.Best-NWO",
+        "nwps:HAVM8:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Geist Reservoir|IN",
+      "liveSourceIds" : [
+        "usgs:03351700:62615"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Grand Lake St. Marys|OH",
+      "liveSourceIds" : [
+        "usgs:403204084342601:62614"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Grand Lake o' the Cherokees|OK",
+      "liveSourceIds" : [
+        "cwms:SWT:PENS.Elev.Inst.1Hour.0.Ccp-Rev",
+        "nwps:PENO2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Great Sacandaga Lake|NY",
+      "liveSourceIds" : [
+        "usgs:01323500:62614",
+        "nwps:SACN6:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Green River Lake|KY",
+      "liveSourceIds" : [
+        "a2w:LRL:Green:Green.Elev.Inst.0.0.lrldlb-rev",
+        "cwms:LRL:Green.Elev.Inst.0.0.lrldlb-rev",
+        "cwms:LRL:Green-Lake.Elev.Inst.15Minutes.0.Decodes-raw"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Greers Ferry|AR",
+      "liveSourceIds" : [
+        "a2w:SWL:GreersFerry_Dam:GreersFerry_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
+        "cwms:SWL:GreersFerry_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
+        "nwps:GRRA4:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Grenada Lake|MS",
+      "liveSourceIds" : [
+        "cwms:MVK:Grenada Lake.Elev.Inst.1Hour.0.Guide Curve",
+        "nwps:GRNM6:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Gull Lake|MN",
+      "liveSourceIds" : [
+        "a2w:MVP:MissHW_Gull:MissHW_Gull-Lake.Elev.Inst.~15Minutes.0.best-NGVD29",
+        "cwms:MVP:MissHW_Gull-Lake.Elev.Inst.15Minutes.0.rev-NGVD29",
+        "cwms:MVP:MissHW_Gull.Elev.Inst.1Hour.0.rev-NGVD29"
+      ]
+    },
     {
       "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Guntersville|AL",
       "liveSourceIds" : [
         "tva:GVDA1"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Havasu|AZ",
+      "liveSourceIds" : [
+        "rise:6128",
+        "nwps:LKHC1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Hebgen Lake|MT",
+      "liveSourceIds" : [
+        "usgs:06038000:62614"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Herrington Lake|KY",
+      "liveSourceIds" : [
+        "nwps:DIXK2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "High Rock Lake|NC",
+      "liveSourceIds" : [
+        "nwps:HGRN7:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Hoover Reservoir|OH",
+      "liveSourceIds" : [
+        "usgs:03228400:62614",
+        "nwps:HOOO1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Hungry Horse Reservoir|MT",
+      "liveSourceIds" : [
+        "a2w:NWS:HGH:HGH.Elev-Forebay.Inst.1Hour.0.CBT-REV",
+        "cwms:NWDP:HGH.Elev-Forebay.Inst.~1Day.0.CBT-RAW",
+        "nwps:HHWM8:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Indian Lake|NY",
+      "liveSourceIds" : [
+        "nwps:INDN6:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Indian Lake|OH",
+      "liveSourceIds" : [
+        "usgs:03260500:62614"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Istokpoga|FL",
+      "liveSourceIds" : [
+        "a2w:SAJ:Lake Istokpoga:Lake Istokpoga.Elev.Ave.~1Day.1Day.SFWMD-Computed",
+        "cwms:SAJ:Lake Istokpoga.Elev.Ave.~1Day.1Day.SFWMD-Computed"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Jennings Randolph Lake|MD",
+      "liveSourceIds" : [
+        "a2w:NAB:Randolph:Randolph.Elev.Inst.15Minutes.0.Best-NAB",
+        "cwms:NAB:Randolph.Elev.Inst.15Minutes.0.Best-NAB;88",
+        "usgs:01595790:00062"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "John Martin Reservoir|CO",
+      "liveSourceIds" : [
+        "a2w:SPA:John Martin:John Martin.Elev.Inst.15Minutes.0.DCP-rev"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "John Redmond Reservoir|KS",
+      "liveSourceIds" : [
+        "nwps:JRLK1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Jordan Lake|NC",
+      "liveSourceIds" : [
+        "cwms:SAW:CFR BEJ.Elev.Inst.15Minutes.0.USGS-raw",
+        "nwps:NHPN7:HPIRG",
+        "usgs:02098197:00062"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Jordan|AL",
+      "liveSourceIds" : [
+        "cwms:SAM:Jordan.Elev.Inst.1Hour.0.Raw-APCO",
+        "nwps:WPKA1:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Kanopolis Lake|KS",
+      "liveSourceIds" : [
+        "a2w:NWK:KANS:KANS.Elev.Inst.1Hour.0.Best-NWK",
+        "cwms:NWDM:KANS.Elev.Inst.1Hour.0.Best-NWK",
+        "nwps:KANK1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Kaw Lake|OK",
+      "liveSourceIds" : [
+        "nwps:KAWO2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Kerr Lake (John H. Kerr)|NC",
+      "liveSourceIds" : [
+        "cwms:SAW:ROA JHK.Elev.Inst.5Minutes.0.USGS-raw"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Kerr Reservoir (Buggs Island)|VA",
+      "liveSourceIds" : [
+        "usgs:02079490:62614"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Keyhole Reservoir|WY",
+      "liveSourceIds" : [
+        "rise:478",
+        "a2w:NWO:KEYO:KEYO.Elev.Inst.1Hour.0.Best-NWO",
+        "cwms:NWDM:KEYO.Elev.Inst.1Hour.0.Best-NWO"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Keystone Lake|OK",
+      "liveSourceIds" : [
+        "a2w:SWT:KEYS:KEYS.Elev.Inst.1Hour.0.Ccp-Rev",
+        "cwms:SWT:KEYS.Elev.Inst.1Hour.0.Ccp-Rev",
+        "nwps:KEYO2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Kissimmee|FL",
+      "liveSourceIds" : [
+        "cwms:SAJ:Kissimmee-11.Elev.Ave.~1Day.1Day.SFWMD-Computed",
+        "cwms:SAJ:Kissimmee.Elev.Ave.~1Day.1Day.SFWMD-Computed",
+        "cwms:SAJ:Kissimmee 5b.Elev.Ave.~1Day.1Day.SFWMD-Computed"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Ashtabula|ND",
+      "liveSourceIds" : [
+        "a2w:MVP:Baldhill_Dam:Baldhill_Dam.Elev.Inst.~15Minutes.0.best-NGVD29",
+        "cwms:MVP:Baldhill_Dam.Elev.Inst.15Minutes.0.rev-NGVD29",
+        "nwps:BLDN8:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Lake Billy Chinook|OR",
+      "liveSourceIds" : [
+        "usgs:14087520:62614",
+        "usgs:14092050:62614"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Bistineau|LA",
+      "liveSourceIds" : [
+        "cwms:MVK:Lake Bistineau.Elev.Inst.30Minutes.0.DCP-rev",
+        "a2w:MVK:Lake Bistineau:Lake Bistineau.Elev.Inst.30Minutes.0.DCP-rev",
+        "nwps:LBUL1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Buchanan|TX",
+      "liveSourceIds" : [
+        "cwms:SWF:BUDT2.Elev.Inst.1Hour.0.LCRA-Web-Rev",
+        "usgs:08148000:00062",
+        "nwps:BUDT2:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Chelan|WA",
+      "liveSourceIds" : [
+        "a2w:NWS:CHL:CHL.Elev-Forebay.Ave.~1Day.1Day.CBT-REV",
+        "a2w:NWS:STKW:STKW.Elev-Forebay.Inst.15Minutes.0.RFC-RAW",
+        "cwms:NWDP:STKW.Elev-Forebay.Inst.15Minutes.0.RFC-RAW"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Lake Conroe|TX",
+      "liveSourceIds" : [
+        "usgs:08067600:62614",
+        "nwps:LCTT2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Cumberland|KY",
+      "liveSourceIds" : [
+        "cwms:LRN:WLCK2-WOLF_CREEK.Elev-Pool.Inst.15Minutes.0.dcp-rev"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Eufaula|OK",
+      "liveSourceIds" : [
+        "a2w:SWT:EUFA:EUFA.Elev.Inst.1Hour.0.Ccp-Rev",
+        "cwms:SWT:EUFA.Elev.Inst.1Hour.0.Ccp-Rev",
+        "nwps:EUFO2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Lake Fork Reservoir|TX",
+      "liveSourceIds" : [
+        "usgs:08018800:62614",
+        "nwps:LFKT2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Lake Gaston|VA",
+      "liveSourceIds" : [
+        "nwps:GASN7:HPIRZ pool"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Lake Greenwood|SC",
+      "liveSourceIds" : [
+        "usgs:02166500:00062",
+        "nwps:CHPS1:HPIRG"
       ]
     },
     {
@@ -19,6 +828,375 @@
       ]
     },
     {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Lake Livingston|TX",
+      "liveSourceIds" : [
+        "usgs:08066190:62614",
+        "nwps:LVDT2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Lake Marion|SC",
+      "liveSourceIds" : [
+        "usgs:02171000:00062",
+        "nwps:PNVS1:HPIRG",
+        "usgs:02169921:00062"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Martin|AL",
+      "liveSourceIds" : [
+        "cwms:SAM:Martin.Elev.Inst.1Hour.0.Raw-APCO",
+        "nwps:TLLA1:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Milton|OH",
+      "liveSourceIds" : [
+        "cwms:LRP:Milton-Lake.Elev.Inst.1Hour.0.RESOPS",
+        "nwps:NWTO1:HPIRG",
+        "usgs:03091000:62615"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Mohave|NV",
+      "liveSourceIds" : [
+        "rise:6133",
+        "nwps:MOHA3:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Lake Monticello|SC",
+      "liveSourceIds" : [
+        "usgs:02160900:00062"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Lake Moomaw|VA",
+      "liveSourceIds" : [
+        "nwps:MOOV2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Lake Moultrie|SC",
+      "liveSourceIds" : [
+        "usgs:02172000:00062",
+        "nwps:PINS1:HPIRG",
+        "nwps:LMIS1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Lake Murray (SC)|SC",
+      "liveSourceIds" : [
+        "usgs:02168500:00062",
+        "nwps:IRMS1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Oahe|SD",
+      "liveSourceIds" : [
+        "cwms:NWDM:OAHE.Elev.Inst.1Hour.0.Best-MRBWM",
+        "nwps:PIES2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Pend Oreille|ID",
+      "liveSourceIds" : [
+        "a2w:NWS:HOPI:HOPI.Elev-Lake.Inst.1Hour.0.IRIDIUM-REV",
+        "cwms:NWDP:BYVI.Elev-Lake.Inst.1Hour.0.IRIDIUM-REV",
+        "cwms:NWDP:HOPI.Elev-Lake.Inst.1Hour.0.IRIDIUM-RAW"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Red Rock|IA",
+      "liveSourceIds" : [
+        "cwms:MVR:PELI4.Elev-Pool.Inst.30Minutes.0.rev"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Tahoe|NV",
+      "liveSourceIds" : [
+        "cwms:SPK:Lake Tahoe.Elev.Inst.~1Day.0.MANUAL",
+        "nwps:THLC1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Lake Tawakoni|TX",
+      "liveSourceIds" : [
+        "usgs:08017400:62614",
+        "nwps:PNTT2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Texoma|TX",
+      "liveSourceIds" : [
+        "a2w:SWT:DENI:DENI.Elev.Inst.1Hour.0.Ccp-Rev",
+        "cwms:SWT:DENI.Elev.Inst.1Hour.0.Ccp-Rev",
+        "nwps:DSNT2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Travis|TX",
+      "liveSourceIds" : [
+        "a2w:SWF:MSDT2:MSDT2.Elev.Inst.1Hour.0.LCRA-Web-Rev",
+        "cwms:SWF:MSDT2.Elev.Inst.1Hour.0.LCRA-Web-Rev",
+        "usgs:08154500:00062"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Lake Winnebago|WI",
+      "liveSourceIds" : [
+        "usgs:04082500:62615"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lake Winnibigoshish|MN",
+      "liveSourceIds" : [
+        "a2w:MVP:MissHW_Winni:MissHW_Winni.Elev.Inst.~15Minutes.0.best-NGVD29",
+        "cwms:MVP:MissHW_Winni.Elev.Inst.15Minutes.0.rev-NGVD29"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Lake of the Ozarks|MO",
+      "liveSourceIds" : [
+        "nwps:LKSM7:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lanier (Sidney Lanier)|GA",
+      "liveSourceIds" : [
+        "a2w:SAM:Buford:Buford.Elev.Inst.15Minutes.0.Raw-USGS",
+        "cwms:SAM:Buford.Elev.Inst.15Minutes.0.Raw-USGS",
+        "usgs:02334400:00062"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Laurel River Lake|KY",
+      "liveSourceIds" : [
+        "a2w:LRN:LAPK2:LAPK2-LAUREL.Elev-Pool.Inst.1Hour.0.man-rev",
+        "cwms:LRN:LAPK2-LAUREL.Elev-Pool.Inst.15Minutes.0.dcp-rev",
+        "cwms:LRN:CBNK2-LaurelR-CorbinKY.Elev.Inst.15Minutes.0.dcp-rev"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Lay|AL",
+      "liveSourceIds" : [
+        "cwms:SAM:Lay.Elev.Inst.1Hour.0.Raw-APCO",
+        "nwps:CLTA1:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Leech Lake|MN",
+      "liveSourceIds" : [
+        "a2w:MVP:MissHW_Leech:MissHW_Leech-Lake.Elev.Inst.~15Minutes.0.best-NGVD29",
+        "cwms:MVP:MissHW_Leech-Lake.Elev.Inst.~15Minutes.0.best-NGVD29",
+        "cwms:MVP:MissHW_Leech.Elev.Inst.15Minutes.0.rev-NGVD29"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Lewis and Clark Lake|SD",
+      "liveSourceIds" : [
+        "nwps:GPDN1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Liberty Reservoir|MD",
+      "liveSourceIds" : [
+        "nwps:MFEM2:HGIRR"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Melvern Lake|KS",
+      "liveSourceIds" : [
+        "a2w:NWK:MELN:MELN.Elev.Inst.1Hour.0.Best-NWK",
+        "cwms:NWDM:MELN.Elev.Inst.1Hour.0.Best-NWK",
+        "cwms:SWT:MELN.Elev.Inst.15Minutes.0.Ccp-Rev"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Merritt Reservoir|NE",
+      "liveSourceIds" : [
+        "rise:599",
+        "nwps:METN1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Milford Lake|KS",
+      "liveSourceIds" : [
+        "a2w:NWK:MILD:MILD.Elev.Inst.1Hour.0.Best-NWK",
+        "cwms:NWDM:MILD.Elev.Inst.1Hour.0.Best-NWK",
+        "nwps:MLFK1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Moses Lake|WA",
+      "liveSourceIds" : [
+        "cwms:NWDP:MLAW.Elev-Forebay.Inst.0.0.RFC-RAW"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Mosquito Creek Lake|OH",
+      "liveSourceIds" : [
+        "a2w:LRP:Mosquito:Mosquito-Lake.Elev.Inst.1Hour.0.OBS",
+        "cwms:LRP:Mosquito-Lake.Elev.Inst.1Hour.0.RESOPS",
+        "nwps:MISO1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Neely Henry|AL",
+      "liveSourceIds" : [
+        "nwps:RGLA1:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Nickajack Lake|TN",
+      "liveSourceIds" : [
+        "tva:NKJT1",
+        "nwps:NKJT1:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Nimrod|AR",
+      "liveSourceIds" : [
+        "a2w:SWL:Nimrod_Dam:Nimrod_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
+        "cwms:SWL:Nimrod_Dam-Headwater.Elev.Inst.15Minutes.0.Decodes-rev",
+        "cwms:SWT:NIMR.Elev.Inst.15Minutes.0.Ccp-Rev"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Norfork|AR",
+      "liveSourceIds" : [
+        "a2w:SWL:Norfork_Dam:Norfork_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
+        "cwms:SWL:Norfork_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-raw",
+        "nwps:NFDA4:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Norris Lake|TN",
+      "liveSourceIds" : [
+        "tva:NRST1",
+        "nwps:NRST1:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Oconee|GA",
+      "liveSourceIds" : [
+        "nwps:WDMG1:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Okatibbee Lake|MS",
+      "liveSourceIds" : [
+        "a2w:SAM:Okatibbee:Okatibbee.Elev.Inst.15Minutes.0.Raw-LRIT",
+        "cwms:SAM:Okatibbee.Elev.Inst.15Minutes.0.Raw-LRIT"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Old Hickory Lake|TN",
+      "liveSourceIds" : [
+        "a2w:LRN:OHHT1:OHHT1-OLD_HICKORY.Elev-Pool.Inst.1Hour.0.man-rev",
+        "cwms:LRN:OHHT1-OLD_HICKORY.Elev-Pool.Inst.15Minutes.0.dcp-rev",
+        "tva:OHHT1"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Ouachita (L. Ouachita)|AR",
+      "liveSourceIds" : [
+        "cwms:MVK:Blakely.Elev.Inst.1Hour.0.DCP-raw",
+        "nwps:BMDA4:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Pactola Reservoir|SD",
+      "liveSourceIds" : [
+        "rise:675",
+        "a2w:NWO:PACA:PACA.Elev.Inst.1Hour.0.Best-NWO",
+        "cwms:NWDM:PACA.Elev.Inst.1Hour.0.Best-NWO"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Patoka Lake|IN",
+      "liveSourceIds" : [
+        "a2w:LRL:Patoka:Patoka.Elev.Inst.0.0.lrldlb-rev",
+        "cwms:LRL:Patoka.Elev.Inst.0.0.lrldlb-raw",
+        "cwms:LRL:Patoka-Lake.Elev.Inst.15Minutes.0.Decodes-raw"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Patterson Lake|ND",
+      "liveSourceIds" : [
+        "rise:305"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Percy Priest Lake|TN",
+      "liveSourceIds" : [
+        "a2w:LRN:JPHT1:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.1Hour.0.man-rev",
+        "cwms:LRN:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.15Minutes.0.dcp-rev",
+        "tva:JPHT1"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Perry Lake|KS",
+      "liveSourceIds" : [
+        "a2w:NWK:PERY:PERY.Elev.Inst.1Hour.0.Best-NWK",
+        "cwms:NWDM:PERY.Elev.Inst.1Hour.0.Best-NWK",
+        "nwps:PRRK1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Philpott Lake|VA",
+      "liveSourceIds" : [
+        "a2w:SAW:ROA PLP:ROA PLP.Elev.Inst.5Minutes.0.USGS-raw",
+        "cwms:SAW:ROA PLP.Elev.Inst.5Minutes.0.USGS-raw",
+        "usgs:02071900:62614"
+      ]
+    },
+    {
       "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Pickwick Lake|TN",
       "liveSourceIds" : [
@@ -27,9 +1205,379 @@
     },
     {
       "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Pomme de Terre Lake|MO",
+      "liveSourceIds" : [
+        "a2w:NWK:PODT:PODT.Elev.Inst.1Hour.0.Best-NWK",
+        "cwms:SWT:PODT.Elev.Inst.15Minutes.0.Ccp-Rev",
+        "cwms:NWDM:PODT.Elev.Inst.1Hour.0.Best-NWK"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Pomona Lake|KS",
+      "liveSourceIds" : [
+        "a2w:NWK:POMA:POMA.Elev.Inst.1Hour.0.Best-NWK",
+        "cwms:NWDM:POMA.Elev.Inst.1Hour.0.Best-NWK",
+        "nwps:PLKK1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Possum Kingdom Lake|TX",
+      "liveSourceIds" : [
+        "cwms:SWF:PSMT2.Elev.Inst.1Hour.0.Decodes-Rev",
+        "usgs:08088500:62614",
+        "usgs:08088440:62614"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Priest Lake|ID",
+      "liveSourceIds" : [
+        "nwps:PSLI1:HPIRA"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Pueblo Reservoir|CO",
+      "liveSourceIds" : [
+        "cwms:SPA:Pueblo.Elev.Inst.15Minutes.0.DCP-rev",
+        "a2w:SPA:Pueblo:Pueblo.Elev.Inst.15Minutes.0.DCP-rev",
+        "rise:682"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "R.D. Bailey Lake|WV",
+      "liveSourceIds" : [
+        "cwms:LRH:RDBailey-Lake.Elev.Inst.15Minutes.0.OBS",
+        "nwps:GBTW2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Rathbun Lake|IA",
+      "liveSourceIds" : [
+        "a2w:NWK:RATN:RATN.Elev.Inst.1Hour.0.Best-NWK",
+        "cwms:NWDM:RATN.Elev.Inst.1Hour.0.Best-NWK",
+        "nwps:RADI4:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Raystown Lake|PA",
+      "liveSourceIds" : [
+        "a2w:NAB:Raystown:Raystown.Elev.Inst.15Minutes.0.Best-NAB",
+        "cwms:NAB:Raystown.Elev.Inst.15Minutes.0.Best-NAB",
+        "nwps:RTDP1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Ross Barnett Reservoir|MS",
+      "liveSourceIds" : [
+        "cwms:MVK:Ross Barnett.Elev.Inst.1Hour.0.DCP-rev",
+        "a2w:MVK:Ross Barnett:Ross Barnett.Elev.Inst.1Hour.0.DCP-rev"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Ross Lake|WA",
+      "liveSourceIds" : [
+        "a2w:NWS:ROS:ROS.Elev-Forebay.Ave.1Hour.1Hour.SCL-RAW"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Rough River Lake|KY",
+      "liveSourceIds" : [
+        "a2w:LRL:Rough:Rough.Elev.Inst.0.0.lrldlb-rev",
+        "cwms:LRL:Rough.Elev.Inst.0.0.lrldlb-raw",
+        "nwps:RRLK2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Sam Rayburn Reservoir|TX",
+      "liveSourceIds" : [
+        "a2w:SWF:JSPT2:JSPT2.Elev.Inst.1Hour.0.Decodes-Rev",
+        "cwms:SWF:JSPT2.Elev.Inst.1Hour.0.Decodes-Rev",
+        "cwms:SWF:JSPT2-Alt.Elev.Inst.~1Day.0.Decodes-Rev"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Santa Rosa Lake|NM",
+      "liveSourceIds" : [
+        "a2w:SPA:Santa Rosa:Santa Rosa.Elev.Inst.15Minutes.0.DCP-rev",
+        "nwps:SRLN5:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Sardis Lake|MS",
+      "liveSourceIds" : [
+        "cwms:MVK:Sardis Lake.Elev.Inst.1Hour.0.Guide Curve",
+        "nwps:SRDM6:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Sardis Lake|OK",
+      "liveSourceIds" : [
+        "a2w:SWT:SARD:SARD.Elev.Inst.1Hour.0.Ccp-Rev",
+        "cwms:SWT:SARD.Elev.Inst.1Hour.0.Ccp-Rev",
+        "nwps:CYDO2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Saylorville Lake|IA",
+      "liveSourceIds" : [
+        "a2w:MVR:SAYI4:SAYI4.Elev-Pool.Inst.30Minutes.0.rev",
+        "cwms:MVR:SAYI4.Elev-Pool.Inst.30Minutes.0.rev",
+        "nwps:SAYI4:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Scituate Reservoir|RI",
+      "liveSourceIds" : [
+        "nwps:SCIR1:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Seminole|GA",
+      "liveSourceIds" : [
+        "cwms:SAM:JimWoodruff.Elev.Inst.15Minutes.0.Raw-USGS",
+        "usgs:02357500:00062"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Senecaville Lake|OH",
+      "liveSourceIds" : [
+        "cwms:LRH:Senecaville-Lake.Elev.Inst.15Minutes.0.OBS",
+        "usgs:03141000:62614",
+        "nwps:SNLO1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Shadow Mountain Reservoir|CO",
+      "liveSourceIds" : [
+        "rise:738",
+        "nwps:SMRC2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Shenango River Lake|PA",
+      "liveSourceIds" : [
+        "a2w:LRP:Shenango:Shenango-Lake.Elev.Inst.1Hour.0.OBS",
+        "cwms:LRP:Shenango-Lake.Elev.Inst.1Hour.0.RESOPS",
+        "nwps:SHPP1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Skiatook Lake|OK",
+      "liveSourceIds" : [
+        "nwps:SKLO2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Smith (Lewis Smith)|AL",
+      "liveSourceIds" : [
+        "cwms:SAM:Smith.Elev.Inst.1Hour.0.GC-APCO",
+        "nwps:ARKA1:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "South Holston Lake|VA",
+      "liveSourceIds" : [
+        "tva:SHDT1"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Spruce Run Reservoir|NJ",
+      "liveSourceIds" : [
+        "usgs:01396790:62614",
+        "nwps:SRRN4:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Stockton Lake|MO",
+      "liveSourceIds" : [
+        "a2w:NWK:STON:STON.Elev.Inst.1Hour.0.Best-NWK",
+        "cwms:NWDM:STON.Elev.Inst.1Hour.0.Best-NWK",
+        "nwps:STXM7:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Strawberry Reservoir|UT",
+      "liveSourceIds" : [
+        "rise:782"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Summersville Lake|WV",
+      "liveSourceIds" : [
+        "a2w:LRH:Summersville:Summersville-Lake.Elev.Inst.15Minutes.0.OBS",
+        "cwms:LRH:Summersville-Lake.Elev.Inst.15Minutes.0.OBS",
+        "nwps:SULW2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Sutton Lake|WV",
+      "liveSourceIds" : [
+        "cwms:LRH:Sutton-Lake.Elev.Inst.15Minutes.0.OBS",
+        "nwps:SUTW2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Table Rock Lake|MO",
+      "liveSourceIds" : [
+        "a2w:SWL:Table_Rock_Dam:Table_Rock_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
+        "cwms:SWL:Table_Rock_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
+        "nwps:FORM7:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Tappan Lake|OH",
+      "liveSourceIds" : [
+        "cwms:LRH:Tappan-Lake.Elev.Inst.15Minutes.0.OBS",
+        "usgs:03128000:62614",
+        "nwps:TAPO1:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Taylorsville Lake|KY",
+      "liveSourceIds" : [
+        "a2w:LRL:Taylorsville:Taylorsville.Elev.Inst.0.0.lrldlb-rev",
+        "cwms:LRL:Taylorsville-Lake.Elev.Inst.15Minutes.0.Decodes-raw"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Tiber Reservoir (Lake Elwell)|MT",
+      "liveSourceIds" : [
+        "a2w:NWO:TIBR:TIBR.Elev.Inst.1Hour.0.Best-NWO",
+        "rise:526",
+        "cwms:NWDM:TIBR.Elev.Inst.1Hour.0.Raw-USBR"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Tims Ford Lake|TN",
+      "liveSourceIds" : [
+        "tva:TMFT1"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Tohopekaliga (Toho)|FL",
+      "liveSourceIds" : [
+        "cwms:SAJ:Tohopekaliga.Elev.Inst.1Hour.0.SFWMD-Raw"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Topaz Lake|NV",
+      "liveSourceIds" : [
+        "nwps:TOPN2:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Truman Lake|MO",
+      "liveSourceIds" : [
+        "a2w:NWK:HAST:HAST.Elev.Inst.1Hour.0.Best-NWK",
+        "cwms:NWDM:HAST.Elev.Inst.1Hour.0.Best-NWK",
+        "nwps:TKZM7:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Ute Lake|NM",
+      "liveSourceIds" : [
+        "nwps:UTEN5:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Waconda Lake|KS",
+      "liveSourceIds" : [
+        "rise:841",
+        "a2w:NWK:GLEL:GLEL.Elev.Inst.1Day.0.Best-NWK",
+        "cwms:NWDM:GLEL.Elev.Inst.1Hour.0.Best-NWK"
+      ]
+    },
+    {
+      "capability" : "DIRECT_LAKE_GAUGE",
+      "lakeId" : "Wanaque Reservoir|NJ",
+      "liveSourceIds" : [
+        "usgs:01386990:62614",
+        "nwps:WRDN4:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Wappapello Lake|MO",
+      "liveSourceIds" : [
+        "cwms:MVS:Wappapello Lk-St Francis.Elev.Inst.30Minutes.0.lrgsShef-raw",
+        "nwps:WPPM7:HPIRG"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Watts Bar Lake|TN",
+      "liveSourceIds" : [
+        "tva:WBOT1",
+        "nwps:WBOT1:HPIRZ"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "West Point|GA",
+      "liveSourceIds" : [
+        "a2w:SAM:WestPoint:WestPoint.Elev.Inst.15Minutes.0.Raw-USGS",
+        "cwms:SAM:WestPoint.Elev.Inst.15Minutes.0.Raw-USGS",
+        "usgs:02339400:00062"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Wheeler|AL",
       "liveSourceIds" : [
         "tva:WHLA1"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Willard Bay Reservoir|UT",
+      "liveSourceIds" : [
+        "rise:869"
+      ]
+    },
+    {
+      "capability" : "DIRECT_OPERATOR_POOL",
+      "lakeId" : "Wilson Lake|KS",
+      "liveSourceIds" : [
+        "a2w:NWK:WILN:WILN.Elev.Inst.1Hour.0.Best-NWK",
+        "cwms:SWT:WILN.Elev.Inst.15Minutes.0.Ccp-Rev",
+        "cwms:NWDM:WILN.Elev.Inst.1Hour.0.Best-NWK"
       ]
     },
     {

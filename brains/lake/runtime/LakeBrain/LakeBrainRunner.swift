@@ -25,6 +25,9 @@ public struct LakeBrainRunOptions: Sendable {
     public var concurrency: Int = 3
     /// Ignore plan() and recompute every lake in scope.
     public var force = false
+    /// Tests only: restrict the pilots scope to the five hand-written rows while still writing the registry/health tail, so the
+    /// publication fixture (tests/golden/lake_run_updates.json) stays the pilots' write set when accepted generated rows exist.
+    public var handWrittenOnly = false
     /// Pull full operator history (decades of CWMS daily) instead of the recent tail.
     public var backfill = false
     public var processingVersion: String? = nil
@@ -280,6 +283,10 @@ public enum LakeBrainRunner {
                                                                          : LakeSourceBindings.reviewedBinding(for: $0.id) != nil }
         case .fleet: lakes = LakeDirectory.all
         }
+        if options.handWrittenOnly {
+            let hand = Set(LakeSourceBindings.handWritten.map(\.lakeId))
+            lakes = lakes.filter { hand.contains($0.id) }
+        }
         if let only = options.lakeIds { lakes = lakes.filter { only.contains($0.id) } }
 
         var presence: LakePresenceIndex?
@@ -327,7 +334,16 @@ public enum LakeBrainRunner {
         guard let store else { result.durationMs = Int(Date().timeIntervalSince(t0) * 1000); return result }
 
         do {
-            for r in out { try await store.update(try lakePaths(r, presence: presence)) }
+            // Each lake's update is its own atomic write; one failed lake no longer stops the others (review of the 189-lake batch,
+            // 2026-11-20). Any failure still fails the run below, so the registry/health tail is not written over a partial run.
+            var lakeWriteErrors: [String] = []
+            for r in out {
+                do { try await store.update(try lakePaths(r, presence: presence)) }
+                catch { lakeWriteErrors.append("\(r.lakeId): \(error)") }
+            }
+            if !lakeWriteErrors.isEmpty {
+                throw LakeBrainWriteError(failures: lakeWriteErrors, written: out.count - lakeWriteErrors.count)
+            }
             let finished = Date()
             result.durationMs = Int(finished.timeIntervalSince(t0) * 1000)
             guard options.lakeIds == nil else { await appendLedger(&result, lakes: lakes, store: store, archive: archive, options: options, now: now); return result }
@@ -583,5 +599,15 @@ extension Optional {
     func asyncMap<U>(_ f: (Wrapped) async -> U) async -> U? {
         guard let x = self else { return nil }
         return await f(x)
+    }
+}
+
+
+/// One or more lakes' writes failed; the other lakes were written (each lake is its own update).
+struct LakeBrainWriteError: Error, CustomStringConvertible {
+    let failures: [String]
+    let written: Int
+    var description: String {
+        "\(failures.count) lake write(s) failed, \(written) written: " + failures.prefix(5).joined(separator: "; ") + (failures.count > 5 ? "; ..." : "")
     }
 }
