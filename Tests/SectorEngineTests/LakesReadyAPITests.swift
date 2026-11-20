@@ -36,8 +36,11 @@ final class LakesReadyAPITests: XCTestCase {
 
     static let now = ISO8601DateFormatter().date(from: "2026-11-10T15:30:00Z")!
     static let on = LakesReadyConfig(enabled: true)
-    static let levelOn = LakeLevelEligibility(enabled: true, eligibleLakeIds: LakeLevelEligibility.validatedLakeIds)
-    static let levelOff = LakeLevelEligibility(enabled: false, eligibleLakeIds: LakeLevelEligibility.validatedLakeIds)
+    /// The gate is tested against a fixed test list, not the live reviewed list (which changes as lakes are reviewed):
+    /// Berlin, Canyon and Flathead are listed; Lake Hartwell is not.
+    static let testLevelList: Set<String> = ["Berlin Lake|OH", "Canyon Lake|TX", "Flathead Lake|MT"]
+    static let levelOn = LakeLevelEligibility(enabled: true, eligibleLakeIds: testLevelList)
+    static let levelOff = LakeLevelEligibility(enabled: false, eligibleLakeIds: testLevelList)
 
     static func clarity(_ lakeId: String, status: String, observedAt: String, freshUntil: String,
                         centralFt: String = "2.0", range: Bool = true) -> String {
@@ -65,7 +68,7 @@ final class LakesReadyAPITests: XCTestCase {
     /// The golden scenario: every status the readers know, plus stale, future-dated, unvalidated and off-directory copies.
     static let subtree: String = {
         let berlin = "Berlin Lake|OH", canyon = "Canyon Lake|TX", flathead = "Flathead Lake|MT"
-        let gunters = "Lake Hartwell|SC", martin = "Lake Martin|AL"
+        let hartwell = "Lake Hartwell|SC", martin = "Lake Martin|AL"
         return """
         {
           "\(BrainPlatform.lakeKey(berlin))": {
@@ -84,10 +87,10 @@ final class LakesReadyAPITests: XCTestCase {
             "clarity": \(clarity(flathead, status: "ESTIMATE", observedAt: "2026-11-10T06:00:00Z", freshUntil: "2026-11-11T06:00:00Z",
                                   centralFt: "18.5", range: false))
           },
-          "\(BrainPlatform.lakeKey(gunters))": {
-            "clarity": \(clarity(gunters, status: "AVAILABLE", observedAt: "2026-11-09T06:00:00Z", freshUntil: "2026-11-10T06:00:00Z")),
-            "waterTemp": \(waterTemp(gunters, status: "UNKNOWN", kind: "measured", observedAt: "2026-11-10T14:00:00Z", freshUntil: "2026-11-10T20:00:00Z")),
-            "level": \(level(gunters, status: "AVAILABLE", observationTime: "2026-11-10T15:00:00Z", freshUntil: "2026-11-11T03:00:00Z"))
+          "\(BrainPlatform.lakeKey(hartwell))": {
+            "clarity": \(clarity(hartwell, status: "AVAILABLE", observedAt: "2026-11-09T06:00:00Z", freshUntil: "2026-11-10T06:00:00Z")),
+            "waterTemp": \(waterTemp(hartwell, status: "UNKNOWN", kind: "measured", observedAt: "2026-11-10T14:00:00Z", freshUntil: "2026-11-10T20:00:00Z")),
+            "level": \(level(hartwell, status: "AVAILABLE", observationTime: "2026-11-10T15:00:00Z", freshUntil: "2026-11-11T03:00:00Z"))
           },
           "\(BrainPlatform.lakeKey(martin))": {
             "waterTemp": \(waterTemp(martin, status: "AVAILABLE", kind: "measured", observedAt: "2026-11-10T17:00:00Z", freshUntil: "2026-11-10T23:00:00Z"))
@@ -193,7 +196,7 @@ final class LakesReadyAPITests: XCTestCase {
         XCTAssertEqual(out.lakes[2].layers, ReadyLakeLayers(clarity: ReadyClarityLayer(status: "ESTIMATE", asOf: "2026-11-10T06:00:00Z",
                                                                                        valueFt: 18.5, lowFt: nil, highFt: nil),
                                                             waterTemp: nil, level: nil))
-        // Lake Hartwell: stale clarity, UNKNOWN temp, and a fresh level that is not on the validated list → not listed.
+        // Lake Hartwell: stale clarity, UNKNOWN temp, and a fresh level that is not on the test level list → not listed.
         // Lake Martin: a time 90 min in the future → not listed. Not_A_Lake_XX: not in the directory → not listed.
     }
 

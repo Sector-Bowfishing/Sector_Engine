@@ -43,10 +43,13 @@ final class LakeLevelOutputTests: XCTestCase {
 
     func testValidatedListMatchesTheLakeBetaResult() async {
         let ids = LakeLevelEligibility.validatedLakeIds
-        XCTAssertEqual(ids.count, 34)
-        // Same-instrument passes, failures and abstentions stay off.
-        for lake in ["Bluestone Lake|WV", "Tappan Lake|OH", "Brookville Lake|IN", "Cagles Mill Lake|IN", "Navajo Reservoir|NM",
-                     "Sumner Lake|NM", "Kentucky Lake|KY", "Lake Hartwell|SC"] {
+        // Every REVIEWED lake (5 pilots + accepted batch; owner approval 2026-11-20 20:01Z, Sector_Ops #51), and no other.
+        XCTAssertEqual(ids.count, 194)
+        // (Equality with LakeSourceBindings.reviewed is asserted in LakeBrainTests, which can see both modules.)
+        for lake in ["Lake Hartwell|SC", "Bluestone Lake|WV", "Tappan Lake|OH"] { XCTAssertTrue(ids.contains(lake), lake) }
+        // Failed the two-gauge check, held or excluded: no reviewed binding, never listed.
+        for lake in ["Brookville Lake|IN", "Sumner Lake|NM", "Cagles Mill Lake|IN", "Navajo Reservoir|NM", "Kentucky Lake|KY",
+                     "Tygart Lake|WV", "Canyon Lake|TX"] {
             XCTAssertFalse(ids.contains(lake), lake)
         }
         // The 4 TVA mainstem lakes are listed as operator-only (owner decision 2026-11-20), and only they are.
@@ -56,7 +59,7 @@ final class LakeLevelOutputTests: XCTestCase {
         let directory = Set(LakeDirectory.all.map(\.id))
         XCTAssertTrue(ids.isSubset(of: directory), "\(ids.subtracting(directory))")
         // Listed and flagged, but with no reader the lake is still UNKNOWN.
-        let o = await LakeLevelOutputAPI.output(lakeId: "Tygart Lake|WV", eligibility: .fromEnvironment(["SECTOR_LAKE_LEVEL_OUTPUT": "1"]),
+        let o = await LakeLevelOutputAPI.output(lakeId: "Sutton Lake|WV", eligibility: .fromEnvironment(["SECTOR_LAKE_LEVEL_OUTPUT": "1"]),
                                                 reader: nil)
         XCTAssertEqual(o.reason, LakeLevelOutputAPI.noReader)
     }
