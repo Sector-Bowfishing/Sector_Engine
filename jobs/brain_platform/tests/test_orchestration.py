@@ -649,3 +649,20 @@ def test_scheduler_truth_comes_from_cloud_scheduler_not_the_job_record():
     j2, s2 = C.build_jobs(m, jobs, [], None)
     assert "enabled" not in s2["lake-surface-daily"]                                                   # no scheduler state at all: unknown, not "enabled"
     assert s2["wind-hourly"]["enabled"] is False                                                       # record's schedulerState is used when no live state
+
+
+def test_due_after_hours_runs_a_brain_before_its_output_goes_stale():
+    """freshness.dueAfterHours (Lake, 2026-11-20, Sector_Ops #51) is the run cadence; without it a Brain is due at staleAfterHours, as before."""
+    import datetime as _dt
+    now = _dt.datetime(2026, 11, 20, 12, 0, tzinfo=_dt.timezone.utc)
+    st = lambda h: {"lastSuccessfulRun": (now - _dt.timedelta(hours=h)).strftime("%Y-%m-%dT%H:%M:%SZ")}
+    lake = {"freshness": {"staleAfterHours": 6, "dueAfterHours": 2.5}}
+    assert O.due_after_hours(lake) == 2.5
+    assert O.due(lake, st(2), now) is False and O.due(lake, st(2.5), now) is True and O.due(lake, st(4), now) is True
+    plain = {"freshness": {"staleAfterHours": 6}}
+    assert O.due_after_hours(plain) == 6 and O.due(plain, st(4), now) is False and O.due(plain, st(6), now) is True
+    for bad in (0, -1, True, "2"):                                          # an invalid cadence falls back to the staleness window
+        assert O.due_after_hours({"freshness": {"staleAfterHours": 6, "dueAfterHours": bad}}) == 6
+    assert O.due({"freshness": {}}, st(100), now) is None
+    m = O.load_manifest()["brains"]["lake-brain"]
+    assert m["freshness"]["dueAfterHours"] < m["freshness"]["staleAfterHours"]

@@ -282,9 +282,20 @@ def with_job_success(m: dict, states: dict, jobs: dict | None) -> dict:
     return out
 
 
+def due_after_hours(brain: dict) -> float | None:
+    """The run cadence: freshness.dueAfterHours when set (a positive number), else freshness.staleAfterHours. None = no time rule."""
+    f = brain.get("freshness") or {}
+    d = f.get("dueAfterHours")
+    if isinstance(d, (int, float)) and not isinstance(d, bool) and d > 0:
+        return float(d)
+    return f.get("staleAfterHours")
+
+
 def due(brain: dict, state: dict | None, now: dt.datetime) -> bool | None:
-    """Time-driven due check from the Brain's own freshness expectation. None = no time rule (VERSION/FINGERPRINT Brain: never 'due' by clock)."""
-    h = (brain.get("freshness") or {}).get("staleAfterHours")
+    """Time-driven due check from the Brain's own freshness expectation. None = no time rule (VERSION/FINGERPRINT Brain: never 'due' by clock).
+    `freshness.dueAfterHours` (optional) is the run cadence and lets a Brain run BEFORE its output goes stale; without it the Brain is due at
+    `staleAfterHours`, as before."""
+    h = due_after_hours(brain)
     if h is None:
         return None
     last = parse_time((state or {}).get("lastSuccessfulRun"))

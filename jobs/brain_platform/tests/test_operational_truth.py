@@ -15,7 +15,7 @@ MANIFEST = O.load_manifest()
 MB = MANIFEST["brains"]
 
 # Shapes as read from production on 2026-10-20 (GET); lake ids synthetic.
-LAKE_REG = {"status": "ACTIVE", "health": "WARNING", "stalenessModel": "TIME", "staleAfterHours": 3, "lastSuccessfulRun": iso(5),
+LAKE_REG = {"status": "ACTIVE", "health": "WARNING", "stalenessModel": "TIME", "staleAfterHours": 6, "lastSuccessfulRun": iso(5),
             "directoryLakeCount": 40, "supportedLakeCount": 12}
 LAKE_HEALTH = {"status": "WARNING", "lastRun": iso(5), "lastSuccess": iso(5)}
 SOURCES = {"usace-cwms-pool": {"ownerBrainId": "lake-brain", "health": "FAILED", "lakeCount": 1, "latestObservationAt": None, "failuresLastRun": 1},
@@ -31,17 +31,23 @@ FLEET = {"lake-a": {"slots": {"lake": {"lastUpdatedAt": iso(6)}, "waterClarity":
 
 # ------------------------------------------------------------------ item 1 + 3: one policy, one verdict
 def test_lake_policy_is_the_manifest_and_reports_the_declared_rule():
+    # Since 2026-11-20 (owner approval, Sector_Ops #51): Lake runs every ~3 h (dueAfterHours 2.5) and goes stale at 6 h in BOTH the manifest and the
+    # Brain's own registry rule (LakeBrainContract.staleAfterHours), so there is no declared difference to report.
     p = OT.effective_policy(MB["lake-brain"], LAKE_REG)
-    assert p["source"] == "ORCHESTRATOR_MANIFEST" and p["model"] == "TIME" and p["staleAfterHours"] == MB["lake-brain"]["freshness"]["staleAfterHours"]
-    assert p["declaredStaleAfterHours"] == 3 and p.get("note")
+    assert p["source"] == "ORCHESTRATOR_MANIFEST" and p["model"] == "TIME" and p["staleAfterHours"] == 6
+    assert MB["lake-brain"]["freshness"]["staleAfterHours"] == 6 and MB["lake-brain"]["freshness"]["dueAfterHours"] == 2.5
+    assert "declaredStaleAfterHours" not in p
+    # A registry still written by an older Lake build (3 h) is reported beside the operating policy, never silently dropped.
+    old = OT.effective_policy(MB["lake-brain"], {**LAKE_REG, "staleAfterHours": 3})
+    assert old["staleAfterHours"] == 6 and old["declaredStaleAfterHours"] == 3 and old.get("note")
 
 
 def test_both_planes_give_lake_the_same_verdict():
     ov = C.brain_summary("lake-brain", LAKE_REG, LAKE_HEALTH, None, None, {}, NOW, manifest_brain=MB["lake-brain"], sources=SOURCES, source_health={})
     st = build(registries={"lake-brain": LAKE_REG}, health={"lake-brain": LAKE_HEALTH})["brains"]["lake-brain"]["freshness"]
-    assert ov["freshness"]["verdict"] == st["verdict"] == "FRESH"          # 5 h old under the 26 h operating policy; was stale (3 h) on one plane only
-    assert ov["stale"] is False and st["stale"] is False and ov["staleAfterHours"] == st["staleAfterHours"]
-    assert ov["freshness"]["declaredStaleAfterHours"] == st["declaredStaleAfterHours"] == 3
+    assert ov["freshness"]["verdict"] == st["verdict"] == "FRESH"          # 5 h old under the 6 h policy: a normal ~3-4 h gap never reads STALE
+    assert ov["stale"] is False and st["stale"] is False and ov["staleAfterHours"] == st["staleAfterHours"] == 6
+    assert "declaredStaleAfterHours" not in ov["freshness"] and st.get("declaredStaleAfterHours") is None
 
 
 def test_time_verdicts_and_missing_evidence_is_unknown():

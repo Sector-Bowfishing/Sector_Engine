@@ -31,8 +31,9 @@ public enum LakeBrainSpec {
     public static let baselineMethod = "doy15-percentile-v2"
     public static let profileSchemaVersion = 1
     public static let stateSchemaVersion = 1
-    /// A published state older than this is stale whatever the source says.
-    public static let staleAfterHours = 3.0
+    /// A published state older than this is stale whatever the source says. 6 h since 2026-11-20 (Sector_Ops #51): Lake runs about every 3 h
+    /// (the Orchestrator's freshness.dueAfterHours 2.5), so a normal run never lapses; pool levels change slowly.
+    public static let staleAfterHours = 6.0
 }
 
 // MARK: - Engine-owned enums
