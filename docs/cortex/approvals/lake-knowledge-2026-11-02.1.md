@@ -21,3 +21,12 @@
 
 ## Related decision (same approval, item 1)
 - **L-H1:** Lake reads the Mac mini's local TVA archive, not live TVA only.
+
+## Addendum 2026-11-20: approved for customer use
+
+> **APPROVED for CUSTOMER use** by Michael (owner), in chat, 2026-11-20 ~15:04Z; recorded on Sector_Ops #51.
+
+- The manifest's approval scope is now `INTERNAL`, `CALIBRATION`, `CUSTOMER`, and `customerEligible` is `true`.
+- The release itself is unchanged: same `releaseId`, files and `releaseDigest`, so artifacts already built against it still verify.
+- This records the release's eligibility only. It does not turn on any customer copy (`PUBLISHER_CUSTOMER_*` stays Michael's switch), does not change `operations.customerPublication` in `brain.json` (the Brain stays `PRE_PRODUCTION`), and changes no value, band, score, binding, catalog entry or lifecycle state.
+- The species-presence release (`presence/latest.json`) is not covered; it stays approval `NOT_RECORDED`.

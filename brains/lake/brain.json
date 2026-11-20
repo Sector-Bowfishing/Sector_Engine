@@ -149,6 +149,6 @@
       "status": "NOT_ELIGIBLE",
       "approvalRef": null
     },
-    "notes": "The packaged knowledge release lake-knowledge-2026-11-02.1 is APPROVED for INTERNAL and CALIBRATION use only (Sector_Ops #51, owner approval 2026-11-12 ~07:00Z, item 2); it is not customer-eligible. The species-presence bucket release is still approval NOT_RECORDED. Production runs are INTERNAL mode. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
+    "notes": "The packaged knowledge release lake-knowledge-2026-11-02.1 is APPROVED for INTERNAL and CALIBRATION use (Sector_Ops #51, owner approval 2026-11-12 ~07:00Z, item 2) and for CUSTOMER use (owner, in chat 2026-11-20, recorded on Sector_Ops #51). The species-presence bucket release is still approval NOT_RECORDED. Production runs are INTERNAL mode. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
   }
 }

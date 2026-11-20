@@ -21,3 +21,11 @@
 - Showing a ± range in the app. The launch answer is "Estimate" with no range (owner approval 2026-11-14); the range failed WT-NOW-2, -3 and -4.
 - Customer serving or customer publication. `operations.customerPublication` stays `NOT_ELIGIBLE`.
 - Any change to the model. Changing the file means a new `releaseId` and a new approval.
+
+## Addendum 2026-11-20: approved for customer use
+
+> **APPROVED for CUSTOMER use** by Michael (owner), in chat, 2026-11-20 ~15:04Z; recorded on Sector_Ops #51.
+
+- The manifest's approval scope is now `INTERNAL`, `CALIBRATION`, `CUSTOMER`, and `customerEligible` is `true`.
+- The release itself is unchanged: same `releaseId`, files and `releaseDigest`, so artifacts already built against it still verify.
+- This records the release's eligibility only. It does not turn on any customer copy (`PUBLISHER_CUSTOMER_*` stays Michael's switch), does not change `operations.customerPublication` in `brain.json` (the Brain stays `PRE_PRODUCTION`), and changes no value, band, score, binding, catalog entry or lifecycle state.
