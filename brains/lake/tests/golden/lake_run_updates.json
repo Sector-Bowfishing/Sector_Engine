@@ -82,7 +82,7 @@
             "binding version changed",
             "nothing published yet"
           ],
-          "staleness" : "time-based: stale when the source is more than two cadences past due, or the published state is older than 3 h",
+          "staleness" : "time-based: stale when the source is more than two cadences past due, or the published state is older than 6 h",
           "status" : "ACTIVE (pilot lakes)"
         },
         "speciesPresence" : {
@@ -121,7 +121,7 @@
       "running" : "false"
     },
     "schemaVersion" : 1,
-    "staleAfterHours" : 3,
+    "staleAfterHours" : 6,
     "staleLakeCount" : 0,
     "stalenessModel" : "TIME",
     "stateKindDefinitions" : {

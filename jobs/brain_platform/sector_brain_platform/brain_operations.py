@@ -87,7 +87,8 @@ def live(brain_id: str, b: dict, row: dict | None, *, scheduler_states: dict | N
         io["lastSuccessfulRunBasis"] = row["lastSuccessfulRunBasis"]
     activity = row.get("activityState") or b.get("activityState")
     if kind == "TIME":
-        iv = float((b.get("freshness") or {}).get("staleAfterHours"))
+        f = b.get("freshness") or {}
+        iv = float(f.get("dueAfterHours") or f.get("staleAfterHours"))       # the run cadence when the manifest sets one
         io["expectedIntervalHours"] = iv
         # the Brain counts as executed within its interval when its last success is fresh, even if the last attempt was a no-op skip
         succ_age = _age_h(row.get("lastSuccessfulRun"), now)

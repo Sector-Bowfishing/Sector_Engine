@@ -21,7 +21,7 @@ SPEC = ContractSpec(
     extras={"registryChildren": ("registry", "LAKE_REGISTRY_CHILDREN", "children"), "healthDomainChildren": ("registry", "LAKE_HEALTH_DOMAIN_CHILDREN", "list"),
             "reservedChildren": ("registry", "BRAIN_NODE_OWNERS", "sortedkeys"), "volatileContract": ("volatile",),
             "writeSetSource": "the runner's recorded write set on deterministic inputs (tests/golden/*_run_updates.json, regenerated only by the Swift fixture test)",
-            "freshness": "stale after lag + 3 x cadence per source (staleAfterHours 3 in the registry); the observation time is never replaced by a run time",
+            "freshness": "stale after lag + 3 x cadence per source (staleAfterHours 6 in the registry); the observation time is never replaced by a run time",
             "lineage": {"knowledgeRelease": "NONE (no versioned knowledge release)", "manifestRef": "NONE", "manifestSha256": "NONE",
                         "consumed": "not recorded by the Swift platform client: absent = unknown, never []"}})
 

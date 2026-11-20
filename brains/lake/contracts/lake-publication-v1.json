@@ -5,7 +5,7 @@
   "derivedFrom": "jobs/brain_platform/sector_brain_platform/publisher/registry.py (lake_specs, lake_bundles)",
   "envelope": "publish-artifact-v2",
   "fingerprint": "sector-semantic-fingerprint-v2",
-  "freshness": "stale after lag + 3 x cadence per source (staleAfterHours 3 in the registry); the observation time is never replaced by a run time",
+  "freshness": "stale after lag + 3 x cadence per source (staleAfterHours 6 in the registry); the observation time is never replaced by a run time",
   "healthDomainChildren": [
     "status",
     "staleLakeCount",
