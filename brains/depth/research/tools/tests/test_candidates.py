@@ -87,7 +87,10 @@ def test_helpers():
 
 def test_reviewed_lake_ids_come_from_lakes_contract_not_its_source():
     ids = reviewed_lake_ids()                                          # brains/lake/contracts/reviewed-lake-bindings-v1.json
-    assert set(ids) == {"Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN", "Lake Hartwell|SC"}
+    import json, os
+    contract = json.load(open(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "lake", "contracts", "reviewed-lake-bindings-v1.json")))
+    assert set(ids) == {r["lakeId"] for r in contract["reviewed"]}                   # the 5 pilots + Lake's accepted batch (Sector_Engine #211)
+    assert {"Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN", "Lake Hartwell|SC"} <= set(ids)
     import depth_research.candidates as cand
     assert ".swift" not in open(cand.__file__).read()
 
