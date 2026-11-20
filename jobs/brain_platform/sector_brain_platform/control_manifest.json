@@ -43,7 +43,7 @@
                    "deprecatedScheduler": {"name": "lake-brain-ledger-daily", "formerCron": "0 12 * * *", "state": "PAUSED", "deprecatedAt": "2026-10-23", "note": "never resume: the orchestrator is the only scheduling authority (PL-15)"},
                    "exception": {"gate": "Lake prospective prediction ledger (90 days for PARTIAL, 12 months for VALIDATED)", "notReconstructable": "predictions must be recorded before outcomes occur", "maxMonthlyUsd": 1, "stop": "Michael's decision on the Lake validation campaign, or 12-month scoring complete", "approvedAt": "2026-10-14 (pending confirmation C-2)"}},
       "freshness": {"staleAfterHours": 6, "dueAfterHours": 2.5, "note": "Lake runs about every 3 h (owner approval, Michael, 2026-11-20 20:01Z, Sector_Ops #51; was one ledger run per day at 26 h): due after 2.5 h so it runs before its output goes stale at 6 h (the Brain's registry rule, LakeBrainContract.staleAfterHours)"}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "modelVersion", "bindingVersion", "readinessCounts", "staleLakeCount", "supportedLakeCount"]},
-      "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 1, "tasks": 1}, "timeoutSeconds": 900, "scopes": ["pilots"], "customerPublication": false
+      "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 1, "tasks": 1}, "timeoutSeconds": 3600, "scopes": ["pilots"], "customerPublication": false
     },
     "water-temp": {
       "displayName": "Water Temperature", "group": "CURRENT_CONDITIONS", "lifecycle": "CALIBRATION", "activityState": "ACTIVE",

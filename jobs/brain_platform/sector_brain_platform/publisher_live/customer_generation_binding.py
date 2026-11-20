@@ -42,10 +42,11 @@ def load_contract(path: str = CONTRACT_FILE) -> dict:
 
 def reviewed_at(contract: dict):
     """The Brain's review time: `reviewedAt` (with a zone; a zoneless one is unparseable and never assumed UTC), else the date in
-    `bindingVersion` (bindings-YYYY-MM-DD.n, a calendar date read as 00:00Z). Never a run time."""
+    `bindingVersion` (bindings-YYYY-MM-DD.n, optionally with the accepted-batch suffix +accepted.N.<fingerprint>; the calendar date is read as
+    00:00Z). Never a run time."""
     if "reviewedAt" in contract:
         return CC.utc(contract.get("reviewedAt"))
-    m = re.fullmatch(r"bindings-(\d{4}-\d{2}-\d{2})\.\d+", str(contract.get("bindingVersion", "")))
+    m = re.fullmatch(r"bindings-(\d{4}-\d{2}-\d{2})\.\d+(?:\+accepted\.\d+\.[0-9a-f]+)?", str(contract.get("bindingVersion", "")))
     return dt.datetime.fromisoformat(m.group(1)).replace(tzinfo=dt.timezone.utc) if m else None
 
 

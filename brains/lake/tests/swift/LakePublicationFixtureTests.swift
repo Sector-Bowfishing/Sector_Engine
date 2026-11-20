@@ -23,7 +23,7 @@ final class LakePublicationFixtureTests: XCTestCase {
     static func runUpdates() async throws -> Data {
         let feeds = FakeFeeds()
         let store = LocalDirectoryStore(directory: NSTemporaryDirectory() + "lake-brain-fixture-\(UUID().uuidString)", brainId: LakeBrainSpec.brainId)
-        var opts = LakeBrainRunOptions(); opts.force = true
+        var opts = LakeBrainRunOptions(); opts.force = true; opts.handWrittenOnly = true     // the five pilots' write set (accepted rows excluded)
         let r = await LakeBrainRunner.run(store: store, feeds: feeds, archive: nil, presenceArchive: nil, options: opts, now: feeds.now)
         XCTAssertTrue(r.ok, r.writeError ?? "")
         var flat: [String: Any] = [:]

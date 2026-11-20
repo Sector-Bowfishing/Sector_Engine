@@ -279,7 +279,7 @@ def gb_plan(contract=None, previous=None, readiness="BETA"):
 
 def test_generation_binding_today_has_no_dam_binding_so_nothing_is_written():
     writes, why = GB.plan(GB.load_contract(), {}, readiness="BETA", env=ON)
-    assert writes == {} and set(why.values()) == {"NO_DAM_BINDING"} and len(why) == 5        # the documented Lake gap
+    assert writes == {} and set(why.values()) == {"NO_DAM_BINDING"} and len(why) == len(GB._records(GB.load_contract())) >= 5   # the documented Lake gap
 
 
 def test_generation_binding_copies_only_the_published_dam_binding():
@@ -296,12 +296,12 @@ def test_generation_binding_copies_only_the_published_dam_binding():
 
 @pytest.mark.parametrize("mutate,reason", [
     (lambda c: c.update(bindingVersion="unversioned"), "NO_REVIEW_TIME"),
-    (lambda c: c["reviewed"][0]["damBinding"].pop("damName"), "NO_VALUE"),
-    (lambda c: c["reviewed"][0]["damBinding"].update(operatorId=""), "NO_VALUE"),
+    (lambda c: GB._records(c)["Guntersville|AL"]["damBinding"].pop("damName"), "NO_VALUE"),
+    (lambda c: GB._records(c)["Guntersville|AL"]["damBinding"].update(operatorId=""), "NO_VALUE"),
 ])
 def test_generation_binding_gates(mutate, reason):
     c = bound_contract()
-    assert c["reviewed"][0]["lakeId"] == "Guntersville|AL"
+    assert "damBinding" in GB._records(c)["Guntersville|AL"]
     mutate(c)
     writes, why = gb_plan(c)
     assert writes == {} and why["Guntersville|AL"] == reason
@@ -422,3 +422,9 @@ def test_the_proposed_rules_deny_every_client_on_every_copy_and_change_nothing_e
                 grants(v)
     grants(cust)
     assert set(cust["lakes"]["$lakeKey"]) == {"level", "clarity", "waterTemp", "generationBinding"} and set(cust["wind"]) == {"outlookModel"}
+
+
+def test_generation_binding_review_date_reads_the_accepted_batch_version():
+    import datetime as _dt
+    assert GB.reviewed_at({"bindingVersion": "bindings-2026-10-13.1+accepted.189.ac62647d"}) == _dt.datetime(2026, 10, 13, tzinfo=_dt.timezone.utc)
+    assert GB.reviewed_at({"bindingVersion": "bindings-2026-10-13.1+accepted.x.zz"}) is None
