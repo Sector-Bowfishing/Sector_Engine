@@ -85,5 +85,14 @@
   "Lake Winnipesaukee|NH"
  ],
  "providerTermsReason": "provider terms unconfirmed (St. Johns River WMD / NH DES): skip unclear operator endpoints unless terms are confirmed",
- "seriesMismatchReason": "history series differs from the live binding by more than 15 ft - datum/series mismatch pending resolution (found by the rules-v2 hold-out QA: holdout_v2_results.json, seriesQa.mismatchOver15ft)"
+ "seriesMismatchReason": "history series differs from the live binding by more than 15 ft - datum/series mismatch pending resolution (found by the rules-v2 hold-out QA: holdout_v2_results.json, seriesQa.mismatchOver15ft)",
+ "dryrunCheck": [
+  "Badin Lake|NC",
+  "High Rock Lake|NC"
+ ],
+ "dryrunCheckReasons": {
+  "Badin Lake|NC": "no live reading (nwps:BADN7 UNAVAILABLE); NWPS BADN7 dead since 2026-10-30, RAH RVD discontinued 2023, no USGS lake gauge; operator Cube Carolinas page to check",
+  "High Rock Lake|NC": "no live reading (nwps:HGRN7 UNAVAILABLE); NWPS HGRN7 dead since ~2026-09-30, no USGS lake gauge; operator Cube Carolinas page to check"
+ },
+ "dryrunCheckReason": "held after the 2026-11-21 Mac mini dry-run gauge check at Engine 66957c45 (second source >0.5 ft, no live reading, seeded-history/live series mismatch >15 ft, or hand review vs full pool); see docs/brains/LAKE_BRAIN_DRYRUN_CHECK_2026-11-21.md"
 }

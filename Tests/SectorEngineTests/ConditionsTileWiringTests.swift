@@ -21,7 +21,7 @@ final class ConditionsTileWiringTests: XCTestCase {
     static func iso(_ d: Date) -> String { ISO8601DateFormatter().string(from: d) }
     static let lake = "Guntersville|AL"
     /// On LakeLevelEligibility.validatedLakeIds.
-    static let validatedLake = "Sutton Lake|WV"
+    static let validatedLake = "Bluestone Lake|WV"
 
     static func ctx(_ lakeId: String? = lake) -> TileRequestContext { TileRequestContext(lakeId: lakeId, lat: 34.4321, lon: -86.2549) }
 

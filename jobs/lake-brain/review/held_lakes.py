@@ -3,6 +3,8 @@
 Held = machine-verified strict rows that must NOT be promoted yet:
   * SERIES_MISMATCH (this file): the history series differs from the live binding by more than 15 ft (datum/series mismatch). Found by the
     rules-v2 hold-out QA: Sector_Engine-lake-rules-v2/jobs/lake-brain/validation/results/holdout_v2_results.json, seriesQa.mismatchOver15ft.
+  * DRYRUN_CHECK: held by the 2026-11-21 Mac mini dry-run gauge check (held_lakes.json dryrunCheck / dryrunCheckReasons):
+    second source >0.5 ft, no live reading, seeded-history/live series mismatch, or hand review against full pool.
   * COORDINATE_FLAG: directory coordinate flagged identity_risk / off_water in geometry/lake_geometry_flags.csv. Those ids come from research
     data, so the builder snapshots them into held_lakes.json (committed next to this file) every time the pack is built.
 """
@@ -28,4 +30,5 @@ def load_snapshot(path=SNAPSHOT_FILE):
     if os.path.exists(path):
         d = json.load(open(path))
         ids |= set(d.get("coordinateFlagged", [])) | set(d.get("seriesMismatch", [])) | set(d.get("providerTerms", []))
+        ids |= set(d.get("dryrunCheck", []))      # held by the 2026-11-21 Mac mini dry-run gauge check (see dryrunCheckReasons)
     return ids

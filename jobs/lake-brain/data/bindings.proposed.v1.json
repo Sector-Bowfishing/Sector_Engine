@@ -868,17 +868,17 @@
    "provider": "cwms",
    "researchProvider": "cwms",
    "station": "MVK",
-   "series": "Arkabutla Lake.Elev.Inst.1Hour.0.Guide Curve",
+   "series": "Arkabutla Lake.Elev.Inst.1Hour.0.DCP-rev",
    "live": [
     {
      "provider": "cwms",
      "capability": "DIRECT_OPERATOR_POOL",
      "station": "MVK",
-     "series": "Arkabutla Lake.Elev.Inst.1Hour.0.Guide Curve",
+     "series": "Arkabutla Lake.Elev.Inst.1Hour.0.DCP-rev",
      "cadenceMin": 60,
      "lagMin": 120,
      "datumOffsetFt": 0.0,
-     "note": "USACE CWMS MVK (unit=EN)"
+     "note": "USACE CWMS MVK observed pool (was the Guide Curve / rule-curve series) [2026-11-21 dry-run research (Sector_Ops #51)]"
     }
    ],
    "history": [
@@ -892,7 +892,9 @@
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 1999,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "live series Arkabutla Lake.Elev.Inst.1Hour.0.Guide Curve was the rule curve; now Arkabutla Lake.Elev.Inst.1Hour.0.DCP-rev [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": {
     "matchedProject": "MVK:Arkabutla Lake | Arkabutla Lake",
     "matchBasis": "nid,sameStation,name,geo<=5km",
@@ -1455,11 +1457,11 @@
      "provider": "cwms",
      "capability": "DIRECT_OPERATOR_POOL",
      "station": "NAP",
-     "series": "Beltzville.Elev.Inst.15Minutes.0.Rev-DCP",
+     "series": "Beltzville.Elev.Inst.15Minutes.0.Rev-DCP-88",
      "cadenceMin": 60,
      "lagMin": 120,
      "datumOffsetFt": 0.0,
-     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T05:30Z age 1.0 h"
+     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T05:30Z age 1.0 h; NAVD88 like the primary (NGVD29 = NAVD88 + 0.66) [2026-11-21 dry-run research (Sector_Ops #51)]"
     },
     {
      "provider": "nwps",
@@ -1476,14 +1478,16 @@
     {
      "kind": "cwmsDaily",
      "office": "NAP",
-     "series": "Beltzville.Elev.Inst.15Minutes.0.Rev-DCP"
+     "series": "Beltzville.Elev.Inst.15Minutes.0.Rev-DCP-88"
     }
    ],
    "historyCompleteYears": 8,
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 2018,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "history switched to the NAVD88 Rev-DCP-88 series (was NGVD29 Rev-DCP, +0.66 ft) [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": {
     "matchedProject": "NAP:Beltzville | Beltzville Dam",
     "matchBasis": "nid,sameStation,name,geo<=5km",
@@ -1904,14 +1908,16 @@
     {
      "kind": "cwmsDaily",
      "office": "LRH",
-     "series": "Bluestone-Lake.Elev.Inst.1Day.0.RUL"
+     "series": "Bluestone-Lake.Elev.Inst.15Minutes.0.OBS"
     }
    ],
    "historyCompleteYears": 13,
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 2013,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "history was Bluestone-Lake.Elev.Inst.1Day.0.RUL (rule curve); now the observed Bluestone-Lake.Elev.Inst.15Minutes.0.OBS, the same series as live (record from ~2021 for Sutton; depth for the others to confirm) [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": {
     "matchedProject": "LRH:Bluestone | Bluestone Lake",
     "matchBasis": "nid,sameStation,name,geo<=5km",
@@ -2936,14 +2942,16 @@
     {
      "kind": "cwmsDaily",
      "office": "LRH",
-     "series": "Burnsville-Lake.Elev.Inst.1Day.0.RUL"
+     "series": "Burnsville-Lake.Elev.Inst.15Minutes.0.OBS"
     }
    ],
    "historyCompleteYears": 13,
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 2013,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "history was Burnsville-Lake.Elev.Inst.1Day.0.RUL (rule curve); now the observed Burnsville-Lake.Elev.Inst.15Minutes.0.OBS, the same series as live (record from ~2021 for Sutton; depth for the others to confirm) [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": {
     "matchedProject": "LRH:Burnsville | Burnsville Lake",
     "matchBasis": "nid,sameStation,name,geo<=5km",
@@ -6567,8 +6575,8 @@
      "series": "HPIRG",
      "cadenceMin": 60,
      "lagMin": 120,
-     "datumOffsetFt": 0.0,
-     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:00:00Z age 1.4 h"
+     "datumOffsetFt": -1.82,
+     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:00:00Z age 1.4 h; NWPS THYM2 is NAVD88, live 00062 is the 2462 spillway datum: offset -1.82 ft [2026-11-21 dry-run research (Sector_Ops #51)]"
     }
    ],
    "history": [
@@ -6577,14 +6585,16 @@
      "site": "03075871",
      "param": "62615",
      "stat": "dv",
-     "offsetFt": 0.0
+     "offsetFt": -1.82
     }
    ],
    "historyCompleteYears": 5,
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 2020,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "history 62615 (NAVD88) shifted -1.82 ft onto the live 00062 spillway datum [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": null,
    "timeZone": "America/New_York",
    "timeZoneRule": "state MD",
@@ -6696,7 +6706,9 @@
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 1998,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "no flood-pool-bottom/full-pool plan beyond Top of Conservation; large irrigation + flood-space drawdown is normal [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": {
     "matchedProject": "SPK:Don Pedro | New Don Pedro Reservoir",
     "matchBasis": "nid,sameStation,name,geo<=5km",
@@ -7276,7 +7288,9 @@
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 1975,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "[2026-11-21 dry-run research (Sector_Ops #51)] Low level is real: Reclamation's interim maximum operating elevation 6,820.5 ft (news release 5329, Safety of Dams). Not bound as a plan: it is a single upper limit, and a plan zone needs both edges."
+   ],
    "plan": null,
    "timeZone": "America/Denver",
    "timeZoneRule": "state NM",
@@ -7358,17 +7372,17 @@
    "provider": "cwms",
    "researchProvider": "cwms",
    "station": "MVK",
-   "series": "Enid Lake.Elev.Inst.1Hour.0.Guide Curve",
+   "series": "Enid Lake.Elev.Inst.1Hour.0.DCP-rev",
    "live": [
     {
      "provider": "cwms",
      "capability": "DIRECT_OPERATOR_POOL",
      "station": "MVK",
-     "series": "Enid Lake.Elev.Inst.1Hour.0.Guide Curve",
+     "series": "Enid Lake.Elev.Inst.1Hour.0.DCP-rev",
      "cadenceMin": 60,
      "lagMin": 120,
      "datumOffsetFt": 0.0,
-     "note": "USACE CWMS MVK (unit=EN)"
+     "note": "USACE CWMS MVK observed pool (was the Guide Curve / rule-curve series) [2026-11-21 dry-run research (Sector_Ops #51)]"
     },
     {
      "provider": "nwps",
@@ -7392,7 +7406,9 @@
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 1999,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "live series Enid Lake.Elev.Inst.1Hour.0.Guide Curve was the rule curve; now Enid Lake.Elev.Inst.1Hour.0.DCP-rev [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": {
     "matchedProject": "MVK:Enid Lake | Enid Lake ",
     "matchBasis": "nid,sameStation,name,geo<=5km",
@@ -9590,17 +9606,17 @@
    "provider": "cwms",
    "researchProvider": "cwms",
    "station": "MVK",
-   "series": "Grenada Lake.Elev.Inst.1Hour.0.Guide Curve",
+   "series": "Grenada Lake.Elev.Inst.1Hour.0.DCP-rev",
    "live": [
     {
      "provider": "cwms",
      "capability": "DIRECT_OPERATOR_POOL",
      "station": "MVK",
-     "series": "Grenada Lake.Elev.Inst.1Hour.0.Guide Curve",
+     "series": "Grenada Lake.Elev.Inst.1Hour.0.DCP-rev",
      "cadenceMin": 60,
      "lagMin": 120,
      "datumOffsetFt": 0.0,
-     "note": "USACE CWMS MVK (unit=EN)"
+     "note": "USACE CWMS MVK observed pool (was the Guide Curve / rule-curve series) [2026-11-21 dry-run research (Sector_Ops #51)]"
     },
     {
      "provider": "nwps",
@@ -9624,7 +9640,9 @@
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 1999,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "live series Grenada Lake.Elev.Inst.1Hour.0.Guide Curve was the rule curve; now Grenada Lake.Elev.Inst.1Hour.0.DCP-rev [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": {
     "matchedProject": "MVK:Grenada Lake | Grenada Lake",
     "matchBasis": "nid,sameStation,name,geo<=5km",
@@ -10085,8 +10103,8 @@
      "series": "HPIRG",
      "cadenceMin": 60,
      "lagMin": 120,
-     "datumOffsetFt": 0.0,
-     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:30:00Z age 0.9 h"
+     "datumOffsetFt": -0.65,
+     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:30:00Z age 0.9 h; LKHC1 (USGS gage+400) sits ~0.65 ft above USBR values (inferred from end-of-month comparison) [2026-11-21 dry-run research (Sector_Ops #51)]"
     }
    ],
    "history": [
@@ -10099,7 +10117,9 @@
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 1938,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "NWPS LKHC1 fallback offset -0.65 ft (inferred) [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": null,
    "timeZone": "America/Phoenix",
    "timeZoneRule": "state AZ",
@@ -11142,11 +11162,11 @@
      "provider": "cwms",
      "capability": "DIRECT_OPERATOR_POOL",
      "station": "NAB",
-     "series": "Randolph.Elev.Inst.15Minutes.0.Best-NAB;88",
+     "series": "Randolph.Elev.Inst.15Minutes.0.Best-NAB",
      "cadenceMin": 60,
      "lagMin": 120,
      "datumOffsetFt": 0.0,
-     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:15Z age 0.2 h"
+     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:15Z age 0.2 h; datum aligned to project datum like the primary (dropped ;88, NAVD88 = PCD - 0.85 ft) [2026-11-21 dry-run research (Sector_Ops #51)]"
     },
     {
      "provider": "usgs",
@@ -11170,7 +11190,9 @@
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 2018,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "cwms fallback switched from the ;88 (NAVD88) variant to project datum, matching the primary and plan [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": {
     "matchedProject": "NAB:Randolph | Jennings Randolph Lake",
     "matchBasis": "nid,sameStation,name,geo<=5km",
@@ -21586,14 +21608,16 @@
     {
      "kind": "cwmsDaily",
      "office": "LRH",
-     "series": "RDBailey-Lake.Elev.Inst.1Day.0.RUL"
+     "series": "RDBailey-Lake.Elev.Inst.15Minutes.0.OBS"
     }
    ],
    "historyCompleteYears": 13,
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 2013,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "history was RDBailey-Lake.Elev.Inst.1Day.0.RUL (rule curve); now the observed RDBailey-Lake.Elev.Inst.15Minutes.0.OBS, the same series as live (record from ~2021 for Sutton; depth for the others to confirm) [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": {
     "matchedProject": "LRH:RDBailey | R.D. Bailey Lake",
     "matchBasis": "nid,sameStation,name,geo<=5km",
@@ -22729,17 +22753,17 @@
    "provider": "cwms",
    "researchProvider": "cwms",
    "station": "MVK",
-   "series": "Sardis Lake.Elev.Inst.1Hour.0.Guide Curve",
+   "series": "Sardis Lake.Elev.Inst.1Hour.0.DCP-rev",
    "live": [
     {
      "provider": "cwms",
      "capability": "DIRECT_OPERATOR_POOL",
      "station": "MVK",
-     "series": "Sardis Lake.Elev.Inst.1Hour.0.Guide Curve",
+     "series": "Sardis Lake.Elev.Inst.1Hour.0.DCP-rev",
      "cadenceMin": 60,
      "lagMin": 120,
      "datumOffsetFt": 0.0,
-     "note": "USACE CWMS MVK (unit=EN)"
+     "note": "USACE CWMS MVK observed pool (was the Guide Curve / rule-curve series) [2026-11-21 dry-run research (Sector_Ops #51)]"
     },
     {
      "provider": "nwps",
@@ -22763,7 +22787,9 @@
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 1999,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "live series Sardis Lake.Elev.Inst.1Hour.0.Guide Curve was the rule curve; now Sardis Lake.Elev.Inst.1Hour.0.DCP-rev [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": {
     "matchedProject": "MVK:Sardis Lake | Sardis Lake",
     "matchBasis": "nid,sameStation,name,geo<=5km",
@@ -23484,14 +23510,16 @@
     {
      "kind": "cwmsDaily",
      "office": "LRH",
-     "series": "Senecaville-Lake.Elev.Inst.1Day.0.RUL"
+     "series": "Senecaville-Lake.Elev.Inst.15Minutes.0.OBS"
     }
    ],
    "historyCompleteYears": 13,
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 2013,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "history was Senecaville-Lake.Elev.Inst.1Day.0.RUL (rule curve); now the observed Senecaville-Lake.Elev.Inst.15Minutes.0.OBS, the same series as live (record from ~2021 for Sutton; depth for the others to confirm) [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": {
     "matchedProject": "LRH:Senecaville | Senecaville Lake",
     "matchBasis": "nid,sameStation,name,geo<=5km",
@@ -24019,17 +24047,17 @@
    "provider": "cwms",
    "researchProvider": "cwms",
    "station": "SAM",
-   "series": "Smith.Elev.Inst.1Hour.0.GC-APCO",
+   "series": "Smith.Elev.Inst.1Hour.0.Raw-APCO",
    "live": [
     {
      "provider": "cwms",
      "capability": "DIRECT_OPERATOR_POOL",
      "station": "SAM",
-     "series": "Smith.Elev.Inst.1Hour.0.GC-APCO",
+     "series": "Smith.Elev.Inst.1Hour.0.Raw-APCO",
      "cadenceMin": 60,
      "lagMin": 120,
      "datumOffsetFt": 0.0,
-     "note": "USACE CWMS SAM (unit=EN)"
+     "note": "USACE CWMS SAM observed (Alabama Power raw; was GC-APCO guide curve) [2026-11-21 dry-run research (Sector_Ops #51)]"
     },
     {
      "provider": "nwps",
@@ -24053,7 +24081,9 @@
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 2018,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "live series Smith.Elev.Inst.1Hour.0.GC-APCO was Alabama Power's guide curve; now Smith.Elev.Inst.1Hour.0.Raw-APCO [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": {
     "matchedProject": "SAM:Smith | Lewis Smith  (APC)",
     "matchBasis": "sameStation,name,geo<=5km",
@@ -25049,14 +25079,16 @@
     {
      "kind": "cwmsDaily",
      "office": "LRH",
-     "series": "Sutton-Lake.Elev.Inst.1Day.0.RUL"
+     "series": "Sutton-Lake.Elev.Inst.15Minutes.0.OBS"
     }
    ],
    "historyCompleteYears": 13,
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 2013,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "history was Sutton-Lake.Elev.Inst.1Day.0.RUL (rule curve); now the observed Sutton-Lake.Elev.Inst.15Minutes.0.OBS, the same series as live (record from ~2021 for Sutton; depth for the others to confirm) [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": {
     "matchedProject": "LRH:Sutton | Sutton Lake",
     "matchBasis": "nid,sameStation,name,geo<=5km",
@@ -25387,14 +25419,16 @@
     {
      "kind": "cwmsDaily",
      "office": "LRH",
-     "series": "Tappan-Lake.Elev.Inst.1Day.0.RUL"
+     "series": "Tappan-Lake.Elev.Inst.15Minutes.0.OBS"
     }
    ],
    "historyCompleteYears": 13,
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 2013,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "history was Tappan-Lake.Elev.Inst.1Day.0.RUL (rule curve); now the observed Tappan-Lake.Elev.Inst.15Minutes.0.OBS, the same series as live (record from ~2021 for Sutton; depth for the others to confirm) [2026-11-21 dry-run research (Sector_Ops #51)]"
+   ],
    "plan": {
     "matchedProject": "LRH:Tappan | Tappan Lake",
     "matchBasis": "nid,sameStation,name,geo<=5km",

@@ -1,12 +1,12 @@
 {
   "schemaVersion": "1.0.0",
   "brainId": "lake-brain",
-  "releaseId": "lake-knowledge-2026-11-20.1",
+  "releaseId": "lake-knowledge-2026-11-21.2",
   "store": "PACKAGED_IN_IMAGE",
   "owner": "lake-brain",
   "approval": {
     "status": "APPROVED",
-    "record": "docs/cortex/approvals/lake-knowledge-2026-11-20.1.md",
+    "record": "docs/cortex/approvals/lake-knowledge-2026-11-21.2.md",
     "scope": [
       "INTERNAL",
       "CALIBRATION",
@@ -27,9 +27,9 @@
     },
     {
       "path": "LakeBrain/LakeSourceBindingsGenerated.swift",
-      "sha256": "5e0945a9fd9c094b05ba2fa2536aba71eecf58174e5feb1b94e93723f3bcf726",
-      "bytes": 429555
+      "sha256": "7db758f878b1ddbc181b7b3e0569b850036b796c5f66ad6038fc69f29681fa82",
+      "bytes": 429596
     }
   ],
-  "releaseDigest": "sha256:7d8fe25dab620d3fc93c90d82c47254272c2c848da8e5ae997fc46d1f48ca5f8"
+  "releaseDigest": "sha256:d9fb97b7bd2b51bdc43e7550daacbfb1997c2a9076bc5c26e737d2e6c74b4b14"
 }

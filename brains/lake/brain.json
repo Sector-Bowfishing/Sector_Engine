@@ -125,7 +125,7 @@
       "INTERNAL"
     ],
     "knowledgeLoading": {
-      "approved": "reviewed-bindings (COMPILED_IN_BINARY, brains/lake/runtime/knowledge-release.json `lake-knowledge-2026-11-20.1`; APPROVED for INTERNAL, CALIBRATION and CUSTOMER use: docs/cortex/approvals/lake-knowledge-2026-11-20.1.md)",
+      "approved": "reviewed-bindings (COMPILED_IN_BINARY, brains/lake/runtime/knowledge-release.json `lake-knowledge-2026-11-21.2`; APPROVED 2026-11-21: docs/cortex/approvals/lake-knowledge-2026-11-21.2.md; previous `lake-knowledge-2026-11-20.1` was APPROVED)",
       "experimental": "species-presence (PRIVATE_BUCKET_RELEASE, gs://sector-lake-brain (presence/latest.json), approval NOT_RECORDED)",
       "refuseWithoutApproved": [
         "CUSTOMER_SERVING"
@@ -149,6 +149,6 @@
       "status": "NOT_ELIGIBLE",
       "approvalRef": null
     },
-    "notes": "The packaged knowledge release lake-knowledge-2026-11-20.1 (189 accepted bindings) is APPROVED for INTERNAL, CALIBRATION and CUSTOMER use (owner, in chat 2026-11-20 ~20:08Z, recorded on Sector_Ops #51); it supersedes lake-knowledge-2026-11-02.1. The species-presence bucket release is still approval NOT_RECORDED. Production runs are INTERNAL mode. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
+    "notes": "The packaged knowledge release lake-knowledge-2026-11-21.2 (187 accepted bindings; 2 held after the 2026-11-21 dry-run gauge check and research) was approved by the owner on 2026-11-21 (Sector_Ops #51); it supersedes lake-knowledge-2026-11-20.1 (189 bindings, APPROVED 2026-11-20). The species-presence bucket release is still approval NOT_RECORDED. Production runs are INTERNAL mode. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
   }
 }

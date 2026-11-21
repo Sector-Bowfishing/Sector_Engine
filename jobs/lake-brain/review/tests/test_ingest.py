@@ -338,3 +338,10 @@ def test_draw_is_deterministic_for_a_seed():
     b = B.draw_sample(list(reversed(eligible)), 7, 60)[3]
     c = B.draw_sample(eligible, 8, 60)[3]
     assert a == b and a != c and len(a) == 60
+
+
+def test_snapshot_includes_the_dryrun_check_holds():
+    """Lakes held by the 2026-11-21 dry-run gauge check (held_lakes.json `dryrunCheck`) are excluded from any batch."""
+    import held_lakes
+    flagged = held_lakes.load_snapshot()
+    assert {"Badin Lake|NC", "High Rock Lake|NC"} <= flagged
