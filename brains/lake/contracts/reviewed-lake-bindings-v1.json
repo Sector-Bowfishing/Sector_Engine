@@ -1,16 +1,7 @@
 {
-  "bindingVersion" : "bindings-2026-10-13.1+accepted.189.ac62647d",
+  "bindingVersion" : "bindings-2026-10-13.1+accepted.172.b7c699d1",
   "owner" : "lake-brain",
   "reviewed" : [
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "Abiquiu Lake|NM",
-      "liveSourceIds" : [
-        "a2w:SPA:Abiquiu:Abiquiu.Elev.Inst.15Minutes.0.DCP-rev",
-        "cwms:SPA:Abiquiu.Elev.Inst.15Minutes.0.DCP-rev",
-        "nwps:ABIN5:HPIRG"
-      ]
-    },
     {
       "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Alcova Reservoir|WY",
@@ -53,13 +44,6 @@
       ]
     },
     {
-      "capability" : "DIRECT_LAKE_GAUGE",
-      "lakeId" : "Badin Lake|NC",
-      "liveSourceIds" : [
-        "nwps:BADN7:HPIRZ"
-      ]
-    },
-    {
       "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Bankhead|AL",
       "liveSourceIds" : [
@@ -74,15 +58,6 @@
         "a2w:LRL:Barren:Barren.Elev.Inst.0.0.lrldlb-rev",
         "cwms:LRL:Barren.Elev.Inst.0.0.lrldlb-raw",
         "cwms:LRL:Barren-Lake.Elev.Inst.15Minutes.0.USGS-rev"
-      ]
-    },
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "Beltzville Lake|PA",
-      "liveSourceIds" : [
-        "a2w:NAP:Beltzville:Beltzville.Elev.Inst.15Minutes.0.Rev-DCP-88",
-        "cwms:NAP:Beltzville.Elev.Inst.15Minutes.0.Rev-DCP",
-        "nwps:PRYP1:HPIRG"
       ]
     },
     {
@@ -288,15 +263,6 @@
     },
     {
       "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "Cochiti Lake|NM",
-      "liveSourceIds" : [
-        "a2w:SPA:Cochiti:Cochiti.Elev.Inst.15Minutes.0.DCP-rev",
-        "cwms:SPA:Cochiti.Elev.Inst.15Minutes.0.DCP-rev",
-        "nwps:COCN5:HPIRG"
-      ]
-    },
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Coeur d'Alene|ID",
       "liveSourceIds" : [
         "a2w:NWS:COEI:COEI.Elev-Forebay.Inst.0.0.CBT-REV",
@@ -363,21 +329,6 @@
       ]
     },
     {
-      "capability" : "DIRECT_LAKE_GAUGE",
-      "lakeId" : "Deep Creek Lake|MD",
-      "liveSourceIds" : [
-        "usgs:03075871:00062",
-        "nwps:THYM2:HPIRG"
-      ]
-    },
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "Don Pedro|CA",
-      "liveSourceIds" : [
-        "cwms:SPK:Don Pedro.Elev.Inst.~1Day.0.MANUAL"
-      ]
-    },
-    {
       "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Douglas Lake|TN",
       "liveSourceIds" : [
@@ -404,13 +355,6 @@
     },
     {
       "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "El Vado Lake|NM",
-      "liveSourceIds" : [
-        "rise:336"
-      ]
-    },
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Enid Lake|MS",
       "liveSourceIds" : [
         "cwms:MVK:Enid Lake.Elev.Inst.1Hour.0.Guide Curve",
@@ -431,15 +375,6 @@
         "a2w:SAW:NEU FLP:NEU FLP.Elev.Inst.15Minutes.0.USGS-raw",
         "usgs:02087182:00062",
         "nwps:NUDN7:HPIRG"
-      ]
-    },
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "Fern Ridge Reservoir|OR",
-      "liveSourceIds" : [
-        "a2w:NWP:FRN:FRN.Elev-Forebay.Inst.0.0.MIXED-REV",
-        "cwms:NWDP:FRN.Elev-Forebay.Inst.0.0.MIXED-REV",
-        "usgs:14168000:62614"
       ]
     },
     {
@@ -540,14 +475,6 @@
     },
     {
       "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "Grenada Lake|MS",
-      "liveSourceIds" : [
-        "cwms:MVK:Grenada Lake.Elev.Inst.1Hour.0.Guide Curve",
-        "nwps:GRNM6:HPIRG"
-      ]
-    },
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Gull Lake|MN",
       "liveSourceIds" : [
         "a2w:MVP:MissHW_Gull:MissHW_Gull-Lake.Elev.Inst.~15Minutes.0.best-NGVD29",
@@ -563,14 +490,6 @@
       ]
     },
     {
-      "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "Havasu|AZ",
-      "liveSourceIds" : [
-        "rise:6128",
-        "nwps:LKHC1:HPIRG"
-      ]
-    },
-    {
       "capability" : "DIRECT_LAKE_GAUGE",
       "lakeId" : "Hebgen Lake|MT",
       "liveSourceIds" : [
@@ -582,13 +501,6 @@
       "lakeId" : "Herrington Lake|KY",
       "liveSourceIds" : [
         "nwps:DIXK2:HPIRG"
-      ]
-    },
-    {
-      "capability" : "DIRECT_LAKE_GAUGE",
-      "lakeId" : "High Rock Lake|NC",
-      "liveSourceIds" : [
-        "nwps:HGRN7:HPIRZ"
       ]
     },
     {
@@ -628,22 +540,6 @@
       "liveSourceIds" : [
         "a2w:SAJ:Lake Istokpoga:Lake Istokpoga.Elev.Ave.~1Day.1Day.SFWMD-Computed",
         "cwms:SAJ:Lake Istokpoga.Elev.Ave.~1Day.1Day.SFWMD-Computed"
-      ]
-    },
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "Jennings Randolph Lake|MD",
-      "liveSourceIds" : [
-        "a2w:NAB:Randolph:Randolph.Elev.Inst.15Minutes.0.Best-NAB",
-        "cwms:NAB:Randolph.Elev.Inst.15Minutes.0.Best-NAB;88",
-        "usgs:01595790:00062"
-      ]
-    },
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "John Martin Reservoir|CO",
-      "liveSourceIds" : [
-        "a2w:SPA:John Martin:John Martin.Elev.Inst.15Minutes.0.DCP-rev"
       ]
     },
     {
@@ -1315,14 +1211,6 @@
     },
     {
       "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "Sardis Lake|MS",
-      "liveSourceIds" : [
-        "cwms:MVK:Sardis Lake.Elev.Inst.1Hour.0.Guide Curve",
-        "nwps:SRDM6:HPIRG"
-      ]
-    },
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Sardis Lake|OK",
       "liveSourceIds" : [
         "a2w:SWT:SARD:SARD.Elev.Inst.1Hour.0.Ccp-Rev",
@@ -1389,14 +1277,6 @@
     },
     {
       "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "Smith (Lewis Smith)|AL",
-      "liveSourceIds" : [
-        "cwms:SAM:Smith.Elev.Inst.1Hour.0.GC-APCO",
-        "nwps:ARKA1:HPIRZ"
-      ]
-    },
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "South Holston Lake|VA",
       "liveSourceIds" : [
         "tva:SHDT1"
@@ -1424,23 +1304,6 @@
       "lakeId" : "Strawberry Reservoir|UT",
       "liveSourceIds" : [
         "rise:782"
-      ]
-    },
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "Summersville Lake|WV",
-      "liveSourceIds" : [
-        "a2w:LRH:Summersville:Summersville-Lake.Elev.Inst.15Minutes.0.OBS",
-        "cwms:LRH:Summersville-Lake.Elev.Inst.15Minutes.0.OBS",
-        "nwps:SULW2:HPIRG"
-      ]
-    },
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "Sutton Lake|WV",
-      "liveSourceIds" : [
-        "cwms:LRH:Sutton-Lake.Elev.Inst.15Minutes.0.OBS",
-        "nwps:SUTW2:HPIRG"
       ]
     },
     {
