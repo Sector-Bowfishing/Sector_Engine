@@ -5,11 +5,11 @@
     "id" : "1780317000000-lake-brain-000",
     "kind" : "brain.registered",
     "severity" : "info",
-    "title" : "Lake Brain registered (v1.0.0, 177 pilot lakes)"
+    "title" : "Lake Brain registered (v1.0.0, 192 pilot lakes)"
   },
   "brains/lake-brain" : {
     "baselineMethod" : "doy15-percentile-v2",
-    "bindingVersion" : "bindings-2026-10-13.1+accepted.172.b7c699d1",
+    "bindingVersion" : "bindings-2026-10-13.1+accepted.187.bd65f378",
     "brainId" : "lake-brain",
     "breakdowns" : {
       "baselineStatus" : {
@@ -19,8 +19,8 @@
         "REVIEWED" : 5
       },
       "fleetBindingStatus" : {
-        "CANDIDATE" : 19,
-        "REVIEWED" : 177
+        "CANDIDATE" : 4,
+        "REVIEWED" : 192
       },
       "historicalState" : {
         "INSUFFICIENT_HISTORY" : 5
@@ -68,7 +68,7 @@
         },
         "lakeState" : {
           "inputs" : [
-            "reviewed source bindings (bindings-2026-10-13.1+accepted.172.b7c699d1)",
+            "reviewed source bindings (bindings-2026-10-13.1+accepted.187.bd65f378)",
             "TVA RestApi observed-data-48-hours + operating-guide",
             "USACE CWMS timeseries (named series)",
             "USGS NWIS IV (named site/parameter)",
@@ -130,7 +130,7 @@
       "UNAVAILABLE" : "No reading from any reviewed source."
     },
     "status" : "BETA",
-    "supportedLakeCount" : 177,
+    "supportedLakeCount" : 192,
     "version" : "1.0.0",
     "versions" : [
       {
@@ -336,7 +336,7 @@
         "value" : 595.44
       }
     },
-    "profileHash" : "9e0494455a507695",
+    "profileHash" : "7d1526d62062214d",
     "profileVersion" : 1,
     "readiness" : {
       "lake" : "CALIBRATION"
@@ -344,7 +344,7 @@
     "schemaVersion" : 1,
     "sourceCapability" : {
       "bindingStatus" : "REVIEWED",
-      "bindingVersion" : "bindings-2026-10-13.1+accepted.172.b7c699d1",
+      "bindingVersion" : "bindings-2026-10-13.1+accepted.187.bd65f378",
       "history" : [
         "gs://sector-water-temp-archive/water-temp/tva/GVDA1 (hourly, shared archive, read-only)",
         "tva:operating-guide:GVDA1 (current + previous year, daily midnight)"
@@ -545,7 +545,7 @@
       "normalFullPoolRef" : "engine-directory:fullPoolFt (GET /lakes)",
       "operatingZoneSource" : "CWMS Drought Level 1 to top of conservation (daily)"
     },
-    "profileHash" : "7e6d6dc5aca51aa6",
+    "profileHash" : "d0124f71d5f3b56e",
     "profileVersion" : 1,
     "readiness" : {
       "lake" : "CALIBRATION"
@@ -553,7 +553,7 @@
     "schemaVersion" : 1,
     "sourceCapability" : {
       "bindingStatus" : "REVIEWED",
-      "bindingVersion" : "bindings-2026-10-13.1+accepted.172.b7c699d1",
+      "bindingVersion" : "bindings-2026-10-13.1+accepted.187.bd65f378",
       "fallbacks" : [
         {
           "cadenceMin" : 60,
@@ -776,7 +776,7 @@
         "value" : 418
       }
     },
-    "profileHash" : "c31aab8b397e8291",
+    "profileHash" : "4098c7260296f831",
     "profileVersion" : 1,
     "readiness" : {
       "lake" : "CALIBRATION"
@@ -784,7 +784,7 @@
     "schemaVersion" : 1,
     "sourceCapability" : {
       "bindingStatus" : "REVIEWED",
-      "bindingVersion" : "bindings-2026-10-13.1+accepted.172.b7c699d1",
+      "bindingVersion" : "bindings-2026-10-13.1+accepted.187.bd65f378",
       "history" : [
         "gs://sector-water-temp-archive/water-temp/tva/PICT1 (hourly, shared archive, read-only)",
         "tva:operating-guide:PICT1 (current + previous year, daily midnight)"
@@ -985,7 +985,7 @@
         "value" : 556.28
       }
     },
-    "profileHash" : "c98d2951df6156f7",
+    "profileHash" : "a2453b0c10d8911f",
     "profileVersion" : 1,
     "readiness" : {
       "lake" : "CALIBRATION"
@@ -993,7 +993,7 @@
     "schemaVersion" : 1,
     "sourceCapability" : {
       "bindingStatus" : "REVIEWED",
-      "bindingVersion" : "bindings-2026-10-13.1+accepted.172.b7c699d1",
+      "bindingVersion" : "bindings-2026-10-13.1+accepted.187.bd65f378",
       "history" : [
         "gs://sector-water-temp-archive/water-temp/tva/WHLA1 (hourly, shared archive, read-only)",
         "tva:operating-guide:WHLA1 (current + previous year, daily midnight)"
@@ -1194,7 +1194,7 @@
         "value" : 507.88
       }
     },
-    "profileHash" : "96515e35bda94c0f",
+    "profileHash" : "b6c58d1c61bcf4a7",
     "profileVersion" : 1,
     "readiness" : {
       "lake" : "CALIBRATION"
@@ -1202,7 +1202,7 @@
     "schemaVersion" : 1,
     "sourceCapability" : {
       "bindingStatus" : "REVIEWED",
-      "bindingVersion" : "bindings-2026-10-13.1+accepted.172.b7c699d1",
+      "bindingVersion" : "bindings-2026-10-13.1+accepted.187.bd65f378",
       "history" : [
         "gs://sector-water-temp-archive/water-temp/tva/WLSA1 (hourly, shared archive, read-only)",
         "tva:operating-guide:WLSA1 (current + previous year, daily midnight)"
