@@ -294,19 +294,21 @@ public enum LakeLevelClassifier {
             facts.append(abs(d) < 0.005 ? "Unchanged over 24 h." : "\(d > 0 ? "Up" : "Down") \(ft(abs(d))) over 24 h.")
         }
 
-        // Freshness: an adaptive window from the lake's own movement and the rain forecast (LakeLevelValidity), inside the source's
-        // stale rule. A changing or rain-bound lake is current for less time and is checked again at its source's next reading.
+        // Freshness: an adaptive window from the lake's own movement and the rain forecast (LakeLevelValidity): never past the
+        // source's stale rule, never ending before the next hourly run's replacement can be published.
         let validity = LakeLevelValidity.decide(trend: trendState, change: change, rainNext12hIn: x.rainNext12hIn,
-                                                cadenceMin: src.cadenceMin, lagMin: src.lagMin)
-        let freshUntil = sel.latest.at.addingTimeInterval(Double(validity.windowMin) * 60)
+                                                cadenceMin: src.cadenceMin, lagMin: src.lagMin, observedAt: sel.latest.at, now: now)
         let stale = sel.stale
-        let cadence = Double(src.cadenceMin) * 60
-        let nextObservation = sel.latest.at.addingTimeInterval(Double(src.cadenceMin + src.lagMin) * 60)
+        let freshUntil = validity.freshUntil
         let next: Date
         let reason: String
-        if stale { next = now.addingTimeInterval(cadence); reason = "source stale: check again after one source cadence" }
-        else if validity.tier == .stable { next = max(nextObservation, now.addingTimeInterval(max(cadence, 2 * 3600))); reason = validity.reason }
-        else { next = max(nextObservation, now.addingTimeInterval(cadence)); reason = validity.reason }
+        if stale {
+            next = now.addingTimeInterval(Double(src.cadenceMin) * 60)
+            reason = "source stale: check again after one source cadence"
+        } else {
+            next = validity.nextCheckAt
+            reason = validity.reason
+        }
         if let r = x.rainNext12hIn, r >= LakeLevelValidity.rainIn {
             facts.append(String(format: "%.2f in of rain forecast in the next 12 h.", r))
         }

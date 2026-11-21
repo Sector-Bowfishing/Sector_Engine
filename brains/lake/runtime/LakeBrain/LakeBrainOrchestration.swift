@@ -66,7 +66,11 @@ public enum LakeBrainPlanner {
             if let pb = publishedBindingVersion, pb != bindingVersion { reasons.append("binding \(pb) → \(bindingVersion)") }
             if p.freshness.stale { reasons.append("published state is stale") }
             let f = ISO8601DateFormatter()
-            if let next = f.date(from: p.freshness.nextCheckAt), now >= next { reasons.append("nextCheckAt \(p.freshness.nextCheckAt) reached") }
+            // A grant lands a few minutes either side of :50: a check due within the tolerance is taken now, not an hour late.
+            if let next = f.date(from: p.freshness.nextCheckAt),
+               now >= next.addingTimeInterval(-Double(LakeLevelValidity.plannerToleranceMin) * 60) {
+                reasons.append("nextCheckAt \(p.freshness.nextCheckAt) reached")
+            }
             if let gen = f.date(from: p.freshness.generatedAt), now.timeIntervalSince(gen) > LakeBrainSpec.staleAfterHours * 3600 {
                 reasons.append("published state older than \(Int(LakeBrainSpec.staleAfterHours)) h")
             }

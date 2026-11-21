@@ -25,6 +25,10 @@ final class HourlyCountingFeeds: LakeLevelFeeds, @unchecked Sendable {
     }
     func archivedHourly(_ source: LakeHistorySource, days: Int, now: Date, timeZone: TimeZone) async -> [LevelObservation] { [] }
     func rainNext12h(lat: Double, lon: Double, now: Date) async -> Double? { rain }
+    private var seeded: [String: String] = [:]
+    var seededPoints: [String: String] { lock.withLock { seeded } }
+    func rainPoints() async -> [String: String] { lock.withLock { seeded.merging(["34.40,-86.30": "https://api.weather.gov/gridpoints/HUN/1,1"]) { a, _ in a } } }
+    func seedRainPoints(_ known: [String: String]) async { lock.withLock { seeded = known } }
 }
 
 final class LakeHourlyRefreshTests: XCTestCase {
@@ -76,5 +80,19 @@ final class LakeHourlyRefreshTests: XCTestCase {
         XCTAssertTrue(w.refreshReason.hasPrefix("FAST"), w.refreshReason)
         let wu = try XCTUnwrap(w.freshUntil), du = try XCTUnwrap(d.freshUntil)
         XCTAssertLessThanOrEqual(wu, du, "rain never lengthens the window")
+    }
+
+    func testTheRunKeepsTheNWSGridCellsInTheArchive() async throws {
+        let (lake, _) = try lakeWithDailyHistory()
+        let archive = LocalLakeBrainArchive(directory: NSTemporaryDirectory() + "lb-points-\(UUID().uuidString)")
+        try await archive.write(LakeRainSignal.pointsPath, Data(#"{"1.00,2.00":"https://api.weather.gov/gridpoints/X/1,1"}"#.utf8), contentType: "application/json")
+        let feeds = HourlyCountingFeeds(rain: 0)
+        var o = LakeBrainRunOptions(); o.lakeIds = [lake.id]
+        _ = await LakeBrainRunner.run(store: nil, feeds: feeds, archive: archive, presenceArchive: nil, options: o, now: feeds.now)
+        XCTAssertEqual(feeds.seededPoints, ["1.00,2.00": "https://api.weather.gov/gridpoints/X/1,1"], "seeded from the archive")
+        let read = try await archive.read(LakeRainSignal.pointsPath)
+        let saved = try XCTUnwrap(read)
+        let map = try JSONDecoder().decode([String: String].self, from: saved)
+        XCTAssertEqual(map.count, 2, "the newly learned cell is saved beside the known one")
     }
 }

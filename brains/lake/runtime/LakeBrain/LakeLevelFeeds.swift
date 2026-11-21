@@ -68,11 +68,16 @@ public protocol LakeLevelFeeds: Sendable {
     func archivedHourly(_ source: LakeHistorySource, days: Int, now: Date, timeZone: TimeZone) async -> [LevelObservation]
     /// Forecast rain at the lake in the next 12 h, inches (LakeRainSignal). nil = unknown.
     func rainNext12h(lat: Double, lon: Double, now: Date) async -> Double?
+    /// The NWS coordinate → grid-cell map learned so far, and seeding it from the archive (LakeRainSignal.pointsPath).
+    func rainPoints() async -> [String: String]
+    func seedRainPoints(_ known: [String: String]) async
 }
 
 public extension LakeLevelFeeds {
     /// Feeds without a rain source (test fakes, replay): unknown, which LakeLevelValidity treats conservatively.
     func rainNext12h(lat: Double, lon: Double, now: Date) async -> Double? { nil }
+    func rainPoints() async -> [String: String] { [:] }
+    func seedRainPoints(_ known: [String: String]) async {}
 }
 
 // MARK: - Live implementation
@@ -479,13 +484,12 @@ public enum LakeLevelCalendar {
 // MARK: - Rain signal (NWS forecast grid; LakeRainSignal.swift)
 
 extension LakeRainSignalClient {
-    /// The live client: api.weather.gov GETs through the shared HTTP client (which sends the User-Agent NWS asks for).
+    /// The live client: api.weather.gov GETs with the Sector-LakeBrain contact User-Agent NWS asks every caller for (LAKE_BRAIN_PROVIDERS.md).
     public static func live() -> LakeRainSignalClient {
-        LakeRainSignalClient { url in
-            guard let u = URL(string: url),
-                  let r = try? await HTTP.get(u, headers: ["Accept": "application/geo+json"]), r.isSuccess else { return nil }
+        LakeRainSignalClient(fetch: { url in
+            guard let r = await LakeFeedHTTP.get(url, accept: "application/geo+json", timeout: 30), r.isSuccess else { return nil }
             return r.body
-        }
+        })
     }
 }
 
@@ -493,4 +497,6 @@ extension PublicLakeLevelFeeds {
     public func rainNext12h(lat: Double, lon: Double, now: Date) async -> Double? {
         await rain.nextHours(lat: lat, lon: lon, now: now)
     }
+    public func rainPoints() async -> [String: String] { await rain.pointMap() }
+    public func seedRainPoints(_ known: [String: String]) async { await rain.seed(known) }
 }

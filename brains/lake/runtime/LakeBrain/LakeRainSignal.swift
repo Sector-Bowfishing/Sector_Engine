@@ -6,8 +6,8 @@
 //  re-checked on a shorter window, so its published level stops being treated as current sooner.
 //
 //  Source: api.weather.gov (NWS, a U.S. Government work: public domain, no key; it asks every caller to send a
-//  self-identifying User-Agent, which HTTP.get does). Two requests per lake: /points/{lat},{lon} (the grid cell,
-//  cached for the run) and that cell's forecastGridData, whose `quantitativePrecipitation` layer is the forecast
+//  self-identifying User-Agent: LakeFeedHTTP's Sector-LakeBrain contact string). /points/{lat},{lon} gives the grid cell
+//  (looked up once, then kept in the archive) and that cell's forecastGridData, whose `quantitativePrecipitation` layer is the forecast
 //  liquid precipitation per period (usually 6 h). Outside NWS coverage (Alaska is partly covered, Hawaii, Canada)
 //  or on any failure the signal is nil, and the validity rule treats an unknown rain signal conservatively.
 //
@@ -85,36 +85,65 @@ public enum LakeRainSignal {
         return f.date(from: s)
     }
 
+    /// The persisted coordinate → gridpoint map, in the Lake Brain's private archive.
+    public static let pointsPath = "signals/nws-points.json"
+
     static func pointsURL(lat: Double, lon: Double) -> String {
         String(format: "https://api.weather.gov/points/%.4f,%.4f", lat, lon)
     }
 }
 
-/// Fetches the signal with a per-run cache of grid cells (lakes in one cell share one gridpoint request too).
+/// Fetches the signal. The coordinate → grid-cell mapping (NWS `/points`) is stable, so it is persisted across runs in the Lake
+/// archive (`LakeRainSignal.pointsPath`; LakeBrainRunner loads and saves it) and a steady hourly run makes ONE request per lake (the
+/// gridpoint forecast; lakes in one cell share it). Requests to api.weather.gov are spaced `spacing` apart, whatever the runner's
+/// concurrency. A cell whose forecast cannot be read is forgotten, so the next run looks the point up again.
 public actor LakeRainSignalClient {
     public typealias Fetch = @Sendable (String) async -> Data?
     let fetch: Fetch
-    private var points: [String: String?] = [:]
+    let spacing: TimeInterval
+    private var points: [String: String]
+    private var unresolved: Set<String> = []
     private var grids: [String: Data?] = [:]
+    private var nextSlot = Date.distantPast
+    public private(set) var requests = 0
 
     /// `fetch` is the HTTP GET (the live one, `LakeRainSignalClient.live()`, is in LakeLevelFeeds.swift beside the other clients).
-    public init(fetch: @escaping Fetch) { self.fetch = fetch }
+    public init(fetch: @escaping Fetch, spacing: TimeInterval = 0.25, knownPoints: [String: String] = [:]) {
+        self.fetch = fetch; self.spacing = spacing; self.points = knownPoints
+    }
+
+    public static func pointKey(lat: Double, lon: Double) -> String { String(format: "%.2f,%.2f", lat, lon) }
+
+    /// The persisted coordinate → gridpoint URL map (what the runner saves).
+    public func pointMap() -> [String: String] { points }
+    /// Seeds the map from the archive; entries already learned in this run win.
+    public func seed(_ known: [String: String]) { points.merge(known) { mine, _ in mine } }
+
+    private func get(_ url: String) async -> Data? {
+        let slot = max(Date(), nextSlot)
+        nextSlot = slot.addingTimeInterval(spacing)
+        let wait = slot.timeIntervalSinceNow
+        if wait > 0 { try? await Task.sleep(nanoseconds: UInt64(wait * 1_000_000_000)) }
+        requests += 1
+        return await fetch(url)
+    }
 
     /// Forecast rain, inches, in the next 12 h at the coordinate. nil = unknown.
     public func nextHours(lat: Double, lon: Double, now: Date) async -> Double? {
-        let key = String(format: "%.2f,%.2f", lat, lon)
-        let gridURL: String?
-        if let cached = points[key] { gridURL = cached }
-        else {
-            let p = await fetch(LakeRainSignal.pointsURL(lat: lat, lon: lon)).flatMap(LakeRainSignal.decodePoint)?.forecastGridData
-            points[key] = p
-            gridURL = p
+        let key = Self.pointKey(lat: lat, lon: lon)
+        var gridURL = points[key]
+        if gridURL == nil, !unresolved.contains(key) {
+            gridURL = await get(LakeRainSignal.pointsURL(lat: lat, lon: lon)).flatMap(LakeRainSignal.decodePoint)?.forecastGridData
+            if let g = gridURL { points[key] = g } else { unresolved.insert(key) }
         }
         guard let gridURL else { return nil }
         let data: Data?
         if let cached = grids[gridURL] { data = cached }
-        else { data = await fetch(gridURL); grids[gridURL] = data }
-        guard let data else { return nil }
-        return LakeRainSignal.forecastInches(gridData: data, now: now)
+        else { data = await get(gridURL); grids[gridURL] = data }
+        guard let data, let inches = LakeRainSignal.forecastInches(gridData: data, now: now) else {
+            points.removeValue(forKey: key)                                   // look the cell up again next run
+            return nil
+        }
+        return inches
     }
 }

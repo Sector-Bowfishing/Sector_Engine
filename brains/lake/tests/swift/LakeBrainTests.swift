@@ -248,7 +248,7 @@ final class LakeBrainTests: XCTestCase {
         XCTAssertNil(s.currentElevationFt)
     }
 
-    func testFreshStableLakeNextCheckIsTwoHoursNeverFasterThanCadence() {
+    func testFreshStableLakeIsCurrentToTheStaleLimitAndRecomputedInTime() {
         let now = iso("2026-06-01T12:30:00Z")
         let p = ref(.directOperatorPool, "PRIMARY")
         var x = inputs(binding([p]), live: [(p, hourly(iso("2026-06-01T12:00:00Z"), hours: 30, start: 600, step: 0))],
@@ -258,7 +258,8 @@ final class LakeBrainTests: XCTestCase {
         XCTAssertEqual(s.levelState, .inZone)
         XCTAssertEqual(s.trendState, .stable)
         XCTAssertEqual(s.differenceFromNormalPoolFt, 0)
-        XCTAssertEqual(ISO8601DateFormatter().date(from: s.freshness.nextCheckAt)!.timeIntervalSince(now), 7200, accuracy: 1)
+        // Recomputed early enough that its replacement is published before freshUntil: freshUntil − refresh latency (16:00 − 150 min).
+        XCTAssertEqual(ISO8601DateFormatter().date(from: s.freshness.nextCheckAt)!.timeIntervalSince(now), 3600, accuracy: 1)
         // STABLE and dry: current until the source's own stale limit (lag 60 + 3 × cadence 60 = 4 h after the reading).
         XCTAssertEqual(s.freshness.freshUntil, "2026-06-01T16:00:00Z")
         XCTAssertTrue(s.freshness.refreshReason.hasPrefix("STABLE"), s.freshness.refreshReason)
@@ -281,7 +282,7 @@ final class LakeBrainTests: XCTestCase {
         XCTAssertEqual(wet.freshness.freshUntil, "2026-06-01T15:00:00Z")
         XCTAssertTrue(wet.freshness.refreshReason.hasPrefix("CHANGING"), wet.freshness.refreshReason)
         XCTAssertTrue(soaked.freshness.refreshReason.hasPrefix("FAST"), soaked.freshness.refreshReason)
-        // FAST wants 2 h, but an hourly run cannot replace a value faster than the refresh latency (3 h): held at the floor.
+        // FAST wants 2 h after the reading (14:00), but the next run's value cannot be published before now + refresh latency (15:00).
         XCTAssertEqual(soaked.freshness.freshUntil, "2026-06-01T15:00:00Z")
         XCTAssertTrue(wet.facts?.contains { $0.contains("rain forecast") } ?? false)
     }
@@ -290,7 +291,7 @@ final class LakeBrainTests: XCTestCase {
         let s = evaluate(step: 0.008, rain: 0)           // 0.19 ft in 24 h: RISING (above the 0.10 ft stable band, below the 0.25 ft rapid floor)
         XCTAssertTrue(s.freshness.refreshReason.hasPrefix("CHANGING"), s.freshness.refreshReason)
         XCTAssertEqual(s.freshness.freshUntil, "2026-06-01T15:00:00Z")
-        XCTAssertEqual(s.freshness.nextCheckAt, "2026-06-01T14:00:00Z", "the source's next reading (cadence + lag)")
+        XCTAssertEqual(s.freshness.nextCheckAt, "2026-06-01T13:15:00Z", "recomputed on the next hourly grant")
         let fast = evaluate(step: 0.25, rain: 0)         // 1.5 ft in 6 h
         XCTAssertTrue(fast.freshness.refreshReason.hasPrefix("FAST"), fast.freshness.refreshReason)
     }
@@ -301,21 +302,72 @@ final class LakeBrainTests: XCTestCase {
         XCTAssertEqual(s.freshness.freshUntil, "2026-06-01T15:00:00Z")
     }
 
-    func testTheWindowNeverOutlivesTheSourcesStaleRuleOrUndercutsOneSourceCycle() {
+    func testTheWindowNeverOutlivesTheSourcesStaleRuleAndNeverEndsBeforeTheNextRunCanReplaceIt() {
+        let now = iso("2026-06-01T12:55:00Z")
+        let latency = Double(LakeLevelValidity.refreshLatencyMin) * 60
         for tier in [LakeTrendState.stable, .rising, .risingRapidly] {
             for rain in [nil, 0.0, 0.5, 2.0] as [Double?] {
-                for (c, l) in [(60, 60), (60, 120), (15, 30), (1440, 360)] {
-                    let d = LakeLevelValidity.decide(trend: tier, change: LakeLevelChange(h1: nil, h6: nil, h24: nil, d3: nil, d7: nil),
-                                                     rainNext12hIn: rain, cadenceMin: c, lagMin: l)
-                    XCTAssertLessThanOrEqual(d.windowMin, l + 3 * c, "ceiling: the source's stale rule")
-                    XCTAssertGreaterThanOrEqual(d.windowMin, min(l + 3 * c, c + l), "floor: one source cycle")
+                for (c, l) in [(60, 60), (60, 120), (15, 30), (1440, 360), (1440, 2880)] {
+                    for ageMin in stride(from: l, through: l + 3 * c, by: max(5, c / 4)) {
+                        let obs = now.addingTimeInterval(-Double(ageMin) * 60)
+                        let d = LakeLevelValidity.decide(trend: tier, change: LakeLevelChange(h1: nil, h6: nil, h24: nil, d3: nil, d7: nil),
+                                                         rainNext12hIn: rain, cadenceMin: c, lagMin: l, observedAt: obs, now: now)
+                        let ceiling = obs.addingTimeInterval(Double(l + 3 * c) * 60)
+                        XCTAssertLessThanOrEqual(d.freshUntil, ceiling, "ceiling: the source's stale rule")
+                        XCTAssertGreaterThanOrEqual(d.freshUntil, min(ceiling, now.addingTimeInterval(latency)), "floor: counted from the run")
+                        XCTAssertGreaterThanOrEqual(d.nextCheckAt, now)
+                        XCTAssertTrue(d.nextCheckAt <= now.addingTimeInterval(Double(LakeLevelValidity.recheckMin) * 60)
+                                      || d.nextCheckAt <= d.freshUntil.addingTimeInterval(-latency), "recomputed before its window runs out")
+                    }
                 }
             }
         }
-        // A daily source is current for one source cycle whatever the tier.
+        // A daily source 7 h after its reading: FAST wants 2 h after the reading, the run floor holds it to now + latency.
+        let obs = now.addingTimeInterval(-7 * 3600)
         let daily = LakeLevelValidity.decide(trend: .risingRapidly, change: LakeLevelChange(h1: nil, h6: 2, h24: nil, d3: nil, d7: nil),
-                                             rainNext12hIn: 3, cadenceMin: 1440, lagMin: 360)
-        XCTAssertEqual(daily.windowMin, 1800)
+                                             rainNext12hIn: 3, cadenceMin: 1440, lagMin: 360, observedAt: obs, now: now)
+        XCTAssertEqual(daily.freshUntil, now.addingTimeInterval(latency))
+        XCTAssertEqual(daily.tier, .fast)
+    }
+
+    /// Review of #216 (B1): hourly grants at :50, one publish cycle of lag, the copy lane checking every 10 min. While the gauge itself
+    /// is not overdue, the customer copy is never withdrawn, for every tier and when NWS fails.
+    func testHourlyGrantsNeverLetTheCopyLapseWhileTheGaugeIsCurrent() {
+        let start = iso("2026-06-01T00:50:00Z")
+        struct Case { var name: String; var lag: Int; var step: Double; var rain: Double? }
+        let cases = [60, 120].flatMap { lag in [
+            Case(name: "STABLE", lag: lag, step: 0, rain: 0), Case(name: "CHANGING", lag: lag, step: 0.008, rain: 0),
+            Case(name: "FAST", lag: lag, step: 0, rain: 1.5), Case(name: "NWS failure", lag: lag, step: 0, rain: nil)] }
+        for c in cases {
+            let p = LevelSeriesRef(provider: .usgs, capability: .directOperatorPool, station: "SIM", series: "00062", cadenceMin: 60, lagMin: c.lag)
+            var visible: [(at: Date, state: LakeLevelStateRecord)] = []
+            var published: LakeLevelStateRecord?
+            for k in 0..<48 {
+                let runAt = start.addingTimeInterval(Double(k) * 3600 + 5 * 60)           // granted at :50, running by :55
+                let plan = LakeBrainPlanner.planState(lakeId: "Test|ST", published: published, bindingVersion: "b",
+                                                      publishedBindingVersion: "b", now: runAt)
+                guard plan.action == .publish else { continue }
+                // The newest reading available now: top of the hour, `lag` minutes ago.
+                let avail = runAt.addingTimeInterval(-Double(c.lag) * 60)
+                let obs = Date(timeIntervalSince1970: (avail.timeIntervalSince1970 / 3600).rounded(.down) * 3600)
+                var x = inputs(binding([p]), live: [(p, hourly(obs, hours: 30, start: 600 + Double(k) * c.step, step: c.step))],
+                               guide: zone(590, 700), now: runAt)
+                x.rainNext12hIn = c.rain
+                let s = LakeLevelClassifier.evaluate(x)
+                XCTAssertFalse(s.freshness.stale, c.name)
+                published = s
+                visible.append((runAt.addingTimeInterval(3600), s))                        // reaches customers one publish cycle later
+            }
+            XCTAssertGreaterThan(visible.count, 30, "\(c.name) lag \(c.lag): recomputed on (nearly) every grant")
+            let f = ISO8601DateFormatter()
+            var t = visible[0].at
+            while t < start.addingTimeInterval(47 * 3600) {
+                let current = visible.last { $0.at <= t }!.state
+                let until = f.date(from: current.freshness.freshUntil!)!
+                XCTAssertLessThanOrEqual(t, until, "\(c.name) lag \(c.lag): copy would be withdrawn at \(f.string(from: t))")
+                t.addTimeInterval(600)
+            }
+        }
     }
 
     func testAStaleSourceIsNeverPresentedAsCurrentWhateverTheTier() {
@@ -348,35 +400,62 @@ final class LakeBrainTests: XCTestCase {
                        LakeRainSignal.Point(forecastGridData: "https://api.weather.gov/gridpoints/HUN/76,30"))
     }
 
-    func testRainClientCachesTheGridCellAndFailsToUnknown() async {
+    func testRainClientKeepsTheGridCellAcrossRunsAndFailsToUnknown() async {
         final class Calls: @unchecked Sendable { var urls: [String] = []; let lock = NSLock()
-            func add(_ u: String) { lock.lock(); urls.append(u); lock.unlock() } }
+            func add(_ u: String) { lock.lock(); urls.append(u); lock.unlock() }
+            var count: Int { lock.lock(); defer { lock.unlock() }; return urls.count } }
         let calls = Calls()
         let grid = "https://api.weather.gov/gridpoints/HUN/1,1"
-        let c = LakeRainSignalClient { url in
+        let fetch: LakeRainSignalClient.Fetch = { url in
             calls.add(url)
             if url.contains("/points/") { return Data("{\"properties\":{\"forecastGridData\":\"\(grid)\"}}".utf8) }
             return Data("{\"properties\":{\"quantitativePrecipitation\":{\"uom\":\"wmoUnit:mm\",\"values\":[{\"validTime\":\"2026-06-01T12:00:00+00:00/PT6H\",\"value\":6.35}]}}}".utf8)
         }
         let now = iso("2026-06-01T12:00:00Z")
-        let a = await c.nextHours(lat: 34.4, lon: -86.3, now: now)
-        let b = await c.nextHours(lat: 34.4, lon: -86.3, now: now)
+        let first = LakeRainSignalClient(fetch: fetch, spacing: 0)
+        let a = await first.nextHours(lat: 34.4, lon: -86.3, now: now)
+        let b = await first.nextHours(lat: 34.4, lon: -86.3, now: now)
         XCTAssertEqual(a, 0.25); XCTAssertEqual(b, 0.25)
-        XCTAssertEqual(calls.urls.count, 2, "one points + one grid request, then cached")
-        let none = LakeRainSignalClient { _ in nil }
-        let unknown = await none.nextHours(lat: 1, lon: 1, now: now)
+        XCTAssertEqual(calls.count, 2, "one points + one grid request, then cached for the run")
+        // The next run is seeded with the learned map (what LakeBrainRunner saves in the archive): grid request only.
+        let learned = await first.pointMap()
+        XCTAssertEqual(learned, [LakeRainSignalClient.pointKey(lat: 34.4, lon: -86.3): grid])
+        let second = LakeRainSignalClient(fetch: fetch, spacing: 0)
+        await second.seed(learned)
+        let c = await second.nextHours(lat: 34.4, lon: -86.3, now: now)
+        XCTAssertEqual(c, 0.25)
+        XCTAssertEqual(calls.count, 3, "no /points lookup on a seeded run")
+        // A cell whose forecast cannot be read is forgotten (looked up again next run), and the answer is unknown.
+        let broken = LakeRainSignalClient(fetch: { _ in nil }, spacing: 0, knownPoints: learned)
+        let unknown = await broken.nextHours(lat: 34.4, lon: -86.3, now: now)
         XCTAssertNil(unknown)
+        let forgotten = await broken.pointMap()
+        XCTAssertTrue(forgotten.isEmpty)
+    }
+
+    func testRainClientSpacesItsRequests() async {
+        let c = LakeRainSignalClient(fetch: { _ in nil }, spacing: 0.2)
+        let t0 = Date()
+        _ = await c.nextHours(lat: 1, lon: 1, now: t0)
+        _ = await c.nextHours(lat: 2, lon: 2, now: t0)
+        _ = await c.nextHours(lat: 3, lon: 3, now: t0)
+        XCTAssertGreaterThanOrEqual(Date().timeIntervalSince(t0), 0.39, "three requests, at least 0.2 s apart")
     }
 
     // MARK: Hourly runs skip the daily history pulls
 
-    func testHistoryIsCurrentOnlyWhenTheArchiveHoldsYesterday() {
+    func testHistoryIsCurrentWhenTheArchiveHoldsTheSourcesNewestExpectedDay() {
         let now = iso("2026-06-02T15:00:00Z")
-        let y = DailyLevel(date: "2026-06-01", ft: 600, sourceId: "x"), old = DailyLevel(date: "2026-05-28", ft: 600, sourceId: "x")
-        XCTAssertTrue(LakeBrainRunner.historyIsCurrent([old, y], backfill: false, now: now, timeZone: utc))
-        XCTAssertFalse(LakeBrainRunner.historyIsCurrent([old], backfill: false, now: now, timeZone: utc), "behind: pull the recent tail")
-        XCTAssertFalse(LakeBrainRunner.historyIsCurrent([], backfill: false, now: now, timeZone: utc), "empty archive: full pull")
-        XCTAssertFalse(LakeBrainRunner.historyIsCurrent([old, y], backfill: true, now: now, timeZone: utc), "backfill always pulls")
+        let cwms = LakeHistorySource.cwmsDaily(office: "SAS", series: "x"), rise = LakeHistorySource.riseDaily(item: "1")
+        func rows(_ days: String...) -> [DailyLevel] { days.map { DailyLevel(date: $0, ft: 600, sourceId: "x") } }
+        XCTAssertTrue(LakeBrainRunner.historyIsCurrent(rows("2026-05-28", "2026-06-01"), source: cwms, backfill: false, now: now, timeZone: utc))
+        XCTAssertFalse(LakeBrainRunner.historyIsCurrent(rows("2026-05-28"), source: cwms, backfill: false, now: now, timeZone: utc), "behind: pull the recent tail")
+        XCTAssertFalse(LakeBrainRunner.historyIsCurrent([], source: cwms, backfill: false, now: now, timeZone: utc), "empty archive: full pull")
+        XCTAssertFalse(LakeBrainRunner.historyIsCurrent(rows("2026-06-01"), source: cwms, backfill: true, now: now, timeZone: utc), "backfill always pulls")
+        // RISE posts about 48 h late: a row for 2026-05-31 is all it can have, so the hourly run does not re-pull it.
+        XCTAssertFalse(LakeBrainRunner.historyIsCurrent(rows("2026-05-31"), source: cwms, backfill: false, now: now, timeZone: utc))
+        XCTAssertTrue(LakeBrainRunner.historyIsCurrent(rows("2026-05-31"), source: rise, backfill: false, now: now, timeZone: utc))
+        XCTAssertFalse(LakeBrainRunner.historyIsCurrent(rows("2026-05-30"), source: rise, backfill: false, now: now, timeZone: utc))
     }
 
     // MARK: Presence

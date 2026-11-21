@@ -120,13 +120,13 @@ MANIFEST: dict[str, dict] = {
         "retryPolicy": "Cloud Run task retries 1", "freshnessPolicy": "paused",
     },
     "lake-brain": {
-        "displayName": "Lake Brain (pilot: 5 lakes)", "owner": "lake-brain", "kind": "Cloud Run job",
-        "classification": "INTERNAL", "environment": "cloud-run-job", "trigger": "orchestrator", "expectedRunsPerDay": 8,
-        "purpose": "Lake level / trend / baseline state for the 5 pilot lakes from the operator feeds; the brain's own plan() skips current lakes. Started by brain-orchestrator when due (dueAfterHours 2.5) and before it goes stale (staleAfterHours 6), never by a blind cron.",
+        "displayName": "Lake Brain (194 reviewed lakes)", "owner": "lake-brain", "kind": "Cloud Run job",
+        "classification": "INTERNAL", "environment": "cloud-run-job", "trigger": "orchestrator", "expectedRunsPerDay": 24,
+        "purpose": "Lake level / trend / baseline state for the 194 lakes with a REVIEWED binding (5 pilots + accepted_batch.json) from the operator feeds; the brain's own plan() skips current lakes. Started by brain-orchestrator about hourly (dueAfterHours 0.75), never by a blind cron; a run whose archive is current reads only the newest level, guide and NWS rain.",
         "inputs": ["tva-restapi", "usace-cwms-pool", "usgs-nwis-lake-elevation", "usace-access2water (fleet/candidate scopes)", "usbr-rise (fleet/candidate scopes)", "nws-nwps (fleet/candidate scopes)", "iem-hads (history)", "usgs-nwis-dv (history)", "nws-forecast-qpf (freshness signal)", "registry:lakes (compiled Engine directory)", "archive:water-temp-tva (read-only)", "archive:lake-brain (history, baselines, presence — private)"],
         "outputs": ["/brains/lake-brain", "/lakes/{k}/brain", "/lakes/{k}/states/lake", "/lakeFleet/{k}/slots/lake", "/snapshots/{k}/latest/lakeState", "/lakes/{k}/speciesPresence"],
         "brainDependencies": [], "statePaths": ["/brains/lake-brain", "/health/brains/lake-brain", "/lakes/{k}/states/lake"], "brainPublishInJob": True,
-        "retryPolicy": "orchestrator backoff 5 / 15 / 45 min after a FAILED run, then needs attention", "freshnessPolicy": "TIME: dueAfterHours 2.5, staleAfterHours 6; per-state nextCheckAt from the binding cadence",
+        "retryPolicy": "orchestrator backoff 5 / 15 / 45 min after a FAILED run, then needs attention", "freshnessPolicy": "TIME: dueAfterHours 0.75, staleAfterHours 6; per-state freshUntil/nextCheckAt from LakeLevelValidity (level change + NWS rain, inside the source stale rule)",
     },
     "lake-brain-ledger-daily": {
         "displayName": "Lake Brain ledger (daily pilot run, Cloud Scheduler)", "owner": "lake-brain", "kind": "Cloud Scheduler job",

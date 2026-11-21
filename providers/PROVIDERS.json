@@ -108,7 +108,7 @@
         "lake-brain"
       ],
       "costClass": "free",
-      "costNote": "Brain-exclusive acquisition inside the Lake Brain Swift runtime (brains/lake/runtime/LakeBrain/LakeRainSignal.swift); two requests per lake per run (the points lookup, cached per run, and the gridpoint forecast), User-Agent sent; feeds the adaptive freshness window only, never the published level",
+      "costNote": "Brain-exclusive acquisition inside the Lake Brain Swift runtime (brains/lake/runtime/LakeBrain/LakeRainSignal.swift); one gridpoint request per lake per run (the points lookup is done once and kept in the Lake archive, signals/nws-points.json), requests spaced 0.25 s apart, Sector-LakeBrain contact User-Agent; feeds the adaptive freshness window only, never the published level",
       "licenseRef": "Public US government data (no licence restriction); provider terms in docs/brains/LAKE_BRAIN_PROVIDERS.md"
     },
     {

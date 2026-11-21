@@ -197,10 +197,12 @@ public struct LakeSeasonalBand: Codable, Equatable, Sendable {
 public struct LakeStateFreshness: Codable, Equatable, Sendable {
     public var generatedAt: String
     public var sourceObservationAt: String?
-    /// observation + an adaptive window (LakeLevelValidity: FAST/CHANGING/STABLE from the lake's own movement and the rain
-    /// forecast), never past the source's stale rule and never shorter than one source cycle or the refresh latency.
+    /// min(observation + the source's stale limit, max(observation + an adaptive window, run + refresh latency)) — LakeLevelValidity:
+    /// FAST/CHANGING/STABLE from the lake's own movement and the rain forecast; never past the source's stale rule, never ending
+    /// before the next hourly run's replacement can be published.
     public var freshUntil: String?
-    /// Earliest a refresh is worthwhile. Never faster than the source cadence.
+    /// When the planner recomputes the lake (within LakeLevelValidity.plannerToleranceMin): the next grant for a FAST/CHANGING
+    /// lake; for a STABLE one its source's next reading, never later than freshUntil − refresh latency; one cadence when stale.
     public var nextCheckAt: String
     public var stale: Bool
     public var refreshReason: String
