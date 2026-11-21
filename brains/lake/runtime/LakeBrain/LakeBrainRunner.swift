@@ -16,6 +16,9 @@
 
 import Foundation
 import SectorEngine
+#if canImport(CoreLocation)
+import CoreLocation
+#endif
 
 public struct LakeBrainRunOptions: Sendable {
     public enum Scope: String, Sendable { case pilots, fleet }
@@ -160,7 +163,11 @@ public enum LakeBrainRunner {
                 var existing: [DailyLevel] = []
                 if let archive, let d = try? await archive.read(LakeDailyHistory.path(lake.id)) { existing = LakeDailyHistory.decode(d) }
                 var fresh: [DailyLevel] = []
-                for h in binding.history {
+                // Hourly runs (2026-11-21): a lake whose archive already holds yesterday's daily value skips the operator daily pulls
+                // (the slow part of a run: HADS is gated at one request per 15 s). Its baseline is built from the archive as before; the
+                // live level, guide and rain are still read every run. A backfill or an empty archive always pulls.
+                let historyCurrent = LakeBrainRunner.historyIsCurrent(existing, backfill: options.backfill, now: now, timeZone: tz)
+                for h in binding.history where !historyCurrent {
                     switch h {
                     case .sharedTVAArchive: continue
                     case .tvaOperatingGuide:
@@ -185,12 +192,15 @@ public enum LakeBrainRunner {
                     do { try await archive.write(LakeBaselineBuilder.path(b), try BrainJSON.encode(b), contentType: "application/json") }
                     catch { errors.append("baseline write: \(error)") }
                 }
+                let coordinate = lake.coordinate
+                let rain = await feeds.rainNext12h(lat: coordinate.latitude, lon: coordinate.longitude, now: now)
                 state = LakeLevelClassifier.evaluate(LakeLevelInputs(
                     lakeId: lake.id, binding: binding, capabilityIfUnbound: binding.capability,
                     fullPoolFt: lake.fullPoolFt, poolBasisIsFullPool: lake.poolBasis == .fullPool,
                     poolConfidenceLow: lake.poolConfidence == .low || lake.poolConfidence == nil,
                     live: liveResults, archivedHourly: archivedHourly, guide: guide, baseline: b,
-                    now: now, processingVersion: options.processingVersion, releaseBySource: releaseBySource))
+                    now: now, processingVersion: options.processingVersion, releaseBySource: releaseBySource,
+                    rainNext12hIn: rain))
             } else {
                 state = published
             }
@@ -217,6 +227,13 @@ public enum LakeBrainRunner {
         return LakeBrainLakeResult(lakeId: lake.id, plan: plan, state: state, profile: profile, presence: presenceRecords,
                                    baseline: baseline, historyRows: historyRows, historyWritten: historyWritten, errors: errors,
                                    dryRunCandidate: dryRunCandidate)
+    }
+
+    /// True when the archive already holds a daily value for yesterday (lake-local) or later, so an hourly run can skip the
+    /// operator daily pulls. Never true for a backfill or an empty archive.
+    static func historyIsCurrent(_ existing: [DailyLevel], backfill: Bool, now: Date, timeZone: TimeZone) -> Bool {
+        guard !backfill, let last = existing.last?.date else { return false }
+        return last >= LakeLevelCalendar.dayString(now.addingTimeInterval(-86_400), timeZone: timeZone)
     }
 
     /// Median of the history of the last 365 days minus the live level, when it is more than 15 ft (and >= 30 days exist).

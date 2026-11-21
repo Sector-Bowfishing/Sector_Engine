@@ -197,7 +197,8 @@ public struct LakeSeasonalBand: Codable, Equatable, Sendable {
 public struct LakeStateFreshness: Codable, Equatable, Sendable {
     public var generatedAt: String
     public var sourceObservationAt: String?
-    /// observation + cadence + lag: no newer observation is expected before this.
+    /// observation + an adaptive window (LakeLevelValidity: FAST/CHANGING/STABLE from the lake's own movement and the rain
+    /// forecast), never past the source's stale rule and never shorter than one source cycle or the refresh latency.
     public var freshUntil: String?
     /// Earliest a refresh is worthwhile. Never faster than the source cadence.
     public var nextCheckAt: String

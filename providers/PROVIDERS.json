@@ -100,6 +100,18 @@
       "licenseRef": "Public US government data (no licence restriction); provider terms in docs/brains/LAKE_BRAIN_PROVIDERS.md"
     },
     {
+      "providerId": "nws-forecast-qpf",
+      "displayName": "NWS forecast grid (quantitative precipitation, api.weather.gov)",
+      "acquisitionOwner": "lake-brain",
+      "healthOwner": "lake-brain",
+      "authorizedConsumers": [
+        "lake-brain"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside the Lake Brain Swift runtime (brains/lake/runtime/LakeBrain/LakeRainSignal.swift); two requests per lake per run (the points lookup, cached per run, and the gridpoint forecast), User-Agent sent; feeds the adaptive freshness window only, never the published level",
+      "licenseRef": "Public US government data (no licence restriction); provider terms in docs/brains/LAKE_BRAIN_PROVIDERS.md"
+    },
+    {
       "providerId": "nws-nwps",
       "displayName": "NWS National Water Prediction Service (pool gauges)",
       "acquisitionOwner": "lake-brain",

@@ -42,6 +42,8 @@ public struct LakeLevelInputs: Sendable {
     public var processingVersion: String?
     /// Release readings by live source id (LB-09); empty where no source publishes release.
     public var releaseBySource: [String: [ReleaseObservation]] = [:]
+    /// Forecast rain at the lake in the next 12 h, inches (LakeRainSignal). nil = unknown; LakeLevelValidity treats that conservatively.
+    public var rainNext12hIn: Double? = nil
 }
 
 public enum LakeLevelClassifier {
@@ -292,16 +294,22 @@ public enum LakeLevelClassifier {
             facts.append(abs(d) < 0.005 ? "Unchanged over 24 h." : "\(d > 0 ? "Up" : "Down") \(ft(abs(d))) over 24 h.")
         }
 
-        // Freshness
-        let freshUntil = sel.latest.at.addingTimeInterval(Double(src.cadenceMin + src.lagMin) * 60)
+        // Freshness: an adaptive window from the lake's own movement and the rain forecast (LakeLevelValidity), inside the source's
+        // stale rule. A changing or rain-bound lake is current for less time and is checked again at its source's next reading.
+        let validity = LakeLevelValidity.decide(trend: trendState, change: change, rainNext12hIn: x.rainNext12hIn,
+                                                cadenceMin: src.cadenceMin, lagMin: src.lagMin)
+        let freshUntil = sel.latest.at.addingTimeInterval(Double(validity.windowMin) * 60)
         let stale = sel.stale
         let cadence = Double(src.cadenceMin) * 60
-        let rapid = trendState == .risingRapidly || trendState == .fallingRapidly
+        let nextObservation = sel.latest.at.addingTimeInterval(Double(src.cadenceMin + src.lagMin) * 60)
         let next: Date
         let reason: String
         if stale { next = now.addingTimeInterval(cadence); reason = "source stale: check again after one source cadence" }
-        else if rapid { next = max(freshUntil, now.addingTimeInterval(cadence)); reason = "rapid change: next source observation" }
-        else { next = max(freshUntil, now.addingTimeInterval(max(cadence, 2 * 3600))); reason = "scheduled: stable lake, 2 h" }
+        else if validity.tier == .stable { next = max(nextObservation, now.addingTimeInterval(max(cadence, 2 * 3600))); reason = validity.reason }
+        else { next = max(nextObservation, now.addingTimeInterval(cadence)); reason = validity.reason }
+        if let r = x.rainNext12hIn, r >= LakeLevelValidity.rainIn {
+            facts.append(String(format: "%.2f in of rain forecast in the next 12 h.", r))
+        }
 
         let baselineStatus = x.baseline?.status ?? .none
         let readiness = readiness(binding: x.binding, kind: kind, stale: stale, hasGuide: x.guide != nil, baseline: baselineStatus)

@@ -61,7 +61,7 @@ def test_a_cycle_starts_only_due_active_pilot_jobs(live_cycle):
     setup, calls = live_cycle
     t = tree()
     t["brains"]["water-clarity"] = {"lastSuccessfulRun": ago(200), "staleAfterHours": 26, "stalenessModel": "TIME", "status": "CALIBRATION", "version": "1"}
-    t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(1)                         # Lake runs every 3 h since 2026-11-20 (Sector_Ops #51): keep it fresh here
+    t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(0.5)                       # Lake runs about hourly (due 0.75 h) since 2026-11-21 (Sector_Ops #51): keep it fresh here
     setup(t)
     assert OR.main([]) == 0
     assert sorted(calls["start"]) == ["water-clarity", "water-temp"]                 # stale + ACTIVE + orchestrator-owned
@@ -74,7 +74,7 @@ def test_fresh_pilot_jobs_are_not_started(live_cycle):
     t = tree()
     t["brains"]["water-temp"]["lastSuccessfulRun"] = ago(1)
     t["brains"]["water-clarity"] = {"lastSuccessfulRun": ago(2), "staleAfterHours": 26, "stalenessModel": "TIME", "status": "CALIBRATION", "version": "1"}
-    t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(1)                         # Lake runs every 3 h since 2026-11-20 (Sector_Ops #51): keep it fresh here
+    t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(0.5)                       # Lake runs about hourly (due 0.75 h) since 2026-11-21 (Sector_Ops #51): keep it fresh here
     setup(t)
     assert OR.main([]) == 0 and calls["start"] == []                                 # no redundant execution
 
@@ -87,14 +87,14 @@ def test_a_scoped_job_success_stops_hourly_reruns_while_the_fleet_registry_stays
     t["brains"]["water-temp"]["lastSuccessfulRun"] = ago(196)                       # fleet registry, untouched by scoped runs
     t["brains"]["water-clarity"] = {"lastSuccessfulRun": ago(2), "staleAfterHours": 26, "stalenessModel": "TIME", "status": "CALIBRATION", "version": "1"}
     t["jobs"] = {"water-temp-brain": {"lastSuccessfulAt": ago(1)}}
-    t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(1)                         # Lake runs every 3 h since 2026-11-20 (Sector_Ops #51): keep it fresh here
+    t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(0.5)                       # Lake runs about hourly (due 0.75 h) since 2026-11-21 (Sector_Ops #51): keep it fresh here
     setup(t)
     assert OR.main([]) == 0 and calls["start"] == []
     t2 = tree()
     t2["brains"]["water-temp"]["lastSuccessfulRun"] = ago(196)
     t2["brains"]["water-clarity"] = {"lastSuccessfulRun": ago(2), "staleAfterHours": 26, "stalenessModel": "TIME", "status": "CALIBRATION", "version": "1"}
     t2["jobs"] = {"water-temp-brain": {"lastSuccessfulAt": ago(7)}}
-    t2["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(1)                         # Lake runs every 3 h since 2026-11-20 (Sector_Ops #51): keep it fresh here
+    t2["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(0.5)                       # Lake runs about hourly (due 0.75 h) since 2026-11-21 (Sector_Ops #51): keep it fresh here
     calls["start"].clear()
     db = setup(t2)
     monkeypatch.setattr(OR, "sync_jobs", lambda *a, **k: (t2["jobs"], {}, 0))       # this cycle's /jobs records feed the control plane

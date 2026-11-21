@@ -31,5 +31,5 @@ def test_requirement_matches_the_provider_role():
     for p in BRAIN["providers"]:
         role = roles.get(p["providerId"])
         assert role is not None, f"{p['providerId']} has no role in the jobs manifest"
-        want = "OPTIONAL" if role in ("history", "fleet/candidate scopes") else "REQUIRED"
+        want = "OPTIONAL" if role in ("history", "fleet/candidate scopes", "freshness signal") else "REQUIRED"   # freshness signal: NWS rain; unknown is conservative, never a failure
         assert p["requirement"] == want, (p["providerId"], role, p["requirement"])

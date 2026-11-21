@@ -66,6 +66,13 @@ public protocol LakeLevelFeeds: Sendable {
     func daily(_ source: LakeHistorySource, since: String?, now: Date, timeZone: TimeZone) async -> [DailyLevel]?
     /// Archived hourly readings (shared archive), oldest first.
     func archivedHourly(_ source: LakeHistorySource, days: Int, now: Date, timeZone: TimeZone) async -> [LevelObservation]
+    /// Forecast rain at the lake in the next 12 h, inches (LakeRainSignal). nil = unknown.
+    func rainNext12h(lat: Double, lon: Double, now: Date) async -> Double?
+}
+
+public extension LakeLevelFeeds {
+    /// Feeds without a rain source (test fakes, replay): unknown, which LakeLevelValidity treats conservatively.
+    func rainNext12h(lat: Double, lon: Double, now: Date) async -> Double? { nil }
 }
 
 // MARK: - Live implementation
@@ -83,6 +90,8 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
 
     /// CWMS requests: bounded, classified retries (LakeLevelFeedsCWMS.swift). Injected by tests.
     let cwmsTransport: CWMSTransport
+    /// NWS forecast rain at the lake (LakeRainSignal.swift); one grid lookup per cell per run.
+    let rain = LakeRainSignalClient.live()
     let cwmsPolicy: CWMSRetryPolicy
 
     public init(sharedArchive: @escaping (String) -> LakeBrainArchive? = { _ in nil }) {
@@ -464,5 +473,24 @@ public enum LakeLevelCalendar {
         guard p.count == 3 else { return nil }
         let utc = TimeZone(identifier: "UTC")!
         return dayString(date(year: p[0], month: p[1], day: p[2], timeZone: utc).addingTimeInterval(-86_400), timeZone: utc)
+    }
+}
+
+// MARK: - Rain signal (NWS forecast grid; LakeRainSignal.swift)
+
+extension LakeRainSignalClient {
+    /// The live client: api.weather.gov GETs through the shared HTTP client (which sends the User-Agent NWS asks for).
+    public static func live() -> LakeRainSignalClient {
+        LakeRainSignalClient { url in
+            guard let u = URL(string: url),
+                  let r = try? await HTTP.get(u, headers: ["Accept": "application/geo+json"]), r.isSuccess else { return nil }
+            return r.body
+        }
+    }
+}
+
+extension PublicLakeLevelFeeds {
+    public func rainNext12h(lat: Double, lon: Double, now: Date) async -> Double? {
+        await rain.nextHours(lat: lat, lon: lon, now: now)
     }
 }
