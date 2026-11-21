@@ -5,6 +5,7 @@
 //
 
 import XCTest
+@testable import SectorEngine
 @testable import LakeBrain
 
 /// FakeFeeds plus counters for the daily pulls and a fixed rain answer.
@@ -73,6 +74,7 @@ final class LakeHourlyRefreshTests: XCTestCase {
                                                      previousProfile: nil, options: LakeBrainRunOptions(), now: FakeFeeds().now)
         let d = try XCTUnwrap(dry.state?.freshness), w = try XCTUnwrap(wet.state?.freshness)
         XCTAssertTrue(w.refreshReason.hasPrefix("FAST"), w.refreshReason)
-        XCTAssertLessThanOrEqual(try XCTUnwrap(w.freshUntil), try XCTUnwrap(d.freshUntil), "rain never lengthens the window")
+        let wu = try XCTUnwrap(w.freshUntil), du = try XCTUnwrap(d.freshUntil)
+        XCTAssertLessThanOrEqual(wu, du, "rain never lengthens the window")
     }
 }

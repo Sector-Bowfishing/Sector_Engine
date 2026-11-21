@@ -3,7 +3,7 @@ name: tmp-lake-fixtures
 on:
   push:
     branches: [feat/lake-smart-freshness-2026-11-21]
-    paths: [".github/workflows/tmp-lake-fixtures.yml"]
+    paths: [".github/workflows/tmp-lake-fixtures.yml", "brains/lake/**"]
 permissions:
   contents: read
 jobs:
@@ -16,10 +16,10 @@ jobs:
       - run: swift build --build-tests
       - run: SECTOR_WRITE_BRAIN_FIXTURES=1 swift test --skip-build --filter LakePublicationFixtureTests || true
       - run: swift test --skip-build --filter LakeBrainTests 2>&1 | tee lake-tests.log || true
-      - uses: actions/upload-artifact@v4
+      - name: print regenerated golden
         if: always()
-        with:
-          name: lake-golden
-          path: |
-            brains/lake/tests/golden/
-            lake-tests.log
+        run: |
+          git status --short
+          git diff --stat
+          tar czf - brains/lake/tests/golden | base64 -w0 > golden.b64
+          echo "GOLDEN_B64_BEGIN"; cat golden.b64; echo; echo "GOLDEN_B64_END"
