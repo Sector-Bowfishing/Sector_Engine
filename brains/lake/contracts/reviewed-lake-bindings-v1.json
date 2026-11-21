@@ -1,5 +1,5 @@
 {
-  "bindingVersion" : "bindings-2026-10-13.1+accepted.189.ac62647d",
+  "bindingVersion" : "bindings-2026-10-13.1+accepted.187.bd65f378",
   "owner" : "lake-brain",
   "reviewed" : [
     {
@@ -49,14 +49,7 @@
       "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Arkabutla Lake|MS",
       "liveSourceIds" : [
-        "cwms:MVK:Arkabutla Lake.Elev.Inst.1Hour.0.Guide Curve"
-      ]
-    },
-    {
-      "capability" : "DIRECT_LAKE_GAUGE",
-      "lakeId" : "Badin Lake|NC",
-      "liveSourceIds" : [
-        "nwps:BADN7:HPIRZ"
+        "cwms:MVK:Arkabutla Lake.Elev.Inst.1Hour.0.DCP-rev"
       ]
     },
     {
@@ -81,7 +74,7 @@
       "lakeId" : "Beltzville Lake|PA",
       "liveSourceIds" : [
         "a2w:NAP:Beltzville:Beltzville.Elev.Inst.15Minutes.0.Rev-DCP-88",
-        "cwms:NAP:Beltzville.Elev.Inst.15Minutes.0.Rev-DCP",
+        "cwms:NAP:Beltzville.Elev.Inst.15Minutes.0.Rev-DCP-88",
         "nwps:PRYP1:HPIRG"
       ]
     },
@@ -413,7 +406,7 @@
       "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Enid Lake|MS",
       "liveSourceIds" : [
-        "cwms:MVK:Enid Lake.Elev.Inst.1Hour.0.Guide Curve",
+        "cwms:MVK:Enid Lake.Elev.Inst.1Hour.0.DCP-rev",
         "nwps:ENDM6:HPIRG"
       ]
     },
@@ -542,7 +535,7 @@
       "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Grenada Lake|MS",
       "liveSourceIds" : [
-        "cwms:MVK:Grenada Lake.Elev.Inst.1Hour.0.Guide Curve",
+        "cwms:MVK:Grenada Lake.Elev.Inst.1Hour.0.DCP-rev",
         "nwps:GRNM6:HPIRG"
       ]
     },
@@ -582,13 +575,6 @@
       "lakeId" : "Herrington Lake|KY",
       "liveSourceIds" : [
         "nwps:DIXK2:HPIRG"
-      ]
-    },
-    {
-      "capability" : "DIRECT_LAKE_GAUGE",
-      "lakeId" : "High Rock Lake|NC",
-      "liveSourceIds" : [
-        "nwps:HGRN7:HPIRZ"
       ]
     },
     {
@@ -635,7 +621,7 @@
       "lakeId" : "Jennings Randolph Lake|MD",
       "liveSourceIds" : [
         "a2w:NAB:Randolph:Randolph.Elev.Inst.15Minutes.0.Best-NAB",
-        "cwms:NAB:Randolph.Elev.Inst.15Minutes.0.Best-NAB;88",
+        "cwms:NAB:Randolph.Elev.Inst.15Minutes.0.Best-NAB",
         "usgs:01595790:00062"
       ]
     },
@@ -1317,7 +1303,7 @@
       "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Sardis Lake|MS",
       "liveSourceIds" : [
-        "cwms:MVK:Sardis Lake.Elev.Inst.1Hour.0.Guide Curve",
+        "cwms:MVK:Sardis Lake.Elev.Inst.1Hour.0.DCP-rev",
         "nwps:SRDM6:HPIRG"
       ]
     },
@@ -1391,7 +1377,7 @@
       "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Smith (Lewis Smith)|AL",
       "liveSourceIds" : [
-        "cwms:SAM:Smith.Elev.Inst.1Hour.0.GC-APCO",
+        "cwms:SAM:Smith.Elev.Inst.1Hour.0.Raw-APCO",
         "nwps:ARKA1:HPIRZ"
       ]
     },

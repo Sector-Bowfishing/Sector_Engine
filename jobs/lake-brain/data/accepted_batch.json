@@ -6,7 +6,6 @@
   "Alum Creek Lake|OH",
   "Angostura Reservoir|SD",
   "Arkabutla Lake|MS",
-  "Badin Lake|NC",
   "Bankhead|AL",
   "Barren River Lake|KY",
   "Beltzville Lake|PA",
@@ -70,7 +69,6 @@
   "Havasu|AZ",
   "Hebgen Lake|MT",
   "Herrington Lake|KY",
-  "High Rock Lake|NC",
   "Hoover Reservoir|OH",
   "Hungry Horse Reservoir|MT",
   "Indian Lake|NY",
@@ -193,5 +191,5 @@
  "reviewedAt": "2026-11-20",
  "reviewedBy": "owner direction (Michael), not the sampled binding review",
  "approvalRef": "owner-direction-2026-11-20/sector-ops-51-7049169954",
- "note": "Accepted on Michael's all-lakes direction (2026-11-20): every MACHINE_VERIFIED binding except the hand-written pilots (already REVIEWED), Brookville Lake|IN and Sumner Lake|NM (failed the two-gauge comparison, Sector_Ops #34), and every held or excluded lake (held_lakes.json, bindings.proposed.v1.excluded.json). The pre-registered 60-row sample review (ingest_review_result.py) was NOT run."
+ "note": "Accepted on Michael's all-lakes direction (2026-11-20): every MACHINE_VERIFIED binding except the hand-written pilots (already REVIEWED), Brookville Lake|IN and Sumner Lake|NM (failed the two-gauge comparison, Sector_Ops #34), and every held or excluded lake (held_lakes.json, bindings.proposed.v1.excluded.json). The pre-registered 60-row sample review (ingest_review_result.py) was NOT run. 2026-11-21: 17 lakes moved to held_lakes.json dryrunCheck after the Mac mini dry-run gauge check (Sector_Ops #51; docs/brains/LAKE_BRAIN_DRYRUN_CHECK_2026-11-21.md). 2026-11-21: 15 of the 17 dry-run-held lakes returned after research (binding/history fixes or confirmed real drawdown), docs/brains/LAKE_BRAIN_DRYRUN_CHECK_2026-11-21.md."
 }
