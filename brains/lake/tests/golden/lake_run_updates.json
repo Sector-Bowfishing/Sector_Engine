@@ -399,7 +399,7 @@
     "freshness" : {
       "freshUntil" : "2026-06-01T15:00:00Z",
       "generatedAt" : "2026-06-01T12:30:00Z",
-      "nextCheckAt" : "2026-06-01T14:00:00Z",
+      "nextCheckAt" : "2026-06-01T13:15:00Z",
       "refreshReason" : "CHANGING: rain forecast unavailable; current for 180 min after the reading",
       "sourceObservationAt" : "2026-06-01T12:00:00Z",
       "stale" : false
@@ -630,7 +630,7 @@
     "freshness" : {
       "freshUntil" : "2026-06-01T15:00:00Z",
       "generatedAt" : "2026-06-01T12:30:00Z",
-      "nextCheckAt" : "2026-06-01T15:00:00Z",
+      "nextCheckAt" : "2026-06-01T13:15:00Z",
       "refreshReason" : "CHANGING: rain forecast unavailable; current for 180 min after the reading",
       "sourceObservationAt" : "2026-06-01T12:00:00Z",
       "stale" : false
@@ -839,7 +839,7 @@
     "freshness" : {
       "freshUntil" : "2026-06-01T15:00:00Z",
       "generatedAt" : "2026-06-01T12:30:00Z",
-      "nextCheckAt" : "2026-06-01T14:00:00Z",
+      "nextCheckAt" : "2026-06-01T13:15:00Z",
       "refreshReason" : "CHANGING: rain forecast unavailable; current for 180 min after the reading",
       "sourceObservationAt" : "2026-06-01T12:00:00Z",
       "stale" : false
@@ -1048,7 +1048,7 @@
     "freshness" : {
       "freshUntil" : "2026-06-01T15:00:00Z",
       "generatedAt" : "2026-06-01T12:30:00Z",
-      "nextCheckAt" : "2026-06-01T14:00:00Z",
+      "nextCheckAt" : "2026-06-01T13:15:00Z",
       "refreshReason" : "CHANGING: rain forecast unavailable; current for 180 min after the reading",
       "sourceObservationAt" : "2026-06-01T12:00:00Z",
       "stale" : false
@@ -1257,7 +1257,7 @@
     "freshness" : {
       "freshUntil" : "2026-06-01T15:00:00Z",
       "generatedAt" : "2026-06-01T12:30:00Z",
-      "nextCheckAt" : "2026-06-01T14:00:00Z",
+      "nextCheckAt" : "2026-06-01T13:15:00Z",
       "refreshReason" : "CHANGING: rain forecast unavailable; current for 180 min after the reading",
       "sourceObservationAt" : "2026-06-01T12:00:00Z",
       "stale" : false
@@ -1333,7 +1333,7 @@
     "freshness" : {
       "freshUntil" : "2026-06-01T15:00:00Z",
       "generatedAt" : "2026-06-01T12:30:00Z",
-      "nextCheckAt" : "2026-06-01T14:00:00Z",
+      "nextCheckAt" : "2026-06-01T13:15:00Z",
       "refreshReason" : "CHANGING: rain forecast unavailable; current for 180 min after the reading",
       "sourceObservationAt" : "2026-06-01T12:00:00Z",
       "stale" : false
@@ -1410,7 +1410,7 @@
     "freshness" : {
       "freshUntil" : "2026-06-01T15:00:00Z",
       "generatedAt" : "2026-06-01T12:30:00Z",
-      "nextCheckAt" : "2026-06-01T15:00:00Z",
+      "nextCheckAt" : "2026-06-01T13:15:00Z",
       "refreshReason" : "CHANGING: rain forecast unavailable; current for 180 min after the reading",
       "sourceObservationAt" : "2026-06-01T12:00:00Z",
       "stale" : false
@@ -1486,7 +1486,7 @@
     "freshness" : {
       "freshUntil" : "2026-06-01T15:00:00Z",
       "generatedAt" : "2026-06-01T12:30:00Z",
-      "nextCheckAt" : "2026-06-01T14:00:00Z",
+      "nextCheckAt" : "2026-06-01T13:15:00Z",
       "refreshReason" : "CHANGING: rain forecast unavailable; current for 180 min after the reading",
       "sourceObservationAt" : "2026-06-01T12:00:00Z",
       "stale" : false
@@ -1562,7 +1562,7 @@
     "freshness" : {
       "freshUntil" : "2026-06-01T15:00:00Z",
       "generatedAt" : "2026-06-01T12:30:00Z",
-      "nextCheckAt" : "2026-06-01T14:00:00Z",
+      "nextCheckAt" : "2026-06-01T13:15:00Z",
       "refreshReason" : "CHANGING: rain forecast unavailable; current for 180 min after the reading",
       "sourceObservationAt" : "2026-06-01T12:00:00Z",
       "stale" : false
@@ -1638,7 +1638,7 @@
     "freshness" : {
       "freshUntil" : "2026-06-01T15:00:00Z",
       "generatedAt" : "2026-06-01T12:30:00Z",
-      "nextCheckAt" : "2026-06-01T14:00:00Z",
+      "nextCheckAt" : "2026-06-01T13:15:00Z",
       "refreshReason" : "CHANGING: rain forecast unavailable; current for 180 min after the reading",
       "sourceObservationAt" : "2026-06-01T12:00:00Z",
       "stale" : false
