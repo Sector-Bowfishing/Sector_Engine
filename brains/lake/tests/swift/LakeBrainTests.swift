@@ -287,7 +287,7 @@ final class LakeBrainTests: XCTestCase {
     }
 
     func testAChangingLakeIsCurrentForLessTimeAndCheckedAtTheNextReading() {
-        let s = evaluate(step: 0.06, rain: 0)            // 0.36 ft in 6 h
+        let s = evaluate(step: 0.008, rain: 0)           // 0.19 ft in 24 h: RISING (above the 0.10 ft stable band, below the 0.25 ft rapid floor)
         XCTAssertTrue(s.freshness.refreshReason.hasPrefix("CHANGING"), s.freshness.refreshReason)
         XCTAssertEqual(s.freshness.freshUntil, "2026-06-01T15:00:00Z")
         XCTAssertEqual(s.freshness.nextCheckAt, "2026-06-01T14:00:00Z", "the source's next reading (cadence + lag)")

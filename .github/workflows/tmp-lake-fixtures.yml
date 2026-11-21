@@ -19,7 +19,7 @@ jobs:
       - name: print regenerated golden
         if: always()
         run: |
-          git status --short
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"; git status --short
           git diff --stat
           tar czf - brains/lake/tests/golden | base64 -w0 > golden.b64
           echo "GOLDEN_B64_BEGIN"; cat golden.b64; echo; echo "GOLDEN_B64_END"
