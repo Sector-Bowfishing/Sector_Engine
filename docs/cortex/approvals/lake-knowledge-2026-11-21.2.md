@@ -1,4 +1,4 @@
-# Approval record: `lake-knowledge-2026-11-21.2` (PENDING)
+# Approval record: `lake-knowledge-2026-11-21.2`
 
 Replaces the unshipped, never-approved draft id `lake-knowledge-2026-11-21.1` (releases are immutable, so the research fixes needed a new id).
 
@@ -7,8 +7,9 @@ Replaces the unshipped, never-approved draft id `lake-knowledge-2026-11-21.1` (r
 | Release | `lake-knowledge-2026-11-21.2` (Lake Brain reviewed source bindings, `PACKAGED_IN_IMAGE`) |
 | Release digest | `sha256:d9fb97b7bd2b51bdc43e7550daacbfb1997c2a9076bc5c26e737d2e6c74b4b14` |
 | Supersedes | `lake-knowledge-2026-11-20.1` (its bindings file changed: binding/history fixes from the 2026-11-21 dry-run research; 2 lakes held) |
-| Status | **NOT_RECORDED: pending Michael's approval** |
-| Requested scope | INTERNAL, CALIBRATION and CUSTOMER (same as 2026-11-20.1) |
+| Approved by | Michael Cather (owner), in chat, 2026-11-21 04:15Z ("yes to both"); recorded on Sector_Ops #51 comment 7057138140 |
+| Scope | **INTERNAL**, **CALIBRATION** and **CUSTOMER** |
+| Customer eligible | **Yes** |
 
 ## What changed in the release
 - `LakeBrain/LakeSourceBindingsGenerated.swift`: `acceptedLakeIds` goes from 189 to **187**; Lake's reviewed set (with the 5 pilots) and the customer Lake-level list go from 194 to **192**.
@@ -20,8 +21,10 @@ Replaces the unshipped, never-approved draft id `lake-knowledge-2026-11-21.1` (r
   - Still held: Badin NC, High Rock NC (no live source).
 - Every other packaged file is unchanged.
 
-## Until it is approved
-- The Publisher (`PackagedReleaseResolver`) accepts only an `APPROVED` release, so a Publisher image built from this commit would refuse Lake artifacts. Approve before the next Publisher redeploy and LakeBrainJob rebuild; nothing is deployed by merging.
+## What this approval allows
+- The central Publisher may accept Lake Brain artifacts that declare this release (`PackagedReleaseResolver` requires `APPROVED`).
+- Customer use of the release.
 
-## To approve
-Michael confirms in chat or in an "Owner approval (Michael, …)" comment on Sector_Ops #51; then set `approval.status` to `APPROVED` here and in `brains/lake/runtime/knowledge-release.json`.
+## What it does not allow
+- Turning on any customer copy: `PUBLISHER_CUSTOMER_LAKE_LEVEL` stays Michael's switch.
+- Any further change to the bindings: changing a file in the release means a new `releaseId` and a new approval.
