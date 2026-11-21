@@ -18,12 +18,26 @@ def _args(**kw):
     return types.SimpleNamespace(**base)
 
 
+class Main(unittest.TestCase):
+    def test_out_of_range_exits_2(self):
+        orig = CLI.read
+        CLI.read = lambda: None
+        try:
+            self.assertEqual(CLI.main(["brain", "--changed-by", "t", "--reason", "r", "--brain", "lake-brain",
+                                       "--max-runs-per-day", "0", "--dry-run"]), 2)
+            self.assertEqual(CLI.main(["brain", "--changed-by", "t", "--reason", "r", "--brain", "lake-brain",
+                                       "--max-runs-per-day", "36", "--dry-run"]), 0)
+        finally:
+            CLI.read = orig
+
+
 class RunLimit(unittest.TestCase):
     def setUp(self):
         self.ids = sorted(CLI.O.load_manifest()["brains"])
         self.assertIn("lake-brain", self.ids)
-        raw = EC.document("ENABLED", brains={b: {"enabled": b == "lake-brain", "limits": dict(EC.DEFAULT_LIMITS)} for b in self.ids},
-                          changed_by="x", changed_at="2026-11-21T00:00:00Z", approval_ref="ref", reason="r", max_starts_per_cycle=2)
+        raw = EC.document("ENABLED", brains={b: {"enabled": b == "lake-brain", "limits": {**EC.DEFAULT_LIMITS, "maxRunsPerDay": 12}}
+                                             for b in self.ids},
+                          changed_by="x", changed_at="2026-11-21T00:00:00Z", approval_ref="ref", reason="r", max_starts_per_cycle=3)
         self.cur = EC.parse(raw)
         self.brains = {b: {"enabled": self.cur["brains"][b]["enabled"], "limits": self.cur["brains"][b]["limits"]} for b in self.ids}
 
@@ -32,11 +46,12 @@ class RunLimit(unittest.TestCase):
         p = EC.parse(doc)
         self.assertEqual(p["state"], "ENABLED")
         self.assertEqual(p["approvalRef"], "ref")
+        self.assertEqual(p["maxStartsPerCycle"], 3)
         self.assertEqual(EC.limits(p, "lake-brain")["maxRunsPerDay"], 36)
         self.assertTrue(EC.brain_enabled(p, "lake-brain"))
         for b in self.ids:
             if b != "lake-brain":
-                self.assertEqual(EC.limits(p, b)["maxRunsPerDay"], 24)
+                self.assertEqual(EC.limits(p, b)["maxRunsPerDay"], 12)
                 self.assertFalse(EC.brain_enabled(p, b))
 
     def test_out_of_range_refused(self):

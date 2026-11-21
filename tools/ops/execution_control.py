@@ -27,7 +27,7 @@ from sector_brain_platform import execution_control as EC, orchestration as O  #
 
 RTDB = os.environ.get("BRAIN_RTDB_URL", "https://sector-brain.firebaseio.com")
 CONFIRM = "RESUME RECURRING BRAIN EXECUTION"
-MAX_RUNS_PER_DAY_CAP = 96                  # one run every 15 min; the orchestrator itself runs hourly, so higher means nothing
+MAX_RUNS_PER_DAY_CAP = 96                  # sanity cap; runner grants count toward the limit as well as Orchestrator starts
 
 
 def _token() -> str:
@@ -63,7 +63,7 @@ def main(argv=None) -> int:
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args(argv)
     ids = sorted(O.load_manifest()["brains"])
-    cur_raw = None if a.dry_run and a.cmd != "show" else read()
+    cur_raw = None if a.dry_run and a.cmd in ("pause", "enable") else read()   # brain --dry-run previews against the live document
     cur = EC.parse(cur_raw)
     if a.cmd == "show":
         print(json.dumps({"raw": cur_raw, "effective": EC.summary(cur)}, indent=1))
