@@ -26,7 +26,7 @@ def test_the_publisher_list_is_the_engine_validated_list():
     s = open(os.path.join(ROOT, "Sources", "SectorEngine", "API", "LakeLevelOutputAPI.swift")).read()
     block = s[s.index("validatedLakeIds"):]
     swift = set(re.findall(r'"([^"]+)"', block[block.index("[") + 1:block.index("]")]))
-    assert C.eligible_lake_ids() == swift and len(swift) == 194
+    assert C.eligible_lake_ids() == swift and len(swift) == 177
 
 
 def test_the_list_is_exactly_lakes_reviewed_set():

@@ -44,12 +44,14 @@ final class LakeLevelOutputTests: XCTestCase {
     func testValidatedListMatchesTheLakeBetaResult() async {
         let ids = LakeLevelEligibility.validatedLakeIds
         // Every REVIEWED lake (5 pilots + accepted batch; owner approval 2026-11-20 20:01Z, Sector_Ops #51), and no other.
-        XCTAssertEqual(ids.count, 194)
+        XCTAssertEqual(ids.count, 177)
         // (Equality with LakeSourceBindings.reviewed is asserted in LakeBrainTests, which can see both modules.)
         for lake in ["Lake Hartwell|SC", "Bluestone Lake|WV", "Tappan Lake|OH"] { XCTAssertTrue(ids.contains(lake), lake) }
         // Failed the two-gauge check, held or excluded: no reviewed binding, never listed.
         for lake in ["Brookville Lake|IN", "Sumner Lake|NM", "Cagles Mill Lake|IN", "Navajo Reservoir|NM", "Kentucky Lake|KY",
-                     "Tygart Lake|WV", "Canyon Lake|TX"] {
+                     "Tygart Lake|WV", "Canyon Lake|TX",
+                     // held by the 2026-11-21 dry-run gauge check (held_lakes.json dryrunCheck)
+                     "Sutton Lake|WV", "Deep Creek Lake|MD", "El Vado Lake|NM", "Badin Lake|NC"] {
             XCTAssertFalse(ids.contains(lake), lake)
         }
         // The 4 TVA mainstem lakes are listed as operator-only (owner decision 2026-11-20), and only they are.
@@ -59,7 +61,7 @@ final class LakeLevelOutputTests: XCTestCase {
         let directory = Set(LakeDirectory.all.map(\.id))
         XCTAssertTrue(ids.isSubset(of: directory), "\(ids.subtracting(directory))")
         // Listed and flagged, but with no reader the lake is still UNKNOWN.
-        let o = await LakeLevelOutputAPI.output(lakeId: "Sutton Lake|WV", eligibility: .fromEnvironment(["SECTOR_LAKE_LEVEL_OUTPUT": "1"]),
+        let o = await LakeLevelOutputAPI.output(lakeId: "Bluestone Lake|WV", eligibility: .fromEnvironment(["SECTOR_LAKE_LEVEL_OUTPUT": "1"]),
                                                 reader: nil)
         XCTAssertEqual(o.reason, LakeLevelOutputAPI.noReader)
     }

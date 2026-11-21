@@ -85,5 +85,44 @@
   "Lake Winnipesaukee|NH"
  ],
  "providerTermsReason": "provider terms unconfirmed (St. Johns River WMD / NH DES): skip unclear operator endpoints unless terms are confirmed",
- "seriesMismatchReason": "history series differs from the live binding by more than 15 ft - datum/series mismatch pending resolution (found by the rules-v2 hold-out QA: holdout_v2_results.json, seriesQa.mismatchOver15ft)"
+ "seriesMismatchReason": "history series differs from the live binding by more than 15 ft - datum/series mismatch pending resolution (found by the rules-v2 hold-out QA: holdout_v2_results.json, seriesQa.mismatchOver15ft)",
+ "dryrunCheck": [
+  "Abiquiu Lake|NM",
+  "Badin Lake|NC",
+  "Beltzville Lake|PA",
+  "Cochiti Lake|NM",
+  "Deep Creek Lake|MD",
+  "Don Pedro|CA",
+  "El Vado Lake|NM",
+  "Fern Ridge Reservoir|OR",
+  "Grenada Lake|MS",
+  "Havasu|AZ",
+  "High Rock Lake|NC",
+  "Jennings Randolph Lake|MD",
+  "John Martin Reservoir|CO",
+  "Sardis Lake|MS",
+  "Smith (Lewis Smith)|AL",
+  "Summersville Lake|WV",
+  "Sutton Lake|WV"
+ ],
+ "dryrunCheckReasons": {
+  "Abiquiu Lake|NM": "seeded history vs live series mismatch -23.8 ft",
+  "Badin Lake|NC": "no live reading (nwps:BADN7 UNAVAILABLE)",
+  "Beltzville Lake|PA": "second source disagrees 0.67 ft (cwms:NAP vs a2w:NAP)",
+  "Cochiti Lake|NM": "seeded history vs live series mismatch -20.2 ft",
+  "Deep Creek Lake|MD": "second source disagrees 1.79 ft (nwps:THYM2 vs usgs:03075871)",
+  "Don Pedro|CA": "seeded history vs live series mismatch +19.9 ft; 48.3 ft from full pool (hand review)",
+  "El Vado Lake|NM": "hand review: 87.0 ft from directory full pool",
+  "Fern Ridge Reservoir|OR": "seeded history vs live series mismatch +16.1 ft",
+  "Grenada Lake|MS": "second source disagrees 1.03 ft (nwps:GRNM6 vs cwms:MVK)",
+  "Havasu|AZ": "second source disagrees 0.83 ft (nwps:LKHC1 vs rise:6128)",
+  "High Rock Lake|NC": "no live reading (nwps:HGRN7 UNAVAILABLE)",
+  "Jennings Randolph Lake|MD": "second source disagrees 0.94 ft (cwms:NAB vs a2w:NAB)",
+  "John Martin Reservoir|CO": "hand review: 40.5 ft from directory full pool",
+  "Sardis Lake|MS": "second source disagrees 1.19 ft (nwps:SRDM6 vs cwms:MVK)",
+  "Smith (Lewis Smith)|AL": "second source disagrees 0.84 ft (nwps:ARKA1 vs cwms:SAM)",
+  "Summersville Lake|WV": "seeded history vs live series mismatch +35.8 ft; 53.9 ft from full pool",
+  "Sutton Lake|WV": "seeded history vs live series mismatch +18.5 ft"
+ },
+ "dryrunCheckReason": "held after the 2026-11-21 Mac mini dry-run gauge check at Engine 66957c45 (second source >0.5 ft, no live reading, seeded-history/live series mismatch >15 ft, or hand review vs full pool); see docs/brains/LAKE_BRAIN_DRYRUN_CHECK_2026-11-21.md"
 }
