@@ -101,6 +101,8 @@ jobs:
           retention-days: 90
       - name: Brain Certification Kit self-tests (BRAIN_CERT_KIT_V1; synthetic Brain, no real Brain involved)
         run: python -m pytest -q tools/brain_certification
+      - name: Owner execution-control CLI (dry-run document building)
+        run: python -m pytest -q tools/ops/tests
       - name: Wind package gates (staging, import boundary, clean copy; dependency gates mandatory here)
         env:
           SECTOR_REQUIRE_WIND_DEPS: "1"

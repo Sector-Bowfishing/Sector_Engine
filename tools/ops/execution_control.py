@@ -7,6 +7,7 @@ registry writer @external-admin). Run by the owner with their own gcloud identit
   python3 tools/ops/execution_control.py enable --changed-by <name> --approval-ref <ref> --reason "<why>" \\
           --brains water-temp,water-clarity --confirm "RESUME RECURRING BRAIN EXECUTION"           # owner authorization only
   python3 tools/ops/execution_control.py brain  --changed-by <name> --brain wind --disable --reason "<why>"
+  python3 tools/ops/execution_control.py brain  --changed-by <name> --brain lake-brain --max-runs-per-day 36 --reason "<why>"
 
 `enable` leaves the Cloud Scheduler PAUSED: the central trigger is resumed separately by tools/ops/resume-orchestrator.sh, after its preflight.
 `--dry-run` prints the document instead of writing it."""
@@ -26,6 +27,7 @@ from sector_brain_platform import execution_control as EC, orchestration as O  #
 
 RTDB = os.environ.get("BRAIN_RTDB_URL", "https://sector-brain.firebaseio.com")
 CONFIRM = "RESUME RECURRING BRAIN EXECUTION"
+MAX_RUNS_PER_DAY_CAP = 96                  # one run every 15 min; the orchestrator itself runs hourly, so higher means nothing
 
 
 def _token() -> str:
@@ -55,6 +57,8 @@ def main(argv=None) -> int:
     g.add_argument("--enable-brain", dest="brain_on", action="store_const", const=True)
     g.add_argument("--disable", dest="brain_on", action="store_const", const=False)
     ap.add_argument("--max-starts-per-cycle", type=int, default=EC.DEFAULT_MAX_STARTS_PER_CYCLE)
+    ap.add_argument("--max-runs-per-day", type=int, help="brain: set this Brain's maxRunsPerDay (1-96); leaves enabled as it is unless "
+                    "--enable-brain/--disable is also given")
     ap.add_argument("--confirm", default="")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args(argv)
@@ -107,10 +111,15 @@ def _build(a, cur, brains, ids, now):
         doc = EC.document("ENABLED", brains=brains, changed_by=a.changed_by, changed_at=now, approval_ref=a.approval_ref, reason=a.reason,
                           max_starts_per_cycle=a.max_starts_per_cycle)
     else:
-        if a.brain not in ids or a.brain_on is None:
-            print("brain needs --brain <id> and --enable-brain or --disable", file=sys.stderr)
+        if a.brain not in ids or (a.brain_on is None and a.max_runs_per_day is None):
+            print("brain needs --brain <id> and --enable-brain, --disable or --max-runs-per-day", file=sys.stderr)
             return None
-        brains[a.brain]["enabled"] = a.brain_on
+        if a.brain_on is not None:
+            brains[a.brain]["enabled"] = a.brain_on
+        if a.max_runs_per_day is not None:
+            if not 1 <= a.max_runs_per_day <= MAX_RUNS_PER_DAY_CAP:
+                raise ValueError(f"--max-runs-per-day must be 1..{MAX_RUNS_PER_DAY_CAP}")
+            brains[a.brain]["limits"] = {**brains[a.brain]["limits"], "maxRunsPerDay": a.max_runs_per_day}
         doc = EC.document(cur["state"], brains=brains, changed_by=a.changed_by, changed_at=now, approval_ref=cur.get("approvalRef"),
                           reason=a.reason, max_starts_per_cycle=cur.get("maxStartsPerCycle", EC.DEFAULT_MAX_STARTS_PER_CYCLE))
     return doc
