@@ -23,7 +23,7 @@ WRITE = re.compile(r"\b(store|archive|writer|primary)\.(update|delete|write)\(")
 EXPECTED = {
     "brains/lake/runtime": {
         ("LakeBrain/LakeBrainRunner.swift", "store.update("): 3,
-        ("LakeBrain/LakeBrainRunner.swift", "archive.write("): 2,
+        ("LakeBrain/LakeBrainRunner.swift", "archive.write("): 3,          # private archive: daily history, baseline, NWS point → grid map (2026-11-21)
         ("LakeBrain/LakePredictionLedger.swift", "archive.write("): 1,
         ("LakeBrain/LakeBrainArchive.swift", "primary.write("): 1,          # LayeredLakeBrainArchive: writes only to its primary (never the seed)
     },

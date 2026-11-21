@@ -35,7 +35,7 @@ def run(world, monkeypatch, argv, policy=CLOUD, store=None, lease_holder=None, c
         ctl_edit(ctl)
     t = stale_world(ctl)
     t["brains"]["water-clarity"]["lastSuccessfulRun"] = ago(1)
-    t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(1)
+    t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(0.5)                       # Lake is due after 0.75 h (about hourly) since 2026-11-21
     setup(t)
     assert OR.main(argv) == 0
     return calls["start"]
@@ -160,7 +160,7 @@ def test_local_mode_never_runs_an_in_process_writer(world, monkeypatch, capsys, 
     t = stale_world(ctl)
     t["brains"]["wind"]["lastSuccessfulRun"] = ago(0)
     t["brains"]["water-clarity"]["lastSuccessfulRun"] = ago(1)
-    t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(1)
+    t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(0.5)                       # Lake is due after 0.75 h (about hourly) since 2026-11-21
     setup(t)
     monkeypatch.setattr(OR, "build_publication_store", lambda d, b=None: MemoryObjectStore())
     monkeypatch.setattr(RL, "load_policy", lambda path=None: CLOUD)
@@ -192,7 +192,7 @@ def test_regrant_cooldown_reads_the_staleness_window_from_the_control_manifest()
     Water Clarity (26 h) would have been granted up to four cycles a day while nothing was published."""
     man = OR.O.load_manifest()
     assert OR.regrant_cooldown_minutes(man, "water-clarity") == 26 * 60
-    assert OR.regrant_cooldown_minutes(man, "lake-brain") == 150                              # dueAfterHours 2.5 (owner approval 2026-11-20 20:01Z, Sector_Ops #51)
+    assert OR.regrant_cooldown_minutes(man, "lake-brain") == 45                               # dueAfterHours 0.75: one grant per hourly tick (Sector_Ops #51, 2026-11-20)
     assert OR.regrant_cooldown_minutes(man, "water-temp") == 6 * 60
     assert OR.regrant_cooldown_minutes(man, "wind") == 90                                      # 1.5 h, above the 20 min lease TTL
     assert OR.regrant_cooldown_minutes(man, "sector-intelligence") == 6 * 60                  # INPUT_CHANGED (owner approval 2026-11-18) still at most one grant per 6 h

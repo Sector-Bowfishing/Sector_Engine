@@ -66,6 +66,18 @@ public protocol LakeLevelFeeds: Sendable {
     func daily(_ source: LakeHistorySource, since: String?, now: Date, timeZone: TimeZone) async -> [DailyLevel]?
     /// Archived hourly readings (shared archive), oldest first.
     func archivedHourly(_ source: LakeHistorySource, days: Int, now: Date, timeZone: TimeZone) async -> [LevelObservation]
+    /// Forecast rain at the lake in the next 12 h, inches (LakeRainSignal). nil = unknown.
+    func rainNext12h(lat: Double, lon: Double, now: Date) async -> Double?
+    /// The NWS coordinate → grid-cell map learned so far, and seeding it from the archive (LakeRainSignal.pointsPath).
+    func rainPoints() async -> [String: String]
+    func seedRainPoints(_ known: [String: String]) async
+}
+
+public extension LakeLevelFeeds {
+    /// Feeds without a rain source (test fakes, replay): unknown, which LakeLevelValidity treats conservatively.
+    func rainNext12h(lat: Double, lon: Double, now: Date) async -> Double? { nil }
+    func rainPoints() async -> [String: String] { [:] }
+    func seedRainPoints(_ known: [String: String]) async {}
 }
 
 // MARK: - Live implementation
@@ -83,6 +95,8 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
 
     /// CWMS requests: bounded, classified retries (LakeLevelFeedsCWMS.swift). Injected by tests.
     let cwmsTransport: CWMSTransport
+    /// NWS forecast rain at the lake (LakeRainSignal.swift); one grid lookup per cell per run.
+    let rain = LakeRainSignalClient.live()
     let cwmsPolicy: CWMSRetryPolicy
 
     public init(sharedArchive: @escaping (String) -> LakeBrainArchive? = { _ in nil }) {
@@ -465,4 +479,24 @@ public enum LakeLevelCalendar {
         let utc = TimeZone(identifier: "UTC")!
         return dayString(date(year: p[0], month: p[1], day: p[2], timeZone: utc).addingTimeInterval(-86_400), timeZone: utc)
     }
+}
+
+// MARK: - Rain signal (NWS forecast grid; LakeRainSignal.swift)
+
+extension LakeRainSignalClient {
+    /// The live client: api.weather.gov GETs with the Sector-LakeBrain contact User-Agent NWS asks every caller for (LAKE_BRAIN_PROVIDERS.md).
+    public static func live() -> LakeRainSignalClient {
+        LakeRainSignalClient(fetch: { url in
+            guard let r = await LakeFeedHTTP.get(url, accept: "application/geo+json", timeout: 30), r.isSuccess else { return nil }
+            return r.body
+        })
+    }
+}
+
+extension PublicLakeLevelFeeds {
+    public func rainNext12h(lat: Double, lon: Double, now: Date) async -> Double? {
+        await rain.nextHours(lat: lat, lon: lon, now: now)
+    }
+    public func rainPoints() async -> [String: String] { await rain.pointMap() }
+    public func seedRainPoints(_ known: [String: String]) async { await rain.seed(known) }
 }

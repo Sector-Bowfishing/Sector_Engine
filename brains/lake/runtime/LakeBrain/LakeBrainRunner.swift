@@ -16,6 +16,9 @@
 
 import Foundation
 import SectorEngine
+#if canImport(CoreLocation)
+import CoreLocation
+#endif
 
 public struct LakeBrainRunOptions: Sendable {
     public enum Scope: String, Sendable { case pilots, fleet }
@@ -160,7 +163,11 @@ public enum LakeBrainRunner {
                 var existing: [DailyLevel] = []
                 if let archive, let d = try? await archive.read(LakeDailyHistory.path(lake.id)) { existing = LakeDailyHistory.decode(d) }
                 var fresh: [DailyLevel] = []
-                for h in binding.history {
+                // Hourly runs (2026-11-21): a daily source whose newest expected day is already in the archive is not pulled again (the
+                // slow part of a run: HADS is gated at one request per 15 s). "Expected" follows each source's own latency (RISE posts
+                // about 48 h late), so a slow source is not re-pulled every hour. The live level, guide and rain are still read every
+                // run. A backfill or an empty archive always pulls.
+                for h in binding.history where !LakeBrainRunner.historyIsCurrent(existing, source: h, backfill: options.backfill, now: now, timeZone: tz) {
                     switch h {
                     case .sharedTVAArchive: continue
                     case .tvaOperatingGuide:
@@ -185,12 +192,15 @@ public enum LakeBrainRunner {
                     do { try await archive.write(LakeBaselineBuilder.path(b), try BrainJSON.encode(b), contentType: "application/json") }
                     catch { errors.append("baseline write: \(error)") }
                 }
+                let coordinate = lake.coordinate
+                let rain = await feeds.rainNext12h(lat: coordinate.latitude, lon: coordinate.longitude, now: now)
                 state = LakeLevelClassifier.evaluate(LakeLevelInputs(
                     lakeId: lake.id, binding: binding, capabilityIfUnbound: binding.capability,
                     fullPoolFt: lake.fullPoolFt, poolBasisIsFullPool: lake.poolBasis == .fullPool,
                     poolConfidenceLow: lake.poolConfidence == .low || lake.poolConfidence == nil,
                     live: liveResults, archivedHourly: archivedHourly, guide: guide, baseline: b,
-                    now: now, processingVersion: options.processingVersion, releaseBySource: releaseBySource))
+                    now: now, processingVersion: options.processingVersion, releaseBySource: releaseBySource,
+                    rainNext12hIn: rain))
             } else {
                 state = published
             }
@@ -217,6 +227,23 @@ public enum LakeBrainRunner {
         return LakeBrainLakeResult(lakeId: lake.id, plan: plan, state: state, profile: profile, presence: presenceRecords,
                                    baseline: baseline, historyRows: historyRows, historyWritten: historyWritten, errors: errors,
                                    dryRunCandidate: dryRunCandidate)
+    }
+
+    /// True when the archive already holds a daily value for yesterday (lake-local) or later, so an hourly run can skip the
+    /// operator daily pulls. Never true for a backfill or an empty archive.
+    /// The archive already holds the newest day `source` can have published by `now`, so pulling it again would add nothing.
+    static func historyIsCurrent(_ existing: [DailyLevel], source: LakeHistorySource, backfill: Bool, now: Date, timeZone: TimeZone) -> Bool {
+        guard !backfill, let last = existing.last?.date else { return false }
+        return last >= expectedLatestDay(source, now: now, timeZone: timeZone)
+    }
+
+    /// The newest day a daily source has normally published by `now`: yesterday for the operator and USGS daily feeds, the day of
+    /// (now − 48 h) for RISE, which posts about two days late and dates its rows by the UTC day of the stamp.
+    static func expectedLatestDay(_ source: LakeHistorySource, now: Date, timeZone: TimeZone) -> String {
+        switch source {
+        case .riseDaily: return LakeLevelCalendar.dayString(now.addingTimeInterval(-48 * 3600), timeZone: TimeZone(identifier: "UTC")!)
+        default: return LakeLevelCalendar.dayString(now.addingTimeInterval(-86_400), timeZone: timeZone)
+        }
     }
 
     /// Median of the history of the last 365 days minus the live level, when it is more than 15 ft (and >= 30 days exist).
@@ -300,6 +327,12 @@ public enum LakeBrainRunner {
             return try? JSONDecoder().decode(LakeBrainRegistryEntry.self, from: d)
         }()
 
+        // The NWS rain signal's coordinate → grid-cell map is kept in the archive, so a steady run skips the /points lookups.
+        var knownRainPoints: [String: String] = [:]
+        if let archive, let d = try? await archive.read(LakeRainSignal.pointsPath),
+           let m = try? JSONDecoder().decode([String: String].self, from: d) { knownRainPoints = m }
+        await feeds.seedRainPoints(knownRainPoints)
+
         let flight = LakeBrainSingleFlight<LakeBrainLakeResult>()
         let presenceIndex = presence
         var out: [LakeBrainLakeResult] = []
@@ -330,6 +363,12 @@ public enum LakeBrainRunner {
         result.lakes = out
         result.archiveErrors = out.flatMap { r in r.errors.map { "\(r.lakeId): \($0)" } }
         result.health = health(out, writeFailed: false)
+        let learnedRainPoints = await feeds.rainPoints()
+        if let archive, !learnedRainPoints.isEmpty, learnedRainPoints != knownRainPoints,
+           let d = try? BrainJSON.encode(learnedRainPoints) {
+            do { try await archive.write(LakeRainSignal.pointsPath, d, contentType: "application/json") }
+            catch { result.archiveErrors.append("rain points write: \(error)") }
+        }
 
         guard let store else { result.durationMs = Int(Date().timeIntervalSince(t0) * 1000); return result }
 

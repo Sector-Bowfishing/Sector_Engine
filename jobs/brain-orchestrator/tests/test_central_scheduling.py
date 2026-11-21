@@ -114,7 +114,7 @@ def test_enabled_runs_only_due_and_enabled_brains(world):
     ctl["brains"]["water-temp"]["enabled"] = False                                 # per-Brain pause beneath the global control
     t = stale_world(ctl)
     t["brains"]["water-clarity"]["lastSuccessfulRun"] = ago(1)                     # fresh: unchanged, not due
-    t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(1)
+    t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(0.5)                       # Lake is due after 0.75 h (about hourly) since 2026-11-21
     setup(t)
     assert OR.main([]) == 0
     assert "water-temp" not in calls["start"] and "water-clarity" not in calls["start"] and "lake-brain" not in calls["start"]

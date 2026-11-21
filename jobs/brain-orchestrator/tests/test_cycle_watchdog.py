@@ -245,7 +245,7 @@ def cycle(world, monkeypatch, store, policy):
     ctl["brains"]["water-temp"]["enabled"] = False                           # as in test_runner_lease_gate: only Wind is due
     t = stale_world(ctl)
     t["brains"]["water-clarity"]["lastSuccessfulRun"] = ago(1)
-    t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(1)
+    t["brains"]["lake-brain"]["lastSuccessfulRun"] = ago(0.5)                       # Lake is due after 0.75 h (about hourly) since 2026-11-21
     setup(t)
     assert OR.main(ARGV) == 0
     return calls, paused

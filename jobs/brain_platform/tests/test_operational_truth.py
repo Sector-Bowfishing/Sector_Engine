@@ -31,11 +31,11 @@ FLEET = {"lake-a": {"slots": {"lake": {"lastUpdatedAt": iso(6)}, "waterClarity":
 
 # ------------------------------------------------------------------ item 1 + 3: one policy, one verdict
 def test_lake_policy_is_the_manifest_and_reports_the_declared_rule():
-    # Since 2026-11-20 (owner approval, Sector_Ops #51): Lake runs every ~3 h (dueAfterHours 2.5) and goes stale at 6 h in BOTH the manifest and the
+    # Since 2026-11-21 (owner direction, Sector_Ops #51): Lake runs about hourly (dueAfterHours 0.75) and goes stale at 6 h in BOTH the manifest and the
     # Brain's own registry rule (LakeBrainContract.staleAfterHours), so there is no declared difference to report.
     p = OT.effective_policy(MB["lake-brain"], LAKE_REG)
     assert p["source"] == "ORCHESTRATOR_MANIFEST" and p["model"] == "TIME" and p["staleAfterHours"] == 6
-    assert MB["lake-brain"]["freshness"]["staleAfterHours"] == 6 and MB["lake-brain"]["freshness"]["dueAfterHours"] == 2.5
+    assert MB["lake-brain"]["freshness"]["staleAfterHours"] == 6 and MB["lake-brain"]["freshness"]["dueAfterHours"] == 0.75
     assert "declaredStaleAfterHours" not in p
     # A registry still written by an older Lake build (3 h) is reported beside the operating policy, never silently dropped.
     old = OT.effective_policy(MB["lake-brain"], {**LAKE_REG, "staleAfterHours": 3})

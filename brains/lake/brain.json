@@ -54,6 +54,7 @@
   ],
   "providers": [
     {"providerId": "iem-hads", "requirement": "OPTIONAL"},
+    {"providerId": "nws-forecast-qpf", "requirement": "OPTIONAL"},
     {"providerId": "nws-nwps", "requirement": "OPTIONAL"},
     {"providerId": "tva-restapi", "requirement": "REQUIRED"},
     {"providerId": "usace-access2water", "requirement": "OPTIONAL"},
