@@ -6,9 +6,12 @@ Per accepted lake it checks:
   (a) observed   the dry run wrote a state with kind OBSERVED, an observed source capability, a value, and freshness.stale == false
   (b) fallback   where the binding has a second live provider: its latest reading is within --fallback-ft (0.5 ft) of the state's value
                  (cwms, usgs and nwps are fetched over public HTTPS, GET only; other providers report n/a)
-  (c) history    the state's value is within --history-ft (5 ft) of the median of the lake's own last 365 days in the local archive
-                 (history/{lakeKey}/daily.csv); n/a when the archive has no such history
-  (d) full pool  |differenceFromNormalPoolFt| (live vs the Engine directory's full pool) <= --full-pool-ft (25 ft)
+  (c) history    the state's value is within --history-ft (5 ft) of the median of the lake's own most recent --history-days (7) daily
+                 values in the local archive (history/{lakeKey}/daily.csv, last 30 days only); n/a when fewer than 3 such values.
+                 Recent days, not a 365-day median, so a normal seasonal drawdown or fill doesn't fail (2026-11-21 review).
+  (d) reference  the live level vs the lake's own seasonal reference when the state carries one: |differenceFromGuideFt| (guide curve),
+                 else the distance outside its operatingZone; only when neither exists, |differenceFromNormalPoolFt| (the Engine
+                 directory's full pool). Each must be <= --full-pool-ft (25 ft).
 El Vado Lake|NM, John Martin Reservoir|CO and Don Pedro|CA are always marked HAND REVIEW (large drawdowns are expected there).
 
 A lake PASSES when (a) passes and no other check fails (n/a does not fail). Output: a markdown table on stdout, plus --csv FILE.
@@ -111,22 +114,40 @@ def fallback_reading(live: dict):
 
 
 # ------------------------------------------------------------------------------------------------ the checks
-def history_median(archive: str | None, lake_id: str, now: dt.date):
+def history_median(archive: str | None, lake_id: str, now: dt.date, days: int = 7):
+    """Median of the lake's own most recent `days` daily values within the last 30 days; None when fewer than 3."""
     if not archive:
         return None
     path = os.path.join(archive, "history", lake_key(lake_id), "daily.csv")
     if not os.path.exists(path):
         return None
-    cut = (now - dt.timedelta(days=365)).isoformat()
-    vals = []
+    cut = (now - dt.timedelta(days=30)).isoformat()
+    rows = []
     with open(path, newline="", encoding="utf-8") as fh:
         for row in csv.DictReader(fh):
             try:
-                if row["date"] >= cut:
-                    vals.append(float(row["elevationFt"]))
+                if cut <= row["date"] <= now.isoformat():
+                    rows.append((row["date"], float(row["elevationFt"])))
             except (KeyError, ValueError, TypeError):
                 continue
-    return statistics.median(vals) if len(vals) >= 30 else None
+    vals = [v for _, v in sorted(rows)[-days:]]
+    return statistics.median(vals) if len(vals) >= 3 else None
+
+
+def reference_distance(state: dict):
+    """(distance ft, label) against the lake's own seasonal reference, else the directory full pool; (None, '') when none."""
+    g = state.get("differenceFromGuideFt")
+    if isinstance(g, (int, float)):
+        return abs(g), "vs guide curve"
+    z = state.get("operatingZone") or {}
+    v = state.get("currentElevationFt")
+    lo, hi = z.get("bottomFt"), z.get("topFt")
+    if isinstance(v, (int, float)) and isinstance(lo, (int, float)) and isinstance(hi, (int, float)):
+        return (0.0 if lo <= v <= hi else min(abs(v - lo), abs(v - hi))), "outside operating zone"
+    n = state.get("differenceFromNormalPoolFt")
+    if isinstance(n, (int, float)):
+        return abs(n), "vs directory full pool"
+    return None, ""
 
 
 def check_lake(lake_id: str, binding: dict, state: dict | None, args, today: dt.date, network: bool) -> dict:
@@ -166,14 +187,15 @@ def check_lake(lake_id: str, binding: dict, state: dict | None, args, today: dt.
     elif not network:
         row["b"] = "n/a (--no-network)"
     # (c) own history
-    med = history_median(args.archive, lake_id, today)
+    med = history_median(args.archive, lake_id, today, args.history_days)
     if med is not None and isinstance(v, (int, float)):
         d = abs(v - med)
-        row["c"] = ("PASS" if d <= args.history_ft else "FAIL") + f" ({d:.1f} ft vs 365-d median)"
-    # (d) directory full pool
-    if isinstance(state, dict) and isinstance(state.get("differenceFromNormalPoolFt"), (int, float)):
-        d = abs(state["differenceFromNormalPoolFt"])
-        row["d"] = ("PASS" if d <= args.full_pool_ft else "FAIL") + f" ({d:.1f} ft)"
+        row["c"] = ("PASS" if d <= args.history_ft else "FAIL") + f" ({d:.1f} ft vs last {args.history_days} days)"
+    # (d) seasonal reference (guide curve / operating zone), else the directory full pool
+    if isinstance(state, dict):
+        d, label = reference_distance(state)
+        if d is not None:
+            row["d"] = ("PASS" if d <= args.full_pool_ft else "FAIL") + f" ({d:.1f} ft {label})"
     failed = row["a"] != "PASS" or any(str(row[k]).startswith("FAIL") for k in ("b", "c", "d"))
     row["result"] = "HAND REVIEW" if lake_id in HAND_REVIEW else ("FAIL" if failed else "PASS")
     row["notes"] = "; ".join(notes)
@@ -188,6 +210,7 @@ def main(argv=None) -> int:
     ap.add_argument("--accepted", default=ACCEPTED)
     ap.add_argument("--fallback-ft", type=float, default=0.5)
     ap.add_argument("--history-ft", type=float, default=5.0)
+    ap.add_argument("--history-days", type=int, default=7, help="recent daily values the history check compares against")
     ap.add_argument("--full-pool-ft", type=float, default=25.0)
     ap.add_argument("--no-network", action="store_true", help="skip check (b)")
     ap.add_argument("--csv", help="also write the table as CSV")
@@ -209,7 +232,7 @@ def main(argv=None) -> int:
         state = _json(state_path) if os.path.exists(state_path) else None
         rows.append(check_lake(lake_id, bindings.get(lake_id) or {}, state, a, today, not a.no_network))
     esc = lambda s: str(s if s is not None else "").replace("|", "\\|")
-    print("| Lake | Source | Value (ft) | (a) observed | (b) fallback | (c) history | (d) full pool | Result | Notes |")
+    print("| Lake | Source | Value (ft) | (a) observed | (b) fallback | (c) recent history | (d) reference | Result | Notes |")
     print("|---|---|---|---|---|---|---|---|---|")
     for r in rows:
         print(f"| {esc(r['lakeId'])} | {esc(r['provider'])}:{esc(r['station'])} | {esc(r['value'])} | {r['a']} | {esc(r['b'])} | {esc(r['c'])} | "
