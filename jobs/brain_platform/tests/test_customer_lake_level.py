@@ -151,3 +151,21 @@ def test_lake_publishes_beta_so_its_own_readiness_passes_gate_1():
     assert readiness == "BETA" and C.ready(readiness)
     writes, why = plan(readiness=readiness)
     assert writes and why[GUNTERSVILLE] == "AVAILABLE"
+
+
+@pytest.mark.parametrize("tier,until", [("STABLE", "2026-06-01T17:00:00Z"), ("CHANGING", "2026-06-01T15:00:00Z"), ("FAST", "2026-06-01T15:00:00Z")])
+def test_the_copy_carries_the_lakes_adaptive_window_not_a_flat_one(tier, until):
+    """Smart freshness (Sector_Ops #51, 2026-11-21): the Lake Brain sets freshUntil per lake from its level change and the NWS rain forecast.
+    The customer copy repeats that value exactly; it never recomputes or extends it."""
+    u = copy.deepcopy(GOLDEN)
+    u["lakes/Lake_Hartwell_SC/states/lake"]["freshness"].update(freshUntil=until, refreshReason=f"{tier}: test; current for N min after the reading")
+    c = plan(u)[0][C.copy_path(HARTWELL)]
+    assert c["status"] == "AVAILABLE" and c["freshUntil"] == until
+
+
+def test_a_short_window_that_has_passed_withdraws_the_copy_at_the_next_publish():
+    u = copy.deepcopy(GOLDEN)
+    u["lakes/Lake_Hartwell_SC/states/lake"]["freshness"].update(freshUntil="2026-06-01T15:00:00Z")   # a CHANGING lake: 3 h after its reading
+    assert plan(u, now=dt.datetime(2026, 6, 1, 14, 59, tzinfo=dt.timezone.utc))[0][C.copy_path(HARTWELL)]["status"] == "AVAILABLE"
+    late, why = plan(u, now=dt.datetime(2026, 6, 1, 15, 1, tzinfo=dt.timezone.utc))
+    assert why[HARTWELL] == "STALE"

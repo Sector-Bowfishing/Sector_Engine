@@ -15,8 +15,8 @@
     "evaluatedAt": "2026-10-23",
     "session": "docs/cortex/sessions/2026-10-23-research-automation.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:9d88f8ddf1b589268a737b625d7d8382433ff9ba888045f0fb73312fd4bbb868",
-    "certificationDigest": "sha256:9d88f8ddf1b589268a737b625d7d8382433ff9ba888045f0fb73312fd4bbb868",
+    "sourceDigest": "sha256:be390b4f2526cb45a0d3b6e0846be5d15bd70781e90ab95d90b4a67158a5703a",
+    "certificationDigest": "sha256:be390b4f2526cb45a0d3b6e0846be5d15bd70781e90ab95d90b4a67158a5703a",
     "certificationCurrent": true,
     "verificationCommit": "3e8a3857"
   },
@@ -504,6 +504,7 @@
         ],
         "providers": [
           "iem-hads",
+          "nws-forecast-qpf",
           "nws-nwps",
           "tva-restapi",
           "usace-access2water",
