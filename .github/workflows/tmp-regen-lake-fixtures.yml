@@ -1,0 +1,21 @@
+# TEMPORARY (dry-run hold PR): regenerates the Lake Swift fixtures on Linux and prints them; removed before merge.
+name: tmp-regen-lake-fixtures
+on:
+  pull_request:
+    paths: ["brains/lake/**", ".github/workflows/tmp-regen-lake-fixtures.yml"]
+permissions:
+  contents: read
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    container: swift:6.1-jammy
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift build --build-tests
+      - run: SECTOR_WRITE_BRAIN_FIXTURES=1 swift test --skip-build --filter "LakePublicationFixtureTests|LakeReviewedBindingsExportTests" || true
+      - run: LEDGER_REGEN_GOLDEN=1 swift test --skip-build --filter testGoldenLedgerMatchesCheckedInFixture || true
+      - run: |
+          for f in brains/lake/tests/golden/lake_run_updates.json brains/lake/contracts/reviewed-lake-bindings-v1.json jobs/lake-brain/ledger/fixtures/sample_ledger.jsonl; do
+            echo "BEGIN-FIXTURE $f"; gzip -9c "$f" | base64 -w0; echo; echo "END-FIXTURE $f"; sha256sum "$f"
+          done
