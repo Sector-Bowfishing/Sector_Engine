@@ -1,24 +1,29 @@
-# Approval record: `lake-knowledge-2026-11-22.1` (PENDING)
+# Approval record: `lake-knowledge-2026-11-22.1` (APPROVED)
 
 | Field | Value |
 |---|---|
 | Release | `lake-knowledge-2026-11-22.1` (Lake Brain reviewed source bindings, `PACKAGED_IN_IMAGE`) |
-| Release digest | `sha256:a40d30b77554dbfd8d6be5a89885c20734c3418e5f053b850f3907a68365a114` |
-| Supersedes | `lake-knowledge-2026-11-21.2` (APPROVED 2026-11-21) |
-| Status | **NOT_RECORDED: pending Michael's approval** |
+| Release digest | `sha256:930ca8e42de0c28f9440a7ac2a91b6ac3437e9e3afae3a665a608dd5e53596bc` |
+| Supersedes | `lake-knowledge-2026-11-21.2` (two packaged source files gained the CDEC, NOAA CO-OPS and USGS-stage provider types; no binding changed) |
+| Status | **APPROVED** by Michael in chat, 2026-11-22 08:00Z ("Approve lake-knowledge-2026-11-22.1"); recorded on Sector_Ops #51 comment 7076252747 |
 | Requested scope | INTERNAL, CALIBRATION and CUSTOMER (same as 2026-11-21.2) |
 
 ## What changed in the release
-- `LakeBrain/LakeSourceBindingsGenerated.swift`: the table gains the **106** batch 2 records (`jobs/lake-brain/data/bindings.batch2.v1.json`) and `acceptedLakeIds` goes from 187 to **293** (`accepted_batch.json` + `accepted_batch2.json`). Lake's reviewed set (with the 5 pilots) goes from 192 to **298**.
-- Batch 2 = the excluded research-bound lakes that passed the 2026-11-22 Mac mini re-check on an engine provider (Sector_Ops #51 comments 7074433014 and 7075462499). Review packet: `docs/brains/LAKE_BRAIN_ACCEPTED_BATCH2_2026-11-22.md`.
-- Series fixed by the re-check: Logan Martin AL and Weiss AL live (Alabama Power guide curve → `Raw-APCO`), East Lynn WV history (rule curve → observed `OBS`), Rend Lake IL history (stopped `MVDhist-rev` → `datman-rev`).
-- Every other packaged file is unchanged.
+- `LakeBrain/LakeSourceBindings.swift`: `LevelSeriesRef.Provider` gains `cdec` (with its `sourceId` and `providerName`), and `LakeHistorySource` gains `cdecDaily(station:sensor:dur:offsetFt:)`. These are types only: the reader is `LakeLevelFeedsCDEC.swift`, outside the release.
+- `LakeBrain/LakeSourceBindings.swift` (2026-11-22, `feat/lake-readers-coops-usgsstage-2026-11-22`, folded into this same pending release): `Provider` also gains `coops` and `usgsStage`, and `LakeHistorySource` gains `coopsDaily(station:)` and `usgsStageDaily(site:datum:stat:)`. Types only: the readers are `LakeLevelFeedsCOOPS.swift` and `LakeLevelFeedsUSGSStage.swift`, outside the release.
+- `LakeBrain/LakeGeneratedBindings.swift`: a generated history record may name `cdecDaily` (optional `station`, `sensor`, `dur` fields), `coopsDaily` (`station`) or `usgsStageDaily` (`site`, `datum`, `stat`).
+- `LakeBrain/LakeSourceBindingsGenerated.swift`: unchanged. The accepted set, the reviewed set (192) and the customer Lake-level list are unchanged; no lake is bound to CDEC, CO-OPS or USGS stage.
 
-## Customer-facing effect (needs Michael's explicit OK)
-- By the 2026-11-20 20:01Z owner rule (the customer Lake-level list is exactly Lake's reviewed set), `customer_lake_level_eligible.json` and `LakeLevelEligibility.validatedLakeIds` go from 192 to **298** lakes in the same PR. The operator-only list stays the 4 TVA mainstem pilots.
+## What approval allows
+- The central Publisher may accept Lake Brain artifacts that declare this release (`PackagedReleaseResolver` requires `APPROVED`).
+- Customer use of the release.
 
-## Until it is approved
-- The Publisher (`PackagedReleaseResolver`) accepts only an `APPROVED` release, so a Publisher image built from this commit would refuse Lake artifacts. Approve before the next Publisher redeploy and LakeBrainJob rebuild; nothing is deployed by merging.
+## Before approval (historical)
+- Approval is a record, not an enforced gate on the Lake path: Lake artifacts declare `knowledgeRelease` NONE (`brains/lake/contracts/describe_contract.py:25`, `flat_artifact.py`), so nothing refuses a Lake artifact while this release is NOT_RECORDED. Nothing is deployed by merging.
 
-## To approve
-Michael confirms in chat or in an "Owner approval (Michael, …)" comment on Sector_Ops #51; then set `approval.status` to `APPROVED` here and in `brains/lake/runtime/knowledge-release.json`.
+## What it does not allow
+- Binding any lake to CDEC, NOAA CO-OPS or USGS stage: each binding goes through the acceptance gate.
+- **CDEC needs DWR's permission first.** CDEC's `robots.txt` disallows `/dynamicapp/`, the path of the JSONDataServlet the reader uses. Under the owner rule (Michael, 2026-11-22: use a source only if its terms / robots.txt do not forbid automated reading), no CDEC binding is made without written permission from California DWR.
+
+## Approval
+Approved by Michael in chat on 2026-11-22 at 08:00Z, digest `sha256:930ca8e42de0c28f9440a7ac2a91b6ac3437e9e3afae3a665a608dd5e53596bc`, recorded on Sector_Ops #51 (comment 7076252747). The same reply refined the source-access rule: official agency data services documented for programmatic use are allowed; web pages or endpoints whose robots.txt or terms forbid automated use (CDEC included) need the operator's permission first.

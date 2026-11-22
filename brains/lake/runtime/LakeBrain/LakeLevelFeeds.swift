@@ -88,8 +88,12 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
     let usgsBase = "https://waterservices.usgs.gov/nwis/iv/"
     /// Read-only access to the shared TVA archive (another lane's bucket).
     let sharedArchive: (String) -> LakeBrainArchive?
-    /// Access2Water / RISE / NWPS / HADS / USGS-history clients (LakeLevelFeedsFleet.swift).
+    /// Access2Water / RISE / NWPS / HADS / USGS-history clients (LakeLevelFeedsFleet.swift) and CDEC (LakeLevelFeedsCDEC.swift).
     let fleet = LakeFleetClients()
+    /// NOAA CO-OPS Great Lakes water levels (LakeLevelFeedsCOOPS.swift).
+    let coops = LakeCOOPSClient.live()
+    /// USGS gage height + published site altitude (LakeLevelFeedsUSGSStage.swift).
+    let usgsStage = LakeUSGSStageClient.live()
     private var guideCache: [String: [TVAGuideRow]] = [:]
     private let lock = NSLock()
 
@@ -136,6 +140,9 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
         case .a2w: return await fleet.a2wRecent(ref)
         case .rise: return await fleet.riseRecent(ref, hours: hours, now: now)
         case .nwps: return await fleet.nwpsRecent(ref, since: now.addingTimeInterval(-Double(hours) * 3600))
+        case .cdec: return await fleet.cdecRecent(ref, hours: hours, now: now)
+        case .coops: return await coops.recent(ref, hours: hours)
+        case .usgsStage: return await usgsStage.recent(ref, hours: hours)
         }
     }
 
@@ -202,8 +209,13 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
                 chunkStart = chunkEnd
             }
             return LakeDailyHistory.dedupe(out)
-        case .usgsDaily, .riseDaily, .hadsDaily:
+        case .usgsDaily, .riseDaily, .hadsDaily, .cdecDaily:
             return await fleetDaily(source, since: since, now: now, timeZone: timeZone)
+        case .coopsDaily(let station):
+            return await coops.daily(station: station, since: since, now: now, timeZone: timeZone)
+        case .usgsStageDaily(let site, let datum, let stat):
+            // The altitude is read now and must be on the binding's datum; the gage heights are shifted by it.
+            return await usgsStage.daily(site: site, datum: datum, stat: stat, since: since, now: now, timeZone: timeZone, fleet: fleet)
         case .sharedTVAArchive:
             return nil
         }

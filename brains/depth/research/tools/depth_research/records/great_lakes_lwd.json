@@ -1,0 +1,36 @@
+{
+  "schema": "depth-great-lakes-lwd-v1",
+  "decision": "Owner decision, Michael, 2026-11-22 (chat 06:48Z; Sector_Ops #51 comment 7075545102): the Great Lakes Low Water Datum (IGLD 1985) is an allowed Depth reference.",
+  "datum": "IGLD85",
+  "note": "Low Water Datum (chart datum) per lake, IGLD 1985. Feet are NOAA's published values; metres agree with CHS. NOAA notes IGLD 1985 is being replaced by IGLD 2020: when the level series moves to IGLD 2020 these values no longer apply and the lakes must be refused until this table is updated.",
+  "lakes": {
+    "superior": {"lwdFt": 601.1, "lwdM": 183.2},
+    "michigan-huron": {"lwdFt": 577.5, "lwdM": 176.0},
+    "st-clair": {"lwdFt": 572.3, "lwdM": 174.4},
+    "erie": {"lwdFt": 569.2, "lwdM": 173.5},
+    "ontario": {"lwdFt": 243.3, "lwdM": 74.2}
+  },
+  "lakeIds": {
+    "Lake Superior|MI": "superior",
+    "Lake Superior|MN": "superior",
+    "Lake Superior|WI": "superior",
+    "Lake Michigan|IN": "michigan-huron",
+    "Lake Michigan|MI": "michigan-huron",
+    "Lake Michigan|WI": "michigan-huron",
+    "Green Bay|WI": "michigan-huron",
+    "Lake Huron|MI": "michigan-huron",
+    "Lake St. Clair|MI": "st-clair",
+    "Lake Erie|MI": "erie",
+    "Lake Erie|NY": "erie",
+    "Lake Erie|OH": "erie",
+    "Lake Erie|PA": "erie",
+    "Lake Ontario|NY": "ontario"
+  },
+  "evidence": [
+    {"publisher": "NOAA CO-OPS", "url": "https://tidesandcurrents.noaa.gov/gldatums.html", "retrieved": "2026-11-22", "paraphrased": true,
+     "quote": "LWD: Superior 183.2 m / 601.1 ft; Michigan and Huron 176.0 m / 577.5 ft; St. Clair 174.4 m / 572.3 ft; Erie 173.5 m / 569.2 ft; Ontario 74.2 m / 243.3 ft", "note": "paraphrased from the page's table (it lists the Ontario stations under their own names), not a verbatim quote"},
+    {"publisher": "Canadian Hydrographic Service", "url": "https://tides.gc.ca/en/great-lakes-st-lawrence-river-system", "retrieved": "2026-11-22", "paraphrased": true,
+     "quote": "Lake Superior chart datum 183.2 m; Michigan and Huron 176.0 m; St. Clair 174.4 m; Erie 173.5 m; Ontario 74.2 m", "note": "paraphrased per lake; the page states that Great Lakes water level elevations are given in IGLD 1985 but does not repeat it next to each chart datum"}
+  ],
+  "levelSide": "NOAA CO-OPS Great Lakes water levels requested with datum IGLD are IGLD 1985 (series name water_level_IGLD85 in the research bindings); Depth reads that series name as the level datum, like a USGS parameter code."
+}
