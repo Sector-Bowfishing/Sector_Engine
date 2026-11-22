@@ -75,8 +75,9 @@ extension LakeFleetClients {
         return (String(format: "%04d-%02d-%02d", ymd[0], ymd[1], ymd[2]), at)
     }
 
-    /// Parses a JSONDataServlet answer for one sensor. Rows of another sensor are ignored; units other than feet fail the whole answer.
-    static func parseCDEC(_ data: Data, station: String, sensor: String) -> (rows: [CDECRow], error: String?) {
+    /// Parses a JSONDataServlet answer for one sensor. Rows of another sensor, another station or (when `dur` is given) another
+    /// duration are ignored; units other than feet fail the whole answer.
+    static func parseCDEC(_ data: Data, station: String, sensor: String, dur: String? = nil) -> (rows: [CDECRow], error: String?) {
         guard let arr = (try? JSONSerialization.jsonObject(with: data)) as? [[String: Any]] else {
             return ([], "CDEC \(station): unreadable JSON")
         }
@@ -84,6 +85,8 @@ extension LakeFleetClients {
         var out: [CDECRow] = []
         for r in arr {
             if let sn = str(r["SENSOR_NUM"] ?? r["sensorNum"]), sn != sensor { continue }
+            if let sid = (r["stationId"] as? String)?.trimmingCharacters(in: .whitespaces), !sid.isEmpty, sid.uppercased() != station.uppercased() { continue }
+            if let dur, let dc = (r["durCode"] as? String)?.trimmingCharacters(in: .whitespaces), !dc.isEmpty, dc.uppercased() != dur.uppercased() { continue }
             guard let v = (r["value"] as? Double) ?? (r["value"] as? Int).map(Double.init), v.isFinite else { continue }
             if v <= -9000 || v == 0 { continue }   // -9999 sentinel; 0 is a mechanical error, never a pool
             if let u = (r["units"] as? String)?.trimmingCharacters(in: .whitespaces), !u.isEmpty, !["FEET", "FT"].contains(u.uppercased()) {
@@ -119,13 +122,13 @@ extension LakeFleetClients {
         let url = Self.cdecURL(station: st, sensor: sensor, dur: dur,
                                start: LakeLevelCalendar.dayString(since.addingTimeInterval(-86_400), timeZone: tz),
                                end: LakeLevelCalendar.dayString(now.addingTimeInterval(86_400), timeZone: tz))
-        guard let r = await LakeFeedHTTP.get(url, timeout: 60) else { return .failed("CDEC \(st) unreachable") }
+        guard let r = await transport(url, "application/json", 60) else { return .failed("CDEC \(st) unreachable") }
         guard r.isSuccess else { return .failed("CDEC \(st): HTTP \(r.status)") }
-        return Self.cdecLive(r.body, station: st, sensor: sensor, since: since)
+        return Self.cdecLive(r.body, station: st, sensor: sensor, since: since, dur: dur)
     }
 
-    static func cdecLive(_ data: Data, station: String, sensor: String, since: Date) -> FeedResult {
-        let (rows, error) = parseCDEC(data, station: station, sensor: sensor)
+    static func cdecLive(_ data: Data, station: String, sensor: String, since: Date, dur: String? = nil) -> FeedResult {
+        let (rows, error) = parseCDEC(data, station: station, sensor: sensor, dur: dur)
         if let error { return .failed(error) }
         let obs = LakeLevelSeries.merge(rows.filter { $0.at >= since }.map { LevelObservation(at: $0.at, ft: $0.ft) })
         return obs.isEmpty ? .failed("CDEC \(station) sensor \(sensor): no readings (-9999 sentinels dropped)") : FeedResult(observations: obs, error: nil)
@@ -147,8 +150,8 @@ extension LakeFleetClients {
             let lo = max(floor, hi.addingTimeInterval(-Self.cdecWindowSeconds(dur: dur)))
             let url = Self.cdecURL(station: station, sensor: sensor, dur: dur,
                                    start: LakeLevelCalendar.dayString(lo, timeZone: tz), end: LakeLevelCalendar.dayString(hi, timeZone: tz))
-            guard let r = await LakeFeedHTTP.get(url, timeout: 120), r.isSuccess else { return nil }
-            let (rows, error) = Self.parseCDEC(r.body, station: station, sensor: sensor)
+            guard let r = await transport(url, "application/json", 120), r.isSuccess else { return nil }
+            let (rows, error) = Self.parseCDEC(r.body, station: station, sensor: sensor, dur: dur)
             if error != nil { return nil }
             empty = rows.isEmpty ? empty + 1 : 0
             out += Self.cdecDailyLevels(rows, dur: dur, timeZone: timeZone, offsetFt: offsetFt, src: src)
