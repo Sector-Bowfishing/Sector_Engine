@@ -20,7 +20,7 @@ Owner decision, Michael, 2026-11-22 (chat 06:48Z; Sector_Ops #51 comment 7075545
 - Lake Brain has no coops bindings: the 14 LWD lakes become possible in the manifest but get no state until Lake publishes them.
 
 ## Counts (from the committed release 2026-10-14.6; a rebuild needs DEPTH_RESEARCH_DATA)
-fullPool 225 (unchanged), lowWaterDatum 14, seriesMedian 132 (86 of them fullPool-basis reservoirs whose level datum is unknown), still blocked for history < 10 years 45. At run time a seriesMedian lake also needs a Lake band with >= 10 basis years.
+fullPool 225 (unchanged), lowWaterDatum 14, seriesMedian 132 (43 naturalSurface; 89 fullPool-basis, 86 of them with an unknown level datum), still blocked for history < 10 years 45. At run time a seriesMedian lake also needs a Lake band with >= 10 basis years.
 
 ## Verification
 Depth tests: 307 passed, 9 skipped. `describe_contract.py --check` OK.
