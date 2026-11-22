@@ -33,21 +33,38 @@ enum USGSSiteDatumResult: Equatable, Sendable {
 }
 
 /// Run-scoped cache of site records; concurrent callers join the same fetch.
+///
+/// Cancellation: a caller that is cancelled (a shadow read past its deadline) no longer holds the shared fetch open. The fetch is
+/// cancelled when every caller waiting on it has been cancelled, and a cancelled fetch's answer is never cached, so the next caller
+/// starts a fresh fetch. A caller that is not cancelled is never affected by another caller's cancellation.
 actor USGSSiteCache {
-    private var inflight: [String: Task<USGSSiteDatumResult, Never>] = [:]
+    private var inflight: [String: (task: Task<USGSSiteDatumResult, Never>, waiters: Int)] = [:]
     private var done: [String: (at: Date, value: USGSSiteDatumResult)] = [:]
     private let ttl: TimeInterval
     init(ttl: TimeInterval = 15 * 60) { self.ttl = ttl }
 
     func site(_ site: String, fetch: @escaping @Sendable (String) async -> USGSSiteDatumResult) async -> USGSSiteDatumResult {
         if let d = done[site], Date().timeIntervalSince(d.at) < ttl { return d.value }
-        if let t = inflight[site] { return await t.value }
-        let t = Task { await fetch(site) }
-        inflight[site] = t
-        let v = await t.value
-        inflight[site] = nil
-        done[site] = (Date(), v)
+        let t: Task<USGSSiteDatumResult, Never>
+        if let f = inflight[site] {
+            t = f.task
+            inflight[site] = (t, f.waiters + 1)
+        } else {
+            t = Task { await fetch(site) }
+            inflight[site] = (t, 1)
+        }
+        let v = await withTaskCancellationHandler { await t.value } onCancel: { Task { await self.leave(site, t) } }
+        if inflight[site]?.task == t { inflight[site] = nil }
+        if !t.isCancelled { done[site] = (Date(), v) }
         return v
+    }
+
+    /// A cancelled caller stops waiting; the last one to leave cancels the fetch and lets the next caller start a new one.
+    private func leave(_ site: String, _ t: Task<USGSSiteDatumResult, Never>) {
+        guard let f = inflight[site], f.task == t else { return }
+        if f.waiters > 1 { inflight[site] = (t, f.waiters - 1); return }
+        inflight[site] = nil
+        t.cancel()
     }
 }
 

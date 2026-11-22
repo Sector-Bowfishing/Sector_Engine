@@ -219,6 +219,10 @@ final class LakeBrainUSGSShadowReadinessTests: XCTestCase {
         let garbage = await read(T.ok(Data("not json".utf8)))
         XCTAssertNil(garbage.levels)
         XCTAssertEqual(garbage.failure?.code, .metadataUnreadable)
+        XCTAssertTrue(garbage.failure?.why.contains("(non-json:") ?? false, garbage.failure?.why ?? "")
+        let page = await read(T.ok(Data("<!DOCTYPE html><html><body>notice</body></html>".utf8)))
+        XCTAssertEqual(page.failure?.code, .metadataUnreadable)
+        XCTAssertTrue(page.failure?.why.contains("(html-page:") ?? false, page.failure?.why ?? "")
         // Ambiguous (metadata read, none Primary): still dropped, 30800 kept.
         let ambiguous = await read(T.ok(Self.meta(["a", "b"], primary: nil)))
         XCTAssertEqual(ambiguous.levels?.map(\.ft), [2.0])
@@ -280,6 +284,8 @@ final class LakeBrainUSGSShadowReadinessTests: XCTestCase {
         // The comparison still lands, as its own line, once v1 answers.
         let site = await log.waitFor(5) { $0.contains("kind=site") }
         XCTAssertTrue(site?.contains("kind=site verdict=agree") ?? false, "\(log.lines)")
+        // The comparison read the legacy record from the run's cache: still no legacy request beyond the legacy switch's.
+        XCTAssertEqual(rec.urls, legacyRec.urls)
     }
 
     func testASiteComparisonPastItsDeadlineLogsATimeout() async throws {
@@ -291,6 +297,112 @@ final class LakeBrainUSGSShadowReadinessTests: XCTestCase {
         XCTAssertNil(r.error)
         let site = await log.waitFor(3) { $0.contains("kind=site") }
         XCTAssertTrue(site?.contains("kind=site verdict=disagree reason=ogc-timeout legacyN=1") ?? false, "\(log.lines)")
+    }
+
+    // MARK: the job drains detached site comparisons before it exits
+
+    func testTheDrainWaitsForAPendingSiteComparisonAndLogsOneSummary() async throws {
+        let ref = LevelSeriesRef(provider: .usgsStage, capability: .directLakeGauge, station: "04082500", series: "NAVD88", cadenceMin: 60, lagMin: 60)
+        let log = LineLog(), drained = LineLog()
+        let stage = try slowSiteStage(v1Delay: 0.5, legacy: URLRecorder(), log: log)
+        _ = await stage.recentLegacy(ref, hours: 24)
+        XCTAssertEqual(stage.governor.detachedShadows.pendingCount, 1)
+        XCTAssertFalse(log.lines.contains { $0.contains("kind=site") })
+        await LakeUSGSShadowDrain.beforeExit(mode: .shadow, governor: stage.governor, log: { drained.add($0) })
+        XCTAssertTrue(log.lines.contains { $0.contains("kind=site verdict=agree") }, "the comparison was logged before the drain returned: \(log.lines)")
+        XCTAssertEqual(drained.lines.count, 1)
+        XCTAssertTrue(drained.lines[0].hasPrefix("[usgs-shadow] detached kind=site completed=1 timedOut=0 dropped=0 drainedMs="), drained.lines[0])
+    }
+
+    func testTheDrainIsBoundedByTheDeadlineAndCountsTimeoutsAndDrops() async throws {
+        let ref = LevelSeriesRef(provider: .usgsStage, capability: .directLakeGauge, station: "04082500", series: "NAVD88", cadenceMin: 60, lagMin: 60)
+        let log = LineLog(), drained = LineLog()
+        let stage = try slowSiteStage(v1Delay: 5, perRead: 0.3, legacy: URLRecorder(), log: log)
+        _ = await stage.recentLegacy(ref, hours: 24)
+        // A comparison whose v1 answers but whose compare never finishes in time: dropped, not waited for past deadline + grace.
+        LakeUSGSRouting.detached(governor: stage.governor, v1: { () async -> Int in 1 }, compare: { (_: Int?) async -> String in
+            try? await Task.sleep(nanoseconds: 10_000_000_000)
+            return "late"
+        }, log: { log.add($0) })
+        let start = Date()
+        await LakeUSGSShadowDrain.beforeExit(mode: .shadow, governor: stage.governor, grace: 0.3, log: { drained.add($0) })
+        XCTAssertLessThan(Date().timeIntervalSince(start), 2, "bounded by the 0.3 s per-read deadline plus grace, not the 5 s v1 read")
+        XCTAssertTrue(log.lines.contains { $0.contains("kind=site verdict=disagree reason=ogc-timeout") }, "\(log.lines)")
+        XCTAssertTrue(drained.lines.first?.hasPrefix("[usgs-shadow] detached kind=site completed=0 timedOut=1 dropped=1 ") ?? false, "\(drained.lines)")
+    }
+
+    func testLegacyRegistersNothingAndTheDrainDoesNotDelayExit() async throws {
+        let ref = LevelSeriesRef(provider: .usgsStage, capability: .directLakeGauge, station: "04082500", series: "NAVD88", cadenceMin: 60, lagMin: 60)
+        let rdb = try T.stageFixture("04082500_site.rdb"), iv = try T.stageFixture("04082500_iv_00065.json")
+        let v1 = WaterDataFake { _, _ in T.status(503) }
+        let gov = LakeUSGSShadowGovernor(perReadSeconds: 20, budgetSeconds: 300, hasKey: true)
+        let log = LineLog(), drained = LineLog()
+        let legacy = LakeUSGSStageClient(fetch: { url, _ in T.ok(url.contains("/nwis/site/") ? rdb : iv) }, cache: USGSSiteCache(),
+                                         mode: .legacy, waterData: v1.client(delay: 5), shadowLog: { log.add($0) }, governor: gov)
+        let r = await legacy.recent(ref, hours: 24)
+        XCTAssertNil(r.error)
+        XCTAssertEqual(gov.detachedShadows.registeredCount, 0, "legacy starts no detached comparison")
+        XCTAssertTrue(v1.urls.isEmpty)
+        XCTAssertTrue(log.lines.isEmpty)
+        let start = Date()
+        await LakeUSGSShadowDrain.beforeExit(mode: .legacy, governor: gov, log: { drained.add($0) })
+        XCTAssertLessThan(Date().timeIntervalSince(start), 0.1)
+        XCTAssertTrue(drained.lines.isEmpty, "legacy logs no summary")
+        // Even with something registered, legacy and v1 never wait.
+        _ = gov.detachedShadows.register(deadline: Date().addingTimeInterval(10))
+        let again = Date()
+        await LakeUSGSShadowDrain.beforeExit(mode: .legacy, governor: gov, log: { drained.add($0) })
+        await LakeUSGSShadowDrain.beforeExit(mode: .v1, governor: gov, log: { drained.add($0) })
+        XCTAssertLessThan(Date().timeIntervalSince(again), 0.1)
+        XCTAssertTrue(drained.lines.isEmpty)
+    }
+
+    // MARK: the site cache honours cancellation
+
+    func testACancelledSiteReadCancelsTheFetchAndIsNotCached() async {
+        final class Seen: @unchecked Sendable {
+            let lock = NSLock(); var cancelled = 0, calls = 0
+            func call() { lock.withLock { calls += 1 } }
+            func cancel() { lock.withLock { cancelled += 1 } }
+            var counts: (calls: Int, cancelled: Int) { lock.withLock { (calls, cancelled) } }
+        }
+        let seen = Seen()
+        let datum = USGSSiteDatum(site: "04082500", name: nil, siteType: "LK", altitudeFt: 743.91, accuracyFt: nil, datum: "NAVD88")
+        let slow: @Sendable (String) async -> USGSSiteDatumResult = { s in
+            seen.call()
+            do { try await Task.sleep(nanoseconds: 5_000_000_000) } catch { seen.cancel(); return .refused("USGS \(s): cancelled") }
+            return .ok(datum)
+        }
+        let cache = USGSSiteCache()
+        let start = Date()
+        let read = Task { await cache.site("04082500", fetch: slow) }
+        try? await Task.sleep(nanoseconds: 100_000_000)
+        read.cancel()
+        _ = await read.value
+        XCTAssertLessThan(Date().timeIntervalSince(start), 2, "the fetch stopped when its only caller was cancelled")
+        XCTAssertEqual(seen.counts.cancelled, 1)
+        // Not cached: the next caller fetches again.
+        let next = await cache.site("04082500", fetch: { _ in .ok(datum) })
+        XCTAssertEqual(next, .ok(datum))
+
+        // A cancelled joiner does not cancel the fetch another caller is waiting on.
+        let shared = USGSSiteCache()
+        let quick: @Sendable (String) async -> USGSSiteDatumResult = { _ in
+            seen.call()
+            do { try await Task.sleep(nanoseconds: 300_000_000) } catch { seen.cancel(); return .refused("cancelled") }
+            return .ok(datum)
+        }
+        let before = seen.counts
+        let keeper = Task { await shared.site("04082500", fetch: quick) }
+        try? await Task.sleep(nanoseconds: 50_000_000)
+        let quitter = Task { await shared.site("04082500", fetch: quick) }
+        try? await Task.sleep(nanoseconds: 50_000_000)
+        quitter.cancel()
+        let kept = await keeper.value
+        _ = await quitter.value
+        XCTAssertEqual(kept, .ok(datum))
+        XCTAssertEqual(seen.counts.calls - before.calls, 1, "the second caller joined the first fetch")
+        XCTAssertEqual(seen.counts.cancelled, before.cancelled, "the shared fetch was not cancelled")
     }
 
     // MARK: LOW: legacy's fallback statistics (D3)

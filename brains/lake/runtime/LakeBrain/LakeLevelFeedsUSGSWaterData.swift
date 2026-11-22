@@ -73,6 +73,8 @@ final class LakeUSGSShadowGovernor: @unchecked Sendable {
     private var waited: TimeInterval = 0
     private var rateLimited = 0
     private var announced: Set<String> = []
+    /// Detached comparisons (kind=site) still running; the job drains them before it exits.
+    let detachedShadows = LakeUSGSDetachedShadows()
 
     init(perReadSeconds: TimeInterval = 20, budgetSeconds: TimeInterval = 300, hasKey: Bool, rateLimitThreshold: Int = 3) {
         self.perReadSeconds = perReadSeconds
@@ -160,6 +162,75 @@ final class LakeUSGSPending<U: Sendable>: @unchecked Sendable {
     }
 }
 
+/// The detached shadow comparisons of a run (kind=site): registered when started, finished when their line is logged. The job waits
+/// for the pending ones before it exits (`LakeUSGSShadowDrain`), at most until the last one's per-read deadline plus `grace`, so a
+/// comparison still running is not killed without a trace. Nothing is registered in `legacy` or `v1`.
+final class LakeUSGSDetachedShadows: @unchecked Sendable {
+    struct Summary: Equatable, Sendable {
+        /// v1 answered and the comparison was logged.
+        var completed = 0
+        /// v1 missed its deadline and `reason=ogc-timeout` was logged.
+        var timedOut = 0
+        /// Still running when the drain gave up (no line logged before exit).
+        var dropped = 0
+        var registered: Int { completed + timedOut + dropped }
+    }
+
+    private let lock = NSLock()
+    private var nextId = 0
+    private var pending: [Int: Date] = [:]
+    private var completed = 0
+    private var timedOut = 0
+
+    /// Registers a comparison whose v1 read must answer by `deadline`; returns its id.
+    func register(deadline: Date) -> Int {
+        lock.lock(); defer { lock.unlock() }
+        nextId += 1
+        pending[nextId] = deadline
+        return nextId
+    }
+
+    func finish(_ id: Int, answered: Bool) {
+        lock.lock(); defer { lock.unlock() }
+        guard pending.removeValue(forKey: id) != nil else { return }
+        if answered { completed += 1 } else { timedOut += 1 }
+    }
+
+    var pendingCount: Int { lock.lock(); defer { lock.unlock() }; return pending.count }
+    var registeredCount: Int { lock.lock(); defer { lock.unlock() }; return nextId }
+
+    private func snapshot() -> (summary: Summary, lastDeadline: Date?) {
+        lock.lock(); defer { lock.unlock() }
+        return (Summary(completed: completed, timedOut: timedOut, dropped: pending.count), pending.values.max())
+    }
+
+    /// Waits until nothing is pending or the last pending deadline plus `grace` has passed; the comparisons left are `dropped`.
+    func drain(grace: TimeInterval = 1, poll: TimeInterval = 0.05) async -> Summary {
+        while true {
+            let (s, last) = snapshot()
+            guard let last, s.dropped > 0, Date() < last.addingTimeInterval(grace) else { return s }
+            try? await Task.sleep(nanoseconds: UInt64(poll * 1_000_000_000))
+        }
+    }
+}
+
+/// What the Lake Brain job calls before it exits: in `shadow`, waits for the detached comparisons still running (bounded by their
+/// per-read deadline) and logs one summary line. In `legacy` and `v1` it returns at once and logs nothing.
+public enum LakeUSGSShadowDrain {
+    public static func beforeExit(mode: LakeUSGSAPIMode = .fromEnvironment(), log: (String) -> Void = { print($0) }) async {
+        await beforeExit(mode: mode, governor: .shared, log: log)
+    }
+
+    static func beforeExit(mode: LakeUSGSAPIMode, governor: LakeUSGSShadowGovernor, grace: TimeInterval = 1,
+                           log: (String) -> Void) async {
+        guard mode == .shadow else { return }
+        let start = Date()
+        let s = await governor.detachedShadows.drain(grace: grace)
+        log("[usgs-shadow] detached kind=site completed=\(s.completed) timedOut=\(s.timedOut) dropped=\(s.dropped)"
+            + " drainedMs=\(Int(Date().timeIntervalSince(start) * 1000))")
+    }
+}
+
 /// Runs a read the way the switch says. In `shadow` the legacy answer is returned unchanged and the v1 answer, read concurrently and
 /// bounded by the governor, is only compared (`compare` gets nil when v1 missed its deadline).
 enum LakeUSGSRouting {
@@ -208,12 +279,15 @@ enum LakeUSGSRouting {
                                       log: @escaping @Sendable (String) -> Void) {
         if shadowOff(governor: governor, log: log) { return }
         let deadline = governor.perReadSeconds
+        let shadows = governor.detachedShadows
+        let id = shadows.register(deadline: Date().addingTimeInterval(deadline))
         Task.detached {
             let pending = LakeUSGSPending<U>()
             let read = Task { pending.fulfil(await v1()) }
             let o = await pending.wait(seconds: deadline)
             if o == nil { read.cancel() }
             log(await compare(o))
+            shadows.finish(id, answered: o != nil)
         }
     }
 }
@@ -539,7 +613,8 @@ struct LakeUSGSWaterDataClient: Sendable {
         case .ok(let d): data = d
         }
         guard let meta = Self.parseMetadata(data) else {
-            return .failure(ReadFailure(.metadataUnreadable, "\(ids.count) \(label) series at this site and time-series-metadata unreadable; refused rather than merged"))
+            let inner = Self.unreadable(data)
+            return .failure(ReadFailure(.metadataUnreadable, "\(ids.count) \(label) series at this site and time-series-metadata unreadable (\(inner.code.rawValue): \(inner.why)); refused rather than merged"))
         }
         let primaries = meta.filter { ids.contains($0.id) && $0.primary == "Primary" }.map(\.id)
         guard primaries.count == 1, let chosen = primaries.first else {
@@ -681,6 +756,8 @@ struct LakeUSGSWaterDataClient: Sendable {
     }
 
     /// A `dv` statistic whose selection failed this way is dropped and the others kept; any other failure refuses the read.
+    /// `severalSeries` cannot reach this today: only a `.single` pick returns it, and a `.single` (gage-height) `dv` read refuses
+    /// before `droppable` is asked. It is listed so that a `.primary` pick that ever reports it is dropped like `ambiguousPrimary`.
     static func droppable(_ f: ReadFailure) -> Bool { f.code == .ambiguousPrimary || f.code == .severalSeries }
 
     /// Whether `time-series-metadata` lists a daily series of `stat` for the site and parameter.

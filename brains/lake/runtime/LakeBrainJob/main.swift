@@ -126,5 +126,7 @@ for e in r.archiveErrors { print("  ! \(e)") }
 if let e = r.presenceError { print("  ! presence: \(e)") }
 print("\(r.ok ? "✓" : "✗") \(r.lakes.count) lakes in \(r.durationMs) ms · health \(r.health)")
 if let e = r.writeError { print("✗ \(e)") }
+// LAKE_USGS_API=shadow only: wait (bounded by the 20 s per-read deadline) for detached kind=site comparisons, then one summary line.
+await LakeUSGSShadowDrain.beforeExit()
 await rest?.shutdown()
 exit(r.ok ? 0 : 1)
