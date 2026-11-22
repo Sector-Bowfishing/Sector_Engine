@@ -40,6 +40,12 @@ public enum LakeGeneratedBindings {
             var item: String?
             var lid: String?
             var pe: String?
+            /// `cdecDaily`: CDEC station id, sensor number and duration code (E / H / D).
+            var station: String?   // also `coopsDaily`
+            var sensor: String?
+            var dur: String?
+            /// `usgsStageDaily`: the altitude datum the site must publish.
+            var datum: String?
         }
         struct Level: Decodable {
             var role: String
@@ -151,6 +157,13 @@ public enum LakeGeneratedBindings {
         case "hadsDaily":
             guard let l = h.lid, let pe = h.pe else { return nil }
             return .hadsDaily(lid: l, pe: pe, offsetFt: h.offsetFt ?? 0)
+        case "cdecDaily":
+            guard let st = h.station, let sensor = h.sensor, let dur = h.dur else { return nil }
+            return .cdecDaily(station: st, sensor: sensor, dur: dur, offsetFt: h.offsetFt ?? 0)
+        case "coopsDaily": return h.station.map { .coopsDaily(station: $0) }
+        case "usgsStageDaily":
+            guard let site = h.site, let datum = h.datum, let st = h.stat else { return nil }
+            return .usgsStageDaily(site: site, datum: datum, stat: st)
         default: return nil
         }
     }
