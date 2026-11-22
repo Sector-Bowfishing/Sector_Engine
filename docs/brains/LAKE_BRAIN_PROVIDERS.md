@@ -10,7 +10,7 @@ Bindings: `docs/brains/LAKE_BRAIN_INTEGRATION.md` section 5.
 | Provider (`LevelSeriesRef.Provider`) | Endpoint | Auth | Units | Cadence / lag (as bound) | Role |
 |---|---|---|---|---|---|
 | `tva` | `https://www.tva.com/RestApi/observed-data-48-hours/{LID}`; guide `/operating-guide/{LID}` | none (the existing client's UA works; plain curl gets HTML) | ft | 60 / 60 min | live pool; guide curve + zone; 2-year history |
-| `cwms` | `https://cwms-data.usace.army.mil/cwms-data/timeseries?office=&name=&unit=EN` | none | ft (asked in English units; a response in metres is converted) | series interval, never finer than hourly / 120 min (daily series 1440 / 1440) | live pool; decades of daily history |
+| `cwms` | `https://cwms-data.usace.army.mil/cwms-data/timeseries?office=&name=&unit=EN` (`office` is a district, e.g. `SAS`, or a division where the series is published there, e.g. `NWDP` / `NWDM`: section 4) | none | ft (asked in English units; a response in metres is converted) | series interval, never finer than hourly / 120 min (daily series 1440 / 1440) | live pool; decades of daily history |
 | `usgs` | `https://waterservices.usgs.gov/nwis/iv/` (live), `/dv/` and `/iv/` (history) | none | ft | 60 / 60 min | on-lake gauge; parameters 62614, 62615, 62616, 00062, 72020, 72022 only |
 | `a2w` USACE Access2Water | `https://water.usace.army.mil/cda/reporting/providers/{district}/locations` (ONE GET per district, shared by every lake in it and by the operator-level reads) | none | ft | series interval (floored at 60) / 120 min | latest value + 24 h change per series; operator `levels[]` |
 | `rise` USBR RISE | `https://data.usbr.gov/rise/api/result?itemId=&dateTime[after]=&itemsPerPage=2000` (`Accept: application/vnd.api+json`) | none | ft | 1440 / 2880 min (about 48 h latency) | daily lake/reservoir elevation; decades of history |
@@ -19,7 +19,7 @@ Bindings: `docs/brains/LAKE_BRAIN_INTEGRATION.md` section 5.
 | NWS forecast grid (rain signal only) | `https://api.weather.gov/points/{lat},{lon}` → its `forecastGridData`, layer `quantitativePrecipitation` | none, User-Agent required (`LakeFeedHTTP.userAgent`, the Sector-LakeBrain contact string) | mm (inches = mm / 25.4) | one gridpoint request per lake per run, spaced 0.25 s; the point → grid map is kept in the archive (`signals/nws-points.json`); usually 6 h periods | forecast rain in the next 12 h at the lake; sets the adaptive freshness window (`LakeLevelValidity`), never the level. Unknown (outside NWS coverage, outage) is treated conservatively |
 
 All requests use `Sector-LakeBrain/1.0 (io.sector.co; read-only public data; contact ...)`, a 120 s read timeout (the engine's 8 s cap is for request-path fetches; a HADS chunk or an Access2Water listing is bigger) and never write anything.
-Not implemented: **TWDB** (no strict-verified lake uses it) and **CO-OPS** (Great Lakes harbours only, not on the allow-list).
+Not implemented: **TWDB** (no strict-verified lake uses it), **CO-OPS** (Great Lakes harbours only, not on the allow-list), **Reclamation Hydromet** and **NWRFC** (section 4).
 
 ## 2. Traps the adapters enforce
 
@@ -67,3 +67,37 @@ What the exercise found and fixed:
 
 Reproduce one lake (local files only): `swift build --product LakeBrainJob && .build/debug/LakeBrainJob --dry-run /tmp/lb --include-candidates --lake "Canton Lake|OK"`.
 
+
+## 4. Pacific Northwest and Great Plains sources (2026-11-22)
+
+Owner decision (chat, 2026-11-22): build readers for lakes that passed the binding checks but need a reader the Engine does not have. Owner rule (same day): use a source only if its terms / `robots.txt` do not forbid automated reading. Result: **no new reader**. Robots files read on 2026-11-22.
+
+### USACE Northwestern Division CWMS offices (NWDP / NWDM): no change needed
+The CWMS reader sends the binding's `station` as the CDA `office` parameter unchanged (`PublicLakeLevelFeeds.cwms`; the `cwmsLevel` / `cwmsSeries` operator levels and `tools/ops/lake_binding_dryrun_check.py` do the same), so a series published under a division office id (`NWDP` Northwestern Division Pacific, `NWDM` Northwestern Division Missouri) is read exactly like a district's. Reviewed bindings already do this: Moses Lake|WA, Lake Chelan|WA, Lake Pend Oreille|ID, Coeur d'Alene|ID, Fern Ridge Reservoir|OR, Flathead Lake|MT and Hungry Horse Reservoir|MT on `NWDP`; Lake Oahe|SD and Branched Oak Lake|NE on `NWDM` (`LakeBrainCWMSDivisionOfficeTests`). A research row labelled `cwms-nwdp` (Lake Roosevelt (FDR)|WA) is held by the bindings-table allow-list and as a post-hoc row, not by the reader; admitting it is a binding decision for the acceptance gate, mapped like `cwms-saw` (provider `cwms`, station = the office).
+
+**Robots flag (applies to every CWMS binding, not only NWDP / NWDM).** `https://cwms-data.usace.army.mil/robots.txt`:
+```
+User-agent: *
+Allow: /cwms-data/
+Disallow: /cwms-data/auth/
+Disallow: /cwms-data/catalog/
+Disallow: /cwms-data/timeseries/
+Disallow: /cwms-data/swagger-docs
+Disallow: /auth/
+Sitemap: https://cwms-data.usace.army.mil/sitemap.xml
+```
+The reader requests `/cwms-data/timeseries?office=…` (no trailing slash), which a literal prefix match of `/cwms-data/timeseries/` does not cover, but the evident intent is to keep automated clients off time-series data. The CDA is a documented public API (Swagger) and this file reads like a crawler/indexing rule rather than an API-use term, but under the owner rule this is the owner's call, for the existing CWMS reader as a whole. Not changed here.
+
+### Reclamation Hydromet (PN and GP): not built — robots.txt forbids it
+`https://www.usbr.gov/robots.txt`:
+```
+User-agent: *
+Disallow: /pn-bin
+Disallow: /gp-bin
+```
+Every Hydromet data endpoint lives under those paths (PN `pn-bin/instant.pl`, `pn-bin/daily.pl`; GP `gp-bin/webdaycsv.pl`, `gp-bin/webarccsv.pl`, `gp-bin/arcread.pl`), so automated reading is forbidden and no reader is part of the Engine. A reader written before the rule was applied is kept, unmerged, on branch `parked/lake-hydromet-reader-2026-11-22` (fixtures assembled from documentation, not recorded) in case Reclamation grants permission. Lakes affected: the `usbr-pnhm` research rows (Banks Lake|WA, Crescent Lake|OR, Lake Cascade|ID, Potholes Reservoir|WA; all also post-hoc). Alternatives that are not robots-blocked are the route for them: RISE (`data.usbr.gov`, already supported) where it carries the reservoir, or the NWPS / HADS series of the NWS location id.
+
+Endpoint research, for the record: PN instant `instant.pl?list={SITE}%20FB&back={hours}&format=csv` (linked from `usbr.gov/pn/hydromet/realtime.html`); PN daily `daily.pl?station=&year=&month=&day=&year=&month=&day=&pcode=` (published clients); GP `webdaycsv.pl` / `webarccsv.pl?parameter={SITE}%20FB&syer=&smnth=&sdy=&eyer=&emnth=&edy=&format=2` and `arcread.pl?…&json=1` (`usbr.gov/gp/hydromet/automated_retrieval.pdf`). Parameter `FB` = reservoir water surface elevation (ft), daily `FB` the midnight reading; missing value `998877`; stamps are site-local time without an offset.
+
+### NWRFC (Northwest River Forecast Center): not built
+NWRFC shows observed pool heights for some reservoirs on HTML station pages (`nwrfc.noaa.gov/station/flowplot/textPlot.cgi?id={LID}&pe=HP`, `hydroPlot.php?id=…&showdata=1`), labelled "Observed" and separate from forecast tables. Not built: (1) its `robots.txt` could not be read on 2026-11-22 (the fetch failed at the site), so the owner rule cannot be shown to be met; (2) there is no documented machine-readable API or terms for these pages, and the text page states no unit and a fixed-PST stamp; (3) in one probe a request for one station id returned another station's table, an identity risk a binding must never carry. The observed series behind it is the NWS DCP stream, which the Engine already reads through `nwps` (live) and IEM HADS (history) under the same NWS location id. The one research lake on NWRFC (Lake Cushman|WA, `provider-not-allowed` and post-hoc) should be re-probed against NWPS / HADS instead.
