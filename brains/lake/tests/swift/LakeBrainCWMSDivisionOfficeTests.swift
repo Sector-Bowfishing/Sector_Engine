@@ -22,7 +22,7 @@ final class LakeBrainCWMSDivisionOfficeTests: XCTestCase {
             cap.lock.withLock { cap.urls.append(url) }
             return .success(CWMSResponse(status: 200, body: body, retryAfter: nil))
         }, sleep: { _ in }, jitter: { 0 }, log: { _ in })
-        let feeds = PublicLakeLevelFeeds(cwmsTransport: transport)
+        let feeds = PublicLakeLevelFeeds.legacyUSGS(cwmsTransport: transport)
         let ref = LevelSeriesRef(provider: .cwms, capability: .directOperatorPool, station: "NWDP", series: "MLAW.Elev-Forebay.Inst.0.0.RFC-RAW",
                                  cadenceMin: 60, lagMin: 120)
         let r = await feeds.recent(ref, hours: 6, now: now)

@@ -83,7 +83,7 @@ final class LakeBrainCDECTests: XCTestCase {
     }
 
     func testStorageAndMalformedSeriesAreRefusedBeforeAnyRequest() async {
-        let feeds = PublicLakeLevelFeeds()
+        let feeds = PublicLakeLevelFeeds.legacyUSGS()
         for series in ["15", "1", "6:M", "six", "6:H:x"] {
             let ref = LevelSeriesRef(provider: .cdec, capability: .directOperatorPool, station: "SHA", series: series, cadenceMin: 60, lagMin: 120)
             let r = await feeds.recent(ref, hours: 24, now: Date())
