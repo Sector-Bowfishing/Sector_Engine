@@ -120,10 +120,24 @@ final class LakeBrainUSGSShadowReadinessTests: XCTestCase {
         XCTAssertGreaterThan(gov.waitedSeconds, 0.1)
     }
 
+    /// Real sleeps, but the governor is charged exactly what it asked to wait: a late wake-up on a busy runner used to charge read 1
+    /// past the 0.15 s budget, so read 2 never reached v1.
+    final class ExactWaitClock: @unchecked Sendable {
+        private let lock = NSLock()
+        private var t = Date(timeIntervalSince1970: 0)
+        var clock: LakeUSGSShadowClock {
+            LakeUSGSShadowClock(now: { self.lock.lock(); defer { self.lock.unlock() }; return self.t },
+                                sleep: { s in
+                                    try? await Task.sleep(nanoseconds: UInt64(s * 1_000_000_000))
+                                    self.lock.lock(); self.t += s; self.lock.unlock()
+                                })
+        }
+    }
+
     func testTheRunBudgetTurnsShadowOffAndSaysSoOnce() async throws {
         let d = try T.v1("daily_01314500_62614.json")
         let log = LineLog()
-        let gov = LakeUSGSShadowGovernor(perReadSeconds: 0.1, budgetSeconds: 0.15, hasKey: true)
+        let gov = LakeUSGSShadowGovernor(perReadSeconds: 0.1, budgetSeconds: 0.15, hasKey: true, clock: ExactWaitClock().clock)
         let fake = WaterDataFake { _, _ in T.ok(d) }
         let f = fleet(.shadow, v1: fake.client(delay: 5), gov: gov, log: log)
         for _ in 0..<4 { _ = await dv(f) }
@@ -131,6 +145,7 @@ final class LakeBrainUSGSShadowReadinessTests: XCTestCase {
         XCTAssertEqual(log.lines.filter { $0.contains("reason=ogc-timeout") }.count, 2)
         XCTAssertEqual(log.lines.filter { $0.contains("shadow-off reason=budget-exhausted") }.count, 1, "\(log.lines)")
         XCTAssertEqual(log.lines.count, 3)
+        XCTAssertEqual(gov.waitedSeconds, 0.15, accuracy: 1e-6, "read 1 waits the full 0.1 s deadline, read 2 the 0.05 s left")
     }
 
     func testRepeated429sWithoutAKeyTurnShadowOffOnce() async throws {
