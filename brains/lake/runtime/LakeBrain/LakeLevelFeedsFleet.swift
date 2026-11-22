@@ -467,6 +467,8 @@ extension PublicLakeLevelFeeds {
             return await fleet.riseDaily(item: item, since: since)
         case .hadsDaily(let lid, let pe, let offset):
             return await fleet.hadsDaily(lid: lid, pe: pe, offsetFt: offset, since: since, now: now, timeZone: timeZone)
+        case .hydrometDaily(let region, let site, let param, let offset):
+            return await fleet.hydrometDaily(region: region, site: site, param: param, offsetFt: offset, since: since, now: now, timeZone: timeZone)
         default:
             return nil
         }
@@ -487,6 +489,9 @@ extension LakeHistorySource {
         case .riseDaily(let item): return "rise:\(item) (daily)"
         case .hadsDaily(let lid, let pe, let off):
             return "hads:\(lid):\(pe) (IEM HADS archive, daily median)" + (off != 0 ? ", datum offset \(String(format: "%.2f", off)) ft" : "")
+        case .hydrometDaily(let region, let site, let param, let off):
+            return "hydromet:\(region.uppercased()):\(site.uppercased()):\(param.uppercased()) (Reclamation Hydromet daily archive, midnight reading)"
+                + (off != 0 ? ", datum offset \(String(format: "%.2f", off)) ft" : "")
         }
     }
 }

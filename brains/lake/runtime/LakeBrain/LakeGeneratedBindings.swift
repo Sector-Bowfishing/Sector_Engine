@@ -40,6 +40,8 @@ public enum LakeGeneratedBindings {
             var item: String?
             var lid: String?
             var pe: String?
+            /// `hydrometDaily`: Hydromet region (PN / GP); the site and parameter use `site` and `param`.
+            var region: String?
         }
         struct Level: Decodable {
             var role: String
@@ -151,6 +153,9 @@ public enum LakeGeneratedBindings {
         case "hadsDaily":
             guard let l = h.lid, let pe = h.pe else { return nil }
             return .hadsDaily(lid: l, pe: pe, offsetFt: h.offsetFt ?? 0)
+        case "hydrometDaily":
+            guard let r = h.region, let site = h.site, let p = h.param else { return nil }
+            return .hydrometDaily(region: r, site: site, param: p, offsetFt: h.offsetFt ?? 0)
         default: return nil
         }
     }

@@ -172,7 +172,7 @@ public enum LakeBrainRunner {
                     case .sharedTVAArchive: continue
                     case .tvaOperatingGuide:
                         if let d = await feeds.daily(h, since: nil, now: now, timeZone: tz) { fresh += d } else { errors.append("history: TVA operating guide unavailable") }
-                    case .cwmsDaily, .usgsDaily, .riseDaily, .hadsDaily:
+                    case .cwmsDaily, .usgsDaily, .riseDaily, .hadsDaily, .hydrometDaily:
                         // Backfill (or an empty archive) pulls the whole record; otherwise the last 21 days.
                         let since: String? = (options.backfill || existing.isEmpty) ? nil
                             : existing.last.map { _ in LakeLevelCalendar.dayString(now.addingTimeInterval(-21 * 86_400), timeZone: tz) }

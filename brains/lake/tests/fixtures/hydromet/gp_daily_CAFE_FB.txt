@@ -1,0 +1,15 @@
+<HTML>
+<HEAD><TITLE>Bureau of Reclamation HYDROMET/AgriMet Data Retrieval</TITLE></HEAD>
+<BODY>
+<PRE>
+BEGIN DATA
+       DATE       ,  CAFE FB
+11/16/2026        ,   3787.21
+11/17/2026        ,   3787.30
+11/18/2026        ,   998877.00
+11/19/2026        ,   MISSING
+11/20/2026        ,   3787.52
+END DATA
+</PRE>
+</BODY>
+</HTML>
