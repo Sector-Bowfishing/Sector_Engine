@@ -127,7 +127,9 @@ def write_set(directory, states, ready, errors, now, computed) -> dict:
     for r in ready.values():
         counts[r] = counts.get(r, 0) + 1
     stale = sum(1 for s in states.values() if s["freshness"]["stale"])
-    computed_n = sum(1 for lid in states if lid in computed)
+    # A lake counts as computed only when its state carries at least one value (kind != "unavailable"): a lake whose every observation and
+    # grid fetch failed has a state of nulls, and a run made only of those is FAILED, not PARTIAL (review of #234).
+    computed_n = sum(1 for lid, st in states.items() if lid in computed and st.get("kind") != "unavailable")
     outcome = "FAILED" if errors and not computed_n else ("PARTIAL" if errors else "SUCCESS")
     health = "FAILED" if outcome == "FAILED" else ("WARNING" if errors or stale else "HEALTHY")
     reg = {
