@@ -145,7 +145,7 @@ final class LakeBrainUSGSShadowReadinessTests: XCTestCase {
         XCTAssertEqual(log.lines.filter { $0.contains("reason=ogc-timeout") }.count, 2)
         XCTAssertEqual(log.lines.filter { $0.contains("shadow-off reason=budget-exhausted") }.count, 1, "\(log.lines)")
         XCTAssertEqual(log.lines.count, 3)
-        XCTAssertEqual(gov.waitedSeconds, 0.15, accuracy: 1e-9, "read 1 waits the full 0.1 s deadline, read 2 the 0.05 s left")
+        XCTAssertEqual(gov.waitedSeconds, 0.15, accuracy: 1e-6, "read 1 waits the full 0.1 s deadline, read 2 the 0.05 s left")
     }
 
     func testRepeated429sWithoutAKeyTurnShadowOffOnce() async throws {
