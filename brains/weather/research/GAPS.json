@@ -1,0 +1,82 @@
+{
+ "schemaVersion": "1.0.0",
+ "brainId": "weather",
+ "gaps": [
+  {
+   "id": "WX-001",
+   "type": "validation",
+   "title": "Pressure and air temperature not yet validated against independent station observations",
+   "whyItMatters": "The published pressure and air temperature come from the nearest stations; whether the station chosen represents the lake (distance, elevation, AWOS altimeter vs sea-level pressure) is unmeasured.",
+   "bowfisherDecision": "Whether the Barometric Pressure and Air Temperature tiles, and the change signal built on them, describe the water the bowfisher is on.",
+   "currentEvidence": [
+    "Engine adapter recordings 2026-11-06 (3 lakes, one moment)"
+   ],
+   "stopCondition": "Stop when the pre-registered comparison in docs/brains/WEATHER_BRAIN_PLAN.md section 5 is scored on its 30-day window.",
+   "expectedOutput": "Scored comparison report with pass/fail per pre-registered criterion.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "OPTIONAL: owner or field barometer/thermometer readings at the lake may be added; never required."
+   },
+   "status": "OPEN",
+   "owner": "weather"
+  },
+  {
+   "id": "WX-002",
+   "type": "validation",
+   "title": "Weather-change thresholds v1 are pre-stated, not yet checked",
+   "whyItMatters": "Too sensitive and Lake/Water Temp refresh for nothing; too strict and a front passes unnoticed.",
+   "bowfisherDecision": "Whether the water-level and water-temperature readings a bowfisher sees were refreshed when the weather turned.",
+   "currentEvidence": [
+    "none (hand-built test cases only)"
+   ],
+   "stopCondition": "Stop after 60 days of CHANGE events are compared with NWS surface-analysis front positions and observed rain (plan section 5.3).",
+   "expectedOutput": "Hit rate and false-alarm rate per event kind; a thresholds-v2 proposal only if a pre-registered criterion fails.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "OPTIONAL"
+   },
+   "status": "OPEN",
+   "owner": "weather"
+  },
+  {
+   "id": "WX-003",
+   "type": "product",
+   "title": "No pressure forecast",
+   "whyItMatters": "The NWS forecast grid has no pressure layer, so the app's 'Next 3 hours expected' pressure readout cannot come from this Brain.",
+   "bowfisherDecision": "Whether a falling barometer is about to bottom out before the trip.",
+   "currentEvidence": [
+    "Engine adapter note (NWS_WEATHER_ADAPTER_V1 section 4): NDFD pressure layer empty"
+   ],
+   "stopCondition": "Stop when an official, documented pressure forecast source is identified and approved, or the owner accepts the gap.",
+   "expectedOutput": "A source decision.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "OPTIONAL"
+   },
+   "status": "OPEN",
+   "owner": "weather"
+  },
+  {
+   "id": "WX-004",
+   "type": "readiness",
+   "title": "Directory lakes outside NWS coverage",
+   "whyItMatters": "/points returns 404 outside the US NWS grid; those lakes get readiness BLOCKED and no state.",
+   "bowfisherDecision": "Whether a bowfisher at such a lake sees any Weather state at all.",
+   "currentEvidence": [
+    "not measured: needs the first full-directory dry run"
+   ],
+   "stopCondition": "Stop when the first full-directory dry run has counted BLOCKED lakes.",
+   "expectedOutput": "A BLOCKED count and list.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "OPTIONAL"
+   },
+   "status": "OPEN",
+   "owner": "weather"
+  }
+ ]
+}

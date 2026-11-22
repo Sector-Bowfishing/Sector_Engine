@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "weather",
+  "displayName": "Weather Brain",
+  "humanName": "Weather",
+  "domain": "condition",
+  "lifecycle": "CALIBRATION",
+  "contractVersion": "0.1.0",
+  "runtime": {
+    "kind": "job",
+    "language": "python",
+    "entrypoint": "brains/weather/runtime/run.py",
+    "trigger": {"kind": "schedule", "staleHours": 3}
+  },
+  "publishes": [
+    {
+      "contractId": "weather-publication-v1",
+      "version": "1.0.0",
+      "schemaRef": "brains/weather/contracts/weather-publication-v1.json",
+      "pathFamilies": [
+        "/lakes/{k}/states/weather",
+        "/lakeFleet/{k}/slots/weather",
+        "/lakeFleet/{k}/readiness/weather",
+        "/lakeFleet/{k}/modelVersions/weather",
+        "/brains/weather/{child}",
+        "/validation/weather"
+      ]
+    }
+  ],
+  "consumes": [
+    {"kind": "registry", "registry": "lakes", "contractId": "registry.lakes", "minVersion": "1.0.0", "requirement": "REQUIRED"}
+  ],
+  "providers": [
+    {"providerId": "nws-station-observations", "domainInterpreter": true},
+    {"providerId": "nws-forecast-grid", "domainInterpreter": true}
+  ],
+  "researchWorkspace": {"workspaceId": "weather-brain"},
+  "customerIntegrationMode": "none",
+  "publisherRequired": {"required": true, "cutoverStatus": "NOT_STARTED"},
+  "authorizedConsumers": ["ops", "lake-brain", "water-temp", "sector-intelligence"],
+  "tests": ["brains/weather/tests"],
+  "dataBudget": {"maxTrackedFileBytes": 262144, "exceptions": []},
+  "knowledge": {
+    "stores": [
+      {
+        "id": "weather-knowledge",
+        "store": "PACKAGED_IN_IMAGE",
+        "owner": "weather",
+        "location": "brains/weather/runtime/knowledge/knowledge-release.json",
+        "loader": "brains/weather/runtime/sector_weather/knowledge.py load",
+        "verification": "sector_brain_platform.knowledge_release: per-file sha256 and bytes plus release digest",
+        "lineage": "thresholdsVersion in every lake state; releaseId and digest via knowledge_release.lineage_triple",
+        "approval": "NOT_RECORDED",
+        "onUnavailable": "REFUSE"
+      }
+    ],
+    "researchFallback": false,
+    "tests": [
+      "brains/weather/tests/test_knowledge_memory.py",
+      "jobs/brain_platform/tests/test_knowledge_release.py"
+    ],
+    "notes": "The release holds only the PRE-STATED weather-change thresholds and freshness tiers (weather-change-thresholds-v1). Observations and forecasts are read live from NWS and are not knowledge."
+  },
+  "operations": {
+    "executionModes": ["INTERNAL"],
+    "knowledgeLoading": {
+      "approved": "NONE",
+      "experimental": "weather-knowledge (PACKAGED_IN_IMAGE, brains/weather/runtime/knowledge/knowledge-release.json, approval NOT_RECORDED): the pre-stated thresholds",
+      "refuseWithoutApproved": ["CUSTOMER_SERVING"]
+    },
+    "internalPublication": ["fam.brains", "fam.lake-states", "fam.lakefleet", "fam.validation"],
+    "internalExecution": "NOT RUNNING: registered DISABLED (control manifest activityState PARKED, executionTarget none, absent from the execution control; no cloud job; run.py --write refuses). Planned: a weather-brain Cloud Run job started by brain-orchestrator (WEATHER_BRAIN_PLAN.md section 6).",
+    "execution": {"authority": "brain-orchestrator", "trigger": "TIME", "minIntervalHours": 0.75, "refresh": "due on every hourly Orchestrator grant (dueAfterHours 0.75); a per-lake planner fetches only lakes whose adaptive nextCheckAt is reached (CHANGE/WATCH each grant, STEADY at most every second grant)", "dependsOn": [], "independentSchedule": false, "controlledBy": "fam.control-execution-control (global + per-Brain; fail closed; read by the orchestrator only)"},
+    "customerPublication": {"status": "NOT_ELIGIBLE", "approvalRef": null},
+    "notes": "CALIBRATION, internal only. customerPublication false. No live writer in this version: the write set is built into the platform's in-memory store. The Weather path families are not yet rows in the Cortex Firebase registry (proposal CG-W-1 in docs/cortex/CORTEX_GAPS.md); nothing is written before that review (Brain Factory onboarding rule)."
+  }
+}

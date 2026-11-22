@@ -19,7 +19,7 @@ import operations_status as OS  # noqa: E402
 from jsonschema_lite import validate  # noqa: E402
 from sector_brain_platform import brain_operations as BO, engineering_status_publication as ESP  # noqa: E402
 
-IDS = {"biological-state", "wind", "water-clarity", "lake-brain", "water-temp", "sector-intelligence", "depth", "vegetation", "moon"}
+IDS = {"biological-state", "wind", "water-clarity", "lake-brain", "water-temp", "sector-intelligence", "depth", "vegetation", "moon", "weather"}
 NOW = dt.datetime(2026, 10, 22, 16, tzinfo=dt.timezone.utc)
 
 
@@ -97,7 +97,7 @@ def test_the_live_document_is_schema_valid_leak_free_and_passes_the_cortex_statu
     assert list(validate(live, json.load(open(P.SCHEMA)))) == [] and ESP.leaks(live) == []
     st = OS.convert(live)
     by = {b["brainId"]: b for b in st["brains"]}
-    assert len(st["brains"]) == 9 and by["wind"]["internalOperation"]["status"] == "ACTIVE" and by["depth"]["internalOperation"]["status"] == "SHADOW"
+    assert len(st["brains"]) == 10 and by["wind"]["internalOperation"]["status"] == "ACTIVE" and by["depth"]["internalOperation"]["status"] == "SHADOW"
     assert by["depth"]["outputs"][0]["lane"] == "INTERNAL_EXPERIMENTAL" and {"mode": "APPROVED_SCIENCE", "knowledgeState": "CANDIDATE", "outcome": "REFUSED"} in by["depth"]["runs"]
     assert "combinedReadiness" not in by["depth"] and by["depth"]["releaseReadiness"]["status"] == "BLOCKED"   # release readiness, beside the dimensions
     assert all(b["customerEligibility"]["status"] == "NOT_ELIGIBLE" for b in st["brains"])

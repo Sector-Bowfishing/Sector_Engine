@@ -748,8 +748,61 @@ def moon_bundles() -> list[BundleSpec]:
     return [BundleSpec(MOON_BUNDLE, MOON, MOON_SCHEMAS)]
 
 
+# ---- Weather (CALIBRATION; canonical package brains/weather, owner decision 2026-11-22, Sector_Ops #51) ----------------------------------------------
+# The Weather job (brains/weather/runtime/run.py) builds ONE flat multi-path update and has NO live writer in this version (--write refuses; the write set
+# goes to the platform's in-memory store). This registration describes that write set as Publisher families so the Brain can be reviewed and certified;
+# it activates nothing. No snapshot projection: no legacy reader exists for Weather. No /health or /sources path: those are Orchestrator-owned (as Clarity,
+# Lake, Water Temp after G3) and the source registry rows are not registered yet (CG proposal in docs/cortex/CORTEX_GAPS.md).
+WEATHER = "weather"
+WEATHER_SLOT = BRAINS[WEATHER][0]
+WEATHER_SCHEMAS = ("weather-lake-state-v1", "weather-registry-v1")
+WEATHER_BUNDLE = "weather-publication-v1"
+WEATHER_REGISTRY_CHILDREN = {
+    "identity": ("brainId", "displayName", "domain", "question", "platform"),
+    "model": ("version", "schemaVersion", "stalenessModel", "dependsOn", "descriptor", "readinessDefinitions", "stateKinds", "thresholds",
+              "thresholdsVersion", "sourceIds"),
+    "status": ("schedule", "enabled", "health", "status", "supportedLakeCount", "directoryLakeCount", "readinessCounts", "staleLakeCount",
+               "staleAfterHours", "lastSuccessfulRun", "lastRunOutcome", "lastError", "weatherChange", "publishMode", "updatedAt"),
+}
+WEATHER_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount")          # for the health mirror only; authorises nothing in the registry
+WEATHER_VOLATILE_CONTRACT_V1 = VolatileContract(
+    "weather-volatile-v1", 1,
+    keys=frozenset({"lastUpdatedAt", "updatedAt", "generatedAt", "evaluatedAt"}),
+    paths=(PathFamily(f"/brains/{WEATHER}/lastSuccessfulRun", note="transitional"), PathFamily(f"/brains/{WEATHER}/lastRunOutcome", note="transitional")),
+    notes={"key:lastUpdatedAt": "slot write time; no domain meaning", "key:updatedAt": "registry write time; no domain meaning",
+           "path:/brains/weather/lastRunOutcome": "execution fact (status, time, counts of this run); retire with lastSuccessfulRun",
+           "key:generatedAt": "run time of the state; the observation times it carries are NOT volatile",
+           "key:evaluatedAt": "run time of the weather-change evaluation; basisObservationAt is NOT volatile",
+           "path:/brains/weather/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records"})
+
+
+def weather_specs() -> list[SchemaSpec]:
+    k = {"k": lake_key_check}
+    lake_state = SchemaSpec(
+        "weather-lake-state-v1", WEATHER,
+        (PathFamily(f"/lakes/{{k}}/states/{WEATHER_SLOT}", k),
+         PathFamily(f"/lakeFleet/{{k}}/slots/{WEATHER_SLOT}", k, "DERIVED_PROJECTION", "projection of the lake state; same atomic publish"),
+         PathFamily(f"/lakeFleet/{{k}}/readiness/{WEATHER_SLOT}", k, "DERIVED_PROJECTION"),
+         PathFamily(f"/lakeFleet/{{k}}/modelVersions/{WEATHER_SLOT}", k, "DERIVED_PROJECTION")),
+        value_types={f"/lakes/{{k}}/states/{WEATHER_SLOT}": dict, f"/lakeFleet/{{k}}/slots/{WEATHER_SLOT}": dict},
+        volatile=WEATHER_VOLATILE_CONTRACT_V1)
+    registry = SchemaSpec(
+        "weather-registry-v1", WEATHER,
+        (PathFamily(f"/brains/{WEATHER}/{{child}}", {"child": one_of(c for group in WEATHER_REGISTRY_CHILDREN.values() for c in group)},
+                    note="approved CHILDREN only; never the whole node, never publication/certification"),
+         PathFamily(f"/validation/{WEATHER}")),
+        delete_families=(PathFamily(f"/brains/{WEATHER}/lastError"),), delete_reasons=("OPTIONAL_CHILD_CLEARED",), volatile=WEATHER_VOLATILE_CONTRACT_V1)
+    return [lake_state, registry]
+
+
+def weather_bundles() -> list[BundleSpec]:
+    return [BundleSpec(WEATHER_BUNDLE, WEATHER, WEATHER_SCHEMAS)]
+
+
 def default_registry() -> Registry:
-    """Wind, Fish, Water Clarity, Sector Intelligence, Lake, Water Temperature, Depth, Vegetation and Moon (all SHADOW). A registration describes a Brain's
-    write set so it can be certified; it activates nothing (Publisher LIVE authorizes no Brain)."""
-    return Registry(wind_specs() + fish_specs() + clarity_specs() + intelligence_specs() + lake_specs() + water_temp_specs() + depth_specs() + vegetation_specs() + moon_specs(),
-                    wind_bundles() + fish_bundles() + clarity_bundles() + intelligence_bundles() + lake_bundles() + water_temp_bundles() + depth_bundles() + vegetation_bundles() + moon_bundles())
+    """Wind, Fish, Water Clarity, Sector Intelligence, Lake, Water Temperature, Depth, Vegetation, Moon and Weather (all SHADOW). A registration describes a
+    Brain's write set so it can be certified; it activates nothing (Publisher LIVE authorizes no Brain)."""
+    return Registry(wind_specs() + fish_specs() + clarity_specs() + intelligence_specs() + lake_specs() + water_temp_specs() + depth_specs() + vegetation_specs()
+                    + moon_specs() + weather_specs(),
+                    wind_bundles() + fish_bundles() + clarity_bundles() + intelligence_bundles() + lake_bundles() + water_temp_bundles() + depth_bundles()
+                    + vegetation_bundles() + moon_bundles() + weather_bundles())

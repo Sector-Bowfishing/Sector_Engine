@@ -22,6 +22,7 @@
     "depth": "NONE",
     "vegetation": "NONE",
     "moon": "NONE",
+    "weather": "NONE",
     "orchestrator": "shared-writer",
     "publisher": "publisher"
   },
@@ -35,6 +36,7 @@
     "depth": "brain-job",
     "vegetation": "brain-job",
     "moon": "brain-job",
+    "weather": "brain-job",
     "orchestrator": "orchestrator",
     "publisher": "publisher"
   },
