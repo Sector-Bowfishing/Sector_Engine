@@ -24,8 +24,8 @@
 //    D3 Daily statistics: `statistic_id` per feature, merged with the legacy precedence (00003 > 32400 > 30800 > 00001 > 00002,
 //       then any other statistic in code order — legacy's fallback, matched by asking `daily` for every statistic when the binding
 //       says `dv`). Each statistic is selected on its own: an ambiguous statistic is dropped (and named in the shadow line), the
-//       unambiguous ones are kept. A binding that names one statistic (32400, 30800, ...) is refused when the API does not serve a
-//       daily series of it.
+//       unambiguous ones are kept; a metadata read that fails (429, unreachable, 5xx, unreadable) refuses the whole read. A binding
+//       that names one statistic (32400, 30800, ...) is refused when the API does not serve a daily series of it.
 //    D4 "No data" is a 200 with zero features (not a 404); a `null` value (and the legacy -999999) is skipped.
 //    D10 A non-JSON body (the blackout notice page) is a failure, never data.
 //  Every v1 failure carries a code and a reason (`ReadFailure`), and the shadow line reports both.
@@ -176,13 +176,7 @@ enum LakeUSGSRouting {
         case .v1:
             return adopt(await v1())
         case .shadow:
-            if let why = governor.skipReason() {
-                if governor.firstTime(why) {
-                    log("[usgs-shadow] shadow-off reason=\(why) rateLimited=\(governor.rateLimitedCount) apiKey=\(governor.hasKey ? "set" : "unset")"
-                        + " waitedSeconds=\(Int(governor.waitedSeconds)) (logged once; legacy continues)")
-                }
-                return await legacy()
-            }
+            if shadowOff(governor: governor, log: log) { return await legacy() }
             let start = Date()
             let pending = LakeUSGSPending<U>()
             let task = Task { pending.fulfil(await v1()) }
@@ -193,6 +187,33 @@ enum LakeUSGSRouting {
             if o == nil { task.cancel() }
             log(compare(l, o))
             return l
+        }
+    }
+
+    /// True when the governor has turned shadow off (the reason is logged the first time it is seen).
+    static func shadowOff(governor: LakeUSGSShadowGovernor, log: (String) -> Void) -> Bool {
+        guard let why = governor.skipReason() else { return false }
+        if governor.firstTime(why) {
+            log("[usgs-shadow] shadow-off reason=\(why) rateLimited=\(governor.rateLimitedCount) apiKey=\(governor.hasKey ? "set" : "unset")"
+                + " waitedSeconds=\(Int(governor.waitedSeconds)) (logged once; legacy continues)")
+        }
+        return true
+    }
+
+    /// A shadow comparison nobody waits for: `v1` runs in a detached task with the per-read deadline, and `compare` is logged when it
+    /// answers or the deadline passes (nil). It spends none of the run's waiting budget, because the run does not wait.
+    static func detached<U: Sendable>(governor: LakeUSGSShadowGovernor,
+                                      v1: @escaping @Sendable () async -> U,
+                                      compare: @escaping @Sendable (U?) async -> String,
+                                      log: @escaping @Sendable (String) -> Void) {
+        if shadowOff(governor: governor, log: log) { return }
+        let deadline = governor.perReadSeconds
+        Task.detached {
+            let pending = LakeUSGSPending<U>()
+            let read = Task { pending.fulfil(await v1()) }
+            let o = await pending.wait(seconds: deadline)
+            if o == nil { read.cancel() }
+            log(await compare(o))
         }
     }
 }
@@ -631,6 +652,9 @@ struct LakeUSGSWaterDataClient: Sendable {
             case .failure(let f):
                 // A named statistic, or the gage-height reader (one series per answer, as legacy): the whole read is refused.
                 if stat != "dv" || singleSeries { return .failed(f) }
+                // Only an ambiguous statistic is dropped. A failed or unreadable metadata read (429, unreachable, 5xx) says nothing
+                // about the statistic, so the whole read is refused with that failure rather than answering with fewer statistics.
+                guard Self.droppable(f) else { return LakeUSGSV1Daily(levels: nil, failure: f, droppedStatistics: dropped) }
                 dropped[s] = f.code.rawValue
                 if firstDrop == nil { firstDrop = f }
             case .success(let picked):
@@ -655,6 +679,9 @@ struct LakeUSGSWaterDataClient: Sendable {
         return LakeUSGSV1Daily(levels: LakeDailyHistory.dedupe(merged.map { DailyLevel(date: $0.key, ft: $0.value + offsetFt, sourceId: src) }),
                                failure: nil, droppedStatistics: dropped)
     }
+
+    /// A `dv` statistic whose selection failed this way is dropped and the others kept; any other failure refuses the read.
+    static func droppable(_ f: ReadFailure) -> Bool { f.code == .ambiguousPrimary || f.code == .severalSeries }
 
     /// Whether `time-series-metadata` lists a daily series of `stat` for the site and parameter.
     func servesDaily(site: String, param: String, stat: String) async -> Result<Bool, ReadFailure> {

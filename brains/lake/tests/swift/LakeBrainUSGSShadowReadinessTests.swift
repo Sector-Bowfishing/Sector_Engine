@@ -199,6 +199,100 @@ final class LakeBrainUSGSShadowReadinessTests: XCTestCase {
         XCTAssertEqual(c.failure?.code, .ambiguousPrimary)
     }
 
+    /// Only an ambiguous statistic is dropped: a failed or unreadable metadata read refuses the whole `dv` read, with its code.
+    func testADvMetadataFailureRefusesTheReadInsteadOfDroppingTheStatistic() async {
+        let body = T.collection([
+            T.feature("a", site: "01314500", param: "62614", time: "2026-11-20", value: #""1.0""#, stat: "00003"),
+            T.feature("b", site: "01314500", param: "62614", time: "2026-11-20", value: #""9.0""#, stat: "00003"),
+            T.feature("c", site: "01314500", param: "62614", time: "2026-11-21", value: #""2.0""#, stat: "30800")])
+        func read(_ metadata: LakeFeedHTTP.Response?) async -> LakeUSGSV1Daily {
+            await WaterDataFake { url, _ in url.contains("/time-series-metadata/") ? metadata : T.ok(body) }.client()
+                .daily(site: "01314500", param: "62614", stat: "dv", offsetFt: 0, since: "2026-11-01", now: now, timeZone: utc, src: "s", singleSeries: false)
+        }
+        for (metadata, inner) in [(T.status(429), "rate-limited"), (T.status(503), "http"), (nil, "unreachable")] as [(LakeFeedHTTP.Response?, String)] {
+            let r = await read(metadata)
+            XCTAssertNil(r.levels, "\(inner): refused, not answered with 30800 alone")
+            XCTAssertEqual(r.failure?.code, .metadataUnreadable, inner)
+            XCTAssertTrue(r.failure?.why.contains("(\(inner):") ?? false, r.failure?.why ?? "")
+            XCTAssertTrue(r.droppedStatistics.isEmpty, inner)
+        }
+        let garbage = await read(T.ok(Data("not json".utf8)))
+        XCTAssertNil(garbage.levels)
+        XCTAssertEqual(garbage.failure?.code, .metadataUnreadable)
+        // Ambiguous (metadata read, none Primary): still dropped, 30800 kept.
+        let ambiguous = await read(T.ok(Self.meta(["a", "b"], primary: nil)))
+        XCTAssertEqual(ambiguous.levels?.map(\.ft), [2.0])
+        XCTAssertEqual(ambiguous.droppedStatistics, ["00003": "ambiguous-primary"])
+        XCTAssertTrue(LakeUSGSWaterDataClient.droppable(LakeUSGSReadFailure(.severalSeries, "x")))
+        XCTAssertFalse(LakeUSGSWaterDataClient.droppable(LakeUSGSReadFailure(.rateLimited, "x")))
+
+        // In shadow the refusal reaches the line with its code; legacy is served.
+        let log = LineLog()
+        let f = fleet(.shadow, v1: WaterDataFake { url, _ in url.contains("/time-series-metadata/") ? T.status(503) : T.ok(body) }.client(),
+                      gov: LakeUSGSShadowGovernor(hasKey: true), log: log)
+        let served = await dv(f)
+        XCTAssertEqual(served?.first?.ft, 1556.20)
+        XCTAssertTrue(log.lines.first?.contains("kind=daily verdict=disagree reason=ogc-failed:metadata-unreadable") ?? false, "\(log.lines)")
+    }
+
+    // MARK: the legacy stage read never waits on the v1 site record
+
+    func slowSiteStage(v1Delay: TimeInterval, perRead: TimeInterval = 20, legacy: URLRecorder, log: LineLog) throws -> LakeUSGSStageClient {
+        let rdb = try T.stageFixture("04082500_site.rdb"), iv = try T.stageFixture("04082500_iv_00065.json")
+        let loc = try T.v1("location_04082500.json")
+        let v1 = WaterDataFake { url, _ in url.contains("/monitoring-locations/") ? T.ok(loc) : T.status(503) }
+        return LakeUSGSStageClient(fetch: { url, _ in legacy.add(url); return T.ok(url.contains("/nwis/site/") ? rdb : iv) },
+                                   cache: USGSSiteCache(), mode: .shadow, waterData: v1.client(delay: v1Delay), shadowLog: { log.add($0) },
+                                   governor: LakeUSGSShadowGovernor(perReadSeconds: perRead, budgetSeconds: 300, hasKey: true))
+    }
+
+    func testTheLegacyStageReadDoesNotWaitOnASlowV1SiteRead() async throws {
+        let ref = LevelSeriesRef(provider: .usgsStage, capability: .directLakeGauge, station: "04082500", series: "NAVD88", cadenceMin: 60, lagMin: 60)
+        let rec = URLRecorder(), log = LineLog()
+        let shadow = try slowSiteStage(v1Delay: 1.5, legacy: rec, log: log)
+        let start = Date()
+        let r = await shadow.recentLegacy(ref, hours: 24)
+        XCTAssertLessThan(Date().timeIntervalSince(start), 0.5, "the legacy iv request goes out without waiting for monitoring-locations")
+        XCTAssertEqual(r.observations.last?.ft ?? 0, 746.74, accuracy: 1e-9)
+        XCTAssertFalse(log.lines.contains { $0.contains("kind=site") }, "the site comparison has not answered yet")
+
+        // The same legacy requests as the legacy switch.
+        let legacyRec = URLRecorder()
+        let rdb = try T.stageFixture("04082500_site.rdb"), iv = try T.stageFixture("04082500_iv_00065.json")
+        let legacy = LakeUSGSStageClient.legacy(fetch: { url, _ in
+            legacyRec.add(url)
+            return T.ok(url.contains("/nwis/site/") ? rdb : iv)
+        }, cache: USGSSiteCache())
+        let l = await legacy.recentLegacy(ref, hours: 24)
+        XCTAssertEqual(r.observations, l.observations)
+        XCTAssertEqual(rec.urls, legacyRec.urls)
+
+        // The history path: the altitude does not wait either.
+        let hist = URLRecorder()
+        let fleet = LakeFleetClients(transport: { url, _, _ in hist.add(url); return T.ok(Self.legacyDV) }, usgsMode: .legacy,
+                                     waterData: .unreachable(), shadowLog: { _ in }, shadowGovernor: LakeUSGSShadowGovernor(hasKey: true))
+        let historyStart = Date()
+        _ = try await slowSiteStage(v1Delay: 1.5, legacy: URLRecorder(), log: LineLog())
+            .daily(site: "04082500", datum: "NAVD88", stat: "dv", since: "2026-11-01", now: now, timeZone: utc, fleet: fleet)
+        XCTAssertLessThan(Date().timeIntervalSince(historyStart), 0.5)
+        XCTAssertFalse(hist.urls.isEmpty, "the dv request was sent")
+
+        // The comparison still lands, as its own line, once v1 answers.
+        let site = await log.waitFor(5) { $0.contains("kind=site") }
+        XCTAssertTrue(site?.contains("kind=site verdict=agree") ?? false, "\(log.lines)")
+    }
+
+    func testASiteComparisonPastItsDeadlineLogsATimeout() async throws {
+        let ref = LevelSeriesRef(provider: .usgsStage, capability: .directLakeGauge, station: "04082500", series: "NAVD88", cadenceMin: 60, lagMin: 60)
+        let log = LineLog()
+        let start = Date()
+        let r = try await slowSiteStage(v1Delay: 5, perRead: 0.2, legacy: URLRecorder(), log: log).recentLegacy(ref, hours: 24)
+        XCTAssertLessThan(Date().timeIntervalSince(start), 0.5)
+        XCTAssertNil(r.error)
+        let site = await log.waitFor(3) { $0.contains("kind=site") }
+        XCTAssertTrue(site?.contains("kind=site verdict=disagree reason=ogc-timeout legacyN=1") ?? false, "\(log.lines)")
+    }
+
     // MARK: LOW: legacy's fallback statistics (D3)
 
     func testDvUsesOtherStatisticsAfterTheFiveLikeLegacy() async {
