@@ -47,36 +47,45 @@
    "sha256": "85264530d578dadcf74b5eeb8793f7f02dbd61c6a18a55485d5362c390f11d87"
   },
   "checks_2026-11-22.csv": {
-   "sha256": "ab825def9096074723055d1022fb6bfee2e8c65530d43a2174efce8af66f20b9"
+   "sha256": "256035b10b77f657af4fd253b224a6f7612b14a3d3cebe41dadb832b709a5e7c"
   }
  },
  "counts": {
-  "records": 106,
+  "records": 104,
   "byProvider": {
-   "a2w": 25,
+   "a2w": 24,
    "cwms": 18,
    "nwps": 16,
    "rise": 9,
    "tva": 4,
-   "usgs": 34
+   "usgs": 33
   },
   "history": {
    "INSUFFICIENT": 2,
    "NONE": 12,
-   "SUFFICIENT": 92
+   "SUFFICIENT": 90
   },
   "excludedForAnyReason": {
-   "coordinate-flag": 58,
+   "coordinate-flag": 57,
    "flagged": 10,
-   "flagged-wave1": 28,
+   "flagged-wave1": 27,
    "history-live-mismatch": 8,
-   "post-hoc": 37
+   "post-hoc": 36
   },
   "seriesFixes": [
    "East Lynn Lake|WV",
    "Logan Martin|AL",
    "Rend Lake|IL",
    "Weiss|AL"
+  ],
+  "historyOffsets": [
+   "Lake Washington|WA",
+   "Rend Lake|IL",
+   "Toledo Bend Reservoir|TX"
+  ],
+  "held": [
+   "Blue Marsh Lake|PA",
+   "Lake Mattamuskeet|NC"
   ]
  },
  "bindings": [
@@ -247,11 +256,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRP Kinzua-Lake.Elev.Inst.1Hour.0.OBS",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -373,11 +382,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged;flagged-wave1",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -508,11 +517,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "history-live-mismatch",
      "fetchedFrom": "NWPS BRTA3 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -639,11 +648,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "CWMS SAM Whitten.Elev.Inst.15Minutes.0.Raw-USGS",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -755,14 +764,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:10055000 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:10055000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -953,11 +962,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SWL Beaver_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -1127,11 +1136,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRH BeechFk-Lake.Elev.Inst.15Minutes.0.OBS",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -1262,187 +1271,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS WWCG1 (HPIRZ)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
-     "approvalRef": "sector-ops-51-7075462499"
-    }
-   }
-  },
-  {
-   "lakeId": "Blue Marsh Lake|PA",
-   "status": "MACHINE_VERIFIED",
-   "capability": "DIRECT_OPERATOR_POOL",
-   "provider": "a2w",
-   "researchProvider": "a2w",
-   "station": "NAP:BlueMarsh",
-   "series": "BlueMarsh.Elev.Inst.30Minutes.0.Rev-DCP-88",
-   "live": [
-    {
-     "provider": "a2w",
-     "capability": "DIRECT_OPERATOR_POOL",
-     "station": "NAP:BlueMarsh",
-     "series": "BlueMarsh.Elev.Inst.30Minutes.0.Rev-DCP-88",
-     "cadenceMin": 60,
-     "lagMin": 120,
-     "datumOffsetFt": 0.0,
-     "note": "USACE Access2Water NAP:BlueMarsh (research probe)"
-    },
-    {
-     "provider": "cwms",
-     "capability": "DIRECT_OPERATOR_POOL",
-     "station": "NAP",
-     "series": "BlueMarsh.Elev.Inst.30Minutes.0.Rev-DCP",
-     "cadenceMin": 60,
-     "lagMin": 120,
-     "datumOffsetFt": 0.0,
-     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T05:00Z age 1.5 h"
-    },
-    {
-     "provider": "nwps",
-     "capability": "DIRECT_LAKE_GAUGE",
-     "station": "PLVP1",
-     "series": "HPIRG",
-     "cadenceMin": 60,
-     "lagMin": 120,
-     "datumOffsetFt": 0.0,
-     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:00:00Z age 1.4 h"
-    }
-   ],
-   "history": [
-    {
-     "kind": "cwmsDaily",
-     "office": "NAP",
-     "series": "BlueMarsh.Elev.Inst.30Minutes.0.Rev-DCP"
-    }
-   ],
-   "historyCompleteYears": 8,
-   "historyClass": "SUFFICIENT",
-   "historyFirstYear": 2018,
-   "historyBasis": "base",
-   "historyNotes": [],
-   "plan": {
-    "matchedProject": "NAP:BlueMarsh | Blue Marsh Dam",
-    "matchBasis": "nid,sameStation,name,geo<=5km",
-    "matchTier": "strong",
-    "distKm": 0.01,
-    "planSource": "a2w+cwms",
-    "verifiedMatch": true,
-    "planStrict": false,
-    "floodStrict": true,
-    "levels": [
-     {
-      "role": "floodPoolBottom",
-      "name": "Top of Conservation",
-      "kind": "a2w",
-      "office": "NAP",
-      "location": "BlueMarsh",
-      "id": "BlueMarsh.Elev.Inst.0.Top of Conservation",
-      "source": "a2w:NAP:BlueMarsh:BlueMarsh.Elev.Inst.0.Top of Conservation",
-      "seasonal": true,
-      "researchTodayFt": 289.27
-     }
-    ]
-   },
-   "timeZone": "America/New_York",
-   "timeZoneRule": "state PA",
-   "dam": {
-    "nidId": "PA00921",
-    "damName": "Blue Marsh Dam",
-    "operatorName": "US Army Corps of Engineers",
-    "hydropower": false,
-    "floodControl": true,
-    "nidPurposes": "Flood Risk Reduction, Recreation, Water Supply",
-    "nidMatchScore": 92.8,
-    "nidDistM": 67.0,
-    "source": "NID PA00921 purposes (nid_links.csv)"
-   },
-   "context": {
-    "lakeClass": {
-     "value": "R4_open_basin_storage",
-     "source": "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
-     "quality": "derived"
-    },
-    "regime": {
-     "value": "reservoir",
-     "source": "research lake_features.csv (2026-10-13)",
-     "quality": "derived"
-    },
-    "region": {
-     "value": "NE",
-     "source": "research lake_features.csv (2026-10-13)",
-     "quality": "derived"
-    },
-    "residenceTimeDays": {
-     "value": 212.1,
-     "source": "research lake_features.csv (2026-10-13): storage / mean inflow (HL / EROM_qema)",
-     "quality": "derived"
-    },
-    "chainPosition": {
-     "upLakes": 0,
-     "downLakes": 0,
-     "nearestDown": null,
-     "chainId": null,
-     "source": "NLDI main-stem navigation from the dam coordinate (250 km) intersected with directory polygons",
-     "quality": "derived"
-    },
-    "grassPct": {
-     "value": 9.1,
-     "asOf": "2026-10-08",
-     "source": "Sector Water Clarity sentinel-2a pass 2026-10-08 (consume-only snapshot)",
-     "quality": "measured, single pass; refresh by regenerating"
-    }
-   },
-   "verification": {
-    "criteriaVersion": "binding-review-v1",
-    "researchStatus": "VERIFIED",
-    "wave": "w1",
-    "checksPassed": [
-     "R1",
-     "R2",
-     "R3",
-     "R4",
-     "R5",
-     "R6",
-     "R8",
-     "R7=strong"
-    ],
-    "corroboratedBy": null,
-    "probedAt": "2026-10-13",
-    "probe": {
-     "lastObservationAt": "2026-10-13T05:00:00Z",
-     "ageHours": 2.4,
-     "medianFt": 290.29,
-     "lastFt": 290.29,
-     "minFt30d": null,
-     "maxFt30d": null,
-     "samples30d": 1
-    },
-    "directoryFullPoolFt": 289.27,
-    "deltaFullPoolFt": 1.02,
-    "coordinateFlag": "off_water",
-    "batch2Check": {
-     "checkedAt": "2026-11-22",
-     "value": 284.3,
-     "observedAt": "2026-11-22T03:00Z",
-     "ageH": 1.6,
-     "median30": 284.53,
-     "median30MinusFullPool": -4.7,
-     "gaugePosition": "at dam (operator pool/forebay series)",
-     "distToOutlineKm": 0.01,
-     "R6": "PASS",
-     "R7": "PASS",
-     "b_fallback": "n/a",
-     "secondSource": null,
-     "c_history": "PASS",
-     "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
-     "excludedFor": "coordinate-flag",
-     "fetchedFrom": "CWMS NAP BlueMarsh.Elev.Inst.30Minutes.0.Rev-DCP-88",
-     "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -1601,11 +1434,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS NWDM BOHA.Elev.Inst.1Hour.0.Best-NWO",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -1791,11 +1624,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRL Buckhorn-Lake.Elev.Inst.5Minutes.0.USGS-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -1924,11 +1757,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "history-live-mismatch",
      "fetchedFrom": "RISE 152",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -2119,11 +1952,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SWL Bull_Shoals_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -2254,11 +2087,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS TIGG1 (HPIRZ)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -2398,11 +2231,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS MVK Caddo Lake.Elev.Inst.1Hour.0.DCP-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -2587,11 +2420,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRL CaglesMill.Elev.Inst.0.0.lrldlb-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -2730,11 +2563,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "RISE 215",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -2848,11 +2681,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "NWPS CNDN6 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -3021,11 +2854,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "history-live-mismatch",
      "fetchedFrom": "CWMS SWF SMCT2.Elev.Inst.1Hour.0.Decodes-Rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -3139,11 +2972,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged;flagged-wave1",
      "fetchedFrom": "CWMS MVK Catahoula Lake-Center.Elev.Inst.1Hour.0.DCP-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -3328,11 +3161,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRL CMHarden.Elev.Inst.0.0.lrldlb-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -3452,14 +3285,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:03013946 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:03013946 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -3633,11 +3466,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "TVA CRKT1",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -3811,11 +3644,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "TVA CKDT1",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -3928,14 +3761,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:11450000 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:11450000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -4126,11 +3959,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SWL Clearwater_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -4242,14 +4075,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:11492200 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:11492200 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -4389,11 +4222,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SWL LD10_Dardanelle-Headwater.Elev.Inst.1Hour.0.Decodes-raw",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -4524,11 +4357,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS DKLI2 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -4644,14 +4477,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:05056500 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:05056500 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -4763,14 +4596,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:14312450 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:14312450 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -4892,11 +4725,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS MVK Muddy Bayou-Landside.Elev.Inst.1Hour.0.DCP-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -5068,11 +4901,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRH EastLynn-Lake.Elev.Inst.15Minutes.0.OBS",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -5202,11 +5035,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS NWDM FTPK.Elev.Inst.1Hour.0.Best-MRBWM",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -5336,14 +5169,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:01483510 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:01483510 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag;flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -5455,11 +5288,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "RISE 372",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -5580,14 +5413,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:01383000 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:01383000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -5762,11 +5595,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS NWDM HACO.Elev.Inst.1Hour.0.Best-NWK",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -5879,14 +5712,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:442805084411001 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:442805084411001 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -6015,11 +5848,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "RISE 87",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -6140,14 +5973,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:442400084472801 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:442400084472801 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -6315,11 +6148,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "RISE 451",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -6495,11 +6328,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "TVA KYDK2",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -6655,11 +6488,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "TVA KYDK2",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -6773,11 +6606,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "NWPS KKPN6 (HPIRZ)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -6965,11 +6798,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRN BAHK2-BARKLEY.Elev-Pool.Inst.1Hour.0.man-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -7084,14 +6917,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:04294500 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:04294500 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -7241,11 +7074,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -7432,11 +7265,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS MVP LakeDarling_Dam.Elev.Inst.~15Minutes.0.best-NGVD29",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -7558,14 +7391,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:06442996 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:06442996 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -7677,14 +7510,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:423525088260400 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:423525088260400 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -7796,14 +7629,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:04278000 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:04278000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -7923,14 +7756,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:04035995 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:04035995 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -8089,11 +7922,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SWT HUDS.Elev.Inst.1Hour.0.Ccp-Rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -8268,130 +8101,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "history-live-mismatch",
      "fetchedFrom": "CWMS NWDP LIB.Elev-Forebay.Inst.1Hour.0.IRIDIUM-REV",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
-     "approvalRef": "sector-ops-51-7075462499"
-    }
-   }
-  },
-  {
-   "lakeId": "Lake Mattamuskeet|NC",
-   "status": "MACHINE_VERIFIED",
-   "capability": "DIRECT_LAKE_GAUGE",
-   "provider": "usgs",
-   "researchProvider": "usgs",
-   "station": "020845889205",
-   "series": "62615",
-   "live": [
-    {
-     "provider": "usgs",
-     "capability": "DIRECT_LAKE_GAUGE",
-     "station": "020845889205",
-     "series": "62615",
-     "cadenceMin": 60,
-     "lagMin": 60,
-     "datumOffsetFt": 0.0,
-     "note": "USGS LAKE MATTAMUSKEET AT NC HWY 94 NEAR FAIRFIELD, NC"
-    }
-   ],
-   "history": [
-    {
-     "kind": "usgsDaily",
-     "site": "0208458893",
-     "param": "00062",
-     "stat": "dv",
-     "offsetFt": 0.0
-    }
-   ],
-   "historyCompleteYears": 12,
-   "historyClass": "SUFFICIENT",
-   "historyFirstYear": 2012,
-   "historyBasis": "base",
-   "historyNotes": [],
-   "plan": null,
-   "timeZone": "America/New_York",
-   "timeZoneRule": "state NC",
-   "dam": {},
-   "context": {
-    "lakeClass": {
-     "value": "N1b_natural_shallow",
-     "source": "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
-     "quality": "derived"
-    },
-    "regime": {
-     "value": "natural",
-     "source": "research lake_features.csv (2026-10-13)",
-     "quality": "derived"
-    },
-    "region": {
-     "value": "SE",
-     "source": "research lake_features.csv (2026-10-13)",
-     "quality": "derived"
-    },
-    "residenceTimeDays": {
-     "value": 880.0,
-     "source": "research lake_features.csv (2026-10-13): storage / mean inflow (HL / HL)",
-     "quality": "derived"
-    },
-    "grassPct": {
-     "value": 2.7,
-     "asOf": "2026-10-06",
-     "source": "Sector Water Clarity sentinel-2c pass 2026-10-06 (consume-only snapshot)",
-     "quality": "measured, single pass; refresh by regenerating"
-    }
-   },
-   "verification": {
-    "criteriaVersion": "binding-review-v1",
-    "researchStatus": "VERIFIED_ENVELOPE",
-    "wave": "w1",
-    "checksPassed": [
-     "R1",
-     "R2",
-     "R3",
-     "R4",
-     "R5",
-     "R6",
-     "R8",
-     "R7=weak",
-     "R7h"
-    ],
-    "corroboratedBy": null,
-    "probedAt": "2026-10-13",
-    "probe": {
-     "lastObservationAt": "2026-10-12T00:00Z",
-     "ageHours": 31.4,
-     "medianFt": -0.055,
-     "lastFt": -0.06,
-     "minFt30d": -0.47,
-     "maxFt30d": 0.23,
-     "samples30d": 134
-    },
-    "directoryFullPoolFt": 0.0,
-    "deltaFullPoolFt": -0.06,
-    "coordinateFlag": "ok",
-    "batch2Check": {
-     "checkedAt": "2026-11-22",
-     "value": -0.47,
-     "observedAt": "2026-11-20T12:00Z",
-     "ageH": 40.9,
-     "median30": -0.4,
-     "median30MinusFullPool": null,
-     "gaugePosition": "on lake (inside the outline)",
-     "distToOutlineKm": 0.02,
-     "R6": "PASS",
-     "R7": "n/a (no full pool)",
-     "b_fallback": "n/a",
-     "secondSource": null,
-     "c_history": "PASS",
-     "d_reference": "n/a (no full pool)",
-     "seriesCheck": "n/a (no research history file)",
-     "excludedFor": "flagged-wave1;post-hoc",
-     "fetchedFrom": "usgs iv/dv",
-     "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -8503,14 +8217,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:04295500 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:04295500 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag;flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -8623,14 +8337,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:05428000 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:05428000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -8748,11 +8462,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "NWPS MTKM5 (HPIRP)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -8865,14 +8579,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:05429000 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:05429000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -8995,14 +8709,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "cwms-nwdm:NWDM:OAHE (-0.00 ft)",
+     "secondSource": "same gauge, other endpoint: cwms-nwdm:NWDM:OAHE (-0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "CWMS NWDM OAHE.Elev.Inst.1Hour.0.Best-MRBWM",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -9114,11 +8828,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag;flagged;post-hoc",
      "fetchedFrom": "CWMS MVP LakeCity.Elev.Inst.~15Minutes.0.best-MSL1912",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -9241,11 +8955,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS PETW3 (HPIRP)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -9348,14 +9062,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:12039490 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:12039490 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -9526,11 +9240,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS RBDS1 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -9657,11 +9371,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "CWMS NWDM GARR.Elev.Inst.1Hour.0.Best-MRBWM",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -9773,14 +9487,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:12122000 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:12122000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -9903,11 +9617,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS BBDS2 (HPIRV)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -10083,11 +9797,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "history-live-mismatch",
      "fetchedFrom": "CWMS MVS Lk Shelbyville-Kaskaskia.Elev.Inst.30Minutes.0.lrgsShef-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -10217,14 +9931,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:02193900 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:02193900 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -10366,11 +10080,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "history-live-mismatch",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -10528,11 +10242,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS TENO2 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -10700,11 +10414,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "RISE 550",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -10733,8 +10447,9 @@
     {
      "kind": "cwmsDaily",
      "office": "NWDP",
-     "series": "LWSC.Elev-Lake.Inst.1Hour.0.NWSRADIO-RAW(+0.36ft over 1874d, sd 0.08)",
-     "offsetFt": 0.0
+     "series": "LWSC.Elev-Lake.Inst.1Hour.0.NWSRADIO-RAW",
+     "offsetFt": 0.36,
+     "note": "history/live offset +0.36 ft: 1874-day mean difference, sd 0.08 ft (research comparator; the value had leaked into the series id as '(+0.36ft over 1874d, sd 0.08)'); sign as the comparator reported it, direction to be confirmed on the Mac mini [2026-11-22 batch 2 re-check (Sector_Ops #51), review of #222]"
     },
     {
      "kind": "cwmsDaily",
@@ -10825,11 +10540,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged;flagged-wave1",
      "fetchedFrom": "CWMS NWDP LWKW.Elev-Lake.Inst.1Hour.0.IRIDIUM-REV",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -10960,14 +10675,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "nwps:CCSA1 (-0.02 ft vs Raw-APCO)",
+     "secondSource": "independent: nwps:CCSA1 (-0.02 ft vs Raw-APCO)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "CWMS SAM LoganMartin.Elev.Inst.1Hour.0.Raw-APCO (re-checked; first pass read GC-APCO guide curve 462.44)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -11076,11 +10791,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag;flagged;flagged-wave1",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -11204,14 +10919,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "cwms-nwdm:NWDM:LGVM (-0.00 ft)",
+     "secondSource": "same gauge, other endpoint: cwms-nwdm:NWDM:LGVM (-0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "CWMS NWDM LGVM.Elev.Inst.1Hour.0.Best-NWK",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -11397,11 +11112,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS MVS Mark Twain Lk-Salt.Elev.Inst.30Minutes.0.lrgsShef-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -11586,11 +11301,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SWL Millwood_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -11765,11 +11480,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRL Mississinewa-Lake.Elev.Inst.15Minutes.0.Decodes-raw",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -11954,11 +11669,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRL Monroe.Elev.Inst.0.0.lrldlb-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -12070,14 +11785,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:04129950 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:04129950 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -12241,11 +11956,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "history-live-mismatch",
      "fetchedFrom": "RISE 612",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -12366,11 +12081,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "CWMS SAJ Okeechobee-8Station.Elev.Ave.~1Hour.1Hour.DCP-Computed",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -12479,11 +12194,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "NWPS CLEN6 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -12660,11 +12375,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SWT OOLO.Elev.Inst.1Hour.0.Ccp-Rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -12776,14 +12491,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:04235396 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:04235396 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -12899,11 +12614,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged;flagged-wave1",
      "fetchedFrom": "NWPS FFCQ6 (HPIRP)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -13050,14 +12765,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:05074000 (+0.28 ft)",
+     "secondSource": "independent: usgs2:05074000 (+0.28 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1",
      "fetchedFrom": "CWMS MVP RedLake_Dam.Elev.Inst.~15Minutes.0.best-MSL1912",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -13096,7 +12811,9 @@
     {
      "kind": "cwmsDaily",
      "office": "MVS",
-     "series": "Rend Lk-Big Muddy.Elev.Inst.~1Day.0.datman-rev"
+     "series": "Rend Lk-Big Muddy.Elev.Inst.~1Day.0.datman-rev",
+     "offsetFt": -0.55,
+     "note": "history/live offset -0.55 ft: datman-rev reads +0.55 ft (max 0.61 ft) above the live lrgsShef-raw series over the last 71 days (2026-11-22 re-check, FIXES note); applied with the opposite sign to bring history onto live [2026-11-22 batch 2 re-check (Sector_Ops #51), review of #222]"
     }
    ],
    "historyCompleteYears": 49,
@@ -13245,11 +12962,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "history-live-mismatch",
      "fetchedFrom": "CWMS MVS Rend Lk-Big Muddy.Elev.Inst.30Minutes.0.lrgsShef-raw",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -13414,11 +13131,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRL Salamonie-Lake.Elev.Inst.15Minutes.0.USGS-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -13538,14 +13255,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:01063995 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:01063995 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -13654,11 +13371,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "NWPS GNVN6 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -13789,11 +13506,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS SNCG1 (HPIRZ)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -13978,11 +13695,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS NWDM SMIE.Elev.Inst.1Hour.0.Best-NWK",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -14126,11 +13843,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "RISE 767",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -14294,11 +14011,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRP StonewallJackson-Lake.Elev.Inst.1Hour.0.OBS",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -14411,14 +14128,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:05056665 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:05056665 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -14602,11 +14319,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "RISE 134012",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -14657,7 +14374,8 @@
      "site": "08025350",
      "param": "62614",
      "stat": "dv",
-     "offsetFt": 0.0
+     "offsetFt": -0.18,
+     "note": "history/live offset -0.18 ft: two-gauge mean, USGS 08025350 (62614, NGVD29) vs live 312914093422701 (62615, NAVD88); VDatum gives -0.285 ft (Sector_Ops #51 comment 7076370263) [2026-11-22 batch 2 re-check (Sector_Ops #51), review of #222]"
     }
    ],
    "historyCompleteYears": 39,
@@ -14750,11 +14468,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -14919,11 +14637,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS NWDM TUCR.Elev.Inst.1Hour.0.Best-NWK",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -15034,14 +14752,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:10288500 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:10288500 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged;flagged-wave1",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -15204,11 +14922,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -15374,11 +15092,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SAM Weiss.Elev.Inst.1Hour.0.Raw-APCO (re-checked; first pass read GC-APCO guide curve 561.43)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -15508,14 +15226,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:13174000 (+0.00 ft)",
+     "secondSource": "same gauge, other endpoint: usgs2:13174000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -15643,14 +15361,14 @@
      "R6": "PASS",
      "R7": "PASS",
      "b_fallback": "PASS",
-     "secondSource": "usgs2:03077000 (-0.05 ft)",
+     "secondSource": "same gauge, other endpoint (presumed: NWPS YGBP1 relays USGS 03077000; to confirm on the Mac mini): usgs2:03077000 (-0.05 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "n/a (no research history file)",
+     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS YGBP1 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }

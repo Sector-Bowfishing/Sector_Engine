@@ -205,7 +205,8 @@ final class LakeBrainBindingsTests: XCTestCase {
         XCTAssertTrue(excludedIds.count > 100)
         XCTAssertEqual(excludedIds.intersection(Set(ids)), batch2Ids)
         XCTAssertTrue(batch2Ids.isSubset(of: excludedIds))
-        for must in ["Clinton Lake|IL", "Lake Shafer|IN", "Upper Klamath Lake|OR"] {
+        // Mattamuskeet and Blue Marsh: held out of batch 2 after the #222 review (live checks pending)
+        for must in ["Clinton Lake|IL", "Lake Shafer|IN", "Upper Klamath Lake|OR", "Lake Mattamuskeet|NC", "Blue Marsh Lake|PA"] {
             XCTAssertTrue(excludedIds.contains(must), "\(must) must be excluded")
             XCTAssertFalse(ids.contains(must))
         }

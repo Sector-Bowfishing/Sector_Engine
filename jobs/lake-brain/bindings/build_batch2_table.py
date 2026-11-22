@@ -60,6 +60,57 @@ FIXES = {
     },
 }
 
+# Review of #222 (2026-11-22): lakes the re-check passed but that are HELD out of batch 2 until the Mac mini checks them with live data.
+# Their rows stay in checks_2026-11-22.csv with result HOLD (the evidence is kept); they get no record and are not accepted.
+HOLD = {
+    "Lake Mattamuskeet|NC": "history reads a different site and parameter (USGS 0208458893 00062) from live (020845889205 62615) and the lake "
+                            "has no full pool, so checks R7 and d do not apply; to batch 3 once the history/live relation is checked",
+    "Blue Marsh Lake|PA": "datum mix between the live a2w/CWMS series and the Rev-DCP history series is unresolved; needs live data (Mac mini)",
+}
+
+# Measured history offsets (review of #222). `offsetFt` is ADDED to the history reading so it lines up with live (the convention of
+# usgsDaily / hadsDaily offsets). The basis of each value goes in the history entry's `note`, as the datum-offset rows already do.
+# NOTE: the engine applies offsetFt only to usgsDaily, hadsDaily and cdecDaily; on cwmsDaily (Lake Washington, Rend Lake) it is
+# recorded data and is not applied by the runner until cwmsDaily gains an offset.
+HISTORY_OFFSETS = {
+    "Lake Washington|WA": {
+        "index": 0, "series": "LWSC.Elev-Lake.Inst.1Hour.0.NWSRADIO-RAW", "offsetFt": 0.36,
+        "note": "history/live offset +0.36 ft: 1874-day mean difference, sd 0.08 ft (research comparator; the value had leaked into the "
+                "series id as '(+0.36ft over 1874d, sd 0.08)'); sign as the comparator reported it, direction to be confirmed on the Mac mini",
+    },
+    "Rend Lake|IL": {
+        "index": 0, "offsetFt": -0.55,
+        "note": "history/live offset -0.55 ft: datman-rev reads +0.55 ft (max 0.61 ft) above the live lrgsShef-raw series over the last 71 days "
+                "(2026-11-22 re-check, FIXES note); applied with the opposite sign to bring history onto live",
+    },
+    "Toledo Bend Reservoir|TX": {
+        "index": 0, "offsetFt": -0.18,
+        "note": "history/live offset -0.18 ft: two-gauge mean, USGS 08025350 (62614, NGVD29) vs live 312914093422701 (62615, NAVD88); "
+                "VDatum gives -0.285 ft (Sector_Ops #51 comment 7076370263)",
+    },
+}
+
+CRITERIA = ("binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through "
+            "another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)")
+
+
+def apply_history_offset(rec: dict, spec: dict) -> None:
+    h = rec["history"][spec["index"]]
+    if "series" in spec:
+        h["series"] = spec["series"]
+    h["offsetFt"] = spec["offsetFt"]
+    h["note"] = f"{spec['note']} [{SOURCE}, review of #222]"
+
+
+def summarize(records: list[dict]) -> dict:
+    by_provider = collections.Counter(r["provider"] for r in records)
+    hist = collections.Counter(r["historyClass"] for r in records)
+    reasons = collections.Counter(p for r in records for p in (r["verification"]["batch2Check"]["excludedFor"] or "").split(";") if p)
+    return {"records": len(records), "byProvider": dict(sorted(by_provider.items())), "history": dict(sorted(hist.items())),
+            "excludedForAnyReason": dict(sorted(reasons.items())), "seriesFixes": sorted(FIXES),
+            "historyOffsets": sorted(HISTORY_OFFSETS), "held": sorted(HOLD)}
+
+
 CHECK_FIELDS = ["checkedAt", "value", "observedAt", "ageH", "median30", "median30MinusFullPool", "gaugePosition", "distToOutlineKm",
                 "R6", "R7", "b_fallback", "secondSource", "c_history", "d_reference", "seriesCheck", "excludedFor", "fetchedFrom"]
 
@@ -77,7 +128,7 @@ def num_or_str(v: str):
 def load_checks() -> dict[str, dict]:
     rows = {}
     for r in csv.DictReader(open(CHECKS, newline="")):
-        assert r["result"] == "PASS", f"{r['lakeId']}: batch 2 lists only PASS rows"
+        assert r["result"] == "PASS" or (r["result"] == "HOLD" and r["lakeId"] in HOLD), f"{r['lakeId']}: batch 2 lists only PASS or HOLD rows"
         assert r["lakeId"] not in rows, f"{r['lakeId']} listed twice"
         rows[r["lakeId"]] = r
     return rows
@@ -98,23 +149,25 @@ def build() -> dict:
     rows = {r["lake_id"]: r for r in inp.v2}
     excluded = {r["lake_id"] for r, _ in B.classify_lakes(inp)[1]}
     records = []
+    assert {l for l, c in checks.items() if c["result"] == "HOLD"} == set(HOLD), "HOLD rows and HOLD must agree"
     for lake in sorted(checks):
+        if lake in HOLD:
+            continue
         assert lake in rows, f"{lake}: no research row"
         assert lake in excluded, f"{lake}: not an excluded lake (batch 2 is only excluded lakes)"
         rec, _ = B.build_record(inp, rows[lake])
         assert rec is not None, f"{lake}: no live ref for {rows[lake]['provider']} {rows[lake]['series_or_param']} (needs a new provider)"
         if lake in FIXES:
             apply_fix(rec, FIXES[lake])
+        if lake in HISTORY_OFFSETS:
+            apply_history_offset(rec, HISTORY_OFFSETS[lake])
         c = checks[lake]
         live0 = rec["live"][0]
         assert (live0["provider"], live0["station"]) == (c["provider"], c["station"]) or lake in FIXES, f"{lake}: record/check mismatch"
         rec["verification"]["batch2Check"] = {k: num_or_str(c.get(k, "")) for k in CHECK_FIELDS} | {
-            "result": c["result"], "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d + 15 ft history/live series rule",
+            "result": c["result"], "criteria": CRITERIA,
             "approvalRef": "sector-ops-51-7075462499"}
         records.append(rec)
-    by_provider = collections.Counter(r["provider"] for r in records)
-    hist = collections.Counter(r["historyClass"] for r in records)
-    reasons = collections.Counter(p for r in records for p in (r["verification"]["batch2Check"]["excludedFor"] or "").split(";") if p)
     return {
         "schema": B.SCHEMA, "bindingStatus": B.STATUS, "criteriaVersion": B.CRITERIA_VERSION, "batch": 2,
         "note": "MACHINE_VERIFIED, NOT REVIEWED. Generated by jobs/lake-brain/bindings/build_batch2_table.py. Excluded research-bound lakes "
@@ -122,8 +175,7 @@ def build() -> dict:
                 "listing its lakeId in jobs/lake-brain/data/accepted_batch2.json.",
         "researchDate": "2026-10-13", "checkDate": CHECK_DATE,
         "inputs": {k: {"sha256": B.sha256(p)} for k, p in sorted(inp.files.items())} | {"checks_2026-11-22.csv": {"sha256": B.sha256(CHECKS)}},
-        "counts": {"records": len(records), "byProvider": dict(sorted(by_provider.items())), "history": dict(sorted(hist.items())),
-                   "excludedForAnyReason": dict(sorted(reasons.items())), "seriesFixes": sorted(FIXES)},
+        "counts": summarize(records),
         "bindings": records,
     }
 

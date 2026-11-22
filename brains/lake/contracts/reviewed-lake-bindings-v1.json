@@ -1,5 +1,5 @@
 {
-  "bindingVersion" : "bindings-2026-10-13.1+accepted.293.310e9a55",
+  "bindingVersion" : "bindings-2026-10-13.1+accepted.291.62f1c511",
   "owner" : "lake-brain",
   "reviewed" : [
     {
@@ -155,15 +155,6 @@
       "lakeId" : "Blackshear|GA",
       "liveSourceIds" : [
         "nwps:WWCG1:HPIRZ"
-      ]
-    },
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "Blue Marsh Lake|PA",
-      "liveSourceIds" : [
-        "a2w:NAP:BlueMarsh:BlueMarsh.Elev.Inst.30Minutes.0.Rev-DCP-88",
-        "cwms:NAP:BlueMarsh.Elev.Inst.30Minutes.0.Rev-DCP",
-        "nwps:PLVP1:HPIRG"
       ]
     },
     {
@@ -1261,13 +1252,6 @@
       "liveSourceIds" : [
         "cwms:SAM:Martin.Elev.Inst.1Hour.0.Raw-APCO",
         "nwps:TLLA1:HPIRZ"
-      ]
-    },
-    {
-      "capability" : "DIRECT_LAKE_GAUGE",
-      "lakeId" : "Lake Mattamuskeet|NC",
-      "liveSourceIds" : [
-        "usgs:020845889205:62615"
       ]
     },
     {

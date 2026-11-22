@@ -8,7 +8,6 @@
   "Beaver|AR",
   "Beech Fork Lake|WV",
   "Blackshear|GA",
-  "Blue Marsh Lake|PA",
   "Bowman-Haley Reservoir|ND",
   "Buckhorn Lake|KY",
   "Buffalo Bill Reservoir|WY",
@@ -55,7 +54,6 @@
   "Lake Gogebic|MI",
   "Lake Hudson|OK",
   "Lake Koocanusa|MT",
-  "Lake Mattamuskeet|NC",
   "Lake Memphremagog|VT",
   "Lake Mendota|WI",
   "Lake Minnetonka|MN",
@@ -110,5 +108,5 @@
  "reviewedAt": "2026-11-22",
  "reviewedBy": "owner direction (Michael), not the sampled binding review",
  "approvalRef": "owner-direction-2026-11-22/sector-ops-51-7075462499",
- "note": "Batch 2, accepted on Michael's 'Yes 1-4' (2026-11-22 06:39Z, recorded in Sector_Ops #51 comment 7075462499) to the batch 2 research (comment 7074433014): the excluded research-bound lakes that passed the 2026-11-22 Mac mini re-check on an engine provider. 108 passed; 2 of them (Clinton Lake|IL, gage height 00065 + site altitude; Upper Klamath Lake|OR, USGS 72275) have no engine adapter yet and move to the new-provider work, so 106 are listed. Records: bindings.batch2.v1.json; evidence: batch2/checks_2026-11-22.csv. Series fixed by the re-check: Logan Martin|AL and Weiss|AL live (guide curve -> Raw-APCO), East Lynn Lake|WV history (rule curve -> OBS), Rend Lake|IL history (stopped MVDhist-rev -> datman-rev). The pre-registered 60-row sample review (ingest_review_result.py) was NOT run. The knowledge release built from this needs Michael's approval."
+ "note": "Batch 2, accepted on Michael's 'Yes 1-4' (2026-11-22 06:39Z, recorded in Sector_Ops #51 comment 7075462499) to the batch 2 research (comment 7074433014): the excluded research-bound lakes that passed the 2026-11-22 Mac mini re-check on an engine provider. 108 passed; 2 of them (Clinton Lake|IL, gage height 00065 + site altitude; Upper Klamath Lake|OR, USGS 72275) have no engine adapter yet and move to the new-provider work, leaving 106; after the #222 review 2 more are HELD for live checks on the Mac mini (Lake Mattamuskeet|NC: different history site/parameter and no full pool, to batch 3 once checked; Blue Marsh Lake|PA: unresolved datum mix), so 104 are listed. Records: bindings.batch2.v1.json; evidence: batch2/checks_2026-11-22.csv. Series fixed by the re-check: Logan Martin|AL and Weiss|AL live (guide curve -> Raw-APCO), East Lynn Lake|WV history (rule curve -> OBS), Rend Lake|IL history (stopped MVDhist-rev -> datman-rev). The pre-registered 60-row sample review (ingest_review_result.py) was NOT run. The knowledge release built from this needs Michael's approval."
 }

@@ -27,9 +27,9 @@
     },
     {
       "path": "LakeBrain/LakeSourceBindingsGenerated.swift",
-      "sha256": "44be2e37ca87485b7815212f527e4e21fc051aa9a8e2827985e86e3013841c42",
-      "bytes": 631913
+      "sha256": "63bd3e8f0ac3555ee94903703ae0b5269415ed7ca473177cb0246121d5ffb0e6",
+      "bytes": 628147
     }
   ],
-  "releaseDigest": "sha256:652a52695504c73e9bd90b5d2e371653d54b428a621840eb1538e2952189245d"
+  "releaseDigest": "sha256:7343fbcbcb66a266636b6c5d31e097b25c9e265947cab50b0f643c5dcc193d61"
 }
