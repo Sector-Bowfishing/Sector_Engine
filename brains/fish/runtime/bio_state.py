@@ -65,9 +65,25 @@ def _slot(st: dict | None, values: dict, now: dt.datetime, stale_after_h: float,
                               "brainVersion": prov.get("brainVersion"), "values": values}.items() if v is not None}
 
 
+def _measured_only(slot: dict, wt: dict | None) -> dict:
+    """Water Temp `evidenceClass` gate (contracts_in: a modelled value is UNKNOWN). Only `sensor` (water-temp-state-v1, EvidenceClass in
+    WaterTemperatureBrain.swift) is a measurement; `modeled`, any other value, or a missing field drops the values. A STALE slot keeps STALE."""
+    if not isinstance(wt, dict) or not wt:
+        return slot
+    ec = wt.get("evidenceClass")
+    if ec == ci.WATER_TEMP_MEASURED_CLASS:
+        return slot
+    code = ci.WATER_TEMP_EVIDENCE_MISSING if ec is None else ci.WATER_TEMP_MODELLED_INPUT
+    out = {**slot, "values": {}, "evidenceClass": ec, "reasonCode": code,
+           "reason": "no evidenceClass: not known to be a sensor measurement" if ec is None else f"evidenceClass {ec!r} is not a sensor measurement"}
+    if out.get("status") in ft.USABLE_INPUT_STATUS:
+        out["status"] = ci.NOT_MEASURED
+    return {k: v for k, v in out.items() if v is not None}
+
+
 def normalize_inputs(snapshot: dict | None, now: dt.datetime, stale_after_h: float = DEFAULT_STALE_AFTER_H) -> dict:
     """The published lake snapshot (`/snapshots/{k}/latest`) -> the slots Biological features read. Implausible values and unrecognised vocabulary
-    are dropped here (they become UNKNOWN features), never repaired."""
+    are dropped here (they become UNKNOWN features), never repaired. A water temperature that is not a sensor measurement is dropped too."""
     s = snapshot or {}
     lk, wt, wc = s.get("lakeState"), s.get("waterTemperature"), s.get("waterClarity")
     pick = lambda d, ks: {k: (d or {}).get(k) for k in ks if (d or {}).get(k) is not None}      # noqa: E731
@@ -80,7 +96,7 @@ def normalize_inputs(snapshot: dict | None, now: dt.datetime, stale_after_h: flo
         lk_vals.pop("tributaryDischargeTrend", None)
     return {
         "lake": _slot(lk, lk_vals, now, stale_after_h, "lake-brain"),
-        "waterTemp": _slot(wt, wt_vals, now, stale_after_h, "water-temp"),
+        "waterTemp": _measured_only(_slot(wt, wt_vals, now, stale_after_h, "water-temp"), wt),
         "waterClarity": _slot(wc, pick(wc, ("clarityFt",)), now, stale_after_h, "water-clarity"),
     }
 

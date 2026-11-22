@@ -19,6 +19,11 @@ UNKNOWN = "UNKNOWN"
 
 # ---------------------------------------------------------------- Water Temp / Lake sanity
 TEMP_F_RANGE = (28.0, 110.0)
+# Water Temp `evidenceClass` (water-temp-state-v1; values `sensor` | `modeled`). Only `sensor` is a measurement Biological may use.
+WATER_TEMP_MEASURED_CLASS = "sensor"
+WATER_TEMP_MODELLED_INPUT = "MODELLED_INPUT"
+WATER_TEMP_EVIDENCE_MISSING = "EVIDENCE_CLASS_MISSING"
+NOT_MEASURED = "NOT_MEASURED"                        # input slot status: published, but not a measurement -> dependent features UNKNOWN
 TREND_F_MAX = 25.0
 
 
@@ -101,7 +106,10 @@ def depth_availability(depth: dict, depth_class: str) -> dict:
 
 
 # ---------------------------------------------------------------- Vegetation
-VEG_CLASSES = ("EMERGENT", "FLOATING", "SUBMERGED", "FLOODED_TERRESTRIAL", "NONE_SIGNIFICANT", "UNKNOWN")
+VEG_CLASSES = ("EMERGENT", "FLOATING", "SUBMERGED", "FLOODED_TERRESTRIAL", "NONE_SIGNIFICANT", "SURFACE_REACHING_MIXED", "UNKNOWN")
+# SURFACE_REACHING_MIXED = the Vegetation Brain's own broadType for plants that reach the surface but whose kind is NOT_CLASSIFIED. It is shallow
+# vegetation, but it cannot be told apart from flooded terrestrial plants, so floodedVegetation is UNKNOWN for it (never FALSE).
+VEG_SURFACE_CLASSES = ("SUBMERGED", "EMERGENT", "FLOATING", "SURFACE_REACHING_MIXED")
 VEG_DENSITY = ("NONE", "SCATTERED", "MODERATE", "DENSE")
 VEG_OBSERVED_TIERS = ("OBSERVED_SATELLITE", "OBSERVED_SURVEY")          # PRIOR_MAPPED / SEASONAL_EXPECTATION / POTENTIAL_HABITAT never count as presence
 MAX_VEG_AGE_DAYS = 45.0                                                  # engineering default: an observation older than this is not "current"; not a biological threshold
@@ -128,11 +136,13 @@ def vegetation_habitat_state(cell: dict | None, habitat_class: str, now: dt.date
     dens = cell.get("density")
     if cls == "NONE_SIGNIFICANT":
         return {"state": "FALSE", "reason": "observed clear of cover", "ageDays": round(age, 1), "confidence": cell.get("confidence")}
+    if habitat_class == "floodedVegetation" and cls == "SURFACE_REACHING_MIXED":
+        return {"state": UNKNOWN, "reason": "surface vegetation type is not classified: flooded terrestrial plants cannot be told apart", "ageDays": round(age, 1)}
     if habitat_class == "floodedVegetation":
         ok = cls == "FLOODED_TERRESTRIAL"
     else:
-        ok = cls in ("SUBMERGED", "EMERGENT", "FLOATING") and dens not in (None, "NONE") and dens in VEG_DENSITY
-    if cls in ("SUBMERGED", "EMERGENT", "FLOATING") and dens not in VEG_DENSITY and habitat_class == "shallowVegetatedHabitat":
+        ok = cls in VEG_SURFACE_CLASSES and dens not in (None, "NONE") and dens in VEG_DENSITY
+    if cls in VEG_SURFACE_CLASSES and dens not in VEG_DENSITY and habitat_class == "shallowVegetatedHabitat":
         return {"state": UNKNOWN, "reason": "density missing or unrecognised"}
     return {"state": "TRUE" if ok else "FALSE", "class": cls, "density": dens, "surfaceTopped": cell.get("surfaceTopped"), "ageDays": round(age, 1), "confidence": cell.get("confidence"),
             "reason": f"{cls} {dens or ''} observed {age:.0f} d ago ({tier})".replace("  ", " ")}

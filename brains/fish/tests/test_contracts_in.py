@@ -43,7 +43,7 @@ class NormalizeInputsTests(unittest.TestCase):
     def snap(self, **kw):
         gen = (NOW - dt.timedelta(hours=1)).isoformat()
         s = {"lakeState": {"trendState": "RISING", "provenance": {"generatedAt": gen}},
-             "waterTemperature": {"currentTempF": 70.0, "trend24hF": 0.5, "provenance": {"generatedAt": gen}},
+             "waterTemperature": {"currentTempF": 70.0, "trend24hF": 0.5, "evidenceClass": "sensor", "provenance": {"generatedAt": gen}},
              "waterClarity": {"clarityFt": 2.5, "provenance": {"generatedAt": gen}}}
         for k, v in kw.items():
             s[k].update(v)
@@ -63,6 +63,52 @@ class NormalizeInputsTests(unittest.TestCase):
         self.assertNotIn("trendState", n["lake"]["values"])
         f = ft.evaluate_features(n)
         self.assertEqual((f["waterTempBand"]["state"], f["stageTrend"]["state"], f["warmRise"]["state"]), ("UNKNOWN", "UNKNOWN", "UNKNOWN"))
+
+
+    def test_sensor_water_temp_is_used(self):
+        import bio_state as bs
+        import features as ft
+        n = bs.normalize_inputs(self.snap(), NOW)
+        self.assertEqual(n["waterTemp"]["status"], "PUBLISHED")
+        self.assertNotIn("reasonCode", n["waterTemp"])
+        self.assertNotEqual(ft.evaluate_features(n)["waterTempBand"]["state"], "UNKNOWN")
+
+    def assert_temp_unknown(self, n, code):
+        import features as ft
+        self.assertEqual(n["waterTemp"]["status"], "NOT_MEASURED")
+        self.assertEqual(n["waterTemp"]["reasonCode"], code)
+        self.assertEqual(n["waterTemp"]["values"], {})
+        f = ft.evaluate_features(n)
+        self.assertEqual((f["waterTempBand"]["state"], f["warmRise"]["state"]), ("UNKNOWN", "UNKNOWN"))
+
+    def test_modelled_or_estimated_water_temp_is_unknown(self):
+        import bio_state as bs
+        for ec in ("modeled", "modelled", "estimated", "SENSOR", ""):
+            with self.subTest(evidenceClass=ec):
+                self.assert_temp_unknown(bs.normalize_inputs(self.snap(waterTemperature={"evidenceClass": ec}), NOW), "MODELLED_INPUT")
+
+    def test_missing_evidence_class_is_unknown(self):
+        import bio_state as bs
+        s = self.snap()
+        del s["waterTemperature"]["evidenceClass"]
+        self.assert_temp_unknown(bs.normalize_inputs(s, NOW), "EVIDENCE_CLASS_MISSING")
+
+    def test_stale_modelled_temp_stays_stale_and_other_slots_unaffected(self):
+        import bio_state as bs
+        s = self.snap(waterTemperature={"evidenceClass": "modeled", "provenance": {"generatedAt": (NOW - dt.timedelta(hours=40)).isoformat()}})
+        n = bs.normalize_inputs(s, NOW)
+        self.assertEqual((n["waterTemp"]["status"], n["waterTemp"]["values"]), ("STALE", {}))
+        self.assertEqual(n["lake"]["values"]["trendState"], "RISING")
+        self.assertEqual(n["waterClarity"]["values"], {"clarityFt": 2.5})
+
+    def test_modelled_temp_is_reported_as_a_lake_unknown(self):
+        import bio_state as bs
+        import rules as rl
+        n = bs.normalize_inputs(self.snap(waterTemperature={"evidenceClass": "modeled"}), NOW)
+        st = bs.build_lake_state("X|AL", region="south", waterbody_type="run_of_river", now=NOW, inputs=n, daypart="NIGHT", presence={},
+                                 ruleset=rl.RuleSet([], "test"))
+        self.assertTrue(any(u.startswith("waterTemp input NOT_MEASURED") for u in st["unknowns"]))
+        self.assertEqual(st["inputs"]["waterTemp"]["reasonCode"], "MODELLED_INPUT")
 
 
 class DepthContractTests(unittest.TestCase):
