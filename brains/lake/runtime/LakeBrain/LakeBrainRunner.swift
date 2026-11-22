@@ -171,12 +171,13 @@ public enum LakeBrainRunner {
                     switch h {
                     case .sharedTVAArchive: continue
                     case .tvaOperatingGuide:
-                        if let d = await feeds.daily(h, since: nil, now: now, timeZone: tz) { fresh += d } else { errors.append("history: TVA operating guide unavailable") }
+                        if let d = await historyDaily(h, lakeId: lake.id, feeds: feeds, since: nil, now: now, timeZone: tz) { fresh += d } else { errors.append("history: TVA operating guide unavailable") }
                     case .cwmsDaily, .usgsDaily, .riseDaily, .hadsDaily, .cdecDaily, .coopsDaily, .usgsStageDaily:
                         // Backfill (or an empty archive) pulls the whole record; otherwise the last 21 days.
                         let since: String? = (options.backfill || existing.isEmpty) ? nil
                             : existing.last.map { _ in LakeLevelCalendar.dayString(now.addingTimeInterval(-21 * 86_400), timeZone: tz) }
-                        if let d = await feeds.daily(h, since: since, now: now, timeZone: tz) { fresh += d } else { errors.append("history: \(h.profileDescription) unavailable") }
+                        // The recorded offsetFt is applied for every provider (LakeHistoryOffsets).
+                        if let d = await historyDaily(h, lakeId: lake.id, feeds: feeds, since: since, now: now, timeZone: tz) { fresh += d } else { errors.append("history: \(h.profileDescription) unavailable") }
                     }
                 }
                 let merged = LakeDailyHistory.merge(existing: existing, new: fresh)

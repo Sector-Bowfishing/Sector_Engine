@@ -35,7 +35,7 @@ final class LakeBrainHistoryWalkTests: XCTestCase {
 
     func testCDECWindowsAreContiguousAndTwoEmptyWindowsEndTheWalk() async throws {
         let rec = URLRecorder()
-        let fleet = LakeFleetClients(transport: { url, _, _ in
+        let fleet = LakeFleetClients.legacy(transport: { url, _, _ in
             rec.add(url)
             switch rec.urls.count {
             case 1: return Self.ok(Self.cdecDays(["2026-11-20", "2026-11-21"]))
@@ -57,7 +57,7 @@ final class LakeBrainHistoryWalkTests: XCTestCase {
 
     func testCDECFailedWindowFailsThePullAndSinceBoundsIt() async throws {
         let rec = URLRecorder()
-        let failing = LakeFleetClients(transport: { url, _, _ in
+        let failing = LakeFleetClients.legacy(transport: { url, _, _ in
             rec.add(url)
             return rec.urls.count == 1 ? Self.ok(Self.cdecDays(["2026-11-20"])) : LakeFeedHTTP.Response(status: 500, body: Data())
         })
@@ -65,7 +65,7 @@ final class LakeBrainHistoryWalkTests: XCTestCase {
         XCTAssertNil(failed, "no silent hole")
 
         let rec2 = URLRecorder()
-        let bounded = LakeFleetClients(transport: { url, _, _ in
+        let bounded = LakeFleetClients.legacy(transport: { url, _, _ in
             rec2.add(url); return Self.ok(Self.cdecDays(["2026-11-18", "2026-11-19", "2026-11-20"]))
         })
         let dPulled = await bounded.cdecDaily(station: "SHA", sensor: "6", dur: "D", offsetFt: 1.5, since: "2026-11-19",
@@ -105,12 +105,12 @@ final class LakeBrainHistoryWalkTests: XCTestCase {
     }
 
     func stage(_ rec: URLRecorder) -> LakeUSGSStageClient {
-        LakeUSGSStageClient(fetch: { url, _ in rec.add(url); return Self.ok(Self.rdb) }, cache: USGSSiteCache())
+        LakeUSGSStageClient.legacy(fetch: { url, _ in rec.add(url); return Self.ok(Self.rdb) }, cache: USGSSiteCache())
     }
 
     func testUSGSStageIVHistoryWalksWholeYearsUntilTwoEmptyYears() async throws {
         let rec = URLRecorder(), siteRec = URLRecorder()
-        let fleet = LakeFleetClients(transport: { url, _, _ in
+        let fleet = LakeFleetClients.legacy(transport: { url, _, _ in
             rec.add(url)
             switch Self.param(url, "startDT").map({ String($0.prefix(4)) }) ?? "" {
             case "2026": return Self.ok(Self.iv(["2026-11-21T12:00:00.000-06:00"]))
@@ -130,18 +130,18 @@ final class LakeBrainHistoryWalkTests: XCTestCase {
     }
 
     func testUSGSStageHistoryFailsOnAFailedYearOrSeveralSeriesAndHonoursSince() async throws {
-        let failing = LakeFleetClients(transport: { url, _, _ in
+        let failing = LakeFleetClients.legacy(transport: { url, _, _ in
             Self.param(url, "startDT")?.hasPrefix("2026") == true ? Self.ok(Self.iv(["2026-11-21T12:00:00.000-06:00"])) : LakeFeedHTTP.Response(status: 500, body: Data())
         })
         let f = await stage(URLRecorder()).daily(site: "04082500", datum: "NAVD88", stat: "iv", since: nil, now: iso("2026-11-22T12:00:00Z"), timeZone: utc, fleet: failing)
         XCTAssertNil(f, "a failed year is no silent hole")
 
-        let twoSeries = LakeFleetClients(transport: { _, _, _ in Self.ok(Self.iv(["2026-11-21T12:00:00.000-06:00"], blocks: 2)) })
+        let twoSeries = LakeFleetClients.legacy(transport: { _, _, _ in Self.ok(Self.iv(["2026-11-21T12:00:00.000-06:00"], blocks: 2)) })
         let t = await stage(URLRecorder()).daily(site: "04082500", datum: "NAVD88", stat: "iv", since: nil, now: iso("2026-11-22T12:00:00Z"), timeZone: utc, fleet: twoSeries)
         XCTAssertNil(t, "two gage-height series at one site: refused")
 
         let rec = URLRecorder()
-        let bounded = LakeFleetClients(transport: { url, _, _ in rec.add(url); return Self.ok(Self.iv(["2026-11-21T12:00:00.000-06:00"])) })
+        let bounded = LakeFleetClients.legacy(transport: { url, _, _ in rec.add(url); return Self.ok(Self.iv(["2026-11-21T12:00:00.000-06:00"])) })
         let dPulled = await stage(URLRecorder()).daily(site: "04082500", datum: "NAVD88", stat: "iv", since: "2026-11-01",
                                                                 now: iso("2026-11-22T12:00:00Z"), timeZone: utc, fleet: bounded)
         let d = try XCTUnwrap(dPulled)

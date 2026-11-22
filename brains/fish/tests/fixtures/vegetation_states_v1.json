@@ -1,0 +1,650 @@
+{
+ "_provenance": {
+  "brainVersion": "vegetation-brain-0.3.0-shadow",
+  "builtFrom": "Sector_Engine 16d2bc14",
+  "generatedAt": "2026-10-14T12:00:00Z",
+  "note": "Fish tests may not import another Brain's code (tools/architecture cross-Brain coupling), so the published shape is pinned here. Regenerate from a Vegetation session if the state schema changes.",
+  "producer": "Vegetation Brain state builder (shared Clarity-pass observer), SYNTHETIC passes",
+  "stateSchema": "sector-brain-vegetation-state-v1"
+ },
+ "now": "2026-10-14T12:00:00Z",
+ "states": {
+  "notObserved": {
+   "agencyObservation": {
+    "level": 1,
+    "reason": "no agency vegetation survey ingested for this lake",
+    "status": "NOT_ASSESSED"
+   },
+   "brainId": "vegetation",
+   "brainVersion": "vegetation-brain-0.3.0-shadow",
+   "claimMaturity": {
+    "agencyVegetationObservation": {
+     "basis": "no provider ingestion built; needs Michael's product-slice decision and source terms",
+     "level": 1,
+     "state": "NOT_ASSESSED"
+    },
+    "coverageDensity": {
+     "basis": "density gate not passed; counts only",
+     "level": 3,
+     "state": "NOT_ASSESSED"
+    },
+    "geometryTier": {
+     "basis": "area/confidence arithmetic over the canonical Lake Registry; unit-tested",
+     "level": 2,
+     "state": "VERIFIED"
+    },
+    "observationAge": {
+     "basis": "date arithmetic; unit-tested",
+     "level": 2,
+     "state": "VERIFIED"
+    },
+    "potentialHabitat": {
+     "basis": "needs live Depth (tier A/B/C) and Clarity Secchi; potentialOnly",
+     "level": 3,
+     "state": "NOT_ASSESSED"
+    },
+    "seasonalState": {
+     "basis": "back-test did not beat the strengthened baselines (A2)",
+     "level": 3,
+     "state": "NOT_VALIDATED"
+    },
+    "submergedVegetation": {
+     "basis": "not observable with Sentinel-2 at fleet scale (research)",
+     "level": 3,
+     "state": "NOT_OBSERVABLE"
+    },
+    "surfaceVegetationPresence": {
+     "basis": "shadow observer; failed lake-level gates on held-out lakes (notes 11, 12)",
+     "level": 3,
+     "state": "NOT_VALIDATED"
+    },
+    "surfaceVegetationType": {
+     "basis": "no validated classifier; broadType is SURFACE_REACHING_MIXED with typeBasis NOT_CLASSIFIED",
+     "level": 3,
+     "state": "NOT_ASSESSED"
+    }
+   },
+   "context": {
+    "consumed": {
+     "clarity": {
+      "consumed": false
+     },
+     "depth": {
+      "consumed": false
+     },
+     "lake": {
+      "consumed": false
+     },
+     "temp": {
+      "consumed": false
+     },
+     "wind": {
+      "consumed": false
+     }
+    },
+    "note": "Upstream states are read-only context with their own confidence; Vegetation does not recompute them."
+   },
+   "forIntelligence": {
+    "broadType": "UNKNOWN",
+    "confidence": "LOW",
+    "coverageClass": "NOT_CALIBRATED",
+    "evidenceKind": "SATELLITE_PERSISTENCE",
+    "limitationsRef": "limitations",
+    "observationAgeDays": 9,
+    "presence": "NOT_OBSERVED",
+    "seasonalState": "UNKNOWN",
+    "separation": "Vegetation publishes plant state only. Habitat value vs shootability/obstruction is Intelligence's synthesis.",
+    "stale": false
+   },
+   "freshness": {
+    "evidenceStale": false,
+    "generatedAt": "2026-10-14T12:00:00Z",
+    "refreshReason": "scheduled",
+    "sourceObservationAt": "2026-10-05",
+    "stale": false
+   },
+   "generatedAt": "2026-10-14T12:00:00Z",
+   "geometry": {
+    "areaKm2": 266.8,
+    "geometryConfidence": "HIGH",
+    "reasons": [],
+    "source": "lake-registry (canonical)",
+    "tier": "HIGH"
+   },
+   "headline": "No surface vegetation seen on the latest clear look",
+   "kind": "observed",
+   "lakeId": "Big|AL",
+   "limitations": [
+    "SHADOW / internal: no customer surface consumes this state.",
+    "V1 observes SURFACE-REACHING vegetation only (floating-leaf beds, mats, emergent belts, surface-topped canopy).",
+    "Submerged vegetation is NOT observable with Sentinel-2 at fleet scale and is never reported as observed.",
+    "Plant type is not classified (typeBasis NOT_CLASSIFIED); no species identification is possible from multispectral imagery.",
+    "Cells touching the lake edge are not claimed (shore-adjacent) because bank vegetation cannot be separated from aquatic vegetation; claims are INTERIOR-ONLY (about half of mapped floating-leaf beds lie in the unclaimed shore band in the validation lakes).",
+    "A single clear-looking scene can be wrong (a burst of false cells); presence needs an accepted pass and, where possible, persistence over >= 3 accepted scenes.",
+    "Where truth is presence-only (e.g. Florida point surveys) recall has been low (< 0.35); treat PRESENT/NOT_OBSERVED there as unvalidated evidence, not a map.",
+    "Density is not calibrated; only presence and counts are published.",
+    "Algal blooms and floating plant mats can share a spectrum; ambiguity is not yet resolved.",
+    "Observer v0.3 is NOT validated: on held-out lakes v0.2 failed the lake-level NLA gates, recovered few Florida/Minnesota surface points, and its haze guard is effectively off (no validated haze rule)."
+   ],
+   "modelVersion": "surface-vegetation-observer-v1",
+   "observation": {
+    "acceptedScenes": 3,
+    "cloudState": "PARTLY_CLOUDY",
+    "evidenceKind": "SATELLITE_PERSISTENCE",
+    "isolatedCellsDropped": 0,
+    "lowCoverageFallback": false,
+    "notes": [
+     "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
+    ],
+    "persistence": "MEDIAN_OF_ACCEPTED",
+    "refusalShares": {}
+   },
+   "potentialHabitat": {
+    "basis": [],
+    "headline": "Potential vegetation habitat",
+    "meaning": "Where submerged vegetation COULD grow given measured depth and clarity. Not an observation of any plant.",
+    "observed": false,
+    "potentialOnly": true,
+    "reasons": [
+     "DEPTH_BRAIN_UNAVAILABLE",
+     "CLARITY_UNAVAILABLE"
+    ],
+    "status": "NOT_EVALUATED"
+   },
+   "provenance": {
+    "brainId": "vegetation",
+    "brainVersion": "vegetation-brain-0.3.0-shadow",
+    "generatedAt": "2026-10-14T12:00:00Z",
+    "inputFingerprint": "4fb0b040c3802acd",
+    "modelVersion": "surface-vegetation-observer-v1",
+    "qualityFlags": [],
+    "readiness": "CALIBRATION",
+    "sources": [
+     {
+      "lastObservationAt": "2026-10-05",
+      "sourceId": "clarity-shared-pass",
+      "sourceType": "sharedEvidence"
+     },
+     {
+      "sourceId": "sector-lake-registry",
+      "sourceType": "geometry",
+      "version": "v1"
+     }
+    ],
+    "validationRef": "/validation/vegetation"
+   },
+   "schemaVersion": 1,
+   "seasonalState": {
+    "backtestGate": "NOT_PASSED",
+    "basis": "NONE",
+    "reason": "seasonal states require the pre-registered multi-year back-test (prereg section 7); no calendar rule is used",
+    "state": "UNKNOWN"
+   },
+   "slot": "vegetation",
+   "stateSchema": "sector-brain-vegetation-state-v1",
+   "submergedVegetation": {
+    "observed": false,
+    "reason": "Sentinel-2 cannot reliably observe submerged vegetation at fleet scale; clarity does not rescue it (research)",
+    "status": "NOT_OBSERVABLE"
+   },
+   "surfaceVegetation": {
+    "ageDays": 9,
+    "broadType": "UNKNOWN",
+    "confidence": {
+     "basis": "RULE_BASED_NOT_CALIBRATED",
+     "level": "LOW",
+     "reasons": [
+      "capped by validation state NOT_VALIDATED"
+     ],
+     "score": 0.45,
+     "validationState": "NOT_VALIDATED"
+    },
+    "coverageClass": "NOT_CALIBRATED",
+    "coverageNote": "density gate (prereg section 6) not passed: presence and counts only",
+    "observedAreaKm2": 0.0,
+    "observedAt": "2026-10-05",
+    "source": {
+     "collection": "sentinel-2-c1-l2a",
+     "sceneIds": [
+      "S_2026-10-08",
+      "S_2026-10-05",
+      "S_2026-10-01"
+     ],
+     "sourceId": "clarity-shared-pass"
+    },
+    "status": "NOT_OBSERVED",
+    "statusReason": "lake looked at; observed grass at or below the not-observed ceiling",
+    "typeBasis": "NOT_CLASSIFIED"
+   },
+   "validation": {
+    "note": "Vegetation begins NOT_VALIDATED; see brains/vegetation/research/tools/vegetation_research/records/VEGETATION_VALIDATION_PREREGISTRATION.md",
+    "ref": "/validation/vegetation",
+    "state": "NOT_VALIDATED"
+   }
+  },
+  "present": {
+   "agencyObservation": {
+    "level": 1,
+    "reason": "no agency vegetation survey ingested for this lake",
+    "status": "NOT_ASSESSED"
+   },
+   "brainId": "vegetation",
+   "brainVersion": "vegetation-brain-0.3.0-shadow",
+   "claimMaturity": {
+    "agencyVegetationObservation": {
+     "basis": "no provider ingestion built; needs Michael's product-slice decision and source terms",
+     "level": 1,
+     "state": "NOT_ASSESSED"
+    },
+    "coverageDensity": {
+     "basis": "density gate not passed; counts only",
+     "level": 3,
+     "state": "NOT_ASSESSED"
+    },
+    "geometryTier": {
+     "basis": "area/confidence arithmetic over the canonical Lake Registry; unit-tested",
+     "level": 2,
+     "state": "VERIFIED"
+    },
+    "observationAge": {
+     "basis": "date arithmetic; unit-tested",
+     "level": 2,
+     "state": "VERIFIED"
+    },
+    "potentialHabitat": {
+     "basis": "needs live Depth (tier A/B/C) and Clarity Secchi; potentialOnly",
+     "level": 3,
+     "state": "NOT_ASSESSED"
+    },
+    "seasonalState": {
+     "basis": "back-test did not beat the strengthened baselines (A2)",
+     "level": 3,
+     "state": "NOT_VALIDATED"
+    },
+    "submergedVegetation": {
+     "basis": "not observable with Sentinel-2 at fleet scale (research)",
+     "level": 3,
+     "state": "NOT_OBSERVABLE"
+    },
+    "surfaceVegetationPresence": {
+     "basis": "shadow observer; failed lake-level gates on held-out lakes (notes 11, 12)",
+     "level": 3,
+     "state": "NOT_VALIDATED"
+    },
+    "surfaceVegetationType": {
+     "basis": "no validated classifier; broadType is SURFACE_REACHING_MIXED with typeBasis NOT_CLASSIFIED",
+     "level": 3,
+     "state": "NOT_ASSESSED"
+    }
+   },
+   "context": {
+    "consumed": {
+     "clarity": {
+      "consumed": false
+     },
+     "depth": {
+      "consumed": false
+     },
+     "lake": {
+      "consumed": false
+     },
+     "temp": {
+      "consumed": false
+     },
+     "wind": {
+      "consumed": false
+     }
+    },
+    "note": "Upstream states are read-only context with their own confidence; Vegetation does not recompute them."
+   },
+   "forIntelligence": {
+    "broadType": "SURFACE_REACHING_MIXED",
+    "confidence": "LOW",
+    "coverageClass": "NOT_CALIBRATED",
+    "evidenceKind": "SATELLITE_PERSISTENCE",
+    "limitationsRef": "limitations",
+    "observationAgeDays": 9,
+    "presence": "PRESENT",
+    "seasonalState": "UNKNOWN",
+    "separation": "Vegetation publishes plant state only. Habitat value vs shootability/obstruction is Intelligence's synthesis.",
+    "stale": false
+   },
+   "freshness": {
+    "evidenceStale": false,
+    "generatedAt": "2026-10-14T12:00:00Z",
+    "refreshReason": "scheduled",
+    "sourceObservationAt": "2026-10-05",
+    "stale": false
+   },
+   "generatedAt": "2026-10-14T12:00:00Z",
+   "geometry": {
+    "areaKm2": 266.8,
+    "geometryConfidence": "HIGH",
+    "reasons": [],
+    "source": "lake-registry (canonical)",
+    "tier": "HIGH"
+   },
+   "headline": "Likely surface vegetation",
+   "kind": "observed",
+   "lakeId": "Big|AL",
+   "limitations": [
+    "SHADOW / internal: no customer surface consumes this state.",
+    "V1 observes SURFACE-REACHING vegetation only (floating-leaf beds, mats, emergent belts, surface-topped canopy).",
+    "Submerged vegetation is NOT observable with Sentinel-2 at fleet scale and is never reported as observed.",
+    "Plant type is not classified (typeBasis NOT_CLASSIFIED); no species identification is possible from multispectral imagery.",
+    "Cells touching the lake edge are not claimed (shore-adjacent) because bank vegetation cannot be separated from aquatic vegetation; claims are INTERIOR-ONLY (about half of mapped floating-leaf beds lie in the unclaimed shore band in the validation lakes).",
+    "A single clear-looking scene can be wrong (a burst of false cells); presence needs an accepted pass and, where possible, persistence over >= 3 accepted scenes.",
+    "Where truth is presence-only (e.g. Florida point surveys) recall has been low (< 0.35); treat PRESENT/NOT_OBSERVED there as unvalidated evidence, not a map.",
+    "Density is not calibrated; only presence and counts are published.",
+    "Algal blooms and floating plant mats can share a spectrum; ambiguity is not yet resolved.",
+    "Observer v0.3 is NOT validated: on held-out lakes v0.2 failed the lake-level NLA gates, recovered few Florida/Minnesota surface points, and its haze guard is effectively off (no validated haze rule)."
+   ],
+   "modelVersion": "surface-vegetation-observer-v1",
+   "observation": {
+    "acceptedScenes": 3,
+    "cloudState": "PARTLY_CLOUDY",
+    "evidenceKind": "SATELLITE_PERSISTENCE",
+    "isolatedCellsDropped": 0,
+    "lowCoverageFallback": false,
+    "notes": [
+     "shared Clarity grass class = production rule (unvalidated); bed-to-bank strip removed from the observed share"
+    ],
+    "persistence": "MEDIAN_OF_ACCEPTED",
+    "refusalShares": {}
+   },
+   "potentialHabitat": {
+    "basis": [],
+    "headline": "Potential vegetation habitat",
+    "meaning": "Where submerged vegetation COULD grow given measured depth and clarity. Not an observation of any plant.",
+    "observed": false,
+    "potentialOnly": true,
+    "reasons": [
+     "DEPTH_BRAIN_UNAVAILABLE",
+     "CLARITY_UNAVAILABLE"
+    ],
+    "status": "NOT_EVALUATED"
+   },
+   "provenance": {
+    "brainId": "vegetation",
+    "brainVersion": "vegetation-brain-0.3.0-shadow",
+    "generatedAt": "2026-10-14T12:00:00Z",
+    "inputFingerprint": "0e23ec06b03f21c9",
+    "modelVersion": "surface-vegetation-observer-v1",
+    "qualityFlags": [],
+    "readiness": "CALIBRATION",
+    "sources": [
+     {
+      "lastObservationAt": "2026-10-05",
+      "sourceId": "clarity-shared-pass",
+      "sourceType": "sharedEvidence"
+     },
+     {
+      "sourceId": "sector-lake-registry",
+      "sourceType": "geometry",
+      "version": "v1"
+     }
+    ],
+    "validationRef": "/validation/vegetation"
+   },
+   "schemaVersion": 1,
+   "seasonalState": {
+    "backtestGate": "NOT_PASSED",
+    "basis": "NONE",
+    "reason": "seasonal states require the pre-registered multi-year back-test (prereg section 7); no calendar rule is used",
+    "state": "UNKNOWN"
+   },
+   "slot": "vegetation",
+   "stateSchema": "sector-brain-vegetation-state-v1",
+   "submergedVegetation": {
+    "observed": false,
+    "reason": "Sentinel-2 cannot reliably observe submerged vegetation at fleet scale; clarity does not rescue it (research)",
+    "status": "NOT_OBSERVABLE"
+   },
+   "surfaceVegetation": {
+    "ageDays": 9,
+    "broadType": "SURFACE_REACHING_MIXED",
+    "confidence": {
+     "basis": "RULE_BASED_NOT_CALIBRATED",
+     "level": "LOW",
+     "reasons": [
+      "capped by validation state NOT_VALIDATED"
+     ],
+     "score": 0.45,
+     "validationState": "NOT_VALIDATED"
+    },
+    "coverageClass": "NOT_CALIBRATED",
+    "coverageNote": "density gate (prereg section 6) not passed: presence and counts only",
+    "observedAreaKm2": 34.684,
+    "observedAt": "2026-10-05",
+    "source": {
+     "collection": "sentinel-2-c1-l2a",
+     "sceneIds": [
+      "S_2026-10-08",
+      "S_2026-10-05",
+      "S_2026-10-01"
+     ],
+     "sourceId": "clarity-shared-pass"
+    },
+    "status": "PRESENT",
+    "statusReason": "observed grass share 13.0 % > the 2.0 % tolerance (bed-to-bank strip removed)",
+    "typeBasis": "NOT_CLASSIFIED"
+   },
+   "validation": {
+    "note": "Vegetation begins NOT_VALIDATED; see brains/vegetation/research/tools/vegetation_research/records/VEGETATION_VALIDATION_PREREGISTRATION.md",
+    "ref": "/validation/vegetation",
+    "state": "NOT_VALIDATED"
+   }
+  },
+  "unknown": {
+   "agencyObservation": {
+    "level": 1,
+    "reason": "no agency vegetation survey ingested for this lake",
+    "status": "NOT_ASSESSED"
+   },
+   "brainId": "vegetation",
+   "brainVersion": "vegetation-brain-0.3.0-shadow",
+   "claimMaturity": {
+    "agencyVegetationObservation": {
+     "basis": "no provider ingestion built; needs Michael's product-slice decision and source terms",
+     "level": 1,
+     "state": "NOT_ASSESSED"
+    },
+    "coverageDensity": {
+     "basis": "density gate not passed; counts only",
+     "level": 3,
+     "state": "NOT_ASSESSED"
+    },
+    "geometryTier": {
+     "basis": "area/confidence arithmetic over the canonical Lake Registry; unit-tested",
+     "level": 2,
+     "state": "VERIFIED"
+    },
+    "observationAge": {
+     "basis": "date arithmetic; unit-tested",
+     "level": 2,
+     "state": "VERIFIED"
+    },
+    "potentialHabitat": {
+     "basis": "needs live Depth (tier A/B/C) and Clarity Secchi; potentialOnly",
+     "level": 3,
+     "state": "NOT_ASSESSED"
+    },
+    "seasonalState": {
+     "basis": "back-test did not beat the strengthened baselines (A2)",
+     "level": 3,
+     "state": "NOT_VALIDATED"
+    },
+    "submergedVegetation": {
+     "basis": "not observable with Sentinel-2 at fleet scale (research)",
+     "level": 3,
+     "state": "NOT_OBSERVABLE"
+    },
+    "surfaceVegetationPresence": {
+     "basis": "shadow observer; failed lake-level gates on held-out lakes (notes 11, 12)",
+     "level": 3,
+     "state": "NOT_VALIDATED"
+    },
+    "surfaceVegetationType": {
+     "basis": "no validated classifier; broadType is SURFACE_REACHING_MIXED with typeBasis NOT_CLASSIFIED",
+     "level": 3,
+     "state": "NOT_ASSESSED"
+    }
+   },
+   "context": {
+    "consumed": {
+     "clarity": {
+      "consumed": false
+     },
+     "depth": {
+      "consumed": false
+     },
+     "lake": {
+      "consumed": false
+     },
+     "temp": {
+      "consumed": false
+     },
+     "wind": {
+      "consumed": false
+     }
+    },
+    "note": "Upstream states are read-only context with their own confidence; Vegetation does not recompute them."
+   },
+   "forIntelligence": {
+    "broadType": "UNKNOWN",
+    "confidence": "NONE",
+    "coverageClass": "NOT_CALIBRATED",
+    "evidenceKind": "NONE",
+    "limitationsRef": "limitations",
+    "observationAgeDays": null,
+    "presence": "UNKNOWN",
+    "seasonalState": "UNKNOWN",
+    "separation": "Vegetation publishes plant state only. Habitat value vs shootability/obstruction is Intelligence's synthesis.",
+    "stale": true
+   },
+   "freshness": {
+    "evidenceStale": true,
+    "generatedAt": "2026-10-14T12:00:00Z",
+    "refreshReason": "scheduled",
+    "stale": false,
+    "staleReasons": [
+     "observation older than OBSERVATION_MAX_AGE_DAYS or absent",
+     "no reliable observation this run"
+    ]
+   },
+   "generatedAt": "2026-10-14T12:00:00Z",
+   "geometry": {
+    "areaKm2": 266.8,
+    "geometryConfidence": "HIGH",
+    "reasons": [],
+    "source": "lake-registry (canonical)",
+    "tier": "HIGH"
+   },
+   "headline": "No reliable vegetation observation",
+   "kind": "unavailable",
+   "lakeId": "Big|AL",
+   "limitations": [
+    "SHADOW / internal: no customer surface consumes this state.",
+    "V1 observes SURFACE-REACHING vegetation only (floating-leaf beds, mats, emergent belts, surface-topped canopy).",
+    "Submerged vegetation is NOT observable with Sentinel-2 at fleet scale and is never reported as observed.",
+    "Plant type is not classified (typeBasis NOT_CLASSIFIED); no species identification is possible from multispectral imagery.",
+    "Cells touching the lake edge are not claimed (shore-adjacent) because bank vegetation cannot be separated from aquatic vegetation; claims are INTERIOR-ONLY (about half of mapped floating-leaf beds lie in the unclaimed shore band in the validation lakes).",
+    "A single clear-looking scene can be wrong (a burst of false cells); presence needs an accepted pass and, where possible, persistence over >= 3 accepted scenes.",
+    "Where truth is presence-only (e.g. Florida point surveys) recall has been low (< 0.35); treat PRESENT/NOT_OBSERVED there as unvalidated evidence, not a map.",
+    "Density is not calibrated; only presence and counts are published.",
+    "Algal blooms and floating plant mats can share a spectrum; ambiguity is not yet resolved.",
+    "Observer v0.3 is NOT validated: on held-out lakes v0.2 failed the lake-level NLA gates, recovered few Florida/Minnesota surface points, and its haze guard is effectively off (no validated haze rule)."
+   ],
+   "modelVersion": "surface-vegetation-observer-v1",
+   "observation": {
+    "acceptedScenes": 0,
+    "cloudState": "UNKNOWN",
+    "evidenceKind": "NONE",
+    "isolatedCellsDropped": 0,
+    "lowCoverageFallback": false,
+    "notes": [],
+    "persistence": "NOT_APPLICABLE",
+    "refusalShares": {
+     "PASS_NOT_ACCEPTED": 1.0
+    }
+   },
+   "potentialHabitat": {
+    "basis": [],
+    "headline": "Potential vegetation habitat",
+    "meaning": "Where submerged vegetation COULD grow given measured depth and clarity. Not an observation of any plant.",
+    "observed": false,
+    "potentialOnly": true,
+    "reasons": [
+     "DEPTH_BRAIN_UNAVAILABLE",
+     "CLARITY_UNAVAILABLE"
+    ],
+    "status": "NOT_EVALUATED"
+   },
+   "provenance": {
+    "brainId": "vegetation",
+    "brainVersion": "vegetation-brain-0.3.0-shadow",
+    "generatedAt": "2026-10-14T12:00:00Z",
+    "inputFingerprint": "4cc74c974b869fe3",
+    "modelVersion": "surface-vegetation-observer-v1",
+    "qualityFlags": [
+     "noReliableObservation"
+    ],
+    "readiness": "DEGRADED",
+    "sources": [
+     {
+      "lastObservationAt": null,
+      "sourceId": "clarity-shared-pass",
+      "sourceType": "sharedEvidence"
+     },
+     {
+      "sourceId": "sector-lake-registry",
+      "sourceType": "geometry",
+      "version": "v1"
+     }
+    ],
+    "validationRef": "/validation/vegetation"
+   },
+   "schemaVersion": 1,
+   "seasonalState": {
+    "backtestGate": "NOT_PASSED",
+    "basis": "NONE",
+    "reason": "seasonal states require the pre-registered multi-year back-test (prereg section 7); no calendar rule is used",
+    "state": "UNKNOWN"
+   },
+   "slot": "vegetation",
+   "stateSchema": "sector-brain-vegetation-state-v1",
+   "submergedVegetation": {
+    "observed": false,
+    "reason": "Sentinel-2 cannot reliably observe submerged vegetation at fleet scale; clarity does not rescue it (research)",
+    "status": "NOT_OBSERVABLE"
+   },
+   "surfaceVegetation": {
+    "ageDays": null,
+    "broadType": "UNKNOWN",
+    "confidence": {
+     "basis": "RULE_BASED_NOT_CALIBRATED",
+     "level": "NONE",
+     "reasons": [],
+     "score": 0.0,
+     "validationState": "NOT_VALIDATED"
+    },
+    "coverageClass": "NOT_CALIBRATED",
+    "coverageNote": "density gate (prereg section 6) not passed: presence and counts only",
+    "observedAt": null,
+    "source": {
+     "collection": "sentinel-2-c1-l2a",
+     "sceneIds": [],
+     "sourceId": "clarity-shared-pass"
+    },
+    "status": "UNKNOWN",
+    "statusReason": "PASS_NOT_ACCEPTED",
+    "typeBasis": "NOT_CLASSIFIED"
+   },
+   "validation": {
+    "note": "Vegetation begins NOT_VALIDATED; see brains/vegetation/research/tools/vegetation_research/records/VEGETATION_VALIDATION_PREREGISTRATION.md",
+    "ref": "/validation/vegetation",
+    "state": "NOT_VALIDATED"
+   }
+  }
+ }
+}

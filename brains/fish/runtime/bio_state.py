@@ -65,9 +65,52 @@ def _slot(st: dict | None, values: dict, now: dt.datetime, stale_after_h: float,
                               "brainVersion": prov.get("brainVersion"), "values": values}.items() if v is not None}
 
 
+def _evidence_code(value, measured, vocabulary) -> str | None:
+    """None when `value` is the measured one; otherwise why not."""
+    if value is None:
+        return ci.WATER_TEMP_EVIDENCE_MISSING
+    if value == measured:
+        return None
+    return ci.WATER_TEMP_MODELLED_INPUT if value in vocabulary else ci.WATER_TEMP_EVIDENCE_UNRECOGNISED
+
+
+def _measured_only(slot: dict, wt: dict | None) -> dict:
+    """Measured-only gate (contracts_in: a modelled value is UNKNOWN), applied per field on the Water Temp Brain's own evidence fields
+    (water-temp-state-v1). A dropped field is listed in `fieldReasons`; when nothing measured is left the slot is NOT_MEASURED. A STALE slot stays STALE."""
+    if not isinstance(wt, dict) or not wt:
+        return slot
+    vals = dict(slot.get("values") or {})
+    ec = wt.get("evidenceClass")
+    lake_code = _evidence_code(ec, ci.WATER_TEMP_MEASURED_CLASS, ci.WATER_TEMP_CLASSES)
+    reasons = {}
+    if "currentTempF" in vals:
+        code = lake_code or _evidence_code(wt.get("kind"), ci.WATER_TEMP_MEASURED_KIND, ci.WATER_TEMP_KINDS)
+        if code:
+            reasons["currentTempF"] = code
+    if "trend24hF" in vals:
+        tb = wt.get("trendBasis")
+        code = lake_code or (ci.WATER_TEMP_EVIDENCE_MISSING if tb is None else (None if tb in ci.WATER_TEMP_MEASURED_TREND_BASES else ci.WATER_TEMP_MODELLED_INPUT))
+        if code:
+            reasons["trend24hF"] = code
+    if not reasons and lake_code is None:
+        return slot
+    for k in reasons:
+        vals.pop(k, None)
+    out = {**slot, "values": vals, "evidenceClass": ec, "kind": wt.get("kind"), "trendBasis": wt.get("trendBasis")}
+    if reasons:
+        out["fieldReasons"] = reasons
+    if not vals:
+        out["reasonCode"] = lake_code or sorted(set(reasons.values()))[0]
+        out["reason"] = ("evidenceClass " + (repr(ec) if ec is not None else "missing") + ": not a sensor lake") if lake_code else \
+            "no measured field: " + ", ".join(f"{k} {v}" for k, v in sorted(reasons.items()))
+        if out.get("status") in ft.USABLE_INPUT_STATUS:
+            out["status"] = ci.NOT_MEASURED
+    return {k: v for k, v in out.items() if v is not None}
+
+
 def normalize_inputs(snapshot: dict | None, now: dt.datetime, stale_after_h: float = DEFAULT_STALE_AFTER_H) -> dict:
     """The published lake snapshot (`/snapshots/{k}/latest`) -> the slots Biological features read. Implausible values and unrecognised vocabulary
-    are dropped here (they become UNKNOWN features), never repaired."""
+    are dropped here (they become UNKNOWN features), never repaired. A water temperature that is not a sensor measurement is dropped too."""
     s = snapshot or {}
     lk, wt, wc = s.get("lakeState"), s.get("waterTemperature"), s.get("waterClarity")
     pick = lambda d, ks: {k: (d or {}).get(k) for k in ks if (d or {}).get(k) is not None}      # noqa: E731
@@ -80,7 +123,7 @@ def normalize_inputs(snapshot: dict | None, now: dt.datetime, stale_after_h: flo
         lk_vals.pop("tributaryDischargeTrend", None)
     return {
         "lake": _slot(lk, lk_vals, now, stale_after_h, "lake-brain"),
-        "waterTemp": _slot(wt, wt_vals, now, stale_after_h, "water-temp"),
+        "waterTemp": _measured_only(_slot(wt, wt_vals, now, stale_after_h, "water-temp"), wt),
         "waterClarity": _slot(wc, pick(wc, ("clarityFt",)), now, stale_after_h, "water-clarity"),
     }
 
@@ -159,6 +202,9 @@ def build_lake_state(lake_id: str, *, region: str, waterbody_type: str, now: dt.
     for slot in ("lake", "waterTemp", "waterClarity"):
         if (inputs.get(slot) or {}).get("status") not in ft.USABLE_INPUT_STATUS:
             lake_unknowns.append(f"{slot} input {(inputs.get(slot) or {}).get('status', 'NOT_PUBLISHED')}: dependent features are UNKNOWN")
+        else:
+            for fld, code in sorted(((inputs.get(slot) or {}).get("fieldReasons") or {}).items()):
+                lake_unknowns.append(f"{slot}.{fld} not measured ({code}): dependent features are UNKNOWN")
     lake_unknowns.append("tributary discharge change is not published by any Brain: rapidDischargeIncrease is UNKNOWN")
     lake_unknowns.append("area-level habitat classes are not evaluable at lake level")
     species_out.sort(key=lambda s: s["speciesId"])

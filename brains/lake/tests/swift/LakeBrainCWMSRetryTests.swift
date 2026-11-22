@@ -157,7 +157,7 @@ final class LakeBrainCWMSRetryTests: XCTestCase {
     func testFeedParsesTheRetriedPage() async {
         let now = Date()
         let f = ScriptedCWMS([.failure(.timeout), ScriptedCWMS.ok(cwmsPage(now: now))])
-        let feeds = PublicLakeLevelFeeds(cwmsTransport: f.transport)
+        let feeds = PublicLakeLevelFeeds.legacyUSGS(cwmsTransport: f.transport)
         let r = await feeds.cwms(office: "SAS", name: "Hartwell.Elev-Pool.Inst.1Hour.0.Raw-SHEF_SAS", begin: now.addingTimeInterval(-192 * 3600), end: now)
         XCTAssertNil(r.error); XCTAssertEqual(r.observations.count, 48); XCTAssertEqual(r.observations.last?.ft, 649.0)
     }
@@ -165,7 +165,7 @@ final class LakeBrainCWMSRetryTests: XCTestCase {
     func testFeedReportsTheExhaustedReason() async {
         let now = Date()
         let f = ScriptedCWMS([.failure(.timeout)])
-        let feeds = PublicLakeLevelFeeds(cwmsTransport: f.transport)
+        let feeds = PublicLakeLevelFeeds.legacyUSGS(cwmsTransport: f.transport)
         let r = await feeds.cwms(office: "SAS", name: "Hartwell.Elev-Pool.Inst.1Hour.0.Raw-SHEF_SAS", begin: now.addingTimeInterval(-192 * 3600), end: now)
         XCTAssertTrue(r.observations.isEmpty)
         XCTAssertEqual(r.error, "CWMS SAS Hartwell.Elev-Pool.Inst.1Hour.0.Raw-SHEF_SAS: timed out (20 s) after 3 attempts")
@@ -188,7 +188,7 @@ final class LakeBrainCWMSRetryTests: XCTestCase {
 
     func runHartwell(_ script: [Result<CWMSResponse, CWMSTransportFailure>], now: Date) async -> (LakeBrainRunResult, LakeBrainLakeResult?, ScriptedCWMS) {
         let f = ScriptedCWMS(script)
-        let feeds = SplitFeeds(cwms: PublicLakeLevelFeeds(cwmsTransport: f.transport), rest: LedgerFeeds(history: [], liveFt: 649.1))
+        let feeds = SplitFeeds(cwms: PublicLakeLevelFeeds.legacyUSGS(cwmsTransport: f.transport), rest: LedgerFeeds(history: [], liveFt: 649.1))
         var o = LakeBrainRunOptions()
         o.lakeIds = ["Lake Hartwell|SC"]; o.force = true; o.ledgerEnabled = false; o.runId = "cwms-retry"
         let store = LocalDirectoryStore(directory: NSTemporaryDirectory() + "lake-cwms-retry-\(UUID().uuidString)", brainId: LakeBrainSpec.brainId)
