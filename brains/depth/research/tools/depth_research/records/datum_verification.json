@@ -1,16 +1,81 @@
 {
  "schema": "depth-datum-verification-v1",
- "rulesVersion": "datum-verification-rules-1",
- "rules": "Verification rule of the Depth datum plan (2026-11-22) section 3: a side is VERIFIED only when two independent publishers name the same datum for the same series or pool (or the datum is stamped by the series' own parameter definition AND an empirical cross-gauge check passes); a conversion is enabled only when the offset agrees with NOAA VDatum at the gauge within 0.10 ft; datum-name disagreement or offsets more than 0.25 ft apart is CONFLICT; at most two research passes per lake. Consumed by depth_research.candidates (verified_conversion); nothing here is read at runtime.",
+ "rulesVersion": "datum-verification-rules-2",
+ "rules": "Verification rule of the Depth datum plan (2026-11-22) section 3: a side is VERIFIED only when two independent publishers name the same datum for the same series or pool (or the datum is stamped by the series' own parameter definition AND an empirical cross-gauge check passes); a conversion is enabled only when the offset agrees with NOAA VDatum at the gauge within 0.10 ft; datum-name disagreement or offsets more than 0.25 ft apart is CONFLICT; at most two research passes per lake. Consumed by depth_research.candidates (verified_conversion); nothing here is read at runtime. Rules-2 (review of PR #223): two publishers that re-serve one upstream record count once (`derivedFrom` on each evidence item, distinct roots required); a side's own offset more than 0.25 ft from VDatum must be recorded as offsetConflict and blocks VERIFIED; every record above NONE needs an http evidence item; carried-forward pointers are marked notEvidence; a SAME_SOURCE record pins Lake's reviewed live binding and the pool Lake Brain uses.",
  "checkedAt": "2026-11-22",
  "reviewer": "claude-code (research pass; promotion into a knowledge release is Michael's decision)",
  "evidenceNote": "Evidence was read with a web fetcher that returns a model summary of the page, so `quote` is the value as reported by that fetch, not a byte-exact excerpt, and `sha256` is null (raw bytes were not retained). VDatum calls: /vdatumweb/api/convert, NAD27 geographic in, NGVD29 -> NAVD88, us_ft, region contiguous, geoid18.",
  "lakes": {
   "Toledo Bend Reservoir|TX": {
    "passes": 2,
-   "status": "VERIFIED",
-   "relationship": {
-    "status": "CONVERTED",
+   "status": "SINGLE_SOURCE",
+   "sides": {
+    "level": {
+     "seriesId": "USGS-312914093422701:62615",
+     "datum": "NAVD88",
+     "status": "VERIFIED",
+     "basis": "parameter-definition+empirical",
+     "basisDecision": "Accepted by the owner: the Negreet gauge datum rests on USGS parameter 62615 and site altitude datum NAVD88 plus the two-gauge comparison; no second publisher names this gauge datum. Michael, chat 2026-11-22 07:14Z (\"Yes 1-3\"), recorded on Sector_Ops #51 and PR #223 comment",
+     "evidence": [
+      {
+       "publisher": "USGS",
+       "url": "https://waterservices.usgs.gov/nwis/iv/?format=rdb&sites=312914093422701,08025350&parameterCd=62614,62615&startDT=2026-10-20T00:00&endDT=2026-10-20T01:00",
+       "quote": "62615 Lake or reservoir water surface elevation above NAVD 1988, feet",
+       "retrievedAt": "2026-11-22",
+       "sha256": null,
+       "derivedFrom": "USGS-312914093422701"
+      },
+      {
+       "publisher": "USGS",
+       "url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&bBox=-94.0,31.0,-93.4,31.9&parameterCd=62615,62614&siteStatus=all&hasDataTypeCd=iv,dv&outputDataTypeCd=iv,dv",
+       "quote": "312914093422701 Toledo Bend Res nr Negreet, LA alt_va 0.0 alt_datum_cd NAVD88, uv 62615 2018-05-01..2026-11-22",
+       "retrievedAt": "2026-11-22",
+       "sha256": null,
+       "derivedFrom": "USGS-312914093422701"
+      }
+     ]
+    },
+    "reference": {
+     "seriesId": "TWDB conservation pool 172.00 ft on USGS 08025350",
+     "datum": "NGVD29",
+     "status": "SINGLE_SOURCE",
+     "basis": "two-publishers",
+     "evidence": [
+      {
+       "publisher": "TWDB (Water Data for Texas)",
+       "url": "https://www.waterdatafortexas.org/reservoirs/individual/toledo-bend",
+       "quote": "Conservation pool elevation 172.00 ft above NGVD29; Vertical datum NGVD29; Data source USGS:08025350",
+       "retrievedAt": "2026-11-22",
+       "sha256": null,
+       "derivedFrom": "USGS-08025350"
+      },
+      {
+       "publisher": "USGS",
+       "url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&sites=08025350&siteOutput=expanded",
+       "quote": "08025350 Toledo Bd Res nr Burkeville, TX alt_va 0 alt_datum_cd NGVD29 (series 62614 above NGVD 1929)",
+       "retrievedAt": "2026-11-22",
+       "sha256": null,
+       "derivedFrom": "USGS-08025350"
+      },
+      {
+       "publisher": "NOAA NWPS",
+       "url": "https://api.water.noaa.gov/nwps/v1/gauges/BKLT2",
+       "quote": "BKLT2 Sabine River at Toledo Bend Reservoir, usgsId 08025350, datums.vertical NGVD29 value 0, action stage 172.5 ft",
+       "retrievedAt": "2026-11-22",
+       "sha256": null,
+       "derivedFrom": "USGS-08025350"
+      }
+     ],
+     "note": "The operator (Sabine River Authority) states pool figures only as 'ft MSL' (https://sratx.org/?p=5676); that wording is not counted as a datum name.",
+     "rootNote": "TWDB lists USGS 08025350 as its data source and NWPS BKLT2 re-serves USGS 08025350, so all three items share one root. The 172.00 ft pool's NGVD29 is named by TWDB alone; no publisher with an independent root (the operator SRA says only 'ft MSL') was found."
+    }
+   },
+   "vdatumAlso": {
+    "at": "USGS 08025350 (31.19630, -93.57212)",
+    "ft": -0.269,
+    "sigmaFt": 0.167
+   },
+   "conversionCandidate": {
     "navd88MinusNgvd29Ft": -0.2,
     "levelDatum": "NAVD88",
     "referenceDatum": "NGVD29",
@@ -29,66 +94,10 @@
      "note": "after the -0.2 ft conversion the two gauges agree within 0.3 ft on every sampled date (largest residual 0.15 ft); a mislabelled NGVD29 series would centre near 0, the NAVD88 label centres near -0.2"
     }
    },
-   "sides": {
-    "level": {
-     "seriesId": "USGS-312914093422701:62615",
-     "datum": "NAVD88",
-     "status": "VERIFIED",
-     "basis": "parameter-definition+empirical",
-     "basisDecision": "Accepted by the owner: the Negreet gauge datum rests on USGS parameter 62615 and site altitude datum NAVD88 plus the two-gauge comparison; no second publisher names this gauge datum. Michael, chat 2026-11-22 07:14Z (\"Yes 1-3\"), recorded on Sector_Ops #51 and PR #223 comment",
-     "evidence": [
-      {
-       "publisher": "USGS",
-       "url": "https://waterservices.usgs.gov/nwis/iv/?format=rdb&sites=312914093422701,08025350&parameterCd=62614,62615&startDT=2026-10-20T00:00&endDT=2026-10-20T01:00",
-       "quote": "62615 Lake or reservoir water surface elevation above NAVD 1988, feet",
-       "retrievedAt": "2026-11-22",
-       "sha256": null
-      },
-      {
-       "publisher": "USGS",
-       "url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&bBox=-94.0,31.0,-93.4,31.9&parameterCd=62615,62614&siteStatus=all&hasDataTypeCd=iv,dv&outputDataTypeCd=iv,dv",
-       "quote": "312914093422701 Toledo Bend Res nr Negreet, LA alt_va 0.0 alt_datum_cd NAVD88, uv 62615 2018-05-01..2026-11-22",
-       "retrievedAt": "2026-11-22",
-       "sha256": null
-      }
-     ]
-    },
-    "reference": {
-     "seriesId": "TWDB conservation pool 172.00 ft on USGS 08025350",
-     "datum": "NGVD29",
-     "status": "VERIFIED",
-     "basis": "two-publishers",
-     "evidence": [
-      {
-       "publisher": "TWDB (Water Data for Texas)",
-       "url": "https://www.waterdatafortexas.org/reservoirs/individual/toledo-bend",
-       "quote": "Conservation pool elevation 172.00 ft above NGVD29; Vertical datum NGVD29; Data source USGS:08025350",
-       "retrievedAt": "2026-11-22",
-       "sha256": null
-      },
-      {
-       "publisher": "USGS",
-       "url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&sites=08025350&siteOutput=expanded",
-       "quote": "08025350 Toledo Bd Res nr Burkeville, TX alt_va 0 alt_datum_cd NGVD29 (series 62614 above NGVD 1929)",
-       "retrievedAt": "2026-11-22",
-       "sha256": null
-      },
-      {
-       "publisher": "NOAA NWPS",
-       "url": "https://api.water.noaa.gov/nwps/v1/gauges/BKLT2",
-       "quote": "BKLT2 Sabine River at Toledo Bend Reservoir, usgsId 08025350, datums.vertical NGVD29 value 0, action stage 172.5 ft",
-       "retrievedAt": "2026-11-22",
-       "sha256": null
-      }
-     ],
-     "note": "The operator (Sabine River Authority) states pool figures only as 'ft MSL' (https://sratx.org/?p=5676); that wording is not counted as a datum name."
-    }
+   "relationship": {
+    "status": null
    },
-   "vdatumAlso": {
-    "at": "USGS 08025350 (31.19630, -93.57212)",
-    "ft": -0.269,
-    "sigmaFt": 0.167
-   }
+   "reason": "Rules-2: the reference side has one independent root (USGS 08025350), so the record is SINGLE_SOURCE and the conversion is not enabled. The offset and empirical facts are kept under conversionCandidate. Michael's acceptance of the level basis stands and is recorded on the level side."
   },
   "Cross Lake|LA": {
    "passes": 2,
@@ -101,7 +110,7 @@
     "level": {
      "seriesId": "MVK:Cross Lake.Elev.Inst.15Minutes.0.DCP-rev",
      "datum": "NAVD88",
-     "status": "VERIFIED",
+     "status": "SINGLE_SOURCE",
      "basis": "two-publishers",
      "gaugeZeroFt": -0.13,
      "offsetToNGVD29Ft": 0.2311,
@@ -114,23 +123,27 @@
        "url": "https://cwms-data.usace.army.mil/cwms-data/timeseries?name=Cross%20Lake.Elev.Inst.15Minutes.0.DCP-rev&office=MVK&unit=EN&begin=2026-11-20T00:00:00Z&end=2026-11-20T01:00:00Z",
        "quote": "vertical-datum-info native-datum NAVD-88, elevation -0.13, offset to NGVD-29 +0.2311 (estimate true)",
        "retrievedAt": "2026-11-22",
-       "sha256": null
+       "sha256": null,
+       "derivedFrom": "USGS-07344480"
       },
       {
        "publisher": "USGS",
        "url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&sites=07344480,07349860,07289350,02486000,10337000&siteOutput=expanded",
        "quote": "07344480 Cross Lake at Shreveport, LA alt_va -0.13 alt_datum_cd NAVD88",
        "retrievedAt": "2026-11-22",
-       "sha256": null
+       "sha256": null,
+       "derivedFrom": "USGS-07344480"
       },
       {
        "publisher": "NOAA NWPS",
        "url": "https://api.water.noaa.gov/nwps/v1/gauges/CRLL1",
        "quote": "CRLL1 Cross Lake at Shreveport, usgsId 07344480, datums.vertical NAVD88 value 0",
        "retrievedAt": "2026-11-22",
-       "sha256": null
+       "sha256": null,
+       "derivedFrom": "USGS-07344480"
       }
-     ]
+     ],
+     "rootNote": "CDA's MVK series has the same zero (-0.13 ft) as USGS 07344480 and NWPS CRLL1 re-serves 07344480: one root."
     },
     "reference": {
      "seriesId": "NWPS CRLL1 impact statement 171.1 ft",
@@ -161,13 +174,13 @@
    "relationship": {
     "status": null
    },
-   "reason": "Level datum named by two publishers; the reference pool (297.5 ft, Pearl River Valley Water Supply District) names no datum.",
+   "reason": "Level datum NGVD29 has one independent root (USGS 02485601); the reference pool (297.5 ft, PRVWSD) names no datum. Owner decision 2026-11-22: stays unconverted.",
    "offsetConflict": "Not used (no conversion needed), recorded for the record: CDA offset NGVD-29 -> NAVD-88 -0.1982 (estimate) vs VDatum +0.108 at USGS 02485601 (sigma 0.206): 0.31 ft apart, above the 0.25 ft conflict bound. The manifest offset (+0.062) agrees with VDatum.",
    "sides": {
     "level": {
      "seriesId": "MVK:Ross Barnett.Elev.Inst.1Hour.0.DCP-rev",
      "datum": "NGVD29",
-     "status": "VERIFIED",
+     "status": "SINGLE_SOURCE",
      "basis": "two-publishers",
      "offsetToNAVD88Ft": -0.1982,
      "offsetIsEstimate": true,
@@ -179,17 +192,20 @@
        "url": "https://cwms-data.usace.army.mil/cwms-data/timeseries?name=Ross%20Barnett.Elev.Inst.1Hour.0.DCP-rev&office=MVK&unit=EN&begin=2026-11-20T00:00:00Z&end=2026-11-20T02:00:00Z",
        "quote": "native-datum NGVD-29, elevation 0.0, offset to NAVD-88 -0.1982 (estimate true)",
        "retrievedAt": "2026-11-22",
-       "sha256": null
+       "sha256": null,
+       "derivedFrom": "USGS-02485601"
       },
       {
        "publisher": "USGS",
        "url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&sites=02485601&siteOutput=expanded",
        "quote": "02485601 Pearl River at Ross Barnett Reservoir, MS alt_va 0.00 alt_datum_cd NGVD29",
        "retrievedAt": "2026-11-22",
-       "sha256": null
+       "sha256": null,
+       "derivedFrom": "USGS-02485601"
       }
      ],
-     "note": "Assumes the CWMS DCP series and USGS 02485601 are the same reservoir gauge (both zero 0.0); NWPS JSNM6 (usgsId 02485601) lists no vertical datum."
+     "note": "Assumes the CWMS DCP series and USGS 02485601 are the same reservoir gauge (both zero 0.0); NWPS JSNM6 (usgsId 02485601) lists no vertical datum.",
+     "rootNote": "CDA's MVK series and USGS 02485601 are taken to be one reservoir gauge (both zero 0.0): one root."
     },
     "reference": {
      "seriesId": "PRVWSD normal summer pool 297.5 ft",
@@ -349,7 +365,15 @@
      "summerTo": "10-10"
     },
     "ownerDecision": "Use the CWMS JPHT1 seasonal level (490.5 ft) as the reference so pool and level are same-source. Michael, chat 2026-11-22 07:14Z (\"Yes 1-3\"), recorded on Sector_Ops #51 and PR #223 comment",
-    "caveat": "490.5 ft is the summer value of a seasonal CWMS level (winter 483 ft); the reference stays a single constant like every other lake, so winter readings show the planned drawdown as a negative shift."
+    "caveat": "490.5 ft is the summer value of a seasonal CWMS level (winter 483 ft); the reference stays a single constant like every other lake, so winter readings show the planned drawdown as a negative shift.",
+    "liveSourceIds": [
+     "a2w:LRN:JPHT1:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.1Hour.0.man-rev",
+     "cwms:LRN:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.15Minutes.0.dcp-rev",
+     "tva:JPHT1"
+    ],
+    "liveBindingContract": "brains/lake/contracts/reviewed-lake-bindings-v1.json (bindings-2026-10-13.1+accepted.187.bd65f378)",
+    "lakeBrainPoolFt": 490.0,
+    "lakeBrainDivergence": "Lake Brain's differenceFromNormalPoolFt uses the directory pool 490 ft (LakeLevelClassifier.swift:269-272) while Depth's reference is 490.5 ft. Lake is not changed. Depth carries lakeBrainPoolFt=490 and re-bases Lake's delta by (490.5 - 490) before its lakeBrainDeltaDisagrees cross-check, so the check still runs and only a real disagreement flags."
    }
   },
   "Jordan|AL": {
@@ -500,25 +524,27 @@
   },
   "Palisades Reservoir|ID": {
    "passes": 2,
-   "status": "SINGLE_SOURCE",
+   "status": "NONE",
    "relationship": {
     "status": null
    },
-   "reason": "Level datum NGVD29 from the A2W project record (already in the manifest); the USBR project page gives 5620.0 ft with no datum. CDA location lookups for NWW were refused by the fetcher (client error). Note the manifest NAVD88-NGVD29 here is about +4.2 ft, so an unnamed pool datum matters.",
+   "reason": "Level datum NGVD29 from the A2W project record (already in the manifest); the USBR project page gives 5620.0 ft with no datum. CDA location lookups for NWW were refused by the fetcher (client error). Note the manifest NAVD88-NGVD29 here is about +4.2 ft, so an unnamed pool datum matters. Rules-2: the only level citation is carried forward from candidates.json, so nothing was verified this pass (NONE).",
    "sides": {
     "level": {
      "seriesId": "A2W NWW:PAL Elev-Forebay",
      "datum": "NGVD29",
-     "status": "SINGLE_SOURCE",
+     "status": "NONE",
      "evidence": [
       {
        "publisher": "USACE Access2Water (as captured in the candidate manifest levelSource.datumNote; not re-fetched)",
        "url": "brains/depth/runtime/knowledge/candidates.json",
        "quote": "A2W project vertical_datum NGVD29 (NWW:PAL)",
        "retrievedAt": "2026-10-14",
-       "sha256": null
+       "sha256": null,
+       "notEvidence": true
       }
-     ]
+     ],
+     "note": "The manifest records NGVD29 from the A2W project vertical_datum; this pass did not re-fetch it, so it is cited here only as a pointer (notEvidence)."
     },
     "reference": {
      "seriesId": "USBR 5620.0 ft",
@@ -538,25 +564,27 @@
   },
   "Jackson Lake|WY": {
    "passes": 2,
-   "status": "SINGLE_SOURCE",
+   "status": "NONE",
    "relationship": {
     "status": null
    },
-   "reason": "As Palisades: A2W NGVD29 level; USBR page gives 6769.0 ft with no datum; CDA refused. Manifest NAVD88-NGVD29 about +4.3 ft.",
+   "reason": "As Palisades: A2W NGVD29 level; USBR page gives 6769.0 ft with no datum; CDA refused. Manifest NAVD88-NGVD29 about +4.3 ft. Rules-2: the only level citation is carried forward from candidates.json, so nothing was verified this pass (NONE).",
    "sides": {
     "level": {
      "seriesId": "A2W NWW:JCK Elev-Forebay",
      "datum": "NGVD29",
-     "status": "SINGLE_SOURCE",
+     "status": "NONE",
      "evidence": [
       {
        "publisher": "USACE Access2Water (as captured in the candidate manifest levelSource.datumNote; not re-fetched)",
        "url": "brains/depth/runtime/knowledge/candidates.json",
        "quote": "A2W project vertical_datum NGVD29 (NWW:JCK)",
        "retrievedAt": "2026-10-14",
-       "sha256": null
+       "sha256": null,
+       "notEvidence": true
       }
-     ]
+     ],
+     "note": "The manifest records NGVD29 from the A2W project vertical_datum; this pass did not re-fetch it, so it is cited here only as a pointer (notEvidence)."
     },
     "reference": {
      "seriesId": "USBR 6769.0 ft",
@@ -576,25 +604,27 @@
   },
   "Anderson Ranch Reservoir|ID": {
    "passes": 1,
-   "status": "SINGLE_SOURCE",
+   "status": "NONE",
    "relationship": {
     "status": null
    },
-   "reason": "A2W NGVD29 level; CDA refused for NWW; the 4196 ft pool source (USBR Boise feasibility DEIS PDF) not re-read this pass. Pending the Reclamation datum request.",
+   "reason": "A2W NGVD29 level; CDA refused for NWW; the 4196 ft pool source (USBR Boise feasibility DEIS PDF) not re-read this pass. Pending the Reclamation datum request. Rules-2: the only level citation is carried forward from candidates.json, so nothing was verified this pass (NONE).",
    "sides": {
     "level": {
      "seriesId": "A2W NWW:AND Elev-Forebay",
      "datum": "NGVD29",
-     "status": "SINGLE_SOURCE",
+     "status": "NONE",
      "evidence": [
       {
        "publisher": "USACE Access2Water (as captured in the candidate manifest levelSource.datumNote; not re-fetched)",
        "url": "brains/depth/runtime/knowledge/candidates.json",
        "quote": "A2W project vertical_datum NGVD29 (NWW:AND)",
        "retrievedAt": "2026-10-14",
-       "sha256": null
+       "sha256": null,
+       "notEvidence": true
       }
-     ]
+     ],
+     "note": "The manifest records NGVD29 from the A2W project vertical_datum; this pass did not re-fetch it, so it is cited here only as a pointer (notEvidence)."
     },
     "reference": {
      "seriesId": "USBR 4196 ft",
@@ -606,25 +636,27 @@
   },
   "Coeur d'Alene|ID": {
    "passes": 1,
-   "status": "SINGLE_SOURCE",
+   "status": "NONE",
    "relationship": {
     "status": null
    },
-   "reason": "A2W NGVD29 level (NWS:COEI); Avista's page gives the lake elevation without a datum and does not state 2128 ft; CDA refused for NWS.",
+   "reason": "A2W NGVD29 level (NWS:COEI); Avista's page gives the lake elevation without a datum and does not state 2128 ft; CDA refused for NWS. Rules-2: the only level citation is carried forward from candidates.json, so nothing was verified this pass (NONE).",
    "sides": {
     "level": {
      "seriesId": "A2W NWS:COEI Elev-Forebay",
      "datum": "NGVD29",
-     "status": "SINGLE_SOURCE",
+     "status": "NONE",
      "evidence": [
       {
        "publisher": "USACE Access2Water (as captured in the candidate manifest levelSource.datumNote; not re-fetched)",
        "url": "brains/depth/runtime/knowledge/candidates.json",
        "quote": "A2W project vertical_datum NGVD29 (NWS:COEI)",
        "retrievedAt": "2026-10-14",
-       "sha256": null
+       "sha256": null,
+       "notEvidence": true
       }
-     ]
+     ],
+     "note": "The manifest records NGVD29 from the A2W project vertical_datum; this pass did not re-fetch it, so it is cited here only as a pointer (notEvidence)."
     },
     "reference": {
      "seriesId": "Avista summer level 2128 ft",

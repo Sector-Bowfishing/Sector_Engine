@@ -25,6 +25,7 @@ class ReferencePool:
     source: str | None = None
     assessment: DatumAssessment | None = None
     relative_scale_pool: float | None = None   # Duke publishes some lakes on a 100-based scale (100.0 = full pond); the same pool in that frame
+    lake_pool_ft: float | None = None     # the normal pool Lake Brain's differenceFromNormalPoolFt uses, when Depth's reference differs from it (recorded)
 
 
 @dataclass
@@ -124,8 +125,9 @@ def compute_shift(level: LevelObservation | None, ref: ReferencePool | None, now
     sigma = math.sqrt(sum(v * v for v in parts.values()))
     flags = (list(a.reasons) if a.status != "SAME_SOURCE" else []) + frame_flags
     if level.lake_difference_ft is not None and a.status != "CONVERTED" and not frame_flags:          # Lake's difference-from-pool is in the absolute frame; skip the cross-check on a relative-scale level
-        if abs(level.lake_difference_ft - shift) > C.LAKE_DELTA_DISAGREE_FT:
-            flags.append(f"lakeBrainDeltaDisagrees:{level.lake_difference_ft:+.2f} vs {shift:+.2f}")
+        lake_diff = level.lake_difference_ft - ((ref.pool_ft - ref.lake_pool_ft) if ref.lake_pool_ft is not None else 0.0)   # Lake's delta, re-based on Depth's reference
+        if abs(lake_diff - shift) > C.LAKE_DELTA_DISAGREE_FT:
+            flags.append(f"lakeBrainDeltaDisagrees:{lake_diff:+.2f} vs {shift:+.2f}")
     stale = age > C.LEVEL_FRESH_HOURS
     if stale:
         flags.append("levelObservationOlderThanFreshWindow")
