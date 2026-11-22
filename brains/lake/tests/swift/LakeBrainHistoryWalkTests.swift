@@ -25,9 +25,12 @@ final class LakeBrainHistoryWalkTests: XCTestCase {
     // MARK: CDEC
 
     static func cdecDays(_ days: [String], station: String = "SHA", dur: String = "D") -> String {
-        "[" + days.enumerated().map { i, d in
-            #"{"stationId":"\#(station)","durCode":"\#(dur)","SENSOR_NUM":6,"sensorType":"RES ELE","date":"\#(d) 00:00","value":\#(1000 + i),"dataFlag":" ","units":"FEET"}"#
-        }.joined(separator: ",") + "]"
+        var rows: [String] = []
+        for (i, d) in days.enumerated() {
+            let v: Int = 1000 + i
+            rows.append(#"{"stationId":"\#(station)","durCode":"\#(dur)","SENSOR_NUM":6,"sensorType":"RES ELE","date":"\#(d) 00:00","value":\#(v),"dataFlag":" ","units":"FEET"}"#)
+        }
+        return "[" + rows.joined(separator: ",") + "]"
     }
 
     func testCDECWindowsAreContiguousAndTwoEmptyWindowsEndTheWalk() async throws {
@@ -75,8 +78,9 @@ final class LakeBrainHistoryWalkTests: XCTestCase {
     }
 
     func testCDECIgnoresRowsOfAnotherStationOrDuration() {
-        let mixed = "[" + [Self.cdecDays(["2026-11-20"]), Self.cdecDays(["2026-11-19"], station: "ORO"), Self.cdecDays(["2026-11-18"], dur: "H")]
-            .map { String($0.dropFirst().dropLast()) }.joined(separator: ",") + "]"
+        let parts: [String] = [Self.cdecDays(["2026-11-20"]), Self.cdecDays(["2026-11-19"], station: "ORO"), Self.cdecDays(["2026-11-18"], dur: "H")]
+        let inner: [String] = parts.map { String($0.dropFirst().dropLast()) }
+        let mixed: String = "[" + inner.joined(separator: ",") + "]"
         let (rows, error) = LakeFleetClients.parseCDEC(Data(mixed.utf8), station: "SHA", sensor: "6", dur: "D")
         XCTAssertNil(error)
         XCTAssertEqual(rows.map(\.day), ["2026-11-20"])
@@ -85,16 +89,19 @@ final class LakeBrainHistoryWalkTests: XCTestCase {
     // MARK: USGS gage height + altitude
 
     static let rdb: String = {
-        let cols = ["agency_cd", "site_no", "station_nm", "site_tp_cd", "alt_va", "alt_acy_va", "alt_datum_cd"]
-        return "#\n" + cols.joined(separator: "\t") + "\n" + ["5s", "15s", "50s", "7s", "8s", "3s", "10s"].joined(separator: "\t") + "\n"
-            + ["USGS", "04082500", "LAKE WINNEBAGO AT OSHKOSH, WI", "LK", "743.91", ".01", "NAVD88"].joined(separator: "\t") + "\n"
+        let cols: [String] = ["agency_cd", "site_no", "station_nm", "site_tp_cd", "alt_va", "alt_acy_va", "alt_datum_cd"]
+        let widths: [String] = ["5s", "15s", "50s", "7s", "8s", "3s", "10s"]
+        let row: [String] = ["USGS", "04082500", "LAKE WINNEBAGO AT OSHKOSH, WI", "LK", "743.91", ".01", "NAVD88"]
+        let lines: [String] = ["#", cols.joined(separator: "\t"), widths.joined(separator: "\t"), row.joined(separator: "\t")]
+        return lines.joined(separator: "\n") + "\n"
     }()
 
     /// A WaterServices IV answer for 00065 with one reading per given ISO instant (2.00 ft each); `blocks` value blocks.
     static func iv(_ instants: [String], blocks: Int = 1) -> String {
         let vals = instants.map { #"{"value":"2.00","qualifiers":["A"],"dateTime":"\#($0)"}"# }.joined(separator: ",")
         let block = #"{"value":[\#(vals)],"qualifier":[],"method":[{"methodID":1}]}"#
-        return #"{"value":{"timeSeries":[{"variable":{"unit":{"unitCode":"ft"},"noDataValue":-999999.0},"values":[\#(Array(repeating: block, count: blocks).joined(separator: ","))],"name":"USGS:04082500:00065:00000"}]}}"#
+        let all: String = Array(repeating: block, count: blocks).joined(separator: ",")
+        return #"{"value":{"timeSeries":[{"variable":{"unit":{"unitCode":"ft"},"noDataValue":-999999.0},"values":[\#(all)],"name":"USGS:04082500:00065:00000"}]}}"#
     }
 
     func stage(_ rec: URLRecorder) -> LakeUSGSStageClient {
