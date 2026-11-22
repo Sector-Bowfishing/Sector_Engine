@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "generation",
+  "releaseId": "generation-knowledge-candidate-2026-11-22.1",
+  "store": "PACKAGED_IN_IMAGE",
+  "owner": "generation",
+  "approval": {
+    "status": "NOT_RECORDED",
+    "record": null
+  },
+  "files": [
+    {
+      "path": "dams.json",
+      "sha256": "c020196beae79737ff755fcd9e1024518773ca48d1bc145775e009eb02a11a96",
+      "bytes": 363431
+    },
+    {
+      "path": "source_access.json",
+      "sha256": "8d2793dfa015c794ec478a11157414bae9692c7ff461024bd412ed147100bd30",
+      "bytes": 3993
+    }
+  ],
+  "releaseDigest": "sha256:8b5351b2d2414b3c4bbc380f6fe4eef40efd4012ed52198c6fa3786e398636b1"
+}

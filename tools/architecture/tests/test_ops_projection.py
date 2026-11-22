@@ -27,7 +27,7 @@ def test_the_projection_is_schema_valid_and_leak_free():
     proj = P.project(_stamped())
     assert list(validate(proj, json.load(open(P.SCHEMA)))) == []
     assert P.leaks(proj) == []
-    assert proj["generatedFrom"]["sourceCommit"] == SHA and len(proj["brains"]) == 10         # eight + Moon + Weather (2026-11-22)
+    assert proj["generatedFrom"]["sourceCommit"] == SHA and len(proj["brains"]) == 11         # eight + Moon + Weather + Generation (2026-11-22)
 
 
 def test_no_evidence_strings_reach_the_browser():

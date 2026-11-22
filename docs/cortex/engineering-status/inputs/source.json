@@ -67,6 +67,11 @@
     ],
     "weather": [
       "W-1"
+    ],
+    "generation": [
+      "G-2",
+      "D-G",
+      "D-H"
     ]
   },
   "cortexGaps": [
@@ -894,6 +899,86 @@
           "No pressure forecast (the NWS grid has no pressure layer)",
           "Registered DISABLED: produces nothing until the owner activation steps",
           "Outside NWS coverage a lake is BLOCKED",
+          "No capability score (not scored)"
+        ]
+      }
+    },
+    "generation": {
+      "statusLayers": {
+        "canonicalStructure": {
+          "status": "PASS",
+          "label": "CANONICAL_PACKAGE",
+          "evidence": "brains/generation: brain.json, operating contract, runtime/, tests/, research/, contracts/ (Kit P01)"
+        },
+        "structuralCertification": {
+          "status": "PASS",
+          "label": "KIT_V1_CERTIFIED",
+          "evidence": "inputs/certification.json (actual per-proof run)"
+        },
+        "scientificValidation": {
+          "status": "BLOCKED",
+          "label": "NOT_VALIDATED",
+          "evidence": "pre-registered week-long comparison with the operators' published schedules not started (GEN-VAL-001)"
+        },
+        "approvedMemoryRelease": {
+          "status": "BLOCKED",
+          "label": "CANDIDATE_RELEASE_AWAITING_APPROVAL",
+          "evidence": "generation-knowledge-candidate-2026-11-22.1 verified; approval NOT_RECORDED; runtime abstains"
+        },
+        "operationalReadiness": {
+          "status": "BLOCKED",
+          "label": "REGISTERED_DISABLED",
+          "evidence": "control manifest PARKED, executionTarget none, no execution-control entry; run.py --write refuses (BLOCKED_AWAITING_APPROVED_RELEASE); dry runs on hand-built fixtures only"
+        },
+        "productionActivation": {
+          "status": "BLOCKED",
+          "label": "NOT_DEPLOYED",
+          "evidence": "no job, no image, no schedule; enabling needs an execution target, an execution-control entry and Michael's approval"
+        },
+        "customerConsumable": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_CUSTOMER_FACING",
+          "evidence": "customerIntegrationMode none; customer publication off"
+        }
+      },
+      "requirements": {
+        "BR-05": "PASS",
+        "BR-06": "PASS",
+        "BR-07": "PASS",
+        "BR-10": "PASS",
+        "BR-11": "PARTIAL",
+        "BR-16": "PASS",
+        "BR-18": "PASS",
+        "BR-19": "PASS"
+      },
+      "structuralProblems": [
+        "Not yet a Cortex target Brain: brain-architecture.json lists nine Brains and gives dam releases to Lake Brain (CG-3.1-20)",
+        "Source parsers tested on hand-built fixtures only; record real responses before enabling"
+      ],
+      "scienceDependencies": [
+        "Approval of a Generation knowledge release (GEN-REL-001)",
+        "Binding of pending CWMS / RISE / TVA / USGS sources (GEN-BIND-001..003)",
+        "Week-long schedule comparison (GEN-VAL-001)"
+      ],
+      "nextWork": [
+        "Cortex release adding Generation as a target Brain and moving dam releases from Lake (CG-3.1-20)",
+        "TVA and SWPA access checks (GEN-ACCESS-001)",
+        "CWMS release-series probe pass (GEN-BIND-001)"
+      ],
+      "operations": {
+        "scientificValidation": {
+          "status": "NOT_STARTED",
+          "label": "SCHEDULE_COMPARISON_PREREGISTERED_GEN_VAL_001"
+        },
+        "knowledgeRelease": {
+          "state": "CANDIDATE",
+          "releaseId": "generation-knowledge-candidate-2026-11-22.1",
+          "approval": "NOT_RECORDED"
+        },
+        "scores": [],
+        "limitations": [
+          "Approved path abstains until an APPROVED release",
+          "17 of 401 dam lakes readable from bound, allowed sources today (TVA); the rest are pending discovery, access checks or operator permission",
           "No capability score (not scored)"
         ]
       }

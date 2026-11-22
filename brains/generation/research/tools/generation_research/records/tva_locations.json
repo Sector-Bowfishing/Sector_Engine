@@ -1,0 +1,23 @@
+{
+  "schema": "generation-tva-locations-v1",
+  "note": "TVA REST API LocationIDs whose lake identity is evidenced inside this repository. Only these are bound; every other TVA-API lake is DISCOVERY_PENDING until probe_tva_roster.py resolves its dam by exact name against TVA's own /locations roster. No id here is inferred from an NWS location id pattern.",
+  "locations": [
+    {"lakeId": "Center Hill Lake|TN", "locationId": "CEHT1", "dam": "Center Hill Dam", "evidence": "jobs/lake-brain/data/bindings.proposed.v1.json live provider tva (Lake Brain verified binding, probe 2026-10-13)"},
+    {"lakeId": "Dale Hollow Lake|TN", "locationId": "DLHT1", "dam": "Dale Hollow Dam", "evidence": "jobs/lake-brain/data/bindings.proposed.v1.json live provider tva"},
+    {"lakeId": "Douglas Lake|TN", "locationId": "DUGT1", "dam": "Douglas Dam", "evidence": "jobs/lake-brain/data/bindings.proposed.v1.json live provider tva"},
+    {"lakeId": "Fort Loudoun Lake|TN", "locationId": "FLDT1", "dam": "Fort Loudoun Dam", "evidence": "jobs/lake-brain/data/bindings.proposed.v1.json live provider tva"},
+    {"lakeId": "Guntersville|AL", "locationId": "GVDA1", "dam": "Guntersville Dam", "evidence": "jobs/lake-brain/data/bindings.proposed.v1.json live provider tva; jobs/water-temp-tva-archive/archive.py DAMS"},
+    {"lakeId": "Nickajack Lake|TN", "locationId": "NKJT1", "dam": "Nickajack Dam", "evidence": "jobs/lake-brain/data/bindings.proposed.v1.json live provider tva; jobs/water-temp-tva-archive/archive.py DAMS"},
+    {"lakeId": "Norris Lake|TN", "locationId": "NRST1", "dam": "Norris Dam", "evidence": "jobs/lake-brain/data/bindings.proposed.v1.json live provider tva"},
+    {"lakeId": "Old Hickory Lake|TN", "locationId": "OHHT1", "dam": "Old Hickory Lock and Dam", "evidence": "jobs/lake-brain/data/bindings.proposed.v1.json live provider tva"},
+    {"lakeId": "Percy Priest Lake|TN", "locationId": "JPHT1", "dam": "J. Percy Priest Dam", "evidence": "jobs/lake-brain/data/bindings.proposed.v1.json live provider tva; Sources/SectorEngine/Engine/Adapters/DamGeneration.swift lakeNameOverrides"},
+    {"lakeId": "Pickwick Lake|TN", "locationId": "PICT1", "dam": "Pickwick Landing Dam", "evidence": "jobs/lake-brain/data/bindings.proposed.v1.json live provider tva; jobs/water-temp-tva-archive/archive.py DAMS"},
+    {"lakeId": "South Holston Lake|VA", "locationId": "SHDT1", "dam": "South Holston Dam", "evidence": "jobs/lake-brain/data/bindings.proposed.v1.json live provider tva"},
+    {"lakeId": "Tims Ford Lake|TN", "locationId": "TMFT1", "dam": "Tims Ford Dam", "evidence": "jobs/lake-brain/data/bindings.proposed.v1.json live provider tva"},
+    {"lakeId": "Watts Bar Lake|TN", "locationId": "WBOT1", "dam": "Watts Bar Dam", "evidence": "jobs/lake-brain/data/bindings.proposed.v1.json live provider tva"},
+    {"lakeId": "Wheeler|AL", "locationId": "WHLA1", "dam": "Wheeler Dam", "evidence": "jobs/lake-brain/data/bindings.proposed.v1.json live provider tva; jobs/water-temp-tva-archive/archive.py DAMS"},
+    {"lakeId": "Wilson|AL", "locationId": "WLSA1", "dam": "Wilson Dam", "evidence": "jobs/lake-brain/data/bindings.proposed.v1.json live provider tva; jobs/water-temp-tva-archive/archive.py DAMS"},
+    {"lakeId": "Lake Cumberland|KY", "locationId": "WLCK2", "dam": "Wolf Creek Dam", "evidence": "Sources/SectorEngine/Engine/Adapters/DamGeneration.swift lakeNameOverrides (TVA feed id WLCK2 impounds Lake Cumberland)"},
+    {"lakeId": "Lake Barkley|KY", "locationId": "BARK2", "dam": "Barkley Dam", "evidence": "Sources/SectorEngine/Engine/Adapters/DamGeneration.swift lakeNameOverrides (TVA feed id BARK2, Lake Barkley)"}
+  ]
+}

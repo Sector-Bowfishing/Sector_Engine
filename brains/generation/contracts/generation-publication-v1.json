@@ -1,0 +1,183 @@
+{
+  "brainId": "generation",
+  "builder": "brains/generation/runtime/generation_brain/publish_artifact.py",
+  "contractId": "generation-publication-v1",
+  "derivedFrom": "jobs/brain_platform/sector_brain_platform/publisher/registry.py (generation_specs, generation_bundles)",
+  "envelope": "publish-artifact-v2",
+  "fingerprint": "sector-semantic-fingerprint-v2",
+  "healthDomainChildren": [
+    "status",
+    "staleLakeCount"
+  ],
+  "lineage": {
+    "consumed": "ACTUAL RTDB reads recorded by the platform client when available; absent = unknown, never []",
+    "knowledgeRelease": "the verified Generation knowledge release id (runtime/knowledge/knowledge-release.json)",
+    "manifestRef": "image:knowledge-release.json",
+    "manifestSha256": "the release digest (sha256)"
+  },
+  "registryChildren": {
+    "identity": [
+      "brainId",
+      "displayName",
+      "domain",
+      "question",
+      "platform"
+    ],
+    "model": [
+      "version",
+      "schemaVersion",
+      "contractVersion",
+      "stalenessModel",
+      "dependsOn",
+      "versions",
+      "readinessDefinitions",
+      "stateKinds",
+      "catalogVersion",
+      "knowledgeRelease",
+      "lifecycle",
+      "scoreStatus",
+      "scoreNote",
+      "sourceIds",
+      "sourceAccess"
+    ],
+    "status": [
+      "schedule",
+      "enabled",
+      "health",
+      "status",
+      "statusBasis",
+      "supportedLakeCount",
+      "directoryLakeCount",
+      "readinessCounts",
+      "staleLakeCount",
+      "staleAfterHours",
+      "lastSuccessfulRun",
+      "lastError",
+      "lastRun",
+      "breakdowns",
+      "fleet",
+      "blockers",
+      "primaryBlocker",
+      "orchestration",
+      "validation",
+      "publishMode",
+      "scope",
+      "updatedAt"
+    ]
+  },
+  "reservedChildren": [
+    "certification",
+    "publication"
+  ],
+  "sections": [
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [],
+      "deleteReasons": [],
+      "families": [
+        {
+          "pattern": "/lakes/{k}/states/generation",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/slots/generation",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/readiness/generation",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/modelVersions/generation",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/snapshots/{k}/latest/generation",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/snapshots/{k}/latest/brainVersions/generation",
+          "status": "CANONICAL"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "generation-lake-state-v1",
+      "volatileContract": "generation-volatile-v1"
+    },
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [
+        "/brains/generation/lastError"
+      ],
+      "deleteReasons": [
+        "OPTIONAL_CHILD_CLEARED"
+      ],
+      "families": [
+        {
+          "pattern": "/brains/generation/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/validation/generation",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/health/brains/generation/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/activity/{event}",
+          "status": "CANONICAL"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "generation-registry-v1",
+      "volatileContract": "generation-volatile-v1"
+    }
+  ],
+  "snapshot": "the snapshot field and its brainVersion are Brain-authored for published lakes (no Publisher COPY projection)",
+  "status": "SHADOW (Publisher Gate P); CALIBRATION Brain registered DISABLED; not wired into the job; the job publishes only from an APPROVED knowledge release; the Brain is registered DISABLED; not a production contract",
+  "version": "1.0.0",
+  "volatileContract": {
+    "id": "generation-volatile-v1",
+    "keys": [
+      "freshUntil",
+      "generatedAt",
+      "lastRun",
+      "lastUpdatedAt",
+      "nextCheckAt",
+      "recheckMinutes",
+      "retrievedAt",
+      "updatedAt"
+    ],
+    "notes": {
+      "key:freshUntil": "derived from the run time and the reading (freshness window)",
+      "key:generatedAt": "run time",
+      "key:lastRun": "per-run counters",
+      "key:lastUpdatedAt": "slot write time; no domain meaning",
+      "key:nextCheckAt": "next read time (run time + tier)",
+      "key:recheckMinutes": "the tier's re-read interval, a function of the release picture",
+      "key:retrievedAt": "when a source was read; the reading's own time is observedAt",
+      "key:updatedAt": "registry write time; no domain meaning",
+      "path:/brains/generation/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records",
+      "path:/brains/generation/versions": "version history entry dated by the run"
+    },
+    "paths": [
+      "/brains/generation/lastSuccessfulRun",
+      "/brains/generation/versions"
+    ],
+    "version": 1
+  }
+}

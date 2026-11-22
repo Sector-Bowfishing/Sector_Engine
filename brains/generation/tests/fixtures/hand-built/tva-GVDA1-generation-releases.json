@@ -1,0 +1,32 @@
+[
+ {
+  "Day": "11/22/2026",
+  "Time": "Midnight - 6 AM CST",
+  "Generators": "0"
+ },
+ {
+  "Day": "11/22/2026",
+  "Time": "6 AM - 10 AM CST",
+  "Generators": "2"
+ },
+ {
+  "Day": "11/22/2026",
+  "Time": "10 AM - 3 PM CST",
+  "Generators": "1"
+ },
+ {
+  "Day": "11/22/2026",
+  "Time": "3 PM - 5 PM CST",
+  "Generators": "0"
+ },
+ {
+  "Day": "11/22/2026",
+  "Time": "5 PM - 9 PM CST",
+  "Generators": "3 or more"
+ },
+ {
+  "Day": "11/22/2026",
+  "Time": "9 PM - Midnight CST",
+  "Generators": "0"
+ }
+]

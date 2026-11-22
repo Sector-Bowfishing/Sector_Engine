@@ -1,0 +1,49 @@
+{
+  "schema": "generation-source-access-v1",
+  "rule": "Owner source-access rule (Michael, chat 2026-11-22 08:00Z, Sector_Ops #51 comment 7076252747): official agency data services documented for public programmatic use are allowed, at most hourly, with the agency named. Web pages or undocumented endpoints whose robots.txt or terms forbid automated use need the operator's permission first. The runtime reads a provider only when its status here is ALLOWED; any other status refuses the read before a request is made.",
+  "minSecondsBetweenReadsOfOneSeries": 3600,
+  "providers": {
+    "cwms": {
+      "agency": "U.S. Army Corps of Engineers (CWMS Data API)",
+      "endpoint": "https://cwms-data.usace.army.mil/cwms-data/timeseries",
+      "kind": "DOCUMENTED_DATA_SERVICE",
+      "status": "ALLOWED",
+      "basis": "named in the owner rule (USACE CWMS); documented public API, no key"
+    },
+    "rise": {
+      "agency": "Bureau of Reclamation (RISE)",
+      "endpoint": "https://data.usbr.gov/rise/api/result",
+      "kind": "DOCUMENTED_DATA_SERVICE",
+      "status": "ALLOWED",
+      "basis": "named in the owner rule (Reclamation RISE); documented public API, no key"
+    },
+    "usgs": {
+      "agency": "U.S. Geological Survey (Water Data API)",
+      "endpoint": "https://api.waterdata.usgs.gov/ogcapi/v1/collections/continuous/items",
+      "kind": "DOCUMENTED_DATA_SERVICE",
+      "status": "ALLOWED",
+      "basis": "named in the owner rule (USGS); the OGC Water Data API replaces WaterServices, which shuts down 2027-02-22"
+    },
+    "tva": {
+      "agency": "Tennessee Valley Authority (tva.com REST API behind the Lake Levels pages)",
+      "endpoint": "https://www.tva.com/RestApi",
+      "kind": "UNDOCUMENTED_PUBLIC_ENDPOINT",
+      "status": "ALLOWED",
+      "basis": "already read hourly by the Lake Brain under the owner's TVA decisions (Sector_Ops #51, 2026-11-22 19:34Z: every TVA lake on the customer Lake-level list); tva.com legal notices restrict only logos, trademarks and copyrighted material (research 2026-11-20).",
+      "openCheck": "robots.txt for www.tva.com/RestApi has not been read by an Engine session (the session that wrote this release could not reach tva.com), and the iOS conditions spec (2026-07-16, item 25) says 'TVA blocks automated access'. Confirm both before the Generation Brain is enabled; if either forbids automated use, set this provider to PERMISSION_REQUIRED and ask TVA."
+    },
+    "swpa": {
+      "agency": "Southwestern Power Administration (U.S. DOE) daily generation schedule page",
+      "endpoint": "https://www.energy.gov/swpa/<weekday>.htm",
+      "kind": "WEB_PAGE",
+      "status": "ACCESS_CHECK_REQUIRED",
+      "basis": "a published web page, not a documented data service; energy.gov robots.txt and terms have not been read (unreachable from the session that wrote this release). The reader is built and tested on a hand-built fixture; the runtime refuses it until the check passes and this status becomes ALLOWED in a new release."
+    }
+  },
+  "notBuilt": [
+    {"operator": "Alabama Power (apcshorelines.com)", "reason": "operator web pages, no documented data service; the old Engine scraped them. Needs Alabama Power's permission (owner rule)."},
+    {"operator": "Duke Energy, Georgia Power, Dominion / SCE&G, Santee Cooper, Entergy, Ameren, Brookfield, Cube Hydro, FirstLight, other utilities and river authorities", "reason": "operator lake/generation pages only; permission first (owner rule). Listed per lake in dams.json as PERMISSION_REQUIRED."},
+    {"operator": "Reclamation Hydromet (PN /pn-bin, GP /gp-bin)", "reason": "usbr.gov robots.txt disallows /pn-bin and /gp-bin (Lake Brain session 2026-11-22). The owner approved GP Hydromet use on 2026-11-22 19:34Z because GP publishes an automated-retrieval guide; a GP release reader is a follow-up (RISE is used first)."},
+    {"operator": "California DWR CDEC", "reason": "robots.txt forbids automated use; DWR permission pending (Lake Brain)."}
+  ]
+}

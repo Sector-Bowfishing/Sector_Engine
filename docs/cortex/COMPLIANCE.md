@@ -181,3 +181,7 @@ Evaluated 2026-10-22 · `sessions/2026-10-22-internal-activation.md`. The status
 | PL-17 | PASS | single-flight, no overlapping cycles, maxStartsPerCycle (no catch-up burst), maxRunsPerDay, maxCostPerDay, bounded retries (tests, mutation-checked) |
 | PL-18 | PASS | no deploy script creates or resumes a scheduler; the orchestrator deploy always pauses its trigger and fails otherwise; resuming only via `tools/ops/resume-orchestrator.sh` with an owner approvalRef |
 | BR-21 | PASS | `operations.execution` in all 8 `brain.json`; `ops-check --repo` 0 findings |
+
+## 2026-11-22 addendum: Generation Brain (sessions/2026-11-22-generation-brain.md)
+
+A further deployed package, `generation` (brains/generation), was added and registered DISABLED. It is not yet a column in the tables above: its cells are evaluated in the session record (BR-05/06/07/10/16/18/19 PASS, BR-11 PARTIAL: candidate release, approval NOT_RECORDED; BR-02 FINDING: not mapped to a Cortex target Brain, CG-3.1-20). `data-check` findings on the package are the same classes Depth carries (`UNREGISTERED_PATH` for the `/lakeFleet` and `/health` string fragments in publish.py; `UNMAPPED_FILE` for its brain.json path families, which wait on the Cortex registry entry). The column is added at the next full re-evaluation.

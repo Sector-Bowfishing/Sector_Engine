@@ -1,0 +1,3 @@
+# Research-tool and contract-test extras (never installed into the production image; the runtime needs only the standard library).
+# jsonschema: tests validate published states against contracts/generation-dam-state-v1.schema.json (Draft 2020-12).
+jsonschema>=4.18,<5

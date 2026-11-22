@@ -1,0 +1,21 @@
+{
+  "schema": "generation-swpa-projects-v1",
+  "note": "Southwestern Power Administration projects whose hourly projected megawatts appear on SWPA's daily schedule page (www.energy.gov/swpa/<weekday>.htm). Column abbreviations and unit counts are SWPA's own project table as transcribed in Sources/SectorEngine/Engine/Adapters/SWPAGenerationService.swift. Only the directory lakes are mapped; Webbers Falls (WFD), Robert S. Kerr (RSK) and Ozark-Jeta Taylor (OZK) have no directory lake. SWPA publishes megawatts, not unit counts: the Brain publishes the megawatts and never derives units or discharge from them.",
+  "projects": [
+    {"abbr": "BBD", "project": "Broken Bow Dam", "lakeId": "Broken Bow Lake|OK", "units": 2},
+    {"abbr": "DEN", "project": "Denison Dam", "lakeId": "Lake Texoma|TX", "units": 2},
+    {"abbr": "KEY", "project": "Keystone Dam", "lakeId": "Keystone Lake|OK", "units": 2},
+    {"abbr": "FGD", "project": "Fort Gibson Dam", "lakeId": "Fort Gibson Lake|OK", "units": 4},
+    {"abbr": "TKD", "project": "Tenkiller Ferry Dam", "lakeId": "Lake Tenkiller|OK", "units": 2},
+    {"abbr": "EUF", "project": "Eufaula Dam", "lakeId": "Lake Eufaula|OK", "units": 3},
+    {"abbr": "DAD", "project": "Dardanelle Dam", "lakeId": "Dardanelle|AR", "units": 4},
+    {"abbr": "BEV", "project": "Beaver Dam", "lakeId": "Beaver|AR", "units": 2},
+    {"abbr": "TRD", "project": "Table Rock Dam", "lakeId": "Table Rock Lake|MO", "units": 4},
+    {"abbr": "BSD", "project": "Bull Shoals Dam", "lakeId": "Bull Shoals Lake|AR", "units": 8},
+    {"abbr": "NFD", "project": "Norfork Dam", "lakeId": "Norfork|AR", "units": 2},
+    {"abbr": "GFD", "project": "Greers Ferry Dam", "lakeId": "Greers Ferry|AR", "units": 2},
+    {"abbr": "STD", "project": "Stockton Dam", "lakeId": "Stockton Lake|MO", "units": 1},
+    {"abbr": "HST", "project": "Harry S Truman Dam", "lakeId": "Truman Lake|MO", "units": 6},
+    {"abbr": "CAN", "project": "Clarence Cannon Dam", "lakeId": "Mark Twain Lake|MO", "units": 2}
+  ]
+}

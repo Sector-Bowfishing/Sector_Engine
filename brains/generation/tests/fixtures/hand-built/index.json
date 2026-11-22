@@ -1,0 +1,15 @@
+{
+ "label": "HAND-BUILT FIXTURES: written for the Generation Brain tests from the documented response shapes (Engine TVA/SWPA/CWMS adapters, Lake Brain readers). Not recorded from the live services; record real responses before enabling (docs/brains/GENERATION_BRAIN_PLAN.md section 5).",
+ "responses": {
+  "https://www.tva.com/RestApi/generation-releases/GVDA1": {
+   "file": "tva-GVDA1-generation-releases.json",
+   "requiresAccept": "application/json",
+   "fallbackFile": "tva-explorer.html"
+  },
+  "https://www.tva.com/RestApi/observed-data-48-hours/GVDA1": {
+   "file": "tva-GVDA1-observed-data-48-hours.json",
+   "requiresAccept": "application/json",
+   "fallbackFile": "tva-explorer.html"
+  }
+ }
+}
