@@ -1,7 +1,7 @@
 {
   "schema": "sector-customer-lake-level-eligible-v1",
   "source": "Lake's REVIEWED bindings (5 pilots + jobs/lake-brain/data/accepted_batch.json + accepted_batch2.json), derived by tools/ops/lake_level_eligible.py; mirrored in Sources/SectorEngine/API/LakeLevelOutputAPI.swift LakeLevelEligibility.validatedLakeIds (a test keeps them equal)",
-  "approvalRef": "owner approval (Michael, 2026-11-20 20:01Z, Sector_Ops #51): the list is every lake with a REVIEWED binding (5 pilots + accepted_batch.json + accepted_batch2.json); earlier: Sector_Ops #45 Lake Beta V1 + 4 TVA mainstem lakes operator-only (comment 7044052751)",
+  "approvalRef": "owner approval (Michael, 2026-11-20 20:01Z, Sector_Ops #51): the list is every lake with a REVIEWED binding (5 pilots + accepted_batch.json + accepted_batch2.json); TVA lakes are listed like any other lake, no operator-only class (owner decision, Michael, 2026-11-22 19:34Z, Sector_Ops #51 comment 7084511040); earlier: Sector_Ops #45 Lake Beta V1 + 4 TVA mainstem lakes operator-only (comment 7044052751)",
   "lakeIds": [
     "Abiquiu Lake|NM",
     "Alcova Reservoir|WY",
@@ -300,11 +300,5 @@
     "Wilson|AL",
     "Youghiogheny River Lake|MD"
   ],
-  "operatorOnlyLakeIds": [
-    "Guntersville|AL",
-    "Wheeler|AL",
-    "Wilson|AL",
-    "Pickwick Lake|TN"
-  ],
-  "operatorOnlyNote": "No independent second gauge exists; the level is TVA's own operator reading (TVA REST, operating guide). Owner decision 2026-11-20: TVA is a credible source. Credit: Source: TVA. Datum not stated by TVA (inferred NGVD29). Review: docs/brains/LAKE_BRAIN_TVA_OPERATOR_ONLY_REVIEW.md"
+  "tvaNote": "TVA lakes are listed like any other lake (owner decision, Michael, 2026-11-22 19:34Z, Sector_Ops #51 comment 7084511040, reversing the 2026-11-20 operator-only class for Guntersville, Wheeler, Wilson and Pickwick). The level is TVA's own operator reading (TVA REST, operating guide); no independent second gauge exists. Credit: Source: TVA. Datum not stated by TVA (inferred NGVD29). Earlier review: docs/brains/LAKE_BRAIN_TVA_OPERATOR_ONLY_REVIEW.md"
 }

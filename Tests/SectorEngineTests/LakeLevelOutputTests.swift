@@ -59,9 +59,9 @@ final class LakeLevelOutputTests: XCTestCase {
                      "Badin Lake|NC", "High Rock Lake|NC"] {
             XCTAssertFalse(ids.contains(lake), lake)
         }
-        // The 4 TVA mainstem lakes are listed as operator-only (owner decision 2026-11-20), and only they are.
-        XCTAssertEqual(LakeLevelEligibility.operatorOnlyLakeIds, ["Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN"])
-        XCTAssertTrue(LakeLevelEligibility.operatorOnlyLakeIds.isSubset(of: ids))
+        // Every reviewed TVA lake is listed like any other lake: no operator-only class (owner decision 2026-11-22 19:34Z, Sector_Ops #51 comment 7084511040).
+        for lake in ["Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN",
+                     "Kentucky Lake|KY", "Kentucky Lake|TN", "Cherokee Lake|TN", "Chickamauga Lake|TN"] { XCTAssertTrue(ids.contains(lake), lake) }
         // Every listed id is a directory lake.
         let directory = Set(LakeDirectory.all.map(\.id))
         XCTAssertTrue(ids.isSubset(of: directory), "\(ids.subtracting(directory))")

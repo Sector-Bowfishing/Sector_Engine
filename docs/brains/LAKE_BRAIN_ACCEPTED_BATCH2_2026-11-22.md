@@ -36,7 +36,7 @@
 - Lake Oahe ND (batch 2) and Lake Oahe SD (batch 1): CWMS NWDM OAHE.
 - Kentucky Lake KY and Kentucky Lake TN (both batch 2): TVA KYDK2.
 
-**Customer list.** By the 2026-11-20 20:01Z owner rule (the customer Lake-level list is exactly Lake's reviewed set), the list goes from 192 to 296 in this PR. That is customer-facing and is gated by the release approval. If batch 2 should publish a level state without a customer copy yet, the list tool needs a different rule; say so in review.
+**Customer list.** By the 2026-11-20 20:01Z owner rule (the customer Lake-level list is exactly Lake's reviewed set), the list goes from 192 to 296 in this PR. TVA lakes are on it like any other lake, with no operator-only class (Michael, 2026-11-22 19:34Z, Sector_Ops #51 comment 7084511040). That is customer-facing and is gated by the release approval. If batch 2 should publish a level state without a customer copy yet, the list tool needs a different rule; say so in review.
 
 **Not changed.** No schedule, no deploy, no live build; the Mac mini keeps running the approved `lake-knowledge-2026-11-21.2` until this is merged, approved and rebuilt. `acceptedReviewedAt` stays the batch 1 date (the generator carries one review date); the batch 2 date is in `accepted_batch2.json`.
 

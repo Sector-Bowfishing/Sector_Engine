@@ -13,7 +13,7 @@ LakeLevelEligibility.validatedLakeIds. This tool derives both from the reviewed 
   python tools/ops/lake_level_eligible.py --write    # rewrite the JSON lakeIds and the Swift validatedLakeIds block
   python tools/ops/lake_level_eligible.py --check    # exit 1 if either differs from the reviewed set
 
-No network, no database. Everything else in the JSON (schema, operatorOnlyLakeIds, notes) is kept as it is.
+No network, no database. Everything else in the JSON (schema, notes) is kept as it is.
 """
 from __future__ import annotations
 
@@ -32,7 +32,8 @@ ELIGIBLE = os.path.join(ROOT, "jobs", "brain_platform", "sector_brain_platform",
 ENGINE_SWIFT = os.path.join(ROOT, "Sources", "SectorEngine", "API", "LakeLevelOutputAPI.swift")
 
 APPROVAL = ("owner approval (Michael, 2026-11-20 20:01Z, Sector_Ops #51): the list is every lake with a REVIEWED binding "
-            "(5 pilots + accepted_batch.json + accepted_batch2.json); earlier: Sector_Ops #45 Lake Beta V1 + 4 TVA mainstem lakes operator-only (comment 7044052751)")
+            "(5 pilots + accepted_batch.json + accepted_batch2.json); TVA lakes are listed like any other lake, no operator-only class (owner decision, Michael, 2026-11-22 19:34Z, Sector_Ops #51 comment 7084511040); "
+            "earlier: Sector_Ops #45 Lake Beta V1 + 4 TVA mainstem lakes operator-only (comment 7044052751)")
 BEGIN = "    public static let validatedLakeIds: Set<String> = ["
 END = "    ]"
 

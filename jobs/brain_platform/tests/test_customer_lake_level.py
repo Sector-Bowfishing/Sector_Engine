@@ -53,13 +53,15 @@ def test_the_list_is_exactly_lakes_reviewed_set():
         assert lake not in ids, lake
 
 
-def test_operator_only_lakes_match_the_engine_and_are_listed():
+def test_tva_lakes_are_listed_like_any_other_lake():
+    # Owner decision (Michael, 2026-11-22 19:34Z, Sector_Ops #51 comment 7084511040): no operator-only class; every reviewed TVA lake is listed.
     s = open(os.path.join(ROOT, "Sources", "SectorEngine", "API", "LakeLevelOutputAPI.swift")).read()
-    block = s[s.index("operatorOnlyLakeIds: Set<String>"):]
-    swift = set(re.findall(r'"([^"]+)"', block[block.index("[") + 1:block.index("]")]))
+    assert "operatorOnlyLakeIds" not in s
     d = json.load(open(C.ELIGIBLE_FILE, encoding="utf-8"))
-    assert set(d["operatorOnlyLakeIds"]) == swift == {"Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN"}
-    assert swift <= C.eligible_lake_ids()
+    assert "operatorOnlyLakeIds" not in d and "operatorOnlyNote" not in d
+    tva = {"Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN", "Kentucky Lake|KY", "Kentucky Lake|TN", "Cherokee Lake|TN",
+           "Chickamauga Lake|TN"}
+    assert tva <= C.eligible_lake_ids()
 
 
 def test_an_eligible_observed_lake_gets_exactly_the_schema_fields():
