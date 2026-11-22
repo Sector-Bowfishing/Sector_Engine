@@ -15,8 +15,8 @@
     "evaluatedAt": "2026-10-23",
     "session": "docs/cortex/sessions/2026-10-23-research-automation.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:043bcb6d61463290de551a7d7c8dd1a408df83e31d4e524fd0121656de50779a",
-    "certificationDigest": "sha256:043bcb6d61463290de551a7d7c8dd1a408df83e31d4e524fd0121656de50779a",
+    "sourceDigest": "sha256:98fb2a83209f00fabb23d841464c61530be1f76bceb261f272d3ade645b56b8c",
+    "certificationDigest": "sha256:98fb2a83209f00fabb23d841464c61530be1f76bceb261f272d3ade645b56b8c",
     "certificationCurrent": true,
     "verificationCommit": "3e8a3857"
   },
@@ -904,6 +904,11 @@
       },
       "dataDependencies": {
         "consumes": [
+          {
+            "kind": "brain",
+            "id": "weather",
+            "requirement": "OPTIONAL"
+          },
           {
             "kind": "registry",
             "id": "lakes",

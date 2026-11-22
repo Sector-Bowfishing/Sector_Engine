@@ -79,7 +79,7 @@ def test_unchanged_inputs_skip_and_cloud_input_republishes():
     assert publish(d, w, S.NIGHT, now=S.NOW)["skippedUnchanged"] == 0
     again = publish(d, w, S.NIGHT, now=S.NOW)
     assert again["skippedUnchanged"] == len(S.SLICE)
-    cloud = {"Guntersville|AL": {"contract": C.WEATHER_INPUT_CONTRACT, "hourly": [{"at": "2026-11-23T03:00:00Z", "cloudCoverPct": 80}]}}
+    cloud = {"Guntersville|AL": S.weather_state([("2026-11-23T03:00:00Z", 80)])}
     assert publish(d, w, S.NIGHT, cloud, now=S.NOW)["skippedUnchanged"] == len(S.SLICE) - 1
 
 

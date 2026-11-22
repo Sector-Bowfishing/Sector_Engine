@@ -38,6 +38,13 @@
   ],
   "consumes": [
     {
+      "kind": "brain",
+      "brainId": "weather",
+      "contractId": "weather-publication-v1",
+      "minVersion": "1.0.0",
+      "requirement": "OPTIONAL"
+    },
+    {
       "kind": "registry",
       "registry": "lakes",
       "contractId": "registry.lakes",
@@ -101,11 +108,11 @@
       "artifact:brains/moon/runtime/run.py --tonight (local JSON file)"
     ],
     "internalExecution": "none: not scheduled, no executor (control manifest PARKED, executionTarget kind none) and absent from the execution control (disabled). run.py writes a local file or an in-memory dry run only; --write refuses.",
-    "execution": {"authority": "brain-orchestrator", "trigger": "TIME", "minIntervalHours": 24.0, "refresh": "once per night per lake when enabled (and hourly with Weather Brain cloud cover); NOT enabled", "dependsOn": [], "independentSchedule": false, "controlledBy": "fam.control-execution-control (global + per-Brain; fail closed; read by the orchestrator only). The Moon Brain is not in it: disabled."},
+    "execution": {"authority": "brain-orchestrator", "trigger": "EVENT", "minIntervalHours": null, "refresh": "registered disabled: no schedule (control manifest schedule MANUAL, triggers MANUAL/ADMIN only); a run happens only on an explicit request. The enablement target is TIME: hourly through the evening and night, after each Weather run, because a Weather state carries only 12 forecast hours and the cloud adjustment covers the part of the window still ahead at that run. It is set together with the manifest schedule when the owner enables it (docs/brains/MOON_BRAIN_PLAN.md section 7.1)", "dependsOn": [], "independentSchedule": false, "controlledBy": "fam.control-execution-control (global + per-Brain; fail closed; read by the orchestrator only). The Moon Brain is not in it: disabled."},
     "customerPublication": {
       "status": "NOT_ELIGIBLE",
       "approvalRef": null
     },
-    "notes": "Owner decision 2026-11-22 (Sector_Ops #51): build it. Merging changes nothing at runtime: PARKED, no executor, no live writer, customerPublication false (PRE_PRODUCTION). The Weather Brain cloud input is OPTIONAL and provisional (contracts/moon-night-light-v1.json weatherInput) until that Brain publishes a contract."
+    "notes": "Owner decision 2026-11-22 (Sector_Ops #51): build it. Merging changes nothing at runtime: PARKED, no executor, no live writer, customerPublication false (PRE_PRODUCTION). The Weather Brain cloud input is OPTIONAL: the Weather state sector-brain-weather-state-v1 (cloud rows only; contracts/moon-night-light-v1.json weatherInput), declared in consumes (OPTIONAL)."
   }
 }

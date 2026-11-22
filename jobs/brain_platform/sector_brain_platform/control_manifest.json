@@ -115,7 +115,7 @@
       "displayName": "Moon and Night Light", "group": "CURRENT_CONDITIONS", "lifecycle": "CALIBRATION", "activityState": "PARKED",
       "executionTarget": {"kind": "none", "note": "registered 2026-11-22 (owner decision, Sector_Ops #51) but DISABLED: no executor, absent from the execution control (absent = disabled), no live writer. runtime/run.py writes a local file or an in-memory dry run; --write refuses. Enabling it is a separate owner decision.", "startedByOrchestrator": false, "scoped": false},
       "allowedTriggers": ["MANUAL", "ADMIN"],
-      "dependencies": [],
+      "dependencies": [{"id": "weather", "requirement": "OPTIONAL", "maxAgeHours": 3, "onStale": "DEPENDENCY_STALE", "provisional": true}],
       "schedule": {"class": "MANUAL", "owner": "NONE"},
       "freshness": {"stalenessModel": "FINGERPRINT"}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "readinessCounts", "supportedLakeCount"]},
       "costClass": "NONE", "timeoutSeconds": 900, "scopes": [], "customerPublication": false

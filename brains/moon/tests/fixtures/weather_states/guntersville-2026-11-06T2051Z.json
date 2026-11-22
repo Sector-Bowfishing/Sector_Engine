@@ -1,0 +1,224 @@
+{
+ "airTemperatureF": {
+  "at": "2026-11-06T20:00:00Z",
+  "origin": "forecastGrid",
+  "station": null,
+  "value": 69.0
+ },
+ "brainId": "weather",
+ "brainVersion": "weather-brain-0.1.0",
+ "dewPointF": {
+  "at": "2026-11-06T20:00:00Z",
+  "origin": "forecastGrid",
+  "station": null,
+  "value": 55.0
+ },
+ "forecast": {
+  "hourly": [
+   {
+    "airTemperatureF": 66.0,
+    "at": "2026-11-06T21:00:00Z",
+    "cloudCoverPct": 19,
+    "dewPointF": 54.0,
+    "humidityPct": 61,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 68.0,
+    "at": "2026-11-06T22:00:00Z",
+    "cloudCoverPct": 17,
+    "dewPointF": 53.0,
+    "humidityPct": 59,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 64.0,
+    "at": "2026-11-06T23:00:00Z",
+    "cloudCoverPct": 16,
+    "dewPointF": 54.0,
+    "humidityPct": 70,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 59.0,
+    "at": "2026-11-07T00:00:00Z",
+    "cloudCoverPct": 14,
+    "dewPointF": 53.0,
+    "humidityPct": 80,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 57.0,
+    "at": "2026-11-07T01:00:00Z",
+    "cloudCoverPct": 12,
+    "dewPointF": 52.0,
+    "humidityPct": 83,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 55.0,
+    "at": "2026-11-07T02:00:00Z",
+    "cloudCoverPct": 13,
+    "dewPointF": 52.0,
+    "humidityPct": 90,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 53.0,
+    "at": "2026-11-07T03:00:00Z",
+    "cloudCoverPct": 14,
+    "dewPointF": 51.0,
+    "humidityPct": 93,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 52.0,
+    "at": "2026-11-07T04:00:00Z",
+    "cloudCoverPct": 24,
+    "dewPointF": 50.0,
+    "humidityPct": 93,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 51.0,
+    "at": "2026-11-07T05:00:00Z",
+    "cloudCoverPct": 26,
+    "dewPointF": 50.0,
+    "humidityPct": 96,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 50.0,
+    "at": "2026-11-07T06:00:00Z",
+    "cloudCoverPct": 31,
+    "dewPointF": 50.0,
+    "humidityPct": 100,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 50.0,
+    "at": "2026-11-07T07:00:00Z",
+    "cloudCoverPct": 25,
+    "dewPointF": 49.0,
+    "humidityPct": 96,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 49.0,
+    "at": "2026-11-07T08:00:00Z",
+    "cloudCoverPct": 30,
+    "dewPointF": 48.0,
+    "humidityPct": 96,
+    "precipProbabilityPct": null
+   }
+  ],
+  "issuedAt": "2026-11-06T20:43:55Z",
+  "source": "NWS forecast grid (NBM-based NDFD)"
+ },
+ "freshness": {
+  "freshUntil": "2026-11-06T20:51:00Z",
+  "generatedAt": "2026-11-06T20:51:00Z",
+  "nextCheckAt": "2026-11-06T21:36:00Z",
+  "observedAt": null,
+  "reason": "WATCH: no observation; nothing is presented as current",
+  "stale": true,
+  "tier": "WATCH"
+ },
+ "generatedAt": "2026-11-06T20:51:00Z",
+ "humidityPct": {
+  "at": "2026-11-06T20:00:00Z",
+  "origin": "forecastGrid",
+  "station": null,
+  "value": 59
+ },
+ "kind": "forecast",
+ "lakeId": "Guntersville|AL",
+ "lakeKey": "Guntersville_AL",
+ "location": {
+  "gridpoint": "HUN/76,30",
+  "lat": 34.42,
+  "lon": -86.26,
+  "stations": [
+   {
+    "distanceMi": 1.4,
+    "id": "K8A1",
+    "name": "Guntersville Municipal Airport"
+   },
+   {
+    "distanceMi": 13.2,
+    "id": "KBFZ",
+    "name": "Albertville Regional Airport-Thomas J Brumlik Field"
+   },
+   {
+    "distanceMi": 23.5,
+    "id": "K4A6",
+    "name": "Scottsboro Municipal Airport"
+   }
+  ]
+ },
+ "missing": [
+  "pressure"
+ ],
+ "mixedOrigin": false,
+ "origins": {
+  "airTemperatureF": "forecastGrid",
+  "cloudCoverPct": "forecastGrid",
+  "dewPointF": "forecastGrid",
+  "humidityPct": "forecastGrid",
+  "pressure": null,
+  "weatherCode": "forecastGrid"
+ },
+ "pressure": null,
+ "provenance": {
+  "estimates": "none: a value no station or forecast reported is null",
+  "provider": "api.weather.gov (U.S. National Weather Service)",
+  "rules": "NWS_WEATHER_ADAPTER_V1 (Engine adapter, ported)",
+  "sourceIds": [
+   "nws-station-observations",
+   "nws-forecast-grid"
+  ]
+ },
+ "schema": "sector-brain-weather-state-v1",
+ "schemaVersion": 1,
+ "sky": {
+  "cloudCoverPct": {
+   "at": "2026-11-06T20:00:00Z",
+   "origin": "forecastGrid",
+   "station": null,
+   "value": 15.0
+  },
+  "description": "Mainly clear",
+  "nwsText": null,
+  "rain": {
+   "forecastIssuedAt": "2026-11-06T20:43:55Z",
+   "forecastNext12hIn": 0.0,
+   "forecastNext6hIn": 0.0,
+   "lastHourIn": null
+  },
+  "weatherCode": {
+   "at": "2026-11-06T20:00:00Z",
+   "origin": "forecastGrid",
+   "station": null,
+   "value": 1
+  },
+  "word": "clear"
+ },
+ "thresholdsVersion": "weather-change-thresholds-v1",
+ "weatherChange": {
+  "basisObservationAt": null,
+  "evaluatedAt": "2026-11-06T20:51:00Z",
+  "events": [],
+  "inputs": {
+   "forecastRainNext6hIn": 0.0
+  },
+  "level": "WATCH",
+  "signature": "524fd57af8b1dac2",
+  "thresholdsVersion": "weather-change-thresholds-v1",
+  "unknown": [
+   "pressure3h: no fresh pressure observation with a sample 3 h earlier",
+   "airTemp3h: no fresh air-temperature observation with a sample 3 h earlier",
+   "front: no fresh observation at the temperature station",
+   "rainOnset: no observation in the last 75 min"
+  ]
+ }
+}

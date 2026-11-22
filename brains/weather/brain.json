@@ -37,7 +37,7 @@
   "researchWorkspace": {"workspaceId": "weather-brain"},
   "customerIntegrationMode": "none",
   "publisherRequired": {"required": true, "cutoverStatus": "NOT_STARTED"},
-  "authorizedConsumers": ["ops", "lake-brain", "water-temp", "sector-intelligence"],
+  "authorizedConsumers": ["ops", "lake-brain", "water-temp", "sector-intelligence", "moon"],
   "tests": ["brains/weather/tests"],
   "dataBudget": {"maxTrackedFileBytes": 262144, "exceptions": []},
   "knowledge": {

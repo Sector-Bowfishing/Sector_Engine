@@ -50,7 +50,21 @@ DARK  A < 0.15   |   MOSTLY_DARK  < 0.35   |   SOME_MOONLIGHT  < 0.60   |   BRIG
 
 ## 4. Weather Brain input
 
-The Weather Brain is being built in parallel on `feat/weather-brain-2026-11-22`. That branch did not exist on origin when this PR was built (checked at the start and again before the final commit), so the Brain defines what it needs as an **optional, provisional** input: `moon-weather-cloud-input-v0`, an hourly list of `{at, cloudCoverPct}` per lake. It is not declared in `brain.json` `consumes`, because a `kind: brain` entry needs a registered brainId. Gap MOON-INP-001 tracks it. When the Weather Brain contract exists: map it to this input, add the `consumes` entry, and add a mapping test.
+The input is the Weather Brain's per-lake state (`sector-brain-weather-state-v1`, `/lakes/{k}/states/weather`). It is OPTIONAL and declared in `brain.json` `consumes` (§7.2). Only these fields are read:
+- `forecast.hourly[].cloudCoverPct`: the NWS forecast grid, at most 12 hours after the run. A row without the key counts as null.
+- `sky.cloudCoverPct {value, at, origin}`: the current hour.
+- `generatedAt`.
+
+**Limits (stated, #236 review):**
+- **What the cloud span covers.** A Weather state cannot describe hours before its run. The cloud adjustment covers `[max(window start, the Weather run's hour), window end]` and reports that span in `cloudCover.span` and in the statement. An evening run judges the whole window; a mid-night run judges the hours still ahead.
+- **Run timing.** With 12 forecast hours, only Weather runs from about 3 h before astronomical dusk cover a whole November night (Guntersville: from 21Z). An earlier run gives MOON_ONLY with INSUFFICIENT_COVERAGE. When enabled, Moon should therefore run after each evening and night Weather run (§7.1).
+- **Coverage.** Coverage counts distinct hours, and at least 75 % of the span's hours need a value. Values are checked only inside the span.
+- **Refusals.** A timestamp without an explicit UTC offset refuses the document. A Weather run after the window has ended gives WEATHER_AFTER_WINDOW.
+- **Labelling.** The statement says the cloud is an NWS forecast, and names an observed current hour when that is the origin.
+- **Tests.** They use four states the Weather Brain built from its recorded NWS fixtures (Guntersville at 20:51Z and 01:00Z, Champlain at 20:51Z and 23:00Z: the afternoon runs give MOON_ONLY, the evening runs MOON_AND_CLOUD), plus schema-valid variants. Every fixture is validated against `brains/weather/contracts/weather-state-v1.schema.json`.
+- **No live check yet.** No live Weather state has been read: both Brains are disabled.
+
+The deliberate differences from the app's Moon tile and Darkness label are listed in the contract under `divergences`: the illumination instant, the fixed 0.3 city glow, forecast cloud over the remaining window, and the event definitions.
 
 ## 5. Package and registrations
 
@@ -75,8 +89,14 @@ The Weather Brain is being built in parallel on `feat/weather-brain-2026-11-22`.
 
 ## 7. Not done here (owner decisions or later work)
 
-1. **Enable execution**: add `moon` to the execution control, give it an executor and a writer, and make it ACTIVE. These are gated owner decisions.
-2. **Weather Brain mapping** (MOON-INP-001), once that Brain's contract exists.
+1. **Enable execution**: these are gated owner decisions. The checklist, done together:
+   - add `moon` to the execution control;
+   - give it an executor and an approved writer;
+   - set the control manifest `activityState` ACTIVE with a real schedule, and `brain.json` `operations.execution.trigger` back to TIME with its `minIntervalHours`. Run Moon hourly through the evening and night after each Weather run, so the remaining-window cloud stays current (§4);
+   - read each lake's Weather state from RTDB with the dependency's freshness rule, instead of the `--weather` file;
+   - decide whether moon presence P should use the same remaining span as the cloud (today P covers the whole window, while the cloud covers only the span still ahead at the Weather run). Check the Weather state's age against the dependency's maxAgeHours (`run.py --weather` does not check it today). Report a missing `generatedAt` with its own reason (today it is MALFORMED_HOURLY_ROW);
+   - remove the `moon` carve-out in `jobs/brain-orchestrator/tests/test_central_scheduling.py` (`registered_disabled`) so the test again requires an execution path for every manifest Brain.
+2. **Weather Brain consumes entry** (MOON-INP-001): done once Weather (#234) reached main. `brain.json` `consumes` lists `{kind: brain, brainId: weather, contractId: weather-publication-v1, requirement: OPTIONAL}`, the control manifest lists an OPTIONAL `weather` dependency (maxAgeHours 3, Weather's own staleAfterHours), and Weather's `authorizedConsumers` include `moon`. What remains is a live read of `/lakes/{k}/states/weather`, which belongs to enablement (§7.1).
 3. **Validate DARKNESS_RULE_V1** against measured on-water illuminance (MOON-VAL-001).
 4. **Per-lake skyglow** (MOON-INP-002).
 5. **Engine event definitions**: whether the Engine and the apps should adopt the USNO altitudes and the noon-to-noon span for the moonrise/sunset they display. That would be a `moon-v2` spec change across iOS, Android and Web.
