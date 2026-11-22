@@ -101,7 +101,7 @@ SIGMA_POOL = {"high": 0.25, "medium": 1.0, "low": 3.0}
 SIGMA_SERIES_MEDIAN = 0.25            # ASSUMED: the reference component of a seriesMedian shift (median of >= 100 daily values; gauge re-levelling is not modelled)
 SIGMA_LEVEL = {"DIRECT_OPERATOR_POOL": 0.1, "DIRECT_LAKE_GAUGE": 0.15}
 SIGMA_DATUM = {"SAME_SOURCE": 0.0, "SAME_OPERATOR_SYSTEM": 0.1, "SAME_DATUM": 0.1, "CONVERTED": 0.3, "SAME_SERIES": 0.0}
-SIGMA_ASSUMED = ("pool", "level", "datum")
+SIGMA_ASSUMED = ("pool", "reference", "level", "datum")   # every component is an ASSUMED research estimate (incl. SIGMA_SERIES_MEDIAN); a state lists those it emits
 CONF_HIGH_MAX_SIGMA = 0.5
 CONF_MEDIUM_MAX_SIGMA = 1.2
 

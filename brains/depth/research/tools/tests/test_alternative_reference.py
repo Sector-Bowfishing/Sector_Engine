@@ -190,3 +190,36 @@ def test_build_applies_the_bases_and_leaves_full_pool_lakes_alone(tmp_path):
     assert erie["reference"]["datum"] == "IGLD85" and erie["levelSource"]["datum"] == "IGLD85" and erie["datum"]["status"] == "SAME_DATUM"
     assert erie["rollout"] == "MEDIUM_CONFIDENCE"
     assert summary["referenceBasis"] == {"fullPool": 1, "seriesMedian": 1, "lowWaterDatum": 1}
+
+
+def test_cwms_guard_compares_the_parameter_segment():
+    live = {"provider": "cwms", "station": "SAS", "series": "Hartwell.Elev-Pool.Inst.1Hour.0.Raw-SHEF_SAS"}
+    assert history_is_live_series(_b(live, {"kind": "cwmsDaily", "office": "SAS", "series": "Hartwell.Elev-Pool.Inst.1Day.0.Raw-SHEF_SAS"}))
+    assert not history_is_live_series(_b(live, {"kind": "cwmsDaily", "office": "SAS", "series": "Hartwell.Elev-GC.Inst.1Day.0.ARCHIVE-DAILY"}))
+    assert not history_is_live_series(_b(live, {"kind": "cwmsDaily", "office": "SAS", "series": "Hartwell"}))
+
+
+def test_pilot_copy_matches_lakes_hand_written_rows():
+    """LAKE_PILOT_BINDINGS restates Lake's hand-written pilots as data; this reads Lake's source text so the copy cannot drift silently."""
+    import os
+    import re
+    from depth_research.candidates import LAKE_PILOT_BINDINGS
+    from depth_research.paths import REPO
+    src = open(os.path.join(REPO, "brains", "lake", "runtime", "LakeBrain", "LakeSourceBindings.swift"), encoding="utf-8").read()
+    body = src[src.index("static let handWritten"):src.index("public static let pilots")]
+    parsed = {}
+    for lid, loc in re.findall(r'tvaPilot\("([^"]+)",\s*"([^"]+)"', body):
+        parsed[lid] = {"live": [{"provider": "tva", "station": loc, "series": None}],
+                       "history": [{"kind": "sharedTVAArchive", "locationId": loc}, {"kind": "tvaOperatingGuide", "locationId": loc}]}
+    fn = src[src.index("private static func tvaPilot"):src.index("static let handWritten")]   # the TVA row shape the copy assumes
+    assert re.search(r"live:\s*\[LevelSeriesRef\(provider:\s*\.tva,[^\]]*station:\s*loc,\s*series:\s*nil", fn)
+    assert re.search(r"history:\s*\[\.sharedTVAArchive\([^)]*locationId:\s*loc\),\s*\.tvaOperatingGuide\(locationId:\s*loc\)\]", fn)
+    for m in re.finditer(r'LakeSourceBinding\(\s*lakeId:\s*"([^"]+)"(.*?)reviewedAt:', body, re.S):
+        lid, row = m.group(1), m.group(2)
+        live0 = re.search(r'live:\s*\[\s*LevelSeriesRef\(provider:\s*\.(\w+),.*?station:\s*"([^"]*)",\s*series:\s*"([^"]*)"', row, re.S)
+        hist = re.search(r"history:\s*\[(.*?)\],\s*guide:", row, re.S).group(1)
+        entries = re.findall(r"\.(\w+)\(([^)]*)\)", hist)
+        parsed[lid] = {"live": [{"provider": live0.group(1), "station": live0.group(2), "series": live0.group(3)}],
+                       "history": [{"kind": k, **dict(re.findall(r'(\w+):\s*"([^"]*)"', args))} for k, args in entries]}
+    assert len(parsed) == 5
+    assert parsed == LAKE_PILOT_BINDINGS

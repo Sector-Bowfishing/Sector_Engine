@@ -130,25 +130,59 @@ def load_datum_verification(path: str | None = None) -> dict:
     return d.get("lakes") or {}
 
 
+def _http_evidence(side: dict) -> list[dict]:
+    """Evidence a reader can open, excluding carried-forward citations (`notEvidence: true`, e.g. a pointer back to candidates.json)."""
+    return [e for e in (side or {}).get("evidence") or [] if str(e.get("url", "")).startswith("http") and not e.get("notEvidence")]
+
+
+def _roots(side: dict) -> set[str]:
+    """Independent roots of a side's evidence: `derivedFrom` (the upstream record a publisher re-serves, e.g. USGS-08025350) or the publisher itself."""
+    return {str(e.get("derivedFrom") or str(e.get("publisher", "")).split(" (")[0]) for e in _http_evidence(side)}
+
+
 def _side_verified(side: dict) -> bool:
-    """VERIFIED needs two distinct publishers naming the datum, or the series' own parameter definition plus a passed empirical check."""
+    """VERIFIED needs two distinct ROOTS naming the datum (two publishers re-serving one gauge count once), or the series' own parameter
+    definition plus a passed empirical check."""
     if (side or {}).get("status") != "VERIFIED" or normalize_datum(side.get("datum")) not in ("NGVD29", "NAVD88"):
         return False
-    pubs = {str(e.get("publisher", "")).split(" (")[0] for e in side.get("evidence") or [] if str(e.get("url", "")).startswith("http")}
-    return len(pubs) >= 2 or side.get("basis") == "parameter-definition+empirical"
+    return len(_roots(side)) >= 2 or (side.get("basis") == "parameter-definition+empirical" and bool(_http_evidence(side)))
+
+
+def _source_navd_minus_ngvd(side: dict) -> float | None:
+    """A side's own NAVD88 - NGVD29 offset (CDA `offsets`), whichever direction it was published in."""
+    if isinstance(side.get("offsetToNAVD88Ft"), (int, float)):
+        return float(side["offsetToNAVD88Ft"])
+    if isinstance(side.get("offsetToNGVD29Ft"), (int, float)):
+        return -float(side["offsetToNGVD29Ft"])
+    return None
 
 
 def verification_problems(lid: str, rec: dict) -> list[str]:
     """Rule violations of one record (empty list = consistent with the plan's verification rule). Used by tests and by verified_conversion."""
     p = []
+    status = rec.get("status")
+    if status not in ("VERIFIED", "SAME_SOURCE", "SINGLE_SOURCE", "CONFLICT", "NONE"):
+        p.append(f"unknown status {status!r}")
     if not 1 <= int(rec.get("passes") or 0) <= VERIFY_MAX_PASSES:
         p.append("passes must be 1..2")
     sides = rec.get("sides") or {}
     rel = rec.get("relationship") or {}
-    if rec.get("status") == "VERIFIED":
+    for s in ("level", "reference"):
+        side = sides.get(s) or {}
+        if side.get("status") in ("VERIFIED", "SINGLE_SOURCE", "CONFLICT") and not _http_evidence(side):
+            p.append(f"{s} side is {side['status']} without an http evidence item")
+        off, vd = _source_navd_minus_ngvd(side), side.get("vdatumCheckFt")
+        if off is not None and isinstance(vd, (int, float)) and abs(off - vd) > VERIFY_CONFLICT_FT + 1e-9:
+            if not rec.get("offsetConflict"):
+                p.append(f"{s} offset {off:+.3f} vs VDatum {vd:+.3f} differ by more than {VERIFY_CONFLICT_FT} ft: record it as offsetConflict")
+            if status == "VERIFIED":
+                p.append(f"{s} offset conflicts with VDatum: cannot be VERIFIED")
+    if status != "NONE" and not any(_http_evidence(sides.get(s)) for s in ("level", "reference")):
+        p.append("a record above NONE needs at least one http evidence item")
+    if status == "VERIFIED":
         for s in ("level", "reference"):
             if not _side_verified(sides.get(s)):
-                p.append(f"{s} side not two-source verified")
+                p.append(f"{s} side not verified by two independent roots")
             elif (sides.get(s) or {}).get("basis") == "parameter-definition+empirical" and (rel.get("empirical") or {}).get("passed") is not True:
                 p.append(f"{s} side rests on its parameter definition but no empirical cross-gauge check passed")
         if rel.get("status") == "CONVERTED":
@@ -163,7 +197,7 @@ def verification_problems(lid: str, rec: dict) -> list[str]:
             lv, rf = (normalize_datum((sides.get(k) or {}).get("datum")) for k in ("level", "reference"))
             if {lv, rf} != {"NGVD29", "NAVD88"} or lv != normalize_datum(rel.get("levelDatum")) or rf != normalize_datum(rel.get("referenceDatum")):
                 p.append("conversion datums do not match the verified sides")
-    elif rec.get("status") == "SAME_SOURCE":
+    elif status == "SAME_SOURCE":
         sr = rec.get("sameRecord") or {}
         loc = sr.get("location") or "\0"
         if rel.get("status") != "SAME_SOURCE":
@@ -174,10 +208,15 @@ def verification_problems(lid: str, rec: dict) -> list[str]:
             p.append("level series and reference level are not on the same CWMS location")
         if normalize_datum(sr.get("referenceDatum")) not in ("NGVD29", "NAVD88"):
             p.append("SAME_SOURCE location datum must be NGVD29 or NAVD88")
-    elif rec.get("status") == "CONFLICT" and not rec.get("conflict"):
-        p.append("CONFLICT needs a stated conflict")
-    elif rel.get("status"):
-        p.append("only a VERIFIED record may carry a relationship")
+        if not sr.get("liveSourceIds"):
+            p.append("SAME_SOURCE must pin the reviewed live binding (liveSourceIds)")
+        if sr.get("lakeBrainPoolFt") is not None and not isinstance(sr["lakeBrainPoolFt"], (int, float)):
+            p.append("lakeBrainPoolFt must be a number")
+    elif status == "CONFLICT":
+        if not rec.get("conflict"):
+            p.append("CONFLICT needs a stated conflict")
+    if status not in ("VERIFIED", "SAME_SOURCE") and rel.get("status"):
+        p.append("only a VERIFIED or SAME_SOURCE record may carry a relationship")
     return p
 
 
@@ -189,14 +228,54 @@ def verified_conversion(rec: dict | None) -> tuple[float, str, str] | None:
     return float(r["navd88MinusNgvd29Ft"]), normalize_datum(r["levelDatum"]), normalize_datum(r["referenceDatum"])
 
 
-def verified_same_source(rec: dict | None) -> dict | None:
-    """The `sameRecord` block of a valid SAME_SOURCE record (pool and level on one CWMS location, owner-decided reference), else None."""
+def reviewed_live_sources(contract_path: str = LAKE_BINDINGS) -> dict[str, list[str]]:
+    """lakeId -> liveSourceIds of Lake's reviewed binding contract (reviewed-lake-bindings-v1)."""
+    with open(contract_path, encoding="utf-8") as fh:
+        d = json.load(fh)
+    if d.get("schema") != "reviewed-lake-bindings-v1":
+        raise ValueError(f"{contract_path}: not a reviewed-lake-bindings-v1 contract")
+    return {r["lakeId"]: list(r.get("liveSourceIds") or []) for r in d["reviewed"]}
+
+
+def live_source_location(source_id: str) -> tuple[str, str | None, str]:
+    """'a2w:LRN:JPHT1:JPHT1-J_PERCY_PRIEST.Elev-Pool...' -> ('a2w', 'LRN', 'JPHT1'); 'cwms:LRN:JPHT1-J_PERCY_PRIEST.Elev...' -> ('cwms', 'LRN', 'JPHT1');
+    'tva:JPHT1' -> ('tva', None, 'JPHT1'). The base location is the CWMS location id before its first '-' sub-location suffix."""
+    parts = source_id.split(":")
+    prov = parts[0].lower()
+    if prov == "a2w" and len(parts) >= 4:
+        office, loc = parts[1], parts[3].split(".")[0]
+    elif prov == "cwms" and len(parts) >= 3:
+        office, loc = parts[1], parts[2].split(".")[0]
+    else:
+        office, loc = None, (parts[1] if len(parts) > 1 else "").split(".")[0]
+    return prov, office, loc.split("-")[0]
+
+
+def same_source_binding_problems(sr: dict, live_ids: list[str] | None) -> list[str]:
+    """SAME_SOURCE holds only while the live level binding is exactly the binding the record was decided on: same ids, and every id on the
+    record's base location (and office, where the id carries one). A changed provider or location refuses the relationship."""
+    if not live_ids:
+        return ["lake has no reviewed live binding"]
+    p = []
+    if sorted(live_ids) != sorted(sr.get("liveSourceIds") or []):
+        p.append(f"live binding changed: {sorted(live_ids)} != recorded {sorted(sr.get('liveSourceIds') or [])}")
+    for sid in live_ids:
+        prov, office, base = live_source_location(sid)
+        if base != sr.get("location") or (office is not None and office != sr.get("office")):
+            p.append(f"{sid}: base location {office}/{base} is not {sr.get('office')}/{sr.get('location')}")
+    return p
+
+
+def verified_same_source(rec: dict | None, live_ids: list[str] | None = None) -> dict | None:
+    """The `sameRecord` block of a valid SAME_SOURCE record whose pinned live binding still matches Lake's reviewed contract, else None."""
     if not rec or rec.get("status") != "SAME_SOURCE" or verification_problems("", rec):
+        return None
+    if same_source_binding_problems(rec["sameRecord"], live_ids):
         return None
     return rec["sameRecord"]
 
 
-def assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w=None, verification=None):
+def assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w=None, verification=None, live_sources=None):
     """Datum relationship for one lake -> (assessment, level_datum, level_verified, level_note, ref_datum, ref_verified, ref_rule, blocked_extra).
     Order: per-lake reviewed override > operator rules (TVA system, CWMS same location) > both-datums-stated > UNKNOWN.
     A NGVD29/NAVD88 pair is converted only when `verification` holds a fully VERIFIED CONVERTED record for this lake whose datums match."""
@@ -222,7 +301,7 @@ def assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w=None,
                             [e["url"] for e in (ov.get("evidence") or []) if isinstance(e, dict) and str(e.get("url", "")).startswith("http")][:2])
         return a, normalize_datum(ov.get("levelDatum")) or ld, True, "reviewed override", normalize_datum(ov.get("referenceDatum")) or rd, True, "override", blocked
     vrec = (verification or {}).get(lid)
-    sr = verified_same_source(vrec)
+    sr = verified_same_source(vrec, (live_sources or {}).get(lid))
     if sr:
         a = DatumAssessment("SAME_SOURCE", C.SIGMA_DATUM["SAME_SOURCE"], 0.0, [f"reference and level share CWMS location {sr['office']}/{sr['location']}"], None,
                             "datum-verification:same-cwms-location:records/datum_verification.json",
@@ -277,9 +356,15 @@ def _cwms_location(series: str | None) -> str | None:
     return series.split(".", 1)[0].strip().lower() if series and "." in series else None
 
 
+def _cwms_parameter(series: str | None) -> str | None:
+    """'Hartwell.Elev-Pool.Inst.1Hour.0.Raw' -> 'elev-pool' (the CWMS parameter: Elev-Pool and Elev-GC are different series)."""
+    parts = (series or "").split(".")
+    return parts[1].strip().lower() if len(parts) > 1 and parts[1].strip() else None
+
+
 def history_is_live_series(binding: dict | None) -> bool:
     """True only when Lake's ONE history source is the same series as its primary live source, with the same offset:
-    usgs = same site and param; nwps/hads = same lid, HP pe; cwms/a2w = same office and CWMS location (prefix before the first '.')."""
+    usgs = same site and param; nwps/hads = same lid, HP pe; cwms/a2w = same office, CWMS location (before the first '.') and parameter (second segment, e.g. Elev vs Elev-Pool vs Elev-GC)."""
     if not binding or len(binding.get("history") or []) != 1 or not binding.get("live"):
         return False
     lv, h = binding["live"][0], binding["history"][0]
@@ -294,7 +379,9 @@ def history_is_live_series(binding: dict | None) -> bool:
     if prov in ("cwms", "a2w") and kind == "cwmsDaily":
         office = (lv.get("station") or "").split(":", 1)[0].upper()
         loc = _cwms_location(lv.get("series"))
-        return bool(office and loc) and office == (h.get("office") or "").upper() and loc == _cwms_location(h.get("series"))
+        param = _cwms_parameter(lv.get("series"))
+        return (bool(office and loc and param) and office == (h.get("office") or "").upper() and loc == _cwms_location(h.get("series"))
+                and param == _cwms_parameter(h.get("series")))
     return False
 
 
@@ -347,6 +434,7 @@ def build(paths: dict, manifest_version: str) -> dict:
     twdb_ver = proposals.twdb_updates(paths.get("twdb_reference_pools")) if paths.get("twdb_reference_pools") else {}
     twdb_all = (proposals.load(paths["twdb_reference_pools"]) or {}).get("lakes", {}) if paths.get("twdb_reference_pools") else {}
     verification = load_datum_verification(paths.get("datum_verification"))
+    live_sources = reviewed_live_sources(paths.get("reviewed_bindings") or LAKE_BINDINGS)
     conv = {r["id"]: float(r["shift_ft_ngvd29_to_navd88"]) for r in read_csv(paths["datum_shift"]) if r.get("shift_ft_ngvd29_to_navd88")}
     lwd = load_lwd(paths.get("great_lakes_lwd") or GREAT_LAKES_LWD)
     lake_bindings = load_lake_bindings(paths.get("lake_proposed_bindings") or LAKE_PROPOSED_BINDINGS)
@@ -355,7 +443,7 @@ def build(paths: dict, manifest_version: str) -> dict:
         lid = lk["id"]
         b = bind.get(lid)
         p = pool.get(lid)
-        sr = verified_same_source(verification.get(lid))
+        sr = verified_same_source(verification.get(lid), live_sources.get(lid))
         pool_ft = float(sr["referencePoolFt"]) if sr else lk.get("fullPoolFt")      # owner-decided same-record reference replaces the directory pool
         m = matrix.get(lid, {})
         ref_conf = C.norm_pool_conf(lk.get("poolConfidence"))
@@ -382,7 +470,7 @@ def build(paths: dict, manifest_version: str) -> dict:
         elif cap not in C.ALLOWED_LEVEL_CAPABILITIES and lstat != "LIVE_REVIEWED":
             blocked.append("LEVEL_SOURCE_NOT_DIRECT")
         conv_ft = conv.get(lid)
-        a, ld, ld_ver, ld_note, rd, rd_ver, rd_pat, extra = assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w, verification)  # converts only on a VERIFIED record
+        a, ld, ld_ver, ld_note, rd, rd_ver, rd_pat, extra = assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w, verification, live_sources)  # converts only on a VERIFIED record
         blocked.extend(extra)
         if lstat != "NONE" and not a.usable and not extra:
             blocked.append("DATUM_UNKNOWN" if a.status == "UNKNOWN" else ("DATUM_CONVERSION_NOT_ENABLED" if (ld and rd and {ld, rd} == {"NGVD29", "NAVD88"}) else "DATUM_INCOMPATIBLE"))
@@ -454,6 +542,7 @@ def build(paths: dict, manifest_version: str) -> dict:
             "lakeId": lid, "lakeName": lk.get("name"), "state": lk.get("state"), "operator": lk.get("operatorName"), "cwmsOffice": lk.get("cwmsOffice"),
             "reference": {"poolFt": pool_ft, "basis": lk.get("poolBasis"), "confidence": ref_conf,
                           "source": (f"CWMS {sr['office']}/{sr['referenceLevelId']} ({sr['referencePoolFt']} ft)" if sr else src_str or "engine-directory:fullPoolFt"),
+                          **({"lakeBrainPoolFt": float(sr["lakeBrainPoolFt"])} if sr and sr.get("lakeBrainPoolFt") is not None else {}),
                           "datum": rd, "datumVerified": rd_ver, "datumRule": rd_pat, "winterPoolFt": (float(p["winterPoolFt"]) if p and p.get("winterPoolFt") else None),
                           **({"relativeScalePoolFt": float(sc["fullPondScaleValue"])} if (sc := ((overrides.get(lid) or {}).get("levelScale") or {})).get("kind") == "DUKE_RELATIVE_100" else {})},
             "levelSource": {"status": lstat, "provider": b.get("provider") if b else None, "series": b.get("series_or_param") if b else None,

@@ -1,6 +1,6 @@
 # Session record: Depth reference bases seriesMedian and lowWaterDatum
 
-Standards: Rehtac Cortex 3.1.2 @ ecaef70, pack sector/engine. Date: 2026-11-22. Branch: `feat/depth-same-series-lwd-2026-11-22` (off main 669d492, then merged with main 8a7ba99 after #223; #223's verified same-source `pool_ft` (Percy Priest) and datum verification are kept, including in the rating hunk).
+Standards: Rehtac Cortex 3.1.2 @ ecaef70, pack sector/engine. Date: 2026-11-22. Branch: `feat/depth-same-series-lwd-2026-11-22` (off main 669d492, merged with main 8a7ba99 after #223 and with main after #225 (e95aca5a; its re-based Lake cross-check kept together with the fullPool guard); #223's verified same-source `pool_ft` (Percy Priest) and datum verification are kept, including in the rating hunk).
 
 ## Scope
 Owner decision, Michael, 2026-11-22 (chat 06:48Z; Sector_Ops #51 comment 7075545102): (1) a same-series reference for natural lakes and stage-only gauges (today's reading vs the same gauge's seasonal median, no datum), (2) the Great Lakes Low Water Datum (IGLD 1985) as a reference. (3) A Depth knowledge release comes to Michael for approval: this change does not rebuild, re-release or approve anything.
@@ -20,10 +20,10 @@ Owner decision, Michael, 2026-11-22 (chat 06:48Z; Sector_Ops #51 comment 7075545
 - Independent review of #224 was NOT CLEAN; this record reflects the fixes.
 
 ## Counts (committed release 2026-10-14.6, 621 lakes; a rebuild needs DEPTH_RESEARCH_DATA)
-fullPool 225 (unchanged), lowWaterDatum 14, seriesMedian 19 (all directory-fullPool reservoirs; 0 if the scope switch is turned off), blocked SERIES_HISTORY_NOT_LIVE_SERIES 113 (93 have no Lake binding), blocked SERIES_HISTORY_TOO_SHORT 45.
+fullPool 225 (unchanged), lowWaterDatum 14 (no Lake binding today: unavailable at run time until a coops binding stamped IGLD85 exists), seriesMedian 19 (all directory-fullPool reservoirs; 0 if the scope switch is turned off; natural lakes unlock zero today), blocked SERIES_HISTORY_NOT_LIVE_SERIES 113 (93 have no Lake binding), blocked SERIES_HISTORY_TOO_SHORT 45.
 
 ## Verification
-Depth runtime and research-tool suites: 320 passed, 9 skipped. `describe_contract.py --check` OK.
+Depth runtime and research-tool suites: 332 passed, 9 skipped (after the #225 merge). `sigmaAssumed` lists the emitted components; a drift test compares the pilot copy with Lake's source text; the cwms/a2w guard also compares the parameter segment. `describe_contract.py --check` OK.
 
 ## Not done / follow-ups
 No manifest rebuild, release or approval. BRAIN_VERSION is bumped with the next release (asked of Michael). Fish's `normalize_depth` drops `referenceBasis` (brains/fish/runtime/contracts_in.py:65). Lake should publish `seasonalBand.sourceIds`.

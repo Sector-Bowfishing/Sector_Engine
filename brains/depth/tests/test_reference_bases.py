@@ -169,3 +169,12 @@ def test_full_pool_states_keep_their_v1_shape():
     st, _ = build_state(candidate(), lake_state(593.6), NOW, manifest_version="fixture")
     assert "referenceBasis" not in st["effectiveDepth"] and "referenceMeaning" not in st["reference"] and "seriesMedian" not in st["reference"]
     assert json.load(open(os.path.join(FIX, "shift_only_observed.json"))) == json.loads(json.dumps(st, sort_keys=True))
+
+
+def test_sigma_assumed_lists_the_components_actually_emitted():
+    med = compute_shift(lvl(588.6), sref(), NOW).as_dict()
+    assert set(med["sigmaComponentsFt"]) == {"reference", "level", "datum"} and med["sigmaAssumed"] == ["reference", "level", "datum"]
+    full = compute_shift(lvl(593.6), ReferencePool(595.0, "fullPool", "high", "NGVD29", assessment=assess("NGVD29", "NGVD29")), NOW).as_dict()
+    assert full["sigmaAssumed"] == ["pool", "level", "datum"] == list(full["sigmaComponentsFt"])
+    st, _ = build_state(series_candidate(), series_state(), NOW)
+    assert "Uncertainty components (reference, level, datum) are research estimates, not instrument specifications." in st["limitations"]

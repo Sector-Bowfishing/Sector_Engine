@@ -33,7 +33,8 @@ def level_from_lake_state(ls: dict | None) -> LevelObservation | None:
 def reference_from_candidate(rec: dict) -> ReferencePool:
     r = rec.get("reference") or {}
     return ReferencePool(pool_ft=r.get("poolFt"), basis=r.get("basis"), confidence=C.norm_pool_conf(r.get("confidence")), datum=r.get("datum"),
-                         datum_verified=bool(r.get("datumVerified")), source=r.get("source"), assessment=_assessment_from_manifest(rec), relative_scale_pool=r.get("relativeScalePoolFt"))
+                         datum_verified=bool(r.get("datumVerified")), source=r.get("source"), assessment=_assessment_from_manifest(rec), relative_scale_pool=r.get("relativeScalePoolFt"),
+                         lake_pool_ft=r.get("lakeBrainPoolFt"))
 
 
 def input_fingerprint(rec: dict, ls: dict | None, manifest_version: str) -> str:
@@ -191,8 +192,9 @@ def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_v
         limitations.append("The reference is the Great Lakes Low Water Datum (chart datum, IGLD 1985), not full pool.")
     if zones_withheld:
         limitations.append("Depth zones are withheld: they are defined at full pool and this lake's reference is not a full-pool elevation.")
-    if ok and "pool" in C.SIGMA_ASSUMED:
-        limitations.append("Uncertainty components (pool, level, datum) are research estimates, not instrument specifications.")
+    assumed = [k for k in res.sigma_parts if k in C.SIGMA_ASSUMED] if ok else []
+    if assumed:
+        limitations.append(f"Uncertainty components ({', '.join(assumed)}) are research estimates, not instrument specifications.")
     state["limitations"] = limitations
 
     stale_input = (lake_state or {}).get("freshness", {}).get("stale") is True

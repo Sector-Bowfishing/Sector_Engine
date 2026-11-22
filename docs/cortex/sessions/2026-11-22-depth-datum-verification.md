@@ -23,7 +23,7 @@ Level sides two-source verified without a usable pair: Cross Lake (NAVD88: CDA, 
 Fetch refusals: CDA `catalog` (robots), CDA `locations` for NWW/NWS, CDA `levels` for MVS, USGS OGC API (robots), web.archive.org (blocked), one USGS WDR PDF.
 
 ## Verification
-Depth tests 285 passed, 9 skipped (research-data tests). Cortex `research-check --repo .` and `data-check` report nothing in the touched files.
+Depth tests at merge of #223: 289 passed, 9 skipped (research-data tests). Cortex `research-check --repo .` and `data-check` report nothing in the touched files.
 
 ## Owner decisions (Michael, chat 2026-11-22 07:14Z, recorded on Sector_Ops #51 and PR #223)
 - Toledo Bend: level datum accepted on USGS's parameter definition plus the two-gauge check; recorded as `basisDecision`.
@@ -32,3 +32,11 @@ Depth tests 285 passed, 9 skipped (research-data tests). Cortex `research-check 
 
 ## Not done
 `candidates.json` is not rebuilt: `refresh` needs `DEPTH_RESEARCH_DATA`, and a rebuild needs a new release id. Release approval stays Michael's (DEPTH-REL-001).
+
+## Review fixes (follow-up PR, branch `feat/depth-datum-review-fixes-2026-11-22`)
+Independent review of #223 was clean; these findings are fixed before the next candidates rebuild.
+- M1: Percy Priest's 490.5 ft reference differs from the 490 ft Lake Brain uses for `differenceFromNormalPoolFt`. Lake is unchanged. The record carries `lakeBrainPoolFt: 490`, the manifest reference carries it, and `shift.compute_shift` re-bases Lake's delta by (reference - lakeBrainPoolFt) before the 0.15 ft cross-check. Chosen over skipping the check because the check still catches a wrong binding or frame.
+- M2: a SAME_SOURCE record pins Lake's reviewed live binding (`liveSourceIds`, reviewed-lake-bindings-v1). The builder refuses SAME_SOURCE if the ids change or any id's base location/office is not LRN/JPHT1 (exact match, so JPHT1X does not pass).
+- M3: every evidence item may name `derivedFrom`; VERIFIED needs two distinct roots. Toledo Bend's reference evidence (TWDB, USGS, NWPS) all derive from USGS 08025350, so **Toledo Bend no longer verifies: it is SINGLE_SOURCE and the conversion is not enabled**. Cross Lake's and Ross Barnett's level sides drop to SINGLE_SOURCE for the same reason.
+- LOWs: the 0.25 ft conflict bound is enforced (a side offset that far from VDatum must be recorded as `offsetConflict` and blocks VERIFIED); a record above NONE needs an http evidence item; carried-forward candidates.json pointers are `notEvidence`, which moves Palisades, Jackson, Anderson Ranch and Coeur d'Alene to NONE; a reversed-datums test is added.
+- Counts now: SAME_SOURCE 1 (Percy Priest), CONFLICT 1 (Cross Lake), SINGLE_SOURCE 8, NONE 5, VERIFIED 0. Depth tests 298 passed, 9 skipped.

@@ -28,6 +28,7 @@ class ReferencePool:
     source: str | None = None
     assessment: DatumAssessment | None = None
     relative_scale_pool: float | None = None   # Duke publishes some lakes on a 100-based scale (100.0 = full pond); the same pool in that frame
+    lake_pool_ft: float | None = None     # the normal pool Lake Brain's differenceFromNormalPoolFt uses, when Depth's reference differs from it (recorded)
 
 
 @dataclass
@@ -64,7 +65,7 @@ class ShiftResult:
             d.update({"shiftFt": round(self.shift_ft, 1), "uncertaintyFt": round(self.sigma_ft, 2), "confidence": self.confidence,
                       "evidenceKind": C.SHIFT_EVIDENCE_KIND, "resolvable": self.resolvable,
                       "sigmaComponentsFt": {k: round(v, 3) for k, v in self.sigma_parts.items()},
-                      "sigmaAssumed": list(C.SIGMA_ASSUMED)})
+                      "sigmaAssumed": [k for k in self.sigma_parts if k in C.SIGMA_ASSUMED]})
             if self.reference_basis and self.reference_basis != "fullPool":         # fullPool states keep their v1 shape exactly
                 d.update({"referenceBasis": self.reference_basis, "referenceFt": round(self.reference_ft, 2)})
         else:
@@ -153,8 +154,9 @@ def compute_shift(level: LevelObservation | None, ref: ReferencePool | None, now
     flags = (list(a.reasons) if a.status != "SAME_SOURCE" else []) + frame_flags
     # Lake's difference is from the DIRECTORY full pool: comparable only with a fullPool reference (never with a median or the LWD)
     if level.lake_difference_ft is not None and a.status != "CONVERTED" and not frame_flags and ref.basis == "fullPool":          # Lake's difference-from-pool is in the absolute frame; skip the cross-check on a relative-scale level
-        if abs(level.lake_difference_ft - shift) > C.LAKE_DELTA_DISAGREE_FT:
-            flags.append(f"lakeBrainDeltaDisagrees:{level.lake_difference_ft:+.2f} vs {shift:+.2f}")
+        lake_diff = level.lake_difference_ft - ((ref.pool_ft - ref.lake_pool_ft) if ref.lake_pool_ft is not None else 0.0)   # Lake's delta, re-based on Depth's reference
+        if abs(lake_diff - shift) > C.LAKE_DELTA_DISAGREE_FT:
+            flags.append(f"lakeBrainDeltaDisagrees:{lake_diff:+.2f} vs {shift:+.2f}")
     stale = age > C.LEVEL_FRESH_HOURS
     if stale:
         flags.append("levelObservationOlderThanFreshWindow")
