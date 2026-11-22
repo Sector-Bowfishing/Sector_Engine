@@ -264,6 +264,7 @@ Recency weighting is not part of v2.0. Whether the score rubric should demand 10
 - |Δ24h| between consecutive days, same window, every year in the last 30 (partial years included; the 60-year cap applies to levels only).
 - Kept only when the window has ≥ 20 samples. Without it, RAPID uses the 0.25 ft floor alone and the flag is `rateBaselineLimited`.
 - Day pairs where either day is a low-resolution archive row (`sourceId` starts with `nws:rvd`, 0.1 ft, non-midnight) are skipped here; those rows still feed the level climatology (`LakeLevelBaseline.lowResolutionSourcePrefix`).
+- Days more than 10 ft from the median of their neighbours (±3 days, ≥ 4 present) are recording errors and are left out of both climatologies, listed as `excludedSpikeDays`; the archive is not edited (`LakeLevelBaseline.spikeToleranceFt`, 2026-11-22).
 
 **Artifacts:** `gs://sector-lake-brain/baselines/{k}/{baselineVersion}.json`, where `baselineVersion = method@historyEnd#fingerprint`. Each is written once, so artifacts are immutable. The method string is part of the version, so the move to `doy15-percentile-v2` writes new artifacts and leaves the v1 ones untouched. (The path scheme itself is unchanged here.)
 

@@ -45,6 +45,13 @@ public struct LakeLevelBaseline: Codable, Equatable, Sendable {
     /// History rows whose `sourceId` starts with this are low-resolution (0.1 ft, non-midnight) archive values: used for the level
     /// climatology, never for the |Δ24h| rate climatology.
     public static let lowResolutionSourcePrefix = "nws:rvd"
+    /// A day whose level is more than this far from the median of its neighbours (the days within ±`spikeNeighbourDays`,
+    /// at least `spikeMinNeighbours` of them present) is a recording error, not water: no reservoir moves 10 ft in a day and
+    /// back. Such days are left out of both climatologies; the history archive itself is never edited
+    /// (Beltzville, 2025-02-10: one day 68 ft below the days around it, Sector_Ops #51, 2026-11-22).
+    public static let spikeToleranceFt = 10.0
+    public static let spikeNeighbourDays = 3
+    public static let spikeMinNeighbours = 4
     public static let grid: [Double] = [0, 2, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 98, 100]
 
     public var lakeId: String
@@ -61,6 +68,8 @@ public struct LakeLevelBaseline: Codable, Equatable, Sendable {
     public var historicalTier: LakeHistoricalTier
     public var windowDays: Int
     public var days: [LakeBaselineDay]
+    /// Dates left out as recording errors (`spikeToleranceFt`); nil when none.
+    public var excludedSpikeDays: [String]? = nil
 
     public func day(_ doy: Int) -> LakeBaselineDay? { days.first { $0.doy == doy } }
 
@@ -106,6 +115,24 @@ public enum LakeBaselineBuilder {
         return q[i]
     }
 
+    /// Days far from their neighbours' median (`LakeLevelBaseline.spikeToleranceFt`). `daily` must be sorted by date.
+    static func spikeDays(_ daily: [DailyLevel]) -> Set<String> {
+        let utc = TimeZone(identifier: "UTC")!
+        let dayNo: [Int?] = daily.map { d in LakeLevelCalendar.utcBounds(day: d.date, timeZone: utc).map { Int(($0.0.timeIntervalSince1970 / 86_400).rounded()) } }
+        let k = LakeLevelBaseline.spikeNeighbourDays
+        var out: Set<String> = []
+        for i in daily.indices {
+            guard let n = dayNo[i] else { continue }
+            var nb: [Double] = []
+            for j in max(0, i - k)...min(daily.count - 1, i + k) where j != i {
+                if let m = dayNo[j], abs(m - n) <= k { nb.append(daily[j].ft) }
+            }
+            guard nb.count >= LakeLevelBaseline.spikeMinNeighbours else { continue }
+            if abs(daily[i].ft - quantile(nb.sorted(), 50)) > LakeLevelBaseline.spikeToleranceFt { out.insert(daily[i].date) }
+        }
+        return out
+    }
+
     static func circularDistance(_ a: Int, _ b: Int) -> Int {
         let d = abs(a - b) % 365
         return min(d, 365 - d)
@@ -122,7 +149,9 @@ public enum LakeBaselineBuilder {
     /// (`naturalSurface`) uses all complete years up to 60. The rate climatology keeps the last-30-years rule.
     public static func build(lakeId: String, daily raw: [DailyLevel], today: String,
                              poolBasisIsFullPool: Bool = true) -> LakeLevelBaseline {
-        let daily = LakeDailyHistory.dedupe(raw).filter { $0.date <= today }
+        let all = LakeDailyHistory.dedupe(raw).filter { $0.date <= today }
+        let spikes = spikeDays(all)
+        let daily = spikes.isEmpty ? all : all.filter { !spikes.contains($0.date) }
         let currentYear = Int(today.prefix(4)) ?? 0
         var perYear: [Int: Int] = [:]
         for d in daily { if let y = Int(d.date.prefix(4)) { perYear[y, default: 0] += 1 } }
@@ -181,7 +210,8 @@ public enum LakeBaselineBuilder {
         return LakeLevelBaseline(lakeId: lakeId, method: LakeBrainSpec.baselineMethod, baselineVersion: version,
                                  historyStart: daily.first?.date, historyEnd: daily.last?.date, observationCount: daily.count,
                                  coveragePct: coverage, completeYears: complete, basisYears: basis, status: status,
-                                 historicalTier: LakeLevelBaseline.tier(basisYears: basis.count), windowDays: w, days: days)
+                                 historicalTier: LakeLevelBaseline.tier(basisYears: basis.count), windowDays: w, days: days,
+                                 excludedSpikeDays: spikes.isEmpty ? nil : spikes.sorted())
     }
 
     public static func path(_ b: LakeLevelBaseline) -> String {
