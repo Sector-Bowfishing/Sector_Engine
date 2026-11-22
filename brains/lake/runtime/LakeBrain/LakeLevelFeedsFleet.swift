@@ -492,6 +492,10 @@ extension LakeHistorySource {
         case .cdecDaily(let st, let sensor, let dur, let off):
             return "cdec:\(st):\(sensor):\(dur) (\(dur == "D" ? "daily values" : "daily median of \(dur == "H" ? "hourly" : "event") values"))"
                 + (off != 0 ? ", datum offset \(String(format: "%.2f", off)) ft" : "")
+        case .coopsDaily(let s):
+            return "coops:\(s) (IGLD; verified daily mean, then daily median of preliminary 6-minute water level)"
+        case .usgsStageDaily(let site, let datum, let stat):
+            return "usgs:\(site):00065 (\(stat == "iv" ? "daily median of instantaneous values" : "daily values")) + site altitude on \(datum), read at run time"
         }
     }
 }

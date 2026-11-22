@@ -150,6 +150,6 @@
       "status": "NOT_ELIGIBLE",
       "approvalRef": null
     },
-    "notes": "The packaged knowledge release lake-knowledge-2026-11-22.1 (187 accepted bindings, unchanged; the CDEC provider types were added to the packaged source files, no lake bound to CDEC) is pending owner approval; it supersedes lake-knowledge-2026-11-21.2 (187 bindings, APPROVED 2026-11-21, Sector_Ops #51). The species-presence bucket release is still approval NOT_RECORDED. Production runs are INTERNAL mode. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
+    "notes": "The packaged knowledge release lake-knowledge-2026-11-22.1 (187 accepted bindings, unchanged; the CDEC, NOAA CO-OPS and USGS-stage provider types were added to the packaged source files, no lake bound to any of them) is pending owner approval; it supersedes lake-knowledge-2026-11-21.2 (187 bindings, APPROVED 2026-11-21, Sector_Ops #51). The species-presence bucket release is still approval NOT_RECORDED. Production runs are INTERNAL mode. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
   }
 }

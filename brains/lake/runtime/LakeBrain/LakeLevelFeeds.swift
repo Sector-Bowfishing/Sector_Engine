@@ -90,6 +90,10 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
     let sharedArchive: (String) -> LakeBrainArchive?
     /// Access2Water / RISE / NWPS / HADS / USGS-history clients (LakeLevelFeedsFleet.swift) and CDEC (LakeLevelFeedsCDEC.swift).
     let fleet = LakeFleetClients()
+    /// NOAA CO-OPS Great Lakes water levels (LakeLevelFeedsCOOPS.swift).
+    let coops = LakeCOOPSClient.live()
+    /// USGS gage height + published site altitude (LakeLevelFeedsUSGSStage.swift).
+    let usgsStage = LakeUSGSStageClient.live()
     private var guideCache: [String: [TVAGuideRow]] = [:]
     private let lock = NSLock()
 
@@ -137,6 +141,8 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
         case .rise: return await fleet.riseRecent(ref, hours: hours, now: now)
         case .nwps: return await fleet.nwpsRecent(ref, since: now.addingTimeInterval(-Double(hours) * 3600))
         case .cdec: return await fleet.cdecRecent(ref, hours: hours, now: now)
+        case .coops: return await coops.recent(ref, hours: hours)
+        case .usgsStage: return await usgsStage.recent(ref, hours: hours)
         }
     }
 
@@ -205,6 +211,13 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
             return LakeDailyHistory.dedupe(out)
         case .usgsDaily, .riseDaily, .hadsDaily, .cdecDaily:
             return await fleetDaily(source, since: since, now: now, timeZone: timeZone)
+        case .coopsDaily(let station):
+            return await coops.daily(station: station, since: since, now: now, timeZone: timeZone)
+        case .usgsStageDaily(let site, let datum, let stat):
+            // The altitude is read now and must be on the binding's datum; the gage heights are shifted by it.
+            guard let alt = await usgsStage.altitude(site: site, expectedDatum: datum).ft else { return nil }
+            return await fleet.usgsDaily(site: site, param: LakeUSGSStageClient.gageHeight, stat: stat, offsetFt: alt, since: since,
+                                         now: now, timeZone: timeZone)
         case .sharedTVAArchive:
             return nil
         }

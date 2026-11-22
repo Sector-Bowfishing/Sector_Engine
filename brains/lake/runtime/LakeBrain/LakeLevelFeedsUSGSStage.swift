@@ -1,0 +1,144 @@
+//
+//  LakeLevelFeedsUSGSStage.swift
+//  Sector — Lake Brain: USGS gage height (00065) at a lake site turned into a lake elevation with the site's published altitude
+//
+//  A gage height is a stage above the gage's own datum, not an elevation (`usgs` refuses it). It becomes one only by adding the
+//  altitude of that gage datum, which USGS publishes per site in the site service (`alt_va`, in the vertical datum `alt_datum_cd`).
+//  This client reads that altitude at run time and:
+//    • refuses when the site publishes no altitude or no altitude datum;
+//    • refuses when the datum is not the one the binding names (`series`, e.g. `NAVD88`): USGS has been moving gages from NGVD29
+//      to NAVD88, and a silent datum change would step the series by the NGVD29 → NAVD88 shift;
+//    • refuses gage height that is not in feet.
+//  The site record is read once per site per 15 minutes (one site-service GET per site and run).
+//
+//  Legacy WaterServices (`/nwis/site/`, `/nwis/iv/`, `/nwis/dv/`) is the same service the `usgs` provider already reads.
+//
+
+import Foundation
+
+/// The altitude USGS publishes for a site's gage datum.
+struct USGSSiteDatum: Equatable, Sendable {
+    var site: String
+    var name: String?
+    /// `site_tp_cd` (`LK` lake / reservoir / impoundment, `ST` stream, ...). Informational: the binding review establishes on-lake.
+    var siteType: String?
+    var altitudeFt: Double
+    var accuracyFt: Double?
+    var datum: String
+}
+
+enum USGSSiteDatumResult: Equatable, Sendable {
+    case ok(USGSSiteDatum)
+    case refused(String)
+}
+
+/// Run-scoped cache of site records; concurrent callers join the same fetch.
+actor USGSSiteCache {
+    private var inflight: [String: Task<USGSSiteDatumResult, Never>] = [:]
+    private var done: [String: (at: Date, value: USGSSiteDatumResult)] = [:]
+    private let ttl: TimeInterval
+    init(ttl: TimeInterval = 15 * 60) { self.ttl = ttl }
+
+    func site(_ site: String, fetch: @escaping @Sendable (String) async -> USGSSiteDatumResult) async -> USGSSiteDatumResult {
+        if let d = done[site], Date().timeIntervalSince(d.at) < ttl { return d.value }
+        if let t = inflight[site] { return await t.value }
+        let t = Task { await fetch(site) }
+        inflight[site] = t
+        let v = await t.value
+        inflight[site] = nil
+        done[site] = (Date(), v)
+        return v
+    }
+}
+
+struct LakeUSGSStageClient: Sendable {
+    static let gageHeight = "00065"
+    static let siteBase = "https://waterservices.usgs.gov/nwis/site/"
+
+    var fetch: @Sendable (_ url: String, _ accept: String) async -> LakeFeedHTTP.Response?
+    var cache: USGSSiteCache
+
+    static func live() -> LakeUSGSStageClient {
+        LakeUSGSStageClient(fetch: { url, accept in await LakeFeedHTTP.get(url, accept: accept, timeout: 60) }, cache: USGSSiteCache())
+    }
+
+    static func isSiteNumber(_ s: String) -> Bool { (8...15).contains(s.count) && s.allSatisfy(\.isNumber) }
+
+    // MARK: site altitude
+
+    /// The site service's tab-separated RDB (`siteOutput=expanded`): `#` comments, a header row, a field-width row, data rows.
+    static func parseSiteRDB(_ data: Data, site: String) -> USGSSiteDatumResult {
+        let lines = String(decoding: data, as: UTF8.self).split(whereSeparator: \.isNewline).map(String.init).filter { !$0.hasPrefix("#") }
+        guard lines.count >= 3 else { return .refused("USGS \(site): site record not found") }
+        let cols = lines[0].split(separator: "\t", omittingEmptySubsequences: false).map { $0.trimmingCharacters(in: .whitespaces) }
+        func idx(_ n: String) -> Int? { cols.firstIndex(of: n) }
+        guard let siteI = idx("site_no"), let altI = idx("alt_va"), let datumI = idx("alt_datum_cd") else {
+            return .refused("USGS \(site): site record has no alt_va / alt_datum_cd columns")
+        }
+        for line in lines.dropFirst(2) {
+            let c = line.split(separator: "\t", omittingEmptySubsequences: false).map { $0.trimmingCharacters(in: .whitespaces) }
+            guard c.count > max(siteI, altI, datumI), c[siteI] == site else { continue }
+            func field(_ n: String) -> String? { idx(n).flatMap { $0 < c.count && !c[$0].isEmpty ? c[$0] : nil } }
+            guard let alt = Double(c[altI]), alt.isFinite else { return .refused("USGS \(site): no published altitude (alt_va); gage height is not an elevation") }
+            let datum = c[datumI]
+            guard !datum.isEmpty else { return .refused("USGS \(site): altitude \(c[altI]) has no published datum (alt_datum_cd)") }
+            return .ok(USGSSiteDatum(site: site, name: field("station_nm"), siteType: field("site_tp_cd"), altitudeFt: alt,
+                                     accuracyFt: field("alt_acy_va").flatMap(Double.init), datum: datum))
+        }
+        return .refused("USGS \(site): site record not found")
+    }
+
+    func siteDatum(_ site: String) async -> USGSSiteDatumResult {
+        let fetch = self.fetch
+        return await cache.site(site) { s in
+            let url = "\(Self.siteBase)?format=rdb&sites=\(s)&siteOutput=expanded&siteStatus=all"
+            guard let r = await fetch(url, "text/plain") else { return .refused("USGS \(s): site service unreachable") }
+            guard r.isSuccess else { return .refused("USGS \(s): site service HTTP \(r.status)") }
+            return Self.parseSiteRDB(r.body, site: s)
+        }
+    }
+
+    /// The site's altitude when its datum is the one the binding expects; otherwise why not.
+    func altitude(site: String, expectedDatum: String?) async -> (ft: Double?, refusal: String?) {
+        guard Self.isSiteNumber(site) else { return (nil, "USGS stage binding needs a USGS site number (got \(site))") }
+        guard let want = expectedDatum?.trimmingCharacters(in: .whitespaces), !want.isEmpty else {
+            return (nil, "USGS \(site) 00065: the binding names no altitude datum (series), so the stage cannot be checked against alt_datum_cd")
+        }
+        switch await siteDatum(site) {
+        case .refused(let why): return (nil, why)
+        case .ok(let d):
+            guard d.datum.uppercased() == want.uppercased() else {
+                return (nil, "USGS \(site): altitude datum is \(d.datum), binding expects \(want) (datum changed or wrong binding)")
+            }
+            return (d.altitudeFt, nil)
+        }
+    }
+
+    // MARK: live
+
+    /// Gage height of the last `hours`, shifted by the site's altitude. `ref.series` is the expected altitude datum.
+    func recent(_ ref: LevelSeriesRef, hours: Int) async -> FeedResult {
+        let site = ref.station
+        let (alt, refusal) = await altitude(site: site, expectedDatum: ref.series)
+        guard let alt else { return .failed(refusal ?? "USGS \(site): no altitude") }
+        let url = "\(LakeFleetClients.usgsBase)/iv/?format=json&sites=\(site)&parameterCd=\(Self.gageHeight)&period=PT\(max(1, hours))H"
+        guard let r = await fetch(url, "application/json") else { return .failed("USGS \(site) 00065 unreachable") }
+        guard r.isSuccess else { return .failed("USGS \(site) 00065: HTTP \(r.status)") }
+        return Self.stageReadings(r.body, site: site, altitudeFt: alt)
+    }
+
+    static func stageReadings(_ data: Data, site: String, altitudeFt: Double) -> FeedResult {
+        if let u = ivUnit(data), u.lowercased() != "ft" { return .failed("USGS \(site) 00065: unit \(u) is not feet") }
+        guard let obs = LakeFleetClients.parseUSGSIV(data) else { return .failed("USGS \(site) 00065: unreadable JSON") }
+        let shifted = obs.map { LevelObservation(at: $0.at, ft: $0.ft + altitudeFt) }
+        return shifted.isEmpty ? .failed("USGS \(site) 00065: no readings") : FeedResult(observations: LakeLevelSeries.merge(shifted), error: nil)
+    }
+
+    /// `value.timeSeries[0].variable.unit.unitCode` of a WaterServices JSON response.
+    static func ivUnit(_ data: Data) -> String? {
+        guard let obj = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+              let series = (obj["value"] as? [String: Any])?["timeSeries"] as? [[String: Any]],
+              let unit = ((series.first?["variable"] as? [String: Any])?["unit"] as? [String: Any])?["unitCode"] as? String else { return nil }
+        return unit
+    }
+}

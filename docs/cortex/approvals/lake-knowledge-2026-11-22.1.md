@@ -3,15 +3,16 @@
 | Field | Value |
 |---|---|
 | Release | `lake-knowledge-2026-11-22.1` (Lake Brain reviewed source bindings, `PACKAGED_IN_IMAGE`) |
-| Release digest | `sha256:d635f4a91c2bfc93e6f8b51542d0d84a8862f82aa54da440672dd0ee0fcae522` |
-| Supersedes | `lake-knowledge-2026-11-21.2` (two packaged source files gained the CDEC provider types; no binding changed) |
+| Release digest | `sha256:930ca8e42de0c28f9440a7ac2a91b6ac3437e9e3afae3a665a608dd5e53596bc` |
+| Supersedes | `lake-knowledge-2026-11-21.2` (two packaged source files gained the CDEC, NOAA CO-OPS and USGS-stage provider types; no binding changed) |
 | Status | **NOT_RECORDED: pending Michael's approval** |
 | Requested scope | INTERNAL, CALIBRATION and CUSTOMER (same as 2026-11-21.2) |
 
 ## What changed in the release
 - `LakeBrain/LakeSourceBindings.swift`: `LevelSeriesRef.Provider` gains `cdec` (with its `sourceId` and `providerName`), and `LakeHistorySource` gains `cdecDaily(station:sensor:dur:offsetFt:)`. These are types only: the reader is `LakeLevelFeedsCDEC.swift`, outside the release.
-- `LakeBrain/LakeGeneratedBindings.swift`: a generated history record may name `cdecDaily` (optional `station`, `sensor`, `dur` fields).
-- `LakeBrain/LakeSourceBindingsGenerated.swift`: unchanged. The accepted set, the reviewed set (192) and the customer Lake-level list are unchanged; no lake is bound to CDEC.
+- `LakeBrain/LakeSourceBindings.swift` (2026-11-22, `feat/lake-readers-coops-usgsstage-2026-11-22`, folded into this same pending release): `Provider` also gains `coops` and `usgsStage`, and `LakeHistorySource` gains `coopsDaily(station:)` and `usgsStageDaily(site:datum:stat:)`. Types only: the readers are `LakeLevelFeedsCOOPS.swift` and `LakeLevelFeedsUSGSStage.swift`, outside the release.
+- `LakeBrain/LakeGeneratedBindings.swift`: a generated history record may name `cdecDaily` (optional `station`, `sensor`, `dur` fields), `coopsDaily` (`station`) or `usgsStageDaily` (`site`, `datum`, `stat`).
+- `LakeBrain/LakeSourceBindingsGenerated.swift`: unchanged. The accepted set, the reviewed set (192) and the customer Lake-level list are unchanged; no lake is bound to CDEC, CO-OPS or USGS stage.
 
 ## Until it is approved
 - The Publisher (`PackagedReleaseResolver`) accepts only an `APPROVED` release, so a Publisher image built from this commit would refuse Lake artifacts. Approve before the next Publisher redeploy and LakeBrainJob rebuild; nothing is deployed by merging.
