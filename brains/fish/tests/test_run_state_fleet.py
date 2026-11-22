@@ -97,7 +97,7 @@ def run_fleet(tmp_path, monkeypatch, ids, keys, *extra):
 def test_fleet_runs_every_directory_lake_and_refuses_lakes_without_context(tmp_path, monkeypatch):
     ids = ["Guntersville|AL", "Weiss|AL", "Kvichak / Ugashik|AK"]
     s = run_fleet(tmp_path, monkeypatch, ids, ["Guntersville_AL", "Weiss_AL", "Kvichak_Ugashik_AK"])
-    assert s["counts"] == {"lakes": 3, "written": 1, "unchanged": 0, "refused": 2}
+    assert s["counts"] == {"lakes": 3, "written": 1, "unchanged": 0, "refused": 2, "error": 0}
     assert set(s["lakes"]) == set(ids)
     for lid in ("Weiss|AL", "Kvichak / Ugashik|AK"):
         assert s["lakes"][lid]["result"] == "REFUSED" and s["lakes"][lid]["reasonCode"] == "NO_LAKE_CONTEXT"
@@ -169,5 +169,62 @@ def test_fleet_over_the_full_621_lake_directory(tmp_path, monkeypatch):
     here = os.path.dirname(os.path.abspath(__file__))
     ids = json.load(open(os.path.join(here, "..", "..", "..", "jobs", "lake-geometry", "tests", "directory_ids_621.json")))["ids"]
     s = run_fleet(tmp_path, monkeypatch, ids, [])
-    assert s["counts"] == {"lakes": 621, "written": 5, "unchanged": 0, "refused": 616}       # no reviewed context yet: only the 5 pilots run
+    assert s["counts"] == {"lakes": 621, "written": 5, "unchanged": 0, "refused": 616, "error": 0}       # no reviewed context yet: only the 5 pilots run
     assert {lid for lid, r in s["lakes"].items() if r["result"] == "WRITTEN"} == set(run_state.PILOT_LAKES)
+
+
+def test_fleet_live_read_failure_is_a_per_lake_error_row(tmp_path):
+    ids = ["Guntersville|AL", "Wheeler|AL"]
+    rules = F.write_rules(str(tmp_path / "rules"))
+    db = F.fake_db(["Guntersville_AL", "Wheeler_AL"]) | {"_fail": ["snapshots/Wheeler_AL/latest"]}
+    args = ["--fleet", "--directory", directory(tmp_path, ids), "--rules", rules, "--live", "--now", F.NOW, "--out", "out"]
+    p = F.run_live(SCRIPT, args, str(tmp_path), db, {"FISH_FLEET_RUNNER": "1"})
+    assert p.returncode == 0, p.stderr
+    s = json.load(open(tmp_path / "out" / "fleet_run.json"))
+    assert s["counts"] == {"lakes": 2, "written": 1, "unchanged": 0, "refused": 0, "error": 1}
+    assert s["lakes"]["Wheeler|AL"]["result"] == "ERROR" and s["lakes"]["Wheeler|AL"]["reasonCode"] == "READ_FAILED"
+    assert s["lakes"]["Guntersville|AL"]["result"] == "WRITTEN"
+
+
+# ------------------------------------------------------------------------------------------------ the real pilots have no temperature sensor
+def _directory_temp_sensor(lake_id):
+    """`tempSensor` for a lake in the Engine's generated directory (Sources/SectorEngine/Support/LakeDirectory.swift). Water Temp's evidenceClass is
+    `sensor` exactly when this is non-null (WaterTemperatureBrain.evidenceClass(for:))."""
+    import re
+    here = os.path.dirname(os.path.abspath(__file__))
+    src = open(os.path.join(here, "..", "..", "..", "Sources", "SectorEngine", "Support", "LakeDirectory.swift"), encoding="utf-8").read()
+    name, state = lake_id.split("|")
+    rows = [json.loads(m) for m in re.findall(r'^(\{"name":.*\}),?$', src, re.M)]
+    hit = [r for r in rows if r["name"] == name and r["state"] == state]
+    assert len(hit) == 1, lake_id
+    return hit[0]["tempSensor"]
+
+
+def water_temp_state_for(lake_id, gen="2026-04-20T01:00:00Z"):
+    """What the Water Temp Brain publishes for a lake with no configured sensor (modelled class and reading, model trend)."""
+    ec = "sensor" if _directory_temp_sensor(lake_id) else "modeled"
+    return {"lakeId": lake_id, "kind": "modeled", "observationType": "MODELED", "evidenceClass": ec, "currentTempF": 64.4, "trend24hF": 1.5,
+            "trendBasis": "model:dailyChange(lakeLocal)", "unit": "F", "spatialSupport": "lake", "evidenceStale": False, "stale": False,
+            "provenance": {"generatedAt": gen}}
+
+
+@pytest.mark.parametrize("lake", F.PILOTS)
+def test_every_pilot_lake_is_modelled_so_its_water_temperature_is_not_measured(tmp_path, lake):
+    assert _directory_temp_sensor(lake) is None                                               # no pilot has a temperature sensor
+    rules_dir = tmp_path / "rules"
+    spn = F._rule("EX-SPN-01", kind="PHENOLOGY", phenology={"event": "spawn", "tempC": {"min": 15.0, "max": 21.0}},
+                  applicability={"months": [3, 4, 5], "regions": ["south"]})
+    del spn["feature"], spn["response"]
+    F.write_rules(str(rules_dir), extra=[spn])
+    key = F.PILOT_KEYS[lake]
+    db = F.fake_db([key])
+    db["snapshots"][key]["latest"]["waterTemperature"] = water_temp_state_for(lake)
+    p = F.run_live(SCRIPT, ["--lake", lake, "--rules", str(rules_dir), "--live", "--now", F.NOW, "--out", "out"], str(tmp_path), db)
+    assert p.returncode == 0, p.stderr
+    st = json.load(open(tmp_path / "out" / f"biological_state_{key}.json"))
+    wt = st["inputs"]["waterTemp"]
+    assert (wt["status"], wt["reasonCode"], wt["evidenceClass"]) == ("NOT_MEASURED", "MODELLED_INPUT", "modeled")
+    for fid in ("waterTempBand", "temperatureTrend", "temperatureCrossing15C", "temperatureCrossing18C", "temperatureCrossing20C", "warmRise", "coldRise"):
+        assert st["features"][fid]["state"] == "UNKNOWN", fid
+    ex = next(s for s in st["species"] if s["speciesId"] == "example_fish")
+    assert ex["spawnWindow"]["state"] == "UNKNOWN" and ex["spawnWindow"]["ruleId"] == "EX-SPN-01"          # month in window, temperature unknown

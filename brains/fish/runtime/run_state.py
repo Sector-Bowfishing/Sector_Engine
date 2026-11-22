@@ -159,7 +159,7 @@ def run_fleet(a) -> int:
         recorder = bp.ConsumptionRecorder("biological-state")
         r = bp.BrainRtdb(bp.BRAIN_RTDB_URL, bp.TokenProvider(), brain_id="biological-state", recorder=recorder)      # GET only
     os.makedirs(a.out, exist_ok=True)
-    rows, counts = {}, {"lakes": len(lakes), "written": 0, "unchanged": 0, "refused": 0}
+    rows, counts = {}, {"lakes": len(lakes), "written": 0, "unchanged": 0, "refused": 0, "error": 0}
     for lake in sorted(lakes, key=lambda x: x["id"]):
         lid, k = lake["id"], keys[lake["id"]]
         ctx = lake_context(lake, contexts)
@@ -170,13 +170,18 @@ def run_fleet(a) -> int:
             continue
         species_info = {}
         if a.live:
-            snap = r.get(f"snapshots/{k}/latest")
-            presence = r.get(f"lakes/{k}/speciesPresence") or {}
-            for sid in presence:
-                if sid not in species_cache:
-                    sp = r.get(f"species/{sid}") or {}
-                    species_cache[sid] = {kk: v for kk, v in {"researchMaturity": sp.get("researchMaturity"), "knowledgeScore": (sp.get("knowledge") or {}).get("overallRounded"), "assessment": sp.get("assessment")}.items() if v is not None}
-                species_info[sid] = species_cache[sid]
+            try:                                                        # one lake's failed read is that lake's ERROR row, not the end of the run
+                snap = r.get(f"snapshots/{k}/latest")
+                presence = r.get(f"lakes/{k}/speciesPresence") or {}
+                for sid in presence:
+                    if sid not in species_cache:
+                        sp = r.get(f"species/{sid}") or {}
+                        species_cache[sid] = {kk: v for kk, v in {"researchMaturity": sp.get("researchMaturity"), "knowledgeScore": (sp.get("knowledge") or {}).get("overallRounded"), "assessment": sp.get("assessment")}.items() if v is not None}
+                    species_info[sid] = species_cache[sid]
+            except Exception as e:                                      # noqa: BLE001
+                rows[lid] = {"lakeKey": k, "result": "ERROR", "reasonCode": "READ_FAILED", "error": repr(e)[:200]}
+                counts["error"] += 1
+                continue
         else:
             snap = _read_json(os.path.join(a.inputs_dir, f"{k}.snapshot.json"), None)
             presence = _read_json(os.path.join(a.inputs_dir, f"{k}.presence.json"), {})

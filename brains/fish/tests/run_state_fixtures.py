@@ -33,10 +33,11 @@ def _rule(rid, **kw):
     return r
 
 
-def write_rules(d: str) -> str:
+def write_rules(d: str, extra=()) -> str:
     os.makedirs(d, exist_ok=True)
     rules = [_rule("EX-FLW-01"),
-             _rule("EX-NGT-01", feature={"featureId": "daypart", "states": ["NIGHT"]}, behavior="FEED", applicability={"months": [3, 4, 5, 6], "regions": ["south"]})]
+             _rule("EX-NGT-01", feature={"featureId": "daypart", "states": ["NIGHT"]}, behavior="FEED", applicability={"months": [3, 4, 5, 6], "regions": ["south"]}),
+             *extra]
     body = json.dumps({"speciesId": "example_fish", "rules": rules}).encode()
     open(os.path.join(d, "example_fish.json"), "wb").write(body)
     man = {"rulesVersion": "synthetic.1", "files": [{"path": "example_fish.json", "sha256": hashlib.sha256(body).hexdigest(), "bytes": len(body)}]}
@@ -45,7 +46,8 @@ def write_rules(d: str) -> str:
 
 
 def snapshot(evidence_class="sensor", gen="2026-04-20T01:00:00Z") -> dict:
-    wt = {"currentTempF": 64.4, "trend24hF": 1.5, "provenance": {"generatedAt": gen}}
+    """A measured sensor reading with no trend: the old and the new measured-only gate read it identically, so the golden isolates the runner."""
+    wt = {"currentTempF": 64.4, "kind": "measured", "observationType": "OBSERVED", "provenance": {"generatedAt": gen}}
     if evidence_class is not None:
         wt["evidenceClass"] = evidence_class
     return {"lakeState": {"trendState": "RISING", "provenance": {"generatedAt": gen}}, "waterTemperature": wt,
@@ -87,6 +89,8 @@ class FakeRtdb:
         self.reads = []
     def get(self, path, **kw):
         self.reads.append(path)
+        if path in DB.get("_fail", ()):
+            raise RuntimeError("injected read failure: " + path)
         node = DB
         for part in path.strip("/").split("/"):
             node = node.get(part) if isinstance(node, dict) else None

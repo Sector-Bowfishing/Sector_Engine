@@ -48,12 +48,13 @@ def test_calibrated_density_is_carried_through_and_gives_true():
     assert va.vegetation_habitat(st, "shallowVegetatedHabitat", NOW)["state"] == "UNKNOWN"
 
 
-def test_not_observed_lake_is_false():
+def test_not_observed_is_surface_only():
     st = published(PERSISTENT_CLEAR)
-    assert st["surfaceVegetation"]["status"] == "NOT_OBSERVED"
+    assert st["surfaceVegetation"]["status"] == "NOT_OBSERVED" and st["submergedVegetation"]["status"] == "NOT_OBSERVABLE"
     assert va.adapt(st)["cell"]["class"] == "NONE_SIGNIFICANT"
-    for h in ("shallowVegetatedHabitat", "floodedVegetation"):
-        assert va.vegetation_habitat(st, h, NOW)["state"] == "FALSE"
+    assert va.vegetation_habitat(st, "floodedVegetation", NOW)["state"] == "FALSE"              # flooded terrestrial plants reach the surface
+    r = va.vegetation_habitat(st, "shallowVegetatedHabitat", NOW)                                # submerged beds cannot be ruled out
+    assert (r["state"], r["reasonCode"]) == ("UNKNOWN", va.SURFACE_ONLY)
 
 
 def test_unknown_vegetation_is_a_refusal_with_vegetations_reason():
@@ -67,12 +68,14 @@ def test_the_45_day_rule_is_unchanged_and_applies_to_adapted_readings():
     assert ci.MAX_VEG_AGE_DAYS == 45.0
     st = published(PERSISTENT_CLEAR)
     observed = dt.datetime.fromisoformat(va.adapt(st)["cell"]["observedAt"].replace("Z", "+00:00"))
-    assert va.vegetation_habitat(st, "shallowVegetatedHabitat", observed + dt.timedelta(days=45))["state"] == "FALSE"
-    late = va.vegetation_habitat(st, "shallowVegetatedHabitat", observed + dt.timedelta(days=46))
+    assert va.vegetation_habitat(st, "floodedVegetation", observed + dt.timedelta(days=45))["state"] == "FALSE"
+    late = va.vegetation_habitat(st, "floodedVegetation", observed + dt.timedelta(days=46))
     assert late["state"] == "UNKNOWN" and "days old" in late["reason"]
     # Nov 30 reading of a Jul-Sep window: UNKNOWN by design (Fish all-lakes plan, 2026-11-22, section 0)
-    a6 = {"presence": "NOT_OBSERVED", "sceneIds": ["S2"], "acquisitionDates": ["2026-08-01", "2026-09-30"], "oldestPassOn": "2026-08-01"}
-    assert va.vegetation_habitat(a6, "shallowVegetatedHabitat", dt.datetime(2026, 11, 30, tzinfo=dt.timezone.utc))["state"] == "UNKNOWN"
+    a6 = {"presence": "NOT_OBSERVED", "evidenceKind": "SATELLITE_PERSISTENCE", "sceneIds": ["S2"], "acquisitionDates": ["2026-08-01", "2026-09-30"],
+          "oldestPassOn": "2026-08-01"}
+    r = va.vegetation_habitat(a6, "floodedVegetation", dt.datetime(2026, 11, 30, tzinfo=dt.timezone.utc))
+    assert r["state"] == "UNKNOWN" and "days old" in r["reason"]
 
 
 def test_single_unaccepted_pass_or_no_evidence_is_not_an_observation():
@@ -88,7 +91,7 @@ A6_NOW = dt.datetime(2026, 8, 20, tzinfo=dt.timezone.utc)
 
 
 def a6(**kw):
-    d = {"presence": "PRESENT", "observedSharePct": 6.2, "observedHa": 140.0, "sceneIds": ["S2A_1", "S2B_2", "S2A_3"],
+    d = {"presence": "PRESENT", "evidenceKind": "SATELLITE_PERSISTENCE", "observedSharePct": 6.2, "observedHa": 140.0, "sceneIds": ["S2A_1", "S2B_2", "S2A_3"],
          "acquisitionDates": ["2026-07-28", "2026-08-05", "2026-08-12"], "oldestPassOn": "2026-07-28", "sensor": "sentinel-2", "observerVersion": "v1"}
     d.update(kw)
     return d
@@ -110,7 +113,8 @@ def test_a6_without_oldest_pass_uses_the_earliest_acquisition_date():
 
 
 def test_a6_not_observed_unknown_and_undated():
-    assert va.vegetation_habitat(a6(presence="NOT_OBSERVED"), "shallowVegetatedHabitat", A6_NOW)["state"] == "FALSE"
+    assert va.vegetation_habitat(a6(presence="NOT_OBSERVED"), "shallowVegetatedHabitat", A6_NOW)["reasonCode"] == va.SURFACE_ONLY
+    assert va.vegetation_habitat(a6(presence="NOT_OBSERVED"), "floodedVegetation", A6_NOW)["state"] == "FALSE"
     r = va.vegetation_habitat(a6(presence="UNKNOWN", reason="BELOW_NOISE_TOLERANCE"), "shallowVegetatedHabitat", A6_NOW)
     assert (r["state"], r["reasonCode"]) == ("UNKNOWN", va.REFUSED) and "BELOW_NOISE_TOLERANCE" in r["reason"]
     assert va.adapt(a6(sceneIds=[]))["reasonCode"] == va.NOT_AN_OBSERVATION
@@ -132,3 +136,10 @@ def test_unrecognised_shapes_are_not_published(bad):
 
 def test_non_vegetation_habitat_classes_stay_unknown():
     assert va.vegetation_habitat(a6(coverageClass="DENSE"), "backwaterHabitat", A6_NOW)["state"] == "UNKNOWN"
+
+
+def test_a6_requires_an_accepted_evidence_kind():
+    for ek in (None, "NONE", "SATELLITE_SINGLE_PASS", "GUESS"):
+        assert va.adapt(a6(evidenceKind=ek))["reasonCode"] == va.NOT_AN_OBSERVATION, ek
+    assert va.adapt(a6(evidenceKind="SATELLITE_ACCEPTED_PASS"))["cell"]["tier"] == "OBSERVED_SATELLITE"
+    assert va.adapt(a6(evidenceKind="SURVEY"))["cell"]["tier"] == "OBSERVED_SURVEY"

@@ -65,19 +65,46 @@ def _slot(st: dict | None, values: dict, now: dt.datetime, stale_after_h: float,
                               "brainVersion": prov.get("brainVersion"), "values": values}.items() if v is not None}
 
 
+def _evidence_code(value, measured, vocabulary) -> str | None:
+    """None when `value` is the measured one; otherwise why not."""
+    if value is None:
+        return ci.WATER_TEMP_EVIDENCE_MISSING
+    if value == measured:
+        return None
+    return ci.WATER_TEMP_MODELLED_INPUT if value in vocabulary else ci.WATER_TEMP_EVIDENCE_UNRECOGNISED
+
+
 def _measured_only(slot: dict, wt: dict | None) -> dict:
-    """Water Temp `evidenceClass` gate (contracts_in: a modelled value is UNKNOWN). Only `sensor` (water-temp-state-v1, EvidenceClass in
-    WaterTemperatureBrain.swift) is a measurement; `modeled`, any other value, or a missing field drops the values. A STALE slot keeps STALE."""
+    """Measured-only gate (contracts_in: a modelled value is UNKNOWN), applied per field on the Water Temp Brain's own evidence fields
+    (water-temp-state-v1). A dropped field is listed in `fieldReasons`; when nothing measured is left the slot is NOT_MEASURED. A STALE slot stays STALE."""
     if not isinstance(wt, dict) or not wt:
         return slot
+    vals = dict(slot.get("values") or {})
     ec = wt.get("evidenceClass")
-    if ec == ci.WATER_TEMP_MEASURED_CLASS:
+    lake_code = _evidence_code(ec, ci.WATER_TEMP_MEASURED_CLASS, ci.WATER_TEMP_CLASSES)
+    reasons = {}
+    if "currentTempF" in vals:
+        code = lake_code or _evidence_code(wt.get("kind"), ci.WATER_TEMP_MEASURED_KIND, ci.WATER_TEMP_KINDS)
+        if code:
+            reasons["currentTempF"] = code
+    if "trend24hF" in vals:
+        tb = wt.get("trendBasis")
+        code = lake_code or (ci.WATER_TEMP_EVIDENCE_MISSING if tb is None else (None if tb in ci.WATER_TEMP_MEASURED_TREND_BASES else ci.WATER_TEMP_MODELLED_INPUT))
+        if code:
+            reasons["trend24hF"] = code
+    if not reasons and lake_code is None:
         return slot
-    code = ci.WATER_TEMP_EVIDENCE_MISSING if ec is None else ci.WATER_TEMP_MODELLED_INPUT
-    out = {**slot, "values": {}, "evidenceClass": ec, "reasonCode": code,
-           "reason": "no evidenceClass: not known to be a sensor measurement" if ec is None else f"evidenceClass {ec!r} is not a sensor measurement"}
-    if out.get("status") in ft.USABLE_INPUT_STATUS:
-        out["status"] = ci.NOT_MEASURED
+    for k in reasons:
+        vals.pop(k, None)
+    out = {**slot, "values": vals, "evidenceClass": ec, "kind": wt.get("kind"), "trendBasis": wt.get("trendBasis")}
+    if reasons:
+        out["fieldReasons"] = reasons
+    if not vals:
+        out["reasonCode"] = lake_code or sorted(set(reasons.values()))[0]
+        out["reason"] = ("evidenceClass " + (repr(ec) if ec is not None else "missing") + ": not a sensor lake") if lake_code else \
+            "no measured field: " + ", ".join(f"{k} {v}" for k, v in sorted(reasons.items()))
+        if out.get("status") in ft.USABLE_INPUT_STATUS:
+            out["status"] = ci.NOT_MEASURED
     return {k: v for k, v in out.items() if v is not None}
 
 
@@ -175,6 +202,9 @@ def build_lake_state(lake_id: str, *, region: str, waterbody_type: str, now: dt.
     for slot in ("lake", "waterTemp", "waterClarity"):
         if (inputs.get(slot) or {}).get("status") not in ft.USABLE_INPUT_STATUS:
             lake_unknowns.append(f"{slot} input {(inputs.get(slot) or {}).get('status', 'NOT_PUBLISHED')}: dependent features are UNKNOWN")
+        else:
+            for fld, code in sorted(((inputs.get(slot) or {}).get("fieldReasons") or {}).items()):
+                lake_unknowns.append(f"{slot}.{fld} not measured ({code}): dependent features are UNKNOWN")
     lake_unknowns.append("tributary discharge change is not published by any Brain: rapidDischargeIncrease is UNKNOWN")
     lake_unknowns.append("area-level habitat classes are not evaluable at lake level")
     species_out.sort(key=lambda s: s["speciesId"])

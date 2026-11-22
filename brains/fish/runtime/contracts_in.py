@@ -20,10 +20,19 @@ UNKNOWN = "UNKNOWN"
 # ---------------------------------------------------------------- Water Temp / Lake sanity
 TEMP_F_RANGE = (28.0, 110.0)
 # Water Temp `evidenceClass` (water-temp-state-v1; values `sensor` | `modeled`). Only `sensor` is a measurement Biological may use.
+# Each field is gated on its OWN basis, because a sensor lake still publishes model values:
+#   currentTempF needs evidenceClass `sensor` AND the per-reading `kind` `measured` (WaterTemperatureBrain stateKind: measured | modeled | unavailable);
+#   trend24hF needs a trendBasis in WATER_TEMP_MEASURED_TREND_BASES. Water Temp publishes only `model:dailyChange(lakeLocal)` today (its `sensorTrend`
+#   is a direction word with no magnitude), so the trend is always UNKNOWN until Water Temp publishes a measured basis and it is added here.
 WATER_TEMP_MEASURED_CLASS = "sensor"
-WATER_TEMP_MODELLED_INPUT = "MODELLED_INPUT"
-WATER_TEMP_EVIDENCE_MISSING = "EVIDENCE_CLASS_MISSING"
-NOT_MEASURED = "NOT_MEASURED"                        # input slot status: published, but not a measurement -> dependent features UNKNOWN
+WATER_TEMP_MEASURED_KIND = "measured"
+WATER_TEMP_MEASURED_TREND_BASES: tuple = ()
+WATER_TEMP_MODELLED_INPUT = "MODELLED_INPUT"                       # modeled evidence class, modeled reading, or model trend basis
+WATER_TEMP_EVIDENCE_MISSING = "EVIDENCE_CLASS_MISSING"             # no evidenceClass / kind / trendBasis: not known to be measured
+WATER_TEMP_EVIDENCE_UNRECOGNISED = "EVIDENCE_CLASS_UNRECOGNISED"   # a value outside the Water Temp vocabulary
+WATER_TEMP_CLASSES = ("sensor", "modeled")
+WATER_TEMP_KINDS = ("measured", "modeled", "unavailable")
+NOT_MEASURED = "NOT_MEASURED"                        # input slot status: published, but nothing in it is a measurement -> dependent features UNKNOWN
 TREND_F_MAX = 25.0
 
 

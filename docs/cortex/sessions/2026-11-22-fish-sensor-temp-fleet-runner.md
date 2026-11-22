@@ -29,3 +29,11 @@ Standards: Rehtac Cortex 3.1.2 @ ecaef70 (clean), pack sector/engine
 ## Not done (gated)
 - Graduating FISH-PRD-001, turning the fleet switch on anywhere, or publishing fleet output.
 - Any change to the 45-day rule.
+
+## Review round 1 (independent review: NOT CLEAN), fixed on the same branch
+- **HIGH: water temp fields gated on their own basis.** `currentTempF` needs `evidenceClass` `sensor` and `kind` `measured`. `trend24hF` needs a measured `trendBasis`. Water Temp publishes only `model:dailyChange(lakeLocal)` (and `sensorTrend` has no magnitude), so the trend is UNKNOWN everywhere today. Dropped fields are listed in `fieldReasons` and in the lake `unknowns`.
+- **Pilots.** All 5 pilot lakes have no temperature sensor (`tempSensor` null in the Engine directory), so their water temperature is NOT_MEASURED and waterTempBand, warmRise, coldRise, the crossings and the spawn-window temperature are UNKNOWN. This follows the owner's no-estimates rule. A test checks it against the directory for each pilot.
+- **Golden.** The fixture is now a measured sensor reading without a trend, so the old and the new gate read it the same way. The golden was regenerated from 16d2bc14's `run_state.py`.
+- **Vegetation.** `NOT_OBSERVED` is surface-only, so `shallowVegetatedHabitat` is UNKNOWN (`VEG_SURFACE_ONLY`) and `floodedVegetation` is FALSE. The A6 answer must carry `evidenceKind`.
+- **LOW items.** `EVIDENCE_CLASS_UNRECOGNISED` is a separate code. In `--live` fleet mode, a failed read gives a per-lake `ERROR` row (`READ_FAILED`) instead of aborting.
+- **Docs.** `BIOLOGICAL_CROSS_BRAIN_INPUT_CONTRACTS.md` now records the measured-only rule and `SURFACE_REACHING_MIXED`.
