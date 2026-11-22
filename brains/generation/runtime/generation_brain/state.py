@@ -30,8 +30,20 @@ def _sha(obj) -> str:
     return "sha256:" + hashlib.sha256(json.dumps(obj, sort_keys=True, separators=(",", ":"), default=str).encode()).hexdigest()
 
 
+OPERATOR_RELEASE = ("tva", "cwms", "rise")
+
+
+def sources_to_read(rec: dict, access: dict) -> list[dict]:
+    """The bound, allowed sources of one lake. A USGS gauge below the dam is read ONLY when no operator release series is bound and allowed:
+    it measures the river, never the dam, and is not needed where the operator publishes the release."""
+    src = bound_sources(rec, access)
+    if any(s["provider"] in OPERATOR_RELEASE for s in src):
+        src = [s for s in src if s["provider"] != "usgs"]
+    return src
+
+
 def read_sources(rec: dict, access: dict, fetcher, now: datetime) -> list:
-    return [READERS[s["provider"]](s, fetcher, now) for s in bound_sources(rec, access)]
+    return [READERS[s["provider"]](s, fetcher, now) for s in sources_to_read(rec, access)]
 
 
 def build_state(rec: dict, readings: list, prev: dict | None, now: datetime, catalog_version: str, release: dict | None) -> tuple[dict, dict]:
@@ -40,15 +52,14 @@ def build_state(rec: dict, readings: list, prev: dict | None, now: datetime, cat
     access = {r.provider: r.agency for r in readings}
     sources = [r.summary(now) for r in readings]
     rel = a["release"]
-    basis = ("NONE" if a["kind"] == C.UNAVAILABLE else "SCHEDULE_ONLY" if a["kind"] == C.SCHEDULE_ONLY
-             else "MEASURED_DOWNSTREAM" if rel["downstreamGauge"] else "OPERATOR_PUBLISHED")
+    basis = {C.UNAVAILABLE: "NONE", C.SCHEDULE_ONLY: "SCHEDULE_ONLY", C.DOWNSTREAM_ONLY: "MEASURED_DOWNSTREAM"}.get(a["kind"], "OPERATOR_PUBLISHED")
     fp_core = {"release": {k: v for k, v in rel.items()}, "schedule": schedule_fingerprint(a["schedule"]), "tailwater": a["tailwater"],
-               "sources": [(s["provider"], s["ok"], s["error"]) for s in sources], "catalog": catalog_version, "brain": C.BRAIN_VERSION}
+               "tailwaterGauge": a["tailwaterGauge"], "sources": [(s["provider"], s["ok"], s["error"]) for s in sources], "catalog": catalog_version, "brain": C.BRAIN_VERSION}
     state = {
         "schema": C.STATE_SCHEMA, "lakeId": rec["lakeId"], "kind": a["kind"], "lane": "INTERNAL",
         "dam": {"name": (rec.get("dam") or {}).get("name"), "nidId": (rec.get("dam") or {}).get("nidId"), "operatorName": rec.get("operatorName"),
                 "group": rec.get("group")},
-        "release": rel, "schedule": a["schedule"], "tailwater": a["tailwater"], "history": a["history"],
+        "release": rel, "schedule": a["schedule"], "tailwater": a["tailwater"], "tailwaterGauge": a["tailwaterGauge"], "history": a["history"],
         "sources": sources, "agencies": sorted(set(access.values())),
         "freshness": fresh,
         "confidence": {"basis": basis, "unitsStated": bool(a["schedule"] and a["schedule"]["unitsStated"]),

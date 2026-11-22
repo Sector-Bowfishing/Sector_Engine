@@ -68,3 +68,19 @@ def test_registry_reports_coverage_and_stays_disabled():
     assert reg["fleet"]["damLakeCount"] == 4 and reg["fleet"]["directoryLakeCount"] == 621 and reg["fleet"]["noDamLakeCount"] == 220   # 4 = the test catalog
     assert reg["sourceAccess"]["swpa"]["status"] == "ACCESS_CHECK_REQUIRED" and "swpa" not in reg["sourceIds"]
     assert reg["knowledgeRelease"]["approvalStatus"] == "NOT_RECORDED"
+
+
+def test_a_usgs_gauge_is_read_only_when_no_operator_release_series_is_bound():
+    from generation_brain.state import sources_to_read
+    access = {p: {"status": "ALLOWED"} for p in ("tva", "cwms", "rise", "usgs")}
+    gauge = {"provider": "usgs", "status": "BOUND", "site": "07055660", "distanceMiles": 2.4}
+    with_op = {"sources": [{"provider": "tva", "status": "BOUND", "locationId": "GVDA1"}, gauge]}
+    assert [s["provider"] for s in sources_to_read(with_op, access)] == ["tva"]
+    alone = {"sources": [gauge, {"provider": "cwms", "status": "DISCOVERY_PENDING"}]}
+    assert [s["provider"] for s in sources_to_read(alone, access)] == ["usgs"]
+
+
+def test_registry_says_disabled_while_orchestration_is_disabled():
+    _, w, _ = run()
+    reg = w.tree["brains"]["generation"]
+    assert reg["enabled"] is False and reg["orchestration"]["status"] == "DISABLED"

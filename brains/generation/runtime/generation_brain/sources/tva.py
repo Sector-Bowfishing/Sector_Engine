@@ -142,6 +142,18 @@ def parse_observed(body: bytes) -> list[dict] | None:
     return merge_observations(obs)
 
 
+def unparsed(endpoint: str, loc: str, body: bytes | None, ok) -> list[str]:
+    """Rows TVA sent that could not be read (an unknown time or generator format): never silently dropped. All rows failing is an error
+    for that endpoint (the schedule or the release is then absent, and the state says why); some failing is named too."""
+    rows = _rows(body) if body is not None else None
+    if not rows:
+        return []
+    bad = sum(1 for r in rows if not (isinstance(r, dict) and ok(r)))
+    if bad == len(rows):
+        return [f"{endpoint}/{loc}: none of {len(rows)} rows could be parsed (format changed?)"]
+    return [f"{endpoint}/{loc}: {bad} of {len(rows)} rows could not be parsed"] if bad else []
+
+
 def read(binding: dict, fetcher, now: datetime) -> Reading:
     loc = binding["locationId"]
     sched = fetcher.get("tva", f"{BASE}/generation-releases/{loc}")
@@ -156,6 +168,8 @@ def read(binding: dict, fetcher, now: datetime) -> Reading:
         errors.append(f"generation-releases/{loc}: {sched.error or 'not JSON (send Accept: application/json)'}")
     if observations is None:
         errors.append(f"observed-data-48-hours/{loc}: {obs.error or 'not JSON (send Accept: application/json)'}")
+    errors += unparsed("generation-releases", loc, sched.body if sched.ok and windows is not None else None, lambda r: parse_window(r) is not None)
+    errors += unparsed("observed-data-48-hours", loc, obs.body if obs.ok and observations is not None else None, lambda r: observed_time(r) is not None)
     if not windows and not observations:
         return failed("tva", AGENCY, "; ".join(errors) or f"TVA {loc}: no rows", series)
     return Reading("tva", AGENCY, True, "; ".join(errors) or None, observations or [], windows or [], series, cadence_min=60, lag_min=60)

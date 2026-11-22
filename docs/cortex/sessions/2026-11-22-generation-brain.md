@@ -23,3 +23,6 @@ Not verified: no source was read live (agency hosts unreachable from this sessio
 
 ## Not changed
 Live systems, schedulers, execution control, IAM, rules, scores, Lake Brain behaviour, customer paths.
+
+## Addendum: pre-enable review fixes (branch `fix/generation-pre-enable-2026-11-22`, follow-up to #235)
+Independent review of #235 came back clean; its pre-enable findings are fixed here: per-series freshness and cadence (a stale daily outflow never hides a fresh turbine / generation series); a USGS gauge below the dam is `tailwaterGauge` {site, distanceMiles} and never sets the dam's status (kind DOWNSTREAM_ONLY), and is read only when no operator release series is bound; a status resting on the schedule hour is capped at the end of that window; the registry says `enabled: false`; TVA rows that cannot be parsed are reported; SWPA uses the page's own date field and per-hour UTC offsets on DST change days (23 / 25 rows); CWMS quality codes (missing, questionable, rejected) are honoured; an exit-3 test for an APPROVED release without operator intent. Owner decisions recorded as blocking enablement in the plan (section 7): D-G (TVA access) and the new D-I (one read per series per hour across Brains: Lake already reads the TVA observed-data URLs). TVA's access status is unchanged.
