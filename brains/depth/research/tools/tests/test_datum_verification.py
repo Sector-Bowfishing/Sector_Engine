@@ -9,7 +9,8 @@ from conftest import MANIFEST_PATH
 from depth_brain import contract as C
 from depth_brain.datum import DatumAssessment
 from depth_brain.shift import LevelObservation, ReferencePool, compute_shift
-from depth_research.candidates import (VERIFICATION_RECORDS, assess_candidate, live_source_location, load_datum_verification,
+from depth_research.candidates import (SINGLE_OFFICIAL, SINGLE_OFFICIAL_LABEL, VERIFICATION_RECORDS, assess_candidate, empirical_problems,
+                                       is_official_root, root_key, live_source_location, load_datum_verification,
                                        load_provider_table, reviewed_live_sources, verification_problems, verified_conversion,
                                        verified_same_source)
 from tests.helpers import NOW
@@ -41,26 +42,136 @@ def verified_toledo():
     return rec
 
 
+SRA = "Sabine River Authority (TX/LA)"
+USGS_SITE = "https://waterservices.usgs.gov/nwis/site/?format=rdb&sites=08025350&siteOutput=expanded"
+
+
+def single_official():
+    """Synthetic qualifying record: Toledo Bend with a pool-side empirical check that does NOT exist today (corroborates includes 'reference'),
+    and only official-host evidence on the reference side."""
+    rec = copy.deepcopy(RECORDS[TOLEDO])
+    rec["relationship"] = {**copy.deepcopy(rec["conversionCandidate"]), "status": "CONVERTED"}
+    rec["relationship"]["empirical"]["corroborates"] = ["level", "reference"]
+    ref = rec["sides"]["reference"]
+    ref["status"] = SINGLE_OFFICIAL
+    ref["evidence"] = [e for e in ref["evidence"] if "usgs.gov" in e["url"] or "noaa.gov" in e["url"]]
+    rec.update(status=SINGLE_OFFICIAL, singleOfficialSource=True, label=SINGLE_OFFICIAL_LABEL)
+    return rec
+
+
+def convert(rec, operator=SRA):
+    return assess_candidate(TOLEDO, {"operatorName": operator}, usgs("62615"), TWDB_SRC, NGVD_POOL_TABLE, {}, {}, None, {TOLEDO: rec})[0]
+
+
 # ── the committed records ─────────────────────────────────────────────────────────────────────────────────
 def test_every_record_satisfies_the_verification_rule():
     assert RECORDS, f"{VERIFICATION_RECORDS} missing or empty"
     for lid, rec in RECORDS.items():
         assert lid in CANDS, f"{lid} is not a manifest lake"
-        assert verification_problems(lid, rec) == [], (lid, verification_problems(lid, rec))
+        assert verification_problems(lid, rec, CANDS[lid].get("operator")) == [], (lid, verification_problems(lid, rec, CANDS[lid].get("operator")))
 
 
-def test_no_committed_record_enables_a_conversion():
-    assert {lid for lid, rec in RECORDS.items() if verified_conversion(rec)} == set()
+def test_no_committed_record_enables_a_conversion_or_claims_single_official():
+    assert {lid for lid, rec in RECORDS.items() if verified_conversion(rec, CANDS[lid].get("operator"))} == set()
+    assert not any(rec["status"] == SINGLE_OFFICIAL for rec in RECORDS.values())
 
 
-def test_toledo_bend_reference_has_one_root_so_it_is_single_source():
+def test_toledo_bend_stays_off_because_no_check_corroborates_the_pool_datum():
     rec = RECORDS[TOLEDO]
-    ref = rec["sides"]["reference"]
-    assert {e["derivedFrom"] for e in ref["evidence"]} == {"USGS-08025350"} and ref["status"] == "SINGLE_SOURCE"
-    assert rec["status"] == "SINGLE_SOURCE" and verified_conversion(rec) is None
-    assert "owner" in rec["sides"]["level"]["basisDecision"]                       # the level-basis decision stays recorded
-    a = assess_candidate(TOLEDO, {}, usgs("62615"), TWDB_SRC, NGVD_POOL_TABLE, {}, {}, None, RECORDS)[0]
-    assert a.status == "INCOMPATIBLE"
+    assert rec["status"] == "SINGLE_SOURCE" and not rec["relationship"]["status"]
+    emp = rec["conversionCandidate"]["empirical"]
+    assert emp["corroborates"] == ["level"] and "pool" in emp["scope"]
+    assert empirical_problems(emp, rec["conversionCandidate"]) == []          # the level-side check itself passes against the -0.2 ft conversion
+    vd = {**emp, "expectedFt": -0.285}
+    assert any("2 SE" in x for x in empirical_problems(vd, rec["conversionCandidate"]))   # against VDatum it would not
+    assert convert(rec).status == "INCOMPATIBLE"
+    as_single = copy.deepcopy(rec)                                                         # labelling it single-official today is refused
+    as_single["relationship"] = {**as_single["conversionCandidate"], "status": "CONVERTED"}
+    as_single["sides"]["reference"]["status"] = SINGLE_OFFICIAL
+    as_single.update(status=SINGLE_OFFICIAL, singleOfficialSource=True, label=SINGLE_OFFICIAL_LABEL)
+    probs = verification_problems(TOLEDO, as_single, SRA)
+    assert any("does not corroborate the reference side" in x for x in probs)
+    assert any("refused as evidence" in x and "waterdatafortexas" in x for x in probs)
+
+
+# ── single official source tier, on a synthetic record ───────────────────────────────────────────────────
+def test_single_official_qualifies_and_the_label_reaches_the_manifest():
+    rec = single_official()
+    assert verification_problems(TOLEDO, rec, SRA) == []
+    a = convert(rec)
+    assert a.status == "CONVERTED" and a.conversion_ft == pytest.approx(0.2)
+    d = a.as_dict()
+    assert "single-official-source" in d["basis"] and d["evidenceConfidence"] == "medium"
+    assert any(r.startswith(SINGLE_OFFICIAL_LABEL) for r in d["reasons"])
+    assert any("usgs.gov" in u for u in d["evidenceUrls"]) and len(d["evidenceUrls"]) == 2       # one level-side and one reference-side URL
+
+
+def test_non_official_root_refused():
+    rec = single_official()
+    rec["sides"]["reference"]["evidence"].append({"publisher": "TWDB", "url": TWDB_SRC, "quote": "172.00 ft above NGVD29"})
+    probs = verification_problems(TOLEDO, rec, SRA)
+    assert any("not an official authority" in x for x in probs) and any("refused as evidence" in x for x in probs)
+    assert convert(rec).status == "INCOMPATIBLE"
+
+
+def test_supporting_item_from_a_non_official_host_is_refused():
+    rec = single_official()
+    rec["sides"]["reference"]["evidence"].append({"publisher": "USGS (reprint)", "url": "https://texashistory.unt.edu/x.pdf", "quote": "q",
+                                                  "derivedFrom": "USGS-08025350", "supportingOnly": True})
+    assert any("refused as evidence" in x for x in verification_problems(TOLEDO, rec, SRA)) and convert(rec).status == "INCOMPATIBLE"
+
+
+def test_dam_operator_comes_from_the_directory_not_the_record():
+    rec = single_official()
+    rec["sides"]["reference"]["evidence"] = [{"publisher": "Sabine River Authority", "url": "https://www.sratx.org/datum.pdf", "quote": "172 ft NGVD 29",
+                                              "derivedFrom": f"OPERATOR:{SRA}"}]
+    rec["damOperator"] = SRA                                                           # ignored
+    assert verification_problems(TOLEDO, rec, SRA) == [] and convert(rec, SRA).status == "CONVERTED"
+    assert any("not an official authority" in x for x in verification_problems(TOLEDO, rec, "Someone Else"))
+    assert convert(rec, "Someone Else").status == "INCOMPATIBLE" and convert(rec, None).status == "INCOMPATIBLE"
+    assert is_official_root("USGS-08025350") and is_official_root("NOAA NWPS") and not is_official_root("USGSX") and not is_official_root("TWDB")
+
+
+def test_one_agency_is_one_root_even_without_supporting_only():
+    rec = verified_toledo()
+    rec["sides"]["reference"]["evidence"] = [e for e in rec["sides"]["reference"]["evidence"] if "usgs.gov" in e["url"]]
+    for e in rec["sides"]["reference"]["evidence"]:
+        e.pop("supportingOnly", None)                                                  # OFR 79-678 (USGS) + USGS-08025350: still one root
+    assert {root_key(e.get("derivedFrom") or e["publisher"]) for e in rec["sides"]["reference"]["evidence"]} == {"USGS"}
+    assert verified_conversion(rec) is None and any("independent roots" in x for x in verification_problems(TOLEDO, rec))
+
+
+@pytest.mark.parametrize("mutate,why", [
+    (lambda r: r["relationship"]["empirical"].clear(), "missing"),
+    (lambda r: r["relationship"]["empirical"].update(passed=False), "flag"),
+    (lambda r: r["relationship"]["empirical"].update(expectedFt=-0.05), "expected is not the conversion"),
+    (lambda r: r["relationship"]["empirical"].update(expectedFt=0.2), "opposite sign"),
+    (lambda r: r["relationship"]["empirical"].update(corroborates=["level"]), "does not corroborate the single-official side"),
+    (lambda r: r["relationship"]["empirical"].pop("residualsFt"), "no stored residuals"),
+    (lambda r: r["relationship"]["empirical"].update(residualsFt=[0.05, -0.05, 0.02, -0.02, 0.0, 0.04, -0.04, 0.01, -0.01], meanFt=0.0), "no offset detected"),
+    (lambda r: r["relationship"]["empirical"].update(toleranceFt=0.5), "tolerance too loose"),
+    (lambda r: r["relationship"]["empirical"].update(n=3), "n too small"),
+])
+def test_single_official_refused_without_a_bound_passing_empirical_check(mutate, why):
+    rec = single_official()
+    mutate(rec)
+    assert verification_problems(TOLEDO, rec, SRA), why
+    assert convert(rec).status == "INCOMPATIBLE", why
+
+
+@pytest.mark.parametrize("mutate,why", [
+    (lambda r: r.update(singleOfficialSource=False), "not labelled"),
+    (lambda r: r.pop("label"), "no label"),
+    (lambda r: r["sides"]["reference"].update(status="VERIFIED"), "no side marked single-official"),
+    (lambda r: r["sides"]["reference"].update(datum=None), "unnamed datum"),
+    (lambda r: r["relationship"].update(navd88MinusNgvd29Ft=0.05, vdatumCheckFt=0.04), "offset under 0.1 ft is untestable"),
+    (lambda r: (r["sides"]["reference"].update(offsetToNAVD88Ft=0.2, vdatumCheckFt=-0.285), r.update(offsetConflict="recorded")), "offsetConflict"),
+])
+def test_single_official_refused_for_rule_violations(mutate, why):
+    rec = single_official()
+    mutate(rec)
+    assert verification_problems(TOLEDO, rec, SRA), why
+    assert verified_conversion(rec, SRA) is None, why
 
 
 def test_ross_barnett_stays_unconverted():
@@ -78,7 +189,7 @@ def test_carried_forward_citations_are_not_evidence():
 
 def test_only_verified_or_same_source_records_carry_a_relationship():
     for lid, rec in RECORDS.items():
-        if rec["status"] not in ("VERIFIED", "SAME_SOURCE"):
+        if rec["status"] not in ("VERIFIED", SINGLE_OFFICIAL, "SAME_SOURCE"):
             assert not (rec.get("relationship") or {}).get("status"), lid
     assert RECORDS["Cross Lake|LA"]["status"] == "CONFLICT" and RECORDS["Cross Lake|LA"]["conflict"]
 
@@ -164,3 +275,12 @@ def test_lake_delta_cross_check_is_rebased_on_the_recorded_reference():
     lvl_bad = LevelObservation(489.0, "ft", None, NOW - timedelta(hours=1), "DIRECT_OPERATOR_POOL", "OBSERVED", -0.2)   # a real disagreement still flags
     r3 = compute_shift(lvl_bad, ReferencePool(490.5, "fullPool", "high", "NGVD29", True, "t", ss, lake_pool_ft=490.0), NOW)
     assert any(f.startswith("lakeBrainDeltaDisagrees") for f in r3.flags)
+
+
+def test_expected_offset_is_bound_to_the_conversion_by_value_and_sign():
+    emp = copy.deepcopy(RECORDS[TOLEDO]["conversionCandidate"]["empirical"])
+    rel = {"navd88MinusNgvd29Ft": -0.2, "vdatumCheckFt": -0.285}
+    assert not any("is not the conversion" in x for x in empirical_problems(emp, rel))
+    assert any("is not the conversion" in x for x in empirical_problems({**emp, "expectedFt": -0.45}, rel))          # mismatched value
+    small = {"navd88MinusNgvd29Ft": 0.04, "vdatumCheckFt": 0.05}
+    assert any("is not the conversion" in x for x in empirical_problems({**emp, "expectedFt": -0.04}, small))        # within 0.10 but opposite sign
