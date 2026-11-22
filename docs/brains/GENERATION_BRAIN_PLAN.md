@@ -42,7 +42,7 @@ Implemented in `brains/generation/runtime/generation_brain/freshness.py` (pure, 
 | STEADY | OFF and nothing scheduled soon | 180 min, but never later than 60 min before the next scheduled start or stop |
 | UNKNOWN | no usable reading (source down or stale) | 120 min (back off) |
 
-Also: when the posted schedule ends within 12 h (next day not yet posted), the next read is at most 120 min away, so the afternoon posting is picked up the same day. The 60 min floor is the owner's access rule (no series more than hourly). A published value stays current for `min(reading + source stale ceiling, max(reading + tier window, now + 150 min))` (ceiling = lag + 3 x cadence, the Lake Brain rule; 150 min = one grant + one publish cycle + run time); a schedule-only state stays current until its window ends, at most 6 h. Thresholds are pre-set, not fitted; the validation week tunes them.
+Also: when the posted schedule ends within 12 h (next day not yet posted), the next read is at most 120 min away, so the afternoon posting is picked up the same day. The 60 min floor is the owner's access rule (no series more than hourly). A published value stays current for `min(reading + source stale ceiling, max(reading + tier window, now + 150 min))` (ceiling = lag + 3 x cadence per series, the earliest among the series used, the Lake Brain rule; 150 min = one grant + one publish cycle + run time); a schedule-only state stays current until its window ends, at most 6 h; any status that rests on the schedule hour is capped at the end of that window. Thresholds are pre-set, not fitted; the validation week tunes them.
 
 ## 5. Validation (pre-registered)
 
@@ -69,9 +69,17 @@ Registered here before any run; nothing has been run.
 6. **Validation week** (section 5) on internal runs. PASS or FAIL recorded.
 7. **Customer path** (Michael's own steps): a customer-lane copy, app reading it, tile flip. Not proposed until validation passes. The existing draft customer copy `customer/lakes/{k}/generationBinding` (Sector_Ops #53, `publisher_live/customer_generation_binding.py`, not wired) waits on a dam binding the Lake contract does not carry; the Generation catalog's bound `operator + LocationID` records are the natural source for it, as a separate reviewed change.
 
-## 7. Open decisions (batched)
+## 7. Blocking enablement (owner decisions, not code)
+
+Nothing in this section is changed by code; each must be decided before the Brain is given an execution target.
+
+1. **TVA access (D-G).** `tva` stays ALLOWED in the candidate release only provisionally: it becomes ALLOWED for enablement only after `www.tva.com/robots.txt` has been read and the iOS conditions-spec note "TVA blocks automated access" (2026-07-16) has been resolved. If either forbids automated use, TVA's status changes to PERMISSION_REQUIRED in a new release and TVA is asked first.
+2. **One read per series per hour across Brains (D-I).** The owner rule caps each official series at one read an hour. The Lake Brain already reads the same TVA `observed-data-48-hours/{LocationID}` URL hourly for the pool level, so an enabled Generation Brain would double the reads of those URLs. Options: (a) one shared reader and archive for TVA observed rows that both Brains consume (Lake keeps pool, Generation takes release and tailwater); (b) Generation reads only `generation-releases` and consumes Lake's published release readout for TVA dams; (c) the owner accepts two reads an hour per URL. Until decided, Generation must not be enabled for TVA lakes. (The reviewer of #235 called this D-H; it is recorded as D-I because D-H is the Cortex architecture decision.)
+
+## 8. Open decisions (batched)
 
 - **G-2** approve a Generation knowledge release (after D-G and the validation week).
-- **D-G** TVA and SWPA access checks (and permission requests if either forbids automated use).
+- **D-G** TVA and SWPA access checks (and permission requests if either forbids automated use); blocking enablement (section 7.1).
+- **D-I** cross-Brain read budget for TVA observed data (section 7.2).
 - **D-H** Cortex architecture: Generation as a tenth target Brain; dam releases move from Lake Brain to Generation; Lake keeps pool level and stops publishing its own release readout once Generation serves it (CG-3.1-20).
 - Operator permission requests for the 73 utility lakes (drafting approved 2026-11-22 19:34Z; sending is Michael's).

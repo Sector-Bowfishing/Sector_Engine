@@ -20,11 +20,13 @@ DEPENDS_ON: tuple = ()
 # State kinds: what one lake's state is built from. Never a value that no source measured or published.
 OBSERVED = "OBSERVED"              # a measured release (discharge / units) within its freshness window, with or without a schedule
 SCHEDULE_ONLY = "SCHEDULE_ONLY"    # the operator's published schedule covers now, but no measured release is current
+DOWNSTREAM_ONLY = "DOWNSTREAM_ONLY"  # only a USGS gauge below the dam is current: the river is measured, the dam's status stays UNKNOWN
 UNAVAILABLE = "UNAVAILABLE"        # the lake has a bound source but nothing usable came back (or every reading is stale)
 NOT_BOUND = "NOT_BOUND"            # no source is bound for this lake in the knowledge release (the stated coverage reason applies)
 KINDS = {
     OBSERVED: "a measured release (operator discharge or unit status) inside its freshness window",
     SCHEDULE_ONLY: "the operator's published schedule covers now; no current measured release",
+    DOWNSTREAM_ONLY: "only a USGS gauge below the dam is current (tailwaterGauge); the dam's own release status is UNKNOWN",
     UNAVAILABLE: "a bound source returned nothing usable or only stale readings: abstain, never a default",
     NOT_BOUND: "no source bound in the knowledge release; the catalog's coverage reason applies",
 }

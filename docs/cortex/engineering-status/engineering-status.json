@@ -15,8 +15,8 @@
     "evaluatedAt": "2026-10-23",
     "session": "docs/cortex/sessions/2026-10-23-research-automation.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:98fb2a83209f00fabb23d841464c61530be1f76bceb261f272d3ade645b56b8c",
-    "certificationDigest": "sha256:98fb2a83209f00fabb23d841464c61530be1f76bceb261f272d3ade645b56b8c",
+    "sourceDigest": "sha256:4151863e7aae4ce8413ee8d0526fdf33e29bc2428b558612ffcaa94d5725f313",
+    "certificationDigest": "sha256:4151863e7aae4ce8413ee8d0526fdf33e29bc2428b558612ffcaa94d5725f313",
     "certificationCurrent": true,
     "verificationCommit": "3e8a3857"
   },
@@ -468,7 +468,8 @@
       "blockers": [
         "G-2",
         "D-G",
-        "D-H"
+        "D-H",
+        "D-I"
       ],
       "certificationProofs": {
         "P01": "PASS",
@@ -2615,6 +2616,16 @@
       "class": "DECISION_REQUIRED",
       "title": "Cortex architecture: add Generation as a tenth target Brain and move dam releases and reservoir operations (not pool level) from Lake Brain to it (CG-3.1-20)",
       "recommendation": "Cortex maintenance session; until then Generation is an UNREGISTERED deployed package registered DISABLED",
+      "brains": [
+        "generation",
+        "lake-brain"
+      ]
+    },
+    {
+      "id": "D-I",
+      "class": "DECISION_REQUIRED",
+      "title": "One read per series per hour across Brains: Lake Brain already reads the TVA observed-data URLs that Generation would read",
+      "recommendation": "Choose a shared TVA observed-data reader, Generation consuming Lake's release readout, or accepting two reads an hour; Generation is not enabled for TVA lakes until decided",
       "brains": [
         "generation",
         "lake-brain"

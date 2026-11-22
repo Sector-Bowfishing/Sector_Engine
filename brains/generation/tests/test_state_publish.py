@@ -68,3 +68,35 @@ def test_registry_reports_coverage_and_stays_disabled():
     assert reg["fleet"]["damLakeCount"] == 4 and reg["fleet"]["directoryLakeCount"] == 621 and reg["fleet"]["noDamLakeCount"] == 220   # 4 = the test catalog
     assert reg["sourceAccess"]["swpa"]["status"] == "ACCESS_CHECK_REQUIRED" and "swpa" not in reg["sourceIds"]
     assert reg["knowledgeRelease"]["approvalStatus"] == "NOT_RECORDED"
+
+
+def test_a_usgs_gauge_is_read_only_when_no_operator_release_series_is_bound():
+    from generation_brain.state import sources_to_read
+    access = {p: {"status": "ALLOWED"} for p in ("tva", "cwms", "rise", "usgs")}
+    gauge = {"provider": "usgs", "status": "BOUND", "site": "07055660", "distanceMiles": 2.4}
+    with_op = {"sources": [{"provider": "tva", "status": "BOUND", "locationId": "GVDA1"}, gauge]}
+    assert [s["provider"] for s in sources_to_read(with_op, access)] == ["tva"]
+    alone = {"sources": [gauge, {"provider": "cwms", "status": "DISCOVERY_PENDING"}]}
+    assert [s["provider"] for s in sources_to_read(alone, access)] == ["usgs"]
+
+
+def test_registry_says_disabled_while_orchestration_is_disabled():
+    _, w, _ = run()
+    reg = w.tree["brains"]["generation"]
+    assert reg["enabled"] is False and reg["orchestration"]["status"] == "DISABLED"
+    assert reg["health"] in ("HEALTHY", "DEGRADED", "FAILED", "UNKNOWN") and reg["status"] == "CALIBRATION"   # health is never dropped
+    from generation_brain.publish_artifact import GENERATION
+    from sector_brain_platform.publisher.registry import GENERATION_REGISTRY_CHILDREN
+    assert "health" in GENERATION_REGISTRY_CHILDREN["status"] and GENERATION == "generation"
+
+
+def test_a_downstream_only_state_validates_and_keeps_river_flow_out_of_the_dam():
+    from generation_brain.sources import Reading
+    from generation_brain.state import build_state
+    obs = [{"at": f"2026-11-22T{h:02d}:00:00Z", "dischargeCfs": 3000.0 + h} for h in range(12, 20)]
+    g = Reading("usgs", "U.S. Geological Survey (Water Data API)", True, None, obs, [], ["usgs:07055660:00060"], meta={"site": "07055660", "distanceMiles": 2.4})
+    rec = {"lakeId": "Test Lake|AR", "operatorName": "Test", "group": "OTHER_OPERATOR", "dam": {}}
+    s, meta = build_state(rec, [g], None, NOW, "cat", None)
+    assert validate(s, SCHEMA) == []
+    assert s["kind"] == "DOWNSTREAM_ONLY" and s["release"]["status"] == "UNKNOWN" and s["history"] == [] and s["tailwaterGauge"]["history"]
+    assert s["confidence"]["basis"] == "MEASURED_DOWNSTREAM"
