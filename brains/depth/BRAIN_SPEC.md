@@ -41,6 +41,18 @@ A failed Level-3 claim never downgrades Level-1/2 claims (tested).
 ## Canonical runtime state
 `/lakes/{k}/states/depth` (DepthState v1): `kind`, `effectiveDepth{mode, shiftFt, uncertaintyFt, confidence, resolvable, reasons}`, `reference`, `level`, `coverage`, optional `referenceZones`/`effectiveZones`, `limitations`, `freshness`, `provenance{..., inputFingerprint, datumEvidence, licence}`. About 3 KB per lake. Downstream never reads research archives, raw contours, or validation corpora. Contract: `docs/brains/depth/DEPTH_STATE_CONTRACT.md`.
 
+## Reference bases (changed 2026-11-22)
+Change note: owner decision, Michael, 2026-11-22 (chat 06:48Z; recorded on Sector_Ops #51, comment 7075545102). (1) A **same-series** reference is allowed for natural lakes and stage-only gauges. (2) The **Great Lakes Low Water Datum (IGLD 1985)** is an allowed reference. Approving a Depth knowledge release that uses them stays with Michael; this change only adds the rules.
+
+`reference.basis` (state: `reference.referencePoolBasis`) is one of `contract.REFERENCE_BASES`:
+| Basis | Reference | `shiftFt` means | Datum status |
+|---|---|---|---|
+| `fullPool` | directory full pool, datum proven compatible with the level | how far the lake is from full pool | SAME_SOURCE / SAME_OPERATOR_SYSTEM / SAME_DATUM / CONVERTED |
+| `lowWaterDatum` | Great Lakes Low Water Datum, IGLD 1985 (`research/tools/depth_research/records/great_lakes_lwd.json`: NOAA CO-OPS and CHS) | how far the water is above chart datum: charted depths are deeper by `shiftFt` | SAME_DATUM (IGLD85 level and reference) |
+| `seriesMedian` | the level gauge's own median for this day of year: Lake Brain `seasonalBand.p50`, a +/-7-day window (15 days) over the gauge's complete basis years | how far the lake is from its usual level for this time of year, **not** from full pool | SAME_SERIES (one gauge, no datum needed) |
+
+Rules. A lake keeps `fullPool` whenever that route is usable; existing datum-verified lakes are unchanged (golden fixtures pinned). The new bases apply only when every blocked reason is on the reference side (`REFERENCE_NOT_A_POOL_ELEVATION`, `REFERENCE_POOL_CONFIDENCE_LOW`, `MISSING_REFERENCE_POOL`, `DATUM_UNKNOWN`); level-side failures, known-but-different datums and Duke's scale get no substitute. LWD wins over the median when the level is an IGLD 1985 series. `seriesMedian` needs at least 10 complete years in the manifest (else blocked `SERIES_HISTORY_TOO_SHORT`) and, at run time, a Lake band with `basisYears` >= 10, `windowDays` 7 and `sampleCount` >= 100 from the primary series (refusals `SERIES_MEDIAN_UNAVAILABLE`, `SERIES_HISTORY_TOO_SHORT`, `SERIES_MEDIAN_WINDOW_MISMATCH`, `SERIES_MEDIAN_TOO_FEW_SAMPLES`, `SERIES_LEVEL_FROM_FALLBACK_SOURCE`). Neither new basis is cross-checked against Lake's `differenceFromNormalPoolFt` (that is from full pool), carries reference or effective zones (zones are defined at full pool; manifest `referenceZonesWithheld: REFERENCE_NOT_FULL_POOL`), or reaches rollout above MEDIUM_CONFIDENCE. Reference sigma: LWD 0.25 ft (`high`), median 0.25 ft (assumed); datum sigma SAME_SERIES 0. A `fullPool` state keeps its v1 shape; a new-basis state adds `effectiveDepth.referenceBasis`/`referenceFt`, `reference.referenceMeaning` and, for the median, `reference.seriesMedian`.
+
 ## Confidence model, refusal policy, freshness
 Sigma in quadrature (pool 0.25/1.0/3.0, level 0.1/0.15, datum 0/0.1/0.3 ft); labels HIGH <= 0.5, MEDIUM <= 1.2 ft; `resolvable` = |shift| > 2 sigma. Refuses (UNKNOWN with reason codes, never a number): datum unknown/incompatible/conflicting, no direct level, low-confidence or non-pool reference, implausible shift, stale/future observation, missing Lake state. Level age > 6 h = `evidenceStale`; > 48 h = unavailable.
 
@@ -53,7 +65,7 @@ Sigma in quadrature (pool 0.25/1.0/3.0, level 0.1/0.15, datum 0/0.1/0.3 ft); lab
 | Needs a clock? | **No.** Time-driven invalidity is handled by Lake freshness; no maintenance schedule needed |
 | Max acceptable state age | evidenceStale 6 h, unavailable 48 h (of the Lake observation) |
 | Fleet recompute? | No: pilot scope, only affected lakes; the manifest is rebuilt offline when evidence changes |
-| Input fingerprint | Lake observationTime + elevation + kind + capability, reference pool, datum status, manifest version, Depth version |
+| Input fingerprint | Lake observationTime + elevation + kind + capability, reference pool, datum status, manifest version, Depth version (+ Lake `seasonalBand` and `sourceFallback` for a `seriesMedian` reference) |
 Frames: Duke publishes some lakes on a 100-based scale (`reference.relativeScalePoolFt`), the engine accepts either frame and refuses a level that is in neither. Orchestration is PREPARED and gated off (`DEPTH_ORCHESTRATION_ENABLED=1`, set nowhere); not approved for scheduling.
 
 ## Score dimensions (research rubric; NOT an official score)

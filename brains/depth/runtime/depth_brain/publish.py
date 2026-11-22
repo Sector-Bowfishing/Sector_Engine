@@ -117,7 +117,8 @@ def publish(manifest: dict, lake_states: dict, writer, now: datetime | None = No
             "validation": {"ref": f"/validation/{C.BRAIN_ID}", "status": "NOT_VALIDATED"},
             "sourceIds": [],
             "descriptor": {"components": {"effectiveDepthShift": {
-                "status": "SHADOW", "inputs": ["lake-brain states/lake (currentElevationFt, datum, sourceCapability)", "engine-directory fullPoolFt/poolBasis/poolConfidence",
+                "status": "SHADOW", "inputs": ["lake-brain states/lake (currentElevationFt, datum, sourceCapability; seasonalBand for a seriesMedian reference)", "engine-directory fullPoolFt/poolBasis/poolConfidence",
+                                                "Great Lakes Low Water Datum (IGLD 1985)",
                                                 "audited datum table", "candidate manifest " + mv],
                 "staleness": "fingerprint of the Lake Brain observation + reference + manifest + Depth version",
                 "recomputeWhen": ["Lake Brain publishes a new observation", "manifest or Depth version changes"]}}},

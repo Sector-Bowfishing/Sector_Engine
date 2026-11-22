@@ -23,7 +23,21 @@ from depth_brain import rating as R
 from depth_brain.evidence import depth_tier_from_research
 
 from . import proposals
-from .paths import LAKE_BINDINGS, research_data
+from .paths import LAKE_BINDINGS, RESEARCH_RECORDS, research_data
+
+GREAT_LAKES_LWD = os.path.join(RESEARCH_RECORDS, "great_lakes_lwd.json")
+
+
+def load_lwd(path: str = GREAT_LAKES_LWD) -> dict:
+    """Great Lakes Low Water Datum record (depth-great-lakes-lwd-v1): lakeId -> {lwdFt, lake}. Absent file -> {} (no LWD references)."""
+    if not path or not os.path.exists(path):
+        return {}
+    with open(path, encoding="utf-8") as fh:
+        d = json.load(fh)
+    if d.get("schema") != "depth-great-lakes-lwd-v1" or normalize_datum(d.get("datum")) != "IGLD85":
+        raise ValueError(f"{path}: not a depth-great-lakes-lwd-v1 IGLD 1985 record")
+    urls = [e["url"] for e in d.get("evidence") or [] if str(e.get("url", "")).startswith("http")][:2]
+    return {lid: {"lake": k, "lwdFt": float(d["lakes"][k]["lwdFt"]), "evidenceUrls": urls} for lid, k in (d.get("lakeIds") or {}).items()}
 
 
 def load_provider_table(path: str | None = None) -> dict:
@@ -74,6 +88,8 @@ def reference_datum_for(source: str | None, table: dict) -> tuple[str | None, bo
 
 def level_datum_for(binding: dict, table: dict) -> tuple[str | None, bool, str]:
     prov = (binding.get("provider") or "").lower()
+    if prov == "coops" and "IGLD85" in (binding.get("series_or_param") or "").upper():
+        return "IGLD85", True, "NOAA CO-OPS series water_level_IGLD85 (requested in IGLD 1985)"
     if prov in ("usgs", "usgs-d"):
         p = (binding.get("series_or_param") or "").split("+")[0]
         d = USGS_PARAM_DATUM.get(p)
@@ -135,6 +151,24 @@ def assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w=None)
     return a, ld, ld_ver, ld_note, rd, rd_ver, rd_pat, blocked
 
 
+def alternative_reference(lid: str, blocked: list, level_datum: str | None, level_datum_verified: bool, history_years: int | None, lwd: dict):
+    """The owner-approved references for lakes whose fullPool route is blocked ONLY on the reference side (contract.SERIES_REFERENCE_ELIGIBLE).
+    -> (basis or None, DatumAssessment or None, blocked reasons). A lake with no blocked reason is never touched: its fullPool route stands.
+    Order: Great Lakes Low Water Datum (IGLD 1985 level on both sides) > the gauge's own seasonal median (enough history) > unchanged."""
+    if not blocked or any(r not in C.SERIES_REFERENCE_ELIGIBLE for r in blocked):
+        return None, None, list(blocked)                    # level-side failures, known-datum conflicts, Duke scale: no substitute reference
+    g = lwd.get(lid)
+    if g and level_datum == "IGLD85" and level_datum_verified:
+        a = assess("IGLD85", "IGLD85")
+        a.basis, a.evidence_urls = f"great-lakes-lwd:{g['lake']}", list(g.get("evidenceUrls") or [])[:2]
+        return "lowWaterDatum", a, []
+    if (history_years or 0) >= C.SERIES_MEDIAN_MIN_YEARS:
+        a = assess(None, None, same_series=True)
+        a.basis, a.evidence_urls = "same-series:lake-brain-seasonal-median", ["brains/depth/BRAIN_SPEC.md"]
+        return "seriesMedian", a, []
+    return None, None, list(blocked) + ["SERIES_HISTORY_TOO_SHORT"]
+
+
 def range_class(p05_p95: float | None) -> str | None:
     if p05_p95 is None:
         return None
@@ -159,6 +193,7 @@ def build(paths: dict, manifest_version: str) -> dict:
     twdb_ver = proposals.twdb_updates(paths.get("twdb_reference_pools")) if paths.get("twdb_reference_pools") else {}
     twdb_all = (proposals.load(paths["twdb_reference_pools"]) or {}).get("lakes", {}) if paths.get("twdb_reference_pools") else {}
     conv = {r["id"]: float(r["shift_ft_ngvd29_to_navd88"]) for r in read_csv(paths["datum_shift"]) if r.get("shift_ft_ngvd29_to_navd88")}
+    lwd = load_lwd(paths.get("great_lakes_lwd") or GREAT_LAKES_LWD)
     out = []
     for lk in directory:
         lid = lk["id"]
@@ -193,13 +228,18 @@ def build(paths: dict, manifest_version: str) -> dict:
         blocked.extend(extra)
         if lstat != "NONE" and not a.usable and not extra:
             blocked.append("DATUM_UNKNOWN" if a.status == "UNKNOWN" else ("DATUM_CONVERSION_NOT_ENABLED" if (ld and rd and {ld, rd} == {"NGVD29", "NAVD88"}) else "DATUM_INCOMPATIBLE"))
-        shift_possible = not blocked
         # history
         hr = oprange.get(lid)
         hyears = int(float(hr["full_years"])) if hr and hr.get("full_years") else (int(b["complete_years"]) if b and b.get("complete_years") else None)
         rclass = range_class(float(hr["p05_p95_range_ft"])) if hr and hr.get("p05_p95_range_ft") else None
+        alt_basis, alt_a, blocked = alternative_reference(lid, blocked, ld, ld_ver, hyears, lwd)
+        if alt_basis:
+            a = alt_a
+        shift_possible = not blocked
         # rollout
-        if shift_possible and lstat == "LIVE_REVIEWED":
+        if shift_possible and alt_basis:
+            rollout = "MEDIUM_CONFIDENCE"                       # new reference bases: never HIGH_CONFIDENCE until field-validated
+        elif shift_possible and lstat == "LIVE_REVIEWED":
             rollout = "PILOT_VERIFIED"
         elif shift_possible and lstat == "RESEARCH_VERIFIED" and ref_conf == "high" and a.status in ("SAME_SOURCE", "SAME_OPERATOR_SYSTEM", "SAME_DATUM") and a.evidence_confidence != "medium" and (hyears or 0) >= 10 and cap in C.ALLOWED_LEVEL_CAPABILITIES:
             rollout = "HIGH_CONFIDENCE"
@@ -235,7 +275,9 @@ def build(paths: dict, manifest_version: str) -> dict:
                        "surveyYear": tw.get("surveyYear"), "note": "survey reference pool verified (docs/brains/depth/DEPTH_TWDB_REFERENCE_POOL_VERIFICATION.md)"})
             ev["surveyYear"] = tw.get("surveyYear")
         rating_withheld = None
-        if lid in curves and not (zr and zr.get("referenceStatus") == "VERIFIED"):                     # a validated contour reference (TWDB) keeps priority
+        if lid in curves and alt_basis:
+            rating_withheld = "REFERENCE_NOT_FULL_POOL"                               # a rating is read at full pool: not used with a median or the LWD
+        elif lid in curves and not (zr and zr.get("referenceStatus") == "VERIFIED"):                     # a validated contour reference (TWDB) keeps priority
             rz, why_r = R.rating_reference_zones(curves[lid], lk.get("fullPoolFt"), rd, rd_ver, a.status, {float(k): v for k, v in (zr or {}).get("cumulative", {}).items()} or None, equiv_all.get(lid))
             if rz:
                 zr = rz
@@ -246,6 +288,9 @@ def build(paths: dict, manifest_version: str) -> dict:
                     ev["hypsometryOnly"] = False
             else:
                 rating_withheld = why_r
+        zones_withheld = None
+        if alt_basis and zr:                                         # contour zones are read at the survey (full) pool: never shifted from a median or the LWD
+            zones_withheld, zr = "REFERENCE_NOT_FULL_POOL", None
         licence = licence_for(ev["contourSources"], lic)
         rec = {
             "lakeId": lid, "lakeName": lk.get("name"), "state": lk.get("state"), "operator": lk.get("operatorName"), "cwmsOffice": lk.get("cwmsOffice"),
@@ -259,6 +304,21 @@ def build(paths: dict, manifest_version: str) -> dict:
             "history": {"completeYears": hyears, "rangeClass": rclass, "p05p95RangeFt": float(hr["p05_p95_range_ft"]) if hr and hr.get("p05_p95_range_ft") else None},
             "shiftPossible": shift_possible, "blockedReasons": blocked, "rollout": rollout, "evidence": ev, "licence": licence,
         }
+        if alt_basis:
+            directory_ref = {k: rec["reference"][k] for k in ("poolFt", "basis", "confidence", "source", "datum", "datumVerified", "datumRule")}
+            if alt_basis == "lowWaterDatum":
+                rec["reference"].update({"poolFt": lwd[lid]["lwdFt"], "basis": "lowWaterDatum", "confidence": "high", "datum": "IGLD85", "datumVerified": True,
+                                         "datumRule": "research/tools/depth_research/records/great_lakes_lwd.json",
+                                         "source": f"Great Lakes Low Water Datum ({lwd[lid]['lake']}), IGLD 1985: NOAA CO-OPS and CHS"})
+            else:
+                rec["reference"].update({"poolFt": None, "basis": "seriesMedian", "confidence": None, "datum": None, "datumVerified": False, "datumRule": None,
+                                         "source": "lake-brain states/lake seasonalBand.p50 (this gauge's own history)",
+                                         "seriesMedian": {"statistic": "p50", "windowDays": C.SERIES_MEDIAN_WINDOW_DAYS, "minBasisYears": C.SERIES_MEDIAN_MIN_YEARS,
+                                                          "minSampleCount": C.SERIES_MEDIAN_MIN_SAMPLES, "manifestHistoryYears": hyears}})
+            rec["reference"]["directory"] = directory_ref
+            rec["reference"]["decision"] = "owner decision 2026-11-22, Sector_Ops #51 comment 7075545102"
+        if zones_withheld:
+            rec["referenceZonesWithheld"] = zones_withheld
         if zr:
             rec["referenceZones"] = zr
         if rating_withheld:
@@ -269,6 +329,7 @@ def build(paths: dict, manifest_version: str) -> dict:
         "rollout": dict(Counter(r["rollout"] for r in out)),
         "levelSourceStatus": dict(Counter(r["levelSource"]["status"] for r in out)),
         "datumStatus": dict(Counter(r["datum"]["status"] for r in out)),
+        "referenceBasis": dict(Counter(r["reference"]["basis"] for r in out if r["shiftPossible"])),
         "blockedReasons": dict(Counter(x for r in out for x in r["blockedReasons"])),
         "tier": dict(Counter(r["evidence"]["tier"] for r in out)),
         "researchTier": dict(Counter(r["evidence"]["researchTier"] for r in out)),
