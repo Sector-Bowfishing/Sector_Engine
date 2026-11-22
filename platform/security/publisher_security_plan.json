@@ -48,6 +48,7 @@
    "health/jobs/{id}": [
     "biological-state",
     "depth",
+    "generation",
     "lake-brain",
     "sector-intelligence",
     "vegetation",
@@ -58,6 +59,7 @@
    "lakeFleet/{k}/lakeId": [
     "biological-state",
     "depth",
+    "generation",
     "lake-brain",
     "sector-intelligence",
     "vegetation",
@@ -68,6 +70,7 @@
    "snapshots/{k}/latest/lakeId": [
     "biological-state",
     "depth",
+    "generation",
     "lake-brain",
     "sector-intelligence",
     "vegetation",

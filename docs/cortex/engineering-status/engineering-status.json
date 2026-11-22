@@ -15,8 +15,8 @@
     "evaluatedAt": "2026-10-23",
     "session": "docs/cortex/sessions/2026-10-23-research-automation.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:04d9745661d2e36c8ba711426bbe0e5d6cec2a398a8c601d0acc8cc82003d391",
-    "certificationDigest": "sha256:04d9745661d2e36c8ba711426bbe0e5d6cec2a398a8c601d0acc8cc82003d391",
+    "sourceDigest": "sha256:3dfb78c2308e94e54f993c4fb66b99a4e8a2f86587deb08f2e1278a7a91a54f2",
+    "certificationDigest": "sha256:3dfb78c2308e94e54f993c4fb66b99a4e8a2f86587deb08f2e1278a7a91a54f2",
     "certificationCurrent": true,
     "verificationCommit": "3e8a3857"
   },
@@ -404,6 +404,205 @@
         "limitations": [
           "Approved path abstains until an APPROVED release (G-1); shadow lane output is experimental",
           "Partial datum coverage: pilot lakes DEGRADED; no contours are invented",
+          "No capability score (not scored)"
+        ]
+      }
+    },
+    {
+      "brainId": "generation",
+      "directory": "brains/generation",
+      "lifecycle": "CALIBRATION",
+      "packageStatus": "CANONICAL",
+      "structuralCertification": {
+        "status": "PASS",
+        "evidence": "Kit V1 run: 51 passed (inputs/certification.json)"
+      },
+      "memory": [
+        {
+          "check": "store-owner",
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "brain.json knowledge: PACKAGED_IN_IMAGE release brains/generation/runtime/knowledge/knowledge-release.json, owner generation, researchFallback false. Not deployed"
+        },
+        {
+          "check": "developer-machine",
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "standing scan + Kit P16 clean; the catalog builder reads the Engine lake directory and Lake's reviewed bindings offline; the runtime reads only its release and the official sources it binds"
+        },
+        {
+          "check": "release-identity",
+          "branch": "PARTIAL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "verified on load (generation_brain.knowledge.load); release id/digest/approval in the registry, every lake state and the artifact lineage (Kit P09). No image exists (registered DISABLED)"
+        },
+        {
+          "check": "memory-unavailable",
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "missing/tampered release -> exit 2 REFUSED; unapproved release -> BLOCKED_AWAITING_APPROVED_RELEASE (tests/test_run_entry.py, tests/test_knowledge_memory.py)"
+        },
+        {
+          "check": "separation-approval",
+          "branch": "PARTIAL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "research tooling separated from the runtime (tests/test_knowledge_memory.py); approval NOT_RECORDED: the candidate release is never published from"
+        },
+        {
+          "check": "pulse-independence",
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "no Pulse/Mac/localhost target (standing scan); no executor, no schedule (control manifest kind none)"
+        }
+      ],
+      "memorySummary": {
+        "branch": {
+          "PASS": 4,
+          "PARTIAL": 2
+        },
+        "production": {
+          "NOT_APPLICABLE": 6
+        }
+      },
+      "recovery": "Not deployed. The release ships with the package and is re-verified on every run; per-dam freshness lives in the published state; no local state.",
+      "blockers": [
+        "G-2",
+        "D-G",
+        "D-H"
+      ],
+      "certificationProofs": {
+        "P01": "PASS",
+        "P02": "PASS",
+        "P03": "PASS",
+        "P04": "PASS",
+        "P05": "PASS",
+        "P06": "PASS",
+        "P07": "PASS",
+        "P08": "PASS",
+        "P09": "PASS",
+        "P10": "PASS",
+        "P11": "PASS",
+        "P12": "PASS",
+        "P13": "PASS",
+        "P14": "PASS",
+        "P15": "PASS",
+        "P16": "PASS",
+        "P17": "PASS",
+        "P18": "PASS",
+        "P19": "PASS"
+      },
+      "certificationMutations": {
+        "passed": 30,
+        "failed": 0
+      },
+      "dataDependencies": {
+        "consumes": [
+          {
+            "kind": "registry",
+            "id": "lakes",
+            "requirement": "REQUIRED"
+          }
+        ],
+        "providers": [
+          "tva-generation-schedule",
+          "usace-cwms-release",
+          "swpa-generation-schedule",
+          "usbr-rise-release",
+          "usgs-waterdata-discharge"
+        ],
+        "knowledgeStores": [
+          {
+            "id": "generation-knowledge",
+            "store": "PACKAGED_IN_IMAGE",
+            "approval": "NOT_RECORDED",
+            "onUnavailable": "REFUSE"
+          }
+        ],
+        "researchFallback": false
+      },
+      "statusLayers": {
+        "canonicalStructure": {
+          "status": "PASS",
+          "label": "CANONICAL_PACKAGE",
+          "evidence": "brains/generation: brain.json, operating contract, runtime/, tests/, research/, contracts/ (Kit P01)"
+        },
+        "structuralCertification": {
+          "status": "PASS",
+          "label": "KIT_V1_CERTIFIED",
+          "evidence": "Kit V1 run: 51 passed (inputs/certification.json)"
+        },
+        "scientificValidation": {
+          "status": "BLOCKED",
+          "label": "NOT_VALIDATED",
+          "evidence": "pre-registered week-long comparison with the operators' published schedules not started (GEN-VAL-001)"
+        },
+        "approvedMemoryRelease": {
+          "status": "BLOCKED",
+          "label": "CANDIDATE_RELEASE_AWAITING_APPROVAL",
+          "evidence": "generation-knowledge-candidate-2026-11-22.1 verified; approval NOT_RECORDED; runtime abstains"
+        },
+        "operationalReadiness": {
+          "status": "BLOCKED",
+          "label": "REGISTERED_DISABLED",
+          "evidence": "control manifest PARKED, executionTarget none, no execution-control entry; run.py --write refuses (BLOCKED_AWAITING_APPROVED_RELEASE); dry runs on hand-built fixtures only"
+        },
+        "productionActivation": {
+          "status": "BLOCKED",
+          "label": "NOT_DEPLOYED",
+          "evidence": "no job, no image, no schedule; enabling needs an execution target, an execution-control entry and Michael's approval"
+        },
+        "customerConsumable": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_CUSTOMER_FACING",
+          "evidence": "customerIntegrationMode none; customer publication off"
+        }
+      },
+      "requirements": {
+        "BR-05": "PASS",
+        "BR-06": "PASS",
+        "BR-07": "PASS",
+        "BR-10": "PASS",
+        "BR-11": "PARTIAL",
+        "BR-16": "PASS",
+        "BR-18": "PASS",
+        "BR-19": "PASS"
+      },
+      "structuralProblems": [
+        "Not yet a Cortex target Brain: brain-architecture.json lists nine Brains and gives dam releases to Lake Brain (CG-3.1-19)",
+        "Source parsers tested on hand-built fixtures only; record real responses before enabling"
+      ],
+      "scienceDependencies": [
+        "Approval of a Generation knowledge release (GEN-REL-001)",
+        "Binding of pending CWMS / RISE / TVA / USGS sources (GEN-BIND-001..003)",
+        "Week-long schedule comparison (GEN-VAL-001)"
+      ],
+      "nextWork": [
+        "Cortex release adding Generation as a target Brain and moving dam releases from Lake (CG-3.1-19)",
+        "TVA and SWPA access checks (GEN-ACCESS-001)",
+        "CWMS release-series probe pass (GEN-BIND-001)"
+      ],
+      "operations": {
+        "scientificValidation": {
+          "status": "NOT_STARTED",
+          "label": "SCHEDULE_COMPARISON_PREREGISTERED_GEN_VAL_001"
+        },
+        "knowledgeRelease": {
+          "state": "CANDIDATE",
+          "releaseId": "generation-knowledge-candidate-2026-11-22.1",
+          "approval": "NOT_RECORDED"
+        },
+        "customerEligibility": {
+          "status": "NOT_ELIGIBLE",
+          "basis": "brain.json operations.customerPublication; execution manifest customerPublication false; engineMode PRE_PRODUCTION"
+        },
+        "executionModes": [
+          "INTERNAL",
+          "APPROVED_SCIENCE"
+        ],
+        "scores": [],
+        "limitations": [
+          "Approved path abstains until an APPROVED release",
+          "17 of 401 dam lakes readable from bound, allowed sources today (TVA); the rest are pending discovery, access checks or operator permission",
           "No capability score (not scored)"
         ]
       }
@@ -2005,6 +2204,34 @@
       "class": "GATED",
       "title": "Turn on publication of the sanitized engineering status (engineering-status-ops-v1) to the Brain RTDB node /control/engineeringStatusV1 by the orchestrator control plane",
       "recommendation": "After A-1 merge and A-2 deploy from main: add --publish-engineering-status to the orchestrator's scheduled arguments. Existing writer and /control ownership; no IAM, identity or Ops rules change"
+    },
+    {
+      "id": "G-2",
+      "class": "APPROVAL",
+      "title": "Approve a Generation knowledge release (dam catalog + source-access list) before any Generation write",
+      "recommendation": "Approve only after D-G and the pre-registered week-long schedule comparison; the candidate generation-knowledge-candidate-2026-11-22.1 stays unapproved",
+      "brains": [
+        "generation"
+      ]
+    },
+    {
+      "id": "D-G",
+      "class": "DECISION_REQUIRED",
+      "title": "TVA robots.txt and the iOS 'TVA blocks automated access' note; SWPA (energy.gov) robots.txt and terms",
+      "recommendation": "Read both robots.txt files from a session that can reach them; if either forbids automated use, ask the operator (owner source-access rule)",
+      "brains": [
+        "generation"
+      ]
+    },
+    {
+      "id": "D-H",
+      "class": "DECISION_REQUIRED",
+      "title": "Cortex architecture: add Generation as a tenth target Brain and move dam releases and reservoir operations (not pool level) from Lake Brain to it (CG-3.1-19)",
+      "recommendation": "Cortex maintenance session; until then Generation is an UNREGISTERED deployed package registered DISABLED",
+      "brains": [
+        "generation",
+        "lake-brain"
+      ]
     }
   ],
   "cortexGaps": [

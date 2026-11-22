@@ -21,6 +21,7 @@
     "sector-intelligence": "shared-writer",
     "depth": "NONE",
     "vegetation": "NONE",
+    "generation": "NONE",
     "orchestrator": "shared-writer",
     "publisher": "publisher"
   },
@@ -33,6 +34,7 @@
     "sector-intelligence": "brain-job",
     "depth": "brain-job",
     "vegetation": "brain-job",
+    "generation": "brain-job",
     "orchestrator": "orchestrator",
     "publisher": "publisher"
   },

@@ -697,8 +697,64 @@ def vegetation_bundles() -> list[BundleSpec]:
     return [BundleSpec(VEGETATION_BUNDLE, VEGETATION, VEGETATION_SCHEMAS)]
 
 
+# ---- Generation (CALIBRATION; canonical package brains/generation, owner direction 2026-11-22, Sector_Ops #51) ------------------------------------
+# Generation has NO live writer: the control manifest gives it no execution target and its knowledge release is not approved, so run.py --write
+# refuses. This registration describes its write set as Publisher families so the Brain can be certified; it activates nothing.
+GENERATION = "generation"
+GENERATION_SLOT = BRAINS[GENERATION][0]
+GENERATION_SNAPSHOT_FIELD = BRAINS[GENERATION][1]
+GENERATION_SCHEMAS = ("generation-lake-state-v1", "generation-registry-v1")
+GENERATION_BUNDLE = "generation-publication-v1"
+GENERATION_REGISTRY_CHILDREN = {
+    "identity": ("brainId", "displayName", "domain", "question", "platform"),
+    "model": ("version", "schemaVersion", "contractVersion", "stalenessModel", "dependsOn", "versions", "readinessDefinitions", "stateKinds",
+              "catalogVersion", "knowledgeRelease", "lifecycle", "scoreStatus", "scoreNote", "sourceIds", "sourceAccess"),
+    "status": ("schedule", "enabled", "health", "status", "statusBasis", "supportedLakeCount", "directoryLakeCount", "readinessCounts", "staleLakeCount",
+               "staleAfterHours", "lastSuccessfulRun", "lastError", "lastRun", "breakdowns", "fleet", "blockers", "primaryBlocker", "orchestration",
+               "validation", "publishMode", "scope", "updatedAt"),
+}
+GENERATION_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount")
+GENERATION_VOLATILE_CONTRACT_V1 = VolatileContract(
+    "generation-volatile-v1", 1,
+    keys=frozenset({"lastUpdatedAt", "updatedAt", "retrievedAt", "generatedAt", "freshUntil", "nextCheckAt", "recheckMinutes", "lastRun"}),
+    paths=(PathFamily(f"/brains/{GENERATION}/lastSuccessfulRun", note="transitional"), PathFamily(f"/brains/{GENERATION}/versions", note="carries the run date")),
+    notes={"key:lastUpdatedAt": "slot write time; no domain meaning", "key:updatedAt": "registry write time; no domain meaning",
+           "key:retrievedAt": "when a source was read; the reading's own time is observedAt", "key:generatedAt": "run time",
+           "key:freshUntil": "derived from the run time and the reading (freshness window)", "key:nextCheckAt": "next read time (run time + tier)",
+           "key:recheckMinutes": "the tier's re-read interval, a function of the release picture", "key:lastRun": "per-run counters",
+           "path:/brains/generation/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records",
+           "path:/brains/generation/versions": "version history entry dated by the run"})
+
+
+def generation_specs() -> list[SchemaSpec]:
+    k = {"k": lake_key_check}
+    lake_state = SchemaSpec(
+        "generation-lake-state-v1", GENERATION,
+        (PathFamily(f"/lakes/{{k}}/states/{GENERATION_SLOT}", k),
+         PathFamily(f"/lakeFleet/{{k}}/slots/{GENERATION_SLOT}", k, "DERIVED_PROJECTION", "projection of the lake state; same atomic publish"),
+         PathFamily(f"/lakeFleet/{{k}}/readiness/{GENERATION_SLOT}", k, "DERIVED_PROJECTION"),
+         PathFamily(f"/lakeFleet/{{k}}/modelVersions/{GENERATION_SLOT}", k, "DERIVED_PROJECTION"),
+         PathFamily(f"/snapshots/{{k}}/latest/{GENERATION_SNAPSHOT_FIELD}", k, note="published lakes only (Brain-authored, no COPY projection)"),
+         PathFamily(f"/snapshots/{{k}}/latest/brainVersions/{GENERATION}", k, note="published lakes only")),
+        value_types={f"/lakes/{{k}}/states/{GENERATION_SLOT}": dict, f"/lakeFleet/{{k}}/slots/{GENERATION_SLOT}": dict},
+        volatile=GENERATION_VOLATILE_CONTRACT_V1)
+    registry = SchemaSpec(
+        "generation-registry-v1", GENERATION,
+        (PathFamily(f"/brains/{GENERATION}/{{child}}", {"child": one_of(c for group in GENERATION_REGISTRY_CHILDREN.values() for c in group)},
+                    note="approved CHILDREN only; never the whole node, never publication/certification"),
+         PathFamily(f"/validation/{GENERATION}"),
+         PathFamily(f"/health/brains/{GENERATION}/{{child}}", {"child": one_of(GENERATION_HEALTH_DOMAIN_CHILDREN)}, note="domain health facts only"),
+         PathFamily("/activity/{event}", {"event": contains(f"-{GENERATION}-")}, note="own domain events only; retention/pruning is a platform concern")),
+        delete_families=(PathFamily(f"/brains/{GENERATION}/lastError"),), delete_reasons=("OPTIONAL_CHILD_CLEARED",), volatile=GENERATION_VOLATILE_CONTRACT_V1)
+    return [lake_state, registry]
+
+
+def generation_bundles() -> list[BundleSpec]:
+    return [BundleSpec(GENERATION_BUNDLE, GENERATION, GENERATION_SCHEMAS)]
+
+
 def default_registry() -> Registry:
-    """Wind, Fish, Water Clarity, Sector Intelligence, Lake, Water Temperature, Depth and Vegetation (all SHADOW). A registration describes a Brain's
+    """Wind, Fish, Water Clarity, Sector Intelligence, Lake, Water Temperature, Depth, Vegetation and Generation (all SHADOW or CALIBRATION). A registration describes a Brain's
     write set so it can be certified; it activates nothing (Publisher LIVE authorizes no Brain)."""
-    return Registry(wind_specs() + fish_specs() + clarity_specs() + intelligence_specs() + lake_specs() + water_temp_specs() + depth_specs() + vegetation_specs(),
-                    wind_bundles() + fish_bundles() + clarity_bundles() + intelligence_bundles() + lake_bundles() + water_temp_bundles() + depth_bundles() + vegetation_bundles())
+    return Registry(wind_specs() + fish_specs() + clarity_specs() + intelligence_specs() + lake_specs() + water_temp_specs() + depth_specs() + vegetation_specs() + generation_specs(),
+                    wind_bundles() + fish_bundles() + clarity_bundles() + intelligence_bundles() + lake_bundles() + water_temp_bundles() + depth_bundles() + vegetation_bundles() + generation_bundles())

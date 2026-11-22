@@ -1,0 +1,54 @@
+{
+ "schema": "sector-bowfishing-charter-v1",
+ "status": "CANDIDATE_PRIORS_NOT_VALIDATED",
+ "note": "Practical priors about bowfishing are hypotheses until validated by independent historical, public-dataset, literature or model evidence (owner-collected field data is optional, never required); fit-for-purpose targets are pre-declared requirements, not achievements.",
+ "brainId": "generation",
+ "role": "Dam release and generation now and on the operator's schedule",
+ "bowfishingPurpose": "Moving water below and near a dam changes where fish hold and whether a tailwater is shootable; bowfishers plan around when the units start and stop.",
+ "decisionsInformed": [
+  "whether the water below the dam is moving or settled tonight",
+  "when generation starts or stops"
+ ],
+ "predicts": [
+  {
+   "id": "releaseStatus",
+   "desc": "Release status now from the operator's measured release and published schedule",
+   "status": "ABSTAIN_NO_RELEASE"
+  },
+  {
+   "id": "scheduledTransitions",
+   "desc": "Next scheduled start and stop of generation, as published by the operator",
+   "status": "ABSTAIN_NO_RELEASE"
+  }
+ ],
+ "mustNotPredict": [
+  "units or discharge derived from megawatts",
+  "a release where no official source publishes one",
+  "pool level (Lake Brain)"
+ ],
+ "needsFrom": [],
+ "providesTo": [],
+ "fitForPurpose": [
+  {
+   "metric": "share of operator-scheduled hours whose published status matches the schedule (one pre-registered week)",
+   "target": 0.95,
+   "direction": "higher",
+   "rationale": "the tile must agree with what the operator published"
+  },
+  {
+   "metric": "start/stop transitions reflected within one grant (minutes)",
+   "target": 90,
+   "direction": "lower",
+   "rationale": "a release that starts must show before the water reaches the bowfisher"
+  }
+ ],
+ "priorityQuestions": [
+  "Which USACE projects publish turbine and spill series in CWMS, not only total outflow?",
+  "Does SWPA's page state its schedule date, and is automated access permitted?"
+ ],
+ "abstainWhen": [
+  "no approved release",
+  "source access not ALLOWED",
+  "no current measured release and no schedule for this hour"
+ ]
+}
