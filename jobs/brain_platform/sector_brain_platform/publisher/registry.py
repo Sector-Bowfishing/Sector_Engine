@@ -697,8 +697,59 @@ def vegetation_bundles() -> list[BundleSpec]:
     return [BundleSpec(VEGETATION_BUNDLE, VEGETATION, VEGETATION_SCHEMAS)]
 
 
+# ---- Moon and Night Light (CALIBRATION; canonical package brains/moon, created 2026-11-22, Sector_Ops #51) -----------------------------------------
+# The Moon Brain has NO live writer: its run modes write a local JSON file or build the write set into an in-memory store (runtime/run.py). This
+# registration describes that write set as Publisher families so the Brain can be certified; it activates nothing and authorizes no writer.
+MOON = "moon"
+MOON_SLOT = BRAINS[MOON][0]
+MOON_SNAPSHOT_FIELD = BRAINS[MOON][1]
+MOON_SCHEMAS = ("moon-lake-state-v1", "moon-registry-v1")
+MOON_BUNDLE = "moon-publication-v1"
+MOON_REGISTRY_CHILDREN = {
+    "identity": ("brainId", "displayName", "domain", "question", "platform"),
+    "model": ("version", "schemaVersion", "stalenessModel", "dependsOn", "versions", "models", "readinessDefinitions", "knowledgeRelease", "scoreNote",
+              "sourceIds"),
+    "status": ("schedule", "enabled", "health", "status", "supportedLakeCount", "directoryLakeCount", "readinessCounts", "staleLakeCount",
+               "staleAfterHours", "lastSuccessfulRun", "lastError", "breakdowns", "validation", "publishMode", "updatedAt"),
+}
+MOON_HEALTH_DOMAIN_CHILDREN = ("status", "staleLakeCount")
+MOON_VOLATILE_CONTRACT_V1 = VolatileContract(
+    "moon-volatile-v1", 1,
+    keys=frozenset({"updatedAt"}),
+    paths=(PathFamily(f"/brains/{MOON}/lastSuccessfulRun", note="transitional"), PathFamily(f"/brains/{MOON}/versions", note="carries the run date")),
+    notes={"key:updatedAt": "registry write time; no domain meaning",
+           "path:/brains/moon/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records",
+           "path:/brains/moon/versions": "version history entry dated by the run"})
+
+
+def moon_specs() -> list[SchemaSpec]:
+    k = {"k": lake_key_check}
+    lake_state = SchemaSpec(
+        "moon-lake-state-v1", MOON,
+        (PathFamily(f"/lakes/{{k}}/states/{MOON_SLOT}", k),
+         PathFamily(f"/lakeFleet/{{k}}/slots/{MOON_SLOT}", k, "DERIVED_PROJECTION", "projection of the lake state; same atomic publish"),
+         PathFamily(f"/lakeFleet/{{k}}/readiness/{MOON_SLOT}", k, "DERIVED_PROJECTION"),
+         PathFamily(f"/lakeFleet/{{k}}/modelVersions/{MOON_SLOT}", k, "DERIVED_PROJECTION"),
+         PathFamily(f"/snapshots/{{k}}/latest/{MOON_SNAPSHOT_FIELD}", k, note="Brain-authored (no COPY projection)"),
+         PathFamily(f"/snapshots/{{k}}/latest/brainVersions/{MOON}", k, note="LEGACY_READER_DEPENDENCY")),
+        value_types={f"/lakes/{{k}}/states/{MOON_SLOT}": dict, f"/lakeFleet/{{k}}/slots/{MOON_SLOT}": dict},
+        volatile=MOON_VOLATILE_CONTRACT_V1)
+    registry = SchemaSpec(
+        "moon-registry-v1", MOON,
+        (PathFamily(f"/brains/{MOON}/{{child}}", {"child": one_of(c for group in MOON_REGISTRY_CHILDREN.values() for c in group)},
+                    note="approved CHILDREN only; never the whole node, never publication/certification"),
+         PathFamily(f"/validation/{MOON}"),
+         PathFamily(f"/health/brains/{MOON}/{{child}}", {"child": one_of(MOON_HEALTH_DOMAIN_CHILDREN)}, note="domain health facts only")),
+        delete_families=(PathFamily(f"/brains/{MOON}/lastError"),), delete_reasons=("OPTIONAL_CHILD_CLEARED",), volatile=MOON_VOLATILE_CONTRACT_V1)
+    return [lake_state, registry]
+
+
+def moon_bundles() -> list[BundleSpec]:
+    return [BundleSpec(MOON_BUNDLE, MOON, MOON_SCHEMAS)]
+
+
 def default_registry() -> Registry:
-    """Wind, Fish, Water Clarity, Sector Intelligence, Lake, Water Temperature, Depth and Vegetation (all SHADOW). A registration describes a Brain's
+    """Wind, Fish, Water Clarity, Sector Intelligence, Lake, Water Temperature, Depth, Vegetation and Moon (all SHADOW). A registration describes a Brain's
     write set so it can be certified; it activates nothing (Publisher LIVE authorizes no Brain)."""
-    return Registry(wind_specs() + fish_specs() + clarity_specs() + intelligence_specs() + lake_specs() + water_temp_specs() + depth_specs() + vegetation_specs(),
-                    wind_bundles() + fish_bundles() + clarity_bundles() + intelligence_bundles() + lake_bundles() + water_temp_bundles() + depth_bundles() + vegetation_bundles())
+    return Registry(wind_specs() + fish_specs() + clarity_specs() + intelligence_specs() + lake_specs() + water_temp_specs() + depth_specs() + vegetation_specs() + moon_specs(),
+                    wind_bundles() + fish_bundles() + clarity_bundles() + intelligence_bundles() + lake_bundles() + water_temp_bundles() + depth_bundles() + vegetation_bundles() + moon_bundles())

@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "moon",
+  "displayName": "Moon and Night Light Brain",
+  "humanName": "Moon and Night Light",
+  "domain": "condition",
+  "lifecycle": "CALIBRATION",
+  "contractVersion": "1.0.0",
+  "runtime": {
+    "kind": "job",
+    "language": "python",
+    "entrypoint": "brains/moon/runtime/run.py",
+    "trigger": {
+      "kind": "manual"
+    }
+  },
+  "publishes": [
+    {
+      "contractId": "moon-publication-v1",
+      "version": "1.0.0",
+      "schemaRef": "brains/moon/contracts/moon-publication-v1.json",
+      "pathFamilies": [
+        "/lakes/{k}/states/moon",
+        "/lakeFleet/{k}/slots/moon",
+        "/lakeFleet/{k}/readiness/moon",
+        "/lakeFleet/{k}/modelVersions/moon",
+        "/snapshots/{k}/latest/moonNightLight",
+        "/snapshots/{k}/latest/brainVersions/moon",
+        "/brains/moon/{child}",
+        "/validation/moon",
+        "/health/brains/moon/{child}"
+      ],
+      "legacyDirectWrites": [
+        {"path": "/snapshots/{k}/latest/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "snapshot-lakeid"},
+        {"path": "/lakeFleet/{k}/lakeId", "disposition": "PLATFORM_OWNED_STOP_WRITING", "ref": "lakefleet-lakeid"}
+      ]
+    }
+  ],
+  "consumes": [
+    {
+      "kind": "registry",
+      "registry": "lakes",
+      "contractId": "registry.lakes",
+      "minVersion": "1.0.0",
+      "requirement": "REQUIRED"
+    }
+  ],
+  "providers": [],
+  "researchWorkspace": {
+    "workspaceId": "moon"
+  },
+  "customerIntegrationMode": "none",
+  "publisherRequired": {
+    "required": true,
+    "cutoverStatus": "SHADOW"
+  },
+  "authorizedConsumers": [
+    "ops",
+    "sector-intelligence"
+  ],
+  "tests": [
+    "brains/moon/tests"
+  ],
+  "dataBudget": {
+    "maxTrackedFileBytes": 1048576,
+    "exceptions": []
+  },
+  "knowledge": {
+    "stores": [
+      {
+        "id": "moon-knowledge",
+        "store": "PACKAGED_IN_IMAGE",
+        "owner": "moon",
+        "location": "brains/moon/runtime/knowledge/knowledge-release.json",
+        "loader": "brains/moon/runtime/moon_brain/lakes.py load",
+        "verification": "sector_brain_platform.knowledge_release: per-file sha256 and bytes plus release digest; then the projection's own schema, count and digest",
+        "lineage": "knowledgeRelease in the registry; knowledgeRelease, manifestRef and manifestSha256 in the artifact lineage",
+        "approval": "NOT_RECORDED",
+        "onUnavailable": "REFUSE"
+      }
+    ],
+    "researchFallback": false,
+    "tests": [
+      "brains/moon/tests/test_lake_directory.py",
+      "jobs/brain_platform/tests/test_knowledge_release.py"
+    ],
+    "notes": "The release is a projection (lakeId, name, state, lat, lon) of the Engine's compiled lake directory, the registry.lakes contract; a test fails when it drifts from Sources/SectorEngine/Support/LakeDirectory.swift. The ephemeris is code (sector-moon-v1), not knowledge."
+  },
+  "operations": {
+    "executionModes": [
+      "INTERNAL"
+    ],
+    "knowledgeLoading": {
+      "approved": "NONE",
+      "experimental": "moon-knowledge (PACKAGED_IN_IMAGE, brains/moon/runtime/knowledge/knowledge-release.json, approval NOT_RECORDED)",
+      "refuseWithoutApproved": [
+        "CUSTOMER_SERVING"
+      ]
+    },
+    "internalPublication": [
+      "artifact:brains/moon/runtime/run.py --tonight (local JSON file)"
+    ],
+    "internalExecution": "none: not scheduled, no executor (control manifest PARKED, executionTarget kind none) and absent from the execution control (disabled). run.py writes a local file or an in-memory dry run only; --write refuses.",
+    "execution": {"authority": "brain-orchestrator", "trigger": "TIME", "minIntervalHours": 24.0, "refresh": "once per night per lake when enabled (and hourly with Weather Brain cloud cover); NOT enabled", "dependsOn": [], "independentSchedule": false, "controlledBy": "fam.control-execution-control (global + per-Brain; fail closed; read by the orchestrator only). The Moon Brain is not in it: disabled."},
+    "customerPublication": {
+      "status": "NOT_ELIGIBLE",
+      "approvalRef": null
+    },
+    "notes": "Owner decision 2026-11-22 (Sector_Ops #51): build it. Merging changes nothing at runtime: PARKED, no executor, no live writer, customerPublication false (PRE_PRODUCTION). The Weather Brain cloud input is OPTIONAL and provisional (contracts/moon-night-light-v1.json weatherInput) until that Brain publishes a contract."
+  }
+}
