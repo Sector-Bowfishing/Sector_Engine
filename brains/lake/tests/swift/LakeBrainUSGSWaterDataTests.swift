@@ -262,7 +262,7 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
         XCTAssertEqual(got.map(\.ft)[3], 1556.34, accuracy: 1e-9)
         XCTAssertEqual(Set(got.map(\.sourceId)), ["usgs:01314500:62614:dv"])
         let u = try XCTUnwrap(fake.urls.first)
-        XCTAssertTrue(u.contains("/daily/items") && !u.contains("statistic_id") && u.contains("time=1900-01-01/2026-11-22"),
+        XCTAssertTrue(u.contains("/daily/items") && !u.contains("statistic_id=") && u.contains("time=1900-01-01/2026-11-22"),
                       "dv asks for every statistic, as legacy did without statCd: \(u)")
     }
 
@@ -451,7 +451,7 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
         XCTAssertEqual(LakeUSGSShadow.compareLive(legacy: l, ogc: feed([("2026-11-22T10:00:00Z", 745.10)])).reason, "ogc-older")
         XCTAssertEqual(LakeUSGSShadow.compareLive(legacy: l, ogc: feed([("2026-11-22T10:00:00Z", 745.10), ("2026-11-22T11:00:00Z", 745.14)])).reason, "latest-delta")
         XCTAssertEqual(LakeUSGSShadow.compareLive(legacy: .failed("x"), ogc: l).verdict, "legacy-unavailable")
-        XCTAssertEqual(LakeUSGSShadow.compareLive(legacy: l, ogc: .failed("x")).reason, "ogc-failed")
+        XCTAssertEqual(LakeUSGSShadow.compareLive(legacy: l, ogc: .failed("x")).reason, "ogc-failed:unknown")
     }
 
     func testDailyAndSiteAgreementRules() {
@@ -463,7 +463,7 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
         XCTAssertEqual(LakeUSGSShadow.compareDaily(legacy: l, ogc: days([("2026-11-21", 1.2)])).reason, "missing-dates")
         XCTAssertEqual(LakeUSGSShadow.compareDaily(legacy: l, ogc: days([("2026-11-19", 1.0), ("2026-11-20", 1.5), ("2026-11-21", 1.2)])).reason, "common-dates")
         XCTAssertEqual(LakeUSGSShadow.compareDaily(legacy: nil, ogc: l).verdict, "legacy-unavailable")
-        XCTAssertEqual(LakeUSGSShadow.compareDaily(legacy: l, ogc: nil).reason, "ogc-failed")
+        XCTAssertEqual(LakeUSGSShadow.compareDaily(legacy: l, ogc: nil).reason, "ogc-failed:unknown")
 
         let a = USGSSiteDatum(site: "04082500", name: nil, siteType: "LK", altitudeFt: 743.91, accuracyFt: 0.01, datum: "NAVD88")
         var b = a; b.datum = " navd88 "

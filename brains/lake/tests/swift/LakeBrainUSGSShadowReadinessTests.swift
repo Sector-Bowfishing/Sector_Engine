@@ -248,7 +248,8 @@ final class LakeBrainUSGSShadowReadinessTests: XCTestCase {
         var b = a; b.datum = #"NAV D88" verdict=agree"#
         let line = LakeUSGSShadow.line(site: "04082500", param: "00065", kind: "site", LakeUSGSShadow.compareSite(legacy: .ok(a), ogc: .ok(b)))
         XCTAssertTrue(line.hasPrefix("[usgs-shadow] site=04082500 param=00065 kind=site verdict=disagree reason="), line)
-        XCTAssertEqual(line.components(separatedBy: " verdict=").count, 2, "a value cannot add an unquoted field: \(line)")
+        let unquoted = line.components(separatedBy: #" ogcWhy=""#)[0]
+        XCTAssertEqual(unquoted.components(separatedBy: " verdict=").count, 2, "a value cannot add an unquoted field: \(line)")
         XCTAssertTrue(line.contains("reason=datum-NAVD88-vs-NAV_D88__VERDICT_AGREE"), line)
         XCTAssertTrue(line.contains(#"ogcWhy="legacy datum NAVD88, v1 datum NAV D88\" verdict=agree""#), line)
         XCTAssertEqual(LakeUSGSShadow.quoted("a\nb\\c"), #""a\nb\\c""#)
