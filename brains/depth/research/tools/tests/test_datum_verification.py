@@ -9,7 +9,8 @@ from conftest import MANIFEST_PATH
 from depth_brain import contract as C
 from depth_brain.datum import DatumAssessment
 from depth_brain.shift import LevelObservation, ReferencePool, compute_shift
-from depth_research.candidates import (VERIFICATION_RECORDS, assess_candidate, live_source_location, load_datum_verification,
+from depth_research.candidates import (SINGLE_OFFICIAL, SINGLE_OFFICIAL_LABEL, VERIFICATION_RECORDS, assess_candidate, empirical_problems,
+                                       is_official_root, live_source_location, load_datum_verification,
                                        load_provider_table, reviewed_live_sources, verification_problems, verified_conversion,
                                        verified_same_source)
 from tests.helpers import NOW
@@ -37,7 +38,6 @@ def verified_toledo():
     rec["sides"]["reference"]["status"] = "VERIFIED"
     rec["sides"]["reference"]["evidence"].append({"publisher": "Operator X", "url": "https://example.org/pool", "quote": "172 ft NGVD 29", "derivedFrom": "operator-survey"})
     rec["status"] = "VERIFIED"
-    rec["relationship"] = {**rec["conversionCandidate"], "status": "CONVERTED"}
     return rec
 
 
@@ -49,18 +49,74 @@ def test_every_record_satisfies_the_verification_rule():
         assert verification_problems(lid, rec) == [], (lid, verification_problems(lid, rec))
 
 
-def test_no_committed_record_enables_a_conversion():
-    assert {lid for lid, rec in RECORDS.items() if verified_conversion(rec)} == set()
+def test_only_toledo_bend_enables_a_conversion_and_it_is_labelled_single_official():
+    assert {lid for lid, rec in RECORDS.items() if verified_conversion(rec)} == {TOLEDO}
+    assert {lid for lid, rec in RECORDS.items() if rec["status"] == SINGLE_OFFICIAL} == {TOLEDO}
 
 
-def test_toledo_bend_reference_has_one_root_so_it_is_single_source():
+def test_toledo_bend_qualifies_as_single_official_source():
     rec = RECORDS[TOLEDO]
     ref = rec["sides"]["reference"]
-    assert {e["derivedFrom"] for e in ref["evidence"]} == {"USGS-08025350"} and ref["status"] == "SINGLE_SOURCE"
-    assert rec["status"] == "SINGLE_SOURCE" and verified_conversion(rec) is None
-    assert "owner" in rec["sides"]["level"]["basisDecision"]                       # the level-basis decision stays recorded
+    roots = {e.get("derivedFrom") for e in ref["evidence"] if not e.get("supportingOnly")}
+    assert roots == {"USGS-08025350"} and ref["status"] == SINGLE_OFFICIAL and is_official_root("USGS-08025350")      # (a) one official root
+    assert empirical_problems(rec["relationship"]["empirical"]) == []                                                    # (b) two-gauge check agrees
+    assert rec["singleOfficialSource"] is True and rec["label"] == SINGLE_OFFICIAL_LABEL                                 # (c) labelled
+    assert "owner" in rec["sides"]["level"]["basisDecision"]
     a = assess_candidate(TOLEDO, {}, usgs("62615"), TWDB_SRC, NGVD_POOL_TABLE, {}, {}, None, RECORDS)[0]
-    assert a.status == "INCOMPATIBLE"
+    assert a.status == "CONVERTED" and a.conversion_ft == pytest.approx(0.2)
+    d = a.as_dict()                                                    # what the manifest carries
+    assert "single-official-source" in d["basis"] and d["evidenceConfidence"] == "medium"
+    assert any(r.startswith(SINGLE_OFFICIAL_LABEL) for r in d["reasons"])
+
+
+def single_official():
+    return copy.deepcopy(RECORDS[TOLEDO])
+
+
+def test_single_official_refused_for_a_non_official_root():
+    rec = single_official()
+    for e in rec["sides"]["reference"]["evidence"]:
+        if not e.get("supportingOnly"):
+            e["derivedFrom"] = "LakeFansBlog"
+    assert verified_conversion(rec) is None and any("not an official authority" in x for x in verification_problems(TOLEDO, rec))
+    assert assess_candidate(TOLEDO, {}, usgs("62615"), TWDB_SRC, NGVD_POOL_TABLE, {}, {}, None, {TOLEDO: rec})[0].status == "INCOMPATIBLE"
+
+
+def test_dam_operator_counts_only_when_named_by_the_record():
+    assert is_official_root("OPERATOR:Sabine River Authority (TX/LA)", "Sabine River Authority (TX/LA)")
+    assert not is_official_root("OPERATOR:Sabine River Authority (TX/LA)", None)
+    assert not is_official_root("USGSX") and is_official_root("NOAA NWPS") and not is_official_root("TWDB")
+
+
+@pytest.mark.parametrize("mutate", [
+    lambda e: e.clear(),                                           # missing
+    lambda e: e.update(passed=False),                              # failed flag
+    lambda e: e.update(meanFt=0.05),                               # disagrees: outside tolerance of -0.285
+    lambda e: e.update(meanFt=-0.10),                              # within tolerance but closer to "no offset"
+    lambda e: e.update(toleranceFt=0.5),                           # tolerance looser than the plan allows
+    lambda e: e.update(n=3),                                       # too few samples
+])
+def test_single_official_refused_without_a_passing_empirical_check(mutate):
+    rec = single_official()
+    mutate(rec["relationship"]["empirical"])
+    assert verified_conversion(rec) is None
+    assert assess_candidate(TOLEDO, {}, usgs("62615"), TWDB_SRC, NGVD_POOL_TABLE, {}, {}, None, {TOLEDO: rec})[0].status == "INCOMPATIBLE"
+
+
+def test_single_official_refused_without_the_label():
+    rec = single_official()
+    rec["singleOfficialSource"] = False
+    assert verified_conversion(rec) is None
+    rec = single_official()
+    rec.pop("label")
+    assert verified_conversion(rec) is None
+
+
+def test_supporting_evidence_is_never_a_second_root():
+    rec = single_official()
+    rec["sides"]["reference"]["status"] = "VERIFIED"
+    rec["status"] = "VERIFIED"                                         # OFR 79-678 (supportingOnly) must not lift it to two roots
+    assert verified_conversion(rec) is None
 
 
 def test_ross_barnett_stays_unconverted():
@@ -78,7 +134,7 @@ def test_carried_forward_citations_are_not_evidence():
 
 def test_only_verified_or_same_source_records_carry_a_relationship():
     for lid, rec in RECORDS.items():
-        if rec["status"] not in ("VERIFIED", "SAME_SOURCE"):
+        if rec["status"] not in ("VERIFIED", SINGLE_OFFICIAL, "SAME_SOURCE"):
             assert not (rec.get("relationship") or {}).get("status"), lid
     assert RECORDS["Cross Lake|LA"]["status"] == "CONFLICT" and RECORDS["Cross Lake|LA"]["conflict"]
 

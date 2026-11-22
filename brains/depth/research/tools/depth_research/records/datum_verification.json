@@ -1,14 +1,14 @@
 {
  "schema": "depth-datum-verification-v1",
- "rulesVersion": "datum-verification-rules-2",
- "rules": "Verification rule of the Depth datum plan (2026-11-22) section 3: a side is VERIFIED only when two independent publishers name the same datum for the same series or pool (or the datum is stamped by the series' own parameter definition AND an empirical cross-gauge check passes); a conversion is enabled only when the offset agrees with NOAA VDatum at the gauge within 0.10 ft; datum-name disagreement or offsets more than 0.25 ft apart is CONFLICT; at most two research passes per lake. Consumed by depth_research.candidates (verified_conversion); nothing here is read at runtime. Rules-2 (review of PR #223): two publishers that re-serve one upstream record count once (`derivedFrom` on each evidence item, distinct roots required); a side's own offset more than 0.25 ft from VDatum must be recorded as offsetConflict and blocks VERIFIED; every record above NONE needs an http evidence item; carried-forward pointers are marked notEvidence; a SAME_SOURCE record pins Lake's reviewed live binding and the pool Lake Brain uses.",
+ "rulesVersion": "datum-verification-rules-3",
+ "rules": "Verification rule of the Depth datum plan (2026-11-22) section 3: a side is VERIFIED only when two independent publishers name the same datum for the same series or pool (or the datum is stamped by the series' own parameter definition AND an empirical cross-gauge check passes); a conversion is enabled only when the offset agrees with NOAA VDatum at the gauge within 0.10 ft; datum-name disagreement or offsets more than 0.25 ft apart is CONFLICT; at most two research passes per lake. Consumed by depth_research.candidates (verified_conversion); nothing here is read at runtime. Rules-2 (review of PR #223): two publishers that re-serve one upstream record count once (`derivedFrom` on each evidence item, distinct roots required); a side's own offset more than 0.25 ft from VDatum must be recorded as offsetConflict and blocks VERIFIED; every record above NONE needs an http evidence item; carried-forward pointers are marked notEvidence; a SAME_SOURCE record pins Lake's reviewed live binding and the pool Lake Brain uses. Rules-3 (Michael, chat 2026-11-22 08:11Z, recorded on Sector_Ops #51): VERIFIED_SINGLE_OFFICIAL, labelled 'single official source', permits the same use as VERIFIED when (a) every evidence root of the single-source side is an official authority (USGS, USACE, USBR, TVA, NOAA, or the dam operator named in damOperator), (b) an empirical real-data check agrees numerically (n >= 5, tolerance <= 0.30 ft, closer to the claimed offset than to no offset), and (c) the record sets singleOfficialSource=true and the label. Two independent roots (VERIFIED) stay the stronger tier.",
  "checkedAt": "2026-11-22",
  "reviewer": "claude-code (research pass; promotion into a knowledge release is Michael's decision)",
  "evidenceNote": "Evidence was read with a web fetcher that returns a model summary of the page, so `quote` is the value as reported by that fetch, not a byte-exact excerpt, and `sha256` is null (raw bytes were not retained). VDatum calls: /vdatumweb/api/convert, NAD27 geographic in, NGVD29 -> NAVD88, us_ft, region contiguous, geoid18.",
  "lakes": {
   "Toledo Bend Reservoir|TX": {
    "passes": 2,
-   "status": "SINGLE_SOURCE",
+   "status": "VERIFIED_SINGLE_OFFICIAL",
    "sides": {
     "level": {
      "seriesId": "USGS-312914093422701:62615",
@@ -38,8 +38,8 @@
     "reference": {
      "seriesId": "TWDB conservation pool 172.00 ft on USGS 08025350",
      "datum": "NGVD29",
-     "status": "SINGLE_SOURCE",
-     "basis": "two-publishers",
+     "status": "VERIFIED_SINGLE_OFFICIAL",
+     "basis": "single-official-source",
      "evidence": [
       {
        "publisher": "TWDB (Water Data for Texas)",
@@ -64,10 +64,28 @@
        "retrievedAt": "2026-11-22",
        "sha256": null,
        "derivedFrom": "USGS-08025350"
+      },
+      {
+       "publisher": "USGS (station description, reprinted by the Sabine River Compact Administration)",
+       "url": "https://texashistory.unt.edu/ark:/67531/metapth1587189/m2/1/high_res_d/UNT-0013-0138.pdf",
+       "quote": "08025350 ... Datum of gage is NGVD of 1929 (levels by Sabine River Authority). (67th Annual Report, 2021, Appendix A)",
+       "retrievedAt": "2026-11-22",
+       "sha256": null,
+       "derivedFrom": "USGS-08025350"
+      },
+      {
+       "publisher": "USGS",
+       "url": "https://pubs.usgs.gov/of/1979/0678/report.pdf",
+       "quote": "All elevations given in this report are referenced to the \"National Geodetic Vertical Datum of 1929,\" ... The elevation of the water surface in the reservoir is maintained at 172.0 ft. (OFR 79-678, April 1979)",
+       "retrievedAt": "2026-11-22",
+       "sha256": null,
+       "derivedFrom": "USGS",
+       "supportingOnly": true
       }
      ],
      "note": "The operator (Sabine River Authority) states pool figures only as 'ft MSL' (https://sratx.org/?p=5676); that wording is not counted as a datum name.",
-     "rootNote": "TWDB lists USGS 08025350 as its data source and NWPS BKLT2 re-serves USGS 08025350, so all three items share one root. The 172.00 ft pool's NGVD29 is named by TWDB alone; no publisher with an independent root (the operator SRA says only 'ft MSL') was found."
+     "officialRoot": "USGS-08025350",
+     "rootNote": "TWDB, USGS and NWPS all derive from USGS 08025350: one official root (condition a). The USGS station description says the gauge datum comes from Sabine River Authority levels; OFR 79-678 is a separate USGS study of the same agency and is supporting evidence only, not a second root."
     }
    },
    "vdatumAlso": {
@@ -75,7 +93,7 @@
     "ft": -0.269,
     "sigmaFt": 0.167
    },
-   "conversionCandidate": {
+   "relationship": {
     "navd88MinusNgvd29Ft": -0.2,
     "levelDatum": "NAVD88",
     "referenceDatum": "NGVD29",
@@ -91,13 +109,17 @@
      "minFt": -0.33,
      "maxFt": -0.05,
      "passed": true,
-     "note": "after the -0.2 ft conversion the two gauges agree within 0.3 ft on every sampled date (largest residual 0.15 ft); a mislabelled NGVD29 series would centre near 0, the NAVD88 label centres near -0.2"
-    }
+     "note": "after the -0.2 ft conversion the two gauges agree within 0.3 ft on every sampled date (largest residual 0.15 ft); a mislabelled NGVD29 series would centre near 0, the NAVD88 label centres near -0.2 Mean -0.178 is 0.107 ft from VDatum's -0.285 and 0.022 ft from the -0.2 ft conversion; it is 0.178 ft from 'no offset', so the discrimination between NAVD88 and a mislabelled NGVD29 series is real but weak (0.107 vs 0.178 ft).",
+     "expectedFt": -0.285,
+     "expectedSource": "VDatum NGVD29->NAVD88 at the Negreet gauge",
+     "toleranceFt": 0.3
+    },
+    "status": "CONVERTED"
    },
-   "relationship": {
-    "status": null
-   },
-   "reason": "Rules-2: the reference side has one independent root (USGS 08025350), so the record is SINGLE_SOURCE and the conversion is not enabled. The offset and empirical facts are kept under conversionCandidate. Michael's acceptance of the level basis stands and is recorded on the level side."
+   "reason": "Single official source rule (Michael, 2026-11-22 08:11Z): the 172.00 ft pool's NGVD29 rests on one official root, USGS 08025350, whose gauge datum was set by the dam operator's levelling (Sabine River Authority); the two-gauge check agrees with the NAVD88/NGVD29 offset. A second independent root was searched for (plans/toledo-bend-datum-sources.md: operator, FERC, TWDB and TPWD say only 'msl') and not found, so this is the weaker tier, labelled.",
+   "singleOfficialSource": true,
+   "label": "single official source",
+   "damOperator": "Sabine River Authority (TX/LA)"
   },
   "Cross Lake|LA": {
    "passes": 2,
@@ -166,7 +188,8 @@
       }
      ]
     }
-   }
+   },
+   "singleOfficialReview": "Stays CONFLICT: the rule needs a named datum on each side; the 171.1 ft pool frame is contested (NWPS NAVD88 frame vs USGS 171.19 ft NGVD 29), and no empirical check exists."
   },
   "Ross Barnett Reservoir|MS": {
    "passes": 2,
@@ -222,7 +245,8 @@
      ],
      "note": "USGS WRI 84-4160 (https://pubs.usgs.gov/wri/1984/4160/report.pdf) defines 'sea level' as NGVD 1929 but does not state the 297.5 ft pool. The directory's own source is a web.archive.org page, which the fetcher refused (site blocked)."
     }
-   }
+   },
+   "singleOfficialReview": "Does not qualify: the level root (USGS 02485601) is official, but the reference (297.5 ft, the operator PRVWSD) names no datum (condition a fails for the reference side); no empirical check. Owner decision: stays unconverted."
   },
   "Lake Tahoe|NV": {
    "passes": 2,
@@ -262,7 +286,8 @@
       }
      ]
     }
-   }
+   },
+   "singleOfficialReview": "Does not qualify: the reference is on the USBR Lake Tahoe datum (official, named) but the level is NGVD29 and no conversion between the two is defined; no empirical check."
   },
   "Mark Twain Lake|MO": {
    "passes": 2,
@@ -311,7 +336,8 @@
      ],
      "note": "The CDA location-levels query for MVS was refused by the fetcher (client error)."
     }
-   }
+   },
+   "singleOfficialReview": "Does not qualify: the level (USACE CDA, NAVD-88) is official, but no source names the datum of the 606 ft Top of Conservation; no empirical check."
   },
   "Percy Priest Lake|TN": {
    "passes": 2,
@@ -414,7 +440,8 @@
       }
      ]
     }
-   }
+   },
+   "singleOfficialReview": "Does not qualify: the operator (Alabama Power) names only 'sea level' for 252 ft, which is not a datum name; no empirical check."
   },
   "Lay|AL": {
    "passes": 1,
@@ -446,7 +473,8 @@
      "status": "NONE",
      "evidence": []
     }
-   }
+   },
+   "singleOfficialReview": "Does not qualify: as Jordan (operator says 'sea level'); no empirical check."
   },
   "Lake Bistineau|LA": {
    "passes": 1,
@@ -480,7 +508,8 @@
      "evidence": [],
      "note": "fetch refused: web.archive.org (SITE_BLOCKED)"
     }
-   }
+   },
+   "singleOfficialReview": "Does not qualify: the reference source was not reachable (web.archive.org blocked), so no datum is named for 141 ft; no empirical check."
   },
   "Eagle Lake|MS": {
    "passes": 1,
@@ -520,7 +549,8 @@
       }
      ]
     }
-   }
+   },
+   "singleOfficialReview": "Does not qualify: the 76.9 ft level (USACE Vicksburg via LDWF) names no datum; no empirical check."
   },
   "Palisades Reservoir|ID": {
    "passes": 2,
