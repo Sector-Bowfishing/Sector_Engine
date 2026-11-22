@@ -65,6 +65,9 @@
     "wind": [
       "D-D"
     ],
+    "weather": [
+      "W-1"
+    ],
     "generation": [
       "G-2",
       "D-G",
@@ -748,6 +751,158 @@
         ]
       }
     },
+    "moon": {
+      "statusLayers": {
+        "canonicalStructure": {
+          "status": "PASS",
+          "label": "CANONICAL_PACKAGE",
+          "evidence": "brains/moon: brain.json, operating contract, runtime/, tests/, research/, contracts/ (Kit P01)"
+        },
+        "structuralCertification": {
+          "status": "PASS",
+          "label": "KIT_V1_CERTIFIED",
+          "evidence": "inputs/certification.json (actual per-proof run)"
+        },
+        "scientificValidation": {
+          "status": "PARTIAL",
+          "label": "ASTRONOMY_CROSS_CHECKED_DARKNESS_RULE_NOT_VALIDATED",
+          "evidence": "rise/set and twilight within 2 min of USNO, principal phases within 20 min, sector-moon-v1 vectors (brains/moon/tests); DARKNESS_RULE_V1 not validated against measured on-water light (MOON-VAL-001)"
+        },
+        "approvedMemoryRelease": {
+          "status": "BLOCKED",
+          "label": "CANDIDATE_RELEASE_NOT_APPROVED",
+          "evidence": "moon-knowledge-candidate-2026-11-22.1 verified; approval NOT_RECORDED"
+        },
+        "operationalReadiness": {
+          "status": "BLOCKED",
+          "label": "REGISTERED_DISABLED",
+          "evidence": "control manifest PARKED, executionTarget kind none, absent from the execution control (disabled); no live writer; run.py --write refuses"
+        },
+        "productionActivation": {
+          "status": "BLOCKED",
+          "label": "NOT_ENABLED",
+          "evidence": "owner decision 2026-11-22 (Sector_Ops #51) approved building it; enabling execution is a separate owner decision"
+        },
+        "customerConsumable": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_CUSTOMER_FACING",
+          "evidence": "customerIntegrationMode none; customer publication off"
+        }
+      },
+      "requirements": {
+        "BR-05": "PASS",
+        "BR-06": "PASS",
+        "BR-07": "PASS",
+        "BR-10": "PASS",
+        "BR-11": "PARTIAL",
+        "BR-16": "PASS",
+        "BR-18": "PASS",
+        "BR-19": "PASS"
+      },
+      "structuralProblems": [],
+      "scienceDependencies": [
+        "Independent on-water illuminance comparison for DARKNESS_RULE_V1 (MOON-VAL-001)",
+        "Weather Brain cloud-cover contract (MOON-INP-001)"
+      ],
+      "nextWork": [
+        "Map the Weather Brain contract to the cloud input when it exists",
+        "Owner decision to enable execution"
+      ],
+      "operations": {
+        "scientificValidation": {
+          "status": "IN_PROGRESS",
+          "label": "ASTRONOMY_CROSS_CHECKED_DARKNESS_RULE_NOT_VALIDATED"
+        },
+        "knowledgeRelease": {
+          "state": "CANDIDATE",
+          "releaseId": "moon-knowledge-candidate-2026-11-22.1",
+          "approval": "NOT_RECORDED"
+        },
+        "scores": [],
+        "limitations": [
+          "Every night is MOON_ONLY until the Weather Brain publishes cloud cover (no cloud value is assumed)",
+          "No per-lake skyglow input: the Engine's default city glow 0.3 is used",
+          "Registered disabled: not scheduled, no live writer",
+          "No capability score (not scored)"
+        ]
+      }
+    },
+    "weather": {
+      "statusLayers": {
+        "canonicalStructure": {
+          "status": "PASS",
+          "label": "CANONICAL_PACKAGE",
+          "evidence": "brains/weather: brain.json, operating contract, runtime/, tests/, research/, contracts/ (created 2026-11-22)"
+        },
+        "structuralCertification": {
+          "status": "NOT_VERIFIED",
+          "label": "CERTIFICATION_STALE_OR_NOT_RUN",
+          "evidence": "no Kit V1 suite yet (inputs/certification.json)"
+        },
+        "scientificValidation": {
+          "status": "NOT_VERIFIED",
+          "label": "PRE_REGISTERED_NOT_STARTED",
+          "evidence": "pressure/air-temperature comparison and change-signal check pre-registered (docs/brains/WEATHER_BRAIN_PLAN.md section 5); no data collected (WX-001, WX-002)"
+        },
+        "approvedMemoryRelease": {
+          "status": "BLOCKED",
+          "label": "CANDIDATE_RELEASE_AWAITING_OWNER_APPROVAL",
+          "evidence": "weather-knowledge-candidate-2026-11-22.1 (pre-stated thresholds) verified; approval NOT_RECORDED (W-1)"
+        },
+        "operationalReadiness": {
+          "status": "NOT_VERIFIED",
+          "label": "REGISTERED_DISABLED",
+          "evidence": "offline tests on recorded NWS fixtures (Engine adapter recordings 2026-11-06) and hand-built cases; no live dry run from this repository yet"
+        },
+        "productionActivation": {
+          "status": "BLOCKED",
+          "label": "REGISTERED_DISABLED",
+          "evidence": "control manifest activityState PARKED, executionTarget none, absent from /control/executionControlV1; no cloud job; run.py --write refuses (W-1)"
+        },
+        "customerConsumable": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_CUSTOMER_FACING",
+          "evidence": "customerIntegrationMode none; customerPublication false"
+        }
+      },
+      "requirements": {
+        "BR-05": "PASS",
+        "BR-06": "PASS",
+        "BR-07": "PASS",
+        "BR-10": "PASS",
+        "BR-11": "PARTIAL",
+        "BR-16": "PASS",
+        "BR-18": "PASS",
+        "BR-19": "PASS"
+      },
+      "structuralProblems": [],
+      "scienceDependencies": [
+        "Prospective station comparison (WX-001)",
+        "Change-signal check against NWS surface analyses and observed rain (WX-002)"
+      ],
+      "nextWork": [
+        "First full-directory dry run (request count, BLOCKED count)",
+        "Owner activation steps W-1"
+      ],
+      "operations": {
+        "scientificValidation": {
+          "status": "NOT_STARTED",
+          "label": "PRE_REGISTERED"
+        },
+        "knowledgeRelease": {
+          "state": "CANDIDATE",
+          "releaseId": "weather-knowledge-candidate-2026-11-22.1",
+          "approval": "NOT_RECORDED"
+        },
+        "scores": [],
+        "limitations": [
+          "No pressure forecast (the NWS grid has no pressure layer)",
+          "Registered DISABLED: produces nothing until the owner activation steps",
+          "Outside NWS coverage a lake is BLOCKED",
+          "No capability score (not scored)"
+        ]
+      }
+    },
     "generation": {
       "statusLayers": {
         "canonicalStructure": {
@@ -797,7 +952,7 @@
         "BR-19": "PASS"
       },
       "structuralProblems": [
-        "Not yet a Cortex target Brain: brain-architecture.json lists nine Brains and gives dam releases to Lake Brain (CG-3.1-19)",
+        "Not yet a Cortex target Brain: brain-architecture.json lists nine Brains and gives dam releases to Lake Brain (CG-3.1-20)",
         "Source parsers tested on hand-built fixtures only; record real responses before enabling"
       ],
       "scienceDependencies": [
@@ -806,7 +961,7 @@
         "Week-long schedule comparison (GEN-VAL-001)"
       ],
       "nextWork": [
-        "Cortex release adding Generation as a target Brain and moving dam releases from Lake (CG-3.1-19)",
+        "Cortex release adding Generation as a target Brain and moving dam releases from Lake (CG-3.1-20)",
         "TVA and SWPA access checks (GEN-ACCESS-001)",
         "CWMS release-series probe pass (GEN-BIND-001)"
       ],

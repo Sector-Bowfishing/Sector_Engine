@@ -64,7 +64,7 @@ Registered here before any run; nothing has been run.
 1. **This PR** (merged changes nothing): package, contract, catalog, registration DISABLED, tests.
 2. **Access checks** (D-G): TVA robots.txt + the iOS note; SWPA robots.txt and terms. New release if any status changes.
 3. **Discovery pass** (GEN-BIND-001..003): CWMS release series, RISE release items, TVA LocationIDs, USGS tailwater gauges, recorded with evidence; real responses recorded as fixtures; new catalog version and release.
-4. **Cortex**: a Cortex maintenance session adds Generation as a target Brain and moves dam releases and reservoir operations (not pool level) from Lake Brain (D-H, CG-3.1-19).
+4. **Cortex**: a Cortex maintenance session adds Generation as a target Brain and moves dam releases and reservoir operations (not pool level) from Lake Brain (D-H, CG-3.1-20).
 5. **Owner approvals** (Michael): approve the knowledge release (G-2); give the Brain an execution target (an in-process executor in the Orchestrator or a job: a job costs money and needs approval) and an execution-control entry; then internal dry runs.
 6. **Validation week** (section 5) on internal runs. PASS or FAIL recorded.
 7. **Customer path** (Michael's own steps): a customer-lane copy, app reading it, tile flip. Not proposed until validation passes. The existing draft customer copy `customer/lakes/{k}/generationBinding` (Sector_Ops #53, `publisher_live/customer_generation_binding.py`, not wired) waits on a dam binding the Lake contract does not carry; the Generation catalog's bound `operator + LocationID` records are the natural source for it, as a separate reviewed change.
@@ -73,5 +73,5 @@ Registered here before any run; nothing has been run.
 
 - **G-2** approve a Generation knowledge release (after D-G and the validation week).
 - **D-G** TVA and SWPA access checks (and permission requests if either forbids automated use).
-- **D-H** Cortex architecture: Generation as a tenth target Brain; dam releases move from Lake Brain to Generation; Lake keeps pool level and stops publishing its own release readout once Generation serves it (CG-3.1-19).
+- **D-H** Cortex architecture: Generation as a tenth target Brain; dam releases move from Lake Brain to Generation; Lake keeps pool level and stops publishing its own release readout once Generation serves it (CG-3.1-20).
 - Operator permission requests for the 73 utility lakes (drafting approved 2026-11-22 19:34Z; sending is Michael's).

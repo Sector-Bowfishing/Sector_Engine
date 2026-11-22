@@ -75,6 +75,17 @@
       "freshness": {"stalenessModel": "FINGERPRINT"}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version"]},
       "costClass": "NONE", "timeoutSeconds": 900, "scopes": [], "customerPublication": false
     },
+    "weather": {
+      "displayName": "Weather", "group": "CURRENT_CONDITIONS", "lifecycle": "CALIBRATION", "activityState": "PARKED",
+      "executionTarget": {"kind": "none", "plannedJob": "weather-brain", "startedByOrchestrator": false, "scoped": true, "note": "Registered 2026-11-22 (owner decision, Sector_Ops #51), DISABLED: no cloud job exists, no live writer exists (brains/weather/runtime/run.py --write refuses), PARKED here and absent from /control/executionControlV1 (absent = disabled). Enabling is a separate owner step: docs/brains/WEATHER_BRAIN_PLAN.md section 6."},
+      "allowedTriggers": ["SCHEDULE", "MANUAL", "ADMIN"],
+      "dependencies": [],
+      "schedule": {"class": "ORCHESTRATOR_OWNED", "owner": "ORCHESTRATOR", "scheduler": "brain-orchestrator",
+                   "exception": {"gate": "INTERNAL_OPERATION: per-lake Weather state and the weather-change signal Lake and Water Temp refresh on; prospective pressure/air-temperature validation against station observations (WEATHER_BRAIN_PLAN.md section 5); not customer-facing", "notReconstructable": "the NWS observation API keeps about 7 days and the forecast issued at run time is replaced every hour: neither can be recreated later", "maxMonthlyUsd": 2, "stop": "disable at any time: control override PAUSE (activityState PARKED) or set activityState PARKED here; owner decision ends internal operation", "approvedAt": "2026-11-22 (owner decision, Sector_Ops #51: build the Weather Brain; activation is a separate owner step and has NOT happened)"}},
+      "freshness": {"staleAfterHours": 3, "dueAfterHours": 0.75, "note": "Weather is due on every hourly Orchestrator grant; the Brain's per-lake planner then fetches only the lakes whose adaptive nextCheckAt is reached (CHANGE/WATCH every grant, STEADY at most every second grant; contracts/weather-state-v1.md section 5). staleAfterHours is the Brain-level registry rule (contract.STALE_AFTER_HOURS)."},
+      "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "readinessCounts", "staleLakeCount", "supportedLakeCount", "weatherChange"]},
+      "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 0.5, "tasks": 1}, "timeoutSeconds": 1800, "scopes": ["directory"], "allowFleetRunNow": false, "customerPublication": false
+    },
     "generation": {
       "displayName": "Generation", "group": "CURRENT_CONDITIONS", "lifecycle": "CALIBRATION", "activityState": "PARKED",
       "executionTarget": {"kind": "none", "note": "registered DISABLED (owner direction 2026-11-22, Sector_Ops #51): no job, no image, no schedule; brains/generation/runtime run.py --write refuses until an APPROVED knowledge release AND GENERATION_WRITE_APPROVED=1; enabling it needs an execution target, an execution-control entry and the owner's approval", "startedByOrchestrator": false, "scoped": false},
@@ -99,6 +110,15 @@
       "schedule": {"class": "MANUAL", "owner": "NONE"},
       "freshness": {"stalenessModel": "FINGERPRINT"}, "fingerprint": {"outputSource": "registry:fingerprint"},
       "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 0.5, "tasks": 1}, "timeoutSeconds": 1800, "scopes": ["pilots"], "customerPublication": false
+    },
+    "moon": {
+      "displayName": "Moon and Night Light", "group": "CURRENT_CONDITIONS", "lifecycle": "CALIBRATION", "activityState": "PARKED",
+      "executionTarget": {"kind": "none", "note": "registered 2026-11-22 (owner decision, Sector_Ops #51) but DISABLED: no executor, absent from the execution control (absent = disabled), no live writer. runtime/run.py writes a local file or an in-memory dry run; --write refuses. Enabling it is a separate owner decision.", "startedByOrchestrator": false, "scoped": false},
+      "allowedTriggers": ["MANUAL", "ADMIN"],
+      "dependencies": [],
+      "schedule": {"class": "MANUAL", "owner": "NONE"},
+      "freshness": {"stalenessModel": "FINGERPRINT"}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "readinessCounts", "supportedLakeCount"]},
+      "costClass": "NONE", "timeoutSeconds": 900, "scopes": [], "customerPublication": false
     }
   },
   "jobs": {

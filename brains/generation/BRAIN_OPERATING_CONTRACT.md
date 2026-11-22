@@ -12,7 +12,7 @@ Tell a bowfisher whether the dam on their lake is releasing or generating now, h
 Whether tonight's tailwater or the current-swept water near the dam will be moving or settled, and when generation starts or stops (the Generation tile; the old Engine's current / generation factor and tailwater regime).
 
 ## 4. OWNERSHIP
-Dam release and generation state per lake: release status (GENERATING, SPILLING, RELEASING, OFF, UNKNOWN), measured discharge, turbine and spill flow, generation MW, units on as stated by the operator, the operator's published schedule and its next start and stop, tailwater elevation as published with the release, and the per-dam refresh cadence. Recorded as owner direction 2026-11-22; the Cortex architecture still lists dam releases under Lake Brain (CORTEX_GAPS CG-3.1-19).
+Dam release and generation state per lake: release status (GENERATING, SPILLING, RELEASING, OFF, UNKNOWN), measured discharge, turbine and spill flow, generation MW, units on as stated by the operator, the operator's published schedule and its next start and stop, tailwater elevation as published with the release, and the per-dam refresh cadence. Recorded as owner direction 2026-11-22; the Cortex architecture still lists dam releases under Lake Brain (CORTEX_GAPS CG-3.1-20).
 
 ## 5. NON-OWNERSHIP
 Pool elevation and water-level trend (Lake Brain), water clarity (Water Clarity), water temperature, fish behaviour, depth, vegetation. No rating, score or recommendation: the final shooting assessment is Sector Intelligence's. Generation never derives units or discharge from megawatts, never fills a missing reading, and never reads a source whose access is not ALLOWED.

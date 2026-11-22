@@ -41,11 +41,11 @@ def test_the_legacy_planner_orders_all_eight_deployed_brains_by_the_target_order
     assert list(DEFAULT_ORDER) == DO.deployed_execution_order(list(DO.BRAINS))
     now = __import__("datetime").datetime(2026, 10, 28, tzinfo=__import__("datetime").timezone.utc)
     p = plan({b: {"dependsOn": []} for b in DO.BRAINS}, {}, now)
-    mapped = [b for b in p["order"] if DO.recognize(b)["kind"] != "UNREGISTERED"]
-    assert mapped[-2:] == ["biological-state", "sector-intelligence"]
-    # generation (owner direction 2026-11-22) is not yet a Cortex target Brain (CORTEX_GAPS CG-3.1-19): deployed_execution_order appends unmapped ids
-    # after the target order. It is registered PARKED with no execution target, so this order runs nothing today.
-    assert p["order"][-1] == "generation" and DO.recognize("generation")["kind"] == "UNREGISTERED"
+    # Moon (created 2026-11-22) is not yet one of the Cortex target Brains (UNREGISTERED in the data_ownership mirror; Cortex gap recorded in
+    # docs/cortex/CORTEX_GAPS.md), so the projection sorts it after the target order. It consumes no Brain and nothing consumes it.
+    # Generation (created 2026-11-22, CORTEX_GAPS CG-3.1-20) is likewise UNREGISTERED; unmapped ids sort by name after the target order.
+    assert DO.recognize("moon")["kind"] == "UNREGISTERED" and DO.recognize("generation")["kind"] == "UNREGISTERED"
+    assert p["order"][-4:] == ["biological-state", "sector-intelligence", "generation", "moon"]
 
 
 def test_the_engine_mirror_matches_cortex_when_cortex_is_present():
