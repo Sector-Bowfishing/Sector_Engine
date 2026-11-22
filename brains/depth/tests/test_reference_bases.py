@@ -61,7 +61,8 @@ def test_same_series_is_usable_with_zero_datum_sigma_and_igld85_normalizes():
 def test_series_median_shift_is_level_minus_the_gauges_own_seasonal_median():
     r = compute_shift(lvl(588.6), sref(), NOW)
     assert r.mode == "shiftOnly" and r.shift_ft == pytest.approx(-1.4) and r.reference_ft == 590.0
-    assert r.sigma_parts["pool"] == C.SIGMA_SERIES_MEDIAN and r.sigma_parts["datum"] == 0.0
+    assert r.sigma_parts["reference"] == C.SIGMA_SERIES_MEDIAN and "pool" not in r.sigma_parts and r.sigma_parts["datum"] == 0.0
+    assert r.confidence == "MEDIUM"                                     # sigma 0.29 would be HIGH: new bases are capped at MEDIUM
     d = r.as_dict()
     assert d["referenceBasis"] == "seriesMedian" and d["referenceFt"] == 590.0
 
@@ -102,7 +103,7 @@ def test_other_reference_bases_are_still_refused():
 def test_low_water_datum_shift_and_no_full_pool_cross_check():
     ref = ReferencePool(569.2, "lowWaterDatum", "high", "IGLD85", True, assessment=assess("IGLD85", "IGLD85"))
     r = compute_shift(LevelObservation(571.4, "ft", "IGLD85", OBS, "DIRECT_LAKE_GAUGE", "OBSERVED", -0.6), ref, NOW, "IGLD85")
-    assert r.mode == "shiftOnly" and r.shift_ft == pytest.approx(2.2) and r.confidence == "HIGH"
+    assert r.mode == "shiftOnly" and r.shift_ft == pytest.approx(2.2) and r.sigma_ft <= C.CONF_HIGH_MAX_SIGMA and r.confidence == "MEDIUM"
     assert not any(f.startswith("lakeBrainDeltaDisagrees") for f in r.flags)
     assert r.as_dict()["referenceBasis"] == "lowWaterDatum"
 
@@ -111,8 +112,15 @@ def test_low_water_datum_requires_an_igld85_reference_and_level():
     bad = ReferencePool(569.2, "lowWaterDatum", "high", "NAVD88", True, assessment=assess("IGLD85", "IGLD85"))
     assert compute_shift(LevelObservation(571.4, "ft", "IGLD85", OBS, "DIRECT_LAKE_GAUGE", "OBSERVED"), bad, NOW).reasons == ["REFERENCE_DATUM_NOT_IGLD85"]
     ref = ReferencePool(569.2, "lowWaterDatum", "high", "IGLD85", True, assessment=assess("IGLD85", "IGLD85"))
-    r = compute_shift(LevelObservation(571.4, "ft", "NAVD88", OBS, "DIRECT_LAKE_GAUGE", "OBSERVED"), ref, NOW, "IGLD85")
-    assert r.reasons == ["LEVEL_DATUM_CONFLICT"]
+    for stamp in ("NAVD88", None, ""):                                      # the reading must be stamped IGLD 1985: unstamped is refused
+        r = compute_shift(LevelObservation(571.4, "ft", stamp, OBS, "DIRECT_LAKE_GAUGE", "OBSERVED"), ref, NOW, "IGLD85")
+        assert r.reasons == ["LEVEL_DATUM_NOT_IGLD85"], stamp
+
+
+def test_relative_scale_frame_is_only_for_full_pool():
+    ref = ReferencePool(569.2, "lowWaterDatum", "high", "IGLD85", True, assessment=assess("IGLD85", "IGLD85"), relative_scale_pool=100.0)
+    r = compute_shift(LevelObservation(571.4, "ft", "IGLD85", OBS, "DIRECT_LAKE_GAUGE", "OBSERVED"), ref, NOW, "IGLD85")
+    assert r.mode == "shiftOnly" and r.shift_ft == pytest.approx(2.2) and "levelFrame:relativeScale100" not in r.flags
 
 
 # ── states ───────────────────────────────────────────────────────────────────────────────────────────
@@ -131,7 +139,9 @@ def test_series_median_state_names_the_reference_and_withholds_zones():
     assert ref["seriesMedian"]["windowDays"] == 7 and ref["seriesMedian"]["minBasisYears"] == 10 and ref["seriesMedian"]["band"]["basisYears"] == 20
     assert "referenceZones" not in st and "effectiveZones" not in st
     assert any("withheld" in x for x in st["limitations"]) and any("seasonal median" in x for x in st["limitations"])
-    assert "usual level for this time of year" in st["facts"][0]
+    f = st["facts"][0]
+    assert f.startswith("The lake is 1.4 ft below its usual level for this time of year") and "must not be applied to charted or contour depths" in f
+    assert "should be read as" not in f
     assert st["provenance"]["datumEvidence"]["status"] == "SAME_SERIES"
 
 

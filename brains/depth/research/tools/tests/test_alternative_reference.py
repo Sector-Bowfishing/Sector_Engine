@@ -7,9 +7,12 @@ import pytest
 from conftest import MANIFEST_PATH
 
 from depth_brain import contract as C
-from depth_research.candidates import GREAT_LAKES_LWD, alternative_reference, level_datum_for, load_lwd
+from depth_research.candidates import GREAT_LAKES_LWD, alternative_reference, history_is_live_series, level_datum_for, load_lake_bindings, load_lwd
 
 LWD = load_lwd()
+LB = load_lake_bindings()
+SAME = {"live": [{"provider": "usgs", "station": "05000000", "series": "62614", "datumOffsetFt": 0.0}],
+        "history": [{"kind": "usgsDaily", "site": "05000000", "param": "62614", "stat": "dv", "offsetFt": 0.0}]}
 MANIFEST = json.load(open(MANIFEST_PATH))
 
 
@@ -33,23 +36,69 @@ def test_great_lake_with_igld85_level_gets_the_low_water_datum():
     assert basis == "lowWaterDatum" and blocked == [] and a.status == "SAME_DATUM" and a.basis == "great-lakes-lwd:erie"
     assert a.evidence_urls and all(u.startswith("https://") for u in a.evidence_urls)
     # an unverified or different level datum never gets the LWD (falls through to the series rule)
-    assert alternative_reference("Lake Erie|OH", ["DATUM_UNKNOWN"], "PROJECT", True, 30, LWD)[0] == "seriesMedian"
+    assert alternative_reference("Lake Erie|OH", ["DATUM_UNKNOWN"], "PROJECT", True, 30, LWD, SAME)[0] == "seriesMedian"
     assert alternative_reference("Lake Erie|OH", ["DATUM_UNKNOWN"], "IGLD85", False, 3, LWD)[0] is None
 
 
 def test_series_median_needs_enough_history_and_refuses_otherwise():
     reasons = ["REFERENCE_NOT_A_POOL_ELEVATION", "REFERENCE_POOL_CONFIDENCE_LOW", "DATUM_UNKNOWN"]
-    basis, a, blocked = alternative_reference("Natural|MN", reasons, None, False, C.SERIES_MEDIAN_MIN_YEARS, LWD)
+    basis, a, blocked = alternative_reference("Natural|MN", reasons, None, False, C.SERIES_MEDIAN_MIN_YEARS, LWD, SAME, "naturalSurface")
     assert basis == "seriesMedian" and a.status == "SAME_SERIES" and a.usable and blocked == []
     for years in (None, 0, C.SERIES_MEDIAN_MIN_YEARS - 1):
-        basis, a, blocked = alternative_reference("Natural|MN", reasons, None, False, years, LWD)
+        basis, a, blocked = alternative_reference("Natural|MN", reasons, None, False, years, LWD, SAME, "naturalSurface")
         assert basis is None and a is None and blocked == reasons + ["SERIES_HISTORY_TOO_SHORT"]
+
+
+def _b(live, *history):
+    return {"live": [live], "history": list(history)}
+
+
+def test_same_series_guard_matches_lakes_history_to_its_live_series():
+    ok = [
+        SAME,
+        _b({"provider": "nwps", "station": "INDN6", "series": "HPIRZ"}, {"kind": "hadsDaily", "lid": "INDN6", "pe": "HP", "offsetFt": 0.0}),
+        _b({"provider": "a2w", "station": "SPA:Abiquiu", "series": "Abiquiu.Elev.Inst.15Minutes.0.DCP-rev", "datumOffsetFt": 0.0},
+           {"kind": "cwmsDaily", "office": "SPA", "series": "Abiquiu.Elev.Inst.~1Day.0.MRS"}),
+        _b({"provider": "cwms", "station": "SAS", "series": "Hartwell.Elev-Pool.Inst.1Hour.0.Raw-SHEF_SAS"},
+           {"kind": "cwmsDaily", "office": "SAS", "series": "Hartwell.Elev-Pool.Inst.1Day.0.Raw-SHEF_SAS"}),
+    ]
+    bad = [
+        None, {"live": [], "history": []},
+        _b({"provider": "usgs", "station": "05000000", "series": "62614"}, {"kind": "usgsDaily", "site": "05000000", "param": "62615", "offsetFt": 0.0}),   # param
+        _b({"provider": "usgs", "station": "05000000", "series": "62614"}, {"kind": "usgsDaily", "site": "05000001", "param": "62614", "offsetFt": 0.0}),   # site
+        _b({"provider": "usgs", "station": "05000000", "series": "00065", "datumOffsetFt": 0.0},
+           {"kind": "usgsDaily", "site": "05000000", "param": "00065", "offsetFt": 512.3}),                                                               # offset
+        _b({"provider": "nwps", "station": "INDN6", "series": "HPIRZ"}, {"kind": "hadsDaily", "lid": "OTHR6", "pe": "HP", "offsetFt": 0.0}),           # lid
+        _b({"provider": "nwps", "station": "INDN6", "series": "HGIRZ"}, {"kind": "hadsDaily", "lid": "INDN6", "pe": "HG", "offsetFt": 0.0}),           # stage pe
+        _b({"provider": "a2w", "station": "SPA:Abiquiu", "series": "Abiquiu.Elev.Inst.15Minutes.0.DCP-rev"},
+           {"kind": "cwmsDaily", "office": "SPK", "series": "Abiquiu.Elev.Inst.~1Day.0.MRS"}),                                                            # office
+        _b({"provider": "cwms", "station": "SAS", "series": "Hartwell.Elev.Inst.1Hour.0.Raw"}, {"kind": "cwmsDaily", "office": "SAS", "series": "Russell.Elev.Inst.1Day.0.Raw"}),
+        _b({"provider": "rise", "station": "1", "series": "x"}, {"kind": "riseDaily", "item": "x"}),                                                    # provider not covered
+        {"live": SAME["live"], "history": SAME["history"] * 2},                                                                                      # two sources
+    ]
+    assert all(history_is_live_series(b) for b in ok)
+    assert not any(history_is_live_series(b) for b in bad)
+
+
+def test_indian_lake_oh_62614_live_vs_62615_history_is_blocked():
+    b = LB["Indian Lake|OH"]
+    assert b["live"][0]["series"] == "62614" and b["history"][0]["param"] == "62615"
+    basis, _, blocked = alternative_reference("Indian Lake|OH", ["DATUM_UNKNOWN"], None, False, 30, LWD, b, "fullPool")
+    assert basis is None and blocked == ["DATUM_UNKNOWN", "SERIES_HISTORY_NOT_LIVE_SERIES"]
+
+
+def test_full_pool_reservoir_switch(monkeypatch):
+    assert C.SERIES_MEDIAN_ALLOW_FULL_POOL_RESERVOIRS is True                       # default ON pending Michael (Sector_Ops #51)
+    assert alternative_reference("R|AL", ["DATUM_UNKNOWN"], None, False, 30, LWD, SAME, "fullPool")[0] == "seriesMedian"
+    monkeypatch.setattr(C, "SERIES_MEDIAN_ALLOW_FULL_POOL_RESERVOIRS", False)
+    assert alternative_reference("R|AL", ["DATUM_UNKNOWN"], None, False, 30, LWD, SAME, "fullPool") == (None, None, ["DATUM_UNKNOWN", "SERIES_MEDIAN_FULL_POOL_RESERVOIR_OFF"])
+    assert alternative_reference("N|MN", ["REFERENCE_NOT_A_POOL_ELEVATION"], None, False, 30, LWD, SAME, "naturalSurface")[0] == "seriesMedian"
 
 
 def test_level_side_and_known_datum_failures_get_no_substitute_reference():
     for reasons in (["NO_VERIFIED_LEVEL_BINDING", "REFERENCE_NOT_A_POOL_ELEVATION"], ["LEVEL_SOURCE_NOT_DIRECT", "DATUM_UNKNOWN"],
                     ["DATUM_INCOMPATIBLE"], ["DATUM_CONVERSION_NOT_ENABLED"], ["DUKE_LOCAL_SCALE_NOT_ENABLED"]):
-        assert alternative_reference("X|AL", reasons, None, False, 40, LWD) == (None, None, reasons)
+        assert alternative_reference("X|AL", reasons, None, False, 40, LWD, SAME) == (None, None, reasons)
 
 
 def test_existing_shift_possible_lakes_are_untouched():
@@ -58,25 +107,27 @@ def test_existing_shift_possible_lakes_are_untouched():
     assert ok and all(c["reference"]["basis"] == "fullPool" for c in ok)
     for c in ok:
         assert alternative_reference(c["lakeId"], c["blockedReasons"], c["levelSource"]["datum"], c["levelSource"]["datumVerified"],
-                                     c["history"]["completeYears"], LWD) == (None, None, [])
+                                     c["history"]["completeYears"], LWD, LB.get(c["lakeId"]), c["reference"]["basis"]) == (None, None, [])
 
 
 def test_counts_on_the_committed_release():
     """What the rules would unlock at the next refresh, computed from the committed release (the rebuild itself needs DEPTH_RESEARCH_DATA)."""
     if MANIFEST["manifestVersion"] != "2026-10-14.6":
         pytest.skip("counts are pinned to release manifest 2026-10-14.6")
-    n = {"fullPool": 0, "seriesMedian": 0, "lowWaterDatum": 0, "short": 0}
+    n = {"fullPool": 0, "seriesMedian": 0, "lowWaterDatum": 0, "short": 0, "notLive": 0}
     for c in MANIFEST["candidates"]:
         ls = c["levelSource"]
         ld, lv = (level_datum_for({"provider": "coops", "series_or_param": ls["series"]}, {})[:2] if ls["provider"] == "coops" else (ls["datum"], ls["datumVerified"]))
-        basis, _, blocked = alternative_reference(c["lakeId"], c["blockedReasons"], ld, lv, c["history"]["completeYears"], LWD)
+        basis, _, blocked = alternative_reference(c["lakeId"], c["blockedReasons"], ld, lv, c["history"]["completeYears"], LWD, LB.get(c["lakeId"]), c["reference"]["basis"])
         if not c["blockedReasons"]:
             n["fullPool"] += 1
         elif basis:
             n[basis] += 1
         elif "SERIES_HISTORY_TOO_SHORT" in blocked:
             n["short"] += 1
-    assert n == {"fullPool": 225, "seriesMedian": 132, "lowWaterDatum": 14, "short": 45}
+        elif "SERIES_HISTORY_NOT_LIVE_SERIES" in blocked:
+            n["notLive"] += 1
+    assert n == {"fullPool": 225, "seriesMedian": 19, "lowWaterDatum": 14, "short": 45, "notLive": 113}
 
 
 # ── end-to-end through build() on a tiny synthetic research snapshot ──────────────────────────────────
@@ -97,8 +148,11 @@ def _build(tmp_path):
                                                                for i, b, c, p in lakes]}))
     (tmp_path / "prov.json").write_text(json.dumps({"providers": {}, "referencePoolSources": {}}))
     (tmp_path / "rev.json").write_text(json.dumps({"schema": "reviewed-lake-bindings-v1", "reviewed": []}))
+    usgs = lambda site, hp: {"live": [{"provider": "usgs", "station": site, "series": "00062", "datumOffsetFt": 0.0}],
+                             "history": [{"kind": "usgsDaily", "site": site, "param": hp, "stat": "dv", "offsetFt": 0.0}]}
+    (tmp_path / "lb.json").write_text(json.dumps({"bindings": [{"lakeId": "Natural|MN", **usgs("01", "00062")}, {"lakeId": "Short|MN", **usgs("02", "00062")}]}))
     paths = {
-        "directory": str(tmp_path / "dir.json"), "providers": str(tmp_path / "prov.json"), "reviewed_bindings": str(tmp_path / "rev.json"),
+        "directory": str(tmp_path / "dir.json"), "providers": str(tmp_path / "prov.json"), "reviewed_bindings": str(tmp_path / "rev.json"), "lake_proposed_bindings": str(tmp_path / "lb.json"),
         "bindings": _csv(tmp_path / "b.csv", ["lake_id", "binding_status", "capability_class", "provider", "series_or_param", "complete_years"], [
             ["Full|AL", "VERIFIED", "DIRECT_OPERATOR_POOL", "tva", "ReservoirElevation", 20],
             ["Natural|MN", "VERIFIED", "DIRECT_LAKE_GAUGE", "usgs", "00062", 30],

@@ -56,7 +56,7 @@ def plan(published: dict | None, rec: dict, ls: dict | None, manifest_version: s
 
 _REF_WORDS = {   # basis -> (what the reference is called, which depths the shift applies to)
     "fullPool": ("its reference pool", "depths measured at the reference pool"),
-    "seriesMedian": ("its usual level for this time of year (this gauge's own seasonal median)", "depths as they usually are at this time of year"),
+    "seriesMedian": ("its usual level for this time of year (this gauge's own seasonal median)", None),
     "lowWaterDatum": ("Low Water Datum (IGLD 1985)", "charted depths (referenced to Low Water Datum)"),
 }
 
@@ -72,8 +72,12 @@ def _facts(res: ShiftResult, rec: dict) -> list[str]:
         move = f"{abs(s):.1f} ft below {name}"
     else:
         move = f"{s:.1f} ft above {name}"
-    out = [f"The lake is {move}; {depths} should be read as about {s:+.1f} ft (+/- {res.sigma_ft:.1f} ft). "
-           f"This is a shift, not a measured depth for any particular spot."]
+    if depths is None:                                                   # seriesMedian: a level fact only, never a depth adjustment
+        out = [f"The lake is {move} (+/- {res.sigma_ft:.1f} ft). This is a level fact only: it must not be applied to charted or contour depths, "
+               f"which are referenced to a fixed elevation, not to this gauge's seasonal median."]
+    else:
+        out = [f"The lake is {move}; {depths} should be read as about {s:+.1f} ft (+/- {res.sigma_ft:.1f} ft). "
+               f"This is a shift, not a measured depth for any particular spot."]
     if not res.resolvable:
         out.append("The shift is within the uncertainty of the reference and level inputs; treat it as unresolved.")
     return out

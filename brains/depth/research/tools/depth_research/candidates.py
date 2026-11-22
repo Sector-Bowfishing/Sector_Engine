@@ -23,7 +23,7 @@ from depth_brain import rating as R
 from depth_brain.evidence import depth_tier_from_research
 
 from . import proposals
-from .paths import LAKE_BINDINGS, RESEARCH_RECORDS, research_data
+from .paths import LAKE_BINDINGS, LAKE_PROPOSED_BINDINGS, RESEARCH_RECORDS, research_data
 
 GREAT_LAKES_LWD = os.path.join(RESEARCH_RECORDS, "great_lakes_lwd.json")
 
@@ -252,10 +252,59 @@ def assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w=None,
     return a, ld, ld_ver, ld_note, rd, rd_ver, rd_pat, blocked
 
 
-def alternative_reference(lid: str, blocked: list, level_datum: str | None, level_datum_verified: bool, history_years: int | None, lwd: dict):
+# Lake's five hand-written pilots (Lake's LakeSourceBindings `handWritten` rows), restated as data: Depth never parses
+# Lake's Swift. live[0] and history in the bindings.proposed.v1.json shape. Keep in step with that file.
+LAKE_PILOT_BINDINGS = {
+    **{lid: {"live": [{"provider": "tva", "station": loc, "series": None}],
+             "history": [{"kind": "sharedTVAArchive", "locationId": loc}, {"kind": "tvaOperatingGuide", "locationId": loc}]}
+       for lid, loc in (("Guntersville|AL", "GVDA1"), ("Wheeler|AL", "WHLA1"), ("Wilson|AL", "WLSA1"), ("Pickwick Lake|TN", "PICT1"))},
+    "Lake Hartwell|SC": {"live": [{"provider": "cwms", "station": "SAS", "series": "Hartwell.Elev-Pool.Inst.1Hour.0.Raw-SHEF_SAS"}],
+                         "history": [{"kind": "cwmsDaily", "office": "SAS", "series": "Hartwell.Elev-Pool.Inst.1Day.0.Raw-SHEF_SAS"}]},
+}
+
+
+def load_lake_bindings(path: str = LAKE_PROPOSED_BINDINGS) -> dict:
+    """lakeId -> Lake binding {live, history}: the hand-written pilots first, then bindings.proposed.v1.json. Absent file -> pilots only."""
+    out = {}
+    if path and os.path.exists(path):
+        with open(path, encoding="utf-8") as fh:
+            out = {r["lakeId"]: r for r in json.load(fh).get("bindings") or []}
+    out.update(LAKE_PILOT_BINDINGS)
+    return out
+
+
+def _cwms_location(series: str | None) -> str | None:
+    return series.split(".", 1)[0].strip().lower() if series and "." in series else None
+
+
+def history_is_live_series(binding: dict | None) -> bool:
+    """True only when Lake's ONE history source is the same series as its primary live source, with the same offset:
+    usgs = same site and param; nwps/hads = same lid, HP pe; cwms/a2w = same office and CWMS location (prefix before the first '.')."""
+    if not binding or len(binding.get("history") or []) != 1 or not binding.get("live"):
+        return False
+    lv, h = binding["live"][0], binding["history"][0]
+    prov, kind = (lv.get("provider") or "").lower(), h.get("kind")
+    if float(h.get("offsetFt") or 0.0) != float(lv.get("datumOffsetFt") or 0.0):
+        return False
+    if prov == "usgs" and kind == "usgsDaily":
+        return bool(lv.get("station")) and lv.get("station") == h.get("site") and lv.get("series") == h.get("param")
+    if prov in ("nwps", "hads") and kind == "hadsDaily":
+        return (bool(lv.get("station")) and lv.get("station").upper() == (h.get("lid") or "").upper()
+                and str(lv.get("series") or "").upper().startswith("HP") and str(h.get("pe") or "").upper().startswith("HP"))
+    if prov in ("cwms", "a2w") and kind == "cwmsDaily":
+        office = (lv.get("station") or "").split(":", 1)[0].upper()
+        loc = _cwms_location(lv.get("series"))
+        return bool(office and loc) and office == (h.get("office") or "").upper() and loc == _cwms_location(h.get("series"))
+    return False
+
+
+def alternative_reference(lid: str, blocked: list, level_datum: str | None, level_datum_verified: bool, history_years: int | None, lwd: dict,
+                          lake_binding: dict | None = None, directory_basis: str | None = None):
     """The owner-approved references for lakes whose fullPool route is blocked ONLY on the reference side (contract.SERIES_REFERENCE_ELIGIBLE).
     -> (basis or None, DatumAssessment or None, blocked reasons). A lake with no blocked reason is never touched: its fullPool route stands.
-    Order: Great Lakes Low Water Datum (IGLD 1985 level on both sides) > the gauge's own seasonal median (enough history) > unchanged."""
+    Order: Great Lakes Low Water Datum (IGLD 1985 level on both sides) > the gauge's own seasonal median > unchanged. The median needs
+    enough history (SERIES_HISTORY_TOO_SHORT), Lake's history to be its live series (SERIES_HISTORY_NOT_LIVE_SERIES), and, for a lake whose
+    directory basis is fullPool, the scope switch C.SERIES_MEDIAN_ALLOW_FULL_POOL_RESERVOIRS (SERIES_MEDIAN_FULL_POOL_RESERVOIR_OFF)."""
     if not blocked or any(r not in C.SERIES_REFERENCE_ELIGIBLE for r in blocked):
         return None, None, list(blocked)                    # level-side failures, known-datum conflicts, Duke scale: no substitute reference
     g = lwd.get(lid)
@@ -263,11 +312,15 @@ def alternative_reference(lid: str, blocked: list, level_datum: str | None, leve
         a = assess("IGLD85", "IGLD85")
         a.basis, a.evidence_urls = f"great-lakes-lwd:{g['lake']}", list(g.get("evidenceUrls") or [])[:2]
         return "lowWaterDatum", a, []
-    if (history_years or 0) >= C.SERIES_MEDIAN_MIN_YEARS:
-        a = assess(None, None, same_series=True)
-        a.basis, a.evidence_urls = "same-series:lake-brain-seasonal-median", ["brains/depth/BRAIN_SPEC.md"]
-        return "seriesMedian", a, []
-    return None, None, list(blocked) + ["SERIES_HISTORY_TOO_SHORT"]
+    if (history_years or 0) < C.SERIES_MEDIAN_MIN_YEARS:
+        return None, None, list(blocked) + ["SERIES_HISTORY_TOO_SHORT"]
+    if not history_is_live_series(lake_binding):
+        return None, None, list(blocked) + ["SERIES_HISTORY_NOT_LIVE_SERIES"]
+    if directory_basis == "fullPool" and not C.SERIES_MEDIAN_ALLOW_FULL_POOL_RESERVOIRS:
+        return None, None, list(blocked) + ["SERIES_MEDIAN_FULL_POOL_RESERVOIR_OFF"]
+    a = assess(None, None, same_series=True)
+    a.basis, a.evidence_urls = "same-series:lake-brain-seasonal-median", ["brains/depth/BRAIN_SPEC.md"]
+    return "seriesMedian", a, []
 
 
 def range_class(p05_p95: float | None) -> str | None:
@@ -296,6 +349,7 @@ def build(paths: dict, manifest_version: str) -> dict:
     verification = load_datum_verification(paths.get("datum_verification"))
     conv = {r["id"]: float(r["shift_ft_ngvd29_to_navd88"]) for r in read_csv(paths["datum_shift"]) if r.get("shift_ft_ngvd29_to_navd88")}
     lwd = load_lwd(paths.get("great_lakes_lwd") or GREAT_LAKES_LWD)
+    lake_bindings = load_lake_bindings(paths.get("lake_proposed_bindings") or LAKE_PROPOSED_BINDINGS)
     out = []
     for lk in directory:
         lid = lk["id"]
@@ -336,7 +390,7 @@ def build(paths: dict, manifest_version: str) -> dict:
         hr = oprange.get(lid)
         hyears = int(float(hr["full_years"])) if hr and hr.get("full_years") else (int(b["complete_years"]) if b and b.get("complete_years") else None)
         rclass = range_class(float(hr["p05_p95_range_ft"])) if hr and hr.get("p05_p95_range_ft") else None
-        alt_basis, alt_a, blocked = alternative_reference(lid, blocked, ld, ld_ver, hyears, lwd)
+        alt_basis, alt_a, blocked = alternative_reference(lid, blocked, ld, ld_ver, hyears, lwd, lake_bindings.get(lid), lk.get("poolBasis"))
         if alt_basis:
             a = alt_a
         shift_possible = not blocked

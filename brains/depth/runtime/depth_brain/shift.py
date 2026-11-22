@@ -112,6 +112,8 @@ def compute_shift(level: LevelObservation | None, ref: ReferencePool | None, now
         return _unknown("REFERENCE_POOL_CONFIDENCE_LOW", flags=[f"confidence:{ref.confidence}"], age=age)
     if ref.basis == "lowWaterDatum" and normalize_datum(ref.datum) != "IGLD85":
         return _unknown("REFERENCE_DATUM_NOT_IGLD85", flags=[f"referenceDatum:{ref.datum}"], age=age)
+    if ref.basis == "lowWaterDatum" and normalize_datum(level.datum) != "IGLD85":         # the reading itself must be stamped IGLD 1985; unstamped is refused
+        return _unknown("LEVEL_DATUM_NOT_IGLD85", flags=[f"levelDatum:{level.datum}"], age=age)
     # A datum stamped on the live Lake Brain state must agree with the datum the audit assumed for this level source.
     live_d, man_d = normalize_datum(level.datum), normalize_datum(manifest_level_datum)
     if live_d and man_d and live_d != man_d:
@@ -134,7 +136,7 @@ def compute_shift(level: LevelObservation | None, ref: ReferencePool | None, now
 
     level_in_ref = level.elevation_ft + (a.conversion_ft if a.status == "CONVERTED" else 0.0)
     pool_in_frame, frame_flags = ref_ft, []
-    if ref.relative_scale_pool is not None:          # two documented frames for one lake; the frames are far apart (hundreds of ft vs ~100), never ambiguous
+    if ref.relative_scale_pool is not None and ref.basis == "fullPool":     # Duke's 100-based frame is a full-pool frame only          # two documented frames for one lake; the frames are far apart (hundreds of ft vs ~100), never ambiguous
         if abs(level_in_ref - ref.relative_scale_pool) <= C.MAX_PLAUSIBLE_SHIFT_FT and abs(level_in_ref - ref.pool_ft) > C.MAX_PLAUSIBLE_SHIFT_FT:
             pool_in_frame, frame_flags = ref.relative_scale_pool, ["levelFrame:relativeScale100"]
         elif abs(level_in_ref - ref.relative_scale_pool) <= C.MAX_PLAUSIBLE_SHIFT_FT:
@@ -143,8 +145,11 @@ def compute_shift(level: LevelObservation | None, ref: ReferencePool | None, now
     if abs(shift) > C.MAX_PLAUSIBLE_SHIFT_FT:
         return _unknown("IMPLAUSIBLE_SHIFT", flags=[f"shift:{shift:.1f}ft"], age=age)
 
-    parts = {"pool": pool_sigma, "level": C.SIGMA_LEVEL[level.capability], "datum": a.sigma_ft}
+    parts = {("reference" if series else "pool"): pool_sigma, "level": C.SIGMA_LEVEL[level.capability], "datum": a.sigma_ft}
     sigma = math.sqrt(sum(v * v for v in parts.values()))
+    label = confidence_label(sigma)
+    if ref.basis in C.NEW_REFERENCE_BASES and label == "HIGH":
+        label = "MEDIUM"                                                       # new reference bases: never HIGH until field-validated
     flags = (list(a.reasons) if a.status != "SAME_SOURCE" else []) + frame_flags
     # Lake's difference is from the DIRECTORY full pool: comparable only with a fullPool reference (never with a median or the LWD)
     if level.lake_difference_ft is not None and a.status != "CONVERTED" and not frame_flags and ref.basis == "fullPool":          # Lake's difference-from-pool is in the absolute frame; skip the cross-check on a relative-scale level
@@ -153,7 +158,7 @@ def compute_shift(level: LevelObservation | None, ref: ReferencePool | None, now
     stale = age > C.LEVEL_FRESH_HOURS
     if stale:
         flags.append("levelObservationOlderThanFreshWindow")
-    return ShiftResult("shiftOnly", shift, sigma, confidence_label(sigma), abs(shift) > 2 * sigma, flags=flags,
+    return ShiftResult("shiftOnly", shift, sigma, label, abs(shift) > 2 * sigma, flags=flags,
                        sigma_parts=parts, level_age_hours=age, evidence_stale=stale, reference_basis=ref.basis, reference_ft=pool_in_frame)
 
 

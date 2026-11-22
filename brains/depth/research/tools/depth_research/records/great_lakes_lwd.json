@@ -27,9 +27,9 @@
     "Lake Ontario|NY": "ontario"
   },
   "evidence": [
-    {"publisher": "NOAA CO-OPS", "url": "https://tidesandcurrents.noaa.gov/gldatums.html", "retrieved": "2026-11-22",
-     "quote": "LWD: Superior 183.2 m / 601.1 ft; Michigan and Huron 176.0 m / 577.5 ft; St. Clair 174.4 m / 572.3 ft; Erie 173.5 m / 569.2 ft; Ontario 74.2 m / 243.3 ft"},
-    {"publisher": "Canadian Hydrographic Service", "url": "https://tides.gc.ca/en/great-lakes-st-lawrence-river-system", "retrieved": "2026-11-22",
+    {"publisher": "NOAA CO-OPS", "url": "https://tidesandcurrents.noaa.gov/gldatums.html", "retrieved": "2026-11-22", "paraphrased": true,
+     "quote": "LWD: Superior 183.2 m / 601.1 ft; Michigan and Huron 176.0 m / 577.5 ft; St. Clair 174.4 m / 572.3 ft; Erie 173.5 m / 569.2 ft; Ontario 74.2 m / 243.3 ft", "note": "paraphrased from the page's table (it lists the Ontario stations under their own names), not a verbatim quote"},
+    {"publisher": "Canadian Hydrographic Service", "url": "https://tides.gc.ca/en/great-lakes-st-lawrence-river-system", "retrieved": "2026-11-22", "paraphrased": true,
      "quote": "Lake Superior chart datum 183.2 m; Michigan and Huron 176.0 m; St. Clair 174.4 m; Erie 173.5 m; Ontario 74.2 m", "note": "paraphrased per lake; the page states that Great Lakes water level elevations are given in IGLD 1985 but does not repeat it next to each chart datum"}
   ],
   "levelSide": "NOAA CO-OPS Great Lakes water levels requested with datum IGLD are IGLD 1985 (series name water_level_IGLD85 in the research bindings); Depth reads that series name as the level datum, like a USGS parameter code."
