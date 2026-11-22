@@ -43,6 +43,18 @@
     {
       "brainId": "vegetation",
       "reason": "SHADOW-only: surface-only shadow V1, NOT_VALIDATED; no approved release"
+    },
+    {
+      "brainId": "moon",
+      "reason": "registered disabled 2026-11-22 (PARKED, no executor, no live writer); no cutover plan; customer publication off"
+    },
+    {
+      "brainId": "weather",
+      "reason": "Registered DISABLED 2026-11-22 (owner decision, Sector_Ops #51): no live writer, no cloud job, thresholds release approval NOT_RECORDED; activation and its own cutover plan are separate owner steps (W-1)"
+    },
+    {
+      "brainId": "generation",
+      "reason": "registered DISABLED (owner direction 2026-11-22): no approved knowledge release, NOT_VALIDATED, no execution target; not yet a Cortex target Brain (CORTEX_GAPS CG-3.1-20)"
     }
   ],
   "separateMigration": {

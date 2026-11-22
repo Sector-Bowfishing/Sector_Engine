@@ -106,7 +106,10 @@ def test_dependency_graph_read_model_is_engine_owned_and_deterministic():
     assert g["brains"]["wind"]["source"] == "brain.json" and g["brains"]["wind"]["declarationsKnown"] is True
     registered = {"wind", "biological-state", "water-clarity",   # Wind (Phase 2), Fish and Water Clarity (Structural Certification V1) declare in brains/*/brain.json,
                   "sector-intelligence", "lake-brain", "water-temp",   # as do Sector Intelligence, Lake and Water Temperature (Cortex architecture completion)
-                  "depth", "vegetation"}                                # and Depth and Vegetation (Cortex 2.1 structural completion)
+                  "depth", "vegetation",                                # and Depth and Vegetation (Cortex 2.1 structural completion)
+                  "moon",                                               # and Moon (created 2026-11-22)
+                  "weather",                                            # and Weather (created 2026-11-22, registered DISABLED)
+                  "generation"}                                         # and Generation (created 2026-11-22, registered DISABLED)
     others = [b for b in g["brains"] if b not in registered]
     assert all(g["brains"][b]["legacy"] for b in others)                      # every registered Brain now declares in brain.json (none left legacy)
     assert g["brains"]["biological-state"]["source"] == "brain.json" and g["brains"]["biological-state"]["declarationsKnown"] is True and g["brains"]["biological-state"]["rows"] == []

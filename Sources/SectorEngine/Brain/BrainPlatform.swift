@@ -32,6 +32,9 @@ public enum BrainPlatform {
         "sector-intelligence": ("intelligence", "sectorIntelligence", "Sector Intelligence"),
         "depth": ("depth", "depth", "Depth"),
         "vegetation": ("vegetation", "vegetation", "Vegetation"),
+        "moon": ("moon", "moonNightLight", "Moon and Night Light"),
+        "weather": ("weather", "weather", "Weather"),
+        "generation": ("generation", "generation", "Generation"),
     ]
     public static func slot(for brainId: String) -> String? { brains[brainId]?.slot }
     public static func snapshotField(for brainId: String) -> String? { brains[brainId]?.snapshotField }

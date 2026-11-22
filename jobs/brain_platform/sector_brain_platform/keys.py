@@ -16,6 +16,9 @@ BRAINS = {
     "sector-intelligence": ("intelligence", "sectorIntelligence", "Sector Intelligence"),
     "depth": ("depth", "depth", "Depth"),
     "vegetation": ("vegetation", "vegetation", "Vegetation"),
+    "moon": ("moon", "moonNightLight", "Moon and Night Light"),
+    "weather": ("weather", "weather", "Weather"),
+    "generation": ("generation", "generation", "Generation"),
 }
 
 

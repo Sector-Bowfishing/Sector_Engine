@@ -159,6 +159,43 @@
       "class": "GATED",
       "title": "Turn on publication of the sanitized engineering status (engineering-status-ops-v1) to the Brain RTDB node /control/engineeringStatusV1 by the orchestrator control plane",
       "recommendation": "After A-1 merge and A-2 deploy from main: add --publish-engineering-status to the orchestrator's scheduled arguments. Existing writer and /control ownership; no IAM, identity or Ops rules change"
+    },
+    {
+      "id": "W-1",
+      "class": "GATED",
+      "title": "Activate the Weather Brain (registered DISABLED 2026-11-22)",
+      "recommendation": "Owner steps in docs/brains/WEATHER_BRAIN_PLAN.md section 6: approve the thresholds release, register the Weather path families in the Cortex Firebase registry, deploy the weather-brain job, set the manifest executionTarget and activityState ACTIVE, then enable weather in the execution control with an approvalRef",
+      "brains": [
+        "weather"
+      ]
+    },
+    {
+      "id": "G-2",
+      "class": "APPROVAL",
+      "title": "Approve a Generation knowledge release (dam catalog + source-access list) before any Generation write",
+      "recommendation": "Approve only after D-G and the pre-registered week-long schedule comparison; the candidate generation-knowledge-candidate-2026-11-22.1 stays unapproved",
+      "brains": [
+        "generation"
+      ]
+    },
+    {
+      "id": "D-G",
+      "class": "DECISION_REQUIRED",
+      "title": "TVA robots.txt and the iOS 'TVA blocks automated access' note; SWPA (energy.gov) robots.txt and terms",
+      "recommendation": "Read both robots.txt files from a session that can reach them; if either forbids automated use, ask the operator (owner source-access rule)",
+      "brains": [
+        "generation"
+      ]
+    },
+    {
+      "id": "D-H",
+      "class": "DECISION_REQUIRED",
+      "title": "Cortex architecture: add Generation as a tenth target Brain and move dam releases and reservoir operations (not pool level) from Lake Brain to it (CG-3.1-20)",
+      "recommendation": "Cortex maintenance session; until then Generation is an UNREGISTERED deployed package registered DISABLED",
+      "brains": [
+        "generation",
+        "lake-brain"
+      ]
     }
   ]
 }

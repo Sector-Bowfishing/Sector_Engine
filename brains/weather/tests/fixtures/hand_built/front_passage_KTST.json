@@ -1,0 +1,447 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "properties": {
+    "station": "https://api.weather.gov/stations/KTST",
+    "timestamp": "2026-11-20T01:53:00+00:00",
+    "textDescription": "Mostly Cloudy",
+    "icon": "https://api.weather.gov/icons/land/night/bkn?size=medium",
+    "temperature": {
+     "unitCode": "wmoUnit:degC",
+     "value": 12,
+     "qualityControl": "V"
+    },
+    "dewpoint": {
+     "unitCode": "wmoUnit:degC",
+     "value": 8,
+     "qualityControl": "V"
+    },
+    "relativeHumidity": {
+     "unitCode": "wmoUnit:percent",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "windSpeed": {
+     "unitCode": "wmoUnit:km_h-1",
+     "value": 24,
+     "qualityControl": "V"
+    },
+    "windDirection": {
+     "unitCode": "wmoUnit:degree_(angle)",
+     "value": 320,
+     "qualityControl": "V"
+    },
+    "barometricPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": 101470,
+     "qualityControl": "V"
+    },
+    "seaLevelPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "precipitationLastHour": {
+     "unitCode": "wmoUnit:mm",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "cloudLayers": []
+   }
+  },
+  {
+   "properties": {
+    "station": "https://api.weather.gov/stations/KTST",
+    "timestamp": "2026-11-20T00:53:00+00:00",
+    "textDescription": "Mostly Cloudy",
+    "icon": "https://api.weather.gov/icons/land/night/bkn?size=medium",
+    "temperature": {
+     "unitCode": "wmoUnit:degC",
+     "value": 13,
+     "qualityControl": "V"
+    },
+    "dewpoint": {
+     "unitCode": "wmoUnit:degC",
+     "value": 9,
+     "qualityControl": "V"
+    },
+    "relativeHumidity": {
+     "unitCode": "wmoUnit:percent",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "windSpeed": {
+     "unitCode": "wmoUnit:km_h-1",
+     "value": 26,
+     "qualityControl": "V"
+    },
+    "windDirection": {
+     "unitCode": "wmoUnit:degree_(angle)",
+     "value": 310,
+     "qualityControl": "V"
+    },
+    "barometricPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": 101370,
+     "qualityControl": "V"
+    },
+    "seaLevelPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "precipitationLastHour": {
+     "unitCode": "wmoUnit:mm",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "cloudLayers": []
+   }
+  },
+  {
+   "properties": {
+    "station": "https://api.weather.gov/stations/KTST",
+    "timestamp": "2026-11-19T23:53:00+00:00",
+    "textDescription": "Mostly Cloudy",
+    "icon": "https://api.weather.gov/icons/land/night/bkn?size=medium",
+    "temperature": {
+     "unitCode": "wmoUnit:degC",
+     "value": 15,
+     "qualityControl": "V"
+    },
+    "dewpoint": {
+     "unitCode": "wmoUnit:degC",
+     "value": 11,
+     "qualityControl": "V"
+    },
+    "relativeHumidity": {
+     "unitCode": "wmoUnit:percent",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "windSpeed": {
+     "unitCode": "wmoUnit:km_h-1",
+     "value": 28,
+     "qualityControl": "V"
+    },
+    "windDirection": {
+     "unitCode": "wmoUnit:degree_(angle)",
+     "value": 300,
+     "qualityControl": "V"
+    },
+    "barometricPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": 101260,
+     "qualityControl": "V"
+    },
+    "seaLevelPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "precipitationLastHour": {
+     "unitCode": "wmoUnit:mm",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "cloudLayers": []
+   }
+  },
+  {
+   "properties": {
+    "station": "https://api.weather.gov/stations/KTST",
+    "timestamp": "2026-11-19T22:53:00+00:00",
+    "textDescription": "Mostly Cloudy",
+    "icon": "https://api.weather.gov/icons/land/night/bkn?size=medium",
+    "temperature": {
+     "unitCode": "wmoUnit:degC",
+     "value": 19.5,
+     "qualityControl": "V"
+    },
+    "dewpoint": {
+     "unitCode": "wmoUnit:degC",
+     "value": 16,
+     "qualityControl": "V"
+    },
+    "relativeHumidity": {
+     "unitCode": "wmoUnit:percent",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "windSpeed": {
+     "unitCode": "wmoUnit:km_h-1",
+     "value": 24,
+     "qualityControl": "V"
+    },
+    "windDirection": {
+     "unitCode": "wmoUnit:degree_(angle)",
+     "value": 210,
+     "qualityControl": "V"
+    },
+    "barometricPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": 101180,
+     "qualityControl": "V"
+    },
+    "seaLevelPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "precipitationLastHour": {
+     "unitCode": "wmoUnit:mm",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "cloudLayers": []
+   }
+  },
+  {
+   "properties": {
+    "station": "https://api.weather.gov/stations/KTST",
+    "timestamp": "2026-11-19T21:53:00+00:00",
+    "textDescription": "Mostly Cloudy",
+    "icon": "https://api.weather.gov/icons/land/night/bkn?size=medium",
+    "temperature": {
+     "unitCode": "wmoUnit:degC",
+     "value": 20,
+     "qualityControl": "V"
+    },
+    "dewpoint": {
+     "unitCode": "wmoUnit:degC",
+     "value": 16.5,
+     "qualityControl": "V"
+    },
+    "relativeHumidity": {
+     "unitCode": "wmoUnit:percent",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "windSpeed": {
+     "unitCode": "wmoUnit:km_h-1",
+     "value": 22,
+     "qualityControl": "V"
+    },
+    "windDirection": {
+     "unitCode": "wmoUnit:degree_(angle)",
+     "value": 200,
+     "qualityControl": "V"
+    },
+    "barometricPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": 101200,
+     "qualityControl": "V"
+    },
+    "seaLevelPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "precipitationLastHour": {
+     "unitCode": "wmoUnit:mm",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "cloudLayers": []
+   }
+  },
+  {
+   "properties": {
+    "station": "https://api.weather.gov/stations/KTST",
+    "timestamp": "2026-11-19T20:53:00+00:00",
+    "textDescription": "Mostly Cloudy",
+    "icon": "https://api.weather.gov/icons/land/night/bkn?size=medium",
+    "temperature": {
+     "unitCode": "wmoUnit:degC",
+     "value": 20,
+     "qualityControl": "V"
+    },
+    "dewpoint": {
+     "unitCode": "wmoUnit:degC",
+     "value": 16.5,
+     "qualityControl": "V"
+    },
+    "relativeHumidity": {
+     "unitCode": "wmoUnit:percent",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "windSpeed": {
+     "unitCode": "wmoUnit:km_h-1",
+     "value": 22,
+     "qualityControl": "V"
+    },
+    "windDirection": {
+     "unitCode": "wmoUnit:degree_(angle)",
+     "value": 190,
+     "qualityControl": "V"
+    },
+    "barometricPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": 101250,
+     "qualityControl": "V"
+    },
+    "seaLevelPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "precipitationLastHour": {
+     "unitCode": "wmoUnit:mm",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "cloudLayers": []
+   }
+  },
+  {
+   "properties": {
+    "station": "https://api.weather.gov/stations/KTST",
+    "timestamp": "2026-11-19T19:53:00+00:00",
+    "textDescription": "Mostly Cloudy",
+    "icon": "https://api.weather.gov/icons/land/night/bkn?size=medium",
+    "temperature": {
+     "unitCode": "wmoUnit:degC",
+     "value": 20.5,
+     "qualityControl": "V"
+    },
+    "dewpoint": {
+     "unitCode": "wmoUnit:degC",
+     "value": 17,
+     "qualityControl": "V"
+    },
+    "relativeHumidity": {
+     "unitCode": "wmoUnit:percent",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "windSpeed": {
+     "unitCode": "wmoUnit:km_h-1",
+     "value": 20,
+     "qualityControl": "V"
+    },
+    "windDirection": {
+     "unitCode": "wmoUnit:degree_(angle)",
+     "value": 190,
+     "qualityControl": "V"
+    },
+    "barometricPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": 101330,
+     "qualityControl": "V"
+    },
+    "seaLevelPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "precipitationLastHour": {
+     "unitCode": "wmoUnit:mm",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "cloudLayers": []
+   }
+  },
+  {
+   "properties": {
+    "station": "https://api.weather.gov/stations/KTST",
+    "timestamp": "2026-11-19T18:53:00+00:00",
+    "textDescription": "Mostly Cloudy",
+    "icon": "https://api.weather.gov/icons/land/night/bkn?size=medium",
+    "temperature": {
+     "unitCode": "wmoUnit:degC",
+     "value": 21,
+     "qualityControl": "V"
+    },
+    "dewpoint": {
+     "unitCode": "wmoUnit:degC",
+     "value": 17,
+     "qualityControl": "V"
+    },
+    "relativeHumidity": {
+     "unitCode": "wmoUnit:percent",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "windSpeed": {
+     "unitCode": "wmoUnit:km_h-1",
+     "value": 20,
+     "qualityControl": "V"
+    },
+    "windDirection": {
+     "unitCode": "wmoUnit:degree_(angle)",
+     "value": 180,
+     "qualityControl": "V"
+    },
+    "barometricPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": 101420,
+     "qualityControl": "V"
+    },
+    "seaLevelPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "precipitationLastHour": {
+     "unitCode": "wmoUnit:mm",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "cloudLayers": []
+   }
+  },
+  {
+   "properties": {
+    "station": "https://api.weather.gov/stations/KTST",
+    "timestamp": "2026-11-19T17:53:00+00:00",
+    "textDescription": "Mostly Cloudy",
+    "icon": "https://api.weather.gov/icons/land/night/bkn?size=medium",
+    "temperature": {
+     "unitCode": "wmoUnit:degC",
+     "value": 21,
+     "qualityControl": "V"
+    },
+    "dewpoint": {
+     "unitCode": "wmoUnit:degC",
+     "value": 17,
+     "qualityControl": "V"
+    },
+    "relativeHumidity": {
+     "unitCode": "wmoUnit:percent",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "windSpeed": {
+     "unitCode": "wmoUnit:km_h-1",
+     "value": 18,
+     "qualityControl": "V"
+    },
+    "windDirection": {
+     "unitCode": "wmoUnit:degree_(angle)",
+     "value": 180,
+     "qualityControl": "V"
+    },
+    "barometricPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": 101500,
+     "qualityControl": "V"
+    },
+    "seaLevelPressure": {
+     "unitCode": "wmoUnit:Pa",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "precipitationLastHour": {
+     "unitCode": "wmoUnit:mm",
+     "value": null,
+     "qualityControl": "Z"
+    },
+    "cloudLayers": []
+   }
+  }
+ ],
+ "_provenance": "HAND_BUILT 2026-11-22 for the Weather Brain tests: a textbook cold-front passage (pressure trough, 110-120 deg wind veer, 8 C drop). Not a recording."
+}

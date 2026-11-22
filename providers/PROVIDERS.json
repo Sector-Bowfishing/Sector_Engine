@@ -182,6 +182,90 @@
       "costClass": "free",
       "costNote": "Acquired by the Water Temperature Brain (brains/water-temperature/runtime) through the shared Engine fetchers (Sources/SectorEngine/Fetchers), the same fetch as /conditions",
       "licenseRef": "Open-Meteo terms of use (customer path already uses it in /conditions)"
+    },
+    {
+      "providerId": "nws-station-observations",
+      "displayName": "NWS station observations (ASOS/AWOS via api.weather.gov)",
+      "acquisitionOwner": "weather",
+      "healthOwner": "weather",
+      "authorizedConsumers": [
+        "weather"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside brains/weather/runtime (sector_weather.client): one 13 h observation window per distinct station per run (the 3 nearest stations of each lake, shared stations fetched once), requests paced 0.25 s, self-identifying Sector-WeatherBrain User-Agent. Not running: the Brain is registered DISABLED.",
+      "licenseRef": "U.S. Government work, public domain; NWS API terms (User-Agent required, documented API): brains/weather/docs/NWS_PROVIDER.md"
+    },
+    {
+      "providerId": "nws-forecast-grid",
+      "displayName": "NWS forecast grid (NBM-based NDFD gridpoint, api.weather.gov)",
+      "acquisitionOwner": "weather",
+      "healthOwner": "weather",
+      "authorizedConsumers": [
+        "weather"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside brains/weather/runtime (sector_weather.client): one gridpoint request per distinct grid cell per run; the /points lookup is cached 30 days. Separate from nws-forecast-qpf (the Lake Brain's own rain-signal read of the same API). Not running: the Brain is registered DISABLED.",
+      "licenseRef": "U.S. Government work, public domain; NWS API terms (User-Agent required, documented API): brains/weather/docs/NWS_PROVIDER.md"
+    },
+    {
+      "providerId": "tva-generation-schedule",
+      "displayName": "TVA REST API generation schedule and observed release (generation-releases, observed-data-48-hours: units, discharge, tailwater)",
+      "acquisitionOwner": "generation",
+      "healthOwner": "generation",
+      "authorizedConsumers": [
+        "generation"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside the Generation Brain runtime (brains/generation/runtime/generation_brain/sources); access-gated by the knowledge release's source_access.json; at most one read per series per hour; the Brain is registered DISABLED",
+      "licenseRef": "Public US government data; TVA legal notices restrict only logos and trademarks; robots.txt check open (docs/brains/GENERATION_BRAIN_PROVIDERS.md)"
+    },
+    {
+      "providerId": "usace-cwms-release",
+      "displayName": "USACE CWMS Data API (project outflow, turbine, spill, generation and tailwater series)",
+      "acquisitionOwner": "generation",
+      "healthOwner": "generation",
+      "authorizedConsumers": [
+        "generation"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside the Generation Brain runtime (brains/generation/runtime/generation_brain/sources); access-gated by the knowledge release's source_access.json; at most one read per series per hour; the Brain is registered DISABLED",
+      "licenseRef": "Public US government data (no licence restriction); documented CWMS Data API"
+    },
+    {
+      "providerId": "swpa-generation-schedule",
+      "displayName": "Southwestern Power Administration daily generation schedule page (projected MW per project per hour)",
+      "acquisitionOwner": "generation",
+      "healthOwner": "generation",
+      "authorizedConsumers": [
+        "generation"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside the Generation Brain runtime (brains/generation/runtime/generation_brain/sources); access-gated by the knowledge release's source_access.json; at most one read per series per hour; the Brain is registered DISABLED",
+      "licenseRef": "Public US government data; energy.gov robots.txt and terms not yet checked: ACCESS_CHECK_REQUIRED, not read (docs/brains/GENERATION_BRAIN_PROVIDERS.md)"
+    },
+    {
+      "providerId": "usbr-rise-release",
+      "displayName": "USBR RISE (reservoir release items)",
+      "acquisitionOwner": "generation",
+      "healthOwner": "generation",
+      "authorizedConsumers": [
+        "generation"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside the Generation Brain runtime (brains/generation/runtime/generation_brain/sources); access-gated by the knowledge release's source_access.json; at most one read per series per hour; the Brain is registered DISABLED",
+      "licenseRef": "Public US government data (no licence restriction); documented RISE API"
+    },
+    {
+      "providerId": "usgs-waterdata-discharge",
+      "displayName": "USGS Water Data API continuous discharge (00060) below dams",
+      "acquisitionOwner": "generation",
+      "healthOwner": "generation",
+      "authorizedConsumers": [
+        "generation"
+      ],
+      "costClass": "free",
+      "costNote": "Brain-exclusive acquisition inside the Generation Brain runtime (brains/generation/runtime/generation_brain/sources); access-gated by the knowledge release's source_access.json; at most one read per series per hour; the Brain is registered DISABLED",
+      "licenseRef": "Public US government data (no licence restriction); documented Water Data OGC API"
     }
   ]
 }

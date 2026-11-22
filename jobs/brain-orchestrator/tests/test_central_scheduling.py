@@ -98,9 +98,14 @@ def test_no_deploy_script_can_create_or_resume_a_schedule():
 # 4 -------------------------------------------------------------------- all eight Brains are registered with the one authority
 def test_all_eight_brains_are_registered_with_the_orchestrator():
     m = O.load_manifest()
-    assert set(m["brains"]) == set(ALL_BRAINS)
+    # Moon, Weather and Generation (2026-11-22): registered DISABLED (PARKED, executionTarget none, no executor, no shadow lane): deliberately no execution path.
+    registered_disabled = {"moon", "weather", "generation"}
+    assert set(m["brains"]) == set(ALL_BRAINS) | registered_disabled
+    for bid in registered_disabled:
+        b = m["brains"][bid]
+        assert b["activityState"] == "PARKED" and b["executionTarget"]["kind"] == "none" and bid not in OR.EXECUTORS and not (b.get("shadowLane") or {}).get("enabled")
     for bid, b in m["brains"].items():
-        runs_here = bid in OR.EXECUTORS or (b.get("shadowLane") or {}).get("enabled")
+        runs_here = bid in OR.EXECUTORS or (b.get("shadowLane") or {}).get("enabled") or bid in registered_disabled
         assert runs_here, f"{bid} has no orchestrator execution path"
         bj = json.load(open(os.path.join(ROOT, "brains", {"biological-state": "fish", "lake-brain": "lake", "water-temp": "water-temperature"}.get(bid, bid), "brain.json")))
         ex = bj["operations"]["execution"]

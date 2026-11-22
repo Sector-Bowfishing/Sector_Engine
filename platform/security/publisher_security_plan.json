@@ -48,31 +48,40 @@
    "health/jobs/{id}": [
     "biological-state",
     "depth",
+    "generation",
     "lake-brain",
+    "moon",
     "sector-intelligence",
     "vegetation",
     "water-clarity",
     "water-temp",
+    "weather",
     "wind"
    ],
    "lakeFleet/{k}/lakeId": [
     "biological-state",
     "depth",
+    "generation",
     "lake-brain",
+    "moon",
     "sector-intelligence",
     "vegetation",
     "water-clarity",
     "water-temp",
+    "weather",
     "wind"
    ],
    "snapshots/{k}/latest/lakeId": [
     "biological-state",
     "depth",
+    "generation",
     "lake-brain",
+    "moon",
     "sector-intelligence",
     "vegetation",
     "water-clarity",
     "water-temp",
+    "weather",
     "wind"
    ]
   },

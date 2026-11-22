@@ -1,0 +1,159 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "generation",
+  "displayName": "Generation Brain",
+  "humanName": "Generation",
+  "domain": "dam-release-and-generation",
+  "lifecycle": "CALIBRATION",
+  "contractVersion": "0.1.0",
+  "runtime": {
+    "kind": "job",
+    "language": "python",
+    "entrypoint": "brains/generation/runtime/run.py",
+    "trigger": {
+      "kind": "manual"
+    }
+  },
+  "publishes": [
+    {
+      "contractId": "generation-publication-v1",
+      "version": "1.0.0",
+      "schemaRef": "brains/generation/contracts/generation-publication-v1.json",
+      "pathFamilies": [
+        "/lakes/{k}/states/generation",
+        "/lakeFleet/{k}/slots/generation",
+        "/lakeFleet/{k}/readiness/generation",
+        "/lakeFleet/{k}/modelVersions/generation",
+        "/snapshots/{k}/latest/generation",
+        "/snapshots/{k}/latest/brainVersions/generation",
+        "/brains/generation/{child}",
+        "/validation/generation",
+        "/health/brains/generation/{child}",
+        "/activity/{event}"
+      ],
+      "legacyDirectWrites": [
+        {
+          "path": "/snapshots/{k}/latest/lakeId",
+          "disposition": "PLATFORM_OWNED_STOP_WRITING",
+          "ref": "snapshot-lakeid"
+        },
+        {
+          "path": "/lakeFleet/{k}/lakeId",
+          "disposition": "PLATFORM_OWNED_STOP_WRITING",
+          "ref": "lakefleet-lakeid"
+        }
+      ]
+    }
+  ],
+  "consumes": [
+    {
+      "kind": "registry",
+      "registry": "lakes",
+      "contractId": "registry.lakes",
+      "minVersion": "1.0.0",
+      "requirement": "REQUIRED"
+    }
+  ],
+  "providers": [
+    {
+      "providerId": "tva-generation-schedule",
+      "requirement": "OPTIONAL"
+    },
+    {
+      "providerId": "usace-cwms-release",
+      "requirement": "OPTIONAL"
+    },
+    {
+      "providerId": "swpa-generation-schedule",
+      "requirement": "OPTIONAL"
+    },
+    {
+      "providerId": "usbr-rise-release",
+      "requirement": "OPTIONAL"
+    },
+    {
+      "providerId": "usgs-waterdata-discharge",
+      "requirement": "OPTIONAL"
+    }
+  ],
+  "researchWorkspace": {
+    "workspaceId": "generation"
+  },
+  "customerIntegrationMode": "none",
+  "publisherRequired": {
+    "required": true,
+    "cutoverStatus": "SHADOW"
+  },
+  "authorizedConsumers": [
+    "ops",
+    "sector-intelligence"
+  ],
+  "tests": [
+    "brains/generation/tests",
+    "brains/generation/research/tools/tests"
+  ],
+  "dataBudget": {
+    "maxTrackedFileBytes": 1048576,
+    "exceptions": []
+  },
+  "knowledge": {
+    "stores": [
+      {
+        "id": "generation-knowledge",
+        "store": "PACKAGED_IN_IMAGE",
+        "owner": "generation",
+        "location": "brains/generation/runtime/knowledge/knowledge-release.json",
+        "loader": "brains/generation/runtime/generation_brain/knowledge.py load",
+        "verification": "sector_brain_platform.knowledge_release: per-file sha256 and bytes plus release digest",
+        "lineage": "knowledgeRelease in the registry, every lake state and the run summary; knowledgeRelease, manifestRef and manifestSha256 in the artifact lineage",
+        "approval": "NOT_RECORDED",
+        "onUnavailable": "REFUSE"
+      }
+    ],
+    "researchFallback": false,
+    "tests": [
+      "brains/generation/tests/test_run_entry.py",
+      "brains/generation/tests/test_knowledge_memory.py",
+      "jobs/brain_platform/tests/test_knowledge_release.py"
+    ],
+    "notes": "CANDIDATE release generation-knowledge-candidate-2026-11-22.1 (approval NOT_RECORDED): the dam catalog (401 directory lakes with a dam, their operator group, bound and pending sources, coverage reason) and the source-access list. Verified on load, never published from: --write and --plan report BLOCKED_AWAITING_APPROVED_RELEASE until Michael approves a named release."
+  },
+  "operations": {
+    "executionModes": [
+      "INTERNAL",
+      "APPROVED_SCIENCE"
+    ],
+    "knowledgeLoading": {
+      "approved": "NONE",
+      "experimental": "generation-knowledge (PACKAGED_IN_IMAGE, brains/generation/runtime/knowledge/knowledge-release.json, approval NOT_RECORDED)",
+      "refuseWithoutApproved": [
+        "APPROVED_SCIENCE",
+        "CUSTOMER_SERVING"
+      ]
+    },
+    "internalPublication": [
+      "fam.activity",
+      "fam.brains",
+      "fam.health-brains",
+      "fam.lake-states",
+      "fam.lakefleet",
+      "fam.snapshots",
+      "fam.validation"
+    ],
+    "internalExecution": "none: registered DISABLED (control manifest PARKED, executionTarget none, no execution-control entry); dry runs only (run.py --dry-run). Even INTERNAL writes refuse without an APPROVED release (run.py --write)",
+    "execution": {
+      "authority": "brain-orchestrator",
+      "trigger": "TIME",
+      "minIntervalHours": 1.0,
+      "refresh": "once enabled: the hourly Orchestrator grant reads only the dams whose adaptive nextCheckAt is reached (TRANSITION 60, ACTIVE 120, STEADY 180 min; never more than hourly per series)",
+      "dependsOn": [],
+      "independentSchedule": false,
+      "controlledBy": "fam.control-execution-control (global + per-Brain; fail closed; read by the orchestrator only)"
+    },
+    "customerPublication": {
+      "status": "NOT_ELIGIBLE",
+      "approvalRef": null
+    },
+    "notes": "Owner direction 2026-11-22 19:37Z (Sector_Ops #51 comment 7084558461): build the Generation Brain; real measured or official operator data only; customer-visible steps stay Michael's. Merging this package changes nothing at runtime. The Brain-owned families (fam.lake-states, fam.lakefleet, fam.snapshots, fam.brains, fam.validation, fam.health-brains, fam.activity) are written only by run.py --write, which refuses until an APPROVED release and GENERATION_WRITE_APPROVED=1."
+  }
+}

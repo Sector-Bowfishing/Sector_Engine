@@ -1,0 +1,45 @@
+{
+ "_about": "Weather Brain approved-memory candidate: the PRE-STATED weather-change thresholds and freshness tiers (owner decision 2026-11-22, Sector_Ops #51). Fixed before any result was computed; changed only by a new thresholdsVersion and a new knowledge release with its reason. Meaning: brains/weather/contracts/weather-state-v1.md sections 4-5.",
+ "thresholdsVersion": "weather-change-thresholds-v1",
+ "preStatedAt": "2026-11-22",
+ "changeRules": {
+  "pressureFastInHgPer3h": 0.06,
+  "airTempSwingFPer3h": 8.0,
+  "frontWindShiftDeg": 90.0,
+  "frontWindMinMph": 5.0,
+  "frontTroughInHg": 0.02,
+  "frontDropF": 5.0,
+  "measurablePrecipIn": 0.01,
+  "rainOnsetDryLookbackHours": 3.0,
+  "rainExpectedIn": 0.1,
+  "rainExpectedHours": 6.0,
+  "windowHours": 3.0
+ },
+ "reasons": {
+  "pressureFastInHgPer3h": "3x the iOS app's +/-0.02 inHg 3 h steady band (displayPressureTrend), above the 1.5 hPa the app's 12 h rule needs",
+  "airTempSwingFPer3h": "the iOS temperature sheet names an overnight slide of 8 F or more",
+  "frontWindShiftDeg": "the iOS wind-shift rule: a quarter-turn is what rides with a frontal passage",
+  "frontWindMinMph": "calm and light-and-variable directions are not a wind turn",
+  "frontTroughInHg": "the iOS 3 h steady band",
+  "frontDropF": "the conventional surface signature of a front, required together with the wind turn",
+  "measurablePrecipIn": "NWS measurable precipitation",
+  "rainOnsetDryLookbackHours": "the same 3 h window as the other observed rules",
+  "rainExpectedIn": "NWS wetting rain",
+  "rainExpectedHours": "the Water Temp minimum refresh interval (6 h)",
+  "windowHours": "the iOS 3 h tendency window"
+ },
+ "freshness": {
+  "tierWindowMin": {
+   "CHANGE": 90,
+   "WATCH": 150,
+   "STEADY": 240
+  },
+  "ceilingMin": 240,
+  "refreshLatencyMin": 75,
+  "recheckMin": 45,
+  "steadyRecheckMaxMin": 120,
+  "plannerToleranceMin": 10,
+  "staleAfterHours": 3.0,
+  "dueAfterHours": 0.75
+ }
+}

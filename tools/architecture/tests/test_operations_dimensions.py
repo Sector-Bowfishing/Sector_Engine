@@ -19,7 +19,7 @@ import operations_status as OS  # noqa: E402
 from jsonschema_lite import validate  # noqa: E402
 from sector_brain_platform import brain_operations as BO, engineering_status_publication as ESP  # noqa: E402
 
-IDS = {"biological-state", "wind", "water-clarity", "lake-brain", "water-temp", "sector-intelligence", "depth", "vegetation"}
+IDS = {"biological-state", "wind", "water-clarity", "lake-brain", "water-temp", "sector-intelligence", "depth", "vegetation", "moon", "weather", "generation"}
 NOW = dt.datetime(2026, 10, 22, 16, tzinfo=dt.timezone.utc)
 
 
@@ -47,7 +47,7 @@ def test_scores_are_classified_and_the_engine_score_is_an_engineering_score():
     p = _proj()
     assert p["engineScore"]["measurement"] == "ENGINEERING_SCORE" and p["engineScore"]["rubric"] == "engine-score-v1"
     by = {b["brainId"]: b["operations"]["scores"] for b in p["brains"]}
-    assert by["depth"] == [] and by["vegetation"] == []                               # no score is invented for an unscored Brain
+    assert by["depth"] == [] and by["vegetation"] == [] and by["moon"] == [] and by["generation"] == []    # no score is invented for an unscored Brain
     assert {s["measurement"] for s in by["wind"]} == {"SCIENTIFIC_MATURITY", "DOMAIN_CAPABILITY"}
     assert all(s["measurement"] != "ENGINEERING_SCORE" for v in by.values() for s in v)
 
@@ -97,7 +97,7 @@ def test_the_live_document_is_schema_valid_leak_free_and_passes_the_cortex_statu
     assert list(validate(live, json.load(open(P.SCHEMA)))) == [] and ESP.leaks(live) == []
     st = OS.convert(live)
     by = {b["brainId"]: b for b in st["brains"]}
-    assert len(st["brains"]) == 8 and by["wind"]["internalOperation"]["status"] == "ACTIVE" and by["depth"]["internalOperation"]["status"] == "SHADOW"
+    assert len(st["brains"]) == 11 and by["wind"]["internalOperation"]["status"] == "ACTIVE" and by["depth"]["internalOperation"]["status"] == "SHADOW"
     assert by["depth"]["outputs"][0]["lane"] == "INTERNAL_EXPERIMENTAL" and {"mode": "APPROVED_SCIENCE", "knowledgeState": "CANDIDATE", "outcome": "REFUSED"} in by["depth"]["runs"]
     assert "combinedReadiness" not in by["depth"] and by["depth"]["releaseReadiness"]["status"] == "BLOCKED"   # release readiness, beside the dimensions
     assert all(b["customerEligibility"]["status"] == "NOT_ELIGIBLE" for b in st["brains"])
