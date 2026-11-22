@@ -16,6 +16,19 @@ Biological **consumes** environmental truth and **converts** it into species-res
 | `waterTemperature.currentTempF` | `waterTempBand`, `warmRise`, `spawnWindow`, crossings | outside 28-110 F is dropped (UNKNOWN); a model fault is not a fish signal |
 | `waterTemperature.trend24hF` | `temperatureTrend` (noise floor ±1.0 F), `temperatureCrossing15C/18C/20C` | outside ±25 F dropped; only a **24 h** crossing is knowable from the published trend |
 | `provenance.generatedAt`, `stale`, `observationType`, `provenance.readiness` | freshness / degraded handling | stale (> 36 h or flagged) → UNKNOWN; DEGRADED lowers band confidence one level |
+
+**Measured-only rule (2026-11-22, `bio_state.normalize_inputs`).** A modelled water temperature is UNKNOWN, never a fish signal. Each field is gated on the Water Temp Brain's own evidence fields (`water-temp-state-v1`), because a sensor lake still publishes model values:
+
+| Field | Used only when | Otherwise |
+|---|---|---|
+| `currentTempF` | `evidenceClass` = `sensor` **and** the reading's `kind` = `measured` | dropped |
+| `trend24hF` | `evidenceClass` = `sensor` **and** `trendBasis` is a measured basis (`contracts_in.WATER_TEMP_MEASURED_TREND_BASES`) | dropped |
+
+* Reason codes, per dropped field in `fieldReasons`: `MODELLED_INPUT` (a `modeled` class, a `modeled`/`unavailable` reading, or a model trend basis), `EVIDENCE_CLASS_MISSING` (the field is absent), `EVIDENCE_CLASS_UNRECOGNISED` (a value outside the Water Temp vocabulary).
+* When nothing measured is left, the slot status is `NOT_MEASURED`, with a slot `reasonCode`. A STALE slot stays STALE.
+* Water Temp publishes only `trendBasis: model:dailyChange(lakeLocal)` today. Its `sensorTrend` is a direction word with no magnitude, so `trend24hF` is UNKNOWN on every lake: `temperatureTrend` and the 15/18/20 C crossings are UNKNOWN until Water Temp publishes a measured trend basis.
+* None of the 5 pilot lakes has a temperature sensor (`evidenceClass` `modeled`), so their `waterTempBand`, `warmRise`, `coldRise` and spawn-window temperature are UNKNOWN.
+
 Requests (not made): a multi-day temperature history (to know "crossed 15 C within 5 days"), and zone/surface-versus-depth temperature if it ever becomes evidence-relevant.
 
 ## 2. Lake (consumed today) and the pool-level / tributary-discharge distinction
@@ -54,10 +67,17 @@ Input: `sector-brain-depth-state-v1` (`effectiveDepth{mode, shiftFt, uncertainty
 Biological supplies species depth *preference* (spawn depths, shootable-zone use) as rule `depthClass`; matching it to a map zone is Intelligence's job.
 
 ## 5. Vegetation (consumption contract; validators and tests exist)
-Input: one cell or segment `{class, density, surfaceTopped, tier, observedAt, confidence}` with the proposed classes `EMERGENT | FLOATING | SUBMERGED | FLOODED_TERRESTRIAL | NONE_SIGNIFICANT | UNKNOWN` and density `NONE | SCATTERED | MODERATE | DENSE`.
+Input: one cell or segment `{class, density, surfaceTopped, tier, observedAt, confidence}` with the classes `EMERGENT | FLOATING | SUBMERGED | FLOODED_TERRESTRIAL | NONE_SIGNIFICANT | SURFACE_REACHING_MIXED | UNKNOWN` and density `NONE | SCATTERED | MODERATE | DENSE`.
 * `vegetation_habitat_state(cell, 'shallowVegetatedHabitat' | 'floodedVegetation')` returns TRUE / FALSE / UNKNOWN.
 * **Only an observation counts:** tiers `OBSERVED_SATELLITE` and `OBSERVED_SURVEY`. `PRIOR_MAPPED`, `SEASONAL_EXPECTATION`, `POTENTIAL_HABITAT`, a refusal, an unrecognised class, a missing density, a missing or future date, or an observation older than **45 days** (an explicit engineering default, not a biological threshold) are UNKNOWN. `NONE_SIGNIFICANT` is FALSE only from a valid observation.
 * `floodedVegetation` is TRUE only for an observed `FLOODED_TERRESTRIAL` cell; submerged plants are not flooded terrestrial vegetation.
+* `SURFACE_REACHING_MIXED` is the Vegetation Brain's own broad type for surface-reaching plants whose kind is not classified. It counts as shallow vegetation (with a density). For `floodedVegetation` it is **UNKNOWN, never FALSE**, because flooded terrestrial plants cannot be told apart from it.
+* Adapter (`vegetation_adapter.py`) from the Vegetation published state (`sector-brain-vegetation-state-v1`) and the provisional A6 fleet answer:
+  * `PRESENT` → the class from `broadType`, else `SURFACE_REACHING_MIXED`.
+  * `NOT_OBSERVED` → `NONE_SIGNIFICANT`. It is surface-only (submerged vegetation is `NOT_OBSERVABLE`), so `floodedVegetation` is FALSE but `shallowVegetatedHabitat` is UNKNOWN (`VEG_SURFACE_ONLY`).
+  * Density comes only from a calibrated `coverageClass`; `NOT_CALIBRATED` gives no density, so the result is UNKNOWN.
+  * Tier comes from `evidenceKind` (accepted pass or persistence → `OBSERVED_SATELLITE`); the A6 answer must carry it.
+  * `observedAt` is A6 `oldestPassOn` (else the earliest acquisition date). The 45-day rule is unchanged.
 Biological supplies species vegetation association (spawn substrate, feeding association, e.g. grass carp ↔ submerged vegetation) as `HABITAT` rules; Vegetation supplies the actual plant state.
 Request: the seasonal state (growing / senescent) per cell, because a few associations (bowfin residency strongest in fall/winter as plants senesce) depend on it.
 

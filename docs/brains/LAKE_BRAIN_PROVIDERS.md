@@ -29,6 +29,7 @@ Not implemented: **TWDB** (no strict-verified lake uses it), **Reclamation Hydro
 | Trap | Handling |
 |---|---|
 | USGS `00065` is a gage height in a local datum, not an elevation | refused as a live series; as a history only with an explicit datum offset (gage height + site altitude, Lake Winnebago) |
+| A recorded datum offset must apply whatever the provider | one sign convention: the offset is **added** to the reading (`archived = reading + offsetFt`, `current = reading + datumOffsetFt`). Live: the classifier adds `datumOffsetFt` for every provider. History: `usgsDaily`, `hadsDaily`, `cdecDaily` readers add their case's `offsetFt`; for `cwmsDaily`, `riseDaily`, `tvaOperatingGuide`, `coopsDaily`, `usgsStageDaily` the runner adds the generated record's `offsetFt` (`LakeHistoryOffsets.swift`, 2026-11-22; before that it was silently dropped). Offset 0 leaves rows unchanged |
 | USGS `-999999` no-data sentinel (a sensor outage today at Buckeye Lake) | dropped; the lake falls back and says so (`primarySourceStale`, `fallbackSource`) |
 | CWMS defaults to SI units | requested with `unit=EN`; a response that still says metres is multiplied by 3.28084 |
 | CWMS dense series (15 min) overflow the page budget | request window shrinks with the series interval (5 years daily/hourly, about 1 year at 15 min); hitting the 20-page limit is an error, never a silent truncation |
