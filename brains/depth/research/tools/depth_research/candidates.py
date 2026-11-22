@@ -116,6 +116,18 @@ VERIFICATION_RECORDS = os.path.join(RESEARCH_RECORDS, "datum_verification.json")
 VERIFY_OFFSET_TOL_FT = 0.10          # plan section 3.2: source offset vs NOAA VDatum at the gauge
 VERIFY_CONFLICT_FT = 0.25            # plan section 3.4: offsets further apart than this are a CONFLICT
 VERIFY_MAX_PASSES = 2                # BRAIN_SPEC stop rule
+# Single official source rule (Michael, 2026-11-22 08:11Z, recorded on Sector_Ops #51): one source suffices when (a) its root is an official
+# authority, (b) an empirical real-data check agrees, (c) the record is labelled. Two independent roots (VERIFIED) stay the stronger tier.
+SINGLE_OFFICIAL = "VERIFIED_SINGLE_OFFICIAL"
+SINGLE_OFFICIAL_LABEL = "single official source"
+OFFICIAL_AUTHORITIES = ("USGS", "USACE", "USBR", "TVA", "NOAA")   # root keys; "USGS-08025350", "USACE CWMS (CDA)" and "USGS" are one root each
+AGENCY_HOSTS = {"USGS": ("usgs.gov",), "USACE": ("usace.army.mil",), "USBR": ("usbr.gov",), "TVA": ("tva.com", "tva.gov"),
+                "NOAA": ("noaa.gov", "weather.gov")}
+OPERATOR_HOSTS = {"Sabine River Authority (TX/LA)": ("sratx.org", "srala-toledo.com")}   # dam operator (named by the engine directory) -> its own hosts
+EMPIRICAL_MAX_TOL_FT = 0.30          # plan section 3.3: two gauges must agree within 0.3 ft after conversion
+EMPIRICAL_MIN_N = 5
+SIGNIFICANCE_BELOW_FT = 0.5          # below this offset, agreement is judged by a 2-standard-error test on the stored per-date residuals
+SINGLE_OFFICIAL_MIN_OFFSET_FT = 0.1  # a smaller NGVD29/NAVD88 offset cannot be told apart from noise by a gauge comparison: untestable
 
 
 def load_datum_verification(path: str | None = None) -> dict:
@@ -135,9 +147,111 @@ def _http_evidence(side: dict) -> list[dict]:
     return [e for e in (side or {}).get("evidence") or [] if str(e.get("url", "")).startswith("http") and not e.get("notEvidence")]
 
 
+def root_key(root: str) -> str:
+    """One key per independent root: every root of an official agency collapses to the agency ('USGS-08025350', 'USGS' and
+    'USGS (station description)' are one root, USGS); an operator root stays 'OPERATOR:<name>'; anything else is itself."""
+    r = str(root or "").strip()
+    for a in OFFICIAL_AUTHORITIES:
+        if r == a or r.startswith(a + "-") or r.startswith(a + " ") or r.startswith(a + ":"):
+            return a
+    return r
+
+
+def _root_of(e: dict) -> str:
+    return root_key(e.get("derivedFrom") or str(e.get("publisher", "")).split(" (")[0])
+
+
 def _roots(side: dict) -> set[str]:
-    """Independent roots of a side's evidence: `derivedFrom` (the upstream record a publisher re-serves, e.g. USGS-08025350) or the publisher itself."""
-    return {str(e.get("derivedFrom") or str(e.get("publisher", "")).split(" (")[0]) for e in _http_evidence(side)}
+    """Independent roots of a side's evidence (see root_key). `supportingOnly` items are evidence but never a root."""
+    return {_root_of(e) for e in _http_evidence(side) if not e.get("supportingOnly")}
+
+
+def _host(url: str) -> str:
+    from urllib.parse import urlparse
+    return (urlparse(url).hostname or "").lower()
+
+
+def _host_in(host: str, domains) -> bool:
+    return any(host == d or host.endswith("." + d) for d in domains)
+
+
+def is_official_root(root: str, dam_operator: str | None = None) -> bool:
+    """An official agency on the allow-list, or `OPERATOR:<name>` where <name> is the dam operator from the engine directory (never the record)."""
+    k = root_key(root)
+    return k in OFFICIAL_AUTHORITIES or bool(dam_operator and k == f"OPERATOR:{dam_operator}")
+
+
+def _side_single_official(side: dict, dam_operator: str | None) -> list[str]:
+    """Condition (a) for a side claimed VERIFIED_SINGLE_OFFICIAL: a named NGVD29/NAVD88 datum; every root official; every evidence item
+    (supportingOnly included) served from an official host; and each root backed by at least one item on its own agency's/operator's host."""
+    side = side or {}
+    p = []
+    if normalize_datum(side.get("datum")) not in ("NGVD29", "NAVD88"):
+        p.append("single official source needs a named NGVD29/NAVD88 datum")
+    roots = _roots(side)
+    if not roots:
+        p.append("single official source needs at least one http evidence root")
+    bad = sorted(r for r in roots if not is_official_root(r, dam_operator))
+    if bad:
+        p.append(f"not an official authority: {bad}")
+    op_hosts = OPERATOR_HOSTS.get(dam_operator or "", ())
+    allowed = tuple(h for hs in AGENCY_HOSTS.values() for h in hs) + tuple(op_hosts)
+    for e in _http_evidence(side):
+        if not _host_in(_host(e["url"]), allowed):
+            p.append(f"refused as evidence (host {_host(e['url'])} is not an official agency or the dam operator): {e['url']}")
+    for r in roots - set(bad):
+        own = AGENCY_HOSTS.get(r) or (op_hosts if r == f"OPERATOR:{dam_operator}" else ())
+        if not any(_root_of(e) == r and _host_in(_host(e["url"]), own) for e in _http_evidence(side)):
+            p.append(f"root {r} has no evidence item on its own host {list(own)}")
+    return p
+
+
+def _stats(xs: list[float]) -> tuple[float, float]:
+    n = len(xs)
+    m = sum(xs) / n
+    sd = (sum((x - m) ** 2 for x in xs) / (n - 1)) ** 0.5 if n > 1 else float("inf")
+    return m, sd / n ** 0.5
+
+
+def empirical_problems(emp: dict | None, rel: dict | None = None) -> list[str]:
+    """Condition (b): a real-data check that agrees, judged on its numbers (never on the `passed` flag alone).
+    - bound to the conversion: expectedFt within 0.10 ft of the relationship's navd88MinusNgvd29Ft or vdatumCheckFt, with the same sign;
+    - n >= 5, tolerance <= 0.30 ft, |mean - expected| <= tolerance;
+    - |expected| < 0.5 ft: per-date residualsFt must be stored, and |mean| >= 2 SE (an offset is detected) and |mean - expected| <= 2 SE;
+      |expected| >= 0.5 ft: the mean is closer to the expected offset than to no offset."""
+    if not emp:
+        return ["no empirical check"]
+    p = []
+    obs, exp, tol, n = emp.get("meanFt"), emp.get("expectedFt"), emp.get("toleranceFt"), emp.get("n")
+    if emp.get("passed") is not True:
+        p.append("empirical check not passed")
+    if not all(isinstance(v, (int, float)) for v in (obs, exp, tol, n)):
+        return p + ["empirical check needs n, meanFt, expectedFt and toleranceFt"]
+    if rel is not None:
+        cands = [rel.get(k) for k in ("navd88MinusNgvd29Ft", "vdatumCheckFt") if isinstance(rel.get(k), (int, float))]
+        if not any(abs(exp - c) <= VERIFY_OFFSET_TOL_FT + 1e-9 and (exp > 0) == (c > 0) and exp != 0 for c in cands):
+            p.append(f"expectedFt {exp:+.3f} is not the conversion's offset or VDatum check (within {VERIFY_OFFSET_TOL_FT} ft, same sign)")
+    if n < EMPIRICAL_MIN_N:
+        p.append(f"empirical n={n} < {EMPIRICAL_MIN_N}")
+    if tol > EMPIRICAL_MAX_TOL_FT:
+        p.append(f"empirical tolerance {tol} ft > {EMPIRICAL_MAX_TOL_FT} ft")
+    if abs(obs - exp) > tol + 1e-9:
+        p.append(f"empirical mean {obs:+.3f} vs expected {exp:+.3f} outside {tol} ft")
+    if abs(exp) < SIGNIFICANCE_BELOW_FT:
+        res = [r.get("residualFt") if isinstance(r, dict) else r for r in emp.get("residualsFt") or []]
+        if len(res) != n or not all(isinstance(x, (int, float)) for x in res):
+            p.append("offset below 0.5 ft: per-date residualsFt (n values) must be stored for the significance test")
+        else:
+            m, se = _stats(res)
+            if abs(m - obs) > 0.005:
+                p.append(f"stored meanFt {obs:+.3f} does not match the residuals' mean {m:+.3f}")
+            if abs(m) < 2 * se:
+                p.append(f"no offset detected: |mean| {abs(m):.3f} < 2 SE {2 * se:.3f}")
+            if abs(m - exp) > 2 * se:
+                p.append(f"mean {m:+.3f} differs from expected {exp:+.3f} by more than 2 SE {2 * se:.3f}")
+    elif abs(obs - exp) >= abs(obs):
+        p.append("empirical mean is not closer to the claimed offset than to no offset")
+    return p
 
 
 def _side_verified(side: dict) -> bool:
@@ -157,11 +271,12 @@ def _source_navd_minus_ngvd(side: dict) -> float | None:
     return None
 
 
-def verification_problems(lid: str, rec: dict) -> list[str]:
-    """Rule violations of one record (empty list = consistent with the plan's verification rule). Used by tests and by verified_conversion."""
+def verification_problems(lid: str, rec: dict, dam_operator: str | None = None) -> list[str]:
+    """Rule violations of one record (empty list = consistent with the plan's verification rule). Used by tests and by verified_conversion.
+    `dam_operator` comes from the engine directory (operatorName), never from the record."""
     p = []
     status = rec.get("status")
-    if status not in ("VERIFIED", "SAME_SOURCE", "SINGLE_SOURCE", "CONFLICT", "NONE"):
+    if status not in ("VERIFIED", SINGLE_OFFICIAL, "SAME_SOURCE", "SINGLE_SOURCE", "CONFLICT", "NONE"):
         p.append(f"unknown status {status!r}")
     if not 1 <= int(rec.get("passes") or 0) <= VERIFY_MAX_PASSES:
         p.append("passes must be 1..2")
@@ -169,22 +284,39 @@ def verification_problems(lid: str, rec: dict) -> list[str]:
     rel = rec.get("relationship") or {}
     for s in ("level", "reference"):
         side = sides.get(s) or {}
-        if side.get("status") in ("VERIFIED", "SINGLE_SOURCE", "CONFLICT") and not _http_evidence(side):
+        if side.get("status") in ("VERIFIED", SINGLE_OFFICIAL, "SINGLE_SOURCE", "CONFLICT") and not _http_evidence(side):
             p.append(f"{s} side is {side['status']} without an http evidence item")
         off, vd = _source_navd_minus_ngvd(side), side.get("vdatumCheckFt")
         if off is not None and isinstance(vd, (int, float)) and abs(off - vd) > VERIFY_CONFLICT_FT + 1e-9:
             if not rec.get("offsetConflict"):
                 p.append(f"{s} offset {off:+.3f} vs VDatum {vd:+.3f} differ by more than {VERIFY_CONFLICT_FT} ft: record it as offsetConflict")
-            if status == "VERIFIED":
-                p.append(f"{s} offset conflicts with VDatum: cannot be VERIFIED")
+            if status in ("VERIFIED", SINGLE_OFFICIAL):
+                p.append(f"{s} offset conflicts with VDatum: cannot be {status}")
     if status != "NONE" and not any(_http_evidence(sides.get(s)) for s in ("level", "reference")):
         p.append("a record above NONE needs at least one http evidence item")
-    if status == "VERIFIED":
+    if status in ("VERIFIED", SINGLE_OFFICIAL):
+        n_single = 0
         for s in ("level", "reference"):
-            if not _side_verified(sides.get(s)):
-                p.append(f"{s} side not verified by two independent roots")
-            elif (sides.get(s) or {}).get("basis") == "parameter-definition+empirical" and (rel.get("empirical") or {}).get("passed") is not True:
-                p.append(f"{s} side rests on its parameter definition but no empirical cross-gauge check passed")
+            side = sides.get(s) or {}
+            if status == SINGLE_OFFICIAL and side.get("status") == SINGLE_OFFICIAL:
+                n_single += 1
+                p.extend(f"{s} side: {x}" for x in _side_single_official(side, dam_operator))
+                if s not in ((rel.get("empirical") or {}).get("corroborates") or []):
+                    p.append(f"condition (b): the empirical check does not corroborate the {s} side (it corroborates "
+                             f"{(rel.get('empirical') or {}).get('corroborates')})")
+            elif not _side_verified(side):
+                p.append(f"{s} side not verified by two independent roots" + (" nor a single official source" if status == SINGLE_OFFICIAL else ""))
+            elif side.get("basis") == "parameter-definition+empirical":
+                p.extend(f"{s} side rests on its parameter definition: {x}" for x in empirical_problems(rel.get("empirical"), rel))
+        if status == SINGLE_OFFICIAL:
+            if not n_single:
+                p.append("VERIFIED_SINGLE_OFFICIAL needs a side marked VERIFIED_SINGLE_OFFICIAL (else the record is plain VERIFIED)")
+            p.extend(f"condition (b): {x}" for x in empirical_problems(rel.get("empirical"), rel))
+            off = rel.get("navd88MinusNgvd29Ft")
+            if rel.get("status") != "CONVERTED" or not isinstance(off, (int, float)) or abs(off) < SINGLE_OFFICIAL_MIN_OFFSET_FT:
+                p.append(f"VERIFIED_SINGLE_OFFICIAL needs a CONVERTED relationship with |offset| >= {SINGLE_OFFICIAL_MIN_OFFSET_FT} ft (smaller is untestable)")
+            if rec.get("singleOfficialSource") is not True or rec.get("label") != SINGLE_OFFICIAL_LABEL:
+                p.append(f"condition (c): record must set singleOfficialSource=true and label={SINGLE_OFFICIAL_LABEL!r}")
         if rel.get("status") == "CONVERTED":
             off, vd = rel.get("navd88MinusNgvd29Ft"), rel.get("vdatumCheckFt")
             if not isinstance(off, (int, float)) or not isinstance(vd, (int, float)):
@@ -192,7 +324,7 @@ def verification_problems(lid: str, rec: dict) -> list[str]:
             elif abs(off - vd) > VERIFY_OFFSET_TOL_FT + 1e-9:
                 p.append(f"offset {off} vs VDatum {vd} differ by more than {VERIFY_OFFSET_TOL_FT} ft")
             emp = rel.get("empirical")
-            if emp is not None and emp.get("passed") is not True:
+            if emp is not None and empirical_problems(emp, rel):
                 p.append("empirical check did not pass")
             lv, rf = (normalize_datum((sides.get(k) or {}).get("datum")) for k in ("level", "reference"))
             if {lv, rf} != {"NGVD29", "NAVD88"} or lv != normalize_datum(rel.get("levelDatum")) or rf != normalize_datum(rel.get("referenceDatum")):
@@ -215,14 +347,15 @@ def verification_problems(lid: str, rec: dict) -> list[str]:
     elif status == "CONFLICT":
         if not rec.get("conflict"):
             p.append("CONFLICT needs a stated conflict")
-    if status not in ("VERIFIED", "SAME_SOURCE") and rel.get("status"):
-        p.append("only a VERIFIED or SAME_SOURCE record may carry a relationship")
+    if status not in ("VERIFIED", SINGLE_OFFICIAL, "SAME_SOURCE") and rel.get("status"):
+        p.append("only a VERIFIED, VERIFIED_SINGLE_OFFICIAL or SAME_SOURCE record may carry a relationship")
     return p
 
 
-def verified_conversion(rec: dict | None) -> tuple[float, str, str] | None:
+def verified_conversion(rec: dict | None, dam_operator: str | None = None) -> tuple[float, str, str] | None:
     """(navd88_minus_ngvd29_ft, level_datum, reference_datum) for a fully verified CONVERTED record, else None. Never an estimate."""
-    if not rec or rec.get("status") != "VERIFIED" or (rec.get("relationship") or {}).get("status") != "CONVERTED" or verification_problems("", rec):
+    if not rec or rec.get("status") not in ("VERIFIED", SINGLE_OFFICIAL) or (rec.get("relationship") or {}).get("status") != "CONVERTED" \
+            or verification_problems("", rec, dam_operator):
         return None
     r = rec["relationship"]
     return float(r["navd88MinusNgvd29Ft"]), normalize_datum(r["levelDatum"]), normalize_datum(r["referenceDatum"])
@@ -308,14 +441,18 @@ def assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w=None,
                             [f"https://cwms-data.usace.army.mil/cwms-data/locations/{sr['location']}?office={sr['office']}"])
         rd = normalize_datum(sr["referenceDatum"])
         return a, ld, ld_ver, ld_note, rd, True, f"CWMS level {sr['office']}/{sr['referenceLevelId']}", blocked
-    vc = verified_conversion(vrec)
+    vc = verified_conversion(vrec, (lk or {}).get("operatorName"))
     conv_ft = vc[0] if vc and ld_ver and rd_ver and (ld, rd) == (vc[1], vc[2]) else None
     a = assess(ld, rd, same_source=same_src, same_operator_system=same_sys, level_datum_verified=ld_ver, reference_datum_verified=rd_ver,
                navd88_minus_ngvd29_ft=conv_ft)
     if a.status == "CONVERTED":
         a.basis = "datum-verification:records/datum_verification.json"
-        a.evidence_urls = [e["url"] for s in ("level", "reference") for e in (vrec["sides"][s].get("evidence") or [])
-                           if str(e.get("url", "")).startswith("http")][:2]
+        if vrec.get("status") == SINGLE_OFFICIAL:                  # condition (c): the label travels with the manifest datum record
+            a.basis = "datum-verification:single-official-source:records/datum_verification.json"
+            a.evidence_confidence = "medium"
+            roots = sorted(_roots(vrec["sides"]["reference"]) | _roots(vrec["sides"]["level"]))
+            a.reasons.append(f"{SINGLE_OFFICIAL_LABEL}: {', '.join(roots)} + empirical check")
+        a.evidence_urls = [h[0]["url"] for s in ("level", "reference") if (h := _http_evidence(vrec["sides"][s]))]   # one per side
         return a, ld, ld_ver, ld_note, rd, rd_ver, rd_pat, blocked
     if a.usable:
         a.basis = ("cwms-location-same-record" if same_src else "tva-operator-system" if same_sys else
