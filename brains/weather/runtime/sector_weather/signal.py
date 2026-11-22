@@ -2,8 +2,9 @@
 
 Output (state field `weatherChange`, contract weather-state-v1 §4):
   level     CHANGE  at least one OBSERVED event (pressure fast, air-temperature swing, front passage, rain onset)
-            WATCH   no observed event, but rain is forecast (RAIN_EXPECTED) or an input needed to rule a change out is unknown
-            STEADY  every rule was evaluated on measured data and none fired, and no rain is forecast
+            WATCH   no observed event, and rain is forecast (RAIN_EXPECTED) or ANY rule could not be evaluated (missing data = WATCH: owner
+                    decision 2026-11-22, Sector_Ops #51 comment 7085207021)
+            STEADY  every rule was evaluated on measured data and the official forecast, none fired, and no rain is forecast
   events    [{kind, basis OBSERVED|FORECAST, value, threshold, unit, at}]
   unknown   the rules that could not be evaluated, and why (unknown never counts as "no change")
   signature changes whenever the level, the event kinds or the observation they rest on change; consumers refresh when it differs
@@ -126,8 +127,7 @@ def evaluate(rd: Reading) -> dict:
         ev("RAIN_EXPECTED", "FORECAST", q, T["rainExpectedIn"], "in/6h", rd.grid.update_time or now)
 
     observed = [e for e in events if e["basis"] == "OBSERVED"]
-    critical_unknown = [u for u in unknown if u.split(":")[0] in ("pressure3h", "airTemp3h")]
-    level = "CHANGE" if observed else ("WATCH" if (events or critical_unknown) else "STEADY")
+    level = "CHANGE" if observed else ("WATCH" if (events or unknown) else "STEADY")          # missing data = WATCH, never STEADY
     basis_at = C.iso(newest.at) if newest else None
     sig_src = "|".join([level, ",".join(sorted(e["kind"] for e in events)), basis_at or "-"])
     return {"level": level, "events": events, "unknown": unknown, "inputs": inputs, "evaluatedAt": C.iso(now), "basisObservationAt": basis_at,

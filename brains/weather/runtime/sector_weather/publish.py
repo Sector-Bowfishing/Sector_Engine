@@ -21,7 +21,7 @@ REGISTRY_CHILDREN = {
     "model": ("version", "schemaVersion", "stalenessModel", "dependsOn", "descriptor", "readinessDefinitions", "stateKinds", "thresholds",
               "thresholdsVersion", "sourceIds"),
     "status": ("schedule", "enabled", "health", "status", "supportedLakeCount", "directoryLakeCount", "readinessCounts", "staleLakeCount",
-               "staleAfterHours", "lastSuccessfulRun", "lastError", "weatherChange", "publishMode", "updatedAt"),
+               "staleAfterHours", "lastSuccessfulRun", "lastRunOutcome", "lastError", "weatherChange", "publishMode", "updatedAt"),
 }
 
 
@@ -127,7 +127,9 @@ def write_set(directory, states, ready, errors, now, computed) -> dict:
     for r in ready.values():
         counts[r] = counts.get(r, 0) + 1
     stale = sum(1 for s in states.values() if s["freshness"]["stale"])
-    health = "FAILED" if errors and not states else ("WARNING" if errors or stale else "HEALTHY")
+    computed_n = sum(1 for lid in states if lid in computed)
+    outcome = "FAILED" if errors and not computed_n else ("PARTIAL" if errors else "SUCCESS")
+    health = "FAILED" if outcome == "FAILED" else ("WARNING" if errors or stale else "HEALTHY")
     reg = {
         "brainId": C.BRAIN_ID, "displayName": C.DISPLAY_NAME, "domain": C.DOMAIN, "question": C.QUESTION,
         "platform": {"implementation": "sector_brain_platform", "contract": "BRAIN_PLATFORM_CONTRACT.md v1.0", "conformant": True},
@@ -142,7 +144,10 @@ def write_set(directory, states, ready, errors, now, computed) -> dict:
         "enabled": False, "health": health, "status": "CALIBRATION",
         "supportedLakeCount": sum(1 for r in ready.values() if r in ("CALIBRATION", "DEGRADED")), "directoryLakeCount": len(directory),
         "readinessCounts": counts, "staleLakeCount": stale, "staleAfterHours": C.STALE_AFTER_HOURS,
-        "lastSuccessfulRun": now_iso if not errors else None,
+        # A run that computed at least one lake is a successful run, even if some station or grid fetch failed (PARTIAL is said explicitly in
+        # lastRunOutcome). A FAILED run does not write lastSuccessfulRun at all, so the previous value stays (never written null).
+        **({"lastSuccessfulRun": now_iso} if outcome != "FAILED" else {}),
+        "lastRunOutcome": {"status": outcome, "at": now_iso, "computedLakeCount": computed_n, "errorCount": len(errors)},
         "lastError": {"at": now_iso, "message": errors[0][:300]} if errors else None,
         "weatherChange": change_summary(states), "publishMode": "DRY_RUN (no live writer in this version)", "updatedAt": now_iso,
     }

@@ -19,9 +19,10 @@ UPSTREAM = ("lake-brain", "water-temp", "water-clarity", "wind", "biological-sta
 ALL_BRAINS = UPSTREAM + ("sector-intelligence",)
 # SHADOW Brains (control_manifest lifecycle PROFILED/SHADOW, no executor) are visible in the control plane but take no part in any roll-up:
 # not in worst-health, conformance counts, dependency completeness, per-lake stale/issue roll-ups, or the Engine score (scoring.py never
-# sees them). Approved design for Depth (control-plane shadow Brain, 2026-10-14); deploying it is a separate gated step.
-SHADOW_BRAINS = ("depth", "vegetation")
-SHADOW_SLOTS = ("depth", "vegetation")
+# sees them). Approved design for Depth (control-plane shadow Brain, 2026-10-14); deploying it is a separate gated step. Moon (2026-11-22) is
+# CALIBRATION but registered disabled (PARKED, no executor), so it is held out of every roll-up the same way.
+SHADOW_BRAINS = ("depth", "vegetation", "moon")
+SHADOW_SLOTS = ("depth", "vegetation", "moon")
 
 
 def _strip(d):

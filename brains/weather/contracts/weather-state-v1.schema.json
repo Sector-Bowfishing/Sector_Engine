@@ -25,7 +25,9 @@
   "weatherChange",
   "freshness",
   "missing",
-  "provenance"
+  "provenance",
+  "origins",
+  "mixedOrigin"
  ],
  "$defs": {
   "time": {
@@ -344,6 +346,7 @@
     "hPa",
     "at",
     "station",
+    "origin",
     "kind",
     "seaLevelOffsetHPa",
     "trend3h",
@@ -443,6 +446,9 @@
     },
     "forecastNote": {
      "type": "string"
+    },
+    "origin": {
+     "const": "observation"
     }
    }
   },
@@ -766,6 +772,89 @@
      "type": "string"
     }
    }
+  },
+  "origins": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "pressure",
+    "airTemperatureF",
+    "humidityPct",
+    "dewPointF",
+    "cloudCoverPct",
+    "weatherCode"
+   ],
+   "properties": {
+    "pressure": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "enum": [
+      "observation",
+      "forecastGrid",
+      null
+     ]
+    },
+    "airTemperatureF": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "enum": [
+      "observation",
+      "forecastGrid",
+      null
+     ]
+    },
+    "humidityPct": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "enum": [
+      "observation",
+      "forecastGrid",
+      null
+     ]
+    },
+    "dewPointF": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "enum": [
+      "observation",
+      "forecastGrid",
+      null
+     ]
+    },
+    "cloudCoverPct": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "enum": [
+      "observation",
+      "forecastGrid",
+      null
+     ]
+    },
+    "weatherCode": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "enum": [
+      "observation",
+      "forecastGrid",
+      null
+     ]
+    }
+   }
+  },
+  "mixedOrigin": {
+   "type": "boolean"
   }
  }
 }

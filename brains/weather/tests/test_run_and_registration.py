@@ -120,6 +120,19 @@ def test_a_failed_station_fetch_degrades_that_lake_and_never_invents_values():
     st = out["states"]["Champlain|VT"]
     assert st["pressure"] is None and st["kind"] == "forecast" and out["errors"]
     assert out["readiness"]["Champlain|VT"] == "DEGRADED"
+    # a station failure is a PARTIAL run, said explicitly; lastSuccessfulRun is written, never null
+    assert out["updates"]["brains/weather/lastRunOutcome"]["status"] == "PARTIAL"
+    assert out["updates"]["brains/weather/lastSuccessfulRun"] == "2026-11-06T20:51:00Z"
+    assert all(v is not None for k, v in out["updates"].items() if k != "brains/weather/lastError")
+
+
+def test_a_run_that_computes_nothing_is_failed_and_keeps_the_previous_last_success():
+    class Broken(FixtureSource):
+        def point(self, lat, lon):
+            raise RuntimeError("boom")
+    out = _run(src=Broken())
+    assert out["updates"]["brains/weather/lastRunOutcome"]["status"] == "FAILED"
+    assert "brains/weather/lastSuccessfulRun" not in out["updates"]
 
 
 def test_the_client_identifies_itself_refuses_other_hosts_and_maps_404():

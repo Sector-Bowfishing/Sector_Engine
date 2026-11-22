@@ -35,8 +35,11 @@ else the nearest station's newest reading up to 2 h; QC flags X and B drop a val
 
 ## 3. State kinds and readiness
 
-`kind`: `observation` (pressure and air temperature from a fresh station observation), `forecast` (no fresh observation: temperature and
-humidity are the grid's current hour, pressure null), `unavailable` (nothing). Lake readiness (`/lakeFleet/{k}/readiness/weather`):
+`kind`: `observation` (at least one tile rests on a fresh station observation), `forecast` (no fresh observation: only forecast-grid values;
+pressure null), `unavailable` (nothing). `origins` gives each tile's origin (`observation` | `forecastGrid` | null) and `mixedOrigin` is true
+when both occur, so a state with observed pressure and grid air temperature says so. `pressure.origin` is always `observation`.
+`sky.weatherCode` from a station is decoded from the station's own icon/text only, never adjusted by the grid's cloud %; the grid gives the
+code (labelled `forecastGrid`) only when the station reports nothing about the sky. Lake readiness (`/lakeFleet/{k}/readiness/weather`):
 `CALIBRATION` (observation kind, current, no tile missing), `DEGRADED`, `BLOCKED` (outside NWS coverage: `/points` 404), `DISCOVERED`.
 
 ## 4. The weather-change signal (`weatherChange`)
@@ -52,8 +55,10 @@ tuned to results):**
 | `RAIN_ONSET` | OBSERVED | the newest observation (≤ 75 min old) reports precipitation (a WMO code ≥ 51 from its icon/text, or ≥ 0.01 in last hour) and no observation of that station between 3 h and 1 h earlier did | 0.01 in is NWS "measurable"; 3 h matches the other windows |
 | `RAIN_EXPECTED` | FORECAST | forecast liquid precipitation ≥ 0.10 in within the next 6 h, and it is not already raining | 0.10 in is the NWS "wetting rain" amount; 6 h is the Water Temp minimum refresh interval |
 
-`level`: **CHANGE** when any OBSERVED event fired; **WATCH** when no observed event fired but rain is expected, or the 3 h pressure or
-air-temperature rule could not be evaluated (unknown is never treated as "no change"); **STEADY** otherwise. `unknown` lists every rule that
+`level`: **CHANGE** when any OBSERVED event fired; **WATCH** when no observed event fired but rain is expected, or **any** rule could not
+be evaluated (pressure, air temperature, front with no wind pair, rain onset with no observation in 75 min, rain expected when the forecast
+grid is missing): missing data = WATCH, never STEADY (owner decision 2026-11-22, Sector_Ops #51 comment 7085207021); **STEADY** only when
+every rule was evaluated and none fired. `unknown` lists every rule that
 could not be evaluated and why. `inputs` carries the measured changes the rules used. `signature` (16 hex) changes whenever the level, the
 event kinds or the observation they rest on change: a consumer refreshes when it differs from the one it last acted on.
 

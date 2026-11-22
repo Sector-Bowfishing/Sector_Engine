@@ -44,6 +44,7 @@
       "staleLakeCount",
       "staleAfterHours",
       "lastSuccessfulRun",
+      "lastRunOutcome",
       "lastError",
       "weatherChange",
       "publishMode",
@@ -133,9 +134,11 @@
       "key:generatedAt": "run time of the state; the observation times it carries are NOT volatile",
       "key:lastUpdatedAt": "slot write time; no domain meaning",
       "key:updatedAt": "registry write time; no domain meaning",
+      "path:/brains/weather/lastRunOutcome": "execution fact (status, time, counts of this run); retire with lastSuccessfulRun",
       "path:/brains/weather/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records"
     },
     "paths": [
+      "/brains/weather/lastRunOutcome",
       "/brains/weather/lastSuccessfulRun"
     ],
     "version": 1

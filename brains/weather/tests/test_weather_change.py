@@ -101,3 +101,14 @@ def test_signature_changes_with_the_observation_and_the_level():
     b = _eval(hourly(NOW + timedelta(hours=1), 7, _steady), _dry_grid(), NOW + timedelta(hours=1))
     c = _eval(hourly(NOW, 6, lambda i: {**_steady(i), "alt_pa": 101500 - 80 * i}), _dry_grid())
     assert len({a["signature"], b["signature"], c["signature"]}) == 3
+
+
+def test_any_unevaluable_rule_is_watch_never_steady():
+    """Owner decision 2026-11-22 (Sector_Ops #51 comment 7085207021): missing data = WATCH."""
+    calm = lambda i: {**_steady(i), "wind_kmh": 0, "wind_dir": None}              # no wind pair: the front rule cannot be evaluated
+    sig = _eval(hourly(NOW, 6, calm), _dry_grid())
+    assert sig["level"] == "WATCH" and sig["events"] == [] and any(u.startswith("front") for u in sig["unknown"])
+    no_grid = _eval(hourly(NOW, 6, _steady), None)                                    # forecast grid fetch failed: rainExpected unknown
+    assert no_grid["level"] == "WATCH" and any(u.startswith("rainExpected") for u in no_grid["unknown"])
+    stale = _eval(hourly(NOW - timedelta(hours=2), 6, _steady), _dry_grid())          # newest observation older than 75 min: rainOnset unknown
+    assert stale["level"] == "WATCH" and any(u.startswith("rainOnset") for u in stale["unknown"])

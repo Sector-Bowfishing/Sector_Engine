@@ -1,4 +1,4 @@
-"""SHADOW Brains in the control plane (Depth, Vegetation): visible, never scored, never part of a roll-up. A shadow slot on a lake never makes
+"""SHADOW Brains in the control plane (Depth, Vegetation, and Moon, registered disabled 2026-11-22): visible, never scored, never part of a roll-up. A shadow slot on a lake never makes
 the lake stale or adds issues; a shadow registry never enters worst-health, conformance or dependency completeness."""
 import datetime as dt
 
@@ -15,7 +15,7 @@ def _overview(brains, fleet=None):
 
 
 def test_shadow_brains_are_depth_and_vegetation_and_never_upstream():
-    assert set(C.SHADOW_BRAINS) == {"depth", "vegetation"}
+    assert set(C.SHADOW_BRAINS) == {"depth", "vegetation", "moon"}
     assert not set(C.SHADOW_BRAINS) & set(C.ALL_BRAINS)
 
 

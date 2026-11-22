@@ -21,3 +21,11 @@ Weather suite (99 offline tests: 48 Brain tests on recorded and hand-built fixtu
 
 ## Gaps and decisions
 CG-W-1 (CORTEX_GAPS.md): Weather is not a Cortex target Brain (BA-01) and its families are not registry rows. W-1 (decisions.json): activation is a separate owner step list (plan §6).
+
+## Review of #234 at ad0c177a (fixed on the same branch, merged with main after Moon #233)
+- Sky code: a station's code is decoded from its own icon/text only (never from the grid's cloud %); the grid gives the code only when the station reports nothing about the sky, labelled `forecastGrid`. This deliberately differs from the Engine adapter, which has the same mislabel (`NWSWeatherService.assemble` passes the grid cover into `NWSCondition.weatherCode` and labels the result an observation; reported, not changed here).
+- Missing data = WATCH for every rule (owner decision, Sector_Ops #51 comment 7085207021).
+- `lastSuccessfulRun` is never written null; `lastRunOutcome` (SUCCESS / PARTIAL / FAILED) makes a partial run explicit.
+- `kind` is `observation` when any tile is observed; `origins` + `mixedOrigin` describe mixed states; `pressure.origin` added.
+- The ordering fallback is scoped to Weather (`ENVIRONMENTAL_PENDING_CORTEX`); Moon keeps main's order.
+- Thresholds release approval unchanged (NOT_RECORDED).

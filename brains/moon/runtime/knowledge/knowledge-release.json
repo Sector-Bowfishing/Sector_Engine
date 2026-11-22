@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "moon",
+  "releaseId": "moon-knowledge-candidate-2026-11-22.1",
+  "store": "PACKAGED_IN_IMAGE",
+  "owner": "moon",
+  "approval": {
+    "status": "NOT_RECORDED",
+    "record": null
+  },
+  "files": [
+    {
+      "path": "lakes-directory.json",
+      "sha256": "c7310d9cadb3f63a37bd3894a33d41a922c13494efeaaa4f708577c6e12a1782",
+      "bytes": 65290
+    }
+  ],
+  "releaseDigest": "sha256:b0cd3dd750364c5da597e612c8614377a248390c137a181f117319f0156991fc"
+}

@@ -21,6 +21,7 @@
     "sector-intelligence": "shared-writer",
     "depth": "NONE",
     "vegetation": "NONE",
+    "moon": "NONE",
     "weather": "NONE",
     "orchestrator": "shared-writer",
     "publisher": "publisher"
@@ -34,6 +35,7 @@
     "sector-intelligence": "brain-job",
     "depth": "brain-job",
     "vegetation": "brain-job",
+    "moon": "brain-job",
     "weather": "brain-job",
     "orchestrator": "orchestrator",
     "publisher": "publisher"

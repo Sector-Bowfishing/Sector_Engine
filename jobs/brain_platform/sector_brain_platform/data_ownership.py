@@ -242,14 +242,20 @@ def execution_order() -> list:
     return order
 
 
+ENVIRONMENTAL_PENDING_CORTEX = ("weather",)          # deployed Brains not yet in the Cortex target list that are environmental specialists
+
+
 def deployed_execution_order(deployed_ids) -> list:
     """The target order projected onto the deployed packages (biological-state appears once, at its LATER target position so it runs after the environmental Brains)."""
     pos = {}
     for i, t in enumerate(execution_order()):
         d = next(b["deployedAs"] for b in target_brains() if b["id"] == t)
         pos[d] = max(pos.get(d, -1), i)
-    # A deployed Brain the target architecture does not list yet (weather, registered 2026-11-22 pending its Cortex release, CG-W-1) is an
-    # environmental specialist: it is ordered just before the combined biological-state slot, never after Sector Intelligence.
-    tail = min((pos[d] for d in ("biological-state", "sector-intelligence") if d in pos), default=None)
-    key = {d: (pos[d] if d in pos else (tail - 0.5 if tail is not None else float("inf"))) for d in deployed_ids}
-    return sorted(deployed_ids, key=lambda d: (key[d], d))
+    ids = [d for d in deployed_ids if d in pos]
+    ordered = sorted(ids, key=lambda d: (pos[d], d)) + sorted(d for d in deployed_ids if d not in pos and d not in ENVIRONMENTAL_PENDING_CORTEX)
+    # Weather (registered 2026-11-22, pending its Cortex release, CG-W-1) is an environmental specialist: it is placed just before the combined
+    # biological-state slot, never after Sector Intelligence. Scoped to the Brains named here; any other unmapped Brain keeps the order above.
+    for d in sorted(x for x in deployed_ids if x in ENVIRONMENTAL_PENDING_CORTEX and x not in pos):
+        anchor = next((i for i, x in enumerate(ordered) if x in ("biological-state", "sector-intelligence")), len(ordered))
+        ordered.insert(anchor, d)
+    return ordered

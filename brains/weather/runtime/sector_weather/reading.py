@@ -100,7 +100,7 @@ def assemble(stations: list[str], observations: dict[str, list[Obs]], grid: Grid
     if p_obs:
         t3 = tendency(raw, p_obs.at, rd.pressure_series, 3, C.TREND_3H_STEADY_INHG / C.HPA_TO_INHG)
         t12 = tendency(raw, p_obs.at, rd.pressure_series, 12, C.TREND_12H_STEADY_HPA)
-        rd.pressure = {"hPa": value, "inHg": value * C.HPA_TO_INHG, "at": p_obs.at, "station": p_obs.station, "kind": kind,
+        rd.pressure = {"hPa": value, "inHg": value * C.HPA_TO_INHG, "at": p_obs.at, "station": p_obs.station, "origin": "observation", "kind": kind,
                        "seaLevelOffsetHPa": offset, "trend3h": t3, "trend12h": t12}
 
     # Sky: total cloud % from the forecast grid's current hour (model total cloud, like the app's Open-Meteo cloud_cover); the observation's
@@ -111,10 +111,13 @@ def assemble(stations: list[str], observations: dict[str, list[Obs]], grid: Grid
         l_obs = pick(lambda o: o.layer_pct is not None)
         cover = _val(l_obs.layer_pct, l_obs.at, "observation", l_obs.station) if l_obs else None
     rd.values["cloudCoverPct"] = cover
+    # The code is labelled by where it really came from (review of #234): a station's own icon/text is decoded WITHOUT the grid's cloud %, so the
+    # value never contradicts what the station reported; only when the station says nothing about the sky does the grid cover give the code, and
+    # then it is labelled forecastGrid. (The Engine adapter passes the grid % into the station's code; the Brain deliberately does not.)
     code = None
-    if sky_obs is not None:
-        c = weather_code(sky_obs.icon, sky_obs.text, cover and cover["value"])
-        code = _val(c, sky_obs.at, "observation", sky_obs.station) if c is not None else None
+    c = weather_code(sky_obs.icon, sky_obs.text, None) if sky_obs is not None else None
+    if c is not None:
+        code = _val(c, sky_obs.at, "observation", sky_obs.station)
     elif cover is not None and cover["origin"] == "forecastGrid":
         code = _val(sky_code_pct(cover["value"]), cover["at"], "forecastGrid")
     rd.values["weatherCode"] = code

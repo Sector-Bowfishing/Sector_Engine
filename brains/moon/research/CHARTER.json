@@ -1,0 +1,45 @@
+{
+ "schema": "sector-bowfishing-charter-v1",
+ "status": "CANDIDATE_PRIORS_NOT_VALIDATED",
+ "note": "The astronomy is cross-checked against USNO; the darkness class is a stated rule (DARKNESS_RULE_V1), a hypothesis about on-water light until validated against independent measurements (owner-collected field data is optional, never required). The Weather Brain cloud input is not listed in needsFrom until that Brain is registered (gap MOON-INP-001); no consumer has declared a need for Moon output yet.",
+ "brainId": "moon",
+ "role": "Tonight's moon, sun and twilight per lake, and how much moonlight reaches the water",
+ "bowfishingPurpose": "Bowfishing is a night sight sport: dark water lets the boat's lights make the contrast a shooter spots fish by. When it gets dark and how much moonlight competes with the lights decides when to launch and which nights are darkest.",
+ "decisionsInformed": [
+  "when it is dark enough to start",
+  "which nights this week have the least moonlight on the water"
+ ],
+ "predicts": [
+  {
+   "id": "astronomicalEvents",
+   "desc": "Sunset, twilight ends, moonrise/moonset, illumination",
+   "status": "CROSS_CHECKED_USNO"
+  },
+  {
+   "id": "onWaterDarkness",
+   "desc": "DARKNESS_RULE_V1 class from moon and cloud",
+   "status": "STATED_RULE_NOT_VALIDATED"
+  }
+ ],
+ "mustNotPredict": [
+  "fish depth or spookiness from moon phase",
+  "solunar feeding windows",
+  "a darkness class from an assumed cloud cover"
+ ],
+ "needsFrom": [],
+ "providesTo": [],
+ "fitForPurpose": [
+  {
+   "metric": "rise/set and twilight error vs USNO",
+   "target": 2,
+   "direction": "lower",
+   "rationale": "minutes; a bowfisher plans launch time to the quarter hour"
+  }
+ ],
+ "priorityQuestions": [
+  "Does the moonlight index track measured on-water illuminance (sky-quality meter or lux) across moon and cloud states?"
+ ],
+ "abstainWhen": [
+  "the Sun does not set (NO_NIGHT)"
+ ]
+}

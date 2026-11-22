@@ -328,6 +328,43 @@
       "recovery": "Not deployed. The release ships with the package and is re-verified on every run; no local state."
     },
     {
+      "brainId": "moon",
+      "directory": "brains/moon",
+      "checks": {
+        "store-owner": {
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "brain.json knowledge: PACKAGED_IN_IMAGE release brains/moon/runtime/knowledge/knowledge-release.json (the lake-directory projection), owner moon, researchFallback false (standing gate). Not deployed"
+        },
+        "developer-machine": {
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "standing scan + Kit P16 clean; the runtime reads only its packaged release"
+        },
+        "release-identity": {
+          "branch": "PARTIAL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "verified on load (moon_brain.lakes.load: release sha256/bytes/digest, then the projection's count and digest); release id/digest in the registry and the artifact lineage (Kit P09). No image exists (not deployable while PARKED)"
+        },
+        "memory-unavailable": {
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "missing/tampered release -> KnowledgeReleaseError, run.py exit 2 REFUSED (tests/test_lake_directory.py, tests/test_run_entry.py)"
+        },
+        "separation-approval": {
+          "branch": "PARTIAL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "no research tooling; the release is a registry projection checked against the Engine directory by a test; approval NOT_RECORDED"
+        },
+        "pulse-independence": {
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "no Pulse/Mac/localhost target (standing scan); no executor, no schedule (control manifest kind none, PARKED)"
+        }
+      },
+      "recovery": "Not deployed. The release ships with the package and is re-verified on every run; no local state."
+    },
+    {
       "brainId": "weather",
       "directory": "brains/weather",
       "checks": {

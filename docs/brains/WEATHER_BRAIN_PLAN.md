@@ -51,7 +51,7 @@ sees a material change when a lake enters or moves within CHANGE.
 - **Lake.** Manifest: an OPTIONAL dependency `{"id": "weather", "usesFields": ["weatherChange"], "onStale": "DEPENDENCY_STALE"}` and
   `DEPENDENCY_CHANGED` in Lake's allowed triggers. Per lake, `LakeLevelValidity` treats Weather `CHANGE` with `RAIN_ONSET` or
   `FRONT_PASSAGE`, or a `RAIN_EXPECTED` event, as at least the CHANGING tier and sets `nextCheckAt` to the next grant. Lake's own QPF read
-  (`nws-forecast-qpf`) can later be replaced by `sky.precipitation.forecastNext12hIn` (same source, same proportional-overlap rule),
+  (`nws-forecast-qpf`) can later be replaced by `sky.rain.forecastNext12hIn` (same source, same proportional-overlap rule),
   removing a duplicate NWS read. An absent or stale Weather state changes nothing: Lake keeps its own rule.
 - **Water Temp.** Manifest: the same OPTIONAL dependency, `DEPENDENCY_CHANGED` allowed, and `dueAfterHours ≤ 6` so every lake is
   refreshed at least every 6 h. Per lake, the run recomputes a lake early when its Weather `level` is `CHANGE` and the `signature` differs
