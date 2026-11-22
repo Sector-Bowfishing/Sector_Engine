@@ -114,8 +114,10 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
 
     func testAPIKeyIsAnOptionalHeaderAndNeverInTheURL() async throws {
         XCTAssertNil(LakeUSGSWaterDataClient.live(env: [:]).apiKey)
-        XCTAssertEqual(LakeUSGSWaterDataClient.live(env: ["USGS_API_KEY": " "]).headers, [:])
-        XCTAssertEqual(LakeUSGSWaterDataClient.live(env: ["USGS_API_KEY": "k-123"]).headers, ["X-Api-Key": "k-123"])
+        let api = LakeUSGSWaterDataClient.base + "/continuous/items?f=json"
+        XCTAssertEqual(LakeUSGSWaterDataClient.live(env: ["USGS_API_KEY": " "]).headers(for: api), [:])
+        XCTAssertEqual(LakeUSGSWaterDataClient.live(env: ["USGS_API_KEY": "k-123"]).headers(for: api), ["X-Api-Key": "k-123"])
+        XCTAssertEqual(LakeUSGSWaterDataClient.live(env: ["USGS_API_KEY": "k-123"]).headers(for: "https://example.org/x"), [:])
         let empty = try Self.v1("empty.json")
         let fake = WaterDataFake { _, _ in Self.ok(empty) }
         _ = await fake.client(apiKey: "k-123").recentLevel(site: "03351700", parameter: "62614", hours: 24)
