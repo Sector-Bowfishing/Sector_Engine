@@ -47,14 +47,14 @@
    "sha256": "85264530d578dadcf74b5eeb8793f7f02dbd61c6a18a55485d5362c390f11d87"
   },
   "checks_2026-11-22.csv": {
-   "sha256": "256035b10b77f657af4fd253b224a6f7612b14a3d3cebe41dadb832b709a5e7c"
+   "sha256": "5edc33a559f11e2ce3097f1bca630d930b41bb65fe78f1792a3e3f821930e9af"
   }
  },
  "counts": {
-  "records": 104,
+  "records": 102,
   "byProvider": {
-   "a2w": 24,
-   "cwms": 18,
+   "a2w": 23,
+   "cwms": 17,
    "nwps": 16,
    "rise": 9,
    "tva": 4,
@@ -63,29 +63,30 @@
   "history": {
    "INSUFFICIENT": 2,
    "NONE": 12,
-   "SUFFICIENT": 90
+   "SUFFICIENT": 88
   },
   "excludedForAnyReason": {
-   "coordinate-flag": 57,
+   "coordinate-flag": 56,
    "flagged": 10,
    "flagged-wave1": 27,
-   "history-live-mismatch": 8,
+   "history-live-mismatch": 7,
    "post-hoc": 36
   },
   "seriesFixes": [
    "East Lynn Lake|WV",
    "Logan Martin|AL",
-   "Rend Lake|IL",
    "Weiss|AL"
   ],
   "historyOffsets": [
+   "Devils Lake|ND",
    "Lake Washington|WA",
-   "Rend Lake|IL",
    "Toledo Bend Reservoir|TX"
   ],
   "held": [
    "Blue Marsh Lake|PA",
-   "Lake Mattamuskeet|NC"
+   "Lake Darling|ND",
+   "Lake Mattamuskeet|NC",
+   "Rend Lake|IL"
   ]
  },
  "bindings": [
@@ -256,11 +257,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "FLAGGED by the 15 ft rule as written (+20.8 ft history vs live); history and live agree within 0.005 ft on matching days over 30 days (same series, seasonal); owner decision pending (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRP Kinzua-Lake.Elev.Inst.1Hour.0.OBS",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -382,11 +383,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged;flagged-wave1",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -517,11 +518,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "history-live-mismatch",
      "fetchedFrom": "NWPS BRTA3 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -648,11 +649,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "CWMS SAM Whitten.Elev.Inst.15Minutes.0.Raw-USGS",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -767,11 +768,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:10055000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -962,11 +963,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SWL Beaver_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -1136,11 +1137,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRH BeechFk-Lake.Elev.Inst.15Minutes.0.OBS",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -1271,11 +1272,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS WWCG1 (HPIRZ)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -1434,11 +1435,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS NWDM BOHA.Elev.Inst.1Hour.0.Best-NWO",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -1624,11 +1625,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRL Buckhorn-Lake.Elev.Inst.5Minutes.0.USGS-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -1757,11 +1758,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "history-live-mismatch",
      "fetchedFrom": "RISE 152",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -1952,11 +1953,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SWL Bull_Shoals_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -2087,11 +2088,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS TIGG1 (HPIRZ)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -2231,11 +2232,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS MVK Caddo Lake.Elev.Inst.1Hour.0.DCP-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -2420,11 +2421,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRL CaglesMill.Elev.Inst.0.0.lrldlb-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -2563,11 +2564,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "RISE 215",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -2681,11 +2682,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "NWPS CNDN6 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -2854,11 +2855,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "FLAGGED by the 15 ft rule as written (-19.3 ft history vs live); history and live agree within 0.005 ft on matching days over 30 days (same series, seasonal); owner decision pending (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "history-live-mismatch",
      "fetchedFrom": "CWMS SWF SMCT2.Elev.Inst.1Hour.0.Decodes-Rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -2972,11 +2973,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged;flagged-wave1",
      "fetchedFrom": "CWMS MVK Catahoula Lake-Center.Elev.Inst.1Hour.0.DCP-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -3161,11 +3162,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRL CMHarden.Elev.Inst.0.0.lrldlb-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -3288,11 +3289,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:03013946 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -3466,11 +3467,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "TVA CRKT1",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -3644,11 +3645,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "TVA CKDT1",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -3764,11 +3765,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:11450000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -3959,11 +3960,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SWL Clearwater_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -4078,11 +4079,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:11492200 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -4222,11 +4223,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SWL LD10_Dardanelle-Headwater.Elev.Inst.1Hour.0.Decodes-raw",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -4357,11 +4358,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS DKLI2 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -4392,8 +4393,8 @@
      "site": "05056500",
      "param": "00065",
      "stat": "dv",
-     "offsetFt": 1401.33,
-     "note": "gage height + site altitude (datum offset); research history series"
+     "offsetFt": 1400.0,
+     "note": "gage height + site altitude (datum offset), corrected from 1401.33 to 1400.00: with 1401.33 the history read 1.33 ft above live on 30 matching days (sd 0.02) in the 2026-11-22 Mac mini live check (Sector_Ops #51 comment 7085401013) [2026-11-22 batch 2 re-check (Sector_Ops #51), review of #222]"
     }
    ],
    "historyCompleteYears": 53,
@@ -4480,11 +4481,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:05056500 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -4599,11 +4600,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:14312450 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -4725,11 +4726,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS MVK Muddy Bayou-Landside.Elev.Inst.1Hour.0.DCP-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -4901,11 +4902,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRH EastLynn-Lake.Elev.Inst.15Minutes.0.OBS",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -5035,11 +5036,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS NWDM FTPK.Elev.Inst.1Hour.0.Best-MRBWM",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -5172,11 +5173,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:01483510 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag;flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -5288,11 +5289,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "RISE 372",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -5416,11 +5417,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:01383000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -5595,11 +5596,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS NWDM HACO.Elev.Inst.1Hour.0.Best-NWK",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -5715,11 +5716,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:442805084411001 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -5848,11 +5849,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "RISE 87",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -5976,11 +5977,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:442400084472801 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "n/a (no USGS daily values in the last year; Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -6148,11 +6149,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "RISE 451",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -6328,11 +6329,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "TVA KYDK2",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -6488,11 +6489,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "TVA KYDK2",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -6606,11 +6607,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "NWPS KKPN6 (HPIRZ)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -6798,11 +6799,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRN BAHK2-BARKLEY.Elev-Pool.Inst.1Hour.0.man-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -6920,11 +6921,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:04294500 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -7074,202 +7075,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
-     "approvalRef": "sector-ops-51-7075462499"
-    }
-   }
-  },
-  {
-   "lakeId": "Lake Darling|ND",
-   "status": "MACHINE_VERIFIED",
-   "capability": "DIRECT_OPERATOR_POOL",
-   "provider": "a2w",
-   "researchProvider": "a2w",
-   "station": "MVP:LakeDarling_Dam",
-   "series": "LakeDarling_Dam.Elev.Inst.~15Minutes.0.best-NGVD29",
-   "live": [
-    {
-     "provider": "a2w",
-     "capability": "DIRECT_OPERATOR_POOL",
-     "station": "MVP:LakeDarling_Dam",
-     "series": "LakeDarling_Dam.Elev.Inst.~15Minutes.0.best-NGVD29",
-     "cadenceMin": 60,
-     "lagMin": 120,
-     "datumOffsetFt": 0.0,
-     "note": "USACE Access2Water MVP:LakeDarling_Dam (research probe)"
-    },
-    {
-     "provider": "cwms",
-     "capability": "DIRECT_OPERATOR_POOL",
-     "station": "MVP",
-     "series": "LakeDarling_Dam.Elev.Inst.15Minutes.0.rev-NGVD29",
-     "cadenceMin": 60,
-     "lagMin": 120,
-     "datumOffsetFt": 0.0,
-     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:00Z age 0.5 h"
-    },
-    {
-     "provider": "nwps",
-     "capability": "DIRECT_LAKE_GAUGE",
-     "station": "DARN8",
-     "series": "HPIRG",
-     "cadenceMin": 60,
-     "lagMin": 120,
-     "datumOffsetFt": 0.0,
-     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:00:00Z age 1.4 h"
-    }
-   ],
-   "history": [
-    {
-     "kind": "usgsDaily",
-     "site": "05115500",
-     "param": "62614",
-     "stat": "dv",
-     "offsetFt": 0.0
-    }
-   ],
-   "historyCompleteYears": 25,
-   "historyClass": "SUFFICIENT",
-   "historyFirstYear": 1991,
-   "historyBasis": "base",
-   "historyNotes": [],
-   "plan": {
-    "matchedProject": "MVP:LakeDarling_Dam | Lake Darling Dam",
-    "matchBasis": "nid,sameStation,name,geo<=5km",
-    "matchTier": "strong",
-    "distKm": 0.0,
-    "planSource": "a2w+cwms",
-    "verifiedMatch": true,
-    "planStrict": true,
-    "floodStrict": true,
-    "levels": [
-     {
-      "role": "zoneTop",
-      "name": "Top of Normal",
-      "kind": "static",
-      "valueFt": 1597.2,
-      "source": "a2w:MVP:LakeDarling_Dam:LakeDarling_Dam.Elev.Inst.0.Top of Normal",
-      "seasonal": false
-     },
-     {
-      "role": "zoneBottom",
-      "name": "Bottom of Normal",
-      "kind": "static",
-      "valueFt": 1596.8,
-      "source": "a2w:MVP:LakeDarling_Dam:LakeDarling_Dam.Elev.Inst.0.Bottom of Normal",
-      "seasonal": false
-     },
-     {
-      "role": "floodPoolBottom",
-      "name": "Top of Conservation",
-      "kind": "static",
-      "valueFt": 1597.0,
-      "source": "a2w:MVP:LakeDarling_Dam:LakeDarling_Dam.Elev.Inst.0.Top of Conservation",
-      "seasonal": false
-     }
-    ]
-   },
-   "timeZone": "America/Chicago",
-   "timeZoneRule": "state ND",
-   "dam": {
-    "nidId": "ND00332",
-    "damName": "Lake Darling Dam ",
-    "operatorName": "Fish and Wildlife Service, US Army Corps of Engineers",
-    "hydropower": false,
-    "floodControl": true,
-    "nidPurposes": "Fish and Wildlife Pond, Flood Risk Reduction, Recreation",
-    "nidMatchScore": 93.3,
-    "nidDistM": 0.0,
-    "source": "NID ND00332 purposes (nid_links.csv)"
-   },
-   "context": {
-    "lakeClass": {
-     "value": "R4_open_basin_storage",
-     "source": "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
-     "quality": "derived"
-    },
-    "regime": {
-     "value": "reservoir",
-     "source": "research lake_features.csv (2026-10-13)",
-     "quality": "derived"
-    },
-    "region": {
-     "value": "GP",
-     "source": "research lake_features.csv (2026-10-13)",
-     "quality": "derived"
-    },
-    "residenceTimeDays": {
-     "value": 323.3,
-     "source": "research lake_features.csv (2026-10-13): storage / mean inflow (HL / HL)",
-     "quality": "derived"
-    },
-    "chainPosition": {
-     "upLakes": 0,
-     "downLakes": 0,
-     "nearestDown": null,
-     "chainId": null,
-     "source": "NLDI main-stem navigation from the dam coordinate (250 km) intersected with directory polygons",
-     "quality": "derived"
-    },
-    "grassPct": {
-     "value": 0.4,
-     "asOf": "2026-10-07",
-     "source": "Sector Water Clarity sentinel-2b pass 2026-10-07 (consume-only snapshot)",
-     "quality": "measured, single pass; refresh by regenerating"
-    }
-   },
-   "verification": {
-    "criteriaVersion": "binding-review-v1",
-    "researchStatus": "VERIFIED",
-    "wave": "w1",
-    "checksPassed": [
-     "R1",
-     "R2",
-     "R3",
-     "R4",
-     "R5",
-     "R6",
-     "R8",
-     "R7=strong"
-    ],
-    "corroboratedBy": "usgs",
-    "probedAt": "2026-10-13",
-    "probe": {
-     "lastObservationAt": "2026-10-13T06:00:00Z",
-     "ageHours": 1.4,
-     "medianFt": 1596.63,
-     "lastFt": 1596.63,
-     "minFt30d": null,
-     "maxFt30d": null,
-     "samples30d": 1
-    },
-    "directoryFullPoolFt": 1597.0,
-    "deltaFullPoolFt": -0.37,
-    "coordinateFlag": "off_water",
-    "batch2Check": {
-     "checkedAt": "2026-11-22",
-     "value": 1596.16,
-     "observedAt": "2026-11-22T04:00Z",
-     "ageH": 0.6,
-     "median30": 1596.36,
-     "median30MinusFullPool": -0.6,
-     "gaugePosition": "at dam (operator pool/forebay series)",
-     "distToOutlineKm": 0.0,
-     "R6": "PASS",
-     "R7": "PASS",
-     "b_fallback": "n/a",
-     "secondSource": null,
-     "c_history": "PASS",
-     "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
-     "excludedFor": "coordinate-flag",
-     "fetchedFrom": "CWMS MVP LakeDarling_Dam.Elev.Inst.~15Minutes.0.best-NGVD29",
-     "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -7394,11 +7204,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:06442996 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -7513,11 +7323,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:423525088260400 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -7632,11 +7442,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:04278000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -7759,11 +7569,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:04035995 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -7922,11 +7732,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SWT HUDS.Elev.Inst.1Hour.0.Ccp-Rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -8101,11 +7911,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "history-live-mismatch",
      "fetchedFrom": "CWMS NWDP LIB.Elev-Forebay.Inst.1Hour.0.IRIDIUM-REV",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -8220,11 +8030,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:04295500 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag;flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -8340,11 +8150,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:05428000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -8462,11 +8272,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "NWPS MTKM5 (HPIRP)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -8582,11 +8392,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:05429000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -8712,11 +8522,11 @@
      "secondSource": "same gauge, other endpoint: cwms-nwdm:NWDM:OAHE (-0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "CWMS NWDM OAHE.Elev.Inst.1Hour.0.Best-MRBWM",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -8828,11 +8638,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag;flagged;post-hoc",
      "fetchedFrom": "CWMS MVP LakeCity.Elev.Inst.~15Minutes.0.best-MSL1912",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -8955,11 +8765,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS PETW3 (HPIRP)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -9065,11 +8875,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:12039490 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -9240,11 +9050,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS RBDS1 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -9371,11 +9181,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "CWMS NWDM GARR.Elev.Inst.1Hour.0.Best-MRBWM",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -9490,11 +9300,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:12122000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -9617,11 +9427,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS BBDS2 (HPIRV)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -9797,11 +9607,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "history-live-mismatch",
      "fetchedFrom": "CWMS MVS Lk Shelbyville-Kaskaskia.Elev.Inst.30Minutes.0.lrgsShef-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -9934,11 +9744,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:02193900 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -10080,11 +9890,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "history-live-mismatch",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -10242,11 +10052,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS TENO2 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -10414,11 +10224,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "RISE 550",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -10449,7 +10259,7 @@
      "office": "NWDP",
      "series": "LWSC.Elev-Lake.Inst.1Hour.0.NWSRADIO-RAW",
      "offsetFt": 0.36,
-     "note": "history/live offset +0.36 ft: 1874-day mean difference, sd 0.08 ft (research comparator; the value had leaked into the series id as '(+0.36ft over 1874d, sd 0.08)'); sign as the comparator reported it, direction to be confirmed on the Mac mini [2026-11-22 batch 2 re-check (Sector_Ops #51), review of #222]"
+     "note": "history/live offset +0.36 ft: 1874-day mean difference, sd 0.08 ft (research comparator; the value had leaked into the series id as '(+0.36ft over 1874d, sd 0.08)'). Sign confirmed by the 2026-11-22 Mac mini live check: live minus history = +0.44 ft, sd 0.06, 1,369 hourly pairs 2026-06-18..08-17 (post-hoc window: the history series stopped on 2026-08-17; Sector_Ops #51 comment 7085401013). +0.36 kept pending the owner's choice between the long-run and the recent mean [2026-11-22 batch 2 re-check (Sector_Ops #51), review of #222]"
     },
     {
      "kind": "cwmsDaily",
@@ -10540,11 +10350,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft; history series stopped 2026-08-17: rebind later (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged;flagged-wave1",
      "fetchedFrom": "CWMS NWDP LWKW.Elev-Lake.Inst.1Hour.0.IRIDIUM-REV",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -10678,11 +10488,11 @@
      "secondSource": "independent: nwps:CCSA1 (-0.02 ft vs Raw-APCO)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "CWMS SAM LoganMartin.Elev.Inst.1Hour.0.Raw-APCO (re-checked; first pass read GC-APCO guide curve 462.44)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -10791,11 +10601,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag;flagged;flagged-wave1",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -10922,11 +10732,11 @@
      "secondSource": "same gauge, other endpoint: cwms-nwdm:NWDM:LGVM (-0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "post-hoc",
      "fetchedFrom": "CWMS NWDM LGVM.Elev.Inst.1Hour.0.Best-NWK",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -11112,11 +10922,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS MVS Mark Twain Lk-Salt.Elev.Inst.30Minutes.0.lrgsShef-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -11301,11 +11111,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SWL Millwood_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -11480,11 +11290,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "FLAGGED by the 15 ft rule as written (+16.0 ft history vs live); history and live agree within 0.005 ft on matching days over 30 days (same series, seasonal); owner decision pending (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRL Mississinewa-Lake.Elev.Inst.15Minutes.0.Decodes-raw",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -11669,11 +11479,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRL Monroe.Elev.Inst.0.0.lrldlb-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -11788,11 +11598,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:04129950 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -11956,11 +11766,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "FLAGGED by the 15 ft rule as written (-40.6 ft history vs live); history and live agree within 0.005 ft on matching days over 30 days (same series, seasonal); owner decision pending (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "history-live-mismatch",
      "fetchedFrom": "RISE 612",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -12081,11 +11891,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "CWMS SAJ Okeechobee-8Station.Elev.Ave.~1Hour.1Hour.DCP-Computed",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -12194,11 +12004,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "NWPS CLEN6 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -12375,11 +12185,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SWT OOLO.Elev.Inst.1Hour.0.Ccp-Rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -12494,11 +12304,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:04235396 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -12614,11 +12424,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged;flagged-wave1",
      "fetchedFrom": "NWPS FFCQ6 (HPIRP)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -12768,205 +12578,11 @@
      "secondSource": "independent: usgs2:05074000 (+0.28 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1",
      "fetchedFrom": "CWMS MVP RedLake_Dam.Elev.Inst.~15Minutes.0.best-MSL1912",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
-     "approvalRef": "sector-ops-51-7075462499"
-    }
-   }
-  },
-  {
-   "lakeId": "Rend Lake|IL",
-   "status": "MACHINE_VERIFIED",
-   "capability": "DIRECT_OPERATOR_POOL",
-   "provider": "cwms",
-   "researchProvider": "cwms",
-   "station": "MVS",
-   "series": "Rend Lk-Big Muddy.Elev.Inst.30Minutes.0.lrgsShef-raw",
-   "live": [
-    {
-     "provider": "cwms",
-     "capability": "DIRECT_OPERATOR_POOL",
-     "station": "MVS",
-     "series": "Rend Lk-Big Muddy.Elev.Inst.30Minutes.0.lrgsShef-raw",
-     "cadenceMin": 60,
-     "lagMin": 120,
-     "datumOffsetFt": 0.0,
-     "note": "USACE CWMS MVS (unit=EN)"
-    },
-    {
-     "provider": "nwps",
-     "capability": "DIRECT_LAKE_GAUGE",
-     "station": "RNDI2",
-     "series": "HPIRG",
-     "cadenceMin": 60,
-     "lagMin": 120,
-     "datumOffsetFt": 0.0,
-     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:30:00Z age 0.9 h"
-    }
-   ],
-   "history": [
-    {
-     "kind": "cwmsDaily",
-     "office": "MVS",
-     "series": "Rend Lk-Big Muddy.Elev.Inst.~1Day.0.datman-rev",
-     "offsetFt": -0.55,
-     "note": "history/live offset -0.55 ft: datman-rev reads +0.55 ft (max 0.61 ft) above the live lrgsShef-raw series over the last 71 days (2026-11-22 re-check, FIXES note); applied with the opposite sign to bring history onto live [2026-11-22 batch 2 re-check (Sector_Ops #51), review of #222]"
-    }
-   ],
-   "historyCompleteYears": 49,
-   "historyClass": "SUFFICIENT",
-   "historyFirstYear": 1971,
-   "historyBasis": "base",
-   "historyNotes": [
-    "history was Rend Lk-Big Muddy.Elev.Inst.~1Day.0.MVDhist-rev, which stops in 2024-07; now the continuing daily datman-rev series (from 1971). Over the last 71 days it reads +0.55 ft (max 0.61 ft) above the live lrgsShef-raw series [2026-11-22 batch 2 re-check (Sector_Ops #51)]"
-   ],
-   "plan": {
-    "matchedProject": "MVS:Rend Lk | Rend Lake Project",
-    "matchBasis": "nid,sameStation,name,geo<=5km",
-    "matchTier": "strong",
-    "distKm": 0.29,
-    "planSource": "a2w+cwms",
-    "verifiedMatch": true,
-    "planStrict": true,
-    "floodStrict": true,
-    "levels": [
-     {
-      "role": "guideCurve",
-      "name": "Seasonal Rule Curve",
-      "kind": "a2w",
-      "office": "MVS",
-      "location": "Rend Lk",
-      "id": "Rend Lk.Elev.Inst.0.Seasonal Rule Curve",
-      "source": "a2w:MVS:Rend Lk:Rend Lk.Elev.Inst.0.Seasonal Rule Curve",
-      "seasonal": true,
-      "researchTodayFt": 405.0
-     },
-     {
-      "role": "zoneTop",
-      "name": "Top of Conservation",
-      "kind": "static",
-      "valueFt": 405.0,
-      "source": "a2w:MVS:Rend Lk:Rend Lk.Elev.Inst.0.Top of Conservation",
-      "seasonal": false
-     },
-     {
-      "role": "zoneBottom",
-      "name": "Bottom of Conservation",
-      "kind": "static",
-      "valueFt": 391.3,
-      "source": "a2w:MVS:Rend Lk:Rend Lk.Elev.Inst.0.Bottom of Conservation",
-      "seasonal": false
-     },
-     {
-      "role": "floodPoolBottom",
-      "name": "Top of Conservation",
-      "kind": "static",
-      "valueFt": 405.0,
-      "source": "a2w:MVS:Rend Lk:Rend Lk.Elev.Inst.0.Top of Conservation",
-      "seasonal": false
-     }
-    ]
-   },
-   "timeZone": "America/Chicago",
-   "timeZoneRule": "state IL",
-   "dam": {
-    "nidId": "IL00117",
-    "damName": "Rend Dam",
-    "operatorName": "US Army Corps of Engineers",
-    "hydropower": false,
-    "floodControl": true,
-    "nidPurposes": "Fish and Wildlife Pond, Flood Risk Reduction, Other, Recreation, Water Supply",
-    "nidMatchScore": 99.5,
-    "nidDistM": 55.0,
-    "source": "NID IL00117 purposes (nid_links.csv)"
-   },
-   "context": {
-    "lakeClass": {
-     "value": "R3_dendritic_storage",
-     "source": "research lake_features.csv (2026-10-13); classes from morphometry + operator family + residence time",
-     "quality": "derived"
-    },
-    "regime": {
-     "value": "reservoir",
-     "source": "research lake_features.csv (2026-10-13)",
-     "quality": "derived"
-    },
-    "region": {
-     "value": "MW",
-     "source": "research lake_features.csv (2026-10-13)",
-     "quality": "derived"
-    },
-    "residenceTimeDays": {
-     "value": 744.1,
-     "source": "research lake_features.csv (2026-10-13): storage / mean inflow (HL / HL)",
-     "quality": "derived"
-    },
-    "chainPosition": {
-     "upLakes": 0,
-     "downLakes": 0,
-     "nearestDown": null,
-     "chainId": null,
-     "source": "NLDI main-stem navigation from the dam coordinate (250 km) intersected with directory polygons",
-     "quality": "derived"
-    },
-    "grassPct": {
-     "value": 1.9,
-     "asOf": "2026-10-11",
-     "source": "Sector Water Clarity sentinel-2c pass 2026-10-11 (consume-only snapshot)",
-     "quality": "measured, single pass; refresh by regenerating"
-    }
-   },
-   "verification": {
-    "criteriaVersion": "binding-review-v1",
-    "researchStatus": "VERIFIED",
-    "wave": "w1",
-    "checksPassed": [
-     "R1",
-     "R2",
-     "R3",
-     "R4",
-     "R5",
-     "R6",
-     "R8",
-     "R7=strong"
-    ],
-    "corroboratedBy": null,
-    "probedAt": "2026-10-13",
-    "probe": {
-     "lastObservationAt": "2026-10-10T08:00Z",
-     "ageHours": 70.5,
-     "medianFt": 404.04,
-     "lastFt": 403.58,
-     "minFt30d": 403.55,
-     "maxFt30d": 404.47,
-     "samples30d": 1298
-    },
-    "directoryFullPoolFt": 405.0,
-    "deltaFullPoolFt": -0.96,
-    "coordinateFlag": "ok",
-    "batch2Check": {
-     "checkedAt": "2026-11-22",
-     "value": 402.71,
-     "observedAt": "2026-11-22T04:00Z",
-     "ageH": 0.6,
-     "median30": 402.94,
-     "median30MinusFullPool": -2.1,
-     "gaugePosition": "at dam (operator pool/forebay series)",
-     "distToOutlineKm": 0.02,
-     "R6": "PASS",
-     "R7": "PASS",
-     "b_fallback": "n/a",
-     "secondSource": null,
-     "c_history": "PASS",
-     "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
-     "excludedFor": "history-live-mismatch",
-     "fetchedFrom": "CWMS MVS Rend Lk-Big Muddy.Elev.Inst.30Minutes.0.lrgsShef-raw",
-     "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -13131,11 +12747,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "history series lrldlb-raw has had no values for months: rebind later (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRL Salamonie-Lake.Elev.Inst.15Minutes.0.USGS-rev",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -13258,11 +12874,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:01063995 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -13371,11 +12987,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "NWPS GNVN6 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -13506,11 +13122,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS SNCG1 (HPIRZ)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -13695,11 +13311,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS NWDM SMIE.Elev.Inst.1Hour.0.Best-NWK",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -13843,11 +13459,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "RISE 767",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -14011,11 +13627,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS LRP StonewallJackson-Lake.Elev.Inst.1Hour.0.OBS",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -14131,11 +13747,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:05056665 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -14319,11 +13935,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "RISE 134012",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -14468,11 +14084,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -14637,11 +14253,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS NWDM TUCR.Elev.Inst.1Hour.0.Best-NWK",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -14755,11 +14371,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:10288500 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged;flagged-wave1",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -14922,11 +14538,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -15092,11 +14708,11 @@
      "secondSource": null,
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "CWMS SAM Weiss.Elev.Inst.1Hour.0.Raw-APCO (re-checked; first pass read GC-APCO guide curve 561.43)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -15229,11 +14845,11 @@
      "secondSource": "same gauge, other endpoint: usgs2:13174000 (+0.00 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "flagged-wave1;post-hoc",
      "fetchedFrom": "usgs iv/dv",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }
@@ -15364,11 +14980,11 @@
      "secondSource": "same gauge, other endpoint (presumed: NWPS YGBP1 relays USGS 03077000; to confirm on the Mac mini): usgs2:03077000 (-0.05 ft)",
      "c_history": "PASS",
      "d_reference": "PASS",
-     "seriesCheck": "PENDING (not run for batch 2; to run on the Mac mini)",
+     "seriesCheck": "within 15 ft or n/a; per-lake results in the research folder batch2-live-checks-2026-11-22 (Mac mini 2026-11-22, Sector_Ops #51 comment 7085401013)",
      "excludedFor": "coordinate-flag",
      "fetchedFrom": "NWPS YGBP1 (HPIRG)",
      "result": "PASS",
-     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)",
+     "criteria": "binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run 2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)",
      "approvalRef": "sector-ops-51-7075462499"
     }
    }

@@ -1,5 +1,5 @@
 {
-  "bindingVersion" : "bindings-2026-10-13.1+accepted.291.62f1c511",
+  "bindingVersion" : "bindings-2026-10-13.1+accepted.289.7b2e91b2",
   "owner" : "lake-brain",
   "reviewed" : [
     {
@@ -1137,15 +1137,6 @@
     },
     {
       "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "Lake Darling|ND",
-      "liveSourceIds" : [
-        "a2w:MVP:LakeDarling_Dam:LakeDarling_Dam.Elev.Inst.~15Minutes.0.best-NGVD29",
-        "cwms:MVP:LakeDarling_Dam.Elev.Inst.15Minutes.0.rev-NGVD29",
-        "nwps:DARN8:HPIRG"
-      ]
-    },
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Lake Eufaula|OK",
       "liveSourceIds" : [
         "a2w:SWT:EUFA:EUFA.Elev.Inst.1Hour.0.Ccp-Rev",
@@ -1914,14 +1905,6 @@
       "lakeId" : "Red Lake|MN",
       "liveSourceIds" : [
         "a2w:MVP:RedLake_Dam:RedLake_Dam.Elev.Inst.~15Minutes.0.best-MSL1912"
-      ]
-    },
-    {
-      "capability" : "DIRECT_OPERATOR_POOL",
-      "lakeId" : "Rend Lake|IL",
-      "liveSourceIds" : [
-        "cwms:MVS:Rend Lk-Big Muddy.Elev.Inst.30Minutes.0.lrgsShef-raw",
-        "nwps:RNDI2:HPIRG"
       ]
     },
     {

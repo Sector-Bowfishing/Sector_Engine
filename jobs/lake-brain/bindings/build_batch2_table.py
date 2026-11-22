@@ -62,26 +62,36 @@ FIXES = {
 
 # Review of #222 (2026-11-22): lakes the re-check passed but that are HELD out of batch 2 until the Mac mini checks them with live data.
 # Their rows stay in checks_2026-11-22.csv with result HOLD (the evidence is kept); they get no record and are not accepted.
+LIVE = "2026-11-22 Mac mini live checks (Sector_Ops #51 comment 7085401013; research folder batch2-live-checks-2026-11-22)"
 HOLD = {
     "Lake Mattamuskeet|NC": "history reads a different site and parameter (USGS 0208458893 00062) from live (020845889205 62615) and the lake "
                             "has no full pool, so checks R7 and d do not apply; to batch 3 once the history/live relation is checked",
-    "Blue Marsh Lake|PA": "datum mix between the live a2w/CWMS series and the Rev-DCP history series is unresolved; needs live data (Mac mini)",
+    "Blue Marsh Lake|PA": "check (b) FAIL: datum mix, live NAVD88 minus NGVD29 (fallback and Rev-DCP history) = -0.74 ft, sd 0.00, 2,877 pairs over "
+                          "61 days, a constant shift (Beltzville was 0.66 ft); for batch 3: apply -0.74 ft to the NGVD29 fallback and history "
+                          f"({LIVE})",
+    "Lake Darling|ND": "check (b) FAIL (pre-registered rule: any check-(b) FAIL is held out): NWS DARN8 fallback reads +1.06 ft above the dam "
+                       "series at every matched time over 7 days; the CWMS fallback agrees exactly (0.00), so DARN8 is on another datum. "
+                       f"Options: drop DARN8 as a fallback or give it a -1.06 ft offset ({LIVE})",
+    "Rend Lake|IL": "check (b) FAIL (pre-registered rule): NWS RNDI2 fallback reads +0.55 ft above the live CWMS lrgsShef-raw series at every "
+                    "matched time, and the datman-rev history is also +0.55 ft above it; two series agree with each other and not with live, so "
+                    f"the live -raw series probably reads 0.55 ft low. Decide which Rend Lake series is right before release ({LIVE})",
 }
 
 # Measured history offsets (review of #222). `offsetFt` is ADDED to the history reading so it lines up with live (the convention of
 # usgsDaily / hadsDaily offsets). The basis of each value goes in the history entry's `note`, as the datum-offset rows already do.
-# NOTE: the engine applies offsetFt only to usgsDaily, hadsDaily and cdecDaily; on cwmsDaily (Lake Washington, Rend Lake) it is
-# recorded data and is not applied by the runner until cwmsDaily gains an offset.
+# The runner applies offsetFt once for every provider (#229, LakeHistoryOffsets).
 HISTORY_OFFSETS = {
     "Lake Washington|WA": {
         "index": 0, "series": "LWSC.Elev-Lake.Inst.1Hour.0.NWSRADIO-RAW", "offsetFt": 0.36,
         "note": "history/live offset +0.36 ft: 1874-day mean difference, sd 0.08 ft (research comparator; the value had leaked into the "
-                "series id as '(+0.36ft over 1874d, sd 0.08)'); sign as the comparator reported it, direction to be confirmed on the Mac mini",
+                "series id as '(+0.36ft over 1874d, sd 0.08)'). Sign confirmed by the 2026-11-22 Mac mini live check: live minus history "
+                "= +0.44 ft, sd 0.06, 1,369 hourly pairs 2026-06-18..08-17 (post-hoc window: the history series stopped on 2026-08-17; "
+                "Sector_Ops #51 comment 7085401013). +0.36 kept pending the owner's choice between the long-run and the recent mean",
     },
-    "Rend Lake|IL": {
-        "index": 0, "offsetFt": -0.55,
-        "note": "history/live offset -0.55 ft: datman-rev reads +0.55 ft (max 0.61 ft) above the live lrgsShef-raw series over the last 71 days "
-                "(2026-11-22 re-check, FIXES note); applied with the opposite sign to bring history onto live",
+    "Devils Lake|ND": {
+        "index": 0, "offsetFt": 1400.00,
+        "note": "gage height + site altitude (datum offset), corrected from 1401.33 to 1400.00: with 1401.33 the history read 1.33 ft above "
+                "live on 30 matching days (sd 0.02) in the 2026-11-22 Mac mini live check (Sector_Ops #51 comment 7085401013)",
     },
     "Toledo Bend Reservoir|TX": {
         "index": 0, "offsetFt": -0.18,
@@ -91,8 +101,9 @@ HISTORY_OFFSETS = {
     },
 }
 
-CRITERIA = ("binding-review-v1 R1-R9 + dry-run checks b/c/d; R9 counts only an independent second gauge (the same gauge read through "
-            "another endpoint is not R9); 15 ft history/live series rule PENDING (seriesCheck not run for batch 2; to run on the Mac mini)")
+CRITERIA = ("binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only "
+            "an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run "
+            "2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)")
 
 
 def apply_history_offset(rec: dict, spec: dict) -> None:
@@ -108,8 +119,8 @@ def summarize(records: list[dict]) -> dict:
     hist = collections.Counter(r["historyClass"] for r in records)
     reasons = collections.Counter(p for r in records for p in (r["verification"]["batch2Check"]["excludedFor"] or "").split(";") if p)
     return {"records": len(records), "byProvider": dict(sorted(by_provider.items())), "history": dict(sorted(hist.items())),
-            "excludedForAnyReason": dict(sorted(reasons.items())), "seriesFixes": sorted(FIXES),
-            "historyOffsets": sorted(HISTORY_OFFSETS), "held": sorted(HOLD)}
+            "excludedForAnyReason": dict(sorted(reasons.items())), "seriesFixes": sorted(f for f in FIXES if f not in HOLD),
+            "historyOffsets": sorted(f for f in HISTORY_OFFSETS if f not in HOLD), "held": sorted(HOLD)}
 
 
 CHECK_FIELDS = ["checkedAt", "value", "observedAt", "ageH", "median30", "median30MinusFullPool", "gaugePosition", "distToOutlineKm",

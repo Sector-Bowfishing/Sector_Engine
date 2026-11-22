@@ -205,13 +205,14 @@ final class LakeBrainBindingsTests: XCTestCase {
         XCTAssertTrue(excludedIds.count > 100)
         XCTAssertEqual(excludedIds.intersection(Set(ids)), batch2Ids)
         XCTAssertTrue(batch2Ids.isSubset(of: excludedIds))
-        // Mattamuskeet and Blue Marsh: held out of batch 2 after the #222 review (live checks pending)
-        for must in ["Clinton Lake|IL", "Lake Shafer|IN", "Upper Klamath Lake|OR", "Lake Mattamuskeet|NC", "Blue Marsh Lake|PA"] {
+        // held out of batch 2: Mattamuskeet and Blue Marsh (#222 review), Lake Darling and Rend Lake (2026-11-22 check-b FAIL)
+        for must in ["Clinton Lake|IL", "Lake Shafer|IN", "Upper Klamath Lake|OR", "Lake Mattamuskeet|NC", "Blue Marsh Lake|PA",
+                     "Lake Darling|ND", "Rend Lake|IL"] {
             XCTAssertTrue(excludedIds.contains(must), "\(must) must be excluded")
             XCTAssertFalse(ids.contains(must))
         }
         // returned by batch 2 after passing the 2026-11-22 re-check
-        for back in ["Bartlett|AZ", "Lake Taneycomo|MO", "Rend Lake|IL", "Red Lake|MN"] { XCTAssertTrue(batch2Ids.contains(back), back) }
+        for back in ["Bartlett|AZ", "Lake Taneycomo|MO", "Red Lake|MN"] { XCTAssertTrue(batch2Ids.contains(back), back) }
         // the re-check's series fixes: the observed level, never Alabama Power's guide curve
         for id in ["Logan Martin|AL", "Weiss|AL"] {
             let r = try XCTUnwrap(LakeGeneratedBindings.records.first { $0.lakeId == id })
