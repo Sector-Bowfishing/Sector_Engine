@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "kit": "BRAIN_CERT_KIT_V1",
   "collectedWith": "pytest -rA per Brain directory (tools/cortex_status/collect_certification.py)",
-  "sourceDigest": "sha256:c88f2e749f6f20724703471a64a625d8ba7c87e3ea075f432fdc950d3db040ba",
+  "sourceDigest": "sha256:98fb2a83209f00fabb23d841464c61530be1f76bceb261f272d3ade645b56b8c",
   "brains": {
     "depth": {
       "directory": "brains/depth",
@@ -36,6 +36,36 @@
     },
     "biological-state": {
       "directory": "brains/fish",
+      "status": "PASS",
+      "proofs": {
+        "P01": "PASS",
+        "P02": "PASS",
+        "P03": "PASS",
+        "P04": "PASS",
+        "P05": "PASS",
+        "P06": "PASS",
+        "P07": "PASS",
+        "P08": "PASS",
+        "P09": "PASS",
+        "P10": "PASS",
+        "P11": "PASS",
+        "P12": "PASS",
+        "P13": "PASS",
+        "P14": "PASS",
+        "P15": "PASS",
+        "P16": "PASS",
+        "P17": "PASS",
+        "P18": "PASS",
+        "P19": "PASS"
+      },
+      "mutations": {
+        "passed": 30,
+        "failed": 0
+      },
+      "summary": "51 passed"
+    },
+    "generation": {
+      "directory": "brains/generation",
       "status": "PASS",
       "proofs": {
         "P01": "PASS",

@@ -1,0 +1,121 @@
+{
+ "schemaVersion": "1.0.0",
+ "brainId": "generation",
+ "gaps": [
+  {
+   "id": "GEN-REL-001",
+   "type": "validation",
+   "title": "No approved Generation knowledge release",
+   "whyItMatters": "The packaged release (dam catalog, source-access list) carries no approval record, so the runtime abstains (BLOCKED_AWAITING_APPROVED_RELEASE).",
+   "bowfisherDecision": "Whether any release or schedule may be shown at all.",
+   "currentEvidence": [
+    "brains/generation/runtime/knowledge/knowledge-release.json"
+   ],
+   "stopCondition": "Stop when Michael records an approval for a named release, or rejects it.",
+   "expectedOutput": "An approval record and a new APPROVED release id.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Owner approval (not field data)."
+   },
+   "status": "OPEN",
+   "owner": "generation-lane"
+  },
+  {
+   "id": "GEN-BIND-001",
+   "type": "readiness",
+   "title": "CWMS release series not bound for USACE and CWMS-published projects",
+   "whyItMatters": "About 200 dam lakes have an allowed official source (CWMS) whose outflow / turbine / spill series ids are not yet bound; until a probe binds them those lakes are DISCOVERY_PENDING.",
+   "bowfisherDecision": "Whether the Generation tile can show measured release on USACE lakes.",
+   "currentEvidence": [
+    "brains/generation/runtime/knowledge/dams.json (sources[provider=cwms, status=DISCOVERY_PENDING])",
+    "Sources/SectorEngine/Engine/Adapters/CWMSObservedService.swift (catalog classification rules)"
+   ],
+   "stopCondition": "Stop when every pending CWMS lake is bound with an exact tsid or recorded as publishing no release series.",
+   "expectedOutput": "Reviewed bindings in a new catalog version.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Binding review (not field data)."
+   },
+   "status": "OPEN",
+   "owner": "generation-lane"
+  },
+  {
+   "id": "GEN-BIND-002",
+   "type": "readiness",
+   "title": "RISE release items not bound for Reclamation reservoirs",
+   "whyItMatters": "65 Reclamation lakes (plus RISE-covered others) need their release item id from the RISE catalog.",
+   "bowfisherDecision": "Whether Western reservoirs show measured release.",
+   "currentEvidence": [
+    "brains/generation/runtime/knowledge/dams.json (sources[provider=rise])"
+   ],
+   "stopCondition": "Stop when each is bound or recorded as having no observed release item.",
+   "expectedOutput": "Reviewed RISE bindings.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Binding review."
+   },
+   "status": "OPEN",
+   "owner": "generation-lane"
+  },
+  {
+   "id": "GEN-BIND-003",
+   "type": "readiness",
+   "title": "TVA LocationIDs not evidenced for 7 TVA-API lakes; USGS tailwater gauges not located",
+   "whyItMatters": "Kentucky Lake, Fontana, Hiwassee, Cherokee, Chickamauga and Laurel River need TVA /locations resolution; lakes run by operators without public release data need a downstream USGS discharge gauge where one exists.",
+   "bowfisherDecision": "Coverage of the Generation tile.",
+   "currentEvidence": [
+    "brains/generation/research/tools/generation_research/records/tva_locations.json"
+   ],
+   "stopCondition": "Stop when each lake is bound or recorded as having no gauge.",
+   "expectedOutput": "Records and bindings in a new catalog version.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Binding review."
+   },
+   "status": "OPEN",
+   "owner": "generation-lane"
+  },
+  {
+   "id": "GEN-ACCESS-001",
+   "type": "readiness",
+   "title": "TVA robots.txt and the iOS 'TVA blocks automated access' note; SWPA (energy.gov) robots.txt and terms",
+   "whyItMatters": "The owner rule allows documented official services; a page whose robots.txt or terms forbid automated use needs permission first.",
+   "bowfisherDecision": "Whether TVA and SWPA schedules may be read.",
+   "currentEvidence": [
+    "brains/generation/runtime/knowledge/source_access.json"
+   ],
+   "stopCondition": "Stop when both are read and recorded, or permission is requested.",
+   "expectedOutput": "source_access.json statuses confirmed in a new release.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Access check (not field data)."
+   },
+   "status": "OPEN",
+   "owner": "generation-lane"
+  },
+  {
+   "id": "GEN-VAL-001",
+   "type": "validation",
+   "title": "Published release picture not yet compared with the operators' published schedules",
+   "whyItMatters": "The pre-registered week-long comparison is the validation gate before any customer use.",
+   "bowfisherDecision": "Whether the tile can be trusted.",
+   "currentEvidence": [
+    "docs/brains/GENERATION_BRAIN_PLAN.md section 5"
+   ],
+   "stopCondition": "Stop after the pre-registered week, PASS or FAIL against the pre-declared thresholds.",
+   "expectedOutput": "A validation record.",
+   "humanOrFieldValidationRequired": {
+    "required": false,
+    "fieldDataRole": "OPTIONAL_EVIDENCE",
+    "what": "Public schedules and gauges only."
+   },
+   "status": "OPEN",
+   "owner": "generation-lane"
+  }
+ ]
+}

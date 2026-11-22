@@ -98,7 +98,9 @@ A failure produces a `weather-change-thresholds-v2` proposal with its reason and
    `executionTarget none`, no executor, no cloud job, absent from `/control/executionControlV1` (absent = disabled), `run.py --write`
    refusing. Merging changes nothing at runtime.
 1. **Read-only dry run** (pre-approved read-only check; a cloud session, never the MacBook): `run.py --dry-run` on 10 lakes, then all
-   621. Record request count, run time, BLOCKED count, state kinds. No database write.
+   621. Record request count, run time, BLOCKED count, state kinds, and the CHANGE / WATCH / STEADY mix with the `unknown` reasons behind
+   each WATCH: every rule that cannot be evaluated is WATCH (owner decision 2026-11-22), so a high WATCH share measures data gaps, not
+   weather, and must be read before Lake and Water Temp consume the signal. No database write.
 2. **Owner: thresholds release approval** (`weather-knowledge-candidate-2026-11-22.1`, now NOT_RECORDED), or explicit acceptance of
    internal use without it.
 3. **Cortex maintenance session:** register the Weather families (`/lakes/{k}/states/weather`, `/lakeFleet/{k}/…/weather`,

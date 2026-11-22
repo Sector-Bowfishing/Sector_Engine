@@ -98,8 +98,8 @@ def test_no_deploy_script_can_create_or_resume_a_schedule():
 # 4 -------------------------------------------------------------------- all eight Brains are registered with the one authority
 def test_all_eight_brains_are_registered_with_the_orchestrator():
     m = O.load_manifest()
-    # Moon and Weather (2026-11-22): registered DISABLED (PARKED, executionTarget none, no executor, no shadow lane): deliberately no execution path.
-    registered_disabled = {"moon", "weather"}
+    # Moon, Weather and Generation (2026-11-22): registered DISABLED (PARKED, executionTarget none, no executor, no shadow lane): deliberately no execution path.
+    registered_disabled = {"moon", "weather", "generation"}
     assert set(m["brains"]) == set(ALL_BRAINS) | registered_disabled
     for bid in registered_disabled:
         b = m["brains"][bid]

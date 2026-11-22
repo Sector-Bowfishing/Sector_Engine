@@ -86,6 +86,16 @@
       "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "readinessCounts", "staleLakeCount", "supportedLakeCount", "weatherChange"]},
       "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 0.5, "tasks": 1}, "timeoutSeconds": 1800, "scopes": ["directory"], "allowFleetRunNow": false, "customerPublication": false
     },
+    "generation": {
+      "displayName": "Generation", "group": "CURRENT_CONDITIONS", "lifecycle": "CALIBRATION", "activityState": "PARKED",
+      "executionTarget": {"kind": "none", "note": "registered DISABLED (owner direction 2026-11-22, Sector_Ops #51): no job, no image, no schedule; brains/generation/runtime run.py --write refuses until an APPROVED knowledge release AND GENERATION_WRITE_APPROVED=1; enabling it needs an execution target, an execution-control entry and the owner's approval", "startedByOrchestrator": false, "scoped": false},
+      "allowedTriggers": ["MANUAL", "ADMIN"],
+      "dependencies": [],
+      "schedule": {"class": "MANUAL", "owner": "NONE"},
+      "freshness": {"stalenessModel": "FINGERPRINT", "note": "per-dam adaptive freshness in the state (generation_brain.freshness): TRANSITION 60 / ACTIVE 120 / STEADY 180 min re-read, never more than hourly per series (owner source-access rule); once enabled, the hourly grant reads only dams whose nextCheckAt is reached"},
+      "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "readinessCounts", "supportedLakeCount"]},
+      "costClass": "NONE", "timeoutSeconds": 900, "scopes": [], "customerPublication": false
+    },
     "sector-intelligence": {
       "displayName": "Sector Intelligence", "group": "SYNTHESIS", "lifecycle": "CALIBRATION", "activityState": "ACTIVE",
       "executionTarget": {"kind": "in-process", "dir": "brains/sector-intelligence/runtime", "startedByOrchestrator": true, "scoped": true},

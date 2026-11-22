@@ -1,0 +1,43 @@
+{
+ "links": {
+  "next": null
+ },
+ "data": [
+  {
+   "attributes": {
+    "dateTime": "2026-11-19T00:00:00+00:00",
+    "result": 4100.0,
+    "resultAttributes": {
+     "resultType": "observed"
+    }
+   }
+  },
+  {
+   "attributes": {
+    "dateTime": "2026-11-20T00:00:00+00:00",
+    "result": 0.0,
+    "resultAttributes": {
+     "resultType": "observed"
+    }
+   }
+  },
+  {
+   "attributes": {
+    "dateTime": "2026-11-21T00:00:00+00:00",
+    "result": 3900.0,
+    "resultAttributes": {
+     "resultType": "observed"
+    }
+   }
+  },
+  {
+   "attributes": {
+    "dateTime": "2026-11-22T00:00:00+00:00",
+    "result": 4000.0,
+    "resultAttributes": {
+     "resultType": "modeled"
+    }
+   }
+  }
+ ]
+}
