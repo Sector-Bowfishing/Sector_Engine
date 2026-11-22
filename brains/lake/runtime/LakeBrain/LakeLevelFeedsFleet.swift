@@ -134,6 +134,14 @@ final class LakeFleetClients: @unchecked Sendable {
     static let usgsBase = "https://waterservices.usgs.gov/nwis"
     /// Minimum seconds between two IEM requests.
     var hadsGapSeconds: TimeInterval = 15
+    /// GET used by the CDEC and USGS-history readers (url, Accept, timeout). Tests inject recorded answers.
+    let transport: @Sendable (_ url: String, _ accept: String, _ timeout: TimeInterval) async -> LakeFeedHTTP.Response?
+
+    init(transport: @escaping @Sendable (_ url: String, _ accept: String, _ timeout: TimeInterval) async -> LakeFeedHTTP.Response? = { url, accept, timeout in
+        await LakeFeedHTTP.get(url, accept: accept, timeout: timeout)
+    }) {
+        self.transport = transport
+    }
 
     // MARK: Access2Water
 
@@ -261,18 +269,24 @@ final class LakeFleetClients: @unchecked Sendable {
     /// Daily-value statistic precedence of the research (mean, then end-of-day observation, ...).
     static let usgsStatOrder = ["00003", "32400", "30800", "00001", "00002"]
 
+    /// `singleSeries`: refuse an answer that carries more than one series for one statistic (several sub-locations at a site, e.g. a
+    /// dam's forebay and tailwater gage heights); the gage-height + altitude reader requires it.
     func usgsDaily(site: String, param: String, stat: String, offsetFt: Double, since: String?, now: Date,
-                   timeZone: TimeZone) async -> [DailyLevel]? {
+                   timeZone: TimeZone, singleSeries: Bool = false) async -> [DailyLevel]? {
         // A gage height is a local-datum stage; it is a history only with the explicit datum offset that makes it an elevation.
         if !Self.usgsElevationParams.contains(param) && offsetFt == 0 { return nil }
         let src = "usgs:\(site):\(param):\(stat)"
-        if stat == "iv" { return await usgsIVDaily(site: site, param: param, offsetFt: offsetFt, since: since, now: now, timeZone: timeZone, src: src) }
+        if stat == "iv" {
+            return await usgsIVDaily(site: site, param: param, offsetFt: offsetFt, since: since, now: now, timeZone: timeZone, src: src,
+                                     singleSeries: singleSeries)
+        }
         let end = LakeLevelCalendar.dayString(now, timeZone: timeZone)
         var url = "\(Self.usgsBase)/dv/?format=json&sites=\(site)&parameterCd=\(param)&startDT=\(since ?? "1900-01-01")&endDT=\(end)&siteStatus=all"
         if stat != "dv" { url += "&statCd=\(stat)" }
-        guard let r = await LakeFeedHTTP.get(url, timeout: 120) else { return nil }
+        guard let r = await transport(url, "application/json", 120) else { return nil }
         if r.status == 404 { return [] }   // USGS answers 404 for "no data"
         guard r.isSuccess else { return nil }
+        if singleSeries && Self.usgsSeriesPerStatistic(r.body) > 1 { return nil }
         return Self.parseUSGSDV(r.body, offsetFt: offsetFt, src: src)
     }
 
@@ -299,7 +313,8 @@ final class LakeFleetClients: @unchecked Sendable {
     }
 
     /// Instantaneous values reduced to the median of each lake-local day. Walks year by year back from now until two empty years.
-    private func usgsIVDaily(site: String, param: String, offsetFt: Double, since: String?, now: Date, timeZone: TimeZone, src: String) async -> [DailyLevel]? {
+    private func usgsIVDaily(site: String, param: String, offsetFt: Double, since: String?, now: Date, timeZone: TimeZone, src: String,
+                             singleSeries: Bool) async -> [DailyLevel]? {
         var out: [DailyLevel] = []
         var year = Int(LakeLevelCalendar.dayString(now, timeZone: timeZone).prefix(4)) ?? 2026
         let floor = since.flatMap { Int($0.prefix(4)) } ?? 1990
@@ -309,14 +324,29 @@ final class LakeFleetClients: @unchecked Sendable {
             let end = year == (Int(LakeLevelCalendar.dayString(now, timeZone: timeZone).prefix(4)) ?? year)
                 ? LakeLevelCalendar.dayString(now, timeZone: timeZone) : "\(year)-12-31"
             let url = "\(Self.usgsBase)/iv/?format=json&sites=\(site)&parameterCd=\(param)&startDT=\(start)&endDT=\(end)&siteStatus=all"
-            guard let r = await LakeFeedHTTP.get(url, timeout: 120) else { return nil }
+            guard let r = await transport(url, "application/json", 120) else { return nil }
             if r.status == 404 { empty += 1; year -= 1; continue }
+            if singleSeries && Self.usgsSeriesPerStatistic(r.body) > 1 { return nil }
             guard r.isSuccess, let obs = Self.parseUSGSIV(r.body) else { return nil }
             empty = obs.isEmpty ? empty + 1 : 0
             out += Self.dailyMedians(obs, timeZone: timeZone, offsetFt: offsetFt, src: src)
             year -= 1
         }
         return LakeDailyHistory.dedupe(out)
+    }
+
+    /// The largest number of series carrying readings for one parameter + statistic in a WaterServices answer. Sub-locations at a
+    /// site come back as separate `values` blocks (one per method) or as separate time series with the same name.
+    static func usgsSeriesPerStatistic(_ data: Data) -> Int {
+        guard let obj = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+              let series = (obj["value"] as? [String: Any])?["timeSeries"] as? [[String: Any]] else { return 0 }
+        var byName: [String: Int] = [:]
+        for s in series {
+            let name = (s["name"] as? String) ?? "?"
+            let blocks = ((s["values"] as? [[String: Any]]) ?? []).filter { !((($0["value"] as? [[String: Any]]) ?? []).isEmpty) }.count
+            byName[name, default: 0] += blocks
+        }
+        return byName.values.max() ?? 0
     }
 
     static func parseUSGSIV(_ data: Data) -> [LevelObservation]? {

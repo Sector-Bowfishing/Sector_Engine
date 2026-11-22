@@ -14,8 +14,16 @@
 - `LakeBrain/LakeGeneratedBindings.swift`: a generated history record may name `cdecDaily` (optional `station`, `sensor`, `dur` fields), `coopsDaily` (`station`) or `usgsStageDaily` (`site`, `datum`, `stat`).
 - `LakeBrain/LakeSourceBindingsGenerated.swift`: unchanged. The accepted set, the reviewed set (192) and the customer Lake-level list are unchanged; no lake is bound to CDEC, CO-OPS or USGS stage.
 
+## What approval allows
+- The central Publisher may accept Lake Brain artifacts that declare this release (`PackagedReleaseResolver` requires `APPROVED`).
+- Customer use of the release.
+
 ## Until it is approved
-- The Publisher (`PackagedReleaseResolver`) accepts only an `APPROVED` release, so a Publisher image built from this commit would refuse Lake artifacts. Approve before the next Publisher redeploy and LakeBrainJob rebuild; nothing is deployed by merging.
+- Approval is a record, not an enforced gate on the Lake path: Lake artifacts declare `knowledgeRelease` NONE (`brains/lake/contracts/describe_contract.py:25`, `flat_artifact.py`), so nothing refuses a Lake artifact while this release is NOT_RECORDED. Nothing is deployed by merging.
+
+## What it does not allow
+- Binding any lake to CDEC, NOAA CO-OPS or USGS stage: each binding goes through the acceptance gate.
+- **CDEC needs DWR's permission first.** CDEC's `robots.txt` disallows `/dynamicapp/`, the path of the JSONDataServlet the reader uses. Under the owner rule (Michael, 2026-11-22: use a source only if its terms / robots.txt do not forbid automated reading), no CDEC binding is made without written permission from California DWR.
 
 ## To approve
 Michael confirms in chat or in an "Owner approval (Michael, …)" comment on Sector_Ops #51; then set `approval.status` to `APPROVED` here and in `brains/lake/runtime/knowledge-release.json`.

@@ -42,7 +42,7 @@ struct LakeCOOPSClient: Sendable {
     }
 
     /// A 7-digit CO-OPS station id.
-    static func isStationId(_ s: String) -> Bool { s.count == 7 && s.allSatisfy(\.isNumber) }
+    static func isStationId(_ s: String) -> Bool { s.count == 7 && s.allSatisfy { $0.isASCII && $0.isNumber } }
 
     static func url(product: String, station: String, timeZone: String, _ extra: [(String, String)]) -> String? {
         var c = URLComponents(string: base)
@@ -171,11 +171,12 @@ struct LakeCOOPSClient: Sendable {
         }
         verified = LakeDailyHistory.dedupe(verified)
 
-        // Preliminary tail: from the day after the last verified mean (or `since`), never more than tailMaxDays back.
+        // Preliminary tail: from the day after the last verified mean (or `since`). It reaches at most tailMaxDays back: a gap older
+        // than that (verification stopped, or `since` far back with no verified means) would be a silent hole, so the pull fails.
         let floorDay = LakeLevelCalendar.dayString(now.addingTimeInterval(-Double(Self.tailMaxDays) * 86_400), timeZone: timeZone)
         var startDay = verified.last.flatMap { LakeLevelCalendar.nextDay($0.date) } ?? since ?? floorDay
         if let since, since > startDay { startDay = since }
-        startDay = max(startDay, floorDay)
+        if startDay < floorDay { return nil }
         var tail: [LevelObservation] = []
         if startDay <= today, var cursor = LakeLevelCalendar.utcBounds(day: startDay, timeZone: timeZone)?.0 {
             while cursor < now {

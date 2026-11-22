@@ -215,9 +215,7 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
             return await coops.daily(station: station, since: since, now: now, timeZone: timeZone)
         case .usgsStageDaily(let site, let datum, let stat):
             // The altitude is read now and must be on the binding's datum; the gage heights are shifted by it.
-            guard let alt = await usgsStage.altitude(site: site, expectedDatum: datum).ft else { return nil }
-            return await fleet.usgsDaily(site: site, param: LakeUSGSStageClient.gageHeight, stat: stat, offsetFt: alt, since: since,
-                                         now: now, timeZone: timeZone)
+            return await usgsStage.daily(site: site, datum: datum, stat: stat, since: since, now: now, timeZone: timeZone, fleet: fleet)
         case .sharedTVAArchive:
             return nil
         }

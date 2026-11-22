@@ -148,6 +148,20 @@ final class LakeBrainCOOPSTests: XCTestCase {
         XCTAssertNil(d, "a failed tail window is no silent hole")
     }
 
+    func testHistoryRefusesATailGapOlderThanTheClamp() async throws {
+        // The last verified mean is 2026-10-03; on 2027-02-01 the 93-day tail reaches back only to 2026-10-31, so October 4..30
+        // would be a silent hole: the pull fails instead, before any water_level request.
+        let rec = URLRecorder(), dm = try Self.fixture("9087044_daily_mean.json"), none = try Self.fixture("no_data.json")
+        let c = client(rec) { url in
+            if url.contains("product=daily_mean") { return Self.ok(url.contains("begin_date=20180101") ? dm : none) }
+            return Self.ok(none)
+        }
+        let d = await c.daily(station: "9087044", since: nil, now: iso("2027-02-01T12:00:00Z"), timeZone: chicago)
+        XCTAssertNil(d)
+        XCTAssertFalse(rec.urls.contains { $0.contains("product=water_level") })
+        XCTAssertFalse(LakeCOOPSClient.isStationId("９０８７０４４"), "ASCII digits only")
+    }
+
     func testIncrementalHistoryStartsAtSince() async throws {
         let rec = URLRecorder(), wl = try Self.fixture("9087044_water_level.json"), none = try Self.fixture("no_data.json")
         let c = client(rec) { url in Self.ok(url.contains("product=daily_mean") ? none : wl) }

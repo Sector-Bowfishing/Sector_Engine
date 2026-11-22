@@ -94,6 +94,29 @@ final class LakeBrainUSGSStageTests: XCTestCase {
         XCTAssertNotNil(r.error)
     }
 
+    func testSeveralGageHeightSeriesAtOneSiteAreRefused() throws {
+        // A second `values` block (another method / sub-location, e.g. a dam's tailwater) in the same answer.
+        let one = String(decoding: try Self.fixture("04082500_iv_00065.json"), as: UTF8.self)
+        let block = #"{"value":[{"value":"9.10","qualifiers":["P"],"dateTime":"2026-11-22T04:00:00.000-06:00"}],"qualifier":[],"method":[{"methodDescription":"tailwater","methodID":2}]}"#
+        let two = one.replacingOccurrences(of: #""values":[{"#, with: #""values":[\#(block),{"#)
+        XCTAssertNotEqual(one, two)
+        let r = LakeUSGSStageClient.stageReadings(Data(two.utf8), site: "04082500", altitudeFt: 743.91)
+        XCTAssertTrue(r.error?.contains("sub-locations") ?? false, r.error ?? "")
+        XCTAssertEqual(LakeFleetClients.usgsSeriesPerStatistic(Data(one.utf8)), 1)
+    }
+
+    func testZeroAltitudeIsRefusedLiveAndInHistory() async throws {
+        let rdb = String(decoding: try Self.fixture("04082500_site.rdb"), as: UTF8.self).replacingOccurrences(of: " 743.91", with: "0")
+        let rec = URLRecorder()
+        let c = client(rec, site: Data(rdb.utf8), iv: try Self.fixture("04082500_iv_00065.json"))
+        let live = await c.recent(ref("NAVD88"), hours: 24)
+        XCTAssertTrue(live.error?.contains("altitude is 0") ?? false, live.error ?? "")
+        let h = await c.daily(site: "04082500", datum: "NAVD88", stat: "dv", since: nil, now: iso("2026-11-22T12:00:00Z"),
+                              timeZone: TimeZone(identifier: "UTC")!, fleet: LakeFleetClients(transport: { _, _, _ in nil }))
+        XCTAssertNil(h)
+        XCTAssertFalse(LakeUSGSStageClient.isSiteNumber("０４０８２５００"), "ASCII digits only")
+    }
+
     func testSiteRecordIsReadOncePerRun() async throws {
         let rec = URLRecorder()
         let c = client(rec, site: try Self.fixture("04082500_site.rdb"), iv: try Self.fixture("04082500_iv_00065.json"))

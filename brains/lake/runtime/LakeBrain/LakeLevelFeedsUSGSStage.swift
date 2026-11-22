@@ -62,7 +62,7 @@ struct LakeUSGSStageClient: Sendable {
         LakeUSGSStageClient(fetch: { url, accept in await LakeFeedHTTP.get(url, accept: accept, timeout: 60) }, cache: USGSSiteCache())
     }
 
-    static func isSiteNumber(_ s: String) -> Bool { (8...15).contains(s.count) && s.allSatisfy(\.isNumber) }
+    static func isSiteNumber(_ s: String) -> Bool { (8...15).contains(s.count) && s.allSatisfy { $0.isASCII && $0.isNumber } }
 
     // MARK: site altitude
 
@@ -110,6 +110,8 @@ struct LakeUSGSStageClient: Sendable {
             guard d.datum.uppercased() == want.uppercased() else {
                 return (nil, "USGS \(site): altitude datum is \(d.datum), binding expects \(want) (datum changed or wrong binding)")
             }
+            // 0 is the usual placeholder of an unsurveyed gage, and the history reader treats a zero offset as "no offset": refused in both.
+            guard d.altitudeFt != 0 else { return (nil, "USGS \(site): published altitude is 0 (unsurveyed gage datum); gage height is not an elevation") }
             return (d.altitudeFt, nil)
         }
     }
@@ -129,12 +131,23 @@ struct LakeUSGSStageClient: Sendable {
 
     static func stageReadings(_ data: Data, site: String, altitudeFt: Double) -> FeedResult {
         if let u = ivUnit(data), u.lowercased() != "ft" { return .failed("USGS \(site) 00065: unit \(u) is not feet") }
+        let n = LakeFleetClients.usgsSeriesPerStatistic(data)
+        if n > 1 { return .failed("USGS \(site) 00065: \(n) gage-height series at this site (sub-locations); the binding cannot tell which is the lake") }
         guard let obs = LakeFleetClients.parseUSGSIV(data) else { return .failed("USGS \(site) 00065: unreadable JSON") }
         let shifted = obs.map { LevelObservation(at: $0.at, ft: $0.ft + altitudeFt) }
         return shifted.isEmpty ? .failed("USGS \(site) 00065: no readings") : FeedResult(observations: LakeLevelSeries.merge(shifted), error: nil)
     }
 
     /// `value.timeSeries[0].variable.unit.unitCode` of a WaterServices JSON response.
+    // MARK: history
+
+    /// Gage-height history shifted by the site's altitude (read now, on the binding's datum). One series per statistic only.
+    func daily(site: String, datum: String, stat: String, since: String?, now: Date, timeZone: TimeZone, fleet: LakeFleetClients) async -> [DailyLevel]? {
+        guard let alt = await altitude(site: site, expectedDatum: datum).ft else { return nil }
+        return await fleet.usgsDaily(site: site, param: Self.gageHeight, stat: stat, offsetFt: alt, since: since, now: now,
+                                     timeZone: timeZone, singleSeries: true)
+    }
+
     static func ivUnit(_ data: Data) -> String? {
         guard let obj = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
               let series = (obj["value"] as? [String: Any])?["timeSeries"] as? [[String: Any]],
