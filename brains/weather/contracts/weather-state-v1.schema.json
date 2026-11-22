@@ -1,0 +1,771 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "sector-brain-weather-state-v1",
+ "title": "Weather Brain lake state (sector-brain-weather-state-v1)",
+ "description": "One lake's weather from NWS station observations and the NWS forecast grid, plus the weather-change signal. Written at /lakes/{k}/states/weather. Meaning of every field: weather-state-v1.md. A value no station or forecast reported is null; nothing is estimated.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema",
+  "schemaVersion",
+  "brainId",
+  "brainVersion",
+  "thresholdsVersion",
+  "lakeId",
+  "lakeKey",
+  "kind",
+  "generatedAt",
+  "location",
+  "sky",
+  "pressure",
+  "airTemperatureF",
+  "humidityPct",
+  "dewPointF",
+  "forecast",
+  "weatherChange",
+  "freshness",
+  "missing",
+  "provenance"
+ ],
+ "$defs": {
+  "time": {
+   "type": "string",
+   "pattern": "^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\dZ$"
+  },
+  "event": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "kind",
+    "basis",
+    "value",
+    "threshold",
+    "unit",
+    "at"
+   ],
+   "properties": {
+    "kind": {
+     "enum": [
+      "PRESSURE_FALLING_FAST",
+      "PRESSURE_RISING_FAST",
+      "AIR_TEMP_SWING",
+      "FRONT_PASSAGE",
+      "RAIN_ONSET",
+      "RAIN_EXPECTED"
+     ]
+    },
+    "basis": {
+     "enum": [
+      "OBSERVED",
+      "FORECAST"
+     ]
+    },
+    "value": {
+     "type": "number"
+    },
+    "threshold": {
+     "type": "number"
+    },
+    "unit": {
+     "type": "string"
+    },
+    "at": {
+     "$ref": "#/$defs/time"
+    },
+    "support": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ },
+ "properties": {
+  "schema": {
+   "const": "sector-brain-weather-state-v1"
+  },
+  "schemaVersion": {
+   "const": 1
+  },
+  "brainId": {
+   "const": "weather"
+  },
+  "brainVersion": {
+   "type": "string"
+  },
+  "thresholdsVersion": {
+   "type": "string"
+  },
+  "lakeId": {
+   "type": "string"
+  },
+  "lakeKey": {
+   "type": "string",
+   "pattern": "^[A-Za-z0-9_]+$"
+  },
+  "kind": {
+   "enum": [
+    "observation",
+    "forecast",
+    "unavailable"
+   ]
+  },
+  "generatedAt": {
+   "$ref": "#/$defs/time"
+  },
+  "location": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "lat",
+    "lon",
+    "gridpoint",
+    "stations"
+   ],
+   "properties": {
+    "lat": {
+     "type": "number"
+    },
+    "lon": {
+     "type": "number"
+    },
+    "gridpoint": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "stations": {
+     "type": "array",
+     "maxItems": 3,
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "name",
+       "distanceMi"
+      ],
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "name": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "distanceMi": {
+        "type": [
+         "number",
+         "null"
+        ]
+       }
+      }
+     }
+    }
+   }
+  },
+  "sky": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "cloudCoverPct",
+    "word",
+    "weatherCode",
+    "description",
+    "nwsText",
+    "rain"
+   ],
+   "properties": {
+    "cloudCoverPct": {
+     "type": [
+      "object",
+      "null"
+     ],
+     "additionalProperties": false,
+     "required": [
+      "value",
+      "at",
+      "origin",
+      "station"
+     ],
+     "properties": {
+      "value": {
+       "type": "number"
+      },
+      "at": {
+       "$ref": "#/$defs/time"
+      },
+      "origin": {
+       "enum": [
+        "observation",
+        "forecastGrid"
+       ]
+      },
+      "station": {
+       "type": [
+        "string",
+        "null"
+       ]
+      }
+     }
+    },
+    "word": {
+     "enum": [
+      "clear",
+      "broken cloud",
+      "overcast",
+      null
+     ]
+    },
+    "weatherCode": {
+     "type": [
+      "object",
+      "null"
+     ],
+     "additionalProperties": false,
+     "required": [
+      "value",
+      "at",
+      "origin",
+      "station"
+     ],
+     "properties": {
+      "value": {
+       "type": "integer"
+      },
+      "at": {
+       "$ref": "#/$defs/time"
+      },
+      "origin": {
+       "enum": [
+        "observation",
+        "forecastGrid"
+       ]
+      },
+      "station": {
+       "type": [
+        "string",
+        "null"
+       ]
+      }
+     }
+    },
+    "description": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "nwsText": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "rain": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "lastHourIn",
+      "forecastNext6hIn",
+      "forecastNext12hIn",
+      "forecastIssuedAt"
+     ],
+     "properties": {
+      "lastHourIn": {
+       "type": [
+        "object",
+        "null"
+       ],
+       "additionalProperties": false,
+       "required": [
+        "value",
+        "at",
+        "origin",
+        "station"
+       ],
+       "properties": {
+        "value": {
+         "type": "number"
+        },
+        "at": {
+         "$ref": "#/$defs/time"
+        },
+        "origin": {
+         "enum": [
+          "observation",
+          "forecastGrid"
+         ]
+        },
+        "station": {
+         "type": [
+          "string",
+          "null"
+         ]
+        }
+       }
+      },
+      "forecastNext6hIn": {
+       "type": [
+        "number",
+        "null"
+       ],
+       "minimum": 0
+      },
+      "forecastNext12hIn": {
+       "type": [
+        "number",
+        "null"
+       ],
+       "minimum": 0
+      },
+      "forecastIssuedAt": {
+       "type": [
+        "string",
+        "null"
+       ]
+      }
+     }
+    }
+   }
+  },
+  "pressure": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "additionalProperties": false,
+   "required": [
+    "inHg",
+    "hPa",
+    "at",
+    "station",
+    "kind",
+    "seaLevelOffsetHPa",
+    "trend3h",
+    "trend12h",
+    "forecast",
+    "forecastNote"
+   ],
+   "properties": {
+    "inHg": {
+     "type": "number"
+    },
+    "hPa": {
+     "type": "number"
+    },
+    "at": {
+     "$ref": "#/$defs/time"
+    },
+    "station": {
+     "type": "string"
+    },
+    "kind": {
+     "enum": [
+      "seaLevel",
+      "altimeter"
+     ]
+    },
+    "seaLevelOffsetHPa": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "trend3h": {
+     "type": [
+      "object",
+      "null"
+     ],
+     "additionalProperties": false,
+     "required": [
+      "trend",
+      "changeInHg",
+      "changeHPa",
+      "from"
+     ],
+     "properties": {
+      "trend": {
+       "enum": [
+        "rising",
+        "falling",
+        "steady"
+       ]
+      },
+      "changeInHg": {
+       "type": "number"
+      },
+      "changeHPa": {
+       "type": "number"
+      },
+      "from": {
+       "$ref": "#/$defs/time"
+      }
+     }
+    },
+    "trend12h": {
+     "type": [
+      "object",
+      "null"
+     ],
+     "additionalProperties": false,
+     "required": [
+      "trend",
+      "changeInHg",
+      "changeHPa",
+      "from"
+     ],
+     "properties": {
+      "trend": {
+       "enum": [
+        "rising",
+        "falling",
+        "steady"
+       ]
+      },
+      "changeInHg": {
+       "type": "number"
+      },
+      "changeHPa": {
+       "type": "number"
+      },
+      "from": {
+       "$ref": "#/$defs/time"
+      }
+     }
+    },
+    "forecast": {
+     "type": "null"
+    },
+    "forecastNote": {
+     "type": "string"
+    }
+   }
+  },
+  "airTemperatureF": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "additionalProperties": false,
+   "required": [
+    "value",
+    "at",
+    "origin",
+    "station"
+   ],
+   "properties": {
+    "value": {
+     "type": "number"
+    },
+    "at": {
+     "$ref": "#/$defs/time"
+    },
+    "origin": {
+     "enum": [
+      "observation",
+      "forecastGrid"
+     ]
+    },
+    "station": {
+     "type": [
+      "string",
+      "null"
+     ]
+    }
+   }
+  },
+  "humidityPct": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "additionalProperties": false,
+   "required": [
+    "value",
+    "at",
+    "origin",
+    "station"
+   ],
+   "properties": {
+    "value": {
+     "type": "number"
+    },
+    "at": {
+     "$ref": "#/$defs/time"
+    },
+    "origin": {
+     "enum": [
+      "observation",
+      "forecastGrid"
+     ]
+    },
+    "station": {
+     "type": [
+      "string",
+      "null"
+     ]
+    }
+   }
+  },
+  "dewPointF": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "additionalProperties": false,
+   "required": [
+    "value",
+    "at",
+    "origin",
+    "station"
+   ],
+   "properties": {
+    "value": {
+     "type": "number"
+    },
+    "at": {
+     "$ref": "#/$defs/time"
+    },
+    "origin": {
+     "enum": [
+      "observation",
+      "forecastGrid"
+     ]
+    },
+    "station": {
+     "type": [
+      "string",
+      "null"
+     ]
+    }
+   }
+  },
+  "forecast": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "source",
+    "issuedAt",
+    "hourly"
+   ],
+   "properties": {
+    "source": {
+     "type": "string"
+    },
+    "issuedAt": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "hourly": {
+     "type": "array",
+     "maxItems": 12,
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "at"
+      ],
+      "properties": {
+       "at": {
+        "$ref": "#/$defs/time"
+       },
+       "airTemperatureF": {
+        "type": [
+         "number",
+         "null"
+        ]
+       },
+       "humidityPct": {
+        "type": [
+         "number",
+         "null"
+        ]
+       },
+       "dewPointF": {
+        "type": [
+         "number",
+         "null"
+        ]
+       },
+       "cloudCoverPct": {
+        "type": [
+         "number",
+         "null"
+        ]
+       },
+       "precipProbabilityPct": {
+        "type": [
+         "number",
+         "null"
+        ]
+       }
+      }
+     }
+    }
+   }
+  },
+  "weatherChange": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "level",
+    "events",
+    "unknown",
+    "inputs",
+    "evaluatedAt",
+    "basisObservationAt",
+    "thresholdsVersion",
+    "signature"
+   ],
+   "properties": {
+    "level": {
+     "enum": [
+      "CHANGE",
+      "WATCH",
+      "STEADY"
+     ]
+    },
+    "events": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/event"
+     }
+    },
+    "unknown": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "inputs": {
+     "type": "object",
+     "additionalProperties": false,
+     "properties": {
+      "pressureChange3hInHg": {
+       "type": "number"
+      },
+      "airTempChange3hF": {
+       "type": "number"
+      },
+      "windTurn3hDeg": {
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "forecastRainNext6hIn": {
+       "type": [
+        "number",
+        "null"
+       ]
+      }
+     }
+    },
+    "evaluatedAt": {
+     "$ref": "#/$defs/time"
+    },
+    "basisObservationAt": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "thresholdsVersion": {
+     "type": "string"
+    },
+    "signature": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{16}$"
+    }
+   }
+  },
+  "freshness": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "tier",
+    "freshUntil",
+    "nextCheckAt",
+    "stale",
+    "observedAt",
+    "reason",
+    "generatedAt"
+   ],
+   "properties": {
+    "tier": {
+     "enum": [
+      "CHANGE",
+      "WATCH",
+      "STEADY"
+     ]
+    },
+    "freshUntil": {
+     "$ref": "#/$defs/time"
+    },
+    "nextCheckAt": {
+     "$ref": "#/$defs/time"
+    },
+    "stale": {
+     "type": "boolean"
+    },
+    "observedAt": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "reason": {
+     "type": "string"
+    },
+    "generatedAt": {
+     "$ref": "#/$defs/time"
+    }
+   }
+  },
+  "missing": {
+   "type": "array",
+   "items": {
+    "enum": [
+     "pressure",
+     "airTemperatureF",
+     "humidityPct",
+     "sky"
+    ]
+   }
+  },
+  "provenance": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "provider",
+    "sourceIds",
+    "rules",
+    "estimates"
+   ],
+   "properties": {
+    "provider": {
+     "type": "string"
+    },
+    "sourceIds": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "rules": {
+     "type": "string"
+    },
+    "estimates": {
+     "type": "string"
+    }
+   }
+  }
+ }
+}

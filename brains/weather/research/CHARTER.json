@@ -1,0 +1,76 @@
+{
+ "schema": "sector-bowfishing-charter-v1",
+ "status": "CANDIDATE_PRIORS_NOT_VALIDATED",
+ "note": "Practical priors about bowfishing are hypotheses until validated by independent historical, public-dataset, literature or model evidence (owner-collected field data is optional, never required); fit-for-purpose targets are pre-declared requirements, not achievements.",
+ "brainId": "weather",
+ "role": "Measured weather at the lake (sky, barometric pressure and trend, air temperature, humidity) from NWS stations and the official NWS forecast, and whether it is changing",
+ "bowfishingPurpose": "Weather turning (a front, a pressure fall, rain starting) changes water level, water temperature and clarity within hours; the other Brains need to know when to look again, and the bowfisher needs the same tile readings the app shows, from measured data.",
+ "decisionsInformed": [
+  "is the weather turning before or during the trip",
+  "when water level and water temperature readings should be refreshed",
+  "is rain about to start"
+ ],
+ "predicts": [
+  {
+   "id": "pressure",
+   "desc": "Station barometric pressure (sea level, or altimeter when the station sends no SLP) and the 3 h tile trend",
+   "status": "MEASUREMENT"
+  },
+  {
+   "id": "airTemperature",
+   "desc": "Station 2 m air temperature",
+   "status": "MEASUREMENT"
+  },
+  {
+   "id": "humidity",
+   "desc": "Station relative humidity and dew point",
+   "status": "MEASUREMENT"
+  },
+  {
+   "id": "sky",
+   "desc": "NWS forecast-grid total cloud % for the current hour and the observation's present weather",
+   "status": "MEASUREMENT"
+  },
+  {
+   "id": "weatherChange",
+   "desc": "CHANGE/WATCH/STEADY from pre-stated thresholds on measured data and the official forecast",
+   "status": "HYPOTHESIS_NOT_VALIDATED"
+  }
+ ],
+ "mustNotPredict": [
+  "fish behaviour (Biological Brain owns it)",
+  "whether tonight is good (Sector Intelligence owns it)",
+  "wind (the Wind Brain owns it)",
+  "any value no station or forecast reported"
+ ],
+ "needsFrom": [],
+ "providesTo": [],
+ "fitForPurpose": [
+  {
+   "metric": "pressure MAE vs the station's own next observation (hPa)",
+   "target": 1.0,
+   "direction": "lower",
+   "rationale": "the app's 12 h trend band is 1.5 hPa; an error above about two thirds of it would flip trends"
+  },
+  {
+   "metric": "3 h trend agreement with an independent second station within 25 mi",
+   "target": 0.8,
+   "direction": "higher",
+   "rationale": "the tile trend must describe the area, not one instrument"
+  },
+  {
+   "metric": "air temperature MAE vs an independent station within 25 mi (F)",
+   "target": 3.0,
+   "direction": "lower",
+   "rationale": "well under the 8 F swing the signal reacts to"
+  }
+ ],
+ "priorityQuestions": [
+  "Does the nearest station represent the lake's pressure and air temperature?",
+  "Do the v1 change thresholds catch fronts without firing on ordinary evenings?"
+ ],
+ "abstainWhen": [
+  "no observation within 2 h (pressure null; temperature/humidity fall back to the labelled forecast grid)",
+  "lake outside NWS coverage (BLOCKED)"
+ ]
+}

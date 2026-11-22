@@ -53,6 +53,7 @@
     "vegetation",
     "water-clarity",
     "water-temp",
+    "weather",
     "wind"
    ],
    "lakeFleet/{k}/lakeId": [
@@ -63,6 +64,7 @@
     "vegetation",
     "water-clarity",
     "water-temp",
+    "weather",
     "wind"
    ],
    "snapshots/{k}/latest/lakeId": [
@@ -73,6 +75,7 @@
     "vegetation",
     "water-clarity",
     "water-temp",
+    "weather",
     "wind"
    ]
   },

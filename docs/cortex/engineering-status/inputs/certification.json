@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "kit": "BRAIN_CERT_KIT_V1",
   "collectedWith": "pytest -rA per Brain directory (tools/cortex_status/collect_certification.py)",
-  "sourceDigest": "sha256:04d9745661d2e36c8ba711426bbe0e5d6cec2a398a8c601d0acc8cc82003d391",
+  "sourceDigest": "sha256:59c0d638d3ad7ef70bab10c6210618d77ed067b09497d2bdc00088d5f45a7d2a",
   "brains": {
     "depth": {
       "directory": "brains/depth",
@@ -213,6 +213,36 @@
         "failed": 0
       },
       "summary": "48 passed, 2 skipped"
+    },
+    "weather": {
+      "directory": "brains/weather",
+      "status": "PASS",
+      "proofs": {
+        "P01": "PASS",
+        "P02": "PASS",
+        "P03": "PASS",
+        "P04": "PASS",
+        "P05": "PASS",
+        "P06": "PASS",
+        "P07": "PASS",
+        "P08": "PASS",
+        "P09": "PASS",
+        "P10": "PASS",
+        "P11": "PASS",
+        "P12": "PASS",
+        "P13": "PASS",
+        "P14": "PASS",
+        "P15": "PASS",
+        "P16": "PASS",
+        "P17": "PASS",
+        "P18": "PASS",
+        "P19": "PASS"
+      },
+      "mutations": {
+        "passed": 30,
+        "failed": 0
+      },
+      "summary": "51 passed"
     },
     "wind": {
       "directory": "brains/wind",

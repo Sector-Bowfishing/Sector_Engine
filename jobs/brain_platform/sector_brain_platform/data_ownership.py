@@ -248,5 +248,8 @@ def deployed_execution_order(deployed_ids) -> list:
     for i, t in enumerate(execution_order()):
         d = next(b["deployedAs"] for b in target_brains() if b["id"] == t)
         pos[d] = max(pos.get(d, -1), i)
-    ids = [d for d in deployed_ids if d in pos]
-    return sorted(ids, key=lambda d: (pos[d], d)) + sorted(d for d in deployed_ids if d not in pos)
+    # A deployed Brain the target architecture does not list yet (weather, registered 2026-11-22 pending its Cortex release, CG-W-1) is an
+    # environmental specialist: it is ordered just before the combined biological-state slot, never after Sector Intelligence.
+    tail = min((pos[d] for d in ("biological-state", "sector-intelligence") if d in pos), default=None)
+    key = {d: (pos[d] if d in pos else (tail - 0.5 if tail is not None else float("inf"))) for d in deployed_ids}
+    return sorted(deployed_ids, key=lambda d: (key[d], d))

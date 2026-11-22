@@ -15,8 +15,8 @@
     "evaluatedAt": "2026-10-23",
     "session": "docs/cortex/sessions/2026-10-23-research-automation.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:04d9745661d2e36c8ba711426bbe0e5d6cec2a398a8c601d0acc8cc82003d391",
-    "certificationDigest": "sha256:04d9745661d2e36c8ba711426bbe0e5d6cec2a398a8c601d0acc8cc82003d391",
+    "sourceDigest": "sha256:59c0d638d3ad7ef70bab10c6210618d77ed067b09497d2bdc00088d5f45a7d2a",
+    "certificationDigest": "sha256:59c0d638d3ad7ef70bab10c6210618d77ed067b09497d2bdc00088d5f45a7d2a",
     "certificationCurrent": true,
     "verificationCommit": "3e8a3857"
   },
@@ -1432,6 +1432,195 @@
       }
     },
     {
+      "brainId": "weather",
+      "directory": "brains/weather",
+      "lifecycle": "CALIBRATION",
+      "packageStatus": "CANONICAL",
+      "structuralCertification": {
+        "status": "PASS",
+        "evidence": "Kit V1 run: 51 passed (inputs/certification.json)"
+      },
+      "memory": [
+        {
+          "check": "store-owner",
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "brain.json knowledge: PACKAGED_IN_IMAGE release brains/weather/runtime/knowledge/knowledge-release.json (the pre-stated thresholds), owner weather, researchFallback false (standing gate). Not deployed"
+        },
+        {
+          "check": "developer-machine",
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "standing scan clean; the runtime reads only the release, the public lake directory and api.weather.gov"
+        },
+        {
+          "check": "release-identity",
+          "branch": "PARTIAL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "verified on import (sector_weather.knowledge.load); thresholdsVersion carried in every lake state. No image exists (registered DISABLED)"
+        },
+        {
+          "check": "memory-unavailable",
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "missing or tampered release raises KnowledgeReleaseError: the runtime refuses (tests/test_knowledge_memory.py)"
+        },
+        {
+          "check": "separation-approval",
+          "branch": "PARTIAL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "no research data or tooling; thresholds pre-stated 2026-11-22; approval NOT_RECORDED (W-1)"
+        },
+        {
+          "check": "pulse-independence",
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "no Pulse/Mac/localhost target (standing scan); no executor, no schedule (control manifest kind none, PARKED)"
+        }
+      ],
+      "memorySummary": {
+        "branch": {
+          "PASS": 4,
+          "PARTIAL": 2
+        },
+        "production": {
+          "NOT_APPLICABLE": 6
+        }
+      },
+      "recovery": "Not deployed. The release ships with the package and is re-verified on every run; the point cache is static metadata that is rebuilt from NWS when missing.",
+      "blockers": [
+        "W-1"
+      ],
+      "certificationProofs": {
+        "P01": "PASS",
+        "P02": "PASS",
+        "P03": "PASS",
+        "P04": "PASS",
+        "P05": "PASS",
+        "P06": "PASS",
+        "P07": "PASS",
+        "P08": "PASS",
+        "P09": "PASS",
+        "P10": "PASS",
+        "P11": "PASS",
+        "P12": "PASS",
+        "P13": "PASS",
+        "P14": "PASS",
+        "P15": "PASS",
+        "P16": "PASS",
+        "P17": "PASS",
+        "P18": "PASS",
+        "P19": "PASS"
+      },
+      "certificationMutations": {
+        "passed": 30,
+        "failed": 0
+      },
+      "dataDependencies": {
+        "consumes": [
+          {
+            "kind": "registry",
+            "id": "lakes",
+            "requirement": "REQUIRED"
+          }
+        ],
+        "providers": [
+          "nws-station-observations",
+          "nws-forecast-grid"
+        ],
+        "knowledgeStores": [
+          {
+            "id": "weather-knowledge",
+            "store": "PACKAGED_IN_IMAGE",
+            "approval": "NOT_RECORDED",
+            "onUnavailable": "REFUSE"
+          }
+        ],
+        "researchFallback": false
+      },
+      "statusLayers": {
+        "canonicalStructure": {
+          "status": "PASS",
+          "label": "CANONICAL_PACKAGE",
+          "evidence": "brains/weather: brain.json, operating contract, runtime/, tests/, research/, contracts/ (created 2026-11-22)"
+        },
+        "structuralCertification": {
+          "status": "PASS",
+          "label": "KIT_V1_CERTIFIED",
+          "evidence": "Kit V1 run: 51 passed (inputs/certification.json)"
+        },
+        "scientificValidation": {
+          "status": "NOT_VERIFIED",
+          "label": "PRE_REGISTERED_NOT_STARTED",
+          "evidence": "pressure/air-temperature comparison and change-signal check pre-registered (docs/brains/WEATHER_BRAIN_PLAN.md section 5); no data collected (WX-001, WX-002)"
+        },
+        "approvedMemoryRelease": {
+          "status": "BLOCKED",
+          "label": "CANDIDATE_RELEASE_AWAITING_OWNER_APPROVAL",
+          "evidence": "weather-knowledge-candidate-2026-11-22.1 (pre-stated thresholds) verified; approval NOT_RECORDED (W-1)"
+        },
+        "operationalReadiness": {
+          "status": "NOT_VERIFIED",
+          "label": "REGISTERED_DISABLED",
+          "evidence": "offline tests on recorded NWS fixtures (Engine adapter recordings 2026-11-06) and hand-built cases; no live dry run from this repository yet"
+        },
+        "productionActivation": {
+          "status": "BLOCKED",
+          "label": "REGISTERED_DISABLED",
+          "evidence": "control manifest activityState PARKED, executionTarget none, absent from /control/executionControlV1; no cloud job; run.py --write refuses (W-1)"
+        },
+        "customerConsumable": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_CUSTOMER_FACING",
+          "evidence": "customerIntegrationMode none; customerPublication false"
+        }
+      },
+      "requirements": {
+        "BR-05": "PASS",
+        "BR-06": "PASS",
+        "BR-07": "PASS",
+        "BR-10": "PASS",
+        "BR-11": "PARTIAL",
+        "BR-16": "PASS",
+        "BR-18": "PASS",
+        "BR-19": "PASS"
+      },
+      "structuralProblems": [],
+      "scienceDependencies": [
+        "Prospective station comparison (WX-001)",
+        "Change-signal check against NWS surface analyses and observed rain (WX-002)"
+      ],
+      "nextWork": [
+        "First full-directory dry run (request count, BLOCKED count)",
+        "Owner activation steps W-1"
+      ],
+      "operations": {
+        "scientificValidation": {
+          "status": "NOT_STARTED",
+          "label": "PRE_REGISTERED"
+        },
+        "knowledgeRelease": {
+          "state": "CANDIDATE",
+          "releaseId": "weather-knowledge-candidate-2026-11-22.1",
+          "approval": "NOT_RECORDED"
+        },
+        "customerEligibility": {
+          "status": "NOT_ELIGIBLE",
+          "basis": "brain.json operations.customerPublication; execution manifest customerPublication false; engineMode PRE_PRODUCTION"
+        },
+        "executionModes": [
+          "INTERNAL"
+        ],
+        "scores": [],
+        "limitations": [
+          "No pressure forecast (the NWS grid has no pressure layer)",
+          "Registered DISABLED: produces nothing until the owner activation steps",
+          "Outside NWS coverage a lake is BLOCKED",
+          "No capability score (not scored)"
+        ]
+      }
+    },
+    {
       "brainId": "wind",
       "directory": "brains/wind",
       "lifecycle": "CALIBRATION",
@@ -2005,6 +2194,15 @@
       "class": "GATED",
       "title": "Turn on publication of the sanitized engineering status (engineering-status-ops-v1) to the Brain RTDB node /control/engineeringStatusV1 by the orchestrator control plane",
       "recommendation": "After A-1 merge and A-2 deploy from main: add --publish-engineering-status to the orchestrator's scheduled arguments. Existing writer and /control ownership; no IAM, identity or Ops rules change"
+    },
+    {
+      "id": "W-1",
+      "class": "GATED",
+      "title": "Activate the Weather Brain (registered DISABLED 2026-11-22)",
+      "recommendation": "Owner steps in docs/brains/WEATHER_BRAIN_PLAN.md section 6: approve the thresholds release, register the Weather path families in the Cortex Firebase registry, deploy the weather-brain job, set the manifest executionTarget and activityState ACTIVE, then enable weather in the execution control with an approvalRef",
+      "brains": [
+        "weather"
+      ]
     }
   ],
   "cortexGaps": [

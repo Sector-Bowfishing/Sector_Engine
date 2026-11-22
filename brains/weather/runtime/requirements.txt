@@ -1,0 +1,1 @@
+# Weather Brain runtime: standard library only (urllib, json). The shared Brain Platform (jobs/brain_platform) is vendored at deploy time.

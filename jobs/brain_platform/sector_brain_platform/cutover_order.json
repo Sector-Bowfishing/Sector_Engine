@@ -43,6 +43,10 @@
     {
       "brainId": "vegetation",
       "reason": "SHADOW-only: surface-only shadow V1, NOT_VALIDATED; no approved release"
+    },
+    {
+      "brainId": "weather",
+      "reason": "Registered DISABLED 2026-11-22 (owner decision, Sector_Ops #51): no live writer, no cloud job, thresholds release approval NOT_RECORDED; activation and its own cutover plan are separate owner steps (W-1)"
     }
   ],
   "separateMigration": {
