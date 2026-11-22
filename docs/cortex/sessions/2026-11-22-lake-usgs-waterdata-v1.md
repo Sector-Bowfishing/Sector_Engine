@@ -1,6 +1,6 @@
 # Session record: Lake Brain USGS reads on the Water Data API (v1), behind a switch that defaults to legacy
 
-Standards: Rehtac Cortex 3.1.2 @ ecaef70 (clean), pack sector/engine (briefing run by hand from the local Cortex checkout; `CORTEX_HOME` unset). Date: 2026-11-22. Branch: `feat/lake-usgs-waterdata-v1-2026-11-22` off main 9431f998 (PR #219, the CDEC / CO-OPS / USGS-stage readers, merged). Cloud session, owner asleep: only work covered by the standing approvals.
+Standards: Rehtac Cortex 3.1.2 @ ecaef70 (clean), pack sector/engine (briefing run by hand from the local Cortex checkout; `CORTEX_HOME` unset). Date: 2026-11-22. Branch: `feat/lake-usgs-waterdata-v1-2026-11-22` off main 9431f998 (PR #219, the CDEC / CO-OPS / USGS-stage readers, merged; main 12aa532c merged in). Cloud session, owner asleep: only work covered by the standing approvals.
 
 ## Scope
 Step 1 (Wave 1 + the stage reader of Wave 2 + Wave 3) of the USGS WaterServices → Water Data API migration plan (2026-11-22) for the
@@ -20,7 +20,7 @@ deploys, job environment, IAM / secrets, rules, bindings.
 - Plan differences: D1 series selection (single, else the one Primary, else refused; gage height: more than one refused), D2 both time forms, D3 legacy statistic precedence and refusal of an unserved named statistic, D4 empty 200 / `null`, D10 non-JSON body = failure.
 - Shadow comparison with the plan's §5 agreement rule (live, daily, site), one `[usgs-shadow]` line per read, legacy answer served.
 - Fixtures hand-built from the published docs, labelled as not recordings; the D1 tests also use the real 2026-10-07 Fort Worth recordings.
-- Provider doc section 7.
+- Provider doc section 8.
 
 ## Knowledge release
 `LakeSourceBindings.swift`, `LakeGeneratedBindings.swift` and `LakeSourceBindingsGenerated.swift` are unchanged: the switch is an environment variable outside the packaged release. `build_release_manifest.py brains/lake/runtime --check` OK (`lake-knowledge-2026-11-22.1`). No new release id.
