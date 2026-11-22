@@ -1,0 +1,7 @@
+[{"stationId":"SHA","durCode":"H","SENSOR_NUM":6,"sensorType":"RES ELE","date":"2026-11-20 10:00","obsDate":"2026-11-20 10:00","value":1015.42,"dataFlag":" ","units":"FEET"},
+{"stationId":"SHA","durCode":"H","SENSOR_NUM":6,"sensorType":"RES ELE","date":"2026-11-20 11:00","obsDate":"2026-11-20 11:00","value":1015.44,"dataFlag":" ","units":"FEET"},
+{"stationId":"SHA","durCode":"H","SENSOR_NUM":6,"sensorType":"RES ELE","date":"2026-11-20 12:00","obsDate":"2026-11-20 12:00","value":-9999,"dataFlag":" ","units":"FEET"},
+{"stationId":"SHA","durCode":"H","SENSOR_NUM":6,"sensorType":"RES ELE","date":"2026-11-20 13:00","obsDate":"2026-11-20 13:00","value":1015.47,"dataFlag":" ","units":"FEET"},
+{"stationId":"SHA","durCode":"H","SENSOR_NUM":6,"sensorType":"RES ELE","date":"2026-11-20 23:00","obsDate":"2026-11-20 23:00","value":1015.51,"dataFlag":" ","units":"FEET"},
+{"stationId":"SHA","durCode":"H","SENSOR_NUM":6,"sensorType":"RES ELE","date":"2026-11-21 00:00","obsDate":"2026-11-21 00:00","value":1015.52,"dataFlag":" ","units":"FEET"},
+{"stationId":"SHA","durCode":"H","SENSOR_NUM":6,"sensorType":"RES ELE","date":"2026-11-21 01:00","obsDate":"2026-11-21 01:00","value":1015.55,"dataFlag":" ","units":"FEET"}]
