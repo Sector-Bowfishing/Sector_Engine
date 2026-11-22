@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0.0",
+  "brainId": "weather",
+  "releaseId": "weather-knowledge-candidate-2026-11-22.1",
+  "store": "PACKAGED_IN_IMAGE",
+  "owner": "weather",
+  "approval": {
+    "status": "NOT_RECORDED",
+    "record": null
+  },
+  "files": [
+    {
+      "path": "weather-change-thresholds-v1.json",
+      "sha256": "268a8a26f9edd41c0704ff20ecb66441e001b2aa4989228acc42efcf3d8eec90",
+      "bytes": 1928
+    }
+  ],
+  "releaseDigest": "sha256:af6f715a64e0c811b953c4b2a3f7a631de9e754d986e19681d8ad678b8095c29"
+}

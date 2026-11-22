@@ -38,6 +38,13 @@
   ],
   "consumes": [
     {
+      "kind": "brain",
+      "brainId": "weather",
+      "contractId": "weather-publication-v1",
+      "minVersion": "1.0.0",
+      "requirement": "OPTIONAL"
+    },
+    {
       "kind": "registry",
       "registry": "lakes",
       "contractId": "registry.lakes",
@@ -106,6 +113,6 @@
       "status": "NOT_ELIGIBLE",
       "approvalRef": null
     },
-    "notes": "Owner decision 2026-11-22 (Sector_Ops #51): build it. Merging changes nothing at runtime: PARKED, no executor, no live writer, customerPublication false (PRE_PRODUCTION). The Weather Brain cloud input is OPTIONAL: the Weather state sector-brain-weather-state-v1 (cloud rows only; contracts/moon-night-light-v1.json weatherInput), declared in consumes once Weather is on main."
+    "notes": "Owner decision 2026-11-22 (Sector_Ops #51): build it. Merging changes nothing at runtime: PARKED, no executor, no live writer, customerPublication false (PRE_PRODUCTION). The Weather Brain cloud input is OPTIONAL: the Weather state sector-brain-weather-state-v1 (cloud rows only; contracts/moon-night-light-v1.json weatherInput), declared in consumes (OPTIONAL)."
   }
 }

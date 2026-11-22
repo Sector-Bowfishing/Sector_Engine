@@ -1,0 +1,146 @@
+{
+  "brainId": "weather",
+  "builder": "brains/weather/runtime/sector_weather/publish.py",
+  "contractId": "weather-publication-v1",
+  "derivedFrom": "jobs/brain_platform/sector_brain_platform/publisher/registry.py (weather_specs, weather_bundles)",
+  "envelope": "publish-artifact-v2",
+  "fingerprint": "sector-semantic-fingerprint-v2",
+  "healthDomainChildren": [
+    "status",
+    "staleLakeCount"
+  ],
+  "lineage": {
+    "knowledgeRelease": "the verified Weather knowledge release id (runtime/knowledge/knowledge-release.json: the pre-stated thresholds)",
+    "thresholdsVersion": "weather-change-thresholds-v1 (pre-stated 2026-11-22), carried in every state"
+  },
+  "registryChildren": {
+    "identity": [
+      "brainId",
+      "displayName",
+      "domain",
+      "question",
+      "platform"
+    ],
+    "model": [
+      "version",
+      "schemaVersion",
+      "stalenessModel",
+      "dependsOn",
+      "descriptor",
+      "readinessDefinitions",
+      "stateKinds",
+      "thresholds",
+      "thresholdsVersion",
+      "sourceIds"
+    ],
+    "status": [
+      "schedule",
+      "enabled",
+      "health",
+      "status",
+      "supportedLakeCount",
+      "directoryLakeCount",
+      "readinessCounts",
+      "staleLakeCount",
+      "staleAfterHours",
+      "lastSuccessfulRun",
+      "lastRunOutcome",
+      "lastError",
+      "weatherChange",
+      "publishMode",
+      "updatedAt"
+    ]
+  },
+  "reservedChildren": [
+    "certification",
+    "publication"
+  ],
+  "sections": [
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [],
+      "deleteReasons": [],
+      "families": [
+        {
+          "pattern": "/lakes/{k}/states/weather",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/slots/weather",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/readiness/weather",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/modelVersions/weather",
+          "status": "DERIVED_PROJECTION"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "weather-lake-state-v1",
+      "volatileContract": "weather-volatile-v1"
+    },
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [
+        "/brains/weather/lastError"
+      ],
+      "deleteReasons": [
+        "OPTIONAL_CHILD_CLEARED"
+      ],
+      "families": [
+        {
+          "pattern": "/brains/weather/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/validation/weather",
+          "status": "CANONICAL"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "weather-registry-v1",
+      "volatileContract": "weather-volatile-v1"
+    }
+  ],
+  "snapshot": "none: Weather writes no /snapshots path (no legacy reader exists)",
+  "stateSchema": "brains/weather/contracts/weather-state-v1.schema.json (sector-brain-weather-state-v1); meaning: weather-state-v1.md",
+  "status": "SHADOW (contract only, not cut over): Weather is CALIBRATION and registered DISABLED; there is no live writer (run.py --write refuses); not a production contract",
+  "version": "1.0.0",
+  "volatileContract": {
+    "id": "weather-volatile-v1",
+    "keys": [
+      "evaluatedAt",
+      "generatedAt",
+      "lastUpdatedAt",
+      "updatedAt"
+    ],
+    "notes": {
+      "key:evaluatedAt": "run time of the weather-change evaluation; basisObservationAt is NOT volatile",
+      "key:generatedAt": "run time of the state; the observation times it carries are NOT volatile",
+      "key:lastUpdatedAt": "slot write time; no domain meaning",
+      "key:updatedAt": "registry write time; no domain meaning",
+      "path:/brains/weather/lastRunOutcome": "execution fact (status, time, counts of this run); retire with lastSuccessfulRun",
+      "path:/brains/weather/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records"
+    },
+    "paths": [
+      "/brains/weather/lastRunOutcome",
+      "/brains/weather/lastSuccessfulRun"
+    ],
+    "version": 1
+  }
+}

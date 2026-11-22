@@ -26,7 +26,7 @@
     "schema": "sector-brain-weather-state-v1",
     "producer": "Weather Brain (brainId weather; Engine PR #234), document /lakes/{k}/states/weather",
     "requirement": "OPTIONAL",
-    "status": "The Weather Brain is not on main yet, so the input is not declared in brain.json consumes; add {kind: brain, brainId: weather} when it lands. Until then run.py --weather passes {lakeId: Weather state document}.",
+    "status": "Declared in brain.json consumes (weather-publication-v1 >= 1.0.0, OPTIONAL). There is no live read yet (no writer or executor while disabled): run.py --weather passes {lakeId: Weather state document}.",
     "read": [
       "forecast.hourly[].{at, cloudCoverPct}: the NWS forecast grid, the next 12 hours after the Weather run (origin forecastGrid)",
       "sky.cloudCoverPct {value, at, origin}: the current hour (forecast grid, or the observation's cloud layers when the grid has no hour)"

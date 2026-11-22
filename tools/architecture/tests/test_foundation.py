@@ -389,9 +389,9 @@ def test_report_is_report_only_by_default():
 def test_real_repo_registers_only_migrated_brains():
     # Wind (Phase 2), Fish (Phase 4, Fish Structural Certification V1), Water Clarity (Water Clarity Structural Certification V1), and Sector Intelligence,
     # Lake and Water Temperature (Cortex architecture completion, 2026-10-20), Depth and Vegetation (Cortex 2.1 structural completion) are the
-    # migrated Brains: all eight registered Brains now have a canonical package. Moon was created as a canonical package (2026-11-22, Sector_Ops #51).
+    # migrated Brains: all eight registered Brains now have a canonical package. Moon and Weather were created as a canonical package (2026-11-22, Sector_Ops #51).
     # No other brain.json may exist.
-    assert report._brain_dirs(ROOT) == ["depth", "fish", "lake", "moon", "sector-intelligence", "vegetation", "water-clarity", "water-temperature", "wind"]
+    assert report._brain_dirs(ROOT) == ["depth", "fish", "lake", "moon", "sector-intelligence", "vegetation", "water-clarity", "water-temperature", "weather", "wind"]
 
 
 @pytest.mark.parametrize("src,flag", [

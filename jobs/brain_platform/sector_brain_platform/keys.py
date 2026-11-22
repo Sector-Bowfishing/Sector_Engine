@@ -17,6 +17,7 @@ BRAINS = {
     "depth": ("depth", "depth", "Depth"),
     "vegetation": ("vegetation", "vegetation", "Vegetation"),
     "moon": ("moon", "moonNightLight", "Moon and Night Light"),
+    "weather": ("weather", "weather", "Weather"),
 }
 
 

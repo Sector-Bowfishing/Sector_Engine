@@ -26,7 +26,7 @@ When it is dark enough to start shooting tonight, and which nights have the leas
 
 ## 6. DEPENDENCIES
 - registry.lakes 1.0.0, REQUIRED (through the packaged projection; a test fails when it drifts from the Engine's directory).
-- Weather Brain cloud cover, OPTIONAL: the Weather state `sector-brain-weather-state-v1` (`forecast.hourly[].cloudCoverPct`, `sky.cloudCoverPct`). Weather is not on main yet, so it is not declared in `brain.json` `consumes` (gap MOON-INP-001). No provider is called.
+- Weather Brain cloud cover, OPTIONAL: the Weather state `sector-brain-weather-state-v1` (`forecast.hourly[].cloudCoverPct`, `sky.cloudCoverPct`). Declared in `brain.json` `consumes` (weather-publication-v1 1.0.0, OPTIONAL). No provider is called.
 
 ## 7. COMMUNICATION CONTRACTS
 `moon-night-light-v1` (the per-lake state) and `moon-publication-v1` (the Publisher bundle). Authorized consumers: `ops`, `sector-intelligence`. No private-research reads and no imports of another Brain's runtime.
