@@ -25,5 +25,10 @@ Fetch refusals: CDA `catalog` (robots), CDA `locations` for NWW/NWS, CDA `levels
 ## Verification
 Depth tests 285 passed, 9 skipped (research-data tests). Cortex `research-check --repo .` and `data-check` report nothing in the touched files.
 
+## Owner decisions (Michael, chat 2026-11-22 07:14Z, recorded on Sector_Ops #51 and PR #223)
+- Toledo Bend: level datum accepted on USGS's parameter definition plus the two-gauge check; recorded as `basisDecision`.
+- Percy Priest: reference is the CWMS JPHT1 seasonal level (summer 490.5 ft), so pool and level are same-source. New record status `SAME_SOURCE` with a `sameRecord` block; the builder uses 490.5 ft as the reference pool.
+- Ross Barnett: stays unconverted.
+
 ## Not done
 `candidates.json` is not rebuilt: `refresh` needs `DEPTH_RESEARCH_DATA`, and a rebuild needs a new release id. Release approval stays Michael's (DEPTH-REL-001).

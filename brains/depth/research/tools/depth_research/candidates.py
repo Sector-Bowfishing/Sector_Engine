@@ -147,6 +147,17 @@ def verification_problems(lid: str, rec: dict) -> list[str]:
             lv, rf = (normalize_datum((sides.get(k) or {}).get("datum")) for k in ("level", "reference"))
             if {lv, rf} != {"NGVD29", "NAVD88"} or lv != normalize_datum(rel.get("levelDatum")) or rf != normalize_datum(rel.get("referenceDatum")):
                 p.append("conversion datums do not match the verified sides")
+    elif rec.get("status") == "SAME_SOURCE":
+        sr = rec.get("sameRecord") or {}
+        loc = sr.get("location") or "\0"
+        if rel.get("status") != "SAME_SOURCE":
+            p.append("SAME_SOURCE record needs relationship SAME_SOURCE")
+        if not isinstance(sr.get("referencePoolFt"), (int, float)) or not sr.get("ownerDecision") or not sr.get("office"):
+            p.append("SAME_SOURCE needs office, referencePoolFt and the owner's decision")
+        if not (loc in str(sr.get("levelSeries", "")) and str(sr.get("referenceLevelId", "")).startswith(loc + ".")):
+            p.append("level series and reference level are not on the same CWMS location")
+        if normalize_datum(sr.get("referenceDatum")) not in ("NGVD29", "NAVD88"):
+            p.append("SAME_SOURCE location datum must be NGVD29 or NAVD88")
     elif rec.get("status") == "CONFLICT" and not rec.get("conflict"):
         p.append("CONFLICT needs a stated conflict")
     elif rel.get("status"):
@@ -160,6 +171,13 @@ def verified_conversion(rec: dict | None) -> tuple[float, str, str] | None:
         return None
     r = rec["relationship"]
     return float(r["navd88MinusNgvd29Ft"]), normalize_datum(r["levelDatum"]), normalize_datum(r["referenceDatum"])
+
+
+def verified_same_source(rec: dict | None) -> dict | None:
+    """The `sameRecord` block of a valid SAME_SOURCE record (pool and level on one CWMS location, owner-decided reference), else None."""
+    if not rec or rec.get("status") != "SAME_SOURCE" or verification_problems("", rec):
+        return None
+    return rec["sameRecord"]
 
 
 def assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w=None, verification=None):
@@ -188,6 +206,13 @@ def assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w=None,
                             [e["url"] for e in (ov.get("evidence") or []) if isinstance(e, dict) and str(e.get("url", "")).startswith("http")][:2])
         return a, normalize_datum(ov.get("levelDatum")) or ld, True, "reviewed override", normalize_datum(ov.get("referenceDatum")) or rd, True, "override", blocked
     vrec = (verification or {}).get(lid)
+    sr = verified_same_source(vrec)
+    if sr:
+        a = DatumAssessment("SAME_SOURCE", C.SIGMA_DATUM["SAME_SOURCE"], 0.0, [f"reference and level share CWMS location {sr['office']}/{sr['location']}"], None,
+                            "datum-verification:same-cwms-location:records/datum_verification.json",
+                            [f"https://cwms-data.usace.army.mil/cwms-data/locations/{sr['location']}?office={sr['office']}"])
+        rd = normalize_datum(sr["referenceDatum"])
+        return a, ld, ld_ver, ld_note, rd, True, f"CWMS level {sr['office']}/{sr['referenceLevelId']}", blocked
     vc = verified_conversion(vrec)
     conv_ft = vc[0] if vc and ld_ver and rd_ver and (ld, rd) == (vc[1], vc[2]) else None
     a = assess(ld, rd, same_source=same_src, same_operator_system=same_sys, level_datum_verified=ld_ver, reference_datum_verified=rd_ver,
@@ -241,6 +266,8 @@ def build(paths: dict, manifest_version: str) -> dict:
         lid = lk["id"]
         b = bind.get(lid)
         p = pool.get(lid)
+        sr = verified_same_source(verification.get(lid))
+        pool_ft = float(sr["referencePoolFt"]) if sr else lk.get("fullPoolFt")      # owner-decided same-record reference replaces the directory pool
         m = matrix.get(lid, {})
         ref_conf = C.norm_pool_conf(lk.get("poolConfidence"))
         src_str = p["source"] if p else None
@@ -259,7 +286,7 @@ def build(paths: dict, manifest_version: str) -> dict:
             blocked.append("REFERENCE_NOT_A_POOL_ELEVATION")
         if ref_conf not in C.REFERENCE_CONF_ALLOWED:
             blocked.append("REFERENCE_POOL_CONFIDENCE_LOW")
-        if lk.get("fullPoolFt") is None:
+        if pool_ft is None:
             blocked.append("MISSING_REFERENCE_POOL")
         if lstat == "NONE":
             blocked.append("NO_VERIFIED_LEVEL_BINDING")
@@ -313,7 +340,7 @@ def build(paths: dict, manifest_version: str) -> dict:
             ev["surveyYear"] = tw.get("surveyYear")
         rating_withheld = None
         if lid in curves and not (zr and zr.get("referenceStatus") == "VERIFIED"):                     # a validated contour reference (TWDB) keeps priority
-            rz, why_r = R.rating_reference_zones(curves[lid], lk.get("fullPoolFt"), rd, rd_ver, a.status, {float(k): v for k, v in (zr or {}).get("cumulative", {}).items()} or None, equiv_all.get(lid))
+            rz, why_r = R.rating_reference_zones(curves[lid], pool_ft, rd, rd_ver, a.status, {float(k): v for k, v in (zr or {}).get("cumulative", {}).items()} or None, equiv_all.get(lid))
             if rz:
                 zr = rz
                 ev["contourSources"] = list(ev["contourSources"]) + ["USBR_TSC" if curves[lid].get("office") == "USBR-TSC" else "USACE_CWMS"]
@@ -326,7 +353,8 @@ def build(paths: dict, manifest_version: str) -> dict:
         licence = licence_for(ev["contourSources"], lic)
         rec = {
             "lakeId": lid, "lakeName": lk.get("name"), "state": lk.get("state"), "operator": lk.get("operatorName"), "cwmsOffice": lk.get("cwmsOffice"),
-            "reference": {"poolFt": lk.get("fullPoolFt"), "basis": lk.get("poolBasis"), "confidence": ref_conf, "source": src_str or "engine-directory:fullPoolFt",
+            "reference": {"poolFt": pool_ft, "basis": lk.get("poolBasis"), "confidence": ref_conf,
+                          "source": (f"CWMS {sr['office']}/{sr['referenceLevelId']} ({sr['referencePoolFt']} ft)" if sr else src_str or "engine-directory:fullPoolFt"),
                           "datum": rd, "datumVerified": rd_ver, "datumRule": rd_pat, "winterPoolFt": (float(p["winterPoolFt"]) if p and p.get("winterPoolFt") else None),
                           **({"relativeScalePoolFt": float(sc["fullPondScaleValue"])} if (sc := ((overrides.get(lid) or {}).get("levelScale") or {})).get("kind") == "DUKE_RELATIVE_100" else {})},
             "levelSource": {"status": lstat, "provider": b.get("provider") if b else None, "series": b.get("series_or_param") if b else None,
