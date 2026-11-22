@@ -9,10 +9,11 @@
 //  Switch: `LAKE_USGS_API` = `legacy` (default, also for an unset, empty or unknown value) | `v1` | `shadow`.
 //    • legacy: the WaterServices readers, unchanged.
 //    • v1:     the Water Data API readers below.
-//    • shadow: both are read; the LEGACY answer is the one returned, the v1 answer is only compared and logged
-//              (`[usgs-shadow] ...`, one line per read). Nothing else is written.
-//  Optional key: `USGS_API_KEY` is sent as the `X-Api-Key` header (never in the URL, never logged). Without it the API rate-limits
-//  by IP; a 429 is retried after a pause.
+//    • shadow: both are read concurrently; the LEGACY answer is the one returned, the v1 answer is only compared and logged
+//              (`[usgs-shadow] ...`, one line per read). Shadow time is bounded (`LakeUSGSShadowGovernor`): a per-read deadline,
+//              a per-run budget of extra waiting, and shadow turns itself off (logged once) after repeated 429s without a key.
+//  Optional key: `USGS_API_KEY` is sent as the `X-Api-Key` header, only to https://api.waterdata.usgs.gov (dropped on a `next` link
+//  or a redirect to any other host), never in a URL or a log. Without it the API rate-limits by IP; a 429 is retried after a pause.
 //
 //  The differences from WaterServices that are handled explicitly (each has a test):
 //    D1 Several series per site and parameter come back flat (one `time_series_id` each). The series that matches the binding is
@@ -20,13 +21,20 @@
 //       refused. Series are never merged (WaterServices' reader merged them last-wins). The gage-height reader keeps its stricter
 //       rule: more than one series is refused.
 //    D2 Times are UTC without fractional seconds (`2026-10-07T08:30:00+00:00`); both that and the legacy form are parsed.
-//    D3 Daily statistics: `statistic_id` per feature, merged with the legacy precedence (00003 > 32400 > 30800 > 00001 > 00002). A
-//       binding that names one statistic (32400, 30800, ...) is refused when the API does not serve a daily series of it.
+//    D3 Daily statistics: `statistic_id` per feature, merged with the legacy precedence (00003 > 32400 > 30800 > 00001 > 00002,
+//       then any other statistic in code order — legacy's fallback, matched by asking `daily` for every statistic when the binding
+//       says `dv`). Each statistic is selected on its own: an ambiguous statistic is dropped (and named in the shadow line), the
+//       unambiguous ones are kept. A binding that names one statistic (32400, 30800, ...) is refused when the API does not serve a
+//       daily series of it.
 //    D4 "No data" is a 200 with zero features (not a 404); a `null` value (and the legacy -999999) is skipped.
 //    D10 A non-JSON body (the blackout notice page) is a failure, never data.
+//  Every v1 failure carries a code and a reason (`ReadFailure`), and the shadow line reports both.
 //
 
 import Foundation
+import AsyncHTTPClient
+import NIOCore
+import NIOHTTP1
 
 // MARK: - Switch
 
@@ -42,22 +50,147 @@ public enum LakeUSGSAPIMode: String, Sendable, CaseIterable {
     }
 }
 
-/// Runs a read the way the switch says. In `shadow` the legacy answer is returned unchanged and the v1 answer is only compared.
+// MARK: - Shadow time bounds
+
+/// Bounds what `shadow` may cost a run. The Lake Brain job evaluates up to 3 lakes at a time (`LakeBrainRunOptions.concurrency`), each
+/// lake's reads one after another, under the Cloud Run task timeout of 60 min (`brains/lake/deploy/deploy-job.sh`); there is no
+/// in-process wall-clock limit. In shadow the v1 read runs concurrently with the legacy one; once legacy has answered, the run waits
+/// for v1 at most until the per-read deadline and only while the per-run budget of such waiting lasts. Without `USGS_API_KEY`,
+/// repeated 429s turn shadow off for the rest of the run. Each "off" reason is logged once.
+final class LakeUSGSShadowGovernor: @unchecked Sendable {
+    static let perReadKey = "LAKE_USGS_SHADOW_READ_SECONDS"
+    static let budgetKey = "LAKE_USGS_SHADOW_BUDGET_SECONDS"
+
+    /// Longest a shadow read may run, from its start.
+    let perReadSeconds: TimeInterval
+    /// Total extra waiting for v1, after legacy has answered, per run.
+    let budgetSeconds: TimeInterval
+    let hasKey: Bool
+    /// 429s (retries included) without a key after which shadow is off.
+    let rateLimitThreshold: Int
+
+    private let lock = NSLock()
+    private var waited: TimeInterval = 0
+    private var rateLimited = 0
+    private var announced: Set<String> = []
+
+    init(perReadSeconds: TimeInterval = 20, budgetSeconds: TimeInterval = 300, hasKey: Bool, rateLimitThreshold: Int = 3) {
+        self.perReadSeconds = perReadSeconds
+        self.budgetSeconds = budgetSeconds
+        self.hasKey = hasKey
+        self.rateLimitThreshold = rateLimitThreshold
+    }
+
+    static func fromEnvironment(_ env: [String: String] = ProcessInfo.processInfo.environment) -> LakeUSGSShadowGovernor {
+        func seconds(_ k: String, _ d: TimeInterval) -> TimeInterval {
+            guard let v = env[k].flatMap({ TimeInterval($0.trimmingCharacters(in: .whitespaces)) }), v.isFinite, v >= 0 else { return d }
+            return v
+        }
+        let key = (env[LakeUSGSWaterDataClient.apiKeyEnvironmentKey] ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        return LakeUSGSShadowGovernor(perReadSeconds: seconds(perReadKey, 20), budgetSeconds: seconds(budgetKey, 300), hasKey: !key.isEmpty)
+    }
+
+    /// One per process: a Lake Brain job execution is one run.
+    static let shared = LakeUSGSShadowGovernor.fromEnvironment()
+
+    func note429() { lock.lock(); rateLimited += 1; lock.unlock() }
+    var rateLimitedCount: Int { lock.lock(); defer { lock.unlock() }; return rateLimited }
+    var waitedSeconds: TimeInterval { lock.lock(); defer { lock.unlock() }; return waited }
+
+    /// nil = run the shadow read; otherwise why it is off.
+    func skipReason() -> String? {
+        lock.lock(); defer { lock.unlock() }
+        if waited >= budgetSeconds - 0.001 { return "budget-exhausted" }
+        if !hasKey && rateLimited >= rateLimitThreshold { return "rate-limited-no-key" }
+        return nil
+    }
+
+    /// True the first time a reason is seen (so it is logged once).
+    func firstTime(_ reason: String) -> Bool { lock.lock(); defer { lock.unlock() }; return announced.insert(reason).inserted }
+
+    /// How long to wait for v1 now that legacy has answered, `elapsed` after the shadow read started.
+    func allowedWait(elapsed: TimeInterval) -> TimeInterval {
+        lock.lock(); defer { lock.unlock() }
+        let w = min(perReadSeconds - elapsed, budgetSeconds - waited)
+        return w < 0.001 ? 0 : w
+    }
+
+    func spend(_ t: TimeInterval) { lock.lock(); waited += max(0, t); lock.unlock() }
+}
+
+/// A value a detached task delivers, awaited with a deadline: the caller never waits past it, whatever the task does.
+final class LakeUSGSPending<U: Sendable>: @unchecked Sendable {
+    private let lock = NSLock()
+    private var value: U?
+    private var waiter: CheckedContinuation<U?, Never>?
+    private var settled = false
+
+    func fulfil(_ v: U) {
+        lock.lock()
+        value = v
+        let w = settled ? nil : waiter
+        if w != nil { settled = true; waiter = nil }
+        lock.unlock()
+        w?.resume(returning: v)
+    }
+
+    private func expire() {
+        lock.lock()
+        let w = settled ? nil : waiter
+        if w != nil { settled = true; waiter = nil }
+        lock.unlock()
+        w?.resume(returning: nil)
+    }
+
+    func wait(seconds: TimeInterval) async -> U? {
+        lock.lock()
+        if let v = value { settled = true; lock.unlock(); return v }
+        lock.unlock()
+        guard seconds > 0 else { return nil }
+        return await withCheckedContinuation { (c: CheckedContinuation<U?, Never>) in
+            lock.lock()
+            if let v = value { settled = true; lock.unlock(); c.resume(returning: v); return }
+            waiter = c
+            lock.unlock()
+            Task { [weak self] in
+                try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+                self?.expire()
+            }
+        }
+    }
+}
+
+/// Runs a read the way the switch says. In `shadow` the legacy answer is returned unchanged and the v1 answer, read concurrently and
+/// bounded by the governor, is only compared (`compare` gets nil when v1 missed its deadline).
 enum LakeUSGSRouting {
-    static func run<T, U>(_ mode: LakeUSGSAPIMode,
-                          legacy: () async -> T,
-                          v1: () async -> U,
-                          adopt: (U) -> T,
-                          compare: (T, U) -> String,
-                          log: (String) -> Void) async -> T {
+    static func run<T: Sendable, U: Sendable>(_ mode: LakeUSGSAPIMode,
+                                              governor: LakeUSGSShadowGovernor,
+                                              legacy: () async -> T,
+                                              v1: @escaping @Sendable () async -> U,
+                                              adopt: (U) -> T,
+                                              compare: (T, U?) -> String,
+                                              log: (String) -> Void) async -> T {
         switch mode {
         case .legacy:
             return await legacy()
         case .v1:
             return adopt(await v1())
         case .shadow:
+            if let why = governor.skipReason() {
+                if governor.firstTime(why) {
+                    log("[usgs-shadow] shadow-off reason=\(why) rateLimited=\(governor.rateLimitedCount) apiKey=\(governor.hasKey ? "set" : "unset")"
+                        + " waitedSeconds=\(Int(governor.waitedSeconds)) (logged once; legacy continues)")
+                }
+                return await legacy()
+            }
+            let start = Date()
+            let pending = LakeUSGSPending<U>()
+            let task = Task { pending.fulfil(await v1()) }
             let l = await legacy()
-            let o = await v1()
+            let legacyDone = Date()
+            let o = await pending.wait(seconds: governor.allowedWait(elapsed: legacyDone.timeIntervalSince(start)))
+            governor.spend(Date().timeIntervalSince(legacyDone))
+            if o == nil { task.cancel() }
             log(compare(l, o))
             return l
         }
@@ -66,13 +199,75 @@ enum LakeUSGSRouting {
 
 // MARK: - v1 client
 
+/// Why a v1 read failed: a code for the shadow line and the human reason.
+struct LakeUSGSReadFailure: Error, Equatable, Sendable {
+    enum Code: String, Sendable {
+        case rateLimited = "rate-limited", http, unreachable, redirect, nonJSON = "non-json", html = "html-page", pageLimit = "page-limit"
+        case ambiguousPrimary = "ambiguous-primary", metadataUnreadable = "metadata-unreadable", severalSeries = "several-series"
+        case statisticNotServed = "statistic-not-served", emptyHistory = "empty-history", unit, noReadings = "no-readings"
+        case siteRefused = "site-refused", badRequest = "bad-request"
+    }
+    var code: Code
+    var why: String
+    init(_ code: Code, _ why: String) { self.code = code; self.why = why }
+}
+
 /// One live read from the v1 API, with the qualifiers it carried (logged in shadow so ice-affected values are visible).
 struct LakeUSGSV1Read: Sendable {
     var result: FeedResult
     var qualifiers: [String: Int] = [:]
+    var failure: LakeUSGSReadFailure?
+
+    static func failed(_ f: LakeUSGSReadFailure, _ message: String) -> LakeUSGSV1Read {
+        LakeUSGSV1Read(result: .failed(message), failure: f)
+    }
+}
+
+/// One history read from the v1 API. `levels` nil = refused or failed (`failure` says why). `droppedStatistics`: statistics of a
+/// `dv` read left out because their series were ambiguous (statistic → reason); the others were kept.
+///
+/// `DailyLevel` does not carry the statistic of each date (its `sourceId` names the binding's `stat`, e.g. `dv`), so the plan §5
+/// "same statistic chosen per date" check cannot be made from the published history; the shadow line reports the dropped
+/// statistics instead, and a statistic difference shows as a value or missing-dates difference.
+struct LakeUSGSV1Daily: Sendable {
+    var levels: [DailyLevel]?
+    var failure: LakeUSGSReadFailure?
+    var droppedStatistics: [String: String] = [:]
+
+    static func failed(_ f: LakeUSGSReadFailure) -> LakeUSGSV1Daily { LakeUSGSV1Daily(levels: nil, failure: f) }
+}
+
+/// The v1 client's HTTP: no automatic redirects, so the API key is never carried to another host (`fetch` follows them itself).
+enum LakeUSGSWaterDataHTTP {
+    static let client: HTTPClient = {
+        var config = HTTPClient.Configuration()
+        config.timeout = HTTPClient.Configuration.Timeout(connect: .seconds(10), read: .seconds(120))
+        config.redirectConfiguration = .disallow
+        config.decompression = .enabled(limit: .size(256 * 1024 * 1024))
+        return HTTPClient(eventLoopGroupProvider: .singleton, configuration: config)
+    }()
+
+    static func get(_ url: String, headers: [String: String], timeout: TimeInterval) async -> LakeFeedHTTP.Response? {
+        guard URL(string: url) != nil else { return nil }
+        var request = HTTPClientRequest(url: url)
+        request.method = .GET
+        request.headers.add(name: "User-Agent", value: LakeFeedHTTP.userAgent)
+        request.headers.add(name: "Accept", value: "application/json")
+        request.headers.add(name: "Accept-Encoding", value: "gzip, deflate")
+        for (k, v) in headers { request.headers.replaceOrAdd(name: k, value: v) }
+        do {
+            let response = try await client.execute(request, timeout: .milliseconds(Int64(timeout * 1000)))
+            let buffer = try await response.body.collect(upTo: 256 * 1024 * 1024)
+            return LakeFeedHTTP.Response(status: Int(response.status.code), body: Data(buffer.readableBytesView),
+                                         location: response.headers.first(name: "Location"))
+        } catch {
+            return nil
+        }
+    }
 }
 
 struct LakeUSGSWaterDataClient: Sendable {
+    static let host = "api.waterdata.usgs.gov"
     static let base = "https://api.waterdata.usgs.gov/ogcapi/v1/collections"
     static let apiKeyEnvironmentKey = "USGS_API_KEY"
     static let pageLimit = 10_000
@@ -81,25 +276,44 @@ struct LakeUSGSWaterDataClient: Sendable {
     static let metadataProperties = "monitoring_location_id,parameter_code,statistic_id,computation_period_identifier,primary,sublocation_identifier"
 
     typealias Transport = @Sendable (_ url: String, _ headers: [String: String], _ timeout: TimeInterval) async -> LakeFeedHTTP.Response?
+    typealias ReadFailure = LakeUSGSReadFailure
 
     var transport: Transport
-    /// Sent as `X-Api-Key` when set.
+    /// Sent as `X-Api-Key` when set, only to `host` over https.
     var apiKey: String?
     /// `rel=next` pages followed before a read is refused as incomplete (a silent truncation would be a hole in the history).
     var maxPages = 20
     /// Retries after a 429, each after `pause(attempt)`.
     var retries429 = 2
     var pause: @Sendable (_ attempt: Int) async -> Void
+    /// Told of every 429 (retries included); the shadow governor counts them.
+    var onRateLimited: @Sendable () -> Void = {}
 
-    static func live(env: [String: String] = ProcessInfo.processInfo.environment) -> LakeUSGSWaterDataClient {
+    static func live(env: [String: String] = ProcessInfo.processInfo.environment,
+                     governor: LakeUSGSShadowGovernor = .shared) -> LakeUSGSWaterDataClient {
         let key = (env[apiKeyEnvironmentKey] ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         return LakeUSGSWaterDataClient(
-            transport: { url, headers, timeout in await LakeFeedHTTP.get(url, accept: "application/json", timeout: timeout, headers: headers) },
+            transport: { url, headers, timeout in await LakeUSGSWaterDataHTTP.get(url, headers: headers, timeout: timeout) },
             apiKey: key.isEmpty ? nil : key,
-            pause: { attempt in _ = try? await Task.sleep(nanoseconds: UInt64(10 * attempt) * 1_000_000_000) })
+            pause: { attempt in _ = try? await Task.sleep(nanoseconds: UInt64(10 * attempt) * 1_000_000_000) },
+            onRateLimited: { governor.note429() })
     }
 
-    var headers: [String: String] { apiKey.map { ["X-Api-Key": $0] } ?? [:] }
+    /// A client that never reaches the network (every request fails as unreachable).
+    static func unreachable() -> LakeUSGSWaterDataClient {
+        LakeUSGSWaterDataClient(transport: { _, _, _ in nil }, apiKey: nil, pause: { _ in })
+    }
+
+    /// Whether the key may go to `url`: https and the Water Data API host only.
+    static func sendsKey(to url: String) -> Bool {
+        guard let u = URL(string: url) else { return false }
+        return u.scheme?.lowercased() == "https" && u.host?.lowercased() == host
+    }
+
+    func headers(for url: String) -> [String: String] {
+        guard let apiKey, Self.sendsKey(to: url) else { return [:] }
+        return ["X-Api-Key": apiKey]
+    }
 
     static func locationId(_ site: String) -> String { "USGS-\(site)" }
 
@@ -116,10 +330,12 @@ struct LakeUSGSWaterDataClient: Sendable {
                            ("limit", String(pageLimit)), ("properties", observationProperties)])
     }
 
-    static func dailyURL(site: String, parameter: String, statistics: [String], time: String) -> String {
-        url("daily", [("monitoring_location_id", locationId(site)), ("parameter_code", parameter),
-                      ("statistic_id", statistics.joined(separator: ",")), ("time", time),
-                      ("limit", String(pageLimit)), ("properties", observationProperties)])
+    /// `statistics` nil = every statistic (legacy `dv` without `statCd`).
+    static func dailyURL(site: String, parameter: String, statistics: [String]?, time: String) -> String {
+        var items = [("monitoring_location_id", locationId(site)), ("parameter_code", parameter)]
+        if let statistics { items.append(("statistic_id", statistics.joined(separator: ","))) }
+        items += [("time", time), ("limit", String(pageLimit)), ("properties", observationProperties)]
+        return url("daily", items)
     }
 
     static func metadataURL(ids: [String]) -> String {
@@ -143,18 +359,32 @@ struct LakeUSGSWaterDataClient: Sendable {
 
     // MARK: HTTP
 
-    enum Fetched { case ok(Data), failed(String) }
+    enum Fetched { case ok(Data), failed(ReadFailure) }
 
-    func fetch(_ url: String, timeout: TimeInterval) async -> Fetched {
+    func fetch(_ first: String, timeout: TimeInterval) async -> Fetched {
+        var url = first
         var attempt = 0
+        var hops = 0
         while true {
-            guard let r = await transport(url, headers, timeout) else { return .failed("unreachable") }
-            if r.status == 429 && attempt < retries429 {
-                attempt += 1
-                await pause(attempt)
+            guard let r = await transport(url, headers(for: url), timeout) else { return .failed(ReadFailure(.unreachable, "unreachable")) }
+            if r.status == 429 {
+                onRateLimited()
+                if attempt < retries429 {
+                    attempt += 1
+                    await pause(attempt)
+                    continue
+                }
+                return .failed(ReadFailure(.rateLimited, "HTTP 429 after \(attempt) retries" + (apiKey == nil ? " (no USGS_API_KEY)" : "")))
+            }
+            if [301, 302, 303, 307, 308].contains(r.status) {
+                guard hops < 5, let loc = r.location, let next = URL(string: loc, relativeTo: URL(string: url))?.absoluteURL.absoluteString else {
+                    return .failed(ReadFailure(.redirect, "HTTP \(r.status) redirect without a usable Location"))
+                }
+                hops += 1
+                url = next
                 continue
             }
-            guard r.isSuccess else { return .failed("HTTP \(r.status)") }
+            guard r.isSuccess else { return .failed(ReadFailure(r.status == 400 ? .badRequest : .http, "HTTP \(r.status)")) }
             return .ok(r.body)
         }
     }
@@ -165,14 +395,14 @@ struct LakeUSGSWaterDataClient: Sendable {
         var next: String? = first
         var pages = 0
         while let url = next {
-            if pages == maxPages { return .failure(ReadFailure("more than \(maxPages) pages (answer too large for one read)")) }
+            if pages == maxPages { return .failure(ReadFailure(.pageLimit, "more than \(maxPages) pages (answer too large for one read)")) }
             let data: Data
             switch await fetch(url, timeout: timeout) {
-            case .failed(let why): return .failure(ReadFailure(why))
+            case .failed(let f): return .failure(f)
             case .ok(let d): data = d
             }
             // D10: a non-JSON body (the legacy blackout notice, a proxy error page) is a failure, never an empty answer.
-            guard let page = Self.parsePage(data) else { return .failure(ReadFailure("unreadable JSON (not a FeatureCollection)")) }
+            guard let page = Self.parsePage(data) else { return .failure(Self.unreadable(data)) }
             rows += page.rows
             pages += 1
             next = page.features == 0 ? nil : page.next
@@ -180,7 +410,13 @@ struct LakeUSGSWaterDataClient: Sendable {
         return .success(rows)
     }
 
-    struct ReadFailure: Error, Equatable { var why: String; init(_ w: String) { why = w } }
+    static func unreadable(_ data: Data) -> ReadFailure {
+        let head = String(decoding: data.prefix(512), as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if head.hasPrefix("<") || head.contains("<html") {
+            return ReadFailure(.html, "an HTML page, not JSON (blackout or error page)")
+        }
+        return ReadFailure(.nonJSON, "unreadable JSON (not a FeatureCollection)")
+    }
 
     // MARK: Wire format
 
@@ -273,14 +509,20 @@ struct LakeUSGSWaterDataClient: Sendable {
         let ids = Array(Set(mine.map(\.seriesId))).sorted()
         if ids.count <= 1 { return .success(mine) }
         if pick == .single {
-            return .failure(ReadFailure("\(ids.count) \(label) series at this site (sub-locations); the binding cannot tell which is the lake"))
+            return .failure(ReadFailure(.severalSeries, "\(ids.count) \(label) series at this site (sub-locations); the binding cannot tell which is the lake"))
         }
-        guard case .ok(let data) = await fetch(Self.metadataURL(ids: ids), timeout: timeout), let meta = Self.parseMetadata(data) else {
-            return .failure(ReadFailure("\(ids.count) series at this site and time-series-metadata unreadable; refused rather than merged"))
+        let data: Data
+        switch await fetch(Self.metadataURL(ids: ids), timeout: timeout) {
+        case .failed(let f):
+            return .failure(ReadFailure(.metadataUnreadable, "\(ids.count) \(label) series at this site and time-series-metadata failed (\(f.code.rawValue): \(f.why)); refused rather than merged"))
+        case .ok(let d): data = d
+        }
+        guard let meta = Self.parseMetadata(data) else {
+            return .failure(ReadFailure(.metadataUnreadable, "\(ids.count) \(label) series at this site and time-series-metadata unreadable; refused rather than merged"))
         }
         let primaries = meta.filter { ids.contains($0.id) && $0.primary == "Primary" }.map(\.id)
         guard primaries.count == 1, let chosen = primaries.first else {
-            return .failure(ReadFailure("\(ids.count) series at this site, \(primaries.count) marked Primary; ambiguous, refused rather than merged"))
+            return .failure(ReadFailure(.ambiguousPrimary, "\(ids.count) \(label) series at this site, \(primaries.count) marked Primary; ambiguous, refused rather than merged"))
         }
         return .success(mine.filter { $0.seriesId == chosen })
     }
@@ -303,33 +545,32 @@ struct LakeUSGSWaterDataClient: Sendable {
     func recentLevel(site: String, parameter: String, hours: Int) async -> LakeUSGSV1Read {
         let url = Self.continuousURL(site: site, parameter: parameter, time: "PT\(max(1, hours))H")
         switch await paged(url, timeout: 60) {
-        case .failure(let e): return LakeUSGSV1Read(result: .failed("USGS \(site) \(parameter) unreachable (Water Data API: \(e.why))"))
+        case .failure(let e): return .failed(e, "USGS \(site) \(parameter) unreachable (Water Data API: \(e.why))")
         case .success(let rows):
             switch await select(rows, site: site, parameter: parameter, pick: .primary, label: parameter, timeout: 60) {
-            case .failure(let e): return LakeUSGSV1Read(result: .failed("USGS \(site) \(parameter): \(e.why)"))
+            case .failure(let e): return .failed(e, "USGS \(site) \(parameter): \(e.why)")
             case .success(let picked):
                 let obs = Self.observations(picked)
-                let result: FeedResult = obs.isEmpty ? .failed("USGS \(site) \(parameter): no readings")
-                    : FeedResult(observations: LakeLevelSeries.merge(obs), error: nil)
-                return LakeUSGSV1Read(result: result, qualifiers: Self.qualifierCounts(picked))
+                guard !obs.isEmpty else { return .failed(ReadFailure(.noReadings, "no readings"), "USGS \(site) \(parameter): no readings") }
+                return LakeUSGSV1Read(result: FeedResult(observations: LakeLevelSeries.merge(obs), error: nil), qualifiers: Self.qualifierCounts(picked))
             }
         }
     }
 
     // MARK: Gage height (legacy `/nwis/iv/?parameterCd=00065`), raw: the stage client adds the altitude
 
-    func recentStage(site: String, hours: Int) async -> Result<[LevelObservation], ReadFailure> {
+    func recentStage(site: String, hours: Int) async -> Result<(obs: [LevelObservation], qualifiers: [String: Int]), ReadFailure> {
         let p = LakeUSGSStageClient.gageHeight
         switch await paged(Self.continuousURL(site: site, parameter: p, time: "PT\(max(1, hours))H"), timeout: 60) {
-        case .failure(let e): return .failure(ReadFailure("unreachable (Water Data API: \(e.why))"))
+        case .failure(let e): return .failure(ReadFailure(e.code, "unreachable (Water Data API: \(e.why))"))
         case .success(let rows):
             switch await select(rows, site: site, parameter: p, pick: .single, label: "gage-height", timeout: 60) {
             case .failure(let e): return .failure(e)
             case .success(let picked):
                 if let u = picked.compactMap(\.unit).first(where: { $0.lowercased() != "ft" }) {
-                    return .failure(ReadFailure("unit \(u) is not feet"))
+                    return .failure(ReadFailure(.unit, "unit \(u) is not feet"))
                 }
-                return .success(Self.observations(picked))
+                return .success((obs: Self.observations(picked), qualifiers: Self.qualifierCounts(picked)))
             }
         }
     }
@@ -338,7 +579,7 @@ struct LakeUSGSWaterDataClient: Sendable {
 
     static func parseLocation(_ data: Data, site: String) -> USGSSiteDatumResult {
         guard let obj = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else {
-            return .refused("USGS \(site): monitoring-locations answer unreadable")
+            return .refused("USGS \(site): monitoring-locations answer unreadable (\(unreadable(data).code.rawValue))")
         }
         let id = (obj["id"] as? String) ?? ((obj["properties"] as? [String: Any])?["id"] as? String)
         guard id == locationId(site), let p = obj["properties"] as? [String: Any] else { return .refused("USGS \(site): site record not found") }
@@ -353,54 +594,82 @@ struct LakeUSGSWaterDataClient: Sendable {
 
     func siteDatum(_ site: String) async -> USGSSiteDatumResult {
         switch await fetch(Self.locationURL(site: site), timeout: 60) {
-        case .failed(let why) where why == "HTTP 404": return .refused("USGS \(site): site record not found")
-        case .failed(let why): return .refused("USGS \(site): monitoring-locations \(why)")
+        case .failed(let f) where f.why == "HTTP 404": return .refused("USGS \(site): site record not found")
+        case .failed(let f): return .refused("USGS \(site): monitoring-locations \(f.code.rawValue): \(f.why)")
         case .ok(let data): return Self.parseLocation(data, site: site)
         }
     }
 
     // MARK: History (legacy `/nwis/dv/` and the year-by-year `/nwis/iv/` walk)
 
-    /// Daily values: `stat` "dv" merges the statistics with the legacy precedence; a statistic code takes only that statistic and is
-    /// refused when the API serves no daily series of it (D3). nil = refused or unreachable.
+    /// Daily values. `stat` "dv": every statistic is requested (as legacy did without `statCd`), each one selected on its own, and
+    /// merged with the legacy precedence; an ambiguous statistic is dropped and the others kept. A statistic code takes only that
+    /// statistic and is refused when the API serves no daily series of it (D3).
     func daily(site: String, param: String, stat: String, offsetFt: Double, since: String?, now: Date, timeZone: TimeZone,
-               src: String, singleSeries: Bool) async -> [DailyLevel]? {
+               src: String, singleSeries: Bool) async -> LakeUSGSV1Daily {
         if stat == "iv" {
             return await ivDaily(site: site, param: param, offsetFt: offsetFt, since: since, now: now, timeZone: timeZone, src: src,
                                  singleSeries: singleSeries)
         }
         let end = LakeLevelCalendar.dayString(now, timeZone: timeZone)
-        let stats = stat == "dv" ? LakeFleetClients.usgsStatOrder : [stat]
-        guard case .success(let rows) = await paged(Self.dailyURL(site: site, parameter: param, statistics: stats,
-                                                                  time: "\(since ?? "1900-01-01")/\(end)"), timeout: 120) else { return nil }
+        let rows: [Row]
+        switch await paged(Self.dailyURL(site: site, parameter: param, statistics: stat == "dv" ? nil : [stat],
+                                         time: "\(since ?? "1900-01-01")/\(end)"), timeout: 120) {
+        case .failure(let f): return .failed(f)
+        case .success(let r): rows = r
+        }
+        let order = LakeFleetClients.usgsStatOrder
+        let present = Set(rows.compactMap(\.statistic))
+        let stats = stat == "dv" ? order + present.subtracting(order).sorted() : [stat]
         var byStat: [String: [String: Double]] = [:]
+        var dropped: [String: String] = [:]
+        var firstDrop: ReadFailure?
         for s in stats {
             let ofStat = rows.filter { ($0.statistic ?? "") == s }
-            guard case .success(let picked) = await select(ofStat, site: site, parameter: param, pick: singleSeries ? .single : .primary,
-                                                           label: "\(param)/\(s)", timeout: 120) else { return nil }
-            for r in picked { if let v = r.value, r.time.count >= 10 { byStat[s, default: [:]][String(r.time.prefix(10))] = v } }
+            if ofStat.isEmpty { continue }
+            switch await select(ofStat, site: site, parameter: param, pick: singleSeries ? .single : .primary, label: "\(param)/\(s)", timeout: 120) {
+            case .failure(let f):
+                // A named statistic, or the gage-height reader (one series per answer, as legacy): the whole read is refused.
+                if stat != "dv" || singleSeries { return .failed(f) }
+                dropped[s] = f.code.rawValue
+                if firstDrop == nil { firstDrop = f }
+            case .success(let picked):
+                for r in picked { if let v = r.value, r.time.count >= 10 { byStat[s, default: [:]][String(r.time.prefix(10))] = v } }
+            }
+        }
+        if stat == "dv", byStat.isEmpty, let f = firstDrop {
+            return LakeUSGSV1Daily(levels: nil, failure: f, droppedStatistics: dropped)
         }
         if stat != "dv" && (byStat[stat] ?? [:]).isEmpty {
             // Empty: a statistic the API does not serve is refused, never substituted; a full-history pull that is empty is refused too.
-            guard since != nil, await servesDaily(site: site, param: param, stat: stat) else { return nil }
-            return []
+            switch await servesDaily(site: site, param: param, stat: stat) {
+            case .failure(let f): return .failed(f)
+            case .success(false): return .failed(ReadFailure(.statisticNotServed, "statistic \(stat) of \(param) is not served as a daily series at USGS \(site)"))
+            case .success(true):
+                guard since != nil else { return .failed(ReadFailure(.emptyHistory, "full-history pull of statistic \(stat) returned no values")) }
+                return LakeUSGSV1Daily(levels: [], failure: nil)
+            }
         }
         var merged: [String: Double] = [:]
         for s in stats { for (d, x) in byStat[s] ?? [:] where merged[d] == nil { merged[d] = x } }
-        return LakeDailyHistory.dedupe(merged.map { DailyLevel(date: $0.key, ft: $0.value + offsetFt, sourceId: src) })
+        return LakeUSGSV1Daily(levels: LakeDailyHistory.dedupe(merged.map { DailyLevel(date: $0.key, ft: $0.value + offsetFt, sourceId: src) }),
+                               failure: nil, droppedStatistics: dropped)
     }
 
     /// Whether `time-series-metadata` lists a daily series of `stat` for the site and parameter.
-    func servesDaily(site: String, param: String, stat: String) async -> Bool {
-        guard case .ok(let data) = await fetch(Self.metadataURL(site: site, parameter: param, statistic: stat), timeout: 60),
-              let meta = Self.parseMetadata(data) else { return false }
-        return meta.contains { $0.statistic == stat && ($0.computationPeriod == nil || $0.computationPeriod?.lowercased() == "daily") }
+    func servesDaily(site: String, param: String, stat: String) async -> Result<Bool, ReadFailure> {
+        switch await fetch(Self.metadataURL(site: site, parameter: param, statistic: stat), timeout: 60) {
+        case .failed(let f): return .failure(ReadFailure(f.code, "time-series-metadata: \(f.why)"))
+        case .ok(let data):
+            guard let meta = Self.parseMetadata(data) else { return .failure(Self.unreadable(data)) }
+            return .success(meta.contains { $0.statistic == stat && ($0.computationPeriod == nil || $0.computationPeriod?.lowercased() == "daily") })
+        }
     }
 
     /// Instantaneous values reduced to the median of each lake-local day, year by year back from now until two empty years
     /// (a 200 with no features is an empty year, D4). Each window is one lake-local calendar year or less (the API allows ≤ 3 years).
     func ivDaily(site: String, param: String, offsetFt: Double, since: String?, now: Date, timeZone: TimeZone, src: String,
-                 singleSeries: Bool) async -> [DailyLevel]? {
+                 singleSeries: Bool) async -> LakeUSGSV1Daily {
         var out: [DailyLevel] = []
         let today = LakeLevelCalendar.dayString(now, timeZone: timeZone)
         let thisYear = Int(today.prefix(4)) ?? 2026
@@ -411,17 +680,25 @@ struct LakeUSGSWaterDataClient: Sendable {
             let start = max(since ?? "\(year)-01-01", "\(year)-01-01")
             let end = year == thisYear ? today : "\(year)-12-31"
             guard let s = LakeLevelCalendar.utcBounds(day: start, timeZone: timeZone)?.0,
-                  let e = LakeLevelCalendar.utcBounds(day: end, timeZone: timeZone)?.1 else { return nil }
+                  let e = LakeLevelCalendar.utcBounds(day: end, timeZone: timeZone)?.1 else {
+                return .failed(ReadFailure(.badRequest, "bad window \(start)/\(end)"))
+            }
             let url = Self.continuousURL(site: site, parameter: param, time: Self.interval(s, e.addingTimeInterval(-1)))
-            guard case .success(let rows) = await paged(url, timeout: 120),
-                  case .success(let picked) = await select(rows, site: site, parameter: param, pick: singleSeries ? .single : .primary,
-                                                           label: param, timeout: 120) else { return nil }
-            let obs = Self.observations(picked)
-            empty = obs.isEmpty ? empty + 1 : 0
-            out += LakeFleetClients.dailyMedians(obs, timeZone: timeZone, offsetFt: offsetFt, src: src)
+            let rows: [Row]
+            switch await paged(url, timeout: 120) {
+            case .failure(let f): return .failed(ReadFailure(f.code, "\(year): \(f.why)"))
+            case .success(let r): rows = r
+            }
+            switch await select(rows, site: site, parameter: param, pick: singleSeries ? .single : .primary, label: param, timeout: 120) {
+            case .failure(let f): return .failed(ReadFailure(f.code, "\(year): \(f.why)"))
+            case .success(let picked):
+                let obs = Self.observations(picked)
+                empty = obs.isEmpty ? empty + 1 : 0
+                out += LakeFleetClients.dailyMedians(obs, timeZone: timeZone, offsetFt: offsetFt, src: src)
+            }
             year -= 1
         }
-        return LakeDailyHistory.dedupe(out)
+        return LakeUSGSV1Daily(levels: LakeDailyHistory.dedupe(out), failure: nil)
     }
 }
 
@@ -435,22 +712,62 @@ enum LakeUSGSShadow {
         var ogcN: Int
         var maxAbsDelta: Double?
         var tsDelta: Double?
+        /// The v1 failure (or refusal) text, logged quoted as `ogcWhy=`.
+        var detail: String?
+
+        /// v1 missed the shadow deadline (its read was cancelled; the legacy answer was served).
+        static func timeout(legacyN: Int) -> Verdict {
+            Verdict(verdict: "disagree", reason: "ogc-timeout", legacyN: legacyN, ogcN: 0, detail: "v1 read missed the shadow deadline")
+        }
     }
 
-    static func line(site: String, param: String, kind: String, _ v: Verdict, qualifiers: [String: Int] = [:]) -> String {
-        var s = "[usgs-shadow] site=\(site) param=\(param) kind=\(kind) verdict=\(v.verdict) reason=\(v.reason) legacyN=\(v.legacyN) ogcN=\(v.ogcN)"
+    /// One token for `key=value`: letters, digits and `._:-` kept, anything else (spaces, `=`, quotes) becomes `_`.
+    static func token(_ s: String) -> String {
+        let ok = Set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._:-")
+        let t = String(s.map { ok.contains($0) ? $0 : "_" }.prefix(80))
+        return t.isEmpty ? "-" : t
+    }
+
+    /// A quoted value with `\`, `"` and line breaks escaped, at most 240 characters.
+    static func quoted(_ s: String) -> String {
+        var out = ""
+        for c in s.prefix(240) {
+            switch c {
+            case "\\": out += "\\\\"
+            case "\"": out += "\\\""
+            case "\n": out += "\\n"
+            case "\r": out += "\\r"
+            case "\t": out += "\\t"
+            default: out.append(c)
+            }
+        }
+        return "\"\(out)\""
+    }
+
+    static func line(site: String, param: String, kind: String, _ v: Verdict, qualifiers: [String: Int] = [:],
+                     dropped: [String: String] = [:]) -> String {
+        var s = "[usgs-shadow] site=\(token(site)) param=\(token(param)) kind=\(token(kind)) verdict=\(token(v.verdict)) reason=\(token(v.reason))"
+        s += " legacyN=\(v.legacyN) ogcN=\(v.ogcN)"
         s += " maxAbsDelta=" + (v.maxAbsDelta.map { String(format: "%.3f", $0) } ?? "-")
         s += " tsDelta=" + (v.tsDelta.map { String(Int($0)) } ?? "-")
-        if !qualifiers.isEmpty { s += " ogcQualifiers=" + qualifiers.sorted { $0.key < $1.key }.map { "\($0.key):\($0.value)" }.joined(separator: ",") }
+        if !qualifiers.isEmpty { s += " ogcQualifiers=" + qualifiers.sorted { $0.key < $1.key }.map { "\(token($0.key)):\($0.value)" }.joined(separator: ",") }
+        if !dropped.isEmpty { s += " ogcDroppedStats=" + dropped.sorted { $0.key < $1.key }.map { "\(token($0.key)):\(token($0.value))" }.joined(separator: ",") }
+        if let d = v.detail { s += " ogcWhy=" + quoted(d) }
         return s
     }
 
+
     /// Live series: same latest timestamp or OGC newer by ≤ 2 h; the value at legacy's latest timestamp within `tolerance`; ≥ 99 % of
     /// common timestamps within `tolerance`. A failed legacy read never counts against OGC.
-    static func compareLive(legacy: FeedResult, ogc: FeedResult, tolerance: Double = 0.01) -> Verdict {
+    static func compareLive(legacy: FeedResult, ogc: FeedResult, ogcFailure: LakeUSGSReadFailure? = nil, tolerance: Double = 0.01) -> Verdict {
         let l = legacy.observations, o = ogc.observations
-        guard let ll = l.last else { return Verdict(verdict: "legacy-unavailable", reason: "legacy-failed", legacyN: 0, ogcN: o.count) }
-        guard let ol = o.last else { return Verdict(verdict: "disagree", reason: "ogc-failed", legacyN: l.count, ogcN: 0) }
+        guard let ll = l.last else {
+            return Verdict(verdict: "legacy-unavailable", reason: "legacy-failed", legacyN: 0, ogcN: o.count, detail: ogcFailure?.why)
+        }
+        guard let ol = o.last else {
+            return Verdict(verdict: "disagree", reason: "ogc-failed:" + (ogcFailure?.code.rawValue ?? "unknown"), legacyN: l.count, ogcN: 0,
+                           detail: ogc.error ?? ogcFailure?.why)
+        }
         let ts = ol.at.timeIntervalSince(ll.at)
         let ov = Dictionary(o.map { ($0.at, $0.ft) }, uniquingKeysWith: { _, b in b })
         let common = l.compactMap { x in ov[x.at].map { abs($0 - x.ft) } }
@@ -468,10 +785,15 @@ enum LakeUSGSShadow {
     }
 
     /// Daily: ≥ 99.5 % of common dates within 0.01 ft; dates present in only one series (up to the earlier last date) ≤ 1 per 365;
-    /// last date equal or OGC newer by ≤ 1 day.
-    static func compareDaily(legacy: [DailyLevel]?, ogc: [DailyLevel]?, tolerance: Double = 0.01) -> Verdict {
-        guard let l = legacy else { return Verdict(verdict: "legacy-unavailable", reason: "legacy-failed", legacyN: 0, ogcN: ogc?.count ?? 0) }
-        guard let o = ogc else { return Verdict(verdict: "disagree", reason: "ogc-failed", legacyN: l.count, ogcN: 0) }
+    /// last date equal or OGC newer by ≤ 1 day. The plan's "same statistic per date" cannot be checked (`LakeUSGSV1Daily`).
+    static func compareDaily(legacy: [DailyLevel]?, ogc: [DailyLevel]?, ogcFailure: LakeUSGSReadFailure? = nil, tolerance: Double = 0.01) -> Verdict {
+        guard let l = legacy else {
+            return Verdict(verdict: "legacy-unavailable", reason: "legacy-failed", legacyN: 0, ogcN: ogc?.count ?? 0, detail: ogcFailure?.why)
+        }
+        guard let o = ogc else {
+            return Verdict(verdict: "disagree", reason: "ogc-failed:" + (ogcFailure?.code.rawValue ?? "unknown"), legacyN: l.count, ogcN: 0,
+                           detail: ogcFailure?.why)
+        }
         if l.isEmpty && o.isEmpty { return Verdict(verdict: "agree", reason: "both-empty", legacyN: 0, ogcN: 0) }
         let lm = Dictionary(l.map { ($0.date, $0.ft) }, uniquingKeysWith: { _, b in b })
         let om = Dictionary(o.map { ($0.date, $0.ft) }, uniquingKeysWith: { _, b in b })
@@ -502,18 +824,21 @@ enum LakeUSGSShadow {
     static func compareSite(legacy: USGSSiteDatumResult, ogc: USGSSiteDatumResult) -> Verdict {
         switch (legacy, ogc) {
         case (.refused(let why), _) where why.contains("unreachable") || why.contains("HTTP "):
-            return Verdict(verdict: "legacy-unavailable", reason: "legacy-failed", legacyN: 0, ogcN: 0)
-        case (.refused, .refused):
-            return Verdict(verdict: "agree", reason: "both-refused", legacyN: 0, ogcN: 0)
-        case (.ok, .refused):
-            return Verdict(verdict: "disagree", reason: "ogc-refused", legacyN: 1, ogcN: 0)
+            var detail: String?
+            if case .refused(let o) = ogc { detail = o }
+            return Verdict(verdict: "legacy-unavailable", reason: "legacy-failed", legacyN: 0, ogcN: 0, detail: detail)
+        case (.refused, .refused(let o)):
+            return Verdict(verdict: "agree", reason: "both-refused", legacyN: 0, ogcN: 0, detail: o)
+        case (.ok, .refused(let o)):
+            return Verdict(verdict: "disagree", reason: "ogc-refused", legacyN: 1, ogcN: 0, detail: o)
         case (.refused, .ok):
             return Verdict(verdict: "disagree", reason: "legacy-refused", legacyN: 0, ogcN: 1)
         case (.ok(let a), .ok(let b)):
             let d = abs(a.altitudeFt - b.altitudeFt)
             let norm = { (s: String) in s.trimmingCharacters(in: .whitespaces).uppercased() }
             if norm(a.datum) != norm(b.datum) {
-                return Verdict(verdict: "disagree", reason: "datum-\(norm(a.datum))-vs-\(norm(b.datum))", legacyN: 1, ogcN: 1, maxAbsDelta: d)
+                return Verdict(verdict: "disagree", reason: "datum-\(norm(a.datum))-vs-\(norm(b.datum))", legacyN: 1, ogcN: 1, maxAbsDelta: d,
+                               detail: "legacy datum \(a.datum), v1 datum \(b.datum)")
             }
             if d > 0.01 + 1e-9 { return Verdict(verdict: "disagree", reason: "altitude", legacyN: 1, ogcN: 1, maxAbsDelta: d) }
             return Verdict(verdict: "agree", reason: "-", legacyN: 1, ogcN: 1, maxAbsDelta: d)

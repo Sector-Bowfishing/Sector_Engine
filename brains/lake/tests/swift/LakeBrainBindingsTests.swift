@@ -260,7 +260,7 @@ final class LakeBrainBindingsTests: XCTestCase {
     }
 
     func testUSGSGageHeightIsNotAnElevation() async {
-        let feeds = PublicLakeLevelFeeds()
+        let feeds = PublicLakeLevelFeeds.legacyUSGS()
         let ref = LevelSeriesRef(provider: .usgs, capability: .directLakeGauge, station: "02187010", series: "00065", cadenceMin: 60, lagMin: 60)
         let live = await feeds.recent(ref, hours: 24, now: Date())
         XCTAssertNotNil(live.error)
@@ -324,7 +324,7 @@ final class LakeBrainBindingsTests: XCTestCase {
     }
 
     func testOperatorLevelsBuildZoneFloodPoolAndGuide() async throws {
-        let feeds = PublicLakeLevelFeeds()
+        let feeds = PublicLakeLevelFeeds.legacyUSGS()
         let o = OperatorLevels(guide: nil, zoneTop: staticLevel("Top of Normal", 1120.43), zoneBottom: staticLevel("Bottom of Normal", 1077),
                                floodPoolBottom: staticLevel("Top of Conservation", 1120.43), matchedProject: "SWL:Beaver_Dam", matchBasis: "nid", verifiedMatch: true)
         let gOpt = await feeds.guide(.operatorLevels(o), day: "2026-10-13", timeZone: utc)

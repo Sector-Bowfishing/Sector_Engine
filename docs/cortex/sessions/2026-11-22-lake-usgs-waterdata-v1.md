@@ -22,6 +22,12 @@ deploys, job environment, IAM / secrets, rules, bindings.
 - Fixtures hand-built from the published docs, labelled as not recordings; the D1 tests also use the real 2026-10-07 Fort Worth recordings.
 - Provider doc section 8.
 
+## Review findings fixed before shadow (same branch, 2026-11-22)
+- M1: every v1 failure has a code and reason in the shadow line (`reason=ogc-failed:<code>`, `ogcWhy="..."`); the v1 history reader returns a reason, not nil.
+- M2: shadow reads v1 concurrently with legacy, under a 20 s per-read deadline and a 300 s per-run waiting budget; without a key, 3 or more 429s turn shadow off (logged once). Job facts: 3 lakes at a time, reads within a lake sequential, Cloud Run task timeout 60 min, no in-process limit.
+- M3: `dv` selects each statistic on its own and drops only the ambiguous ones.
+- LOWs: key only to the API host (manual redirects); `dv` matches legacy's fallback statistics; the legacy test suites pin `.legacy` and an offline v1 client; field values escaped; `DailyLevel` cannot carry the statistic (documented).
+
 ## Knowledge release
 `LakeSourceBindings.swift`, `LakeGeneratedBindings.swift` and `LakeSourceBindingsGenerated.swift` are unchanged: the switch is an environment variable outside the packaged release. `build_release_manifest.py brains/lake/runtime --check` OK (`lake-knowledge-2026-11-22.1`). No new release id.
 

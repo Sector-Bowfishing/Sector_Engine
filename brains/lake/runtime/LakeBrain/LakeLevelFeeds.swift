@@ -89,11 +89,11 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
     /// Read-only access to the shared TVA archive (another lane's bucket).
     let sharedArchive: (String) -> LakeBrainArchive?
     /// Access2Water / RISE / NWPS / HADS / USGS-history clients (LakeLevelFeedsFleet.swift) and CDEC (LakeLevelFeedsCDEC.swift).
-    let fleet = LakeFleetClients()
+    let fleet: LakeFleetClients
     /// NOAA CO-OPS Great Lakes water levels (LakeLevelFeedsCOOPS.swift).
     let coops = LakeCOOPSClient.live()
     /// USGS gage height + published site altitude (LakeLevelFeedsUSGSStage.swift).
-    let usgsStage = LakeUSGSStageClient.live()
+    let usgsStage: LakeUSGSStageClient
     private var guideCache: [String: [TVAGuideRow]] = [:]
     private let lock = NSLock()
 
@@ -107,6 +107,8 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
         self.sharedArchive = sharedArchive
         self.cwmsTransport = .live()
         self.cwmsPolicy = CWMSRetryPolicy()
+        self.fleet = LakeFleetClients()
+        self.usgsStage = LakeUSGSStageClient.live()
     }
 
     /// Faults a dry-run rehearsal may inject (never a live run; LakeBrainJob refuses them without --dry-run).
@@ -119,10 +121,14 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
         self.init(sharedArchive: sharedArchive, cwmsTransport: rehearsalFaults.cwmsUnreachable ? .unreachable() : .live())
     }
 
-    init(sharedArchive: @escaping (String) -> LakeBrainArchive? = { _ in nil }, cwmsTransport: CWMSTransport, cwmsPolicy: CWMSRetryPolicy = CWMSRetryPolicy()) {
+    /// `usgsMode` / `usgsWaterData`: tests pin the USGS switch and the v1 client instead of reading the environment.
+    init(sharedArchive: @escaping (String) -> LakeBrainArchive? = { _ in nil }, cwmsTransport: CWMSTransport, cwmsPolicy: CWMSRetryPolicy = CWMSRetryPolicy(),
+         usgsMode: LakeUSGSAPIMode = .fromEnvironment(), usgsWaterData: LakeUSGSWaterDataClient = .live()) {
         self.sharedArchive = sharedArchive
         self.cwmsTransport = cwmsTransport
         self.cwmsPolicy = cwmsPolicy
+        self.fleet = LakeFleetClients(usgsMode: usgsMode, waterData: usgsWaterData)
+        self.usgsStage = LakeUSGSStageClient.live(mode: usgsMode, waterData: usgsWaterData)
     }
 
     public func recent(_ ref: LevelSeriesRef, hours: Int, now: Date) async -> FeedResult {
@@ -137,13 +143,15 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
             // 00065 is a gage height in a local datum, not an elevation: never a lake level.
             guard LakeFleetClients.usgsElevationParams.contains(p) else { return .failed("USGS \(p) is not a lake elevation parameter (gage height is not an elevation)") }
             let site = ref.station
-            return await LakeUSGSRouting.run(fleet.usgsMode,
+            let client = fleet.waterData
+            return await LakeUSGSRouting.run(fleet.usgsMode, governor: fleet.shadowGovernor,
                 legacy: { await usgs(site: site, parameter: p, hours: hours) },
-                v1: { await fleet.waterData.recentLevel(site: site, parameter: p, hours: hours) },
+                v1: { await client.recentLevel(site: site, parameter: p, hours: hours) },
                 adopt: { $0.result },
                 compare: { l, o in
-                    LakeUSGSShadow.line(site: site, param: p, kind: "live", LakeUSGSShadow.compareLive(legacy: l, ogc: o.result),
-                                        qualifiers: o.qualifiers)
+                    guard let o else { return LakeUSGSShadow.line(site: site, param: p, kind: "live", .timeout(legacyN: l.observations.count)) }
+                    return LakeUSGSShadow.line(site: site, param: p, kind: "live",
+                                               LakeUSGSShadow.compareLive(legacy: l, ogc: o.result, ogcFailure: o.failure), qualifiers: o.qualifiers)
                 },
                 log: fleet.shadowLog)
         case .a2w: return await fleet.a2wRecent(ref)

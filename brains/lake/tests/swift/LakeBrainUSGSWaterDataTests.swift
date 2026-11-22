@@ -10,6 +10,27 @@ import XCTest
 @testable import SectorEngine
 @testable import LakeBrain
 
+/// The legacy readers with the USGS switch pinned: test suites never read `LAKE_USGS_API` or `USGS_API_KEY` from the environment.
+extension LakeFleetClients {
+    static func legacy(transport: @escaping @Sendable (_ url: String, _ accept: String, _ timeout: TimeInterval) async -> LakeFeedHTTP.Response?) -> LakeFleetClients {
+        LakeFleetClients(transport: transport, usgsMode: .legacy, waterData: .unreachable(), shadowLog: { _ in },
+                         shadowGovernor: LakeUSGSShadowGovernor(hasKey: false))
+    }
+}
+
+extension LakeUSGSStageClient {
+    static func legacy(fetch: @escaping @Sendable (_ url: String, _ accept: String) async -> LakeFeedHTTP.Response?, cache: USGSSiteCache) -> LakeUSGSStageClient {
+        LakeUSGSStageClient(fetch: fetch, cache: cache, mode: .legacy, waterData: .unreachable(), shadowLog: { _ in },
+                            governor: LakeUSGSShadowGovernor(hasKey: false))
+    }
+}
+
+extension PublicLakeLevelFeeds {
+    static func legacyUSGS(cwmsTransport: CWMSTransport = .live()) -> PublicLakeLevelFeeds {
+        PublicLakeLevelFeeds(cwmsTransport: cwmsTransport, usgsMode: .legacy, usgsWaterData: .unreachable())
+    }
+}
+
 /// A fake v1 transport: answers by URL, records URLs and headers.
 final class WaterDataFake: @unchecked Sendable {
     private let lock = NSLock()
@@ -24,16 +45,20 @@ final class WaterDataFake: @unchecked Sendable {
     var headers: [[String: String]] { lock.lock(); defer { lock.unlock() }; return seen.map(\.headers) }
     var pauseCount: Int { lock.lock(); defer { lock.unlock() }; return pauses }
 
-    func client(apiKey: String? = nil, maxPages: Int = 20) -> LakeUSGSWaterDataClient {
+    /// `delay`: every answer arrives this late (honours cancellation). `governor`: told of every 429.
+    func client(apiKey: String? = nil, maxPages: Int = 20, delay: TimeInterval = 0, governor: LakeUSGSShadowGovernor? = nil) -> LakeUSGSWaterDataClient {
         LakeUSGSWaterDataClient(transport: { url, headers, _ in
             self.lock.lock()
             let n = self.seen.filter { $0.url == url }.count
             self.seen.append((url, headers))
             self.lock.unlock()
+            if delay > 0 {
+                do { try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000)) } catch { return nil }
+            }
             return self.route(url, n)
         }, apiKey: apiKey, maxPages: maxPages, pause: { _ in
             self.lock.lock(); self.pauses += 1; self.lock.unlock()
-        })
+        }, onRateLimited: { _ = governor?.note429() })
     }
 }
 
@@ -171,11 +196,11 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
         let live = await c.recentLevel(site: "03351700", parameter: "62614", hours: 24)
         XCTAssertEqual(live.result.error, "USGS 03351700 62614: no readings")
         let dv = await c.daily(site: "03351700", param: "62614", stat: "dv", offsetFt: 0, since: nil, now: iso("2026-11-22T12:00:00Z"),
-                               timeZone: utc, src: "usgs:03351700:62614:dv", singleSeries: false)
+                               timeZone: utc, src: "usgs:03351700:62614:dv", singleSeries: false).levels
         XCTAssertEqual(dv, [])
         let before = fake.urls.count
         let iv = await c.daily(site: "03351700", param: "62614", stat: "iv", offsetFt: 0, since: nil, now: iso("2026-11-22T12:00:00Z"),
-                               timeZone: utc, src: "usgs:03351700:62614:iv", singleSeries: false)
+                               timeZone: utc, src: "usgs:03351700:62614:iv", singleSeries: false).levels
         XCTAssertEqual(iv, [])
         XCTAssertEqual(fake.urls.count - before, 2, "two empty years stop the walk, as the legacy 404s did")
     }
@@ -184,9 +209,12 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
         let html = try Self.v1("blackout.html")
         let c = WaterDataFake { _, _ in Self.ok(html) }.client()
         let live = await c.recentLevel(site: "03351700", parameter: "62614", hours: 24)
-        XCTAssertTrue(live.result.error?.contains("unreadable JSON") ?? false, live.result.error ?? "")
+        XCTAssertEqual(live.failure?.code, .html)
+        XCTAssertTrue(live.result.error?.contains("HTML page") ?? false, live.result.error ?? "")
+        let garbage = await WaterDataFake { _, _ in Self.ok(Data("{\"oops\":1}".utf8)) }.client().recentLevel(site: "03351700", parameter: "62614", hours: 24)
+        XCTAssertEqual(garbage.failure?.code, .nonJSON)
         let dv = await c.daily(site: "03351700", param: "62614", stat: "dv", offsetFt: 0, since: nil, now: iso("2026-11-22T12:00:00Z"),
-                               timeZone: utc, src: "x", singleSeries: false)
+                               timeZone: utc, src: "x", singleSeries: false).levels
         XCTAssertNil(dv)
     }
 
@@ -223,7 +251,7 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
         let d = try Self.v1("daily_01314500_62614.json")
         let fake = WaterDataFake { _, _ in Self.ok(d) }
         let out = await fake.client().daily(site: "01314500", param: "62614", stat: "dv", offsetFt: -0.01, since: nil,
-                                            now: iso("2026-11-22T12:00:00Z"), timeZone: utc, src: "usgs:01314500:62614:dv", singleSeries: false)
+                                            now: iso("2026-11-22T12:00:00Z"), timeZone: utc, src: "usgs:01314500:62614:dv", singleSeries: false).levels
         let got = try XCTUnwrap(out)
         XCTAssertEqual(got.map(\.date), ["2026-11-18", "2026-11-19", "2026-11-20", "2026-11-21"])
         XCTAssertEqual(got.map(\.ft)[0], 1556.19, accuracy: 1e-9)
@@ -232,14 +260,14 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
         XCTAssertEqual(got.map(\.ft)[3], 1556.34, accuracy: 1e-9)
         XCTAssertEqual(Set(got.map(\.sourceId)), ["usgs:01314500:62614:dv"])
         let u = try XCTUnwrap(fake.urls.first)
-        XCTAssertTrue(u.contains("/daily/items") && u.contains("statistic_id=00003,32400,30800,00001,00002")
-                      && u.contains("time=1900-01-01/2026-11-22"), u)
+        XCTAssertTrue(u.contains("/daily/items") && !u.contains("statistic_id") && u.contains("time=1900-01-01/2026-11-22"),
+                      "dv asks for every statistic, as legacy did without statCd: \(u)")
     }
 
     func testANamedStatisticTakesOnlyThatStatistic() async throws {
         let d = try Self.v1("daily_01314500_62614.json")
         let out = await WaterDataFake { _, _ in Self.ok(d) }.client().daily(site: "01314500", param: "62614", stat: "30800", offsetFt: 0,
-            since: nil, now: iso("2026-11-22T12:00:00Z"), timeZone: utc, src: "s", singleSeries: false)
+            since: nil, now: iso("2026-11-22T12:00:00Z"), timeZone: utc, src: "s", singleSeries: false).levels
         XCTAssertEqual(out?.map(\.ft), [1556.31, 1556.33, 1556.35])
     }
 
@@ -249,21 +277,21 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
         // 32400 at 01314500: /daily has nothing and time-series-metadata lists no daily 32400 series.
         let none = WaterDataFake { _, _ in Self.ok(empty) }
         let a = await none.client().daily(site: "01314500", param: "62614", stat: "32400", offsetFt: 0, since: "2026-11-01", now: now,
-                                          timeZone: utc, src: "s", singleSeries: false)
+                                          timeZone: utc, src: "s", singleSeries: false).levels
         XCTAssertNil(a)
         XCTAssertTrue(none.urls.contains { $0.contains("/time-series-metadata/") && $0.contains("statistic_id=32400") })
         // 30800 is served but nothing is new since the last pull: an empty increment, not a refusal.
         let served = WaterDataFake { url, _ in Self.ok(url.contains("/time-series-metadata/") ? meta : empty) }
         let b = await served.client().daily(site: "01314500", param: "62614", stat: "30800", offsetFt: 0, since: "2026-11-21", now: now,
-                                            timeZone: utc, src: "s", singleSeries: false)
+                                            timeZone: utc, src: "s", singleSeries: false).levels
         XCTAssertEqual(b, [])
         // A full-history pull that is empty is refused even when the series is listed.
         let c = await served.client().daily(site: "01314500", param: "62614", stat: "30800", offsetFt: 0, since: nil, now: now,
-                                            timeZone: utc, src: "s", singleSeries: false)
+                                            timeZone: utc, src: "s", singleSeries: false).levels
         XCTAssertNil(c)
         // "dv" never asks whether one statistic is served: it merges what exists.
         let dv = await served.client().daily(site: "01314500", param: "62614", stat: "dv", offsetFt: 0, since: "2026-11-21", now: now,
-                                             timeZone: utc, src: "s", singleSeries: false)
+                                             timeZone: utc, src: "s", singleSeries: false).levels
         XCTAssertEqual(dv, [])
     }
 
@@ -276,10 +304,10 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
         let fake = WaterDataFake { url, _ in Self.ok(url.contains("/time-series-metadata/") ? meta : body) }
         let now = iso("2026-11-22T12:00:00Z")
         let picked = await fake.client().daily(site: "10297000", param: "00062", stat: "32400", offsetFt: 4899.97, since: "2026-11-01",
-                                               now: now, timeZone: utc, src: "s", singleSeries: false)
+                                               now: now, timeZone: utc, src: "s", singleSeries: false).levels
         XCTAssertEqual(picked?.first?.ft ?? 0, 4900.97, accuracy: 1e-9)
         let strict = await fake.client().daily(site: "10297000", param: "00062", stat: "32400", offsetFt: 4899.97, since: "2026-11-01",
-                                               now: now, timeZone: utc, src: "s", singleSeries: true)
+                                               now: now, timeZone: utc, src: "s", singleSeries: true).levels
         XCTAssertNil(strict, "the gage-height reader refuses several series outright")
     }
 
@@ -291,7 +319,7 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
         let ny = TimeZone(identifier: "America/New_York")!
         let out = await fake.client().daily(site: "395540082291600", param: "62614", stat: "iv", offsetFt: 0, since: nil,
                                             now: iso("2026-11-22T12:00:00Z"), timeZone: ny, src: "usgs:395540082291600:62614:iv",
-                                            singleSeries: false)
+                                            singleSeries: false).levels
         XCTAssertEqual(out?.map(\.date), ["2026-11-22"])
         XCTAssertEqual(fake.urls.count, 3, "2026 with data, then 2025 and 2024 empty")
         XCTAssertTrue(fake.urls[0].contains("time=2026-01-01T05:00:00Z/2026-11-23T04:59:59Z"), fake.urls[0])
@@ -305,7 +333,8 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
         return LakeUSGSStageClient(fetch: { url, _ in
             legacy.add(url)
             return Self.ok(url.contains("/nwis/site/") ? rdb : iv)
-        }, cache: USGSSiteCache(), mode: mode, waterData: v1.client(), shadowLog: { log.add($0) })
+        }, cache: USGSSiteCache(), mode: mode, waterData: v1.client(), shadowLog: { log.add($0) },
+           governor: LakeUSGSShadowGovernor(hasKey: true))
     }
 
     func v1Stage(location: Data? = nil, stage: Data? = nil) throws -> WaterDataFake {
@@ -392,10 +421,11 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
 
     func testRoutingCallsOnlyWhatTheSwitchSays() async {
         let calls = LineLog()
+        let gov = LakeUSGSShadowGovernor(hasKey: true)
         func run(_ m: LakeUSGSAPIMode) async -> Int {
-            await LakeUSGSRouting.run(m, legacy: { () -> Int in calls.add("legacy"); return 1 },
-                                      v1: { () -> String in calls.add("v1"); return "2" },
-                                      adopt: { (s: String) -> Int in Int(s)! }, compare: { (l: Int, o: String) -> String in "cmp \(l) \(o)" },
+            await LakeUSGSRouting.run(m, governor: gov, legacy: { () -> Int in calls.add("legacy"); return 1 },
+                                      v1: { @Sendable () -> String in calls.add("v1"); return "2" },
+                                      adopt: { (s: String) -> Int in Int(s)! }, compare: { (l: Int, o: String?) -> String in "cmp \(l) \(o ?? "nil")" },
                                       log: { calls.add($0) })
         }
         let a = await run(.legacy)
@@ -404,7 +434,9 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
         XCTAssertEqual(b, 2); XCTAssertEqual(calls.lines, ["legacy", "v1"])
         let c = await run(.shadow)
         XCTAssertEqual(c, 1, "shadow returns the legacy answer")
-        XCTAssertEqual(calls.lines, ["legacy", "v1", "legacy", "v1", "cmp 1 2"])
+        XCTAssertEqual(calls.lines.count, 5)
+        XCTAssertEqual(Set(calls.lines[2...3]), ["legacy", "v1"], "shadow reads both, concurrently")
+        XCTAssertEqual(calls.lines.last, "cmp 1 2")
     }
 
     func testLiveAgreementRule() {
@@ -447,7 +479,7 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
         let dv = Data(#"{"value":{"timeSeries":[{"name":"USGS:01314500:62614:00003","variable":{"noDataValue":-999999.0,"options":{"option":[{"optionCode":"00003"}]}},"values":[{"value":[{"value":"1556.20","dateTime":"2026-11-20T00:00:00.000"}]}]}]}}"#.utf8)
         let rec = URLRecorder(), v1 = WaterDataFake { _, _ in nil }, log = LineLog()
         let fleet = LakeFleetClients(transport: { url, _, _ in rec.add(url); return Self.ok(dv) }, usgsMode: .legacy,
-                                     waterData: v1.client(), shadowLog: { log.add($0) })
+                                     waterData: v1.client(), shadowLog: { log.add($0) }, shadowGovernor: LakeUSGSShadowGovernor(hasKey: true))
         let now = iso("2026-11-22T12:00:00Z")
         let out = await fleet.usgsDaily(site: "01314500", param: "62614", stat: "30800", offsetFt: -0.01, since: "2026-11-01", now: now, timeZone: utc)
         XCTAssertEqual(out, LakeFleetClients.parseUSGSDV(dv, offsetFt: -0.01, src: "usgs:01314500:62614:30800"))
@@ -458,12 +490,13 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
         // Shadow: the same legacy request and answer, plus one v1 read and one comparison line.
         let srec = URLRecorder(), sv1 = WaterDataFake { _, _ in Self.ok(Self.collection([])) }, slog = LineLog()
         let shadow = LakeFleetClients(transport: { url, _, _ in srec.add(url); return Self.ok(dv) }, usgsMode: .shadow,
-                                      waterData: sv1.client(), shadowLog: { slog.add($0) })
+                                      waterData: sv1.client(), shadowLog: { slog.add($0) }, shadowGovernor: LakeUSGSShadowGovernor(hasKey: true))
         let s = await shadow.usgsDaily(site: "01314500", param: "62614", stat: "30800", offsetFt: -0.01, since: "2026-11-01", now: now, timeZone: utc)
         XCTAssertEqual(s, out)
         XCTAssertEqual(srec.urls, rec.urls)
         XCTAssertFalse(sv1.urls.isEmpty)
         XCTAssertEqual(slog.lines.count, 1)
-        XCTAssertTrue(slog.lines[0].hasPrefix("[usgs-shadow] site=01314500 param=62614 kind=daily verdict=disagree reason=ogc-failed"), slog.lines[0])
+        XCTAssertTrue(slog.lines[0].hasPrefix("[usgs-shadow] site=01314500 param=62614 kind=daily verdict=disagree reason=ogc-failed:statistic-not-served"), slog.lines[0])
+        XCTAssertTrue(slog.lines[0].contains(#"ogcWhy="statistic 30800 of 62614 is not served as a daily series at USGS 01314500""#), slog.lines[0])
     }
 }

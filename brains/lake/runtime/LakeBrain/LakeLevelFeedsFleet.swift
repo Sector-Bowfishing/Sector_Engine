@@ -34,7 +34,13 @@ enum LakeFeedHTTP {
         return HTTPClient(eventLoopGroupProvider: .singleton, configuration: config)
     }()
 
-    struct Response { var status: Int; var body: Data; var isSuccess: Bool { (200..<300).contains(status) } }
+    struct Response {
+        var status: Int
+        var body: Data
+        /// The `Location` header, where a client that does not follow redirects reads it (LakeUSGSWaterDataHTTP).
+        var location: String? = nil
+        var isSuccess: Bool { (200..<300).contains(status) }
+    }
 
     static func get(_ url: String, accept: String = "application/json", timeout: TimeInterval = 60,
                     headers: [String: String] = [:]) async -> Response? {
@@ -142,15 +148,18 @@ final class LakeFleetClients: @unchecked Sendable {
     let waterData: LakeUSGSWaterDataClient
     /// Where `shadow` writes its comparison lines.
     let shadowLog: @Sendable (String) -> Void
+    /// Bounds the time `shadow` adds to a run (one per process by default).
+    let shadowGovernor: LakeUSGSShadowGovernor
 
     init(transport: @escaping @Sendable (_ url: String, _ accept: String, _ timeout: TimeInterval) async -> LakeFeedHTTP.Response? = { url, accept, timeout in
         await LakeFeedHTTP.get(url, accept: accept, timeout: timeout)
     }, usgsMode: LakeUSGSAPIMode = .fromEnvironment(), waterData: LakeUSGSWaterDataClient = .live(),
-         shadowLog: @escaping @Sendable (String) -> Void = { print($0) }) {
+         shadowLog: @escaping @Sendable (String) -> Void = { print($0) }, shadowGovernor: LakeUSGSShadowGovernor = .shared) {
         self.transport = transport
         self.usgsMode = usgsMode
         self.waterData = waterData
         self.shadowLog = shadowLog
+        self.shadowGovernor = shadowGovernor
     }
 
     // MARK: Access2Water
@@ -286,13 +295,18 @@ final class LakeFleetClients: @unchecked Sendable {
         // A gage height is a local-datum stage; it is a history only with the explicit datum offset that makes it an elevation.
         if !Self.usgsElevationParams.contains(param) && offsetFt == 0 { return nil }
         let src = "usgs:\(site):\(param):\(stat)"
-        return await LakeUSGSRouting.run(usgsMode,
+        let client = waterData
+        return await LakeUSGSRouting.run(usgsMode, governor: shadowGovernor,
             legacy: { await usgsDailyLegacy(site: site, param: param, stat: stat, offsetFt: offsetFt, since: since, now: now,
                                              timeZone: timeZone, src: src, singleSeries: singleSeries) },
-            v1: { await waterData.daily(site: site, param: param, stat: stat, offsetFt: offsetFt, since: since, now: now,
-                                        timeZone: timeZone, src: src, singleSeries: singleSeries) },
-            adopt: { $0 },
-            compare: { l, o in LakeUSGSShadow.line(site: site, param: param, kind: "daily", LakeUSGSShadow.compareDaily(legacy: l, ogc: o)) },
+            v1: { await client.daily(site: site, param: param, stat: stat, offsetFt: offsetFt, since: since, now: now,
+                                     timeZone: timeZone, src: src, singleSeries: singleSeries) },
+            adopt: { $0.levels },
+            compare: { l, o in
+                guard let o else { return LakeUSGSShadow.line(site: site, param: param, kind: "daily", .timeout(legacyN: l?.count ?? 0)) }
+                return LakeUSGSShadow.line(site: site, param: param, kind: "daily",
+                                           LakeUSGSShadow.compareDaily(legacy: l, ogc: o.levels, ogcFailure: o.failure), dropped: o.droppedStatistics)
+            },
             log: shadowLog)
     }
 

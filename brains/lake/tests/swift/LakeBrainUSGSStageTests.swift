@@ -26,7 +26,7 @@ final class LakeBrainUSGSStageTests: XCTestCase {
     static func ok(_ d: Data) -> LakeFeedHTTP.Response { LakeFeedHTTP.Response(status: 200, body: d) }
 
     func client(_ rec: URLRecorder, site: Data?, iv: Data?) -> LakeUSGSStageClient {
-        LakeUSGSStageClient(fetch: { url, _ in
+        LakeUSGSStageClient.legacy(fetch: { url, _ in
             rec.add(url)
             if url.contains("/nwis/site/") { return site.map(Self.ok) }
             return iv.map(Self.ok)
@@ -112,7 +112,7 @@ final class LakeBrainUSGSStageTests: XCTestCase {
         let live = await c.recent(ref("NAVD88"), hours: 24)
         XCTAssertTrue(live.error?.contains("altitude is 0") ?? false, live.error ?? "")
         let h = await c.daily(site: "04082500", datum: "NAVD88", stat: "dv", since: nil, now: iso("2026-11-22T12:00:00Z"),
-                              timeZone: TimeZone(identifier: "UTC")!, fleet: LakeFleetClients(transport: { _, _, _ in nil }))
+                              timeZone: TimeZone(identifier: "UTC")!, fleet: LakeFleetClients.legacy(transport: { _, _, _ in nil }))
         XCTAssertNil(h)
         XCTAssertFalse(LakeUSGSStageClient.isSiteNumber("０４０８２５００"), "ASCII digits only")
     }
@@ -136,7 +136,7 @@ final class LakeBrainUSGSStageTests: XCTestCase {
     // MARK: PublicLakeLevelFeeds wiring (refusals happen before any network call)
 
     func testFeedsRefuseAStageBindingWithoutADatum() async {
-        let feeds = PublicLakeLevelFeeds()
+        let feeds = PublicLakeLevelFeeds.legacyUSGS()
         let live = await feeds.recent(ref(nil), hours: 24, now: Date())
         XCTAssertNotNil(live.error)
         let h = await feeds.daily(.usgsStageDaily(site: "04082500", datum: "", stat: "dv"), since: nil, now: Date(), timeZone: TimeZone(identifier: "UTC")!)
