@@ -1,0 +1,206 @@
+{
+ "schema": "depth-datum-verification-v1",
+ "rulesVersion": "datum-verification-rules-1",
+ "rules": "Verification rule of the Depth datum plan (2026-11-22) section 3: a side is VERIFIED only when two independent publishers name the same datum for the same series or pool (or the datum is stamped by the series' own parameter definition AND an empirical cross-gauge check passes); a conversion is enabled only when the offset agrees with NOAA VDatum at the gauge within 0.10 ft; datum-name disagreement or offsets more than 0.25 ft apart is CONFLICT; at most two research passes per lake. Consumed by depth_research.candidates (verified_conversion); nothing here is read at runtime.",
+ "checkedAt": "2026-11-22",
+ "reviewer": "claude-code (research pass; promotion into a knowledge release is Michael's decision)",
+ "evidenceNote": "Evidence was read with a web fetcher that returns a model summary of the page, so `quote` is the value as reported by that fetch, not a byte-exact excerpt, and `sha256` is null (raw bytes were not retained). VDatum calls: /vdatumweb/api/convert, NAD27 geographic in, NGVD29 -> NAVD88, us_ft, region contiguous, geoid18.",
+ "lakes": {
+  "Toledo Bend Reservoir|TX": {
+   "passes": 2,
+   "status": "VERIFIED",
+   "relationship": {"status": "CONVERTED", "navd88MinusNgvd29Ft": -0.2, "levelDatum": "NAVD88", "referenceDatum": "NGVD29",
+                    "offsetSource": "manifest navd88MinusNgvd29Ft (research datum_shift table)",
+                    "vdatumCheckFt": -0.285, "vdatumSigmaFt": 0.167, "vdatumAt": "USGS 312914093422701 (31.48733, -93.70753)",
+                    "offsetAgreementFt": 0.085,
+                    "empirical": {"method": "Negreet 62615 (NAVD88) minus Burkeville 62614 (NGVD29), same 15-min timestamp, 9 dates 2025-12-15..2026-11-10",
+                                  "n": 9, "meanFt": -0.178, "minFt": -0.33, "maxFt": -0.05, "passed": true,
+                                  "note": "after the -0.2 ft conversion the two gauges agree within 0.3 ft on every sampled date (largest residual 0.15 ft); a mislabelled NGVD29 series would centre near 0, the NAVD88 label centres near -0.2"}},
+   "sides": {
+    "level": {"seriesId": "USGS-312914093422701:62615", "datum": "NAVD88", "status": "VERIFIED", "basis": "parameter-definition+empirical",
+              "evidence": [
+               {"publisher": "USGS", "url": "https://waterservices.usgs.gov/nwis/iv/?format=rdb&sites=312914093422701,08025350&parameterCd=62614,62615&startDT=2026-10-20T00:00&endDT=2026-10-20T01:00", "quote": "62615 Lake or reservoir water surface elevation above NAVD 1988, feet", "retrievedAt": "2026-11-22", "sha256": null},
+               {"publisher": "USGS", "url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&bBox=-94.0,31.0,-93.4,31.9&parameterCd=62615,62614&siteStatus=all&hasDataTypeCd=iv,dv&outputDataTypeCd=iv,dv", "quote": "312914093422701 Toledo Bend Res nr Negreet, LA alt_va 0.0 alt_datum_cd NAVD88, uv 62615 2018-05-01..2026-11-22", "retrievedAt": "2026-11-22", "sha256": null}]},
+    "reference": {"seriesId": "TWDB conservation pool 172.00 ft on USGS 08025350", "datum": "NGVD29", "status": "VERIFIED", "basis": "two-publishers",
+                  "evidence": [
+                   {"publisher": "TWDB (Water Data for Texas)", "url": "https://www.waterdatafortexas.org/reservoirs/individual/toledo-bend", "quote": "Conservation pool elevation 172.00 ft above NGVD29; Vertical datum NGVD29; Data source USGS:08025350", "retrievedAt": "2026-11-22", "sha256": null},
+                   {"publisher": "USGS", "url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&sites=08025350&siteOutput=expanded", "quote": "08025350 Toledo Bd Res nr Burkeville, TX alt_va 0 alt_datum_cd NGVD29 (series 62614 above NGVD 1929)", "retrievedAt": "2026-11-22", "sha256": null},
+                   {"publisher": "NOAA NWPS", "url": "https://api.water.noaa.gov/nwps/v1/gauges/BKLT2", "quote": "BKLT2 Sabine River at Toledo Bend Reservoir, usgsId 08025350, datums.vertical NGVD29 value 0, action stage 172.5 ft", "retrievedAt": "2026-11-22", "sha256": null}],
+                  "note": "The operator (Sabine River Authority) states pool figures only as 'ft MSL' (https://sratx.org/?p=5676); that wording is not counted as a datum name."}
+   },
+   "vdatumAlso": {"at": "USGS 08025350 (31.19630, -93.57212)", "ft": -0.269, "sigmaFt": 0.167}
+  },
+  "Cross Lake|LA": {
+   "passes": 2,
+   "status": "CONFLICT",
+   "relationship": {"status": null},
+   "conflict": "The 171.1 ft reference comes from the NWPS CRLL1 impact statements, whose stage frame is NAVD88 (datums.vertical NAVD88 = 0), while USGS FS 2011-3086 gives the spillway crest as 171.19 ft above NGVD 29. NAVD88 - NGVD29 here is about -0.24 ft, so the two readings of the pool frame differ by about 0.15-0.24 ft and neither publisher names the datum of the 171.1 figure itself. A third source (City of Shreveport / operator document naming the datum of 171.1) is needed.",
+   "sides": {
+    "level": {"seriesId": "MVK:Cross Lake.Elev.Inst.15Minutes.0.DCP-rev", "datum": "NAVD88", "status": "VERIFIED", "basis": "two-publishers",
+              "gaugeZeroFt": -0.13, "offsetToNGVD29Ft": 0.2311, "offsetIsEstimate": true, "vdatumCheckFt": -0.243, "vdatumSigmaFt": 0.165,
+              "evidence": [
+               {"publisher": "USACE CWMS (CDA)", "url": "https://cwms-data.usace.army.mil/cwms-data/timeseries?name=Cross%20Lake.Elev.Inst.15Minutes.0.DCP-rev&office=MVK&unit=EN&begin=2026-11-20T00:00:00Z&end=2026-11-20T01:00:00Z", "quote": "vertical-datum-info native-datum NAVD-88, elevation -0.13, offset to NGVD-29 +0.2311 (estimate true)", "retrievedAt": "2026-11-22", "sha256": null},
+               {"publisher": "USGS", "url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&sites=07344480,07349860,07289350,02486000,10337000&siteOutput=expanded", "quote": "07344480 Cross Lake at Shreveport, LA alt_va -0.13 alt_datum_cd NAVD88", "retrievedAt": "2026-11-22", "sha256": null},
+               {"publisher": "NOAA NWPS", "url": "https://api.water.noaa.gov/nwps/v1/gauges/CRLL1", "quote": "CRLL1 Cross Lake at Shreveport, usgsId 07344480, datums.vertical NAVD88 value 0", "retrievedAt": "2026-11-22", "sha256": null}]},
+    "reference": {"seriesId": "NWPS CRLL1 impact statement 171.1 ft", "datum": null, "status": "CONFLICT",
+                  "evidence": [
+                   {"publisher": "NOAA NWPS", "url": "https://api.water.noaa.gov/nwps/v1/gauges/CRLL1", "quote": "impact statements mention a 171.1 ft conservation pool stage; gauge frame NAVD88", "retrievedAt": "2026-11-22", "sha256": null},
+                   {"publisher": "USGS", "url": "https://pubs.usgs.gov/fs/2011/3086/FS2011-3086.pdf", "quote": "65,807 acre-ft in volume at spillway crest, which is 171.19 ft above NGVD 29", "retrievedAt": "2026-11-22", "sha256": null}]}
+   }
+  },
+  "Ross Barnett Reservoir|MS": {
+   "passes": 2,
+   "status": "SINGLE_SOURCE",
+   "relationship": {"status": null},
+   "reason": "Level datum named by two publishers; the reference pool (297.5 ft, Pearl River Valley Water Supply District) names no datum.",
+   "offsetConflict": "Not used (no conversion needed), recorded for the record: CDA offset NGVD-29 -> NAVD-88 -0.1982 (estimate) vs VDatum +0.108 at USGS 02485601 (sigma 0.206): 0.31 ft apart, above the 0.25 ft conflict bound. The manifest offset (+0.062) agrees with VDatum.",
+   "sides": {
+    "level": {"seriesId": "MVK:Ross Barnett.Elev.Inst.1Hour.0.DCP-rev", "datum": "NGVD29", "status": "VERIFIED", "basis": "two-publishers",
+              "offsetToNAVD88Ft": -0.1982, "offsetIsEstimate": true, "vdatumCheckFt": 0.108, "vdatumSigmaFt": 0.206,
+              "evidence": [
+               {"publisher": "USACE CWMS (CDA)", "url": "https://cwms-data.usace.army.mil/cwms-data/timeseries?name=Ross%20Barnett.Elev.Inst.1Hour.0.DCP-rev&office=MVK&unit=EN&begin=2026-11-20T00:00:00Z&end=2026-11-20T02:00:00Z", "quote": "native-datum NGVD-29, elevation 0.0, offset to NAVD-88 -0.1982 (estimate true)", "retrievedAt": "2026-11-22", "sha256": null},
+               {"publisher": "USGS", "url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&sites=02485601&siteOutput=expanded", "quote": "02485601 Pearl River at Ross Barnett Reservoir, MS alt_va 0.00 alt_datum_cd NGVD29", "retrievedAt": "2026-11-22", "sha256": null}],
+              "note": "Assumes the CWMS DCP series and USGS 02485601 are the same reservoir gauge (both zero 0.0); NWPS JSNM6 (usgsId 02485601) lists no vertical datum."},
+    "reference": {"seriesId": "PRVWSD normal summer pool 297.5 ft", "datum": null, "status": "NONE",
+                  "evidence": [{"publisher": "Pearl River Valley Water Supply District", "url": "https://www.therez.ms.gov/sites/default/files/documents/bridge-elevations.pdf", "quote": "Normal summer pool 297.5 (no datum named)", "retrievedAt": "2026-11-22", "sha256": null}],
+                  "note": "USGS WRI 84-4160 (https://pubs.usgs.gov/wri/1984/4160/report.pdf) defines 'sea level' as NGVD 1929 but does not state the 297.5 ft pool. The directory's own source is a web.archive.org page, which the fetcher refused (site blocked)."}
+   }
+  },
+  "Lake Tahoe|NV": {
+   "passes": 2,
+   "status": "SINGLE_SOURCE",
+   "relationship": {"status": null},
+   "reason": "The reference (6,229.1 ft) is on the U.S. Bureau of Reclamation Lake Tahoe datum, a project datum; the level series is labelled NGVD-29 by CWMS while USGS 10337000 at Tahoe City carries a NAVD88 altitude. No second publisher states the BOR-datum -> NGVD29 relation, so no conversion is defined.",
+   "sides": {
+    "level": {"seriesId": "SPK:Lake Tahoe.Elev.Inst.~1Day.0.MANUAL", "datum": "NGVD29", "status": "SINGLE_SOURCE", "offsetToNAVD88Ft": 4.03, "offsetIsEstimate": true,
+              "evidence": [{"publisher": "USACE CWMS (CDA)", "url": "https://cwms-data.usace.army.mil/cwms-data/timeseries?name=Lake%20Tahoe.Elev.Inst.~1Day.0.MANUAL&office=SPK&unit=EN&begin=2026-11-01T00:00:00Z&end=2026-11-20T00:00:00Z", "quote": "native-datum NGVD-29, elevation 6221.129, offset to NAVD-88 +4.03 (estimate true); 2026-11-01 value 6226.55", "retrievedAt": "2026-11-22", "sha256": null}]},
+    "reference": {"seriesId": "Truckee River legal maximum 6,229.1 ft", "datum": "PROJECT:USBR-LAKE-TAHOE", "status": "SINGLE_SOURCE",
+                  "evidence": [{"publisher": "USGS", "url": "https://pubs.usgs.gov/wri/wri024030/text/environmental.htm", "quote": "maximum permissible elevation of Lake Tahoe to 6,229.1 ft, U.S. Bureau of Reclamation (BOR) datum ... which equals 6,227.96 ft above sea level", "retrievedAt": "2026-11-22", "sha256": null}]}
+   }
+  },
+  "Mark Twain Lake|MO": {
+   "passes": 2,
+   "status": "SINGLE_SOURCE",
+   "relationship": {"status": null},
+   "reason": "The level location (Mark Twain Lk-Salt) is NAVD-88 in CDA; the pool (Top of Conservation 606 ft) sits on the project location 'Mark Twain Lk', which has no vertical datum in CDA, and the USACE EDR record leaves vertical_datum blank. NAVD88 - NGVD29 is only about -0.05 ft here, but no publisher names the pool datum.",
+   "sides": {
+    "level": {"seriesId": "MVS:Mark Twain Lk-Salt.Elev.Inst.30Minutes.0.lrgsShef-rev", "datum": "NAVD88", "status": "SINGLE_SOURCE", "gaugeZeroFt": 579.95, "offsetToNGVD29Ft": 0.052, "offsetIsEstimate": true,
+              "evidence": [{"publisher": "USACE CWMS (CDA)", "url": "https://cwms-data.usace.army.mil/cwms-data/timeseries?name=Mark%20Twain%20Lk-Salt.Elev.Inst.30Minutes.0.lrgsShef-rev&office=MVS&unit=EN&begin=2026-11-20T00:00:00Z&end=2026-11-20T02:00:00Z", "quote": "native-datum NAVD-88, elevation 579.95, offset to NGVD-29 +0.052 (estimate true)", "retrievedAt": "2026-11-22", "sha256": null}]},
+    "reference": {"seriesId": "CWMS Mark Twain Lk.Elev.Inst.0.Top of Conservation (606 ft)", "datum": null, "status": "NONE",
+                  "evidence": [
+                   {"publisher": "USACE CWMS (CDA)", "url": "https://cwms-data.usace.army.mil/cwms-data/locations/Mark%20Twain%20Lk?office=MVS", "quote": "location-kind PROJECT; elevation and vertical-datum not provided", "retrievedAt": "2026-11-22", "sha256": null},
+                   {"publisher": "USACE EDR (via Internet of Water)", "url": "https://api.wwdh.internetofwater.app/collections/usace-edr/items/412018", "quote": "Top of Conservation 606 ft; vertical_datum \"\"", "retrievedAt": "2026-11-22", "sha256": null}],
+                  "note": "The CDA location-levels query for MVS was refused by the fetcher (client error)."}
+   }
+  },
+  "Percy Priest Lake|TN": {
+   "passes": 2,
+   "status": "SINGLE_SOURCE",
+   "relationship": {"status": null},
+   "reason": "Level (A2W JPHT1) and the project's operating zones are NGVD29 on the CWMS location JPHT1, but both come from one publisher (USACE), and the directory pool of 490 ft is not itself a CWMS location level (CWMS summer Bottom of Flood is 490.5). No independent publisher was found (USGS site search near the lake returned nothing).",
+   "sides": {
+    "level": {"seriesId": "A2W LRN:JPHT1 Elev-Pool", "datum": "NGVD29", "status": "SINGLE_SOURCE",
+              "evidence": [{"publisher": "USACE CWMS (CDA)", "url": "https://cwms-data.usace.army.mil/cwms-data/locations/JPHT1?office=LRN", "quote": "JPHT1 J Percy Priest Dam, location-kind PROJECT, vertical-datum NGVD29, elevation 0.0", "retrievedAt": "2026-11-22", "sha256": null}]},
+    "reference": {"seriesId": "USACE published pool 490 ft", "datum": "NGVD29", "status": "SINGLE_SOURCE",
+                  "evidence": [{"publisher": "USACE CWMS (CDA)", "url": "https://cwms-data.usace.army.mil/cwms-data/levels?office=LRN&level-id-mask=JPHT1.Elev.Inst.0.Bottom%20of%20Flood&unit=EN&format=json&begin=2000-01-01T00:00:00Z&end=2026-11-22T00:00:00Z", "quote": "JPHT1.Elev.Inst.0.Bottom of Flood seasonal 483 / 490.5 ft NGVD29", "retrievedAt": "2026-11-22", "sha256": null}],
+                  "note": "A same-record path exists: if the reference were the CWMS JPHT1 seasonal level itself, the pair would be SAME_SOURCE under the existing rule. That is a reference choice for the directory owner, not a datum finding."}
+   }
+  },
+  "Jordan|AL": {
+   "passes": 2,
+   "status": "SINGLE_SOURCE",
+   "relationship": {"status": null},
+   "reason": "CWMS labels the APC series NGVD-29 (elevation 0.0, i.e. no surveyed zero recorded); Alabama Power states the 252 ft pool only as 'above sea level'. USGS 02410400 (Jordan Lake near Wetumpka) carries no altitude datum. CDA has no location levels for Jordan.",
+   "sides": {
+    "level": {"seriesId": "SAM:Jordan.Elev.Inst.1Hour.0.Raw-APCO", "datum": "NGVD29", "status": "SINGLE_SOURCE", "offsetToNAVD88Ft": 0.0799, "offsetIsEstimate": true,
+              "evidence": [{"publisher": "USACE CWMS (CDA)", "url": "https://cwms-data.usace.army.mil/cwms-data/timeseries?name=Jordan.Elev.Inst.1Hour.0.Raw-APCO&office=SAM&unit=EN&begin=2026-11-20T00:00:00Z&end=2026-11-20T03:00:00Z", "quote": "native-datum NGVD-29, elevation 0.0, offset to NAVD-88 +0.0799 (estimate true)", "retrievedAt": "2026-11-22", "sha256": null}]},
+    "reference": {"seriesId": "Alabama Power 252 ft", "datum": null, "status": "NONE",
+                  "evidence": [{"publisher": "Alabama Power", "url": "https://apcshorelines.com/lake/jordan/", "quote": "Elevation above sea level: 252 feet", "retrievedAt": "2026-11-22", "sha256": null}]}
+   }
+  },
+  "Lay|AL": {
+   "passes": 1,
+   "status": "SINGLE_SOURCE",
+   "relationship": {"status": null},
+   "reason": "Same situation as Jordan (same operator and CWMS office): CDA NGVD-29 with elevation 0.0; operator pool page uses 'sea level' wording. Second pass not spent: it would repeat Jordan's sources.",
+   "sides": {
+    "level": {"seriesId": "SAM:Lay.Elev.Inst.1Hour.0.Raw-APCO", "datum": "NGVD29", "status": "SINGLE_SOURCE", "offsetToNAVD88Ft": 0.1243, "offsetIsEstimate": true,
+              "evidence": [{"publisher": "USACE CWMS (CDA)", "url": "https://cwms-data.usace.army.mil/cwms-data/timeseries?name=Lay.Elev.Inst.1Hour.0.Raw-APCO&office=SAM&unit=EN&begin=2026-11-20T00:00:00Z&end=2026-11-20T03:00:00Z", "quote": "native-datum NGVD-29, elevation 0.0, offset to NAVD-88 +0.1243 (estimate true)", "retrievedAt": "2026-11-22", "sha256": null}]},
+    "reference": {"seriesId": "Alabama Power 396 ft", "datum": null, "status": "NONE", "evidence": []}
+   }
+  },
+  "Lake Bistineau|LA": {
+   "passes": 1,
+   "status": "SINGLE_SOURCE",
+   "relationship": {"status": null},
+   "reason": "Level NAVD-88 in CDA; the 141 ft pool source is a web.archive.org copy of an LDWF plan, which the fetcher refused (site blocked).",
+   "sides": {
+    "level": {"seriesId": "MVK:Lake Bistineau.Elev.Inst.30Minutes.0.DCP-rev", "datum": "NAVD88", "status": "SINGLE_SOURCE", "gaugeZeroFt": 129.84, "offsetToNGVD29Ft": 0.1804, "offsetIsEstimate": true,
+              "evidence": [{"publisher": "USACE CWMS (CDA)", "url": "https://cwms-data.usace.army.mil/cwms-data/timeseries?name=Lake%20Bistineau.Elev.Inst.30Minutes.0.DCP-rev&office=MVK&unit=EN&begin=2026-11-20T00:00:00Z&end=2026-11-20T01:00:00Z", "quote": "native-datum NAVD-88, elevation 129.84, offset to NGVD-29 +0.1804 (estimate true)", "retrievedAt": "2026-11-22", "sha256": null}]},
+    "reference": {"seriesId": "LDWF 141 ft", "datum": null, "status": "NONE", "evidence": [], "note": "fetch refused: web.archive.org (SITE_BLOCKED)"}
+   }
+  },
+  "Eagle Lake|MS": {
+   "passes": 1,
+   "status": "SINGLE_SOURCE",
+   "relationship": {"status": null},
+   "reason": "Level NGVD-29 in CDA (elevation 0.0); the 76.9 ft winter-spring level is from an LDWF news item that names no datum.",
+   "sides": {
+    "level": {"seriesId": "MVK:Muddy Bayou-Landside.Elev.Inst.1Hour.0.DCP-rev", "datum": "NGVD29", "status": "SINGLE_SOURCE", "offsetToNAVD88Ft": -0.1157, "offsetIsEstimate": true,
+              "evidence": [{"publisher": "USACE CWMS (CDA)", "url": "https://cwms-data.usace.army.mil/cwms-data/timeseries?name=Muddy%20Bayou-Landside.Elev.Inst.1Hour.0.DCP-rev&office=MVK&unit=EN&begin=2026-11-20T00:00:00Z&end=2026-11-20T02:00:00Z", "quote": "native-datum NGVD-29, elevation 0.0, offset to NAVD-88 -0.1157 (estimate true)", "retrievedAt": "2026-11-22", "sha256": null}]},
+    "reference": {"seriesId": "USACE Vicksburg via LDWF 76.9 ft", "datum": null, "status": "NONE",
+                  "evidence": [{"publisher": "LDWF", "url": "https://www.wlf.louisiana.gov/news/vicksburg-district-begins-drawdown-at-eagle-lake", "quote": "increase the lake's elevation to 76.9 feet throughout winter and spring (no datum named)", "retrievedAt": "2026-11-22", "sha256": null}]}
+   }
+  },
+  "Palisades Reservoir|ID": {
+   "passes": 2,
+   "status": "SINGLE_SOURCE",
+   "relationship": {"status": null},
+   "reason": "Level datum NGVD29 from the A2W project record (already in the manifest); the USBR project page gives 5620.0 ft with no datum. CDA location lookups for NWW were refused by the fetcher (client error). Note the manifest NAVD88-NGVD29 here is about +4.2 ft, so an unnamed pool datum matters.",
+   "sides": {
+    "level": {"seriesId": "A2W NWW:PAL Elev-Forebay", "datum": "NGVD29", "status": "SINGLE_SOURCE", "evidence": [{"publisher": "USACE Access2Water (as captured in the candidate manifest levelSource.datumNote; not re-fetched)", "url": "brains/depth/runtime/knowledge/candidates.json", "quote": "A2W project vertical_datum NGVD29 (NWW:PAL)", "retrievedAt": "2026-10-14", "sha256": null}]},
+    "reference": {"seriesId": "USBR 5620.0 ft", "datum": null, "status": "NONE", "evidence": [{"publisher": "USBR", "url": "https://www.usbr.gov/projects/index.php?id=317", "quote": "Top of Active Conservation Pool 5620.0 ft (no datum named)", "retrievedAt": "2026-11-22", "sha256": null}]}
+   }
+  },
+  "Jackson Lake|WY": {
+   "passes": 2,
+   "status": "SINGLE_SOURCE",
+   "relationship": {"status": null},
+   "reason": "As Palisades: A2W NGVD29 level; USBR page gives 6769.0 ft with no datum; CDA refused. Manifest NAVD88-NGVD29 about +4.3 ft.",
+   "sides": {
+    "level": {"seriesId": "A2W NWW:JCK Elev-Forebay", "datum": "NGVD29", "status": "SINGLE_SOURCE", "evidence": [{"publisher": "USACE Access2Water (as captured in the candidate manifest levelSource.datumNote; not re-fetched)", "url": "brains/depth/runtime/knowledge/candidates.json", "quote": "A2W project vertical_datum NGVD29 (NWW:JCK)", "retrievedAt": "2026-10-14", "sha256": null}]},
+    "reference": {"seriesId": "USBR 6769.0 ft", "datum": null, "status": "NONE", "evidence": [{"publisher": "USBR", "url": "https://www.usbr.gov/projects/index.php?id=162", "quote": "Top of Active Conservation Pool 6769.0 ft (no datum named)", "retrievedAt": "2026-11-22", "sha256": null}]}
+   }
+  },
+  "Anderson Ranch Reservoir|ID": {
+   "passes": 1,
+   "status": "SINGLE_SOURCE",
+   "relationship": {"status": null},
+   "reason": "A2W NGVD29 level; CDA refused for NWW; the 4196 ft pool source (USBR Boise feasibility DEIS PDF) not re-read this pass. Pending the Reclamation datum request.",
+   "sides": {
+    "level": {"seriesId": "A2W NWW:AND Elev-Forebay", "datum": "NGVD29", "status": "SINGLE_SOURCE", "evidence": [{"publisher": "USACE Access2Water (as captured in the candidate manifest levelSource.datumNote; not re-fetched)", "url": "brains/depth/runtime/knowledge/candidates.json", "quote": "A2W project vertical_datum NGVD29 (NWW:AND)", "retrievedAt": "2026-10-14", "sha256": null}]},
+    "reference": {"seriesId": "USBR 4196 ft", "datum": null, "status": "NONE", "evidence": []}
+   }
+  },
+  "Coeur d'Alene|ID": {
+   "passes": 1,
+   "status": "SINGLE_SOURCE",
+   "relationship": {"status": null},
+   "reason": "A2W NGVD29 level (NWS:COEI); Avista's page gives the lake elevation without a datum and does not state 2128 ft; CDA refused for NWS.",
+   "sides": {
+    "level": {"seriesId": "A2W NWS:COEI Elev-Forebay", "datum": "NGVD29", "status": "SINGLE_SOURCE", "evidence": [{"publisher": "USACE Access2Water (as captured in the candidate manifest levelSource.datumNote; not re-fetched)", "url": "brains/depth/runtime/knowledge/candidates.json", "quote": "A2W project vertical_datum NGVD29 (NWS:COEI)", "retrievedAt": "2026-10-14", "sha256": null}]},
+    "reference": {"seriesId": "Avista summer level 2128 ft", "datum": null, "status": "NONE", "evidence": [{"publisher": "Avista", "url": "https://www.myavista.com/about-us/celebrate-our-rivers/water-flow-information", "quote": "The elevation of Coeur d'Alene Lake is 2124.49 ... maximum summer level (no number, no datum)", "retrievedAt": "2026-11-22", "sha256": null}]}
+   }
+  },
+  "Lake Chelan|WA": {
+   "passes": 1,
+   "status": "NONE",
+   "relationship": {"status": null},
+   "reason": "Level provider datum is PER_SITE; the USGS WDR figure that is the pool source was refused by the fetcher (client error). Nothing new verified.",
+   "sides": {
+    "level": {"seriesId": "A2W Elev-Forebay (Lake Chelan)", "datum": null, "status": "NONE", "evidence": []},
+    "reference": {"seriesId": "USGS WDR 2005 figure 54, 1100 ft", "datum": null, "status": "NONE", "evidence": [], "note": "fetch refused: pubs.usgs.gov WDR PDF (client_error)"}
+   }
+  }
+ }
+}

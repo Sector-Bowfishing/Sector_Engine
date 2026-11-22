@@ -23,7 +23,7 @@ from depth_brain import rating as R
 from depth_brain.evidence import depth_tier_from_research
 
 from . import proposals
-from .paths import LAKE_BINDINGS, research_data
+from .paths import LAKE_BINDINGS, RESEARCH_RECORDS, research_data
 
 
 def load_provider_table(path: str | None = None) -> dict:
@@ -96,9 +96,76 @@ def licence_for(sources: list, lic: dict) -> dict:
     return {"classes": classes, "sources": list(sources), "customerDerivedMetricsAllowed": "true" if allowed else "false"}
 
 
-def assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w=None):
+VERIFICATION_RECORDS = os.path.join(RESEARCH_RECORDS, "datum_verification.json")
+VERIFY_OFFSET_TOL_FT = 0.10          # plan section 3.2: source offset vs NOAA VDatum at the gauge
+VERIFY_CONFLICT_FT = 0.25            # plan section 3.4: offsets further apart than this are a CONFLICT
+VERIFY_MAX_PASSES = 2                # BRAIN_SPEC stop rule
+
+
+def load_datum_verification(path: str | None = None) -> dict:
+    """Per-lake datum verification records (records/datum_verification.json, schema depth-datum-verification-v1). Absent -> {}."""
+    p = path or VERIFICATION_RECORDS
+    if not os.path.exists(p):
+        return {}
+    with open(p, encoding="utf-8") as fh:
+        d = json.load(fh)
+    if d.get("schema") != "depth-datum-verification-v1":
+        raise ValueError(f"{p}: not a depth-datum-verification-v1 file")
+    return d.get("lakes") or {}
+
+
+def _side_verified(side: dict) -> bool:
+    """VERIFIED needs two distinct publishers naming the datum, or the series' own parameter definition plus a passed empirical check."""
+    if (side or {}).get("status") != "VERIFIED" or normalize_datum(side.get("datum")) not in ("NGVD29", "NAVD88"):
+        return False
+    pubs = {str(e.get("publisher", "")).split(" (")[0] for e in side.get("evidence") or [] if str(e.get("url", "")).startswith("http")}
+    return len(pubs) >= 2 or side.get("basis") == "parameter-definition+empirical"
+
+
+def verification_problems(lid: str, rec: dict) -> list[str]:
+    """Rule violations of one record (empty list = consistent with the plan's verification rule). Used by tests and by verified_conversion."""
+    p = []
+    if not 1 <= int(rec.get("passes") or 0) <= VERIFY_MAX_PASSES:
+        p.append("passes must be 1..2")
+    sides = rec.get("sides") or {}
+    rel = rec.get("relationship") or {}
+    if rec.get("status") == "VERIFIED":
+        for s in ("level", "reference"):
+            if not _side_verified(sides.get(s)):
+                p.append(f"{s} side not two-source verified")
+            elif (sides.get(s) or {}).get("basis") == "parameter-definition+empirical" and (rel.get("empirical") or {}).get("passed") is not True:
+                p.append(f"{s} side rests on its parameter definition but no empirical cross-gauge check passed")
+        if rel.get("status") == "CONVERTED":
+            off, vd = rel.get("navd88MinusNgvd29Ft"), rel.get("vdatumCheckFt")
+            if not isinstance(off, (int, float)) or not isinstance(vd, (int, float)):
+                p.append("conversion needs a source offset and a VDatum check")
+            elif abs(off - vd) > VERIFY_OFFSET_TOL_FT + 1e-9:
+                p.append(f"offset {off} vs VDatum {vd} differ by more than {VERIFY_OFFSET_TOL_FT} ft")
+            emp = rel.get("empirical")
+            if emp is not None and emp.get("passed") is not True:
+                p.append("empirical check did not pass")
+            lv, rf = (normalize_datum((sides.get(k) or {}).get("datum")) for k in ("level", "reference"))
+            if {lv, rf} != {"NGVD29", "NAVD88"} or lv != normalize_datum(rel.get("levelDatum")) or rf != normalize_datum(rel.get("referenceDatum")):
+                p.append("conversion datums do not match the verified sides")
+    elif rec.get("status") == "CONFLICT" and not rec.get("conflict"):
+        p.append("CONFLICT needs a stated conflict")
+    elif rel.get("status"):
+        p.append("only a VERIFIED record may carry a relationship")
+    return p
+
+
+def verified_conversion(rec: dict | None) -> tuple[float, str, str] | None:
+    """(navd88_minus_ngvd29_ft, level_datum, reference_datum) for a fully verified CONVERTED record, else None. Never an estimate."""
+    if not rec or rec.get("status") != "VERIFIED" or (rec.get("relationship") or {}).get("status") != "CONVERTED" or verification_problems("", rec):
+        return None
+    r = rec["relationship"]
+    return float(r["navd88MinusNgvd29Ft"]), normalize_datum(r["levelDatum"]), normalize_datum(r["referenceDatum"])
+
+
+def assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w=None, verification=None):
     """Datum relationship for one lake -> (assessment, level_datum, level_verified, level_note, ref_datum, ref_verified, ref_rule, blocked_extra).
-    Order: per-lake reviewed override > operator rules (TVA system, CWMS same location) > both-datums-stated > UNKNOWN."""
+    Order: per-lake reviewed override > operator rules (TVA system, CWMS same location) > both-datums-stated > UNKNOWN.
+    A NGVD29/NAVD88 pair is converted only when `verification` holds a fully VERIFIED CONVERTED record for this lake whose datums match."""
     prov = ((b or {}).get("provider") or "").lower()
     ld, ld_ver, ld_note = level_datum_for(b, table) if b else (None, False, "no binding")
     rd, rd_ver, rd_pat = reference_datum_for(src_str, table)
@@ -120,7 +187,16 @@ def assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w=None)
                             f"reviewed-override:{ov.get('method') or 'manual'}:{ov.get('promotedFrom') or 'datum_lake_overrides.json'}",
                             [e["url"] for e in (ov.get("evidence") or []) if isinstance(e, dict) and str(e.get("url", "")).startswith("http")][:2])
         return a, normalize_datum(ov.get("levelDatum")) or ld, True, "reviewed override", normalize_datum(ov.get("referenceDatum")) or rd, True, "override", blocked
-    a = assess(ld, rd, same_source=same_src, same_operator_system=same_sys, level_datum_verified=ld_ver, reference_datum_verified=rd_ver)
+    vrec = (verification or {}).get(lid)
+    vc = verified_conversion(vrec)
+    conv_ft = vc[0] if vc and ld_ver and rd_ver and (ld, rd) == (vc[1], vc[2]) else None
+    a = assess(ld, rd, same_source=same_src, same_operator_system=same_sys, level_datum_verified=ld_ver, reference_datum_verified=rd_ver,
+               navd88_minus_ngvd29_ft=conv_ft)
+    if a.status == "CONVERTED":
+        a.basis = "datum-verification:records/datum_verification.json"
+        a.evidence_urls = [e["url"] for s in ("level", "reference") for e in (vrec["sides"][s].get("evidence") or [])
+                           if str(e.get("url", "")).startswith("http")][:2]
+        return a, ld, ld_ver, ld_note, rd, rd_ver, rd_pat, blocked
     if a.usable:
         a.basis = ("cwms-location-same-record" if same_src else "tva-operator-system" if same_sys else
                    f"stated-datums:level[{ld_note[:60]}]+reference[{(rd_pat or 'cwms-location-api')[:60]}]")
@@ -158,6 +234,7 @@ def build(paths: dict, manifest_version: str) -> dict:
     curves = R.load_curves(paths["stage_area"]) if paths.get("stage_area") and os.path.exists(paths["stage_area"]) else {}
     twdb_ver = proposals.twdb_updates(paths.get("twdb_reference_pools")) if paths.get("twdb_reference_pools") else {}
     twdb_all = (proposals.load(paths["twdb_reference_pools"]) or {}).get("lakes", {}) if paths.get("twdb_reference_pools") else {}
+    verification = load_datum_verification(paths.get("datum_verification"))
     conv = {r["id"]: float(r["shift_ft_ngvd29_to_navd88"]) for r in read_csv(paths["datum_shift"]) if r.get("shift_ft_ngvd29_to_navd88")}
     out = []
     for lk in directory:
@@ -189,7 +266,7 @@ def build(paths: dict, manifest_version: str) -> dict:
         elif cap not in C.ALLOWED_LEVEL_CAPABILITIES and lstat != "LIVE_REVIEWED":
             blocked.append("LEVEL_SOURCE_NOT_DIRECT")
         conv_ft = conv.get(lid)
-        a, ld, ld_ver, ld_note, rd, rd_ver, rd_pat, extra = assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w)   # conversion NOT enabled
+        a, ld, ld_ver, ld_note, rd, rd_ver, rd_pat, extra = assess_candidate(lid, lk, b, src_str, table, cwms_locs, overrides, a2w, verification)  # converts only on a VERIFIED record
         blocked.extend(extra)
         if lstat != "NONE" and not a.usable and not extra:
             blocked.append("DATUM_UNKNOWN" if a.status == "UNKNOWN" else ("DATUM_CONVERSION_NOT_ENABLED" if (ld and rd and {ld, rd} == {"NGVD29", "NAVD88"}) else "DATUM_INCOMPATIBLE"))
