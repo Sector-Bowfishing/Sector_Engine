@@ -50,10 +50,12 @@
     "depth",
     "generation",
     "lake-brain",
+    "moon",
     "sector-intelligence",
     "vegetation",
     "water-clarity",
     "water-temp",
+    "weather",
     "wind"
    ],
    "lakeFleet/{k}/lakeId": [
@@ -61,10 +63,12 @@
     "depth",
     "generation",
     "lake-brain",
+    "moon",
     "sector-intelligence",
     "vegetation",
     "water-clarity",
     "water-temp",
+    "weather",
     "wind"
    ],
    "snapshots/{k}/latest/lakeId": [
@@ -72,10 +76,12 @@
     "depth",
     "generation",
     "lake-brain",
+    "moon",
     "sector-intelligence",
     "vegetation",
     "water-clarity",
     "water-temp",
+    "weather",
     "wind"
    ]
   },

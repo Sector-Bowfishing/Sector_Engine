@@ -1,0 +1,45 @@
+{
+ "schemaVersion": "1.0.0",
+ "brainId": "moon",
+ "gaps": [
+  {
+   "id": "MOON-VAL-001",
+   "type": "validation",
+   "title": "The darkness class is a stated rule, not validated against measured on-water light",
+   "whyItMatters": "DARKNESS_RULE_V1 reuses the Engine's DarknessFactor constants (cloud knee 50 %, span 50 %, city glow 0.3) and its label thresholds. Nobody has measured whether the moonlight index orders real nights by on-water illuminance.",
+   "bowfisherDecision": "Which nights are darkest on the water.",
+   "currentEvidence": ["brains/moon/contracts/moon-night-light-v1.json"],
+   "stopCondition": "Stop when a preregistered comparison against an independent illuminance dataset (public sky-quality or lux records near fleet lakes) is scored, or the owner rejects the need.",
+   "expectedOutput": "A scored comparison and a keep/adjust recommendation for DARKNESS_RULE_V1.",
+   "humanOrFieldValidationRequired": {"required": false, "fieldDataRole": "OPTIONAL_EVIDENCE", "what": "OPTIONAL: sky-quality-meter readings from a boat may be added as evidence; they are never required."},
+   "status": "OPEN",
+   "owner": "moon-lane"
+  },
+  {
+   "id": "MOON-INP-001",
+   "type": "evidence",
+   "title": "Cloud cover input waits on the Weather Brain contract",
+   "whyItMatters": "Until the Weather Brain publishes a contract, every night is answered MOON_ONLY (the clear-sky upper bound). The provisional input moon-weather-cloud-input-v0 defines what is needed.",
+   "bowfisherDecision": "Whether an overcast night with a bright moon is still dark on the water.",
+   "currentEvidence": ["brains/moon/contracts/moon-night-light-v1.json"],
+   "stopCondition": "Stop when the Weather Brain's contract is mapped to the Moon input and declared in brain.json consumes.",
+   "expectedOutput": "A consumes entry for the Weather Brain and a mapping test.",
+   "humanOrFieldValidationRequired": {"required": false, "fieldDataRole": "OPTIONAL_EVIDENCE", "what": "Another Brain's contract (not field data)."},
+   "status": "OPEN",
+   "owner": "moon-lane"
+  },
+  {
+   "id": "MOON-INP-002",
+   "type": "product",
+   "title": "No per-lake skyglow input",
+   "whyItMatters": "Cloud reflects city glow near towns instead of blocking moonlight. The rule uses the Engine's fixed default (0.3) for every lake.",
+   "bowfisherDecision": "Whether a lake near a city is darker under cloud.",
+   "currentEvidence": ["Sources/SectorEngine/Engine/Adapters/ConditionsInputBuilder.swift defaultCityGlow"],
+   "stopCondition": "Stop when a public artificial-sky-brightness dataset is bound per lake, or the owner decides the default is enough.",
+   "expectedOutput": "A per-lake skyglow factor in the knowledge release, or a recorded decision to keep the default.",
+   "humanOrFieldValidationRequired": {"required": false, "fieldDataRole": "OPTIONAL_EVIDENCE", "what": "Approval or decision (not field data)."},
+   "status": "OPEN",
+   "owner": "moon-lane"
+  }
+ ]
+}
