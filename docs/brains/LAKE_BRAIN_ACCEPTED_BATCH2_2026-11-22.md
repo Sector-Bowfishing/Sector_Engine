@@ -21,7 +21,7 @@
 **History offsets (measured, recorded with their basis in the history entry's `note`).** `offsetFt` is added to the history reading:
 - Lake Washington WA: `LWSC.Elev-Lake.Inst.1Hour.0.NWSRADIO-RAW` carried a leaked comparator annotation in its series id (`(+0.36ft over 1874d, sd 0.08)`); the id is now clean and +0.36 ft (1874-day mean, sd 0.08 ft) is recorded as `offsetFt`. The sign is as the comparator reported it; direction to be confirmed on the Mac mini.
 - Rend Lake IL: -0.55 ft (datman-rev reads +0.55 ft above live over 71 days, so the history is shifted down by 0.55 ft).
-- Toledo Bend Reservoir TX: -0.18 ft (two-gauge mean, USGS 08025350 NGVD29 vs live 312914093422701 NAVD88; VDatum -0.285 ft; Sector_Ops #51 comment 7076370263).
+- Toledo Bend Reservoir TX: -0.18 ft (two-gauge check, live 312914093422701 NAVD88 minus history USGS 08025350 NGVD29: n=9, mean -0.178 ft, sd 0.0995 ft; VDatum -0.285 ft; Sector_Ops #51 comment 7076370263). This checks the two level gauges against each other, which is what the history offset needs; it is not the Depth pool-datum conversion, which #226 left off.
 - The engine applies `offsetFt` only to `usgsDaily`, `hadsDaily` and `cdecDaily` history. Lake Washington and Rend Lake are `cwmsDaily`, so their offsets are recorded data, not applied by the runner, until `cwmsDaily` gains an offset (follow-up).
 
 **Held out of batch 2 (review of #222; live data needed, Mac mini).**

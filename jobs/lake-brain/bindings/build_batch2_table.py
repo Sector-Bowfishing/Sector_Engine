@@ -85,8 +85,9 @@ HISTORY_OFFSETS = {
     },
     "Toledo Bend Reservoir|TX": {
         "index": 0, "offsetFt": -0.18,
-        "note": "history/live offset -0.18 ft: two-gauge mean, USGS 08025350 (62614, NGVD29) vs live 312914093422701 (62615, NAVD88); "
-                "VDatum gives -0.285 ft (Sector_Ops #51 comment 7076370263)",
+        "note": "history/live offset -0.18 ft: two-gauge check, live 312914093422701 (62615, NAVD88) minus USGS 08025350 (62614, NGVD29), "
+                "n=9, mean -0.178 ft, sd 0.0995 ft (VDatum -0.285 ft; Sector_Ops #51 comment 7076370263, "
+                "docs/cortex/sessions/2026-11-22-depth-datum-verification.md)",
     },
 }
 
