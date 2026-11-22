@@ -5,7 +5,7 @@
   "store": "PACKAGED_IN_IMAGE",
   "owner": "lake-brain",
   "approval": {
-    "status": "NOT_RECORDED",
+    "status": "APPROVED",
     "record": "docs/cortex/approvals/lake-knowledge-2026-11-22.1.md",
     "scope": [
       "INTERNAL",
