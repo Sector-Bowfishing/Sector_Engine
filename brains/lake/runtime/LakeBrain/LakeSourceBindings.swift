@@ -27,12 +27,13 @@ import SectorEngine
 
 /// One named water-level series.
 public struct LevelSeriesRef: Codable, Equatable, Sendable {
-    public enum Provider: String, Codable, Sendable { case tva, cwms, usgs, a2w, rise, nwps }
+    public enum Provider: String, Codable, Sendable { case tva, cwms, usgs, a2w, rise, nwps, cdec }
     public var provider: Provider
     public var capability: LevelSourceCapability
-    /// TVA LocationID, CWMS office, USGS site number, Access2Water `DISTRICT:LocationCode`, RISE item id or NWS location id.
+    /// TVA LocationID, CWMS office, USGS site number, Access2Water `DISTRICT:LocationCode`, RISE item id, NWS location id or CDEC station id.
     public var station: String
-    /// CWMS / Access2Water time-series id, USGS parameter code, NWPS observed pedts (e.g. `HPIRZ`); nil for TVA and RISE.
+    /// CWMS / Access2Water time-series id, USGS parameter code, NWPS observed pedts (e.g. `HPIRZ`), CDEC `SENSOR[:E|H|D]` (e.g. `6:H`);
+    /// nil for TVA and RISE.
     public var series: String?
     public var cadenceMin: Int
     public var lagMin: Int
@@ -49,6 +50,7 @@ public struct LevelSeriesRef: Codable, Equatable, Sendable {
         case .a2w: return "a2w:\(station):\(series ?? "")"
         case .rise: return "rise:\(station)"
         case .nwps: return "nwps:\(station):\(series ?? "")"
+        case .cdec: return "cdec:\(station):\(series ?? "6")"
         }
     }
 
@@ -56,6 +58,7 @@ public struct LevelSeriesRef: Codable, Equatable, Sendable {
         switch provider {
         case .tva: return "TVA"; case .cwms: return "USACE CWMS"; case .usgs: return "USGS"
         case .a2w: return "USACE Access2Water"; case .rise: return "USBR RISE"; case .nwps: return "NWS NWPS"
+        case .cdec: return "California DWR CDEC"
         }
     }
 }
@@ -91,6 +94,9 @@ public enum LakeHistorySource: Codable, Equatable, Sendable {
     case riseDaily(item: String)
     /// IEM HADS archive of an NWS location id (pool elevation `HP…`), daily median of each lake-local day.
     case hadsDaily(lid: String, pe: String, offsetFt: Double)
+    /// California DWR CDEC reservoir elevation (sensor 6). `dur` "D" keeps CDEC's daily value per date; "H" / "E" are reduced to the
+    /// median of each lake-local day. `offsetFt` is a datum shift.
+    case cdecDaily(station: String, sensor: String, dur: String, offsetFt: Double)
 }
 
 public struct LakeSourceBinding: Codable, Equatable, Sendable {

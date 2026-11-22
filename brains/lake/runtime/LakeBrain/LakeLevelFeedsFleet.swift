@@ -467,6 +467,8 @@ extension PublicLakeLevelFeeds {
             return await fleet.riseDaily(item: item, since: since)
         case .hadsDaily(let lid, let pe, let offset):
             return await fleet.hadsDaily(lid: lid, pe: pe, offsetFt: offset, since: since, now: now, timeZone: timeZone)
+        case .cdecDaily(let station, let sensor, let dur, let offset):
+            return await fleet.cdecDaily(station: station, sensor: sensor, dur: dur, offsetFt: offset, since: since, now: now, timeZone: timeZone)
         default:
             return nil
         }
@@ -487,6 +489,9 @@ extension LakeHistorySource {
         case .riseDaily(let item): return "rise:\(item) (daily)"
         case .hadsDaily(let lid, let pe, let off):
             return "hads:\(lid):\(pe) (IEM HADS archive, daily median)" + (off != 0 ? ", datum offset \(String(format: "%.2f", off)) ft" : "")
+        case .cdecDaily(let st, let sensor, let dur, let off):
+            return "cdec:\(st):\(sensor):\(dur) (\(dur == "D" ? "daily values" : "daily median of \(dur == "H" ? "hourly" : "event") values"))"
+                + (off != 0 ? ", datum offset \(String(format: "%.2f", off)) ft" : "")
         }
     }
 }

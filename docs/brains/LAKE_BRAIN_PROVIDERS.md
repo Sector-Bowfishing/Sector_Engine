@@ -2,7 +2,7 @@
 
 Status: implemented and exercised read-only against live data on 2026-10-13. Nothing here publishes to any RTDB or bucket; the live
 exercise used `LakeBrainJob --dry-run DIR --include-candidates`, which writes local files only.
-Code: `brains/lake/runtime/LakeBrain/LakeLevelFeeds.swift` (TVA, CWMS, USGS live) and `LakeLevelFeedsFleet.swift` (everything below).
+Code: `brains/lake/runtime/LakeBrain/LakeLevelFeeds.swift` (TVA, CWMS, USGS live), `LakeLevelFeedsFleet.swift` (Access2Water, RISE, NWPS, HADS, USGS history) and `LakeLevelFeedsCDEC.swift` (CDEC, section 4).
 Bindings: `docs/brains/LAKE_BRAIN_INTEGRATION.md` section 5.
 
 ## 1. Provider table
@@ -15,6 +15,7 @@ Bindings: `docs/brains/LAKE_BRAIN_INTEGRATION.md` section 5.
 | `a2w` USACE Access2Water | `https://water.usace.army.mil/cda/reporting/providers/{district}/locations` (ONE GET per district, shared by every lake in it and by the operator-level reads) | none | ft | series interval (floored at 60) / 120 min | latest value + 24 h change per series; operator `levels[]` |
 | `rise` USBR RISE | `https://data.usbr.gov/rise/api/result?itemId=&dateTime[after]=&itemsPerPage=2000` (`Accept: application/vnd.api+json`) | none | ft | 1440 / 2880 min (about 48 h latency) | daily lake/reservoir elevation; decades of history |
 | `nwps` NWS NWPS | `https://api.water.noaa.gov/nwps/v1/gauges/{LID}/stageflow/observed` | none, User-Agent required | ft | 60 / 120 min | about 30 days of hourly pool elevation (`HP…`) |
+| `cdec` California DWR CDEC (reader only, no lake bound yet: section 4) | `https://cdec.water.ca.gov/dynamicapp/req/JSONDataServlet?Stations={ID}&SensorNums=6&dur_code={E\|H\|D}&Start=yyyy-MM-dd&End=yyyy-MM-dd` | none | ft (`units` `FEET`; sensor 6 only) | hourly `H`: 60 / 120 min suggested; daily `D`: 1440 / 1440 | California reservoir pool elevation; daily history (`cdecDaily`) |
 | HADS (history only) IEM | `https://mesonet.agron.iastate.edu/cgi-bin/request/hads.py?stations=&sts=&ets=&what=txt&delim=comma` | none | ft | n/a | the NWS DCP archive of an NWPS location id, about 2010-12 onward |
 | NWS forecast grid (rain signal only) | `https://api.weather.gov/points/{lat},{lon}` → its `forecastGridData`, layer `quantitativePrecipitation` | none, User-Agent required (`LakeFeedHTTP.userAgent`, the Sector-LakeBrain contact string) | mm (inches = mm / 25.4) | one gridpoint request per lake per run, spaced 0.25 s; the point → grid map is kept in the archive (`signals/nws-points.json`); usually 6 h periods | forecast rain in the next 12 h at the lake; sets the adaptive freshness window (`LakeLevelValidity`), never the level. Unknown (outside NWS coverage, outage) is treated conservatively |
 
@@ -35,6 +36,9 @@ Not implemented: **TWDB** (no strict-verified lake uses it) and **CO-OPS** (Grea
 | RISE writes 0.0 for a missing day; results can be modeled | `result <= 0` and any `resultType` other than `observed` dropped; the history day is the UTC date of the stamp (as in the research) |
 | NWPS `HG` stage vs `HP` pool; `-999` sentinels; flow units | the gauge's `pedts` must start with the binding's pe code; units must be ft; sentinels dropped |
 | IEM HADS rate limit (HTTP 429 above about one request per 15 s) | one process-wide gate (15 s between requests), 3-year chunks newest first, 429 backs off 60 s and doubles; any failed chunk fails the whole pull (no silent hole), the walk stops at the first empty chunk |
+| CDEC sensor 15 is storage (acre-feet), sensor 1 a river stage | only sensor 6 (`RES ELE`, reservoir elevation) is read; any other sensor is refused before a request, and an answer whose `units` are not feet fails as a whole |
+| CDEC `-9999` missing value is a number, not null (often a third of the rows); 0 is a mechanical error | values <= -9000 and exactly 0 dropped; a day with no reading stays missing, never filled |
+| CDEC timestamps have no offset | read as Pacific wall-clock time (America/Los_Angeles, daylight saving applied); daily `D` rows keep the date in their stamp (section 4) |
 | A research history that is a different series from the live level | every run compares the median of the seeded history of the last 365 days with the live level; more than 15 ft sets `historyLiveMismatch:<delta>ft` and an error. The 14 lakes the rules-v2 QA found are held out of the table |
 
 ## 3. Live exercise (2026-10-13, `--dry-run --include-candidates`, read-only)
@@ -67,3 +71,16 @@ What the exercise found and fixed:
 
 Reproduce one lake (local files only): `swift build --product LakeBrainJob && .build/debug/LakeBrainJob --dry-run /tmp/lb --include-candidates --lake "Canton Lake|OK"`.
 
+## 4. CDEC (California DWR) reservoir elevation
+
+Added 2026-11-22. **Reader only:** no lake is bound to CDEC (`LakeBrainCDECTests.testNoLakeIsBoundToCDEC`). Binding a California lake goes through the acceptance gate like every other binding (`LAKE_BRAIN_BINDING_REVIEW_PROTOCOL.md`), and `cdec` is not yet on the bindings-table allow-list (`jobs/lake-brain/bindings/build_bindings_table.py`, Almanor and Berryessa are excluded as `provider-not-allowed`).
+
+- **Source.** California Department of Water Resources, California Data Exchange Center. Endpoint `JSONDataServlet` (above); answer: a JSON array, one object per reading: `stationId`, `durCode`, `SENSOR_NUM`, `sensorType`, `date` and `obsDate` (`yyyy-MM-dd HH:mm`, no offset), `value` (number), `dataFlag`, `units`. Station ids are short codes (`SHA` Shasta, `ORO` Oroville, `FOL` Folsom). No authentication; no published rate limit or quota.
+- **Binding shape.** Live: `provider: cdec`, `station` = the CDEC id, `series` = `6` (hourly) or `6:H`, `6:E` (event, about 15 min), `6:D` (daily); `sourceId` `cdec:{ID}:{series}`. History: `cdecDaily(station, sensor, dur, offsetFt)`, in the generated table `{"kind": "cdecDaily", "station", "sensor", "dur", "offsetFt"}`.
+- **Cadence.** Hourly (`H`) is the usual reservoir series; event (`E`) exists for some stations; daily (`D`) values go back decades for the large reservoirs. History is pulled newest first in windows of 10 years (`D`), 1 year (`H`) or 60 days (`E`), one request at a time; two empty windows in a row end the walk and any failed window fails the whole pull. A daily value is expected for yesterday (the default `expectedLatestDay`).
+- **Time zone.** Stamps carry no offset and are read as Pacific wall-clock time with daylight saving (`LakeFleetClients.cdecTimeZone`). One third-party client documents exactly that (CDEC times "in Pacific Time and Daylight Savings adjustments are reflected"); CDEC's own statement could not be retrieved. If CDEC in fact stamps fixed PST all year, summer readings are read one hour **older** than they are, never fresher, so the freshness rule stays conservative. Confirm on the first live probe (compare a summer hourly stamp with the same reading on the station's CDEC page) before binding a lake.
+- **Missing values.** `-9999` (a number) is dropped, as is anything <= -9000 and an exact 0. `dataFlag` is not interpreted; a station that writes a text flag into `value` yields no reading for that row.
+- **Datum.** CDEC does not state the vertical datum per series; most projects report in their historical datum (typically NGVD29, not NAVD88). The binding review records the datum and sets `datumOffsetFt` (live) / `offsetFt` (history) when it differs from the lake's pool reference.
+- **Health plane.** `cdec` is not yet a declared Lake input (`brain.json` providers, `providers/PROVIDERS.json`, the `lake-brain` job manifest, Swift `BrainOwnership`) and has no source-health record in `LakeBrainRunner.sourceRecords`; that registration belongs with the first accepted CDEC binding (operating contract section 10: new providers need the owner's approval).
+- **Access note.** CDEC's `robots.txt` disallows automated crawling of `/dynamicapp/`; the Brain is not a crawler (it requests named series only, a few requests per lake per run), but the owner should confirm this use before a lake is bound.
+- **Tests.** `brains/lake/tests/swift/LakeBrainCDECTests.swift` with `brains/lake/tests/fixtures/cdec/SHA_6_H.json` (shape of the JSONDataServlet answer with a `-9999` row; assembled from the documented format because the host was not reachable from the authoring session, to be replaced by a recorded answer). No test makes a network call.

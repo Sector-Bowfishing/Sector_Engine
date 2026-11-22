@@ -88,7 +88,7 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
     let usgsBase = "https://waterservices.usgs.gov/nwis/iv/"
     /// Read-only access to the shared TVA archive (another lane's bucket).
     let sharedArchive: (String) -> LakeBrainArchive?
-    /// Access2Water / RISE / NWPS / HADS / USGS-history clients (LakeLevelFeedsFleet.swift).
+    /// Access2Water / RISE / NWPS / HADS / USGS-history clients (LakeLevelFeedsFleet.swift) and CDEC (LakeLevelFeedsCDEC.swift).
     let fleet = LakeFleetClients()
     private var guideCache: [String: [TVAGuideRow]] = [:]
     private let lock = NSLock()
@@ -136,6 +136,7 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
         case .a2w: return await fleet.a2wRecent(ref)
         case .rise: return await fleet.riseRecent(ref, hours: hours, now: now)
         case .nwps: return await fleet.nwpsRecent(ref, since: now.addingTimeInterval(-Double(hours) * 3600))
+        case .cdec: return await fleet.cdecRecent(ref, hours: hours, now: now)
         }
     }
 
@@ -202,7 +203,7 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
                 chunkStart = chunkEnd
             }
             return LakeDailyHistory.dedupe(out)
-        case .usgsDaily, .riseDaily, .hadsDaily:
+        case .usgsDaily, .riseDaily, .hadsDaily, .cdecDaily:
             return await fleetDaily(source, since: since, now: now, timeZone: timeZone)
         case .sharedTVAArchive:
             return nil
