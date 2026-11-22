@@ -27,7 +27,7 @@ def level_from_lake_state(ls: dict | None) -> LevelObservation | None:
     return LevelObservation(
         elevation_ft=ls.get("currentElevationFt"), unit=ls.get("unit", "ft"), datum=ls.get("datum"),
         observed_at=C.parse_iso(ls.get("observationTime")), capability=ls.get("sourceCapability"), kind=ls.get("kind"),
-        lake_difference_ft=ls.get("differenceFromNormalPoolFt"))
+        lake_difference_ft=ls.get("differenceFromNormalPoolFt"), seasonal_band=ls.get("seasonalBand"), source_fallback=bool(ls.get("sourceFallback")))
 
 
 def reference_from_candidate(rec: dict) -> ReferencePool:
@@ -40,6 +40,8 @@ def reference_from_candidate(rec: dict) -> ReferencePool:
 def input_fingerprint(rec: dict, ls: dict | None, manifest_version: str) -> str:
     key = [rec.get("lakeId"), (rec.get("reference") or {}).get("poolFt"), (rec.get("datum") or {}).get("status"), manifest_version, C.BRAIN_VERSION,
            (ls or {}).get("observationTime"), (ls or {}).get("currentElevationFt"), (ls or {}).get("kind"), (ls or {}).get("sourceCapability")]
+    if (rec.get("reference") or {}).get("basis") == "seriesMedian":          # the run-time reference is an input too (fullPool keys are unchanged)
+        key += [(ls or {}).get("seasonalBand"), bool((ls or {}).get("sourceFallback"))]
     return hashlib.sha256(json.dumps(key, sort_keys=True, default=str).encode()).hexdigest()[:16]
 
 
@@ -53,18 +55,30 @@ def plan(published: dict | None, rec: dict, ls: dict | None, manifest_version: s
     return {"action": "SKIP", "reasons": ["inputs unchanged"], "fingerprint": fp}
 
 
+_REF_WORDS = {   # basis -> (what the reference is called, which depths the shift applies to)
+    "fullPool": ("its reference pool", "depths measured at the reference pool"),
+    "seriesMedian": ("its usual level for this time of year (this gauge's own seasonal median)", None),
+    "lowWaterDatum": ("Low Water Datum (IGLD 1985)", "charted depths (referenced to Low Water Datum)"),
+}
+
+
 def _facts(res: ShiftResult, rec: dict) -> list[str]:
     if res.mode != "shiftOnly":
         return []
     s = res.shift_ft
+    name, depths = _REF_WORDS.get(res.reference_basis or "fullPool", _REF_WORDS["fullPool"])
     if abs(s) < 0.05:
-        move = "at its reference pool"
+        move = f"at {name}"
     elif s < 0:
-        move = f"{abs(s):.1f} ft below its reference pool"
+        move = f"{abs(s):.1f} ft below {name}"
     else:
-        move = f"{s:.1f} ft above its reference pool"
-    out = [f"The lake is {move}; depths measured at the reference pool should be read as about {s:+.1f} ft (+/- {res.sigma_ft:.1f} ft). "
-           f"This is a shift, not a measured depth for any particular spot."]
+        move = f"{s:.1f} ft above {name}"
+    if depths is None:                                                   # seriesMedian: a level fact only, never a depth adjustment
+        out = [f"The lake is {move} (+/- {res.sigma_ft:.1f} ft). This is a level fact only: it must not be applied to charted or contour depths, "
+               f"which are referenced to a fixed elevation, not to this gauge's seasonal median."]
+    else:
+        out = [f"The lake is {move}; {depths} should be read as about {s:+.1f} ft (+/- {res.sigma_ft:.1f} ft). "
+               f"This is a shift, not a measured depth for any particular spot."]
     if not res.resolvable:
         out.append("The shift is within the uncertainty of the reference and level inputs; treat it as unresolved.")
     return out
@@ -83,6 +97,16 @@ def _effective_zones(z, res, ref) -> dict:
     if sd is None or rd is None or sd != rd:
         return {"available": False, "reason": "SURVEY_REFERENCE_DATUM_NOT_COMPATIBLE"}
     return Z.effective_zones(z, res.shift_ft + (ref.pool_ft - z.reference_pool_ft), res.sigma_ft)
+
+
+def _series_reference(lvl: LevelObservation | None, rec: dict) -> dict:
+    """What the seriesMedian reference is and the run-time median it used (Lake Brain seasonalBand). Rules: contract.SERIES_MEDIAN_*."""
+    b = (lvl.seasonal_band if lvl else None) or {}
+    out = {"statistic": "median (p50) of this gauge's daily levels", "source": "lake-brain states/lake seasonalBand",
+           "windowDays": C.SERIES_MEDIAN_WINDOW_DAYS, "minBasisYears": C.SERIES_MEDIAN_MIN_YEARS, "minSampleCount": C.SERIES_MEDIAN_MIN_SAMPLES}
+    if b:
+        out["band"] = {k: b.get(k) for k in ("p50", "basisYears", "windowDays", "sampleCount") if b.get(k) is not None}
+    return out
 
 
 def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_version: str = "unversioned", brain_version: str = C.BRAIN_VERSION) -> tuple[dict, dict]:
@@ -105,6 +129,8 @@ def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_v
         "reference": {k: v for k, v in {
             "referencePoolFt": ref.pool_ft, "referencePoolBasis": ref.basis, "referencePoolConfidence": ref.confidence,
             "referencePoolDatum": ref.datum, "referencePoolSource": ref.source,
+            "referenceMeaning": (C.REFERENCE_BASES.get(ref.basis) if ref.basis in C.NEW_REFERENCE_BASES else None),
+            "seriesMedian": (_series_reference(lvl, rec) if ref.basis == "seriesMedian" else None),
             "datumAssessment": (ref.assessment.as_dict() if ref.assessment else None)}.items() if v is not None},
         "effectiveDepth": eff,
         "coverage": {k: v for k, v in {
@@ -125,6 +151,9 @@ def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_v
 
     # Contour zones: only for tier A/B/C lakes whose manifest carries supported cumulative shares.
     zr = rec.get("referenceZones")
+    zones_withheld = ref.basis != "fullPool"                                  # zones are defined at full pool: never shifted from a median or the LWD
+    if zones_withheld:
+        zr = None
     if zr and ok and tier in ("A", "B", "C"):
         kind_z = zr.get("kind", "contour")
         curve = R.load_curves().get(lid) if kind_z == "stage-area-rating" else None
@@ -157,8 +186,15 @@ def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_v
         limitations.append("Contour source terms do not (yet) permit customer-facing derived numbers: internal / shadow use only.")
     if tier in ("D", "UNKNOWN"):
         limitations.append("No measured or contour depth evidence for this lake: depth zones, flats and drop-offs are unknown, and modeled bathymetry is not used.")
-    if ok and "pool" in C.SIGMA_ASSUMED:
-        limitations.append("Uncertainty components (pool, level, datum) are research estimates, not instrument specifications.")
+    if ref.basis == "seriesMedian":
+        limitations.append("The reference is this gauge's own seasonal median, not full pool: the shift says how far the lake is from its usual level for this time of year.")
+    elif ref.basis == "lowWaterDatum":
+        limitations.append("The reference is the Great Lakes Low Water Datum (chart datum, IGLD 1985), not full pool.")
+    if zones_withheld:
+        limitations.append("Depth zones are withheld: they are defined at full pool and this lake's reference is not a full-pool elevation.")
+    assumed = [k for k in res.sigma_parts if k in C.SIGMA_ASSUMED] if ok else []
+    if assumed:
+        limitations.append(f"Uncertainty components ({', '.join(assumed)}) are research estimates, not instrument specifications.")
     state["limitations"] = limitations
 
     stale_input = (lake_state or {}).get("freshness", {}).get("stale") is True
@@ -183,7 +219,7 @@ def build_state(rec: dict, lake_state: dict | None, now: datetime, *, manifest_v
     if not ok:
         flags.append("shiftUnavailable")
     datum_prov = {k: v for k, v in {
-        "status": (rec.get("datum") or {}).get("status"), "confidence": (rec.get("datum") or {}).get("evidenceConfidence") or ("high" if (rec.get("datum") or {}).get("status") in ("SAME_SOURCE", "SAME_DATUM") else None),
+        "status": (rec.get("datum") or {}).get("status"), "confidence": (rec.get("datum") or {}).get("evidenceConfidence") or ("high" if (rec.get("datum") or {}).get("status") in ("SAME_SOURCE", "SAME_DATUM", "SAME_SERIES") else None),
         "basis": (rec.get("datum") or {}).get("basis"), "evidenceUrls": (rec.get("datum") or {}).get("evidenceUrls")}.items() if v}
     lic = rec.get("licence") or {}
     state["provenance"] = {

@@ -8,6 +8,8 @@ Statuses
                 reservoir elevation); the operator does not NAME the datum, so the relationship is inferred but internally consistent. Small sigma.
   SAME_DATUM    both datums are known (document-verified or explicitly stamped on the data) and equal.
   CONVERTED     datums known and different, and an explicit conversion (ft, NAVD88 - NGVD29) was supplied. Adds sigma.
+  SAME_SERIES   the reference is the level series' own seasonal median (reference basis `seriesMedian`); one gauge, one datum by
+                construction, so no datum is needed (owner decision 2026-11-22, Sector_Ops #51 comment 7075545102).
   INCOMPATIBLE  datums known and different, no conversion supplied.
   UNKNOWN       either side unknown / per-site / unverified. Includes `LOCAL` and `PROJECT` datums unless both sides name the same one.
 """
@@ -18,11 +20,12 @@ from dataclasses import dataclass, field
 
 from . import contract as C
 
-USABLE = ("SAME_SOURCE", "SAME_OPERATOR_SYSTEM", "SAME_DATUM", "CONVERTED")
+USABLE = ("SAME_SOURCE", "SAME_OPERATOR_SYSTEM", "SAME_DATUM", "CONVERTED", "SAME_SERIES")
 
 _ALIASES = {
     "NGVD29": "NGVD29", "NGVD 29": "NGVD29", "NGVD1929": "NGVD29", "NGVD": "NGVD29", "MSL29": "NGVD29",
     "NAVD88": "NAVD88", "NAVD 88": "NAVD88", "NAVD1988": "NAVD88",
+    "IGLD85": "IGLD85", "IGLD 85": "IGLD85", "IGLD1985": "IGLD85", "IGLD 1985": "IGLD85",   # International Great Lakes Datum 1985 (never bare "IGLD": 1955/1985/2020 differ)
     "LOCAL": "LOCAL", "PROJECT": "PROJECT", "PER_SITE": "PER_SITE",
 }
 
@@ -70,12 +73,14 @@ class DatumAssessment:
         return d
 
 
-def assess(level_datum, reference_datum, *, same_source: bool = False, same_operator_system: bool = False, level_datum_verified: bool = True,
+def assess(level_datum, reference_datum, *, same_source: bool = False, same_operator_system: bool = False, same_series: bool = False, level_datum_verified: bool = True,
            reference_datum_verified: bool = True, navd88_minus_ngvd29_ft: float | None = None) -> DatumAssessment:
     """Decide whether `level - reference` is defensible.
 
     `*_verified` means the datum is document- or data-stamped, not an assumption. An unverified datum is treated as unknown.
     `navd88_minus_ngvd29_ft` = (elevation in NAVD88) - (elevation of the same point in NGVD29) at this lake."""
+    if same_series:
+        return DatumAssessment("SAME_SERIES", C.SIGMA_DATUM["SAME_SERIES"], 0.0, ["reference is the level series' own seasonal median; no datum needed"])
     if same_source:
         return DatumAssessment("SAME_SOURCE", C.SIGMA_DATUM["SAME_SOURCE"], 0.0, ["reference and level share one operator record"])
     if same_operator_system:
