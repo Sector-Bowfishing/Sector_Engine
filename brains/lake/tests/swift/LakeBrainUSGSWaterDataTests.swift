@@ -67,6 +67,16 @@ final class LineLog: @unchecked Sendable {
     private var all: [String] = []
     func add(_ s: String) { lock.lock(); all.append(s); lock.unlock() }
     var lines: [String] { lock.lock(); defer { lock.unlock() }; return all }
+
+    /// The first line matching `pred`, waiting up to `timeout` for a detached shadow task to log it.
+    func waitFor(_ timeout: TimeInterval = 5, _ pred: (String) -> Bool) async -> String? {
+        let end = Date().addingTimeInterval(timeout)
+        while Date() < end {
+            if let l = lines.first(where: pred) { return l }
+            try? await Task.sleep(nanoseconds: 20_000_000)
+        }
+        return lines.first(where: pred)
+    }
 }
 
 final class LakeBrainUSGSWaterDataTests: XCTestCase {
@@ -408,9 +418,10 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
         let s = await shadow.recent(ref("NAVD88"), hours: 24), l = await legacy.recent(ref("NAVD88"), hours: 24)
         XCTAssertEqual(s.observations, l.observations)
         XCTAssertEqual(s.error, l.error)
-        let lines = log.lines
-        XCTAssertTrue(lines.contains { $0.hasPrefix("[usgs-shadow] site=04082500 param=00065 kind=site verdict=agree") }, "\(lines)")
-        XCTAssertTrue(lines.contains { $0.hasPrefix("[usgs-shadow] site=04082500 param=00065 kind=live verdict=agree") }, "\(lines)")
+        // The site comparison is a detached task (it never holds up the legacy read), so its line may follow the live one.
+        let site = await log.waitFor { $0.hasPrefix("[usgs-shadow] site=04082500 param=00065 kind=site verdict=agree") }
+        XCTAssertNotNil(site, "\(log.lines)")
+        XCTAssertTrue(log.lines.contains { $0.hasPrefix("[usgs-shadow] site=04082500 param=00065 kind=live verdict=agree") }, "\(log.lines)")
     }
 
     func testShadowServesLegacyEvenWhenV1Disagrees() async throws {

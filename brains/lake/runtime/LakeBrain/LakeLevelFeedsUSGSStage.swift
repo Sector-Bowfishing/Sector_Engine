@@ -112,15 +112,31 @@ struct LakeUSGSStageClient: Sendable {
         return await v1Cache.site(site) { s in await client.siteDatum(s) }
     }
 
-    /// The site record the switch says to use; in `shadow` the legacy record is used and the v1 record compared (kind=site).
+    /// The site record the switch says to use. In `shadow` it is the legacy record, returned without waiting on v1: the v1 record is
+    /// compared in its own detached shadow task (kind=site), so a slow `monitoring-locations` read never delays a legacy read.
     func siteDatumByMode(_ site: String) async -> USGSSiteDatumResult {
+        switch mode {
+        case .legacy: return await siteDatum(site)
+        case .v1: return await siteDatumV1(site)
+        case .shadow:
+            shadowSite(site)
+            return await siteDatum(site)
+        }
+    }
+
+    /// Starts the kind=site comparison and returns at once. The legacy record comes from the run's site cache (the read the caller
+    /// is making joins it), so this adds no legacy request.
+    func shadowSite(_ site: String) {
         let me = self
-        return await LakeUSGSRouting.run(mode, governor: governor,
-            legacy: { await siteDatum(site) },
+        LakeUSGSRouting.detached(governor: governor,
             v1: { await me.siteDatumV1(site) },
-            adopt: { $0 },
-            compare: { l, o in
-                guard let o else { return LakeUSGSShadow.line(site: site, param: Self.gageHeight, kind: "site", .timeout(legacyN: 1)) }
+            compare: { o in
+                let l = await me.siteDatum(site)
+                guard let o else {
+                    let n: Int
+                    if case .ok = l { n = 1 } else { n = 0 }
+                    return LakeUSGSShadow.line(site: site, param: Self.gageHeight, kind: "site", .timeout(legacyN: n))
+                }
                 return LakeUSGSShadow.line(site: site, param: Self.gageHeight, kind: "site", LakeUSGSShadow.compareSite(legacy: l, ogc: o))
             },
             log: shadowLog)
@@ -183,8 +199,8 @@ struct LakeUSGSStageClient: Sendable {
         }
     }
 
-    /// The WaterServices reads (the `legacy` switch value). The altitude comes from `altitude(site:expectedDatum:)`, which in `shadow`
-    /// also compares the v1 site record.
+    /// The WaterServices reads (the `legacy` switch value). The altitude comes from `altitude(site:expectedDatum:)`: the legacy site
+    /// record, with the v1 record compared in a detached task in `shadow` (never awaited here).
     func recentLegacy(_ ref: LevelSeriesRef, hours: Int) async -> FeedResult {
         let site = ref.station
         let (alt, refusal) = await altitude(site: site, expectedDatum: ref.series)
