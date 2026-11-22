@@ -52,6 +52,16 @@ public enum LakeUSGSAPIMode: String, Sendable, CaseIterable {
 
 // MARK: - Shadow time bounds
 
+/// Where shadow routing reads the time and sleeps while it waits for v1. Always `.system` in production; a test injects a clock
+/// that records exact waits, so budget accounting does not depend on how late a busy machine wakes a sleeping task.
+struct LakeUSGSShadowClock: Sendable {
+    let now: @Sendable () -> Date
+    let sleep: @Sendable (TimeInterval) async -> Void
+
+    static let system = LakeUSGSShadowClock(now: { Date() },
+                                            sleep: { try? await Task.sleep(nanoseconds: UInt64($0 * 1_000_000_000)) })
+}
+
 /// Bounds what `shadow` may cost a run. The Lake Brain job evaluates up to 3 lakes at a time (`LakeBrainRunOptions.concurrency`), each
 /// lake's reads one after another, under the Cloud Run task timeout of 60 min (`brains/lake/deploy/deploy-job.sh`); there is no
 /// in-process wall-clock limit. In shadow the v1 read runs concurrently with the legacy one; once legacy has answered, the run waits
@@ -68,6 +78,8 @@ final class LakeUSGSShadowGovernor: @unchecked Sendable {
     let hasKey: Bool
     /// 429s (retries included) without a key after which shadow is off.
     let rateLimitThreshold: Int
+    /// Measures the time spent waiting for v1 (`LakeUSGSRouting.run`).
+    let clock: LakeUSGSShadowClock
 
     private let lock = NSLock()
     private var waited: TimeInterval = 0
@@ -76,11 +88,13 @@ final class LakeUSGSShadowGovernor: @unchecked Sendable {
     /// Detached comparisons (kind=site) still running; the job drains them before it exits.
     let detachedShadows = LakeUSGSDetachedShadows()
 
-    init(perReadSeconds: TimeInterval = 20, budgetSeconds: TimeInterval = 300, hasKey: Bool, rateLimitThreshold: Int = 3) {
+    init(perReadSeconds: TimeInterval = 20, budgetSeconds: TimeInterval = 300, hasKey: Bool, rateLimitThreshold: Int = 3,
+         clock: LakeUSGSShadowClock = .system) {
         self.perReadSeconds = perReadSeconds
         self.budgetSeconds = budgetSeconds
         self.hasKey = hasKey
         self.rateLimitThreshold = rateLimitThreshold
+        self.clock = clock
     }
 
     static func fromEnvironment(_ env: [String: String] = ProcessInfo.processInfo.environment) -> LakeUSGSShadowGovernor {
@@ -144,7 +158,7 @@ final class LakeUSGSPending<U: Sendable>: @unchecked Sendable {
         w?.resume(returning: nil)
     }
 
-    func wait(seconds: TimeInterval) async -> U? {
+    func wait(seconds: TimeInterval, sleep: @escaping @Sendable (TimeInterval) async -> Void = LakeUSGSShadowClock.system.sleep) async -> U? {
         lock.lock()
         if let v = value { settled = true; lock.unlock(); return v }
         lock.unlock()
@@ -155,7 +169,7 @@ final class LakeUSGSPending<U: Sendable>: @unchecked Sendable {
             waiter = c
             lock.unlock()
             Task { [weak self] in
-                try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+                await sleep(seconds)
                 self?.expire()
             }
         }
@@ -248,13 +262,14 @@ enum LakeUSGSRouting {
             return adopt(await v1())
         case .shadow:
             if shadowOff(governor: governor, log: log) { return await legacy() }
-            let start = Date()
+            let clock = governor.clock
+            let start = clock.now()
             let pending = LakeUSGSPending<U>()
             let task = Task { pending.fulfil(await v1()) }
             let l = await legacy()
-            let legacyDone = Date()
-            let o = await pending.wait(seconds: governor.allowedWait(elapsed: legacyDone.timeIntervalSince(start)))
-            governor.spend(Date().timeIntervalSince(legacyDone))
+            let legacyDone = clock.now()
+            let o = await pending.wait(seconds: governor.allowedWait(elapsed: legacyDone.timeIntervalSince(start)), sleep: clock.sleep)
+            governor.spend(clock.now().timeIntervalSince(legacyDone))
             if o == nil { task.cancel() }
             log(compare(l, o))
             return l
