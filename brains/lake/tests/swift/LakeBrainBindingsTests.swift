@@ -40,8 +40,15 @@ final class LakeBrainBindingsTests: XCTestCase {
         XCTAssertTrue(LakeGeneratedBindings.loadErrors.isEmpty, "\(LakeGeneratedBindings.loadErrors)")
         let d = try Data(contentsOf: repoData("accepted_batch.json"))
         let doc = try XCTUnwrap(JSONSerialization.jsonObject(with: d) as? [String: Any])
-        let fileIds = Set(try XCTUnwrap(doc["lakeIds"] as? [String]))
+        let batch1 = Set(try XCTUnwrap(doc["lakeIds"] as? [String]))
         XCTAssertEqual(doc["approvalRef"] as? String, "owner-direction-2026-11-20/sector-ops-51-7049169954", "an accepted batch carries the owner's approvalRef")
+        // batch 2 (2026-11-22): excluded lakes that passed the re-check, from bindings.batch2.v1.json
+        let d2 = try Data(contentsOf: repoData("accepted_batch2.json"))
+        let doc2 = try XCTUnwrap(JSONSerialization.jsonObject(with: d2) as? [String: Any])
+        let batch2 = Set(try XCTUnwrap(doc2["lakeIds"] as? [String]))
+        XCTAssertEqual(doc2["approvalRef"] as? String, "owner-direction-2026-11-22/sector-ops-51-7075462499", "an accepted batch carries the owner's approvalRef")
+        XCTAssertTrue(batch1.isDisjoint(with: batch2))
+        let fileIds = batch1.union(batch2)
         XCTAssertEqual(LakeGeneratedBindings.acceptedLakeIds, fileIds)
         XCTAssertFalse(fileIds.isEmpty)
         let handIds = Set(LakeSourceBindings.handWritten.map(\.lakeId))
@@ -146,21 +153,33 @@ final class LakeBrainBindingsTests: XCTestCase {
 
     // MARK: (c) the generated table is the Python table
 
+    func batch2() throws -> [String: Any] {
+        let d = try Data(contentsOf: repoData("bindings.batch2.v1.json"))
+        return try XCTUnwrap(JSONSerialization.jsonObject(with: d) as? [String: Any])
+    }
+
     func testGeneratedTableMatchesThePythonTable() throws {
         let doc = try proposed()
         XCTAssertEqual(doc["bindingStatus"] as? String, "MACHINE_VERIFIED")
-        let rows = try XCTUnwrap(doc["bindings"] as? [[String: Any]])
+        let proposedRows = try XCTUnwrap(doc["bindings"] as? [[String: Any]])
+        let b2 = try batch2()
+        XCTAssertEqual(b2["bindingStatus"] as? String, "MACHINE_VERIFIED")
+        XCTAssertEqual(b2["batch"] as? Int, 2)
+        let batch2Rows = try XCTUnwrap(b2["bindings"] as? [[String: Any]])
+        let rows = proposedRows + batch2Rows
         XCTAssertEqual(LakeGeneratedBindings.tableCount, rows.count, "generated Swift table is stale: run scripts/generate-lake-bindings.py")
         XCTAssertEqual(LakeGeneratedBindings.bindings.count, rows.count)
         XCTAssertEqual(Set(LakeGeneratedBindings.records.map(\.lakeId)), Set(rows.compactMap { $0["lakeId"] as? String }))
-        // the counts the build script reported
+        // the counts the build scripts reported
         let counts = try XCTUnwrap(doc["counts"] as? [String: Any])
-        XCTAssertEqual(counts["eligible"] as? Int, rows.count)
+        XCTAssertEqual(counts["eligible"] as? Int, proposedRows.count)
+        XCTAssertEqual((b2["counts"] as? [String: Any])?["records"] as? Int, batch2Rows.count)
     }
 
     func testGeneratedTableSanity() throws {
         let ids = LakeGeneratedBindings.records.map(\.lakeId)
         XCTAssertEqual(Set(ids).count, ids.count, "lake ids are unique")
+        let batch2Ids = Set(try XCTUnwrap(try batch2()["bindings"] as? [[String: Any]]).compactMap { $0["lakeId"] as? String })
         let directory = Set(LakeDirectory.all.map(\.id))
         for id in ids { XCTAssertTrue(directory.contains(id), "\(id) is not a LakeDirectory id") }
         for r in LakeGeneratedBindings.records {
@@ -173,20 +192,29 @@ final class LakeBrainBindingsTests: XCTestCase {
             }
             XCTAssertNotNil(TimeZone(identifier: r.timeZone), "\(r.lakeId): \(r.timeZone)")
             XCTAssertEqual(r.verification.criteriaVersion, "binding-review-v1")
+            if batch2Ids.contains(r.lakeId) { continue }   // batch 2: excluded lakes re-checked on 2026-11-22 (post-hoc waves and flagged rows allowed)
             XCTAssertTrue(["w1", "w2-v1"].contains(r.verification.wave), "\(r.lakeId): only pre-registered waves")
             XCTAssertTrue(["VERIFIED", "VERIFIED_CORROBORATED"].contains(r.verification.researchStatus), r.lakeId)
         }
         // every binding mapped, none lost
         XCTAssertEqual(LakeGeneratedBindings.bindings.count, ids.count)
-        // excluded lakes (undocumented providers, coordinate flags, post-hoc, history/live mismatch, ...) never appear
+        // excluded lakes (undocumented providers, coordinate flags, post-hoc, history/live mismatch, ...) appear only through batch 2
         let ex = try Data(contentsOf: repoData("bindings.proposed.v1.excluded.json"))
         let excluded = try XCTUnwrap((try JSONSerialization.jsonObject(with: ex) as? [String: Any])?["excluded"] as? [[String: Any]])
         let excludedIds = Set(excluded.compactMap { $0["lakeId"] as? String })
         XCTAssertTrue(excludedIds.count > 100)
-        XCTAssertTrue(excludedIds.isDisjoint(with: Set(ids)))
-        for must in ["Clinton Lake|IL", "Bartlett|AZ", "Lake Taneycomo|MO", "Rend Lake|IL", "Red Lake|MN", "Lake Shafer|IN"] {
+        XCTAssertEqual(excludedIds.intersection(Set(ids)), batch2Ids)
+        XCTAssertTrue(batch2Ids.isSubset(of: excludedIds))
+        for must in ["Clinton Lake|IL", "Lake Shafer|IN", "Upper Klamath Lake|OR"] {
             XCTAssertTrue(excludedIds.contains(must), "\(must) must be excluded")
             XCTAssertFalse(ids.contains(must))
+        }
+        // returned by batch 2 after passing the 2026-11-22 re-check
+        for back in ["Bartlett|AZ", "Lake Taneycomo|MO", "Rend Lake|IL", "Red Lake|MN"] { XCTAssertTrue(batch2Ids.contains(back), back) }
+        // the re-check's series fixes: the observed level, never Alabama Power's guide curve
+        for id in ["Logan Martin|AL", "Weiss|AL"] {
+            let r = try XCTUnwrap(LakeGeneratedBindings.records.first { $0.lakeId == id })
+            XCTAssertTrue(r.live.first?.series?.hasSuffix("Raw-APCO") ?? false, id)
         }
     }
 

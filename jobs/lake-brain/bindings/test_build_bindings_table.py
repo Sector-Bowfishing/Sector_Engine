@@ -174,3 +174,32 @@ class TableTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@unittest.skipUnless(os.path.exists(os.path.join(DATA, "bindings.batch2.v1.json")), "batch 2 table not built")
+class Batch2Tests(unittest.TestCase):
+    """Batch 2 (2026-11-22, Sector_Ops #51 comment 7075462499): excluded lakes that passed the re-check."""
+
+    def test_batch2_is_consistent(self):
+        import csv
+        b2 = json.load(open(os.path.join(DATA, "bindings.batch2.v1.json")))
+        acc = json.load(open(os.path.join(DATA, "accepted_batch2.json")))
+        ex = {x["lakeId"] for x in json.load(open(os.path.join(DATA, "bindings.proposed.v1.excluded.json")))["excluded"]}
+        proposed = {b["lakeId"] for b in json.load(open(os.path.join(DATA, "bindings.proposed.v1.json")))["bindings"]}
+        checks = {r["lakeId"]: r for r in csv.DictReader(open(os.path.join(DATA, "batch2", "checks_2026-11-22.csv")))}
+        ids = [r["lakeId"] for r in b2["bindings"]]
+        self.assertEqual(len(ids), 106)
+        self.assertEqual(set(ids), set(acc["lakeIds"]))
+        self.assertEqual(set(ids), set(checks))
+        self.assertTrue(set(ids) <= ex and not (set(ids) & proposed))
+        self.assertEqual(acc["approvalRef"], "owner-direction-2026-11-22/sector-ops-51-7075462499")
+        for r in b2["bindings"]:
+            self.assertEqual(checks[r["lakeId"]]["result"], "PASS")
+            self.assertEqual(r["verification"]["batch2Check"]["result"], "PASS")
+            for l in r["live"]:
+                self.assertNotIn(l["provider"], B.UNDOCUMENTED)
+                self.assertFalse((l.get("series") or "").endswith(("GC-APCO", "Guide Curve")), r["lakeId"])
+            for h in r["history"]:
+                self.assertFalse(str(h.get("series", "")).endswith((".RUL", "GC-APCO")), r["lakeId"])
+        for gone in ("Clinton Lake|IL", "Upper Klamath Lake|OR"):     # no engine adapter yet: new-provider work
+            self.assertNotIn(gone, ids)

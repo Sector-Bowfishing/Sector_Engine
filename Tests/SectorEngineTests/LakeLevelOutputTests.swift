@@ -43,15 +43,16 @@ final class LakeLevelOutputTests: XCTestCase {
 
     func testValidatedListMatchesTheLakeBetaResult() async {
         let ids = LakeLevelEligibility.validatedLakeIds
-        // Every REVIEWED lake (5 pilots + accepted batch; owner approval 2026-11-20 20:01Z, Sector_Ops #51), and no other.
-        XCTAssertEqual(ids.count, 192)
+        // Every REVIEWED lake (5 pilots + accepted batches 1 and 2; owner approval 2026-11-20 20:01Z, Sector_Ops #51), and no other.
+        XCTAssertEqual(ids.count, 298)
         // (Equality with LakeSourceBindings.reviewed is asserted in LakeBrainTests, which can see both modules.)
         for lake in ["Lake Hartwell|SC", "Bluestone Lake|WV", "Tappan Lake|OH",
                      // returned after the 2026-11-21 research (binding/history fixes or confirmed real drawdown)
-                     "Sutton Lake|WV", "Sardis Lake|MS", "Deep Creek Lake|MD", "El Vado Lake|NM"] { XCTAssertTrue(ids.contains(lake), lake) }
+                     "Sutton Lake|WV", "Sardis Lake|MS", "Deep Creek Lake|MD", "El Vado Lake|NM",
+                     // batch 2: excluded lakes that passed the 2026-11-22 re-check (Sector_Ops #51 comment 7075462499)
+                     "Cagles Mill Lake|IN", "Navajo Reservoir|NM", "Kentucky Lake|KY", "Canyon Lake|TX"] { XCTAssertTrue(ids.contains(lake), lake) }
         // Failed the two-gauge check, held or excluded: no reviewed binding, never listed.
-        for lake in ["Brookville Lake|IN", "Sumner Lake|NM", "Cagles Mill Lake|IN", "Navajo Reservoir|NM", "Kentucky Lake|KY",
-                     "Tygart Lake|WV", "Canyon Lake|TX",
+        for lake in ["Brookville Lake|IN", "Sumner Lake|NM", "Tygart Lake|WV", "Clinton Lake|IL", "Lake Shafer|IN",
                      // still held after the 2026-11-21 dry-run gauge check and research (held_lakes.json dryrunCheck: no live source)
                      "Badin Lake|NC", "High Rock Lake|NC"] {
             XCTAssertFalse(ids.contains(lake), lake)

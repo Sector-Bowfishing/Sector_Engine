@@ -26,11 +26,11 @@ def test_the_publisher_list_is_the_engine_validated_list():
     s = open(os.path.join(ROOT, "Sources", "SectorEngine", "API", "LakeLevelOutputAPI.swift")).read()
     block = s[s.index("validatedLakeIds"):]
     swift = set(re.findall(r'"([^"]+)"', block[block.index("[") + 1:block.index("]")]))
-    assert C.eligible_lake_ids() == swift and len(swift) == 192
+    assert C.eligible_lake_ids() == swift and len(swift) == 298   # 192 + 106 batch 2 (2026-11-22)
 
 
 def test_the_list_is_exactly_lakes_reviewed_set():
-    # Owner approval 2026-11-20 20:01Z (Sector_Ops #51): every lake with a REVIEWED binding (5 pilots + accepted_batch.json), no others.
+    # Owner approval 2026-11-20 20:01Z (Sector_Ops #51): every lake with a REVIEWED binding (5 pilots + accepted_batch.json + accepted_batch2.json), no others.
     import importlib.util
     spec = importlib.util.spec_from_file_location("lake_level_eligible", os.path.join(ROOT, "tools", "ops", "lake_level_eligible.py"))
     g = importlib.util.module_from_spec(spec)
@@ -43,8 +43,13 @@ def test_the_list_is_exactly_lakes_reviewed_set():
     held = json.load(open(os.path.join(ROOT, "jobs", "lake-brain", "review", "held_lakes.json"), encoding="utf-8"))
     held_ids = set(held["coordinateFlagged"]) | set(held["seriesMismatch"]) | set(held["providerTerms"]) | set(held.get("dryrunCheck", []))
     assert held_ids
+    # Batch 2 (2026-11-22, Sector_Ops #51 comment 7075462499) returns 106 excluded lakes that passed the re-check; they stay in the
+    # held snapshot (it records why they were held) but are no longer held.
+    batch2 = set(json.load(open(os.path.join(ROOT, "jobs", "lake-brain", "data", "accepted_batch2.json"), encoding="utf-8"))["lakeIds"])
+    assert len(batch2) == 106 and batch2 <= ids
+    held_ids -= batch2
     assert {"Badin Lake|NC", "High Rock Lake|NC"} <= set(held["dryrunCheck"])
-    for lake in {"Brookville Lake|IN", "Sumner Lake|NM", "Tygart Lake|WV", "Kentucky Lake|KY"} | held_ids:
+    for lake in {"Brookville Lake|IN", "Sumner Lake|NM", "Tygart Lake|WV", "Clinton Lake|IL"} | held_ids:
         assert lake not in ids, lake
 
 
