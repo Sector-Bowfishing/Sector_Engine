@@ -133,8 +133,10 @@ final class LakeBrainUSGSWaterDataTests: XCTestCase {
 
     func testOneSeriesNeedsNoMetadata() async throws {
         let fake = try recordedFortWorth()
-        let r = await fake.client().recentLevel(site: "07332610", parameter: "00065", hours: 12)   // Lk Bonham: one series
+        let r = await fake.client().recentLevel(site: "07332610", parameter: "62614", hours: 12)   // Lk Bonham elevation: one series
         XCTAssertNil(r.result.error)
+        XCTAssertEqual(r.result.observations.count, 47)
+        XCTAssertEqual(r.result.observations.first?.ft ?? 0, 562.58, accuracy: 1e-9)
         XCTAssertFalse(fake.urls.contains { $0.contains("/time-series-metadata/") })
     }
 
