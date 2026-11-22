@@ -11,14 +11,19 @@ from . import night
 
 
 def _weather_rows(weather: dict | None) -> list:
-    return sorted(((r.get("at"), r.get("cloudCoverPct")) for r in (weather or {}).get("hourly") or [] if isinstance(r, dict)),
-                  key=lambda x: str(x[0]))
+    """The cloud rows the darkness rule reads from the Weather state (only those), so an unrelated Weather field never re-triggers."""
+    if not isinstance(weather, dict):
+        return []
+    try:
+        return sorted(([str(a), v, o] for a, v, o in darkness._weather_rows(weather)), key=lambda x: (x[0], x[2]))
+    except (KeyError, TypeError, AttributeError):
+        return [["MALFORMED"]]
 
 
 def input_fingerprint(lake: dict, date: dt.date, weather: dict | None) -> str:
     """Material inputs only: the lake coordinate, the night, the cloud rows and the Brain version. No run time, no execution id."""
     blob = {"lakeId": lake["lakeId"], "lat": lake["lat"], "lon": lake["lon"], "date": date.isoformat(), "brainVersion": C.BRAIN_VERSION,
-            "weather": _weather_rows(weather), "weatherContract": (weather or {}).get("contract")}
+            "weather": _weather_rows(weather), "weatherSchema": (weather or {}).get("schema") if isinstance(weather, dict) else None}
     return hashlib.sha256(json.dumps(blob, sort_keys=True, default=str).encode()).hexdigest()
 
 

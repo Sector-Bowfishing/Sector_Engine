@@ -88,3 +88,20 @@ def test_absent_moon_events_are_absent_not_invented():
         assert sky["moon"]["moonrise"] == next((e["at"] for e in evs if e["event"] == "rise"), None)
         assert sky["moon"]["moonset"] == next((e["at"] for e in evs if e["event"] == "set"), None)
         assert kinds != ["rise", "rise"] and kinds != ["set", "set"]
+
+
+@pytest.mark.parametrize("now,lon,lat,want", [
+    ("2026-11-22T20:29:00Z", -86.26, 34.42, "2026-11-22"),     # 2:29 PM CST: tonight is this evening
+    ("2026-11-23T03:00:00Z", -86.26, 34.42, "2026-11-22"),     # 9 PM CST, already the 23rd in UTC: still the 22nd's night
+    ("2026-11-23T10:00:00Z", -86.26, 34.42, "2026-11-22"),     # 4 AM CST, before sunrise: the night is not over
+    ("2026-11-23T14:00:00Z", -86.26, 34.42, "2026-11-23"),     # 8 AM CST, after sunrise, before solar noon: the coming evening
+    ("2026-11-22T20:29:00Z", -155.0, 59.55, "2026-11-22"),     # Iliamna 10 AM solar, after sunrise: this evening
+])
+def test_default_date_is_the_lakes_own_tonight_not_the_utc_date(now, lon, lat, want):
+    t = dt.datetime.fromisoformat(now.replace("Z", "+00:00"))
+    assert night.evening_date(lat, lon, t).isoformat() == want
+
+
+def test_default_date_without_a_sunrise_keeps_the_span_date():
+    t = dt.datetime(2026, 6, 21, 20, 0, tzinfo=dt.timezone.utc)          # Teshekpuk, midnight sun
+    assert night.evening_date(70.6, -153.5, t) == (t + dt.timedelta(hours=-153.5 / 15 - 12)).date()

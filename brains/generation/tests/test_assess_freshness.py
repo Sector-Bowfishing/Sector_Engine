@@ -85,13 +85,39 @@ def test_a_stale_daily_outflow_never_hides_a_fresh_turbine_series():
     assert rel["dischargeCfs"] is None and rel["observedAt"] == t(-1)
 
 
-def test_each_series_uses_its_own_cadence_and_the_earliest_limit_bounds_fresh_until():
+def test_values_of_different_ages_are_never_shown_as_one_release_picture():
     a = assess([_cwms([{"at": t(-20), "dischargeCfs": 5000.0}, {"at": t(-4, -30), "turbineCfs": 4200.0}])], NOW)
-    rel = a["release"]                                                       # daily outflow current (96 h); hourly turbine current until -4:30 + 5 h
-    assert rel["dischargeCfs"] == 5000.0 and rel["turbineCfs"] == 4200.0 and rel["observedAt"] == t(-4, -30)
+    rel = a["release"]                                                       # daily outflow is current (96 h) but from an earlier period
+    assert rel["turbineCfs"] == 4200.0 and rel["dischargeCfs"] is None and rel["observedAt"] == t(-4, -30)
+    assert rel["observedAtByField"] == {"turbineCfs": t(-4, -30)} and any(g.startswith("dischargeCfs not shown") for g in a["gaps"])
     assert a["measuredCurrentUntil"] == t(0, 30) and decide(a, None, NOW)["freshUntil"] == t(0, 30)
+
+
+def test_values_of_one_period_carry_their_own_times():
+    a = assess([_cwms([{"at": t(-1), "turbineCfs": 4200.0}, {"at": t(-1, -30), "generationMw": 30.0}])], NOW)
+    assert a["release"]["observedAtByField"] == {"generationMw": t(-1, -30), "turbineCfs": t(-1)} and a["release"]["observedAt"] == t(-1)
     stale_turbine = assess([_cwms([{"at": t(-20), "dischargeCfs": 5000.0}, {"at": t(-6), "turbineCfs": 4200.0}])], NOW)
     assert stale_turbine["release"]["turbineCfs"] is None and stale_turbine["release"]["status"] == C.RELEASING
+
+
+def test_river_flow_below_the_dam_stays_out_of_the_dam_history_and_freshness():
+    obs = [{"at": t(-h), "dischargeCfs": 3000.0} for h in range(8, 1, -1)] + [{"at": t(-1), "dischargeCfs": 14000.0}]
+    g = Reading("usgs", "USGS", True, None, obs, [], ["usgs"], meta={"site": "07055660", "distanceMiles": 2.4})
+    a = assess([g], NOW)
+    assert a["history"] == [] and len(a["tailwaterGauge"]["history"]) == 8 and a["tailwaterGauge"]["history"][-1]["dischargeCfs"] == 14000.0
+    f = decide(a, None, NOW)
+    assert f["tier"] == C.TIER_UNKNOWN and "moved" not in f["reason"]         # a river jump is not a dam release change
+
+
+def test_a_generating_flag_taken_from_the_schedule_hour_is_capped_at_that_window():
+    sched = [{"start": t(-4), "end": t(0, 40), "unitsOn": 0, "unitsOnIsMinimum": False, "statedBy": "operator"},
+             {"start": t(0, 40), "end": t(30), "unitsOn": 2, "unitsOnIsMinimum": False, "statedBy": "operator"}]
+    a = assess([reading("tva", [{"at": t(-1), "dischargeCfs": 9000.0}], sched)], NOW)
+    rel = a["release"]                                                       # outflow measured, units off per the schedule: RELEASING, generating False
+    assert rel["status"] == C.RELEASING and rel["statusBasis"] == "MEASURED" and rel["generating"] is False and rel["generatingBasis"] == "SCHEDULE"
+    assert decide(a, None, NOW)["freshUntil"] == t(0, 40)
+    m = assess([_cwms([{"at": t(-1), "turbineCfs": 4200.0}])], NOW)
+    assert m["release"]["generatingBasis"] == "MEASURED"
 
 
 def test_a_status_resting_on_the_schedule_hour_is_capped_at_that_window():

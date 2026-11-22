@@ -15,12 +15,13 @@ SCHEMA_VERSION = 1
 STATE_SCHEMA = "moon-night-light-v1"
 MODEL_ID = "sector-moon-v1+usno-events+darkness-rule-v1"
 JOB_ID = "moon-brain"
-STALENESS_MODEL = "TIME"                 # tonight changes every day; cloud input changes hourly
+STALENESS_MODEL = "FINGERPRINT"          # == control manifest freshness.stalenessModel: a lake state is recomputed only when its input
+                                         # fingerprint (coordinate, night, cloud rows, Brain version) changes
 STALE_AFTER_HOURS = 24
 DEPENDS_ON = []                          # the Weather Brain (cloud cover) is an OPTIONAL input declared in the contract, not yet a registered Brain
 EPHEMERIS_SPEC = "sector-moon-v1"        # contracts/moon/moon-v1.json
 EVENT_DEFINITIONS = "USNO / Meeus ch. 15 standard altitudes (sun -0.8333, -6, -12, -18; moon 0.7275*parallax - 0.5667)"
-WEATHER_INPUT_CONTRACT = "moon-weather-cloud-input-v0"   # provisional: replaced by the Weather Brain's own contract when it exists
+WEATHER_INPUT_SCHEMA = "sector-brain-weather-state-v1"   # the Weather Brain's /lakes/{k}/states/weather (OPTIONAL; cloud rows only)
 
 READINESS = ("CALIBRATION", "DEGRADED")
 DARKNESS_CLASSES = ("DARK", "MOSTLY_DARK", "SOME_MOONLIGHT", "BRIGHT_MOON", "NO_NIGHT")

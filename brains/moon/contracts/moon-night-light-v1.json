@@ -7,7 +7,8 @@
   "night": {
     "definition": "Tonight for calendar date D = the night starting on the evening of D at the lake. Span = [D 12:00 UTC - lon/15 h, +24 h): local solar noon to local solar noon, so every longitude gets exactly one evening and the following morning. All instants are UTC (ISO 8601 Z); the client renders them in the lake's zone.",
     "fishingWindow": "Mirrors the Engine and iOS (ConditionsInputBuilder; iOS specs/conditions-engine.md 'the night window runs into TOMORROW'): start = astronomical dusk, else sunset + 80 min; end = the next sunrise, else start + 8 h. Basis values: ASTRONOMICAL_DUSK_TO_SUNRISE, SUNSET_PLUS_80_MIN_TO_SUNRISE, (either)_FALLBACK_8H, POLAR_NIGHT_WHOLE_SPAN, NO_NIGHT_SUN_ALWAYS_UP.",
-    "illuminationInstant": "Moon illumination, phase fraction and phase name are evaluated at local solar midnight (span start + 12 h)."
+    "illuminationInstant": "Moon illumination, phase fraction and phase name are evaluated at local solar midnight (span start + 12 h). This differs from the app's request-instant value: see divergences.",
+    "defaultDate": "Without an explicit date, each lake gets its own tonight: the night whose span contains the run, or the coming evening once that night's sunrise has passed (night.evening_date). Never the UTC date."
   },
   "algorithms": {
     "ephemeris": "sector-moon-v1 (contracts/moon/moon-v1.json): Paul Schlyter's low-precision Sun and Moon positions, ported line for line from Sources/SectorEngine/Engine/Astronomy.swift. Illumination, phaseFraction and phaseName pass the spec's 52 vectors (tolerance 0.0005 / 1e-6).",
@@ -22,31 +23,26 @@
     "test": "brains/moon/tests/test_usno_crosscheck.py"
   },
   "weatherInput": {
-    "contract": "moon-weather-cloud-input-v0",
-    "status": "PROVISIONAL: the Weather Brain (branch feat/weather-brain-2026-11-22) has no published contract yet. This is the input the Moon Brain needs; it is replaced by a mapping from the Weather Brain's own contract when that exists.",
+    "schema": "sector-brain-weather-state-v1",
+    "producer": "Weather Brain (brainId weather; Engine PR #234), document /lakes/{k}/states/weather",
     "requirement": "OPTIONAL",
-    "shape": {
-      "type": "object",
-      "required": ["hourly"],
-      "properties": {
-        "contract": {"type": "string"},
-        "source": {"type": "string", "description": "producer id, e.g. weather"},
-        "issuedAt": {"type": "string", "format": "date-time"},
-        "hourly": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["at", "cloudCoverPct"],
-            "properties": {
-              "at": {"type": "string", "format": "date-time", "description": "the hour the value describes (UTC)"},
-              "cloudCoverPct": {"type": ["number", "null"], "minimum": 0, "maximum": 100, "description": "total cloud cover, percent"}
-            }
-          }
-        }
-      }
-    },
-    "use": "Window cloud = mean of the hourly values whose instant lies in [window start - 30 min, window end + 30 min]. Needs values for at least 75 % of the window's hours. A null value is skipped; a value outside 0..100 or a malformed row makes the whole input unusable.",
-    "whenMissing": "status MISSING with a reason (NO_WEATHER_INPUT, NO_HOURLY_CLOUD_COVER, MALFORMED_HOURLY_ROW, CLOUD_COVER_OUT_OF_RANGE, INSUFFICIENT_COVERAGE). No cloud value is assumed."
+    "status": "Declared in brain.json consumes (weather-publication-v1 >= 1.0.0, OPTIONAL). There is no live read yet (no writer or executor while disabled): run.py --weather passes {lakeId: Weather state document}.",
+    "read": [
+      "forecast.hourly[].{at, cloudCoverPct}: the NWS forecast grid, at most the 12 hours after the Weather run (origin forecastGrid). A row without cloudCoverPct is a null value (the Weather schema requires only at)",
+      "sky.cloudCoverPct {value, at, origin}: the current hour at the Weather run (forecast grid, or an NWS station observation when the grid has no hour)",
+      "generatedAt: the Weather run time"
+    ],
+    "notRead": "Every other Weather field. Only the cloud rows enter the input fingerprint, so an unrelated Weather change does not trigger a recompute.",
+    "cloudSpan": "A Weather state cannot describe hours before its own run. The cloud adjustment therefore covers [max(window start, the Weather run's current hour), window end]: an evening run judges the whole fishing window, a mid-night run judges the hours still ahead. The span is reported in cloudCover.span {start, end, fullWindow} and named in the statement.",
+    "use": "Each row is keyed on the top of its hour. The span's hours are the top-of-hour instants within [span start - 30 min, span end + 30 min]; at least 75 % of those DISTINCT hours need a value, and the cloud is their mean. A repeated hour with the same value counts once; the same hour with different values refuses the input. Values are checked only inside the span. A timestamp without an explicit UTC offset anywhere refuses the document. With 12 forecast hours, a run from about 3 h before astronomical dusk onwards covers a 12 h November night (Guntersville: runs from 21Z); an earlier run gives MOON_ONLY with INSUFFICIENT_COVERAGE.",
+    "whenMissing": "status MISSING with a reason: NO_WEATHER_INPUT, UNSUPPORTED_WEATHER_INPUT (not a sector-brain-weather-state-v1 document), NO_HOURLY_CLOUD_COVER, MALFORMED_HOURLY_ROW (missing at or generatedAt, or a timestamp without an explicit UTC offset), WEATHER_AFTER_WINDOW (the Weather run is after the window ended), CLOUD_COVER_OUT_OF_RANGE, CONFLICTING_HOURLY_VALUES, INSUFFICIENT_COVERAGE. No cloud value is assumed."
+  },
+  "divergences": {
+    "note": "Where this Brain deliberately differs from other sector-moon-v1 consumers and the app's Darkness tile. Read before comparing numbers.",
+    "illuminationInstant": "The Brain evaluates illumination, phase fraction and phase name at local solar midnight of tonight's span. The Engine /conditions moonIllumination and the app's Moon tile use the request instant (the Moon sheet's chart samples about 9 PM). The same night can differ by a few percentage points (about 3 points per 6 h near the quarters), and the phase NAME can flip near a band edge. Both come from the same sector-moon-v1 math.",
+    "cityGlow": "The cloud cancel uses the Engine's DEFAULT city glow 0.3 for every lake. The app's Darkness factor uses the per-request cityGlow when one is supplied. At a spot with a different glow value the same cloud cancels a different share (rural 1.0 vs 0.76 here vs 0.2 in a city), so the class can differ from the app's label.",
+    "cloudBasis": "The Brain uses the mean NWS-forecast cloud cover from the Weather Brain over the part of the fishing window still ahead at the Weather run. The Engine uses the current cloud cover and treats a missing value as 0 %. The Brain treats a missing value as MOON_ONLY.",
+    "eventTimes": "Rise, set and twilight use the USNO standard altitudes inside a noon-to-noon span. The Engine's Astronomy.moonRiseSet uses the moon's centre at 0 deg within the UTC day (see docs/brains/MOON_BRAIN_PLAN.md section 2)."
   },
   "darknessRule": {
     "id": "DARKNESS_RULE_V1",

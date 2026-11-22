@@ -10,6 +10,7 @@ import traceback
 from collections import Counter
 
 from . import contract as C
+from .night import evening_date
 from .state import build_state, plan
 from .writer import PLATFORM  # noqa: E402  (also puts the shared platform package on sys.path)
 
@@ -33,8 +34,9 @@ def _health(errors: list, evaluated: int) -> str:
     return "HEALTHY" if evaluated else "UNKNOWN"
 
 
-def publish(directory: dict, writer, date: dt.date, weather: dict | None = None, now: dt.datetime | None = None) -> dict:
-    """directory: lakes.load(). weather: {lakeId: weather input} (optional, per lake; contract moon-weather-cloud-input-v0)."""
+def publish(directory: dict, writer, date: dt.date | None, weather: dict | None = None, now: dt.datetime | None = None) -> dict:
+    """directory: lakes.load(). date: the evening date for every lake, or None for each lake's own current night
+    (night.evening_date(lon, now)). weather: {lakeId: Weather Brain state document} (optional, per lake; sector-brain-weather-state-v1)."""
     now = (now or dt.datetime.now(dt.timezone.utc)).replace(microsecond=0)
     now_iso = C.iso(now)
     weather = weather or {}
@@ -50,14 +52,15 @@ def publish(directory: dict, writer, date: dt.date, weather: dict | None = None,
             lid = lake["lakeId"]
             k = lake_key(lid)
             w = weather.get(lid)
+            night_of = date or evening_date(lake["lat"], lake["lon"], now)
             try:
-                pl = plan(writer.get(f"lakes/{k}/states/{C.SLOT}"), lake, date, w)
-                state = build_state(lake, date, w)
+                pl = plan(writer.get(f"lakes/{k}/states/{C.SLOT}"), lake, night_of, w)
+                state = build_state(lake, night_of, w)
                 evaluated += 1
                 readiness[lid] = state["readiness"]
                 classes[state["darkness"]["class"]] += 1
                 bases[state["darkness"]["basis"]] += 1
-                rep["lakes"][lid] = {"class": state["darkness"]["class"], "basis": state["darkness"]["basis"], "plan": pl["action"]}
+                rep["lakes"][lid] = {"class": state["darkness"]["class"], "basis": state["darkness"]["basis"], "plan": pl["action"], "date": state["date"]}
                 if pl["action"] == "SKIP":
                     skipped += 1
                     continue
@@ -77,7 +80,7 @@ def publish(directory: dict, writer, date: dt.date, weather: dict | None = None,
             fleet[f"lakeFleet/{k}/modelVersions/{C.SLOT}"] = C.MODEL_ID
             m = rep["lakes"].get(lid)
             if m:
-                fleet[f"lakeFleet/{k}/slots/{C.SLOT}"] = {"readiness": r, "date": date.isoformat(), "darknessClass": m["class"], "basis": m["basis"]}
+                fleet[f"lakeFleet/{k}/slots/{C.SLOT}"] = {"readiness": r, "date": m["date"], "darknessClass": m["class"], "basis": m["basis"]}
         writer.patch(fleet)
         rep["writes"] += 1
 
@@ -96,7 +99,7 @@ def publish(directory: dict, writer, date: dt.date, weather: dict | None = None,
                           "status": "CALIBRATION"}],
             "validation": {"ref": f"/validation/{C.BRAIN_ID}", "status": "NOT_VALIDATED"}, "sourceIds": [],
             "readinessDefinitions": C.READINESS_DEFINITIONS, "updatedAt": now_iso, "publishMode": "dry run only: no live writer",
-            "scoreNote": C.SCORE_NOTE, "knowledgeRelease": directory.get("release"), "breakdowns": {"darknessClass": dict(classes), "basis": dict(bases), "night": date.isoformat()},
+            "scoreNote": C.SCORE_NOTE, "knowledgeRelease": directory.get("release"), "breakdowns": {"darknessClass": dict(classes), "basis": dict(bases), "night": date.isoformat() if date else "per lake: the night containing the run (local solar noon to noon)"},
         }
         writer.patch({f"brains/{C.BRAIN_ID}": reg, f"validation/{C.BRAIN_ID}": {**NOT_VALIDATED, "publishedAt": now_iso}})
         rep["writes"] += 1

@@ -4,7 +4,10 @@ Measured release (the first operator provider with at least one CURRENT release 
   1. the operator's own release: TVA AverageHourlyDischarge; CWMS project outflow, turbine, spill and generation (MW) series;
   2. Reclamation RISE release item.
 Within a provider every release series is judged on its OWN freshness (lag + 3 x its own cadence): a stale daily outflow never hides a fresh
-hourly turbine or generation series, and a stale series contributes nothing. `observedAt` is the newest value used.
+hourly turbine or generation series, and a stale series contributes nothing. Of the current values, only those of the newest reading period are
+shown together (same_period); an older one is named in `gaps`, never mixed in. `observedAt` is the newest value used and `observedAtByField`
+gives each value's own time. The dam's `history` holds the dam's own data only; a USGS gauge keeps its river flow in `tailwaterGauge.history`.
+`generatingBasis` says whether `generating` was measured or taken from the operator's schedule hour.
 A USGS gauge below the dam measures the river, not the dam: it is published as `tailwaterGauge` {site, distanceMiles, dischargeCfs, ...}
 and never sets the dam's release status (kind DOWNSTREAM_ONLY, status UNKNOWN). It is read only when no operator release series is bound.
 The schedule comes from the operator only: TVA (unit counts as stated) or SWPA (megawatts; no unit count).
@@ -43,6 +46,17 @@ def current(reading, key: str, now: datetime) -> dict | None:
     if row and now - parse_iso(row["at"]) <= timedelta(minutes=reading.ceiling_min(key)):
         return row
     return None
+
+
+def same_period(reading, rows: dict) -> tuple[dict, dict]:
+    """Split current series values into those of the newest reading period and older ones. A value counts as the same period when it is no
+    older than the newest value minus the newest series' cadence; e.g. a daily outflow from 30 h ago is never shown beside a 30-min turbine
+    flow. Returns (used, older)."""
+    newest_key = max(rows, key=lambda k: rows[k]["at"])
+    newest = parse_iso(rows[newest_key]["at"])
+    window = timedelta(minutes=reading.timing(newest_key)[0])
+    used = {k: v for k, v in rows.items() if newest - parse_iso(v["at"]) <= window}
+    return used, {k: v for k, v in rows.items() if k not in used}
 
 
 def _trend(rows: list[dict], key: str, last: dict) -> float | None:
@@ -91,7 +105,7 @@ def transitions(schedule: list[dict], now: datetime) -> dict:
 
 def assess(readings: list, now: datetime) -> dict:
     by = {r.provider: r for r in readings if r.ok}
-    measured, measured_by, used = None, None, {}
+    measured, measured_by, used, older = None, None, {}, {}
     for p in PRIORITY:
         r = by.get(p)
         if not r:
@@ -99,8 +113,9 @@ def assess(readings: list, now: datetime) -> dict:
         rows = {k: current(r, k, now) for k in RELEASE_KEYS}
         rows = {k: v for k, v in rows.items() if v is not None}
         if rows:
-            measured_by, used = r, rows
-            measured = {k: v[k] for k, v in rows.items()}
+            measured_by = r
+            used, older = same_period(r, rows)
+            measured = {k: v[k] for k, v in used.items()}
             break
     sched_by = next((by[p] for p in SCHEDULE_PRIORITY if p in by and by[p].schedule), None)
     schedule = sched_by.schedule if sched_by else []
@@ -108,7 +123,8 @@ def assess(readings: list, now: datetime) -> dict:
 
     gaps = []
     release = {"status": C.UNKNOWN, "statusBasis": None, "generating": None, "spilling": None, "dischargeCfs": None, "turbineCfs": None,
-               "spillCfs": None, "generationMw": None, "trend12hCfs": None, "observedAt": None, "source": None}
+               "spillCfs": None, "generationMw": None, "trend12hCfs": None, "observedAt": None, "observedAtByField": {}, "source": None,
+               "generatingBasis": None}
     measured_until = None
     if measured:
         turb, mw, spill, q = (measured.get(k) for k in ("turbineCfs", "generationMw", "spillCfs", "dischargeCfs"))
@@ -125,20 +141,25 @@ def assess(readings: list, now: datetime) -> dict:
         else:
             status = C.UNKNOWN
         release.update({"status": status, "statusBasis": "MEASURED", "dischargeCfs": q, "turbineCfs": turb, "spillCfs": spill, "generationMw": mw,
-                        "observedAt": max(v["at"] for v in used.values()), "source": measured_by.provider,
+                        "observedAt": max(v["at"] for v in used.values()), "observedAtByField": {k: v["at"] for k, v in sorted(used.items())},
+                        "source": measured_by.provider,
                         "generating": True if g else (False if turb == 0 or mw == 0 else None),
+                        "generatingBasis": "MEASURED" if (g or turb == 0 or mw == 0) else None,
                         "spilling": True if s else (False if spill == 0 else None)})
         if status == C.RELEASING and _running(now_w) is not None:
             # TVA's observed rows carry the release, not the units; the operator's schedule for this hour says whether units are running.
-            release["generating"] = _running(now_w)
+            release["generating"], release["generatingBasis"] = _running(now_w), "SCHEDULE"
             if _running(now_w):
                 release.update({"status": C.GENERATING, "statusBasis": "MEASURED_AND_SCHEDULE"})
+        for k, v in sorted(older.items()):
+            gaps.append(f"{k} not shown: its latest value ({v['at']}) is from an earlier period than the newest release reading "
+                        f"({release['observedAt']}); one release picture never mixes readings of different ages")
         if q is not None:
             release["trend12hCfs"] = _trend(measured_by.observations, "dischargeCfs", used["dischargeCfs"])
         measured_until = iso(min(parse_iso(v["at"]) + timedelta(minutes=measured_by.ceiling_min(k)) for k, v in used.items()))
     elif _running(now_w) is not None:
         release.update({"status": C.GENERATING if _running(now_w) else C.OFF, "statusBasis": "SCHEDULE", "source": sched_by.provider,
-                        "generating": _running(now_w)})
+                        "generating": _running(now_w), "generatingBasis": "SCHEDULE"})
         gaps.append("no current measured release: status is the operator's schedule for this hour")
     else:
         gaps.append("no current measured release and no operator schedule for this hour")
@@ -149,7 +170,9 @@ def assess(readings: list, now: datetime) -> dict:
         row = current(u, "dischargeCfs", now)
         if row:
             gauge = {"site": u.meta.get("site"), "distanceMiles": u.meta.get("distanceMiles"), "dischargeCfs": row["dischargeCfs"],
-                     "trend12hCfs": _trend(u.observations, "dischargeCfs", row), "observedAt": row["at"], "agency": u.agency}
+                     "trend12hCfs": _trend(u.observations, "dischargeCfs", row), "observedAt": row["at"], "agency": u.agency,
+                     "history": [{"at": o["at"], "dischargeCfs": o["dischargeCfs"]} for o in u.observations
+                                 if o.get("dischargeCfs") is not None and timedelta(0) <= now - parse_iso(o["at"]) <= timedelta(hours=48)]}
             gauge_until = iso(parse_iso(row["at"]) + timedelta(minutes=u.ceiling_min("dischargeCfs")))
             gaps.append("a USGS gauge below the dam measures the river, not the dam's release: the dam's status stays UNKNOWN")
 
@@ -167,7 +190,7 @@ def assess(readings: list, now: datetime) -> dict:
                        "unitsStated": sched_by.provider == "tva", **transitions(schedule, now)}
         if sched_by.provider == "swpa":
             gaps.append("SWPA publishes megawatts, not unit counts: units on are not stated")
-    hist_src = measured_by or next((by[p] for p in PRIORITY + ("usgs",) if p in by and by[p].observations), None)
+    hist_src = measured_by or next((by[p] for p in PRIORITY if p in by and by[p].observations), None)     # the dam's own data only
     history = [{k: r.get(k) for k in ("at", "dischargeCfs", "turbineCfs", "spillCfs", "generationMw", "tailwaterFt") if r.get(k) is not None}
                for r in (hist_src.observations if hist_src else []) if now - parse_iso(r["at"]) <= timedelta(hours=48) and parse_iso(r["at"]) <= now]
     if measured:

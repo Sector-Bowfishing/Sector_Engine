@@ -153,7 +153,9 @@
         "generationMw",
         "trend12hCfs",
         "observedAt",
-        "source"
+        "source",
+        "observedAtByField",
+        "generatingBasis"
       ],
       "properties": {
         "status": {
@@ -212,6 +214,33 @@
             null
           ],
           "description": "the operator provider the status rests on; a USGS gauge never appears here (see tailwaterGauge)"
+        },
+        "observedAtByField": {
+          "type": "object",
+          "description": "each shown release value's own observation time (only values of the newest reading period are shown)",
+          "additionalProperties": false,
+          "properties": {
+            "dischargeCfs": {
+              "$ref": "#/$defs/time"
+            },
+            "turbineCfs": {
+              "$ref": "#/$defs/time"
+            },
+            "spillCfs": {
+              "$ref": "#/$defs/time"
+            },
+            "generationMw": {
+              "$ref": "#/$defs/time"
+            }
+          }
+        },
+        "generatingBasis": {
+          "enum": [
+            "MEASURED",
+            "SCHEDULE",
+            null
+          ],
+          "description": "whether `generating` was measured (turbine flow / MW) or taken from the operator's schedule hour"
         }
       }
     },
@@ -306,7 +335,8 @@
             "$ref": "#/$defs/time"
           }
         }
-      }
+      },
+      "description": "the dam's own release data only (operator sources); river flow below the dam is in tailwaterGauge.history"
     },
     "sources": {
       "type": "array",
@@ -500,7 +530,8 @@
         "dischargeCfs",
         "trend12hCfs",
         "observedAt",
-        "agency"
+        "agency",
+        "history"
       ],
       "properties": {
         "site": {
@@ -526,6 +557,26 @@
         },
         "agency": {
           "type": "string"
+        },
+        "history": {
+          "type": "array",
+          "maxItems": 400,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "at",
+              "dischargeCfs"
+            ],
+            "properties": {
+              "at": {
+                "$ref": "#/$defs/time"
+              },
+              "dischargeCfs": {
+                "type": "number"
+              }
+            }
+          }
         }
       }
     }
