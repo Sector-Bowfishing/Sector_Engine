@@ -8,9 +8,11 @@ disabled) and NO live writer.
   python run.py --dry-run OUT.json [--date ...] [--weather ...]      # build the RTDB write set into an in-memory store and dump it; writes nothing remote
   python run.py --write                                              # REFUSED (exit 2): no publication path is approved
 
---date is the evening's calendar date at the lakes (default: today, UTC). --weather is the OPTIONAL cloud input, {lakeId: weather input}, in the
-provisional contract moon-weather-cloud-input-v0 (contracts/moon-night-light-v1.json weatherInput). Without it every lake gets the moon-only
-answer, labelled as such."""
+--date is the evening's calendar date at the lakes. Without it each lake gets ITS OWN current night: the night whose span (local solar noon to
+local solar noon) contains the run time, or the coming evening once that night's sunrise has passed (night.evening_date). Never the UTC date, which is the wrong
+evening for a US lake after 6-8 PM local.
+--weather is the OPTIONAL cloud input: {lakeId: the Weather Brain state document} (sector-brain-weather-state-v1, /lakes/{k}/states/weather;
+only forecast.hourly[].cloudCoverPct and sky.cloudCoverPct are read). Without it every lake gets the moon-only answer, labelled as such."""
 import argparse
 import datetime as dt
 import json
@@ -21,6 +23,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import moon_brain  # noqa: E402,F401  (bootstraps the platform path)
 from moon_brain import contract as C, lakes as L  # noqa: E402
+from moon_brain.night import evening_date  # noqa: E402
 from moon_brain.publish import publish  # noqa: E402
 from moon_brain.state import build_state  # noqa: E402
 from moon_brain.writer import DryRunWriter  # noqa: E402
@@ -56,19 +59,20 @@ def main(argv=None) -> int:
         print(json.dumps({"brainId": C.BRAIN_ID, "action": "SKIP", "status": "NOT_SCHEDULED",
                           "reason": "no executor (control manifest executionTarget none, PARKED) and no live writer"}))
         return 0
-    date = dt.date.fromisoformat(a.date) if a.date else dt.datetime.now(dt.timezone.utc).date()
+    date = dt.date.fromisoformat(a.date) if a.date else None
+    now = dt.datetime.now(dt.timezone.utc)
     weather = json.load(open(a.weather, encoding="utf-8")) if a.weather else {}
     d = _directory(a.lakes)
     if a.tonight:
-        out = {"schema": "moon-night-light-run-v1", "brainId": C.BRAIN_ID, "brainVersion": C.BRAIN_VERSION, "date": date.isoformat(),
+        out = {"schema": "moon-night-light-run-v1", "brainId": C.BRAIN_ID, "brainVersion": C.BRAIN_VERSION, "date": date.isoformat() if date else "PER_LAKE_CURRENT_NIGHT",
                "lakeRegistry": {k: d[k] for k in ("source", "registry", "count", "digest")}, "weatherInput": "PROVIDED" if weather else "ABSENT",
-               "lakes": {r["lakeId"]: build_state(r, date, weather.get(r["lakeId"])) for r in d["lakes"]}}
+               "lakes": {r["lakeId"]: build_state(r, date or evening_date(r["lat"], r["lon"], now), weather.get(r["lakeId"])) for r in d["lakes"]}}
         with open(a.tonight, "w", encoding="utf-8") as fh:
             json.dump(out, fh, indent=1)
         print(json.dumps({"ok": True, "lakes": len(out["lakes"]), "date": out["date"], "out": a.tonight, "published": False}))
         return 0
     w = DryRunWriter()
-    rep = publish(d, w, date, weather)
+    rep = publish(d, w, date, weather, now=now)
     w.dump(a.dry_run)
     print(json.dumps({**{k: rep.get(k) for k in ("ok", "evaluated", "skippedUnchanged", "readinessCounts", "darknessClass", "basis", "errors", "writes")},
                       "dryRunFile": a.dry_run, "published": False}, default=str))

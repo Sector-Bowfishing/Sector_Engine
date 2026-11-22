@@ -11,6 +11,9 @@ DARKNESS_RULE_V1 (constants are the Engine's DarknessFactor / ConditionsConfig.D
     A  = I * P * (1 - C)                                               (moonlight reaching the water, 0..1)
     class: A < 0.15 DARK | A < 0.35 MOSTLY_DARK | A < 0.60 SOME_MOONLIGHT | else BRIGHT_MOON
 
+Cloud comes from the Weather Brain state (sector-brain-weather-state-v1): forecast.hourly[].cloudCoverPct plus the current-hour
+sky.cloudCoverPct, mean over the distinct hours of the window (window_cloud).
+
 Cloud cover missing, partial or invalid -> C is NOT assumed (the Engine's `cloud ?? 0` default is a guess this Brain refuses):
 the answer is the MOON_ONLY class (A = I * P, the clear-sky upper bound on moonlight), labelled as such, with the reason.
 No night (Sun never sets) -> class NO_NIGHT.
@@ -34,6 +37,17 @@ def _parse(ts: str) -> float:
     return dt.datetime.fromisoformat(ts.replace("Z", "+00:00")).timestamp()
 
 
+def _parse_aware(ts) -> float:
+    """An hourly timestamp must carry an explicit UTC offset ('Z' or +hh:mm). A naive one would be read in the host's local time, so it is
+    refused (ValueError -> MALFORMED_HOURLY_ROW), never guessed."""
+    if not isinstance(ts, str):
+        raise ValueError("timestamp is not a string")
+    t = dt.datetime.fromisoformat(ts.replace("Z", "+00:00"))
+    if t.tzinfo is None or t.utcoffset() is None:
+        raise ValueError("timestamp has no UTC offset")
+    return t.timestamp()
+
+
 def classify(moonlight_index: float) -> str:
     for name, upper in CLASSES:
         if moonlight_index < upper:
@@ -50,33 +64,68 @@ def label(cls: str, illumination: float, presence: float) -> str:
     return f"{int(round(illumination * 100))}% moon · {eff}"
 
 
+WEATHER_STATE_SCHEMA = "sector-brain-weather-state-v1"
+WINDOW_MARGIN_S = 1800
+
+
+def _miss(reason: str, **extra) -> dict:
+    return {"status": "MISSING", "reason": reason, **extra}
+
+
+def _weather_rows(weather: dict) -> list:
+    """Hourly cloud rows from a Weather Brain state document (sector-brain-weather-state-v1, /lakes/{k}/states/weather):
+    `forecast.hourly[]` rows {at, cloudCoverPct: number|null} (the NWS forecast grid, origin forecastGrid) and the current hour
+    `sky.cloudCoverPct` {value, at, origin}. Nothing else in the document is read. Raises KeyError/TypeError on a malformed shape."""
+    rows = []
+    for r in (weather.get("forecast") or {}).get("hourly") or []:
+        rows.append((r["at"], r["cloudCoverPct"], "forecastGrid"))
+    cur = (weather.get("sky") or {}).get("cloudCoverPct")
+    if cur is not None:
+        rows.append((cur["at"], cur["value"], cur.get("origin") or "unknown"))
+    return rows
+
+
 def window_cloud(weather: dict | None, start: float, end: float) -> dict:
-    """Mean cloud cover over [start, end] from the optional Weather Brain input. Never fills a gap."""
+    """Mean cloud cover over the fishing window from the optional Weather Brain state. Never fills a gap.
+
+    Coverage counts DISTINCT hours: each row is keyed on the top of its hour, the same hour twice with the same value counts once, and the
+    same hour with two different values refuses the input (CONFLICTING_HOURLY_VALUES), so a repeated reading cannot pass the floor. The window's
+    hours are the top-of-hour instants within [start - 30 min, end + 30 min]; at least 75 % of them need a value."""
     if not weather:
-        return {"status": "MISSING", "reason": "NO_WEATHER_INPUT"}
-    hourly = weather.get("hourly")
-    if not isinstance(hourly, list) or not hourly:
-        return {"status": "MISSING", "reason": "NO_HOURLY_CLOUD_COVER"}
-    vals = []
-    for row in hourly:
+        return _miss("NO_WEATHER_INPUT")
+    if not isinstance(weather, dict) or weather.get("schema") != WEATHER_STATE_SCHEMA:
+        return _miss("UNSUPPORTED_WEATHER_INPUT")
+    try:
+        rows = _weather_rows(weather)
+    except (KeyError, TypeError, AttributeError):
+        return _miss("MALFORMED_HOURLY_ROW")
+    if not rows:
+        return _miss("NO_HOURLY_CLOUD_COVER")
+    by_hour, origins = {}, {}
+    for at, v, origin in rows:
         try:
-            t = _parse(row["at"])
-            v = row["cloudCoverPct"]
-        except (KeyError, TypeError, ValueError):
-            return {"status": "MISSING", "reason": "MALFORMED_HOURLY_ROW"}
+            t = _parse_aware(at)
+        except ValueError:
+            return _miss("MALFORMED_HOURLY_ROW")
         if v is None:
             continue
         if isinstance(v, bool) or not isinstance(v, (int, float)) or not (0 <= v <= 100):
-            return {"status": "MISSING", "reason": "CLOUD_COVER_OUT_OF_RANGE"}
-        if start - 1800 <= t <= end + 1800:
-            vals.append(float(v))
-    hours = max(1, math.ceil((end - start) / 3600.0))
-    coverage = len(vals) / hours
-    if coverage < MIN_HOURLY_COVERAGE:
-        return {"status": "MISSING", "reason": "INSUFFICIENT_COVERAGE", "hoursWithValue": len(vals), "windowHours": hours}
-    return {"status": "AVAILABLE", "meanPct": round(sum(vals) / len(vals), 1), "hoursWithValue": len(vals),
-            "windowHours": hours, "source": weather.get("source"), "issuedAt": weather.get("issuedAt"),
-            "contract": weather.get("contract")}
+            return _miss("CLOUD_COVER_OUT_OF_RANGE")
+        h = int(t // 3600) * 3600
+        if h in by_hour and by_hour[h] != float(v):
+            return _miss("CONFLICTING_HOURLY_VALUES")
+        by_hour[h], origins[h] = float(v), origin
+    first = int(math.ceil((start - WINDOW_MARGIN_S) / 3600.0)) * 3600
+    expected = list(range(first, int(end + WINDOW_MARGIN_S) + 1, 3600)) or [int(start // 3600) * 3600]
+    have = [h for h in expected if h in by_hour]
+    if len(have) / len(expected) < MIN_HOURLY_COVERAGE:
+        return _miss("INSUFFICIENT_COVERAGE", hoursWithValue=len(have), windowHours=len(expected))
+    used = {}
+    for h in have:
+        used[origins[h]] = used.get(origins[h], 0) + 1
+    return {"status": "AVAILABLE", "meanPct": round(sum(by_hour[h] for h in have) / len(have), 1), "hoursWithValue": len(have),
+            "windowHours": len(expected), "source": "weather", "contract": WEATHER_STATE_SCHEMA,
+            "issuedAt": (weather.get("forecast") or {}).get("issuedAt"), "generatedAt": weather.get("generatedAt"), "origins": used}
 
 
 def cloud_cancel(cloud_pct: float) -> float:

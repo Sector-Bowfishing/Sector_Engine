@@ -50,7 +50,13 @@ DARK  A < 0.15   |   MOSTLY_DARK  < 0.35   |   SOME_MOONLIGHT  < 0.60   |   BRIG
 
 ## 4. Weather Brain input
 
-The Weather Brain is being built in parallel on `feat/weather-brain-2026-11-22`. That branch did not exist on origin when this PR was built (checked at the start and again before the final commit), so the Brain defines what it needs as an **optional, provisional** input: `moon-weather-cloud-input-v0`, an hourly list of `{at, cloudCoverPct}` per lake. It is not declared in `brain.json` `consumes`, because a `kind: brain` entry needs a registered brainId. Gap MOON-INP-001 tracks it. When the Weather Brain contract exists: map it to this input, add the `consumes` entry, and add a mapping test.
+The input is the Weather Brain's per-lake state (`sector-brain-weather-state-v1`, `/lakes/{k}/states/weather`, PR #234). It is OPTIONAL. Only the cloud rows are read:
+- `forecast.hourly[].cloudCoverPct`: the NWS forecast grid, the next 12 hours.
+- `sky.cloudCoverPct {value, at, origin}`: the current hour.
+
+Rows are keyed on their hour. Coverage counts **distinct** hours (follow-up to the #233 review). A timestamp without an explicit UTC offset is refused as MALFORMED_HOURLY_ROW, never read in the host's local time. Because the Weather forecast reaches 12 hours ahead, only a Weather state generated near dusk covers a whole night; otherwise the night is MOON_ONLY with INSUFFICIENT_COVERAGE. Weather is not on main yet, so `brain.json` `consumes` does not list it (§7.2). The earlier provisional shape `moon-weather-cloud-input-v0` is retired.
+
+The deliberate differences from the app's Moon tile and Darkness label (illumination instant, the fixed 0.3 city glow, window-mean cloud, event definitions) are listed in the contract under `divergences`.
 
 ## 5. Package and registrations
 
@@ -75,8 +81,12 @@ The Weather Brain is being built in parallel on `feat/weather-brain-2026-11-22`.
 
 ## 7. Not done here (owner decisions or later work)
 
-1. **Enable execution**: add `moon` to the execution control, give it an executor and a writer, and make it ACTIVE. These are gated owner decisions.
-2. **Weather Brain mapping** (MOON-INP-001), once that Brain's contract exists.
+1. **Enable execution**: these are gated owner decisions. The checklist, done together:
+   - add `moon` to the execution control;
+   - give it an executor and an approved writer;
+   - set the control manifest `activityState` ACTIVE with a real schedule, and `brain.json` `operations.execution.trigger` back to TIME with its `minIntervalHours`;
+   - remove the `moon` carve-out in `jobs/brain-orchestrator/tests/test_central_scheduling.py` (`registered_disabled`) so the test again requires an execution path for every manifest Brain.
+2. **Weather Brain consumes entry** (MOON-INP-001): the cloud input already reads the Weather state shape (§4). Once Weather (#234) is on main, add `{kind: brain, brainId: weather, contractId: weather-publication-v1, requirement: OPTIONAL}` to `brain.json` `consumes` and a manifest dependency.
 3. **Validate DARKNESS_RULE_V1** against measured on-water illuminance (MOON-VAL-001).
 4. **Per-lake skyglow** (MOON-INP-002).
 5. **Engine event definitions**: whether the Engine and the apps should adopt the USNO altitudes and the noon-to-noon span for the moonrise/sunset they display. That would be a `moon-v2` spec change across iOS, Android and Web.

@@ -4,6 +4,8 @@ import os
 import subprocess
 import sys
 
+import moon_support as S
+
 RUN = os.path.join(os.path.dirname(__file__), "..", "runtime", "run.py")
 
 
@@ -24,8 +26,7 @@ def test_write_is_refused():
 def test_tonight_for_listed_lakes(tmp_path):
     out = tmp_path / "tonight.json"
     w = tmp_path / "w.json"
-    w.write_text(json.dumps({"Guntersville|AL": {"contract": "moon-weather-cloud-input-v0", "hourly": [
-        {"at": f"2026-11-23T{h:02d}:00:00Z", "cloudCoverPct": 100} for h in range(0, 14)]}}))
+    w.write_text(json.dumps({"Guntersville|AL": S.weather_state(S.hourly_over("2026-11-22T23:00:00Z", "2026-11-23T13:00:00Z", 100))}))
     r = _run("--tonight", str(out), "--date", "2026-11-22", "--lakes", "Guntersville|AL,Iliamna|AK", "--weather", str(w))
     assert r.returncode == 0, r.stderr
     doc = json.load(open(out))
@@ -37,3 +38,11 @@ def test_tonight_for_listed_lakes(tmp_path):
 def test_unknown_lake_is_refused(tmp_path):
     r = _run("--tonight", str(tmp_path / "x.json"), "--lakes", "Atlantis|ZZ")
     assert r.returncode == 2 and "not directory lakes" in r.stderr
+
+
+def test_without_date_each_lake_gets_its_own_tonight(tmp_path):
+    out = tmp_path / "t.json"
+    r = _run("--tonight", str(out), "--lakes", "Guntersville|AL,Iliamna|AK")
+    assert r.returncode == 0, r.stderr
+    doc = json.load(open(out))
+    assert doc["date"] == "PER_LAKE_CURRENT_NIGHT" and all(len(v["date"]) == 10 for v in doc["lakes"].values())

@@ -12,8 +12,7 @@ def artifact(n, generated_at, consumed, rerun):
 
 
 def changed_artifact(n, generated_at):
-    cloud = {"Guntersville|AL": {"contract": "moon-weather-cloud-input-v0", "hourly": [{"at": f"2026-11-23T{h:02d}:00:00Z", "cloudCoverPct": 95}
-                                                                                      for h in range(0, 14)]}}
+    cloud = {"Guntersville|AL": S.weather_state(S.hourly_over("2026-11-23T00:00:00Z", "2026-11-23T13:00:00Z", 95))}
     return S.build(S.run_updates(weather=cloud), n=n, generated_at=generated_at).artifact                # cloud input arrived: a real input change
 
 

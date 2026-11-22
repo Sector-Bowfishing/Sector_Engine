@@ -29,6 +29,18 @@ def iso(t: float | None) -> str | None:
     return dt.datetime.fromtimestamp(round(t), dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def evening_date(lat: float, lon: float, now: dt.datetime) -> dt.date:
+    """The default "tonight" for a lake: the evening date D of the night that has not yet ended at `now`. Take the night whose span (local
+    solar noon of D to local solar noon of D+1) contains `now`; if that night's sunrise has already passed (morning, before local solar noon),
+    tonight is the coming evening, D+1. With no sunrise in the span (polar day or night) the span's own date stands."""
+    t = now.astimezone(dt.timezone.utc)
+    d = (t + dt.timedelta(hours=lon / 15.0 - 12.0)).date()
+    s0, s1 = span_for(d, lon)
+    rs = ev.crossings(ev.sun_offset(ev.SUN_RISE_SET_H0), lat, lon, s0, s1)
+    sunrise = ev.first(rs, "rise", after=ev.first(rs, "set"))
+    return d + dt.timedelta(days=1) if sunrise is not None and t.timestamp() >= sunrise else d
+
+
 def span_for(date: dt.date, lon: float) -> tuple[float, float]:
     noon = dt.datetime(date.year, date.month, date.day, 12, tzinfo=dt.timezone.utc).timestamp() - (lon / 15.0) * 3600.0
     return noon, noon + 86400.0

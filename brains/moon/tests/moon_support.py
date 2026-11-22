@@ -41,3 +41,26 @@ def run_updates(date=NIGHT, weather=None, only=SLICE) -> dict:
 def build(updates, *, n=1, generated_at="2026-11-22T19:00:00Z", consumed=None):
     ctx = pa.BuildContext(generated_at, uid(n), "test@1", lifecycle=pa.LIFECYCLE)
     return pa.build_artifact(updates, ctx, release_lineage=L.lineage(), consumed=consumed)
+
+
+def weather_state(hourly, current=None, generated_at="2026-11-22T23:00:00Z"):
+    """A Weather Brain state document (sector-brain-weather-state-v1) reduced to what the Moon Brain reads, in the producer's shape
+    (brains/weather/runtime/sector_weather/state.py on PR #234): forecast.hourly[] rows {at, cloudCoverPct, ...} and sky.cloudCoverPct
+    {value, at, origin, station}. hourly: [(iso, pct)]; current: (iso, pct, origin) or None."""
+    return {"schema": "sector-brain-weather-state-v1", "brainId": "weather", "generatedAt": generated_at, "kind": "forecast",
+            "sky": {"cloudCoverPct": None if current is None else {"value": current[1], "at": current[0], "origin": current[2], "station": None},
+                    "word": None},
+            "forecast": {"source": "NWS forecast grid (NBM-based NDFD)", "issuedAt": "2026-11-22T22:41:00Z",
+                         "hourly": [{"at": at, "airTemperatureF": 50.0, "humidityPct": 80, "dewPointF": 44.0, "cloudCoverPct": pct,
+                                     "precipProbabilityPct": 10} for at, pct in hourly]}}
+
+
+def hourly_over(start_iso, end_iso, pct):
+    """[(iso, pct)] at every top of hour from the hour of start to one hour past end."""
+    s = dt.datetime.fromisoformat(start_iso.replace("Z", "+00:00")).replace(minute=0, second=0)
+    e = dt.datetime.fromisoformat(end_iso.replace("Z", "+00:00"))
+    out = []
+    while s <= e + dt.timedelta(hours=1):
+        out.append((s.strftime("%Y-%m-%dT%H:%M:%SZ"), pct))
+        s += dt.timedelta(hours=1)
+    return out
