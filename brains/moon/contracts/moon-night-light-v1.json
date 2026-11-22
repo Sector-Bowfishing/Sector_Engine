@@ -1,0 +1,147 @@
+{
+  "contractId": "moon-night-light-v1",
+  "version": "1.0.0",
+  "brainId": "moon",
+  "status": "CALIBRATION: internal only, no live writer, customer publication off",
+  "purpose": "Tonight's moon phase, illumination, moonrise/moonset, sunset/sunrise and civil/nautical/astronomical twilight for every registry.lakes lake, plus the on-water darkness class. Path /lakes/{k}/states/moon (Publisher declaration: moon-publication-v1.json).",
+  "night": {
+    "definition": "Tonight for calendar date D = the night starting on the evening of D at the lake. Span = [D 12:00 UTC - lon/15 h, +24 h): local solar noon to local solar noon, so every longitude gets exactly one evening and the following morning. All instants are UTC (ISO 8601 Z); the client renders them in the lake's zone.",
+    "fishingWindow": "Mirrors the Engine and iOS (ConditionsInputBuilder; iOS specs/conditions-engine.md 'the night window runs into TOMORROW'): start = astronomical dusk, else sunset + 80 min; end = the next sunrise, else start + 8 h. Basis values: ASTRONOMICAL_DUSK_TO_SUNRISE, SUNSET_PLUS_80_MIN_TO_SUNRISE, (either)_FALLBACK_8H, POLAR_NIGHT_WHOLE_SPAN, NO_NIGHT_SUN_ALWAYS_UP.",
+    "illuminationInstant": "Moon illumination, phase fraction and phase name are evaluated at local solar midnight (span start + 12 h)."
+  },
+  "algorithms": {
+    "ephemeris": "sector-moon-v1 (contracts/moon/moon-v1.json): Paul Schlyter's low-precision Sun and Moon positions, ported line for line from Sources/SectorEngine/Engine/Astronomy.swift. Illumination, phaseFraction and phaseName pass the spec's 52 vectors (tolerance 0.0005 / 1e-6).",
+    "siderealTime": "IAU 1982 GMST (Meeus, Astronomical Algorithms 2nd ed., eq. 12.4).",
+    "events": "Meeus ch. 15 / USNO standard altitudes. Sun rise/set: centre at -0.8333 deg. Civil, nautical, astronomical twilight: centre at -6, -12, -18 deg. Moon rise/set: upper limb on the horizon with 34' refraction, geocentric altitude of the centre h0 = 0.7275 * horizontal parallax - 0.5667 deg. Altitude sampled every 10 min and bisected to 1 s; positions recomputed at every trial instant.",
+    "moonlight": "presence = mean of max(0, sin(topocentric moon altitude)) sampled every 15 min across the fishing window, end inclusive (the Engine's moonAltitudeFraction). upFraction = share of samples with the moon's centre above the horizon.",
+    "absentEvents": "An event that does not occur in the span (polar day or night, a moon that does not rise or set) is null, and sunState says why (ALWAYS_ABOVE / ALWAYS_BELOW). It is never interpolated."
+  },
+  "usnoCrossCheck": {
+    "reference": "brains/moon/tests/fixtures/usno_reference.json (USNO Astronomical Applications API rstt/oneday, moon/phases and the yearly twilight tables, retrieved 2026-11-22)",
+    "tolerance": {"riseSetMinutes": 2, "twilightMinutes": 2, "principalPhaseMinutes": 20, "illuminationAtPrincipalPhase": 0.003},
+    "test": "brains/moon/tests/test_usno_crosscheck.py"
+  },
+  "weatherInput": {
+    "contract": "moon-weather-cloud-input-v0",
+    "status": "PROVISIONAL: the Weather Brain (branch feat/weather-brain-2026-11-22) has no published contract yet. This is the input the Moon Brain needs; it is replaced by a mapping from the Weather Brain's own contract when that exists.",
+    "requirement": "OPTIONAL",
+    "shape": {
+      "type": "object",
+      "required": ["hourly"],
+      "properties": {
+        "contract": {"type": "string"},
+        "source": {"type": "string", "description": "producer id, e.g. weather"},
+        "issuedAt": {"type": "string", "format": "date-time"},
+        "hourly": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["at", "cloudCoverPct"],
+            "properties": {
+              "at": {"type": "string", "format": "date-time", "description": "the hour the value describes (UTC)"},
+              "cloudCoverPct": {"type": ["number", "null"], "minimum": 0, "maximum": 100, "description": "total cloud cover, percent"}
+            }
+          }
+        }
+      }
+    },
+    "use": "Window cloud = mean of the hourly values whose instant lies in [window start - 30 min, window end + 30 min]. Needs values for at least 75 % of the window's hours. A null value is skipped; a value outside 0..100 or a malformed row makes the whole input unusable.",
+    "whenMissing": "status MISSING with a reason (NO_WEATHER_INPUT, NO_HOURLY_CLOUD_COVER, MALFORMED_HOURLY_ROW, CLOUD_COVER_OUT_OF_RANGE, INSUFFICIENT_COVERAGE). No cloud value is assumed."
+  },
+  "darknessRule": {
+    "id": "DARKNESS_RULE_V1",
+    "statedBeforeScoring": "2026-11-22. Constants are the Engine's DarknessFactor and ConditionsConfig.Darkness, so the Brain and the app classify the same night the same way.",
+    "inputs": {
+      "I": "moon illumination at local solar midnight (0..1)",
+      "P": "moon presence across the fishing window (0..1)",
+      "cloudPct": "window mean cloud cover from weatherInput, when AVAILABLE"
+    },
+    "cloudCancel": "C = clamp((cloudPct - 50) / 50, 0, 1) * (1 - 0.8 * 0.3). 0.3 is the Engine's default city-glow factor: no per-lake skyglow input exists, so the rule uses the Engine's constant, not a per-lake estimate.",
+    "moonlightIndex": "A = I * P * (1 - C)",
+    "classes": [
+      {"class": "DARK", "when": "A < 0.15", "label": "moon down (P < 0.15) or dark water"},
+      {"class": "MOSTLY_DARK", "when": "0.15 <= A < 0.35", "label": "mostly dark"},
+      {"class": "SOME_MOONLIGHT", "when": "0.35 <= A < 0.60", "label": "some glow"},
+      {"class": "BRIGHT_MOON", "when": "A >= 0.60", "label": "bright — moon up"},
+      {"class": "NO_NIGHT", "when": "the Sun does not set in the span", "label": null}
+    ],
+    "basis": {
+      "MOON_AND_CLOUD": "cloud cover AVAILABLE: A uses C.",
+      "MOON_ONLY": "cloud cover MISSING: A = I * P, the clear-sky upper bound on moonlight. The state says so in `statement` and names the reason. Unlike the Engine (cloud ?? 0), nothing is assumed.",
+      "NO_NIGHT": "no dark window to classify."
+    },
+    "alwaysReported": "moonOnly {moonlightIndex, class, label} is reported on every night, cloud or not.",
+    "notClaimed": "The class describes moonlight competing with the boat's lights (shooter visibility). It makes no claim that a bright moon makes fish hold deeper or spook (iOS specs/weather-metric-detail.md 'Copy accuracy (moon)'). Artificial skyglow is not modelled. Not validated against measured on-water light."
+  },
+  "stateSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "required": ["schema", "schemaVersion", "brainId", "brainVersion", "lakeId", "date", "readiness", "span", "sun", "moon", "window", "darkness", "provenance"],
+    "properties": {
+      "schema": {"const": "moon-night-light-v1"},
+      "schemaVersion": {"const": 1},
+      "brainId": {"const": "moon"},
+      "brainVersion": {"type": "string"},
+      "lakeId": {"type": "string", "description": "registry.lakes id, Name|ST"},
+      "date": {"type": "string", "format": "date"},
+      "readiness": {"enum": ["CALIBRATION", "DEGRADED"]},
+      "span": {"type": "object", "required": ["start", "end", "anchor"], "properties": {"anchor": {"const": "LOCAL_SOLAR_NOON"}}},
+      "sun": {
+        "type": "object",
+        "required": ["sunset", "sunrise", "twilight"],
+        "properties": {
+          "sunset": {"type": ["string", "null"], "format": "date-time"},
+          "sunrise": {"type": ["string", "null"], "format": "date-time", "description": "the morning after sunset"},
+          "sunState": {"enum": [null, "ALWAYS_ABOVE", "ALWAYS_BELOW"]},
+          "twilight": {
+            "type": "object",
+            "required": ["civil", "nautical", "astronomical"],
+            "additionalProperties": {
+              "type": "object",
+              "required": ["dusk", "dawn"],
+              "properties": {"dusk": {"type": ["string", "null"]}, "dawn": {"type": ["string", "null"]}, "sunState": {"enum": [null, "ALWAYS_ABOVE", "ALWAYS_BELOW"]}}
+            }
+          }
+        }
+      },
+      "moon": {
+        "type": "object",
+        "required": ["phaseName", "phaseFraction", "waxing", "illumination", "illuminationAt", "moonrise", "moonset", "events"],
+        "properties": {
+          "phaseName": {"enum": ["New moon", "Waxing crescent", "First quarter", "Waxing gibbous", "Full moon", "Waning gibbous", "Last quarter", "Waning crescent"]},
+          "phaseFraction": {"type": "number", "minimum": 0, "maximum": 1},
+          "waxing": {"type": "boolean"},
+          "illumination": {"type": "number", "minimum": 0, "maximum": 1},
+          "illuminationAt": {"type": "string", "format": "date-time"},
+          "moonrise": {"type": ["string", "null"], "description": "first moonrise in the span"},
+          "moonset": {"type": ["string", "null"], "description": "first moonset in the span"},
+          "events": {"type": "array", "items": {"type": "object", "required": ["at", "event"], "properties": {"event": {"enum": ["rise", "set"]}}}},
+          "upAtSpanStart": {"type": "boolean"}
+        }
+      },
+      "window": {
+        "type": "object",
+        "required": ["start", "end", "basis"],
+        "properties": {
+          "moonlight": {"type": "object", "required": ["presence", "upFraction", "maxAltitudeDeg", "samples"]}
+        }
+      },
+      "darkness": {
+        "type": "object",
+        "required": ["rule", "class", "basis", "cloudCover"],
+        "properties": {
+          "rule": {"const": "DARKNESS_RULE_V1"},
+          "class": {"enum": ["DARK", "MOSTLY_DARK", "SOME_MOONLIGHT", "BRIGHT_MOON", "NO_NIGHT"]},
+          "basis": {"enum": ["MOON_AND_CLOUD", "MOON_ONLY", "NO_NIGHT"]},
+          "moonlightIndex": {"type": "number", "minimum": 0, "maximum": 1},
+          "cloudCancel": {"type": ["number", "null"]},
+          "cloudCover": {"type": "object", "required": ["status"], "properties": {"status": {"enum": ["AVAILABLE", "MISSING", "NOT_APPLICABLE"]}}},
+          "moonOnly": {"type": "object", "required": ["moonlightIndex", "class", "label"]},
+          "label": {"type": "string"},
+          "statement": {"type": "string"}
+        }
+      },
+      "provenance": {"type": "object", "required": ["ephemeris", "events", "darknessRule", "inputFingerprint"]}
+    }
+  }
+}

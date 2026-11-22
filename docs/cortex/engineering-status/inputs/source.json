@@ -742,6 +742,82 @@
           "No capability score (not scored)"
         ]
       }
+    },
+    "moon": {
+      "statusLayers": {
+        "canonicalStructure": {
+          "status": "PASS",
+          "label": "CANONICAL_PACKAGE",
+          "evidence": "brains/moon: brain.json, operating contract, runtime/, tests/, research/, contracts/ (Kit P01)"
+        },
+        "structuralCertification": {
+          "status": "PASS",
+          "label": "KIT_V1_CERTIFIED",
+          "evidence": "inputs/certification.json (actual per-proof run)"
+        },
+        "scientificValidation": {
+          "status": "PARTIAL",
+          "label": "ASTRONOMY_CROSS_CHECKED_DARKNESS_RULE_NOT_VALIDATED",
+          "evidence": "rise/set and twilight within 2 min of USNO, principal phases within 20 min, sector-moon-v1 vectors (brains/moon/tests); DARKNESS_RULE_V1 not validated against measured on-water light (MOON-VAL-001)"
+        },
+        "approvedMemoryRelease": {
+          "status": "BLOCKED",
+          "label": "CANDIDATE_RELEASE_NOT_APPROVED",
+          "evidence": "moon-knowledge-candidate-2026-11-22.1 verified; approval NOT_RECORDED"
+        },
+        "operationalReadiness": {
+          "status": "BLOCKED",
+          "label": "REGISTERED_DISABLED",
+          "evidence": "control manifest PARKED, executionTarget kind none, absent from the execution control (disabled); no live writer; run.py --write refuses"
+        },
+        "productionActivation": {
+          "status": "BLOCKED",
+          "label": "NOT_ENABLED",
+          "evidence": "owner decision 2026-11-22 (Sector_Ops #51) approved building it; enabling execution is a separate owner decision"
+        },
+        "customerConsumable": {
+          "status": "NOT_APPLICABLE",
+          "label": "NOT_CUSTOMER_FACING",
+          "evidence": "customerIntegrationMode none; customer publication off"
+        }
+      },
+      "requirements": {
+        "BR-05": "PASS",
+        "BR-06": "PASS",
+        "BR-07": "PASS",
+        "BR-10": "PASS",
+        "BR-11": "PARTIAL",
+        "BR-16": "PASS",
+        "BR-18": "PASS",
+        "BR-19": "PASS"
+      },
+      "structuralProblems": [],
+      "scienceDependencies": [
+        "Independent on-water illuminance comparison for DARKNESS_RULE_V1 (MOON-VAL-001)",
+        "Weather Brain cloud-cover contract (MOON-INP-001)"
+      ],
+      "nextWork": [
+        "Map the Weather Brain contract to the cloud input when it exists",
+        "Owner decision to enable execution"
+      ],
+      "operations": {
+        "scientificValidation": {
+          "status": "IN_PROGRESS",
+          "label": "ASTRONOMY_CROSS_CHECKED_DARKNESS_RULE_NOT_VALIDATED"
+        },
+        "knowledgeRelease": {
+          "state": "CANDIDATE",
+          "releaseId": "moon-knowledge-candidate-2026-11-22.1",
+          "approval": "NOT_RECORDED"
+        },
+        "scores": [],
+        "limitations": [
+          "Every night is MOON_ONLY until the Weather Brain publishes cloud cover (no cloud value is assumed)",
+          "No per-lake skyglow input: the Engine's default city glow 0.3 is used",
+          "Registered disabled: not scheduled, no live writer",
+          "No capability score (not scored)"
+        ]
+      }
     }
   },
   "engineScore": {

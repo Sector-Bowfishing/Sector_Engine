@@ -1,0 +1,153 @@
+{
+  "brainId": "moon",
+  "builder": "brains/moon/runtime/moon_brain/publish_artifact.py",
+  "contractId": "moon-publication-v1",
+  "derivedFrom": "jobs/brain_platform/sector_brain_platform/publisher/registry.py (moon_specs, moon_bundles)",
+  "envelope": "publish-artifact-v2",
+  "fingerprint": "sector-semantic-fingerprint-v2",
+  "healthDomainChildren": [
+    "status",
+    "staleLakeCount"
+  ],
+  "lineage": {
+    "consumed": "ACTUAL RTDB reads recorded by the platform client when available; absent = unknown, never []",
+    "knowledgeRelease": "the verified Moon knowledge release id (runtime/knowledge/knowledge-release.json: the lake-directory projection)",
+    "manifestRef": "image:knowledge-release.json",
+    "manifestSha256": "the release digest (sha256)"
+  },
+  "registryChildren": {
+    "identity": [
+      "brainId",
+      "displayName",
+      "domain",
+      "question",
+      "platform"
+    ],
+    "model": [
+      "version",
+      "schemaVersion",
+      "stalenessModel",
+      "dependsOn",
+      "versions",
+      "models",
+      "readinessDefinitions",
+      "knowledgeRelease",
+      "scoreNote",
+      "sourceIds"
+    ],
+    "status": [
+      "schedule",
+      "enabled",
+      "health",
+      "status",
+      "supportedLakeCount",
+      "directoryLakeCount",
+      "readinessCounts",
+      "staleLakeCount",
+      "staleAfterHours",
+      "lastSuccessfulRun",
+      "lastError",
+      "breakdowns",
+      "validation",
+      "publishMode",
+      "updatedAt"
+    ]
+  },
+  "reservedChildren": [
+    "certification",
+    "publication"
+  ],
+  "sections": [
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [],
+      "deleteReasons": [],
+      "families": [
+        {
+          "pattern": "/lakes/{k}/states/moon",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/slots/moon",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/readiness/moon",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/lakeFleet/{k}/modelVersions/moon",
+          "status": "DERIVED_PROJECTION"
+        },
+        {
+          "pattern": "/snapshots/{k}/latest/moonNightLight",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/snapshots/{k}/latest/brainVersions/moon",
+          "status": "CANONICAL"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "moon-lake-state-v1",
+      "volatileContract": "moon-volatile-v1"
+    },
+    {
+      "allowedLifecycles": [
+        "RESEARCH",
+        "PROFILED",
+        "SHADOW",
+        "CALIBRATION"
+      ],
+      "deleteFamilies": [
+        "/brains/moon/lastError"
+      ],
+      "deleteReasons": [
+        "OPTIONAL_CHILD_CLEARED"
+      ],
+      "families": [
+        {
+          "pattern": "/brains/moon/{child}",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/validation/moon",
+          "status": "CANONICAL"
+        },
+        {
+          "pattern": "/health/brains/moon/{child}",
+          "status": "CANONICAL"
+        }
+      ],
+      "requiresFreshness": false,
+      "requiresRelease": false,
+      "schemaId": "moon-registry-v1",
+      "volatileContract": "moon-volatile-v1"
+    }
+  ],
+  "snapshot": "the snapshot field and its brainVersion are Brain-authored (no Publisher COPY projection)",
+  "status": "SHADOW (Publisher Gate P); Brain lifecycle CALIBRATION; not wired into any job; there is no live writer; not a production contract",
+  "version": "1.0.0",
+  "volatileContract": {
+    "id": "moon-volatile-v1",
+    "keys": [
+      "updatedAt"
+    ],
+    "notes": {
+      "key:updatedAt": "registry write time; no domain meaning",
+      "path:/brains/moon/lastSuccessfulRun": "execution fact; retire when the Orchestrator reads its own execution records",
+      "path:/brains/moon/versions": "version history entry dated by the run"
+    },
+    "paths": [
+      "/brains/moon/lastSuccessfulRun",
+      "/brains/moon/versions"
+    ],
+    "version": 1
+  }
+}

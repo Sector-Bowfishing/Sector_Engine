@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "kit": "BRAIN_CERT_KIT_V1",
   "collectedWith": "pytest -rA per Brain directory (tools/cortex_status/collect_certification.py)",
-  "sourceDigest": "sha256:4c5f3a25184cce9fd700e7da29b813a7da6d11e9cd2bbc5e6c6b3080e6f706f3",
+  "sourceDigest": "sha256:7f68bd479a963c6ae6863c23675387a50fd88f845834d7d7f4b49962f067ef90",
   "brains": {
     "depth": {
       "directory": "brains/depth",
@@ -93,6 +93,36 @@
         "failed": 0
       },
       "summary": "47 passed, 2 skipped"
+    },
+    "moon": {
+      "directory": "brains/moon",
+      "status": "PASS",
+      "proofs": {
+        "P01": "PASS",
+        "P02": "PASS",
+        "P03": "PASS",
+        "P04": "PASS",
+        "P05": "PASS",
+        "P06": "PASS",
+        "P07": "PASS",
+        "P08": "PASS",
+        "P09": "PASS",
+        "P10": "PASS",
+        "P11": "PASS",
+        "P12": "PASS",
+        "P13": "PASS",
+        "P14": "PASS",
+        "P15": "PASS",
+        "P16": "PASS",
+        "P17": "PASS",
+        "P18": "PASS",
+        "P19": "PASS"
+      },
+      "mutations": {
+        "passed": 30,
+        "failed": 0
+      },
+      "summary": "51 passed"
     },
     "sector-intelligence": {
       "directory": "brains/sector-intelligence",

@@ -89,6 +89,15 @@
       "schedule": {"class": "MANUAL", "owner": "NONE"},
       "freshness": {"stalenessModel": "FINGERPRINT"}, "fingerprint": {"outputSource": "registry:fingerprint"},
       "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 0.5, "tasks": 1}, "timeoutSeconds": 1800, "scopes": ["pilots"], "customerPublication": false
+    },
+    "moon": {
+      "displayName": "Moon and Night Light", "group": "CURRENT_CONDITIONS", "lifecycle": "CALIBRATION", "activityState": "PARKED",
+      "executionTarget": {"kind": "none", "note": "registered 2026-11-22 (owner decision, Sector_Ops #51) but DISABLED: no executor, absent from the execution control (absent = disabled), no live writer. runtime/run.py writes a local file or an in-memory dry run; --write refuses. Enabling it is a separate owner decision.", "startedByOrchestrator": false, "scoped": false},
+      "allowedTriggers": ["MANUAL", "ADMIN"],
+      "dependencies": [],
+      "schedule": {"class": "MANUAL", "owner": "NONE"},
+      "freshness": {"stalenessModel": "FINGERPRINT"}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "readinessCounts", "supportedLakeCount"]},
+      "costClass": "NONE", "timeoutSeconds": 900, "scopes": [], "customerPublication": false
     }
   },
   "jobs": {
