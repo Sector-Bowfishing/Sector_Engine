@@ -1,0 +1,494 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sector.engine/brains/generation/contracts/generation-dam-state-v1.schema.json",
+  "title": "Generation Brain per-lake state (/lakes/{k}/states/generation), generation-dam-state-v1",
+  "description": "What the dam on one lake is releasing or generating, from official operator or agency data only. A value no source measured or published is null, never estimated. UNKNOWN is an abstention, never OFF. Nullable objects are typed [object, null] (validated with tools/architecture/jsonschema_lite, no oneOf).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "lakeId",
+    "kind",
+    "lane",
+    "dam",
+    "release",
+    "schedule",
+    "tailwater",
+    "history",
+    "sources",
+    "agencies",
+    "freshness",
+    "confidence",
+    "gaps",
+    "provenance"
+  ],
+  "$defs": {
+    "time": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "timeOrNull": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "numOrNull": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start",
+        "end",
+        "statedBy"
+      ],
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/time"
+        },
+        "end": {
+          "$ref": "#/$defs/time"
+        },
+        "unitsOn": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "units as STATED by the operator (TVA); absent when the operator states megawatts only"
+        },
+        "unitsOnIsMinimum": {
+          "type": "boolean",
+          "description": "the operator said 'N or more'"
+        },
+        "generationMw": {
+          "type": "number",
+          "minimum": 0,
+          "description": "projected MW as published (SWPA)"
+        },
+        "unitsStated": {
+          "type": "boolean"
+        },
+        "statedBy": {
+          "const": "operator"
+        }
+      }
+    }
+  },
+  "properties": {
+    "schema": {
+      "const": "generation-dam-state-v1"
+    },
+    "lakeId": {
+      "type": "string",
+      "pattern": "^.+\\|[A-Z]{2}$"
+    },
+    "kind": {
+      "enum": [
+        "OBSERVED",
+        "SCHEDULE_ONLY",
+        "UNAVAILABLE"
+      ]
+    },
+    "lane": {
+      "const": "INTERNAL"
+    },
+    "dam": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "nidId",
+        "operatorName",
+        "group"
+      ],
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "nidId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "operatorName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "group": {
+          "enum": [
+            "TVA",
+            "TVA_CUMBERLAND",
+            "SWPA_USACE",
+            "USACE",
+            "USBR",
+            "UTILITY_OR_POWER_AUTHORITY",
+            "OTHER_OPERATOR"
+          ]
+        }
+      }
+    },
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "statusBasis",
+        "generating",
+        "spilling",
+        "dischargeCfs",
+        "turbineCfs",
+        "spillCfs",
+        "generationMw",
+        "trend12hCfs",
+        "observedAt",
+        "source",
+        "downstreamGauge"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "GENERATING",
+            "SPILLING",
+            "RELEASING",
+            "OFF",
+            "UNKNOWN"
+          ]
+        },
+        "statusBasis": {
+          "enum": [
+            "MEASURED",
+            "MEASURED_AND_SCHEDULE",
+            "SCHEDULE",
+            null
+          ]
+        },
+        "generating": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "spilling": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "dischargeCfs": {
+          "$ref": "#/$defs/numOrNull"
+        },
+        "turbineCfs": {
+          "$ref": "#/$defs/numOrNull"
+        },
+        "spillCfs": {
+          "$ref": "#/$defs/numOrNull"
+        },
+        "generationMw": {
+          "$ref": "#/$defs/numOrNull"
+        },
+        "trend12hCfs": {
+          "$ref": "#/$defs/numOrNull"
+        },
+        "observedAt": {
+          "$ref": "#/$defs/timeOrNull"
+        },
+        "source": {
+          "enum": [
+            "tva",
+            "cwms",
+            "swpa",
+            "rise",
+            "usgs",
+            null
+          ]
+        },
+        "downstreamGauge": {
+          "type": "boolean",
+          "description": "true when the discharge is a USGS gauge below the dam (the river, not the dam's own release)"
+        }
+      }
+    },
+    "schedule": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "publishedBy",
+        "provider",
+        "windows",
+        "now",
+        "unitsStated",
+        "nextReleaseStartAt",
+        "nextShutdownAt",
+        "scheduleCoversUntil"
+      ],
+      "properties": {
+        "publishedBy": {
+          "type": "string"
+        },
+        "provider": {
+          "enum": [
+            "tva",
+            "swpa"
+          ]
+        },
+        "windows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/window"
+          }
+        },
+        "now": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "unitsStated": {
+          "type": "boolean"
+        },
+        "nextReleaseStartAt": {
+          "$ref": "#/$defs/timeOrNull"
+        },
+        "nextShutdownAt": {
+          "$ref": "#/$defs/timeOrNull"
+        },
+        "scheduleCoversUntil": {
+          "$ref": "#/$defs/timeOrNull"
+        }
+      }
+    },
+    "tailwater": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "elevationFt",
+        "observedAt",
+        "source"
+      ],
+      "properties": {
+        "elevationFt": {
+          "type": "number"
+        },
+        "observedAt": {
+          "$ref": "#/$defs/time"
+        },
+        "source": {
+          "enum": [
+            "tva",
+            "cwms"
+          ]
+        }
+      }
+    },
+    "history": {
+      "type": "array",
+      "maxItems": 400,
+      "items": {
+        "type": "object",
+        "required": [
+          "at"
+        ],
+        "properties": {
+          "at": {
+            "$ref": "#/$defs/time"
+          }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "provider",
+          "agency",
+          "ok",
+          "error",
+          "series",
+          "retrievedAt",
+          "observationCount",
+          "scheduleWindows"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string"
+          },
+          "agency": {
+            "type": "string",
+            "minLength": 1
+          },
+          "ok": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "series": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "retrievedAt": {
+            "$ref": "#/$defs/time"
+          },
+          "observationCount": {
+            "type": "integer"
+          },
+          "scheduleWindows": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "agencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tier",
+        "reason",
+        "freshUntil",
+        "nextCheckAt",
+        "recheckMinutes",
+        "stale",
+        "model"
+      ],
+      "properties": {
+        "tier": {
+          "enum": [
+            "TRANSITION",
+            "ACTIVE",
+            "STEADY",
+            "UNKNOWN"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "freshUntil": {
+          "$ref": "#/$defs/time"
+        },
+        "nextCheckAt": {
+          "$ref": "#/$defs/time"
+        },
+        "recheckMinutes": {
+          "type": "integer",
+          "minimum": 60
+        },
+        "stale": {
+          "type": "boolean"
+        },
+        "model": {
+          "const": "ADAPTIVE_PER_DAM"
+        }
+      }
+    },
+    "confidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis",
+        "unitsStated",
+        "validation",
+        "note"
+      ],
+      "properties": {
+        "basis": {
+          "enum": [
+            "OPERATOR_PUBLISHED",
+            "MEASURED_DOWNSTREAM",
+            "SCHEDULE_ONLY",
+            "NONE"
+          ]
+        },
+        "unitsStated": {
+          "type": "boolean"
+        },
+        "validation": {
+          "enum": [
+            "NOT_VALIDATED",
+            "VALIDATED"
+          ]
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "brainVersion",
+        "modelId",
+        "catalogVersion",
+        "knowledgeRelease",
+        "scheduleFingerprint",
+        "inputFingerprint",
+        "generatedAt"
+      ],
+      "properties": {
+        "brainVersion": {
+          "type": "string"
+        },
+        "modelId": {
+          "type": "string"
+        },
+        "catalogVersion": {
+          "type": "string"
+        },
+        "knowledgeRelease": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scheduleFingerprint": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "inputFingerprint": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "generatedAt": {
+          "$ref": "#/$defs/time"
+        }
+      }
+    }
+  }
+}

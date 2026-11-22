@@ -400,6 +400,43 @@
         }
       },
       "recovery": "Not deployed. The release ships with the package and is re-verified on every run; the point cache is static metadata that is rebuilt from NWS when missing."
+    },
+    {
+      "brainId": "generation",
+      "directory": "brains/generation",
+      "checks": {
+        "store-owner": {
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "brain.json knowledge: PACKAGED_IN_IMAGE release brains/generation/runtime/knowledge/knowledge-release.json, owner generation, researchFallback false. Not deployed"
+        },
+        "developer-machine": {
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "standing scan + Kit P16 clean; the catalog builder reads the Engine lake directory and Lake's reviewed bindings offline; the runtime reads only its release and the official sources it binds"
+        },
+        "release-identity": {
+          "branch": "PARTIAL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "verified on load (generation_brain.knowledge.load); release id/digest/approval in the registry, every lake state and the artifact lineage (Kit P09). No image exists (registered DISABLED)"
+        },
+        "memory-unavailable": {
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "missing/tampered release -> exit 2 REFUSED; unapproved release -> BLOCKED_AWAITING_APPROVED_RELEASE (tests/test_run_entry.py, tests/test_knowledge_memory.py)"
+        },
+        "separation-approval": {
+          "branch": "PARTIAL",
+          "production": "NOT_APPLICABLE",
+          "evidence": "research tooling separated from the runtime (tests/test_knowledge_memory.py); approval NOT_RECORDED: the candidate release is never published from"
+        },
+        "pulse-independence": {
+          "branch": "PASS",
+          "production": "NOT_APPLICABLE",
+          "evidence": "no Pulse/Mac/localhost target (standing scan); no executor, no schedule (control manifest kind none)"
+        }
+      },
+      "recovery": "Not deployed. The release ships with the package and is re-verified on every run; per-dam freshness lives in the published state; no local state."
     }
   ]
 }

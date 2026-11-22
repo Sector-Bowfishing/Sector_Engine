@@ -1,0 +1,25 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "properties": {
+    "time_series_id": "a",
+    "monitoring_location_id": "USGS-07055660",
+    "parameter_code": "00060",
+    "time": "2026-11-22T00:00:00+00:00",
+    "value": "1",
+    "unit_of_measure": "ft^3/s"
+   }
+  },
+  {
+   "properties": {
+    "time_series_id": "b",
+    "monitoring_location_id": "USGS-07055660",
+    "parameter_code": "00060",
+    "time": "2026-11-22T00:00:00+00:00",
+    "value": "1",
+    "unit_of_measure": "ft^3/s"
+   }
+  }
+ ]
+}
