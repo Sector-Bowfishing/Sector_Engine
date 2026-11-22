@@ -126,6 +126,22 @@ def test_a_failed_station_fetch_degrades_that_lake_and_never_invents_values():
     assert all(v is not None for k, v in out["updates"].items() if k != "brains/weather/lastError")
 
 
+def test_a_run_whose_every_fetch_failed_is_failed_not_partial():
+    """Reviewer's probe (#234): observations and grid all fail -> states of nulls (kind unavailable) -> FAILED, no lastSuccessfulRun."""
+    class AllDown(FixtureSource):
+        def observations(self, station, now):
+            raise FetchError("HTTP 503")
+
+        def grid(self, url):
+            raise FetchError("HTTP 503")
+    out = run([LAKES["Champlain|VT"]], AllDown(), PointCache(None), {}, RECORDED_NOW)
+    assert len(out["errors"]) == 4                                        # 1 grid + 3 stations (KBTV, KPBG, KFSO)
+    assert out["states"]["Champlain|VT"]["kind"] == "unavailable"
+    oc = out["updates"]["brains/weather/lastRunOutcome"]
+    assert oc["status"] == "FAILED" and oc["computedLakeCount"] == 0 and oc["errorCount"] == 4
+    assert "brains/weather/lastSuccessfulRun" not in out["updates"] and out["updates"]["brains/weather/health"] == "FAILED"
+
+
 def test_a_run_that_computes_nothing_is_failed_and_keeps_the_previous_last_success():
     class Broken(FixtureSource):
         def point(self, lat, lon):
