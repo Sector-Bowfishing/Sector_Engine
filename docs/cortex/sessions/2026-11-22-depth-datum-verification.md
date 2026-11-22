@@ -47,3 +47,10 @@ Rule adopted by Michael in chat 2026-11-22 08:11Z (recorded on Sector_Ops #51, c
 - **Toledo Bend qualifies:** reference root USGS 08025350 (gauge datum from Sabine River Authority levels), two-gauge mean -0.178 ft vs VDatum -0.285 ft (0.107 ft, tolerance 0.30; 0.178 ft from no offset, so the discrimination is weak), labelled. Conversion -0.2 ft enabled at the next rebuild, MEDIUM evidence confidence. USGS OFR 79-678 added as supporting evidence only.
 - **No other lake qualifies:** each SINGLE_SOURCE record has no named datum on its reference side (Ross Barnett, Mark Twain, Jordan, Lay, Bistineau, Eagle) or no defined conversion (Lake Tahoe), and none has an empirical check. Cross Lake stays CONFLICT. Reasons are in each record's `singleOfficialReview`.
 - Counts: VERIFIED_SINGLE_OFFICIAL 1, SAME_SOURCE 1, CONFLICT 1, SINGLE_SOURCE 7, NONE 5. Depth tests 342 passed, 9 skipped.
+
+### #226 review fixes (same branch)
+- The empirical check is bound to the conversion (expectedFt within 0.10 ft of the offset or VDatum, same sign) and must name the side it corroborates.
+- Offsets under 0.5 ft use a 2-standard-error test on stored per-date residuals. Toledo's nine residuals: mean -0.178, SD 0.0995, SE 0.033 (2 SE 0.066). An offset is detected (0.178 >= 0.066); the mean agrees with the -0.2 ft conversion (0.022) but not with VDatum's -0.285 (0.107 > 0.066). The residuals are seasonal, so the SE is optimistic.
+- Official evidence must come from agency or operator hosts; the operator comes from the engine directory; one agency is one root; |offset| < 0.1 ft is refused; evidence URLs include one per side.
+- **Toledo Bend is back to SINGLE_SOURCE and its conversion stays off.** The two-gauge check corroborates the level gauges' relative datums, not the 172 ft pool figure's datum, and no real-data check of the pool datum exists today. A pool check (operator readings vs USGS 08025350, n >= 5) would be a third research pass.
+- Counts: SAME_SOURCE 1, CONFLICT 1, SINGLE_SOURCE 8, NONE 5; no record uses the single-official tier. Depth tests 353 passed, 9 skipped.

@@ -1,14 +1,14 @@
 {
  "schema": "depth-datum-verification-v1",
- "rulesVersion": "datum-verification-rules-3",
- "rules": "Verification rule of the Depth datum plan (2026-11-22) section 3: a side is VERIFIED only when two independent publishers name the same datum for the same series or pool (or the datum is stamped by the series' own parameter definition AND an empirical cross-gauge check passes); a conversion is enabled only when the offset agrees with NOAA VDatum at the gauge within 0.10 ft; datum-name disagreement or offsets more than 0.25 ft apart is CONFLICT; at most two research passes per lake. Consumed by depth_research.candidates (verified_conversion); nothing here is read at runtime. Rules-2 (review of PR #223): two publishers that re-serve one upstream record count once (`derivedFrom` on each evidence item, distinct roots required); a side's own offset more than 0.25 ft from VDatum must be recorded as offsetConflict and blocks VERIFIED; every record above NONE needs an http evidence item; carried-forward pointers are marked notEvidence; a SAME_SOURCE record pins Lake's reviewed live binding and the pool Lake Brain uses. Rules-3 (Michael, chat 2026-11-22 08:11Z, recorded on Sector_Ops #51): VERIFIED_SINGLE_OFFICIAL, labelled 'single official source', permits the same use as VERIFIED when (a) every evidence root of the single-source side is an official authority (USGS, USACE, USBR, TVA, NOAA, or the dam operator named in damOperator), (b) an empirical real-data check agrees numerically (n >= 5, tolerance <= 0.30 ft, closer to the claimed offset than to no offset), and (c) the record sets singleOfficialSource=true and the label. Two independent roots (VERIFIED) stay the stronger tier.",
+ "rulesVersion": "datum-verification-rules-4",
+ "rules": "Verification rule of the Depth datum plan (2026-11-22) section 3: a side is VERIFIED only when two independent publishers name the same datum for the same series or pool (or the datum is stamped by the series' own parameter definition AND an empirical cross-gauge check passes); a conversion is enabled only when the offset agrees with NOAA VDatum at the gauge within 0.10 ft; datum-name disagreement or offsets more than 0.25 ft apart is CONFLICT; at most two research passes per lake. Consumed by depth_research.candidates (verified_conversion); nothing here is read at runtime. Rules-2 (review of PR #223): two publishers that re-serve one upstream record count once (`derivedFrom` on each evidence item, distinct roots required); a side's own offset more than 0.25 ft from VDatum must be recorded as offsetConflict and blocks VERIFIED; every record above NONE needs an http evidence item; carried-forward pointers are marked notEvidence; a SAME_SOURCE record pins Lake's reviewed live binding and the pool Lake Brain uses. Rules-4 (single official source, Michael 2026-11-22 08:11Z on Sector_Ops #51, as tightened by the #226 review): VERIFIED_SINGLE_OFFICIAL, labelled 'single official source', permits a conversion when (a) the single-source side's roots are official (USGS, USACE, USBR, TVA, NOAA, or the dam operator named by the ENGINE DIRECTORY), roots of one agency count once, and every evidence item, supporting ones included, is served from that agency's or operator's own host; (b) an empirical real-data check CORROBORATES THAT SIDE: its expectedFt is the conversion's offset or VDatum check (within 0.10 ft, same sign), n >= 5, tolerance <= 0.30 ft and, for offsets under 0.5 ft, the stored per-date residuals show |mean| >= 2 SE and |mean - expected| <= 2 SE; (c) the record sets singleOfficialSource=true and the label; and the offset is at least 0.1 ft (smaller is untestable). A two-gauge comparison corroborates the two LEVEL gauges' relative datums; it says nothing about the datum of a published pool figure. Two independent roots (VERIFIED) stay the stronger tier.",
  "checkedAt": "2026-11-22",
  "reviewer": "claude-code (research pass; promotion into a knowledge release is Michael's decision)",
  "evidenceNote": "Evidence was read with a web fetcher that returns a model summary of the page, so `quote` is the value as reported by that fetch, not a byte-exact excerpt, and `sha256` is null (raw bytes were not retained). VDatum calls: /vdatumweb/api/convert, NAD27 geographic in, NGVD29 -> NAVD88, us_ft, region contiguous, geoid18.",
  "lakes": {
   "Toledo Bend Reservoir|TX": {
    "passes": 2,
-   "status": "VERIFIED_SINGLE_OFFICIAL",
+   "status": "SINGLE_SOURCE",
    "sides": {
     "level": {
      "seriesId": "USGS-312914093422701:62615",
@@ -38,8 +38,7 @@
     "reference": {
      "seriesId": "TWDB conservation pool 172.00 ft on USGS 08025350",
      "datum": "NGVD29",
-     "status": "VERIFIED_SINGLE_OFFICIAL",
-     "basis": "single-official-source",
+     "status": "SINGLE_SOURCE",
      "evidence": [
       {
        "publisher": "TWDB (Water Data for Texas)",
@@ -84,7 +83,6 @@
       }
      ],
      "note": "The operator (Sabine River Authority) states pool figures only as 'ft MSL' (https://sratx.org/?p=5676); that wording is not counted as a datum name.",
-     "officialRoot": "USGS-08025350",
      "rootNote": "TWDB, USGS and NWPS all derive from USGS 08025350: one official root (condition a). The USGS station description says the gauge datum comes from Sabine River Authority levels; OFR 79-678 is a separate USGS study of the same agency and is supporting evidence only, not a second root."
     }
    },
@@ -93,7 +91,8 @@
     "ft": -0.269,
     "sigmaFt": 0.167
    },
-   "relationship": {
+   "reason": "Single-source, and the conversion stays OFF. The 172.00 ft pool's NGVD29 rests on one official root (USGS, gauge 08025350, gauge datum from Sabine River Authority levels; USGS OFR 79-678 agrees). Condition (a) is met only by the usgs.gov items (TWDB's page and the unt.edu reprint are refused as official evidence, which does not matter because one USGS item suffices). Condition (b) is NOT met for the reference side: the two-gauge check corroborates the level gauges' relative datums, not the pool figure's datum, and no real-data check of the pool figure's datum exists today.",
+   "conversionCandidate": {
     "navd88MinusNgvd29Ft": -0.2,
     "levelDatum": "NAVD88",
     "referenceDatum": "NGVD29",
@@ -105,21 +104,81 @@
     "empirical": {
      "method": "Negreet 62615 (NAVD88) minus Burkeville 62614 (NGVD29), same 15-min timestamp, 9 dates 2025-12-15..2026-11-10",
      "n": 9,
-     "meanFt": -0.178,
-     "minFt": -0.33,
-     "maxFt": -0.05,
+     "meanFt": -0.1778,
      "passed": true,
      "note": "after the -0.2 ft conversion the two gauges agree within 0.3 ft on every sampled date (largest residual 0.15 ft); a mislabelled NGVD29 series would centre near 0, the NAVD88 label centres near -0.2 Mean -0.178 is 0.107 ft from VDatum's -0.285 and 0.022 ft from the -0.2 ft conversion; it is 0.178 ft from 'no offset', so the discrimination between NAVD88 and a mislabelled NGVD29 series is real but weak (0.107 vs 0.178 ft).",
-     "expectedFt": -0.285,
-     "expectedSource": "VDatum NGVD29->NAVD88 at the Negreet gauge",
-     "toleranceFt": 0.3
-    },
-    "status": "CONVERTED"
+     "expectedFt": -0.2,
+     "expectedSource": "the conversion offset navd88MinusNgvd29Ft (-0.2 ft)",
+     "toleranceFt": 0.3,
+     "corroborates": [
+      "level"
+     ],
+     "sdFt": 0.0995,
+     "seFt": 0.0332,
+     "residualsFt": [
+      {
+       "date": "2025-12-15",
+       "residualFt": -0.24,
+       "time": "06:00 local (03:00 on 2026-09-05, 2026-11-10; 00:00 on 2026-10-20)"
+      },
+      {
+       "date": "2026-02-15",
+       "residualFt": -0.33,
+       "time": "06:00 local (03:00 on 2026-09-05, 2026-11-10; 00:00 on 2026-10-20)"
+      },
+      {
+       "date": "2026-04-15",
+       "residualFt": -0.28,
+       "time": "06:00 local (03:00 on 2026-09-05, 2026-11-10; 00:00 on 2026-10-20)"
+      },
+      {
+       "date": "2026-06-15",
+       "residualFt": -0.16,
+       "time": "06:00 local (03:00 on 2026-09-05, 2026-11-10; 00:00 on 2026-10-20)"
+      },
+      {
+       "date": "2026-07-15",
+       "residualFt": -0.25,
+       "time": "06:00 local (03:00 on 2026-09-05, 2026-11-10; 00:00 on 2026-10-20)"
+      },
+      {
+       "date": "2026-08-15",
+       "residualFt": -0.1,
+       "time": "06:00 local (03:00 on 2026-09-05, 2026-11-10; 00:00 on 2026-10-20)"
+      },
+      {
+       "date": "2026-09-05",
+       "residualFt": -0.1,
+       "time": "06:00 local (03:00 on 2026-09-05, 2026-11-10; 00:00 on 2026-10-20)"
+      },
+      {
+       "date": "2026-10-20",
+       "residualFt": -0.09,
+       "time": "06:00 local (03:00 on 2026-09-05, 2026-11-10; 00:00 on 2026-10-20)"
+      },
+      {
+       "date": "2026-11-10",
+       "residualFt": -0.05,
+       "time": "06:00 local (03:00 on 2026-09-05, 2026-11-10; 00:00 on 2026-10-20)"
+      }
+     ],
+     "significance": {
+      "absMeanFt": 0.178,
+      "twoSeFt": 0.066,
+      "offsetDetected": true,
+      "vsConversionFt": 0.022,
+      "withinTwoSeOfConversion": true,
+      "vsVDatumFt": 0.107,
+      "withinTwoSeOfVDatum": false
+     },
+     "scope": "Corroborates the relative datums of the two LEVEL gauges (Negreet NAVD88 vs Burkeville NGVD29). It does not test the datum of the 172.00 ft pool figure.",
+     "caveat": "Residuals show a seasonal pattern (winter about -0.3 ft, late summer about -0.1 ft), so the dates are not independent and the SE is optimistic."
+    }
    },
-   "reason": "Single official source rule (Michael, 2026-11-22 08:11Z): the 172.00 ft pool's NGVD29 rests on one official root, USGS 08025350, whose gauge datum was set by the dam operator's levelling (Sabine River Authority); the two-gauge check agrees with the NAVD88/NGVD29 offset. A second independent root was searched for (plans/toledo-bend-datum-sources.md: operator, FERC, TWDB and TPWD say only 'msl') and not found, so this is the weaker tier, labelled.",
-   "singleOfficialSource": true,
-   "label": "single official source",
-   "damOperator": "Sabine River Authority (TX/LA)"
+   "relationship": {
+    "status": null
+   },
+   "singleOfficialReview": "Does not qualify (rules-4): no empirical check corroborates the reference (pool) side. The level-side check passes its own test against the -0.2 ft conversion (|mean| 0.178 >= 2 SE 0.066; |mean - (-0.2)| 0.022 <= 2 SE) but would fail against VDatum's -0.285 (0.107 > 2 SE). What could meet (b) for the pool: a comparison of the operator's published reservoir readings (SRA advisories, 'ft MSL') against USGS 08025350 at the same times, n >= 5 - that is a third research pass for this lake, beyond the two-pass stop rule unless the owner allows it, and it would still only show the operator's frame equals the gauge's frame."
   },
   "Cross Lake|LA": {
    "passes": 2,
