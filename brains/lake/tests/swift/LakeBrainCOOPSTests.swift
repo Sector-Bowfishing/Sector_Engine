@@ -124,7 +124,8 @@ final class LakeBrainCOOPSTests: XCTestCase {
             if url.contains("product=daily_mean") { return Self.ok(url.contains("begin_date=20170101") ? dm : none) }
             return Self.ok(wl)
         }
-        let d = try XCTUnwrap(await c.daily(station: "9087044", since: nil, now: iso("2026-11-22T12:00:00Z"), timeZone: chicago))
+        let pulled = await c.daily(station: "9087044", since: nil, now: iso("2026-11-22T12:00:00Z"), timeZone: chicago)
+        let d = try XCTUnwrap(pulled)
         XCTAssertEqual(d.map(\.date), ["2026-10-01", "2026-10-02", "2026-10-03", "2026-11-21", "2026-11-22"])
         XCTAssertEqual(d.prefix(3).map(\.ft), [579.383, 579.478, 579.314])
         XCTAssertEqual(Set(d.prefix(3).map(\.sourceId)), ["coops:9087044:daily_mean"])
@@ -150,7 +151,8 @@ final class LakeBrainCOOPSTests: XCTestCase {
     func testIncrementalHistoryStartsAtSince() async throws {
         let rec = URLRecorder(), wl = try Self.fixture("9087044_water_level.json"), none = try Self.fixture("no_data.json")
         let c = client(rec) { url in Self.ok(url.contains("product=daily_mean") ? none : wl) }
-        let d = try XCTUnwrap(await c.daily(station: "9087044", since: "2026-11-01", now: iso("2026-11-22T12:00:00Z"), timeZone: chicago))
+        let pulled = await c.daily(station: "9087044", since: "2026-11-01", now: iso("2026-11-22T12:00:00Z"), timeZone: chicago)
+        let d = try XCTUnwrap(pulled)
         XCTAssertEqual(d.map(\.date), ["2026-11-21", "2026-11-22"])
         let dmURL = try XCTUnwrap(rec.urls.first { $0.contains("product=daily_mean") })
         XCTAssertTrue(dmURL.contains("begin_date=20261101") && dmURL.contains("end_date=20261122"), dmURL)
