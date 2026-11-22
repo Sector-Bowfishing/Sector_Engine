@@ -19,6 +19,20 @@ UNKNOWN = "UNKNOWN"
 
 # ---------------------------------------------------------------- Water Temp / Lake sanity
 TEMP_F_RANGE = (28.0, 110.0)
+# Water Temp `evidenceClass` (water-temp-state-v1; values `sensor` | `modeled`). Only `sensor` is a measurement Biological may use.
+# Each field is gated on its OWN basis, because a sensor lake still publishes model values:
+#   currentTempF needs evidenceClass `sensor` AND the per-reading `kind` `measured` (WaterTemperatureBrain stateKind: measured | modeled | unavailable);
+#   trend24hF needs a trendBasis in WATER_TEMP_MEASURED_TREND_BASES. Water Temp publishes only `model:dailyChange(lakeLocal)` today (its `sensorTrend`
+#   is a direction word with no magnitude), so the trend is always UNKNOWN until Water Temp publishes a measured basis and it is added here.
+WATER_TEMP_MEASURED_CLASS = "sensor"
+WATER_TEMP_MEASURED_KIND = "measured"
+WATER_TEMP_MEASURED_TREND_BASES: tuple = ()
+WATER_TEMP_MODELLED_INPUT = "MODELLED_INPUT"                       # modeled evidence class, modeled reading, or model trend basis
+WATER_TEMP_EVIDENCE_MISSING = "EVIDENCE_CLASS_MISSING"             # no evidenceClass / kind / trendBasis: not known to be measured
+WATER_TEMP_EVIDENCE_UNRECOGNISED = "EVIDENCE_CLASS_UNRECOGNISED"   # a value outside the Water Temp vocabulary
+WATER_TEMP_CLASSES = ("sensor", "modeled")
+WATER_TEMP_KINDS = ("measured", "modeled", "unavailable")
+NOT_MEASURED = "NOT_MEASURED"                        # input slot status: published, but nothing in it is a measurement -> dependent features UNKNOWN
 TREND_F_MAX = 25.0
 
 
@@ -101,7 +115,10 @@ def depth_availability(depth: dict, depth_class: str) -> dict:
 
 
 # ---------------------------------------------------------------- Vegetation
-VEG_CLASSES = ("EMERGENT", "FLOATING", "SUBMERGED", "FLOODED_TERRESTRIAL", "NONE_SIGNIFICANT", "UNKNOWN")
+VEG_CLASSES = ("EMERGENT", "FLOATING", "SUBMERGED", "FLOODED_TERRESTRIAL", "NONE_SIGNIFICANT", "SURFACE_REACHING_MIXED", "UNKNOWN")
+# SURFACE_REACHING_MIXED = the Vegetation Brain's own broadType for plants that reach the surface but whose kind is NOT_CLASSIFIED. It is shallow
+# vegetation, but it cannot be told apart from flooded terrestrial plants, so floodedVegetation is UNKNOWN for it (never FALSE).
+VEG_SURFACE_CLASSES = ("SUBMERGED", "EMERGENT", "FLOATING", "SURFACE_REACHING_MIXED")
 VEG_DENSITY = ("NONE", "SCATTERED", "MODERATE", "DENSE")
 VEG_OBSERVED_TIERS = ("OBSERVED_SATELLITE", "OBSERVED_SURVEY")          # PRIOR_MAPPED / SEASONAL_EXPECTATION / POTENTIAL_HABITAT never count as presence
 MAX_VEG_AGE_DAYS = 45.0                                                  # engineering default: an observation older than this is not "current"; not a biological threshold
@@ -128,11 +145,13 @@ def vegetation_habitat_state(cell: dict | None, habitat_class: str, now: dt.date
     dens = cell.get("density")
     if cls == "NONE_SIGNIFICANT":
         return {"state": "FALSE", "reason": "observed clear of cover", "ageDays": round(age, 1), "confidence": cell.get("confidence")}
+    if habitat_class == "floodedVegetation" and cls == "SURFACE_REACHING_MIXED":
+        return {"state": UNKNOWN, "reason": "surface vegetation type is not classified: flooded terrestrial plants cannot be told apart", "ageDays": round(age, 1)}
     if habitat_class == "floodedVegetation":
         ok = cls == "FLOODED_TERRESTRIAL"
     else:
-        ok = cls in ("SUBMERGED", "EMERGENT", "FLOATING") and dens not in (None, "NONE") and dens in VEG_DENSITY
-    if cls in ("SUBMERGED", "EMERGENT", "FLOATING") and dens not in VEG_DENSITY and habitat_class == "shallowVegetatedHabitat":
+        ok = cls in VEG_SURFACE_CLASSES and dens not in (None, "NONE") and dens in VEG_DENSITY
+    if cls in VEG_SURFACE_CLASSES and dens not in VEG_DENSITY and habitat_class == "shallowVegetatedHabitat":
         return {"state": UNKNOWN, "reason": "density missing or unrecognised"}
     return {"state": "TRUE" if ok else "FALSE", "class": cls, "density": dens, "surfaceTopped": cell.get("surfaceTopped"), "ageDays": round(age, 1), "confidence": cell.get("confidence"),
             "reason": f"{cls} {dens or ''} observed {age:.0f} d ago ({tier})".replace("  ", " ")}
