@@ -73,14 +73,35 @@ def norm_pool_conf(v):
     return POOL_CONF_ALIASES.get(v, v)
 
 
-REFERENCE_CONF_ALLOWED = ("high", "medium")   # `low` references (natural-lake surfaces, shorthand) never yield a shift
+REFERENCE_CONF_ALLOWED = ("high", "medium")   # `low` references (natural-lake surfaces, shorthand) never yield a shift (fullPool basis)
+
+# ── Reference bases (`reference.basis` in the manifest, `reference.referencePoolBasis` in the state) ─────────────────
+# Owner decision, Michael, 2026-11-22 (chat 06:48Z; recorded on Sector_Ops #51, comment 7075545102): (1) a SAME-SERIES reference is
+# allowed for natural lakes and stage-only gauges, (2) the Great Lakes Low Water Datum (IGLD 1985) is an allowed reference.
+# A fullPool reference wins whenever its datum route is usable; the two new bases are used only where it is not.
+REFERENCE_BASES = {
+    "fullPool": "the directory full-pool elevation, in a datum proven compatible with the level series; shift = level - full pool",
+    "seriesMedian": "the level gauge's OWN seasonal median for this day of year (Lake Brain seasonalBand.p50, same series, no datum needed); "
+                    "shift = level - that median: how far the lake is from its usual level for the time of year, NOT from full pool; a level fact, never applied to charted or contour depths",
+    "lowWaterDatum": "the Great Lakes Low Water Datum (chart datum), IGLD 1985; shift = level - LWD: how far charted depths are exceeded",
+}
+NEW_REFERENCE_BASES = ("seriesMedian", "lowWaterDatum")      # no reference zones (zones are defined at full pool); rollout and effectiveDepth.confidence never above MEDIUM
+SERIES_MEDIAN_WINDOW_DAYS = 7         # +/- days around the day of year (Lake Brain baseline doy15-percentile-v2: a 15-day window)
+SERIES_MEDIAN_MIN_YEARS = 10          # complete basis years behind the median (Lake Brain history tier STANDARD); fewer -> refused
+SERIES_MEDIAN_MIN_SAMPLES = 100       # daily values in the window (10 years x 15 days = 150 possible; at least two thirds present)
+# Scope switch (pending Michael's answer, Sector_Ops #51): lakes whose DIRECTORY basis is fullPool (reservoirs blocked only because the level datum
+# is unknown or the pool confidence is low, i.e. stage-only / per-site gauges) may use seriesMedian. Default ON per the pending recommendation;
+# False blocks them with SERIES_MEDIAN_FULL_POOL_RESERVOIR_OFF and leaves seriesMedian to non-fullPool (natural-surface) lakes.
+SERIES_MEDIAN_ALLOW_FULL_POOL_RESERVOIRS = True
+SERIES_REFERENCE_ELIGIBLE = ("REFERENCE_NOT_A_POOL_ELEVATION", "REFERENCE_POOL_CONFIDENCE_LOW", "MISSING_REFERENCE_POOL", "DATUM_UNKNOWN")
 
 # ── Uncertainty (ft). Components add in quadrature. Values come from the research sigma propagation
 #    (DEPTH_BRAIN_EFFECTIVE_DEPTH_RESEARCH.md); some are ASSUMED, not measured, and are flagged in the state. ─
 SIGMA_POOL = {"high": 0.25, "medium": 1.0, "low": 3.0}
+SIGMA_SERIES_MEDIAN = 0.25            # ASSUMED: the reference component of a seriesMedian shift (median of >= 100 daily values; gauge re-levelling is not modelled)
 SIGMA_LEVEL = {"DIRECT_OPERATOR_POOL": 0.1, "DIRECT_LAKE_GAUGE": 0.15}
-SIGMA_DATUM = {"SAME_SOURCE": 0.0, "SAME_OPERATOR_SYSTEM": 0.1, "SAME_DATUM": 0.1, "CONVERTED": 0.3}
-SIGMA_ASSUMED = ("pool", "level", "datum")
+SIGMA_DATUM = {"SAME_SOURCE": 0.0, "SAME_OPERATOR_SYSTEM": 0.1, "SAME_DATUM": 0.1, "CONVERTED": 0.3, "SAME_SERIES": 0.0}
+SIGMA_ASSUMED = ("pool", "reference", "level", "datum")   # every component is an ASSUMED research estimate (incl. SIGMA_SERIES_MEDIAN); a state lists those it emits
 CONF_HIGH_MAX_SIGMA = 0.5
 CONF_MEDIUM_MAX_SIGMA = 1.2
 

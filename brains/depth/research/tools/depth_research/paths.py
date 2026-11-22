@@ -15,6 +15,7 @@ KNOWLEDGE_DIR = os.path.join(PACKAGE, "runtime", "knowledge")                   
 MANIFEST = os.path.join(KNOWLEDGE_DIR, "candidates.json")
 RESEARCH_RECORDS = os.path.join(HERE, "records")                                # small research records kept with the tooling (prereg, rubric inputs)
 LAKE_BINDINGS = os.path.join(REPO, "brains", "lake", "contracts", "reviewed-lake-bindings-v1.json")   # Lake-owned contract (never Lake's Swift source)
+LAKE_PROPOSED_BINDINGS = os.path.join(REPO, "jobs", "lake-brain", "data", "bindings.proposed.v1.json")   # Lake's machine binding table (live + history per lake)
 
 
 class ResearchDataUnavailable(RuntimeError):
