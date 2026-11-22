@@ -136,11 +136,21 @@ final class LakeFleetClients: @unchecked Sendable {
     var hadsGapSeconds: TimeInterval = 15
     /// GET used by the CDEC and USGS-history readers (url, Accept, timeout). Tests inject recorded answers.
     let transport: @Sendable (_ url: String, _ accept: String, _ timeout: TimeInterval) async -> LakeFeedHTTP.Response?
+    /// Which USGS API the USGS readers use (`LAKE_USGS_API`, default legacy; LakeLevelFeedsUSGSWaterData.swift).
+    let usgsMode: LakeUSGSAPIMode
+    /// The USGS Water Data API (v1) client, used in `v1` and `shadow`.
+    let waterData: LakeUSGSWaterDataClient
+    /// Where `shadow` writes its comparison lines.
+    let shadowLog: @Sendable (String) -> Void
 
     init(transport: @escaping @Sendable (_ url: String, _ accept: String, _ timeout: TimeInterval) async -> LakeFeedHTTP.Response? = { url, accept, timeout in
         await LakeFeedHTTP.get(url, accept: accept, timeout: timeout)
-    }) {
+    }, usgsMode: LakeUSGSAPIMode = .fromEnvironment(), waterData: LakeUSGSWaterDataClient = .live(),
+         shadowLog: @escaping @Sendable (String) -> Void = { print($0) }) {
         self.transport = transport
+        self.usgsMode = usgsMode
+        self.waterData = waterData
+        self.shadowLog = shadowLog
     }
 
     // MARK: Access2Water
@@ -276,6 +286,19 @@ final class LakeFleetClients: @unchecked Sendable {
         // A gage height is a local-datum stage; it is a history only with the explicit datum offset that makes it an elevation.
         if !Self.usgsElevationParams.contains(param) && offsetFt == 0 { return nil }
         let src = "usgs:\(site):\(param):\(stat)"
+        return await LakeUSGSRouting.run(usgsMode,
+            legacy: { await usgsDailyLegacy(site: site, param: param, stat: stat, offsetFt: offsetFt, since: since, now: now,
+                                             timeZone: timeZone, src: src, singleSeries: singleSeries) },
+            v1: { await waterData.daily(site: site, param: param, stat: stat, offsetFt: offsetFt, since: since, now: now,
+                                        timeZone: timeZone, src: src, singleSeries: singleSeries) },
+            adopt: { $0 },
+            compare: { l, o in LakeUSGSShadow.line(site: site, param: param, kind: "daily", LakeUSGSShadow.compareDaily(legacy: l, ogc: o)) },
+            log: shadowLog)
+    }
+
+    /// The WaterServices `/nwis/dv/` and `/nwis/iv/` history reads (the `legacy` switch value), unchanged.
+    private func usgsDailyLegacy(site: String, param: String, stat: String, offsetFt: Double, since: String?, now: Date,
+                                 timeZone: TimeZone, src: String, singleSeries: Bool) async -> [DailyLevel]? {
         if stat == "iv" {
             return await usgsIVDaily(site: site, param: param, offsetFt: offsetFt, since: since, now: now, timeZone: timeZone, src: src,
                                      singleSeries: singleSeries)

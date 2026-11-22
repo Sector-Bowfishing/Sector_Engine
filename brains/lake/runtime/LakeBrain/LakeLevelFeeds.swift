@@ -136,7 +136,16 @@ public final class PublicLakeLevelFeeds: LakeLevelFeeds, @unchecked Sendable {
             guard let p = ref.series else { return .failed("usgs parameter missing") }
             // 00065 is a gage height in a local datum, not an elevation: never a lake level.
             guard LakeFleetClients.usgsElevationParams.contains(p) else { return .failed("USGS \(p) is not a lake elevation parameter (gage height is not an elevation)") }
-            return await usgs(site: ref.station, parameter: p, hours: hours)
+            let site = ref.station
+            return await LakeUSGSRouting.run(fleet.usgsMode,
+                legacy: { await usgs(site: site, parameter: p, hours: hours) },
+                v1: { await fleet.waterData.recentLevel(site: site, parameter: p, hours: hours) },
+                adopt: { $0.result },
+                compare: { l, o in
+                    LakeUSGSShadow.line(site: site, param: p, kind: "live", LakeUSGSShadow.compareLive(legacy: l, ogc: o.result),
+                                        qualifiers: o.qualifiers)
+                },
+                log: fleet.shadowLog)
         case .a2w: return await fleet.a2wRecent(ref)
         case .rise: return await fleet.riseRecent(ref, hours: hours, now: now)
         case .nwps: return await fleet.nwpsRecent(ref, since: now.addingTimeInterval(-Double(hours) * 3600))

@@ -1,0 +1,146 @@
+{
+ "_fixture_note": "NOT A RECORDING. Hand-built on 2026-11-22 from the published USGS Water Data OGC API v1 documentation (https://api.waterdata.usgs.gov/docs/ogcapi/ and the migration guide) because this session could not reach api.waterdata.usgs.gov. Values are illustrative. Replace with recordings from an allowed runner (see README.md).",
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "id": "obs-1",
+   "properties": {
+    "time_series_id": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
+    "monitoring_location_id": "USGS-01314500",
+    "parameter_code": "62614",
+    "statistic_id": "00003",
+    "time": "2026-11-18",
+    "value": "1556.20",
+    "unit_of_measure": "ft",
+    "approval_status": "Provisional",
+    "qualifier": null
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -88.5,
+     44.0
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "obs-2",
+   "properties": {
+    "time_series_id": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
+    "monitoring_location_id": "USGS-01314500",
+    "parameter_code": "62614",
+    "statistic_id": "00003",
+    "time": "2026-11-19",
+    "value": null,
+    "unit_of_measure": "ft",
+    "approval_status": "Provisional",
+    "qualifier": null
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -88.5,
+     44.0
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "obs-3",
+   "properties": {
+    "time_series_id": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
+    "monitoring_location_id": "USGS-01314500",
+    "parameter_code": "62614",
+    "statistic_id": "00003",
+    "time": "2026-11-20",
+    "value": "1556.24",
+    "unit_of_measure": "ft",
+    "approval_status": "Provisional",
+    "qualifier": null
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -88.5,
+     44.0
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "obs-4",
+   "properties": {
+    "time_series_id": "0f9e8d7c6b5a49382716051f2e3d4c5b",
+    "monitoring_location_id": "USGS-01314500",
+    "parameter_code": "62614",
+    "statistic_id": "30800",
+    "time": "2026-11-19",
+    "value": "1556.31",
+    "unit_of_measure": "ft",
+    "approval_status": "Provisional",
+    "qualifier": null
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -88.5,
+     44.0
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "obs-5",
+   "properties": {
+    "time_series_id": "0f9e8d7c6b5a49382716051f2e3d4c5b",
+    "monitoring_location_id": "USGS-01314500",
+    "parameter_code": "62614",
+    "statistic_id": "30800",
+    "time": "2026-11-20",
+    "value": "1556.33",
+    "unit_of_measure": "ft",
+    "approval_status": "Provisional",
+    "qualifier": null
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -88.5,
+     44.0
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "obs-6",
+   "properties": {
+    "time_series_id": "0f9e8d7c6b5a49382716051f2e3d4c5b",
+    "monitoring_location_id": "USGS-01314500",
+    "parameter_code": "62614",
+    "statistic_id": "30800",
+    "time": "2026-11-21",
+    "value": "1556.35",
+    "unit_of_measure": "ft",
+    "approval_status": "Provisional",
+    "qualifier": null
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -88.5,
+     44.0
+    ]
+   }
+  }
+ ],
+ "numberReturned": 6,
+ "links": [
+  {
+   "rel": "self",
+   "href": "https://api.waterdata.usgs.gov/ogcapi/v1/collections/daily/items?f=json"
+  }
+ ],
+ "timeStamp": "2026-11-22T12:00:00+00:00"
+}

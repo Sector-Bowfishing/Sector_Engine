@@ -57,9 +57,16 @@ struct LakeUSGSStageClient: Sendable {
 
     var fetch: @Sendable (_ url: String, _ accept: String) async -> LakeFeedHTTP.Response?
     var cache: USGSSiteCache
+    /// Which USGS API this reader uses (`LAKE_USGS_API`; LakeLevelFeedsUSGSWaterData.swift). `legacy` unless `live()` reads otherwise.
+    var mode: LakeUSGSAPIMode = .legacy
+    var waterData: LakeUSGSWaterDataClient = .live()
+    /// Site records from `monitoring-locations` (v1), kept apart from the legacy site-service records.
+    var v1Cache = USGSSiteCache()
+    var shadowLog: @Sendable (String) -> Void = { print($0) }
 
     static func live() -> LakeUSGSStageClient {
-        LakeUSGSStageClient(fetch: { url, accept in await LakeFeedHTTP.get(url, accept: accept, timeout: 60) }, cache: USGSSiteCache())
+        LakeUSGSStageClient(fetch: { url, accept in await LakeFeedHTTP.get(url, accept: accept, timeout: 60) }, cache: USGSSiteCache(),
+                            mode: .fromEnvironment())
     }
 
     static func isSiteNumber(_ s: String) -> Bool { (8...15).contains(s.count) && s.allSatisfy { $0.isASCII && $0.isNumber } }
@@ -98,13 +105,33 @@ struct LakeUSGSStageClient: Sendable {
         }
     }
 
+    /// The site record from `monitoring-locations` (v1), read once per site per 15 minutes.
+    func siteDatumV1(_ site: String) async -> USGSSiteDatumResult {
+        let client = waterData
+        return await v1Cache.site(site) { s in await client.siteDatum(s) }
+    }
+
+    /// The site record the switch says to use; in `shadow` the legacy record is used and the v1 record compared (kind=site).
+    func siteDatumByMode(_ site: String) async -> USGSSiteDatumResult {
+        await LakeUSGSRouting.run(mode,
+            legacy: { await siteDatum(site) },
+            v1: { await siteDatumV1(site) },
+            adopt: { $0 },
+            compare: { l, o in LakeUSGSShadow.line(site: site, param: Self.gageHeight, kind: "site", LakeUSGSShadow.compareSite(legacy: l, ogc: o)) },
+            log: shadowLog)
+    }
+
     /// The site's altitude when its datum is the one the binding expects; otherwise why not.
     func altitude(site: String, expectedDatum: String?) async -> (ft: Double?, refusal: String?) {
+        await altitude(site: site, expectedDatum: expectedDatum, record: { await siteDatumByMode($0) })
+    }
+
+    func altitude(site: String, expectedDatum: String?, record: (String) async -> USGSSiteDatumResult) async -> (ft: Double?, refusal: String?) {
         guard Self.isSiteNumber(site) else { return (nil, "USGS stage binding needs a USGS site number (got \(site))") }
         guard let want = expectedDatum?.trimmingCharacters(in: .whitespaces), !want.isEmpty else {
             return (nil, "USGS \(site) 00065: the binding names no altitude datum (series), so the stage cannot be checked against alt_datum_cd")
         }
-        switch await siteDatum(site) {
+        switch await record(site) {
         case .refused(let why): return (nil, why)
         case .ok(let d):
             guard d.datum.uppercased() == want.uppercased() else {
@@ -120,6 +147,31 @@ struct LakeUSGSStageClient: Sendable {
 
     /// Gage height of the last `hours`, shifted by the site's altitude. `ref.series` is the expected altitude datum.
     func recent(_ ref: LevelSeriesRef, hours: Int) async -> FeedResult {
+        let site = ref.station
+        return await LakeUSGSRouting.run(mode,
+            legacy: { await recentLegacy(ref, hours: hours) },
+            v1: { await recentV1(ref, hours: hours) },
+            adopt: { $0 },
+            compare: { l, o in LakeUSGSShadow.line(site: site, param: Self.gageHeight, kind: "live", LakeUSGSShadow.compareLive(legacy: l, ogc: o)) },
+            log: shadowLog)
+    }
+
+    /// v1: the `monitoring-locations` altitude and the `continuous` gage height, with the same refusals as the legacy reader.
+    func recentV1(_ ref: LevelSeriesRef, hours: Int) async -> FeedResult {
+        let site = ref.station
+        let (alt, refusal) = await altitude(site: site, expectedDatum: ref.series, record: { await siteDatumV1($0) })
+        guard let alt else { return .failed(refusal ?? "USGS \(site): no altitude") }
+        switch await waterData.recentStage(site: site, hours: hours) {
+        case .failure(let e): return .failed("USGS \(site) 00065: \(e.why)")
+        case .success(let obs):
+            let shifted = obs.map { LevelObservation(at: $0.at, ft: $0.ft + alt) }
+            return shifted.isEmpty ? .failed("USGS \(site) 00065: no readings") : FeedResult(observations: LakeLevelSeries.merge(shifted), error: nil)
+        }
+    }
+
+    /// The WaterServices reads (the `legacy` switch value). The altitude comes from `altitude(site:expectedDatum:)`, which in `shadow`
+    /// also compares the v1 site record.
+    func recentLegacy(_ ref: LevelSeriesRef, hours: Int) async -> FeedResult {
         let site = ref.station
         let (alt, refusal) = await altitude(site: site, expectedDatum: ref.series)
         guard let alt else { return .failed(refusal ?? "USGS \(site): no altitude") }

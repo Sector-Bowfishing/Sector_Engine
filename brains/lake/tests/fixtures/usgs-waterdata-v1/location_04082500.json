@@ -1,0 +1,33 @@
+{
+ "type": "Feature",
+ "id": "USGS-04082500",
+ "properties": {
+  "agency_code": "USGS",
+  "monitoring_location_number": "04082500",
+  "monitoring_location_name": "LAKE WINNEBAGO AT OSHKOSH, WI",
+  "site_type_code": "LK",
+  "site_type": "Lake, Reservoir, Impoundment",
+  "altitude": 743.91,
+  "altitude_accuracy": 0.01,
+  "altitude_method_code": "L",
+  "altitude_method_name": "Level or other surveyed method",
+  "vertical_datum": "NAVD88",
+  "vertical_datum_name": "North American Vertical Datum of 1988",
+  "time_zone_abbreviation": "CST",
+  "uses_daylight_savings": "Y"
+ },
+ "geometry": {
+  "type": "Point",
+  "coordinates": [
+   -88.53,
+   44.01
+  ]
+ },
+ "_fixture_note": "NOT A RECORDING. Hand-built on 2026-11-22 from the published USGS Water Data OGC API v1 documentation (https://api.waterdata.usgs.gov/docs/ogcapi/ and the migration guide) because this session could not reach api.waterdata.usgs.gov. Values are illustrative. Replace with recordings from an allowed runner (see README.md).",
+ "links": [
+  {
+   "rel": "self",
+   "href": "https://api.waterdata.usgs.gov/ogcapi/v1/collections/monitoring-locations/items/USGS-04082500?f=json"
+  }
+ ]
+}
