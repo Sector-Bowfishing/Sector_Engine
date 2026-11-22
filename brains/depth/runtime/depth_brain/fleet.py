@@ -34,6 +34,7 @@ def fleet_metrics(manifest: dict) -> dict:
         "inferredOperatorSystem": ds.get("SAME_OPERATOR_SYSTEM", 0),
         "convertedDatum": ds.get("CONVERTED", 0),
         "datumStatus": dict(ds),
+        "referenceBasis": dict(Counter(_g(x, "reference", "basis", default="unknown") for x in ok)),   # fullPool | seriesMedian | lowWaterDatum
         "plausibleBlockedByDatum": sum(1 for x in c if _g(x, "reference", "basis") == "fullPool" and _g(x, "reference", "confidence") in ("high", "medium")
                                        and _g(x, "levelSource", "status", default="NONE") != "NONE" and not _g(x, "shiftPossible", default=False)),
         "tierAB": len(tier_ab),
