@@ -1,6 +1,8 @@
 """Shared support for the Moon tests: one REAL dry-run publish (unchanged `publish()`) over a fixed slice of the packaged lake directory into an
 in-memory store, and the pinned artifact build context. Offline; nothing is published."""
+import copy
 import datetime as dt
+import json
 import os
 import uuid
 
@@ -43,24 +45,39 @@ def build(updates, *, n=1, generated_at="2026-11-22T19:00:00Z", consumed=None):
     return pa.build_artifact(updates, ctx, release_lineage=L.lineage(), consumed=consumed)
 
 
+WEATHER_STATES = os.path.join(HERE, "fixtures", "weather_states")
+WEATHER_SCHEMA = os.path.join(REPO, "brains", "weather", "contracts", "weather-state-v1.schema.json")
+_TEMPLATE = "guntersville-2026-11-07T0100Z.json"
+
+
+def real_weather_state(name):
+    """A Weather state the Weather Brain itself built from its recorded NWS fixtures (tests/fixtures/weather_states/PROVENANCE.md)."""
+    with open(os.path.join(WEATHER_STATES, name), encoding="utf-8") as fh:
+        return json.load(fh)
+
+
 def weather_state(hourly, current=None, generated_at="2026-11-22T23:00:00Z"):
-    """A Weather Brain state document (sector-brain-weather-state-v1) reduced to what the Moon Brain reads, in the producer's shape
-    (brains/weather/runtime/sector_weather/state.py on PR #234): forecast.hourly[] rows {at, cloudCoverPct, ...} and sky.cloudCoverPct
-    {value, at, origin, station}. hourly: [(iso, pct)]; current: (iso, pct, origin) or None."""
-    return {"schema": "sector-brain-weather-state-v1", "brainId": "weather", "generatedAt": generated_at, "kind": "forecast",
-            "sky": {"cloudCoverPct": None if current is None else {"value": current[1], "at": current[0], "origin": current[2], "station": None},
-                    "word": None},
-            "forecast": {"source": "NWS forecast grid (NBM-based NDFD)", "issuedAt": "2026-11-22T22:41:00Z",
-                         "hourly": [{"at": at, "airTemperatureF": 50.0, "humidityPct": 80, "dewPointF": 44.0, "cloudCoverPct": pct,
-                                     "precipProbabilityPct": 10} for at, pct in hourly]}}
+    """A schema-valid Weather state (sector-brain-weather-state-v1): a real Weather Brain state used as the template, with the run time,
+    the current hour's sky.cloudCoverPct and the forecast.hourly cloud values replaced. hourly: [(iso, pct)], at most 12 rows (the Weather
+    schema's maxItems); current: (iso, pct, origin) or None."""
+    assert len(hourly) <= 12, "a Weather state holds at most 12 forecast hours"
+    doc = copy.deepcopy(real_weather_state(_TEMPLATE))
+    tmpl = doc["forecast"]["hourly"][0]
+    doc["generatedAt"] = generated_at
+    doc["freshness"]["generatedAt"] = generated_at
+    doc["sky"]["cloudCoverPct"] = None if current is None else {"value": current[1], "at": current[0], "origin": current[2], "station": None}
+    doc["forecast"]["hourly"] = [{**tmpl, "at": at, "cloudCoverPct": pct} for at, pct in hourly]
+    return doc
 
 
-def hourly_over(start_iso, end_iso, pct):
-    """[(iso, pct)] at every top of hour from the hour of start to one hour past end."""
-    s = dt.datetime.fromisoformat(start_iso.replace("Z", "+00:00")).replace(minute=0, second=0)
-    e = dt.datetime.fromisoformat(end_iso.replace("Z", "+00:00"))
-    out = []
-    while s <= e + dt.timedelta(hours=1):
-        out.append((s.strftime("%Y-%m-%dT%H:%M:%SZ"), pct))
-        s += dt.timedelta(hours=1)
-    return out
+def night_rows(run_at, pct, hours=12):
+    """The forecast rows a Weather run at `run_at` carries: the `hours` top-of-hour instants after the run hour (pct: a value or a list)."""
+    h0 = dt.datetime.fromisoformat(run_at.replace("Z", "+00:00")).replace(minute=0, second=0)
+    vals = pct if isinstance(pct, list) else [pct] * hours
+    return [((h0 + dt.timedelta(hours=i + 1)).strftime("%Y-%m-%dT%H:%M:%SZ"), v) for i, v in enumerate(vals[:hours])]
+
+
+def run_state(run_at, pct, origin="forecastGrid"):
+    """A Weather run at `run_at` with every hour (current + 12 ahead) at `pct`."""
+    h0 = dt.datetime.fromisoformat(run_at.replace("Z", "+00:00")).replace(minute=0, second=0).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return weather_state(night_rows(run_at, pct), current=(h0, pct if not isinstance(pct, list) else pct[0], origin), generated_at=run_at)

@@ -26,7 +26,7 @@ def test_write_is_refused():
 def test_tonight_for_listed_lakes(tmp_path):
     out = tmp_path / "tonight.json"
     w = tmp_path / "w.json"
-    w.write_text(json.dumps({"Guntersville|AL": S.weather_state(S.hourly_over("2026-11-22T23:00:00Z", "2026-11-23T13:00:00Z", 100))}))
+    w.write_text(json.dumps({"Guntersville|AL": S.run_state("2026-11-22T23:00:00Z", 100)}))
     r = _run("--tonight", str(out), "--date", "2026-11-22", "--lakes", "Guntersville|AL,Iliamna|AK", "--weather", str(w))
     assert r.returncode == 0, r.stderr
     doc = json.load(open(out))

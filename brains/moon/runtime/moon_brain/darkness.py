@@ -74,58 +74,86 @@ def _miss(reason: str, **extra) -> dict:
 
 def _weather_rows(weather: dict) -> list:
     """Hourly cloud rows from a Weather Brain state document (sector-brain-weather-state-v1, /lakes/{k}/states/weather):
-    `forecast.hourly[]` rows {at, cloudCoverPct: number|null} (the NWS forecast grid, origin forecastGrid) and the current hour
-    `sky.cloudCoverPct` {value, at, origin}. Nothing else in the document is read. Raises KeyError/TypeError on a malformed shape."""
+    `forecast.hourly[]` rows {at, cloudCoverPct?} (the NWS forecast grid, at most 12 hours after the run; origin forecastGrid) and the
+    current hour `sky.cloudCoverPct` {value, at, origin}. A row without `cloudCoverPct` is a null value (the Weather schema requires only
+    `at`). Nothing else in the document is read. Raises KeyError/TypeError on a malformed shape."""
     rows = []
     for r in (weather.get("forecast") or {}).get("hourly") or []:
-        rows.append((r["at"], r["cloudCoverPct"], "forecastGrid"))
+        rows.append((r["at"], r.get("cloudCoverPct"), "forecastGrid"))
     cur = (weather.get("sky") or {}).get("cloudCoverPct")
     if cur is not None:
-        rows.append((cur["at"], cur["value"], cur.get("origin") or "unknown"))
+        rows.append((cur["at"], cur.get("value"), cur.get("origin") or "unknown"))
     return rows
 
 
-def window_cloud(weather: dict | None, start: float, end: float) -> dict:
-    """Mean cloud cover over the fishing window from the optional Weather Brain state. Never fills a gap.
+def _hhmm(t: float) -> str:
+    return dt.datetime.fromtimestamp(t, dt.timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
 
-    Coverage counts DISTINCT hours: each row is keyed on the top of its hour, the same hour twice with the same value counts once, and the
-    same hour with two different values refuses the input (CONFLICTING_HOURLY_VALUES), so a repeated reading cannot pass the floor. The window's
-    hours are the top-of-hour instants within [start - 30 min, end + 30 min]; at least 75 % of them need a value."""
+
+def window_cloud(weather: dict | None, start: float, end: float) -> dict:
+    """Mean cloud cover over the part of tonight's fishing window still ahead at the Weather run. Never fills a gap.
+
+    A Weather state holds the current hour and the next 12 forecast hours, so it cannot describe hours before its own run. The cloud span is
+    therefore [max(window start, the Weather run's current hour), window end]: an evening run judges the whole night, a mid-night run judges
+    the hours still ahead. The span's hours are the top-of-hour instants within [span start - 30 min, span end + 30 min], and at least 75 %
+    of those DISTINCT hours need a value: a row is keyed on the top of its hour, a repeated hour with the same value counts once, and the same
+    hour with two different values refuses the input (CONFLICTING_HOURLY_VALUES). Values are checked only inside that span; a timestamp
+    without an explicit UTC offset anywhere refuses the document (MALFORMED_HOURLY_ROW). A Weather run after the window has ended gives
+    WEATHER_AFTER_WINDOW."""
     if not weather:
         return _miss("NO_WEATHER_INPUT")
     if not isinstance(weather, dict) or weather.get("schema") != WEATHER_STATE_SCHEMA:
         return _miss("UNSUPPORTED_WEATHER_INPUT")
     try:
         rows = _weather_rows(weather)
-    except (KeyError, TypeError, AttributeError):
+        run_at = _parse_aware(weather["generatedAt"])
+        parsed = [(_parse_aware(at), v, origin) for at, v, origin in rows]
+    except (KeyError, TypeError, AttributeError, ValueError):
         return _miss("MALFORMED_HOURLY_ROW")
     if not rows:
         return _miss("NO_HOURLY_CLOUD_COVER")
+    run_hour = int(run_at // 3600) * 3600
+    span_start = max(start, float(run_hour))
+    if span_start >= end:
+        return _miss("WEATHER_AFTER_WINDOW", weatherGeneratedAt=_hhmm(run_at))
+    lo = max(start - WINDOW_MARGIN_S, float(run_hour))
+    first = int(math.ceil(lo / 3600.0)) * 3600
+    expected = list(range(first, int(end + WINDOW_MARGIN_S) + 1, 3600)) or [int(span_start // 3600) * 3600]
+    inside = set(expected)
     by_hour, origins = {}, {}
-    for at, v, origin in rows:
-        try:
-            t = _parse_aware(at)
-        except ValueError:
-            return _miss("MALFORMED_HOURLY_ROW")
-        if v is None:
+    for t, v, origin in parsed:
+        h = int(t // 3600) * 3600
+        if h not in inside or v is None:
             continue
         if isinstance(v, bool) or not isinstance(v, (int, float)) or not (0 <= v <= 100):
             return _miss("CLOUD_COVER_OUT_OF_RANGE")
-        h = int(t // 3600) * 3600
         if h in by_hour and by_hour[h] != float(v):
             return _miss("CONFLICTING_HOURLY_VALUES")
         by_hour[h], origins[h] = float(v), origin
-    first = int(math.ceil((start - WINDOW_MARGIN_S) / 3600.0)) * 3600
-    expected = list(range(first, int(end + WINDOW_MARGIN_S) + 1, 3600)) or [int(start // 3600) * 3600]
+    span = {"start": _hhmm(span_start), "end": _hhmm(end), "fullWindow": span_start <= start,
+            "basis": "the part of tonight's fishing window still ahead at the Weather run (a Weather state holds no earlier hours)"}
     have = [h for h in expected if h in by_hour]
     if len(have) / len(expected) < MIN_HOURLY_COVERAGE:
-        return _miss("INSUFFICIENT_COVERAGE", hoursWithValue=len(have), windowHours=len(expected))
+        return _miss("INSUFFICIENT_COVERAGE", hoursWithValue=len(have), windowHours=len(expected), span=span,
+                     weatherGeneratedAt=_hhmm(run_at))
     used = {}
     for h in have:
         used[origins[h]] = used.get(origins[h], 0) + 1
     return {"status": "AVAILABLE", "meanPct": round(sum(by_hour[h] for h in have) / len(have), 1), "hoursWithValue": len(have),
-            "windowHours": len(expected), "source": "weather", "contract": WEATHER_STATE_SCHEMA,
+            "windowHours": len(expected), "span": span, "source": "weather", "contract": WEATHER_STATE_SCHEMA,
             "issuedAt": (weather.get("forecast") or {}).get("issuedAt"), "generatedAt": weather.get("generatedAt"), "origins": used}
+
+
+def _cloud_statement(cloud: dict, cancel: float) -> str:
+    o = cloud.get("origins") or {}
+    src = "NWS forecast grid (Weather Brain"
+    src += f", forecast issued {cloud['issuedAt']})" if cloud.get("issuedAt") else ")"
+    if o.get("observation"):
+        src += "; the current hour is an NWS station observation"
+    sp = cloud["span"]
+    when = "the whole fishing window" if sp["fullWindow"] else "the rest of the fishing window"
+    return (f"Moon and cloud: {cloud['meanPct']}% mean cloud cover from the {src} over {when}, {sp['start']} to {sp['end']} UTC "
+            f"({cloud['hoursWithValue']} of {cloud['windowHours']} hours). It cancels {round(cancel * 100)}% of the moonlight.")
 
 
 def cloud_cancel(cloud_pct: float) -> float:
@@ -154,7 +182,7 @@ def assess(sky: dict, weather: dict | None) -> dict:
         cls = classify(idx)
         out.update({"basis": "MOON_AND_CLOUD", "cloudCancel": cancel, "moonlightIndex": idx, "class": cls,
                     "label": label(cls, illum, presence),
-                    "statement": f"Moon and cloud: {cloud['meanPct']}% mean cloud over the window cancels {round(cancel * 100)}% of the moonlight."})
+                    "statement": _cloud_statement(cloud, cancel)})
     else:
         out.update({"basis": "MOON_ONLY", "cloudCancel": None, "moonlightIndex": moon_only_index, "class": moon_only,
                     "label": label(moon_only, illum, presence),

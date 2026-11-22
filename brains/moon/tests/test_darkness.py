@@ -13,8 +13,8 @@ CONTRACT = json.load(open(os.path.join(os.path.dirname(__file__), "..", "contrac
 SKY = night.tonight(34.42, -86.26, dt.date(2026, 11, 22))       # ~97 % moon, up most of the window
 
 
-def _hourly(pct, start=SKY["window"]["start"], end=SKY["window"]["end"]):
-    return S.weather_state(S.hourly_over(start, end, pct))
+def _hourly(pct, run_at="2026-11-22T23:00:00Z"):
+    return S.run_state(run_at, pct)
 
 
 def test_contract_states_the_rule_the_code_runs():
@@ -53,7 +53,8 @@ def test_overcast_cancels_moonlight_and_clear_sky_equals_moon_only():
 @pytest.mark.parametrize("weather,reason", [
     (S.weather_state([]), "NO_HOURLY_CLOUD_COVER"),
     ({"hourly": [{"at": "2026-11-23T03:00:00Z", "cloudCoverPct": 90}]}, "UNSUPPORTED_WEATHER_INPUT"),     # the retired v0 shape
-    ({**S.weather_state([]), "forecast": {"hourly": [{"at": "2026-11-23T03:00:00Z"}]}}, "MALFORMED_HOURLY_ROW"),
+    ({**S.weather_state([]), "forecast": {"hourly": [{"cloudCoverPct": 50}]}}, "MALFORMED_HOURLY_ROW"),      # no "at"
+    ({k: v for k, v in S.weather_state([]).items() if k != "generatedAt"}, "MALFORMED_HOURLY_ROW"),
     (S.weather_state([("2026-11-23T03:00:00Z", 140)]), "CLOUD_COVER_OUT_OF_RANGE"),
     (S.weather_state([("2026-11-23T03:00:00Z", 90)]), "INSUFFICIENT_COVERAGE"),
     (S.weather_state([("2026-11-20T03:00:00Z", 90)]), "INSUFFICIENT_COVERAGE"),
@@ -76,25 +77,25 @@ def test_one_reading_repeated_does_not_pass_the_coverage_floor():
 @pytest.mark.parametrize("at", ["2026-11-23T03:00:00", "2026-11-23 03:00", 1795316400])
 def test_a_timestamp_without_an_explicit_offset_is_malformed_not_read_in_local_time(at):
     """#233 review: a naive timestamp was read in the host's local time. It is refused."""
-    rows = S.hourly_over(SKY["window"]["start"], SKY["window"]["end"], 100)
+    rows = S.night_rows("2026-11-22T23:00:00Z", 100)
     rows[3] = (at, 100)
     assert D.assess(SKY, S.weather_state(rows))["cloudCover"]["reason"] == "MALFORMED_HOURLY_ROW"
 
 
 def test_explicit_non_utc_offsets_are_accepted():
     rows = [(dt.datetime.fromisoformat(a.replace("Z", "+00:00")).astimezone(dt.timezone(dt.timedelta(hours=-6))).isoformat(), v)
-            for a, v in S.hourly_over(SKY["window"]["start"], SKY["window"]["end"], 100)]
+            for a, v in S.night_rows("2026-11-22T23:00:00Z", 100)]
     assert D.assess(SKY, S.weather_state(rows))["basis"] == "MOON_AND_CLOUD"
 
 
 def test_the_weather_current_hour_counts_and_the_mean_is_over_distinct_hours():
-    rows = S.hourly_over(SKY["window"]["start"], SKY["window"]["end"], 100)
+    rows = S.night_rows("2026-11-22T23:00:00Z", 100)
     first, rest = rows[0], rows[1:]
-    w = S.weather_state([(a, 0) for a, _ in rest], current=(first[0], 0, "forecastGrid"))
+    w = S.weather_state([(a, 0) for a, _ in rest], current=(first[0], 0, "forecastGrid"), generated_at="2026-11-23T00:10:00Z")
     c = D.assess(SKY, w)["cloudCover"]
     assert c["status"] == "AVAILABLE" and c["meanPct"] == 0 and c["origins"]["forecastGrid"] == c["hoursWithValue"]
-    assert c["contract"] == "sector-brain-weather-state-v1" and c["issuedAt"] == "2026-11-22T22:41:00Z"
-    half = S.weather_state([(a, 100 if i % 2 else 0) for i, (a, _) in enumerate(rows)])
+    assert c["contract"] == "sector-brain-weather-state-v1" and c["issuedAt"] == w["forecast"]["issuedAt"]
+    half = S.weather_state([(a, 100 if i % 2 else 0) for i, (a, _) in enumerate(rows)], generated_at="2026-11-22T23:00:00Z")
     assert D.assess(SKY, half)["cloudCover"]["meanPct"] == pytest.approx(50, abs=5)
 
 
@@ -126,7 +127,7 @@ def test_null_hours_are_skipped_but_count_against_coverage():
 
 def test_no_night_is_its_own_class():
     sky = night.tonight(70.6, -153.5, dt.date(2026, 6, 21))
-    d = D.assess(sky, _hourly(0, "2026-06-21T20:00:00Z", "2026-06-22T08:00:00Z"))
+    d = D.assess(sky, _hourly(0, "2026-06-21T20:00:00Z"))
     assert d["class"] == "NO_NIGHT" and d["basis"] == "NO_NIGHT" and d["cloudCover"]["status"] == "NOT_APPLICABLE"
 
 

@@ -1,0 +1,242 @@
+{
+ "airTemperatureF": {
+  "at": "2026-11-06T20:30:00Z",
+  "origin": "observation",
+  "station": "KBTV",
+  "value": 62.6
+ },
+ "brainId": "weather",
+ "brainVersion": "weather-brain-0.1.0",
+ "dewPointF": {
+  "at": "2026-11-06T20:30:00Z",
+  "origin": "observation",
+  "station": "KBTV",
+  "value": 48.2
+ },
+ "forecast": {
+  "hourly": [
+   {
+    "airTemperatureF": 59.0,
+    "at": "2026-11-06T21:00:00Z",
+    "cloudCoverPct": 63,
+    "dewPointF": 53.0,
+    "humidityPct": 80,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 59.0,
+    "at": "2026-11-06T22:00:00Z",
+    "cloudCoverPct": 63,
+    "dewPointF": 52.0,
+    "humidityPct": 78,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 58.0,
+    "at": "2026-11-06T23:00:00Z",
+    "cloudCoverPct": 56,
+    "dewPointF": 52.0,
+    "humidityPct": 80,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 58.0,
+    "at": "2026-11-07T00:00:00Z",
+    "cloudCoverPct": 34,
+    "dewPointF": 52.0,
+    "humidityPct": 80,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 56.0,
+    "at": "2026-11-07T01:00:00Z",
+    "cloudCoverPct": 45,
+    "dewPointF": 52.0,
+    "humidityPct": 86,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 56.0,
+    "at": "2026-11-07T02:00:00Z",
+    "cloudCoverPct": 50,
+    "dewPointF": 52.0,
+    "humidityPct": 86,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 55.0,
+    "at": "2026-11-07T03:00:00Z",
+    "cloudCoverPct": 55,
+    "dewPointF": 51.0,
+    "humidityPct": 86,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 55.0,
+    "at": "2026-11-07T04:00:00Z",
+    "cloudCoverPct": 52,
+    "dewPointF": 51.0,
+    "humidityPct": 86,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 55.0,
+    "at": "2026-11-07T05:00:00Z",
+    "cloudCoverPct": 58,
+    "dewPointF": 50.0,
+    "humidityPct": 83,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 54.0,
+    "at": "2026-11-07T06:00:00Z",
+    "cloudCoverPct": 55,
+    "dewPointF": 49.0,
+    "humidityPct": 83,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 53.0,
+    "at": "2026-11-07T07:00:00Z",
+    "cloudCoverPct": 67,
+    "dewPointF": 49.0,
+    "humidityPct": 86,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 53.0,
+    "at": "2026-11-07T08:00:00Z",
+    "cloudCoverPct": 79,
+    "dewPointF": 48.0,
+    "humidityPct": 83,
+    "precipProbabilityPct": null
+   }
+  ],
+  "issuedAt": "2026-11-06T20:35:47Z",
+  "source": "NWS forecast grid (NBM-based NDFD)"
+ },
+ "freshness": {
+  "freshUntil": "2026-11-07T00:30:00Z",
+  "generatedAt": "2026-11-06T20:51:00Z",
+  "nextCheckAt": "2026-11-06T22:51:00Z",
+  "observedAt": "2026-11-06T20:30:00Z",
+  "reason": "STEADY: current for 240 min after the observation (the 4 h ceiling)",
+  "stale": false,
+  "tier": "STEADY"
+ },
+ "generatedAt": "2026-11-06T20:51:00Z",
+ "humidityPct": {
+  "at": "2026-11-06T20:30:00Z",
+  "origin": "observation",
+  "station": "KBTV",
+  "value": 59
+ },
+ "kind": "observation",
+ "lakeId": "Champlain|VT",
+ "lakeKey": "Champlain_VT",
+ "location": {
+  "gridpoint": "BTV/86,56",
+  "lat": 44.47,
+  "lon": -73.3,
+  "stations": [
+   {
+    "distanceMi": 7.4,
+    "id": "KBTV",
+    "name": "Burlington, Burlington International Airport"
+   },
+   {
+    "distanceMi": 14.9,
+    "id": "KPBG",
+    "name": "Plattsburgh International Airport "
+   },
+   {
+    "distanceMi": 34.0,
+    "id": "KFSO",
+    "name": "Franklin County State Airport"
+   }
+  ]
+ },
+ "missing": [],
+ "mixedOrigin": true,
+ "origins": {
+  "airTemperatureF": "observation",
+  "cloudCoverPct": "forecastGrid",
+  "dewPointF": "observation",
+  "humidityPct": "observation",
+  "pressure": "observation",
+  "weatherCode": "observation"
+ },
+ "pressure": {
+  "at": "2026-11-06T20:30:00Z",
+  "forecast": null,
+  "forecastNote": "The NWS forecast grid has no pressure layer; no pressure forecast is published.",
+  "hPa": 1010.4,
+  "inHg": 29.84,
+  "kind": "seaLevel",
+  "origin": "observation",
+  "seaLevelOffsetHPa": -0.1,
+  "station": "KBTV",
+  "trend12h": {
+   "changeHPa": -0.7,
+   "changeInHg": -0.021,
+   "from": "2026-11-06T08:54:00Z",
+   "trend": "steady"
+  },
+  "trend3h": {
+   "changeHPa": -0.68,
+   "changeInHg": -0.02,
+   "from": "2026-11-06T17:10:00Z",
+   "trend": "falling"
+  }
+ },
+ "provenance": {
+  "estimates": "none: a value no station or forecast reported is null",
+  "provider": "api.weather.gov (U.S. National Weather Service)",
+  "rules": "NWS_WEATHER_ADAPTER_V1 (Engine adapter, ported)",
+  "sourceIds": [
+   "nws-station-observations",
+   "nws-forecast-grid"
+  ]
+ },
+ "schema": "sector-brain-weather-state-v1",
+ "schemaVersion": 1,
+ "sky": {
+  "cloudCoverPct": {
+   "at": "2026-11-06T20:00:00Z",
+   "origin": "forecastGrid",
+   "station": null,
+   "value": 48.0
+  },
+  "description": "Partly cloudy",
+  "nwsText": "Partly Cloudy",
+  "rain": {
+   "forecastIssuedAt": "2026-11-06T20:35:47Z",
+   "forecastNext12hIn": 0.0,
+   "forecastNext6hIn": 0.0,
+   "lastHourIn": null
+  },
+  "weatherCode": {
+   "at": "2026-11-06T20:30:00Z",
+   "origin": "observation",
+   "station": "KBTV",
+   "value": 2
+  },
+  "word": "broken cloud"
+ },
+ "thresholdsVersion": "weather-change-thresholds-v1",
+ "weatherChange": {
+  "basisObservationAt": "2026-11-06T20:30:00Z",
+  "evaluatedAt": "2026-11-06T20:51:00Z",
+  "events": [],
+  "inputs": {
+   "airTempChange3hF": -1.8,
+   "forecastRainNext6hIn": 0.0,
+   "pressureChange3hInHg": -0.02,
+   "windTurn3hDeg": 20
+  },
+  "level": "STEADY",
+  "signature": "0a608f45cd70d06f",
+  "thresholdsVersion": "weather-change-thresholds-v1",
+  "unknown": []
+ }
+}

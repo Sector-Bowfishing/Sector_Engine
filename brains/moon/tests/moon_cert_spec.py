@@ -12,7 +12,7 @@ def artifact(n, generated_at, consumed, rerun):
 
 
 def changed_artifact(n, generated_at):
-    cloud = {"Guntersville|AL": S.weather_state(S.hourly_over("2026-11-23T00:00:00Z", "2026-11-23T13:00:00Z", 95))}
+    cloud = {"Guntersville|AL": S.run_state("2026-11-22T23:00:00Z", 95)}
     return S.build(S.run_updates(weather=cloud), n=n, generated_at=generated_at).artifact                # cloud input arrived: a real input change
 
 

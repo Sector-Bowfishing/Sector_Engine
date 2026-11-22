@@ -32,7 +32,10 @@ def iso(t: float | None) -> str | None:
 def evening_date(lat: float, lon: float, now: dt.datetime) -> dt.date:
     """The default "tonight" for a lake: the evening date D of the night that has not yet ended at `now`. Take the night whose span (local
     solar noon of D to local solar noon of D+1) contains `now`; if that night's sunrise has already passed (morning, before local solar noon),
-    tonight is the coming evening, D+1. With no sunrise in the span (polar day or night) the span's own date stands."""
+    tonight is the coming evening, D+1. With no sunrise in the span (polar day or night) the span's own date stands. A naive `now` is
+    refused (it would be read in the host's local time)."""
+    if now.tzinfo is None or now.utcoffset() is None:
+        raise ValueError("evening_date needs a timezone-aware `now`")
     t = now.astimezone(dt.timezone.utc)
     d = (t + dt.timedelta(hours=lon / 15.0 - 12.0)).date()
     s0, s1 = span_for(d, lon)
