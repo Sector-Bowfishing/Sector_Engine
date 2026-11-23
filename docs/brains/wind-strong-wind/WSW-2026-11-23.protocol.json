@@ -1,0 +1,128 @@
+{
+  "schema": "sector-wind-strong-wind-protocol-v1",
+  "protocolId": "WSW-2026-11-23",
+  "brainId": "wind",
+  "gap": "WIND-CNF-001",
+  "rubricItemsInformed": ["WI4 (strong-wind event detection, 10 pts)", "WI3 and EA1 only indirectly (no method here changes them)"],
+  "status": "PRE-REGISTERED",
+  "preRegisteredAt": "2026-11-23",
+  "preRegisteredBy": "Claude (Engine research session, branch research/wind-strong-wind-method-2026-11-23)",
+  "ownerDirection": "Sector_Ops #51 comment 7093610553 (Michael, 2026-11-23: new research directions that make Brains stronger are pre-approved; publishing any score or validation change, rubric adoption, customer-visible changes, IAM, spending and cloud jobs still go to him first).",
+  "dataExaminedBeforeRegistration": "None. No NBM grib2 file, .idx file, METAR/ASOS observation or other value from the past window or from H2 was fetched or read before this file was hashed. Only repository code and the committed evidence summary (docs/brains/scoring/evidence/wind-measurements-evidence.json: CAL+H1 aggregates) were read.",
+  "purpose": "Lift Wind's largest missing block: strong-wind nights are not forecast (deterministic NBM v5.0 POD 0 at every lead on 49 observed night >= 15 mph events, CAL+H1). Pre-register two candidate strong-wind detection methods, an independent past-window test on data never read, and the one-shot confirmatory test on H2 at unseal.",
+
+  "windows": {
+    "CAL_H1": {
+      "role": "fitting only (method M-B). Already consumed by earlier Wind research.",
+      "inits": ["2026-05-06T00:00Z", "2026-10-06T23:00Z"],
+      "nbmVersion": "NBM v5.0 (inits from 2026-05-05 13Z)",
+      "source": "the existing Stage 3C historical corpus store (pre-registered in stage3c/WIND_HISTORICAL_CORPUS_PREREG.md), read in place; nothing is re-downloaded"
+    },
+    "PW": {
+      "role": "independent past-window test. Never read by any repository tool (every Wind research window in Git starts 2026-05-06; the live shadow starts 2026-10-07). The operator confirms from the private wind-brain manifest that no NBM or METAR object dated in this window exists there before fetching; if one does, stop and report.",
+      "inits": ["2025-11-01T00:00Z", "2026-04-30T18:00Z"],
+      "nbmVersion": "NBM v4.3 (operational 2025-05-27 12Z to 2026-05-05 12Z; brains/wind/runtime/sector_wind/ingest.py nbm_version)",
+      "fetchOrder": "The runner refuses to fetch PW data until the M-B fit file exists (the fit is frozen before any PW value reaches disk)."
+    },
+    "H2": {
+      "role": "confirmatory, one shot, at unseal. Sealed until 2027-01-01 (brains/wind/BRAIN_OPERATING_CONTRACT.md section 9).",
+      "inits": ["2026-10-07T00:00Z", "2026-12-31T18:00Z"],
+      "nbmVersion": "NBM v5.0",
+      "rule": "The runner refuses any H2 fetch, row build or score before 2027-01-01T00:00Z, and refuses a second H2 score in the same output folder. Never tune on H2."
+    }
+  },
+
+  "versionTransferCaveat": {
+    "statement": "The past window is NBM v4.3; CAL+H1 and H2 are NBM v5.0. NOAA/MDL re-calibrated wind speed and gust in v5.0 (SCN 26-24, operational 2026-05-05 13Z). A past-window result therefore measures the methods on a different model generation and is NOT a measurement of today's (v5.0) forecast.",
+    "consequences": [
+      "M-B is fitted on v5.0 (CAL+H1) and applied to v4.3 (PW). A v4.3/v5.0 difference in the upper tail of 10 m speed shifts its map: a PW failure of M-B can be a version artifact, and a PW pass does not prove v5.0 skill.",
+      "M-A has no fitted parameter; it transfers only through the definition and calibration of the qmd 90% level, which also changed with v5.0.",
+      "B0 on PW is a v4.3 measurement. It never replaces the v5.0 CAL+H1 WI4 fact.",
+      "Season also differs: CAL+H1 is May-October (warm season), PW is November-April (cool season, synoptic wind), H2 is October-December. A season effect cannot be separated from the version effect on PW."
+    ],
+    "howTheResultIsUsed": "PW evidence can reach INDEPENDENTLY_VALIDATED only for the NBM v4.3 cool-season regime, and is labelled so. Only the H2 confirmatory score (same generation, v5.0) can close WIND-CNF-001 under its stop condition."
+  },
+
+  "stations": {
+    "set": "the 8 frozen stations of brains/wind/runtime/lakes.json (8A1, 4A6 Guntersville; DCU, HSV, 9A4 Wheeler; MSL Wilson; SNH, 15M Pickwick)",
+    "note": "Four are AWOS, four ASOS. Both are served by the IEM ASOS/AWOS archive. Same stations as the WI4 fact."
+  },
+
+  "truth": {
+    "source": "Iowa Environmental Mesonet ASOS/AWOS archive (https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py), report types 3 and 4 (routine + special), fields sknt, drct, gust. Registered research source iem-asos (tools/research/sources.json). Independent of every forecast.",
+    "pairing": "For each station and valid hour, the report within 10 minutes of the top of the hour, nearest wins (sector_wind.validate.load_obs). Missing sknt = no observation (row dropped).",
+    "units": "knots x 0.514444 = m/s, rounded to 0.01 (sector_wind.ingest.ingest_metar_day)."
+  },
+
+  "forecastRows": {
+    "inits": "synoptic cycles only (00, 06, 12, 18Z), because the NBM qmd percentiles that M-A needs exist only for those cycles. All methods are scored on the same rows.",
+    "leads": [1, 3, 6, 12, 18],
+    "night": "valid hour (UTC) in 01..08 inclusive (sector_wind.validate._night). Only (init, lead) pairs whose valid hour is night are fetched: 00Z leads 1/3/6, 06Z lead 1, 12Z lead 18, 18Z lead 12.",
+    "fetch": "sector_wind.ingest.ingest_nbm_cycle (same decoder, row-scan fix and self-check as the corpus) into a local store under the operator's output folder; NBM core WIND/WDIR/GUST and qmd WIND 10/50/90% and GUST 90% levels at 10 m.",
+    "stationValue": "bilinear blend of the lake cut-out at the station (sector_wind.interp.CutoutIndex.weights). Deterministic speed: blend_wind (as validate.collect). P90 speed: blend of speedP90.",
+    "missing": "A row with no observation or no deterministic speed is dropped. A row without speedP90 is kept for B0 and M-B but is not in the common set."
+  },
+
+  "event": {
+    "definition": "observed sustained 10 m speed >= 15 mph (6.7056 m/s) at a night valid hour (scoreboard dimension 1 / WI4 event: validate._metrics pod_15mph, n_obs_15mph).",
+    "forecastEventByMethod": "see methods; each method yields a yes/no strong-wind forecast per row."
+  },
+
+  "methods": {
+    "B0": {
+      "name": "deterministic NBM (reference)",
+      "rule": "forecast event iff blended deterministic speed >= 6.7056 m/s",
+      "parameters": "none",
+      "role": "the current WI4 method; the paired reference for every comparison"
+    },
+    "M-A": {
+      "name": "NBM P90 exceedance",
+      "rule": "forecast event iff blended qmd WIND 90% level (speedP90) >= 6.7056 m/s",
+      "parameters": "none fitted. The 90% level is fixed by this protocol (the highest wind percentile the corpus stores); the threshold is the event threshold.",
+      "rationale": "NBM's deterministic speed is a central estimate and almost never reaches 15 mph at night; its own upper percentile carries the strong-wind signal without any tuning."
+    },
+    "M-B": {
+      "name": "night upper-tail quantile mapping",
+      "rule": "forecast event iff QM(blended deterministic speed) >= 6.7056 m/s",
+      "fit": {
+        "data": "CAL_H1 only: every night row (valid 01..08Z) of validate.collect over the corpus store, leads 1/3/6/12/18, all hourly inits, 8 stations, pooled over stations and leads. The runner refuses an init outside 2026-05-06T00Z..2026-10-06T23Z.",
+        "levels": [0.5, 0.9, 0.95, 0.97, 0.98, 0.99, 0.995, 0.998, 0.999],
+        "quantile": "linear interpolation between order statistics (type 7)",
+        "map": "F_k = forecast quantile at level k, O_k = observed quantile at level k, D_k = O_k - F_k. QM(f) = f + D(f) with D linear in f between consecutive (F_k, D_k); D = D at the lowest level below F_0.5 and D = D at the highest level above F_0.999. Ties in F_k are merged into one knot whose D is the mean of the tied D_k.",
+        "minimumRows": 10000,
+        "output": "wsw-mb-fit.json (levels, F_k, O_k, D_k, n, window, protocol sha256, frozenAt). Its sha256 is posted on Sector_Ops #51 with the run summary and is checked by every later score."
+      },
+      "rationale": "Count-matching of the upper tail: the forecast is wrong mostly in magnitude, not timing; mapping its upper quantiles onto the observed upper quantiles lets strong forecasts cross the event threshold."
+    }
+  },
+
+  "scoring": {
+    "rowSet": "common rows: rows where B0, M-A and M-B all have a value. Each method is also reported on its own available rows (diagnostic only).",
+    "perLead": "hits, misses, false alarms, POD = hits/(hits+misses), FAR = FA/(hits+FA), CSI = hits/(hits+misses+FA), observed events, forecast events",
+    "pooled": "the same over all leads",
+    "wi4Credit": "rubric wind-specialist-capability-v2 WI4 scale, computed as written: min over leads of POD credit (linear 0 -> 0, 0.5 -> 1) x min over leads of FAR credit (linear 0.8 -> 0, 0.5 -> 1; a lead with no forecast events -> 1); a lead with no observed events has POD credit 0; no observed events at all -> 0.",
+    "scoreboardGate": "scoreboard.py dimension 1 strong-wind condition, computed as written: pass iff POD >= 0.5 and (FAR <= 0.5 or no forecast events) at every lead.",
+    "uncertainty": "block bootstrap over UTC valid dates (resample dates with replacement), 2000 resamples, seed 20261123; percentile intervals for pooled POD, FAR, CSI and the paired difference CSI(method) - CSI(B0).",
+    "multipleComparisons": "two candidate methods: Bonferroni. The one-sided lower bound of the paired CSI difference is the 1.25th bootstrap percentile."
+  },
+
+  "decision": {
+    "minimumEvidence": "at least 25 observed events in the common row set and at least 80% of the B0 rows having a speedP90 value; otherwise the window outcome is INSUFFICIENT_EVENTS or NOT_EVALUABLE (recorded, never a pass).",
+    "supported": "per method: lower bound of CSI(method) - CSI(B0) > 0, pooled POD >= 0.25 and pooled FAR <= 0.80. Otherwise NOT_SUPPORTED.",
+    "pastWindowOutcome": "SUPPORTED | NOT_SUPPORTED | INSUFFICIENT_EVENTS | NOT_EVALUABLE, per method, labelled 'NBM v4.3 cool season (version-transfer caveat)'.",
+    "h2Outcome": "the same rule on H2, once. SUPPORTED on H2 -> recommendation ACCEPT for a versioned strong-wind signal that may only LOWER the exposure assessment's confidence (WIND-CNF-001 expectedOutput); otherwise REJECT. Both methods are scored on H2 whatever the PW result (both are pre-registered here, before 2027-01-01).",
+    "noLadderStop": "Both methods are evaluated; no method is chosen, re-fitted or re-thresholded after the PW result. A method changed after seeing PW or H2 results needs a new protocol id and data not used to choose it (RS-18, RS-30)."
+  },
+
+  "outputsAndAdmission": {
+    "labels": ["INTERNAL_EXPERIMENTAL", "NOT_FOR_CUSTOMERS"],
+    "writes": "local files in the operator's output folder only (the Wind research folder from Cortex research-path). No Firebase, no bucket, no score file, no evidence file in the repository, no schedule, no cloud job.",
+    "admission": "Nothing here changes WI4, the wind-measurements-evidence file, frozen-scores.json or any published score. A future evidence change is proposed as a candidate block and goes through jobs/brain-scores/refresh_wind_score.py (anything other than live reliability is HELD for review) and Michael's decision. Whether a post-processed signal may earn WI4 credit (the item says 'deterministic') is a rubric-governance question for Michael, not settled here."
+  },
+
+  "budget": {
+    "download": "at most 60 GB for PW (estimate: about 7,600 grib2 messages), resumable; stop and report if exceeded",
+    "wallClock": "at most 48 h for the PW fetch",
+    "hosts": ["noaa-nbm-grib2-pds.s3.amazonaws.com (NOAA Open Data Dissemination, public, no credentials)", "mesonet.agron.iastate.edu (IEM, public)"]
+  }
+}
