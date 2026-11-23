@@ -1,0 +1,46 @@
+{
+ "_note": "SYNTHETIC. Every station, series, location and time stamp is invented for tests; no real gauge is described.",
+ "lakes": [
+  {"lakeId": "Testa Reservoir|ZZ", "name": "Testa Reservoir", "state": "ZZ", "lat": 35.025, "lon": -89.95, "reviewed": false,
+   "purposes": ["BINDING"], "bindingStatus": "NONE", "bound": [], "priorResearch": null,
+   "outline": [[-90.0, 35.0], [-89.9, 35.0], [-89.9, 35.05], [-90.0, 35.05], [-90.0, 35.0]]},
+  {"lakeId": "Testb Lake|ZZ", "name": "Testb Lake", "state": "ZZ", "lat": 36.025, "lon": -90.95, "reviewed": true,
+   "purposes": ["INDEPENDENT_TRUTH"], "bindingStatus": "REVIEWED", "priorResearch": null,
+   "bound": [{"provider": "a2w", "station": "LRP:TestB", "series": "TestB-Lake.Elev.Inst.1Hour.0.OBS", "role": "primary"},
+             {"provider": "usgs", "station": "07000002", "series": "62615", "role": "fallback"},
+             {"provider": "cwms", "station": "LRP", "series": "TestB-Lake.Elev.Inst.1Hour.0.OBS", "role": "history"}],
+   "outline": [[-91.0, 36.0], [-90.9, 36.0], [-90.9, 36.05], [-91.0, 36.05], [-91.0, 36.0]]},
+  {"lakeId": "Testc Lake|ZZ", "name": "Testc Lake", "state": "ZZ", "lat": 37.0, "lon": -88.0, "reviewed": true,
+   "purposes": ["INDEPENDENT_TRUTH"], "bindingStatus": "REVIEWED", "priorResearch": null,
+   "bound": [{"provider": "tva", "station": "TSTT1", "series": null, "role": "primary"}], "outline": null}
+ ],
+ "usgs": [
+  {"site": "07000001", "name": "TESTA RESERVOIR NEAR DAMVILLE ZZ", "tp": "LK", "lat": 35.02, "lon": -89.95, "param": "62615", "alt_datum": "NAVD88", "end": "2026-12-01"},
+  {"site": "07000003", "name": "TESTA DAM TAILWATER NEAR DAMVILLE ZZ", "tp": "ST", "lat": 34.99, "lon": -89.95, "param": "00062", "alt_datum": "NGVD29", "end": "2026-12-01"},
+  {"site": "07000002", "name": "TESTB LAKE AT DAM ZZ", "tp": "LK", "lat": 36.002, "lon": -90.985, "param": "62615", "alt_datum": "NAVD88", "end": "2026-12-01"},
+  {"site": "07000004", "name": "TESTB LAKE AT UPPER END ZZ", "tp": "LK", "lat": 36.04, "lon": -90.91, "param": "62614", "alt_datum": "NGVD29", "end": "2026-12-01"},
+  {"site": "07000005", "name": "TESTC LAKE NEAR TESTVILLE ZZ", "tp": "LK", "lat": 37.001, "lon": -88.001, "param": "00062", "alt_datum": "NGVD29", "end": "2026-12-01"}
+ ],
+ "cwmsLocations": {"LRP": [
+  {"office": "LRP", "name": "TestA", "kind": "PROJECT", "latitude": 35.001, "longitude": -89.99, "public-name": "Testa Dam", "vertical-datum": "NGVD29"},
+  {"office": "LRP", "name": "TestA-Tailwater", "kind": "STREAM_LOCATION", "latitude": 34.995, "longitude": -89.99, "public-name": "Testa Tailwater", "vertical-datum": "NGVD29"},
+  {"office": "LRP", "name": "TestB-Lake", "kind": "PROJECT", "latitude": 36.001, "longitude": -90.99, "public-name": "Testb Lake", "vertical-datum": "NGVD29"}
+ ]},
+ "cwmsTimeseries": [
+  {"office": "LRP", "name": "TestA.Elev.Inst.1Hour.0.Raw-DCP", "interval": "1Hour", "latest": "2026-12-01T05:00:00Z", "earliest": "1990-01-01T00:00:00Z"},
+  {"office": "LRP", "name": "TestA.Elev-Guide Curve.Inst.1Day.0.Rev", "interval": "1Day", "latest": "2027-12-31T00:00:00Z", "earliest": "1990-01-01T00:00:00Z"},
+  {"office": "LRP", "name": "TestA-Tailwater.Elev.Inst.1Hour.0.Raw", "interval": "1Hour", "latest": "2026-12-01T05:00:00Z", "earliest": "1990-01-01T00:00:00Z"},
+  {"office": "LRP", "name": "TestB-Lake.Elev.Inst.1Hour.0.OBS", "interval": "1Hour", "latest": "2026-12-01T05:00:00Z", "earliest": "2000-01-01T00:00:00Z"},
+  {"office": "LRP", "name": "TestB-Lake.Elev.Inst.15Minutes.0.Raw-USGS", "interval": "15Minutes", "latest": "2026-12-01T05:00:00Z", "earliest": "2010-01-01T00:00:00Z"}
+ ],
+ "riseLocations": [
+  {"id": 900, "locationName": "Testa Reservoir", "lat": 35.03, "lon": -89.93, "verticalDatumName": "NGVD29", "items": [9001, 9002]},
+  {"id": 901, "locationName": "Faraway Reservoir", "lat": 40.0, "lon": -100.0, "verticalDatumName": "NAVD88", "items": [9003]}
+ ],
+ "riseItems": {
+  "9001": {"itemTitle": "Testa Reservoir Daily Lake/Reservoir Elevation-ft Time Series Data", "parameterName": "Lake/Reservoir Elevation", "parameterTimestep": "daily", "temporalStartDate": "1960-01-01T00:00:00Z", "temporalEndDate": "2026-11-30T00:00:00Z"},
+  "9002": {"itemTitle": "Testa Reservoir Daily Lake/Reservoir Storage-af Time Series Data", "parameterName": "Lake/Reservoir Storage", "parameterTimestep": "daily", "temporalStartDate": "1960-01-01T00:00:00Z", "temporalEndDate": "2026-11-30T00:00:00Z"},
+  "9003": {"itemTitle": "Faraway Reservoir Daily Lake/Reservoir Elevation-ft Time Series Data", "parameterName": "Lake/Reservoir Elevation", "parameterTimestep": "daily", "temporalStartDate": "1960-01-01T00:00:00Z", "temporalEndDate": "2026-11-30T00:00:00Z"}
+ },
+ "ivValueSentinel": 98765.4321
+}
