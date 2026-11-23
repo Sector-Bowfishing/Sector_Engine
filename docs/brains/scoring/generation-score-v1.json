@@ -1,0 +1,171 @@
+{
+  "scoreVersion": "generation-score-v1",
+  "brainId": "generation",
+  "scale": 10,
+  "status": "DRAFT",
+  "adopted": false,
+  "statusNote": "DRAFT, NOT ADOPTED. Drafted 2026-11-23 at the owner's request, for Michael's review. No scorer loads this file: it is not in jobs/brain-scores/score_brains.py UPSTREAM, sector_brain_platform/scoring.py has no Generation rubric, and jobs/brain-scores/test_draft_rubrics_not_loaded.py fails if either changes while this status is DRAFT. The Brain's registry keeps scoreStatus NOT_ESTABLISHED until adoption. Rationale: docs/brains/scoring/NEW_BRAIN_RUBRICS_DRAFT_2026-11-23.md.",
+  "measurement": "Domain capability score (Cortex scoring.md SC-02, SC-03): how far Sector can trust the Generation Brain's published dam release picture (status, measured release, the operator's schedule). Not operational health, not production readiness, not comparable with any other Brain's score.",
+  "question": "Per dam lake, does the Generation Brain publish the operator's measured release and posted schedule, current, from sources Sector is allowed to read, with parsers proven on real responses, and has the published picture matched the operators' own schedules over the pre-registered week (GENERATION_BRAIN_PLAN.md section 5)?",
+  "scope": "Coverage over DAM lakes (/brains/generation.fleet.damLakeCount, 401 in catalog generation-dams-2026-11-22.1), not the 621-lake directory: the 220 lakes without a dam have no release by definition. Quality shares over supported lakes (/brains/generation.supportedLakeCount: state kind OBSERVED or SCHEDULE_ONLY). Validation fleet-wide.",
+  "sourceContract": "brains/generation/contracts/generation-publication-v1.json (families /lakes/{k}/states/generation, /lakeFleet/{k}/..., /snapshots/{k}/latest/generation, /brains/generation/{child}, /validation/generation, /health/brains/generation/{child}); state schema brains/generation/contracts/generation-dam-state-v1.schema.json",
+  "dimensionClasses": "Cortex scoring.md SC-09: CAP, COV, PRED, VAL, ENG, VOL. This draft has no ENG or VOL dimension.",
+  "unscoredWhen": "The registry /brains/generation is absent or has never carried lastSuccessfulRun. The scorer then writes NO score block: UNSCORED, never 0. Today this holds (PARKED, no executor, run.py --write refuses: BLOCKED_AWAITING_APPROVED_RELEASE).",
+  "dimensions": [
+    {
+      "id": "validation",
+      "label": "Pre-registered schedule comparison (plan section 5)",
+      "weight": 30,
+      "class": "VAL",
+      "movableByPackagingOnly": false,
+      "fact": "/validation/generation.status",
+      "scale": {"NOT_VALIDATED": 0, "PARTIAL": 5, "VALIDATED": 10, "absent": "UNKNOWN"},
+      "note": "The Brain writes NOT_VALIDATED today (validationVersion 'generation-validation-none (calibration)'). Meanings in validationStatusMeaning."
+    },
+    {
+      "id": "damCoverage",
+      "label": "Dam lakes with a published release picture",
+      "weight": 25,
+      "class": "COV",
+      "movableByPackagingOnly": false,
+      "fact": "/brains/generation.supportedLakeCount / /brains/generation.fleet.damLakeCount",
+      "scale": "coverage ladder (sector_brain_platform.scoring.ladder)",
+      "note": "Moves only with new bindings on allowed sources AND a live state from them (GEN-BIND-001..003). A catalog entry alone does not count: supportedLakeCount counts published OBSERVED / SCHEDULE_ONLY states."
+    },
+    {
+      "id": "measuredRelease",
+      "label": "Release measured by the operator (not schedule-only, not downstream-only)",
+      "weight": 20,
+      "class": "CAP",
+      "movableByPackagingOnly": false,
+      "fact": "/lakeFleet/{k}/slots/generation.kind == OBSERVED, share over supported lakes",
+      "scale": "share x 10",
+      "note": "SCHEDULE_ONLY states (the operator's plan without a measured release) and DOWNSTREAM_ONLY (a USGS gauge below the dam, labelled as such) are published honestly but earn nothing here."
+    },
+    {
+      "id": "scheduleCoverage",
+      "label": "Operator schedule published where operators post one",
+      "weight": 15,
+      "class": "CAP",
+      "movableByPackagingOnly": false,
+      "fact": "count of /lakes/{k}/states/generation with a non-empty schedule.windows / (fleet.byGroup.TVA + fleet.byGroup.TVA_CUMBERLAND + fleet.byGroup.SWPA_USACE)",
+      "scale": "share x 10 (capped at 10)",
+      "note": "Schedules (start / stop times) exist only for TVA, the TVA-published Cumberland projects and SWPA (plan section 3, about 39 lakes). The denominator is those groups, so binding more measured-only CWMS or RISE lakes never lowers this share (the scoring.md CG-2.8-4 concern)."
+    },
+    {
+      "id": "currency",
+      "label": "Supported lakes current (not stale)",
+      "weight": 10,
+      "class": "CAP",
+      "movableByPackagingOnly": false,
+      "fact": "1 - /brains/generation.staleLakeCount / /brains/generation.supportedLakeCount",
+      "scale": "(1 - share) x 10",
+      "note": "A release picture past freshUntil is worse than none for the tile; the Brain marks it stale rather than serving it."
+    }
+  ],
+  "gates": [
+    {
+      "id": "health",
+      "when": "/health/brains/generation.status (or /brains/generation.health) is FAILED, UNKNOWN or absent",
+      "cap": 2.0,
+      "tiesTo": "the Brain's own run health"
+    },
+    {
+      "id": "release",
+      "when": "/brains/generation.knowledgeRelease.approvalStatus is not APPROVED",
+      "cap": 2.0,
+      "tiesTo": "G-2 (plan section 8) and gap GEN-REL-001; release generation-knowledge-candidate-2026-11-22.1 is NOT_RECORDED. A guard: the writer already refuses without it."
+    },
+    {
+      "id": "sourceAccess",
+      "when": "any provider in /brains/generation.sourceAccess has status ACCESS_CHECK_REQUIRED, OR /brains/generation.knowledgeRelease.approvalStatus is not APPROVED",
+      "cap": 3.0,
+      "tiesTo": "decision D-G and gap GEN-ACCESS-001 (TVA robots.txt and the iOS 'TVA blocks automated access' note; SWPA energy.gov robots.txt and terms). SWPA is ACCESS_CHECK_REQUIRED today, so this fires.",
+      "limitation": "The TVA half of D-G is not visible in published facts: tva is ALLOWED in the candidate release only provisionally, and the open check (source_access.json 'openCheck') is not copied into /brains/generation.sourceAccess. The gate therefore also requires the approved release, because G-2 is sequenced after D-G (plan sections 6.1 step 0 and 8). A direct fact would need the Brain to publish the open check; that is a Brain change and is not made here."
+    },
+    {
+      "id": "realResponseFixtures",
+      "when": "the Generation Brain's test fixtures do not include, for every provider that serves a supported lake, at least one response recorded from the live service with provenance (not hand-built)",
+      "cap": 3.0,
+      "fact": "repository evidence, not an RTDB fact: brains/generation/tests/fixtures/ (today only hand-built/, whose index.json label says 'HAND-BUILT FIXTURES ... Not recorded from the live services; record real responses before enabling'). At adoption the scorer image must stage the fixture index, as the Wind evidence file is staged (jobs/brain-orchestrator/deploy-job.sh).",
+      "tiesTo": "GENERATION_BRAIN_PLAN.md section 6 step 3 ('real responses recorded as fixtures') and the hand-built index note"
+    },
+    {
+      "id": "coverage",
+      "when": "supportedLakeCount / fleet.damLakeCount < 10 %",
+      "cap": 3.0,
+      "tiesTo": "the lake-brain-score-v1 coverage gate, over dam lakes. 17 of 401 readable today is 4.2 %."
+    },
+    {
+      "id": "validation",
+      "when": "/validation/generation.status is NOT_VALIDATED or absent",
+      "cap": 5.0,
+      "tiesTo": "GENERATION_BRAIN_PLAN.md section 5 (pre-registered); gap GEN-VAL-001"
+    },
+    {
+      "id": "validationPartial",
+      "when": "/validation/generation.status is PARTIAL",
+      "cap": 7.0,
+      "tiesTo": "GENERATION_BRAIN_PLAN.md section 5"
+    }
+  ],
+  "validationStatusMeaning": {
+    "source": "docs/brains/GENERATION_BRAIN_PLAN.md section 5, registered before any run. Thresholds are the plan's (not restated or moved here); a FAIL is reported as a FAIL.",
+    "VALIDATED": "All five pre-registered metrics PASS (hour agreement, transition latency, schedule fidelity, no invented values, freshness) over the 7-day window (>= 2 weekdays, >= 1 weekend day) on every lake with a schedule bound and readable, at least the 17 bound today.",
+    "PARTIAL": "Metrics 3 (schedule fidelity), 4 (no invented values) and 5 (freshness) PASS; metric 1 or 2 FAILED or not yet scored.",
+    "NOT_VALIDATED": "Anything else. Metric 4 failing (an invented unit count, a sourceless discharge, a status other than UNKNOWN with no source) is always NOT_VALIDATED.",
+    "whoSetsIt": "The validation record under docs/cortex/ (plan section 5) and the reviewed change that writes /validation/generation, never the scorer."
+  },
+  "notGatedHere": "D-I (one read per series per hour across Brains, for TVA observed data) blocks enablement for TVA lakes, not the score; while it is open those lakes publish nothing, which the coverage dimension already shows.",
+  "movesUp": [
+    "D-G decided and recorded in a new release; G-2 approval; enablement (plan section 6.1): the Brain becomes scoreable and the release and access caps lift",
+    "real service responses recorded as fixtures for every serving provider (lifts the 3.0 fixture cap)",
+    "the discovery pass binding CWMS, RISE and TVA series (GEN-BIND-001..003): damCoverage, past 10 % lifts the coverage cap",
+    "the validation week PASSED (lifts the 5.0 and 7.0 caps)"
+  ],
+  "cannotCount": [
+    "catalog entries without a published state (DISCOVERY_PENDING, PERMISSION_REQUIRED, NO_KNOWN_PUBLIC_RELEASE_DATA)",
+    "the 220 directory lakes without a dam",
+    "hand-built fixtures, the Brain Cert Kit, packaging, docs, Ops pages",
+    "values the old Engine derived (SWPA unit counts and cfs) or anything derived from megawatts",
+    "dry runs"
+  ],
+  "workedExample": {
+    "derivation": "TYPED_NOT_COMPUTED (scoring.md SC-11): hand arithmetic from this draft, not a scorer output. Non-authoritative.",
+    "today": {
+      "asOf": "2026-11-23 (origin/main 8d421fe)",
+      "facts": "No /brains/generation registry has been written (PARKED, no executor, no job; run.py --write refuses BLOCKED_AWAITING_APPROVED_RELEASE). Release NOT_RECORDED; SWPA ACCESS_CHECK_REQUIRED; only hand-built fixtures; 17 of 401 dam lakes would be readable.",
+      "result": "UNSCORED (no score block). Forced through the arithmetic: 0.0 / 10, completenessPct 0."
+    },
+    "liftPath": [
+      {
+        "step": "Illustration: the 17 readable lakes published, all OBSERVED, all with schedule windows, none stale (an assumption, not a measurement), validation not started",
+        "arithmetic": "damCoverage ladder(17/401 = 4.2 %) = 1 x 25 = 25; measuredRelease 10 x 20 = 200; scheduleCoverage 17/39 = 0.436 -> 4.4 x 15 = 65; currency 10 x 10 = 100; validation 0 x 30 = 0; uncapped (25 + 200 + 65 + 100 + 0) / 100 = 3.9; caps: release 2.0 (if unapproved), sourceAccess 3.0, realResponseFixtures 3.0, coverage 3.0, validation 5.0",
+        "effect": "2.0 / 10 while the release is unapproved, 3.0 once it is approved; uncapped 3.9 shown beside it."
+      },
+      {
+        "step": "D-G resolved, real fixtures recorded, discovery pass reaches 150 dam lakes (the low end of the plan's planning estimate, section 3), validation week PASSED",
+        "arithmetic": "damCoverage ladder(150/401 = 37 %) = 5 x 25 = 125; measuredRelease and currency as above (assumed) 200 + 100; scheduleCoverage 39/39 = 10 x 15 = 150; validation 10 x 30 = 300; uncapped 8.8; no cap",
+        "effect": "8.8 / 10 under these assumptions. The shares are assumptions for illustration; only the probe and the validation week replace them with measurements."
+      }
+    ]
+  },
+  "improvementsDraft": {
+    "note": "Draft text for score_improvements_v1.json. NOT added there: that registry is loaded by the scorer's explanation step and published in /scores/{id}/explanation. Copy at adoption.",
+    "gate:sourceAccess@3": "Decide D-G: read TVA and SWPA robots.txt and terms, resolve the iOS 'TVA blocks automated access' note, and record the statuses in a new knowledge release (GEN-ACCESS-001).",
+    "gate:realResponseFixtures@3": "Record one real response per serving provider (TVA, CWMS, RISE, USGS, and SWPA once allowed) as fixtures with provenance, and run the parsers on them.",
+    "gate:coverage@3": "Run the discovery pass on allowed official services (GEN-BIND-001..003) and publish states for the newly bound dams.",
+    "gate:validation@5": "Run the pre-registered 7-day schedule comparison (plan section 5) on internal runs and record PASS or FAIL per metric (GEN-VAL-001)."
+  },
+  "adoption": {
+    "approvedBy": null,
+    "approvedAt": null,
+    "requires": [
+      "Michael approves this rubric as written or amended (approval-gated: PROJECT.md section 7)",
+      "Michael decides whether the realResponseFixtures gate may read repository evidence (every other fact here is a published RTDB fact)",
+      "a Cortex maintenance session: Generation is not a Cortex target Brain (D-H, CG-3.1-20); /scores/generation is not a registered family",
+      "a scorer PR (score_generation(), facts, UPSTREAM, improvement entries, fixture-index staging) and a decision whether Generation enters the Engine score (today it does not)",
+      "the Brain's scoreNote / scoreStatus updated, status ADOPTED here, and verification/fixtures/scores/score_baseline.json re-recorded in the same PR"
+    ]
+  }
+}

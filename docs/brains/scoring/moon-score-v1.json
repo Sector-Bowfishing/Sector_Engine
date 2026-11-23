@@ -1,0 +1,151 @@
+{
+  "scoreVersion": "moon-score-v1",
+  "brainId": "moon",
+  "scale": 10,
+  "status": "DRAFT",
+  "adopted": false,
+  "statusNote": "DRAFT, NOT ADOPTED. Drafted 2026-11-23 at the owner's request, for Michael's review. No scorer loads this file: it is not in jobs/brain-scores/score_brains.py UPSTREAM, sector_brain_platform/scoring.py has no Moon rubric, and jobs/brain-scores/test_draft_rubrics_not_loaded.py fails if either changes while this status is DRAFT. The Brain's own registry still says it has no score (moon_brain.contract.SCORE_NOTE); that stays true until adoption. Rationale: docs/brains/scoring/NEW_BRAIN_RUBRICS_DRAFT_2026-11-23.md.",
+  "measurement": "Domain capability score (Cortex scoring.md SC-02, SC-03): how far Sector can trust the Moon and Night Light Brain's published on-water darkness class for tonight. Not operational health, not production readiness, not comparable with any other Brain's score.",
+  "question": "Per lake, for tonight, does the Moon Brain publish a darkness class that accounts for cloud (not only the clear-sky moon), for every directory lake, current for tonight, and has DARKNESS_RULE_V1 been shown to order nights by measured on-water light (gap MOON-VAL-001)?",
+  "scope": "Coverage over the directory (/brains/moon.directoryLakeCount). Quality shares over the lakes the Brain supports (/brains/moon.supportedLakeCount) using the registry breakdowns the Brain publishes. Validation fleet-wide.",
+  "sourceContract": "brains/moon/contracts/moon-publication-v1.json (families /lakes/{k}/states/moon, /lakeFleet/{k}/..., /snapshots/{k}/latest/moonNightLight, /brains/moon/{child}, /validation/moon, /health/brains/moon/{child}); state contract brains/moon/contracts/moon-night-light-v1.json",
+  "dimensionClasses": "Cortex scoring.md SC-09: CAP, COV, PRED, VAL, ENG, VOL. This draft has no ENG or VOL dimension.",
+  "unscoredWhen": "The registry /brains/moon is absent or has never carried lastSuccessfulRun. The scorer then writes NO score block: UNSCORED, never 0. Today this holds (PARKED, no executor, run.py --write refuses without an APPROVED release and MOON_WRITE_APPROVED=1).",
+  "dimensions": [
+    {
+      "id": "validation",
+      "label": "Darkness class validated against measured on-water light (MOON-VAL-001)",
+      "weight": 40,
+      "class": "VAL",
+      "movableByPackagingOnly": false,
+      "fact": "/validation/moon.status",
+      "scale": {"NOT_VALIDATED": 0, "PARTIAL": 5, "VALIDATED": 10, "absent": "UNKNOWN"},
+      "note": "The sun, twilight and moon events are deterministic astronomy, already cross-checked against USNO in tests (moon-night-light-v1.json usnoCrossCheck). That cross-check is not published as a measurement, so it earns nothing here. The one judgement the Brain makes is the darkness class, so validation carries the largest weight."
+    },
+    {
+      "id": "cloudIntegration",
+      "label": "Darkness class includes cloud cover",
+      "weight": 30,
+      "class": "CAP",
+      "movableByPackagingOnly": false,
+      "fact": "/brains/moon.breakdowns.basis.MOON_AND_CLOUD / (supportedLakeCount - breakdowns.basis.NO_NIGHT)",
+      "scale": "share x 10",
+      "note": "MOON_ONLY is the clear-sky upper bound: it can call a cloudy night bright. Credit needs the Weather Brain live (MOON-INP-001) and Moon run after each evening Weather run (plan section 7.1). NO_NIGHT lakes (polar day) are excluded from the denominator."
+    },
+    {
+      "id": "coverage",
+      "label": "Directory lakes with a night state",
+      "weight": 15,
+      "class": "COV",
+      "movableByPackagingOnly": true,
+      "fact": "/brains/moon.supportedLakeCount / /brains/moon.directoryLakeCount",
+      "scale": "coverage ladder (sector_brain_platform.scoring.ladder)",
+      "note": "Marked movable by packaging alone (SC-09): the astronomy computes every directory lake in about 4 s, so this reaches 10 on the first live run. It is kept, at a low weight, so a run that loses lakes is visible."
+    },
+    {
+      "id": "currentNight",
+      "label": "Lakes computed for tonight without error",
+      "weight": 15,
+      "class": "CAP",
+      "movableByPackagingOnly": false,
+      "fact": "1 - /brains/moon.staleLakeCount / /brains/moon.supportedLakeCount (staleLakeCount = readinessCounts.DEGRADED: the lake could not be computed this run, nothing substituted)",
+      "scale": "(1 - share) x 10"
+    }
+  ],
+  "gates": [
+    {
+      "id": "health",
+      "when": "/health/brains/moon.status (or /brains/moon.health) is FAILED, UNKNOWN or absent",
+      "cap": 2.0,
+      "tiesTo": "the Brain's own run health"
+    },
+    {
+      "id": "release",
+      "when": "/brains/moon.knowledgeRelease.approvalStatus is not APPROVED",
+      "cap": 2.0,
+      "tiesTo": "the lake-directory release moon-knowledge-candidate-2026-11-22.1 (NOT_RECORDED today). A guard: the live writer already refuses without it, so a published registry should never fire it."
+    },
+    {
+      "id": "cloudInput",
+      "when": "cloudIntegration share < 50 %",
+      "cap": 4.0,
+      "tiesTo": "MOON-INP-001 and plan section 4: with most nights MOON_ONLY the class is a clear-sky bound, not a darkness assessment"
+    },
+    {
+      "id": "validation",
+      "when": "/validation/moon.status is NOT_VALIDATED or absent",
+      "cap": 5.0,
+      "tiesTo": "MOON-VAL-001. The Brain writes NOT_VALIDATED today (validationVersion 'moon-validation-usno-crosscheck-v1 (astronomy only)')."
+    },
+    {
+      "id": "validationPartial",
+      "when": "/validation/moon.status is PARTIAL",
+      "cap": 7.0,
+      "tiesTo": "MOON-VAL-001 scored on the stated proxy only (see validationStatusMeaning)"
+    }
+  ],
+  "validationStatusMeaning": {
+    "source": "brains/moon/research/GAPS.json MOON-VAL-001 (stop condition: a preregistered comparison against an independent illuminance dataset, public sky-quality or lux records near fleet lakes, is scored). Unlike Weather and Generation, the Moon plan has NO pre-registered validation thresholds yet (MOON_BRAIN_PLAN.md section 7 item 3).",
+    "preRegistrationRequired": "VALIDATED and PARTIAL both require a MOON-VAL-001 pre-registration committed BEFORE any illuminance data is read: dataset, sites, nights, metric and pass thresholds. This rubric does not set them.",
+    "statedProxy": "Measured on-water illuminance (lux) is the target truth. The stated proxy is zenith night-sky brightness from public sky-quality-meter records (mag/arcsec^2, converted so brighter = more light) at sites near fleet lakes. Field sky-quality-meter readings from a boat are optional extra evidence, never required (MOON-VAL-001).",
+    "proposedCriteriaForPreRegistration": "PROPOSAL ONLY, not pre-registered, for Michael to accept, change or reject when MOON-VAL-001 is pre-registered: (a) the published moonlightIndex A ranks site-nights by measured light with Spearman rho >= 0.6 over >= 60 site-nights at >= 3 sites; (b) the class order holds: median measured light DARK < MOSTLY_DARK < SOME_MOONLIGHT < BRIGHT_MOON; (c) both on nights with basis MOON_AND_CLOUD.",
+    "VALIDATED": "The pre-registered comparison PASSES on measured illuminance (lux), or on the stated proxy at sites within the distance the pre-registration fixes.",
+    "PARTIAL": "The pre-registered comparison PASSES only on MOON_ONLY nights (clear-sky ordering), or only on a proxy dataset farther from fleet lakes than pre-registered.",
+    "NOT_VALIDATED": "Anything else, including no pre-registration, a FAIL, or an insufficient sample. A FAIL produces a DARKNESS_RULE_V2 proposal; V1 results are kept.",
+    "whoSetsIt": "The Moon Brain's validation record (a reviewed change that writes /validation/moon), never the scorer."
+  },
+  "movesUp": [
+    "owner-approved enablement (MOON_BRAIN_PLAN.md section 7.1) after Weather is on: the Brain becomes scoreable",
+    "Moon run after each evening Weather run so the cloud span covers the window (cloudIntegration, lifts the 4.0 cap)",
+    "MOON-VAL-001 pre-registered, then scored and PASSED (lifts the 5.0 and 7.0 caps)"
+  ],
+  "cannotCount": [
+    "the USNO cross-check in tests (engineering correctness; not a published measurement)",
+    "the Brain Cert Kit, packaging, docs, Ops pages",
+    "MOON_ONLY nights as if cloud had been judged",
+    "a per-lake skyglow input (MOON-INP-002) until a fact for it is published and a new rubric version credits it",
+    "dry runs"
+  ],
+  "workedExample": {
+    "derivation": "TYPED_NOT_COMPUTED (scoring.md SC-11): hand arithmetic from this draft, not a scorer output. Non-authoritative.",
+    "today": {
+      "asOf": "2026-11-23 (origin/main 8d421fe)",
+      "facts": "No /brains/moon registry has been written (PARKED, no executor, no job, run.py --write refuses). Knowledge release approval NOT_RECORDED.",
+      "result": "UNSCORED (no score block). Forced through the arithmetic: 0.0 / 10, completenessPct 0."
+    },
+    "liftPath": [
+      {
+        "step": "Illustration from the recorded full-directory dry run of 2026-11-22 (MOON_BRAIN_PLAN.md section 6: 621 lakes, every lake MOON_ONLY, no lake failed), as if it had been published with an approved release",
+        "arithmetic": "validation 0 x 40 = 0; cloudIntegration 0 x 30 = 0; coverage ladder(621/621) = 10 x 15 = 150; currentNight 10 x 15 = 150; uncapped (0 + 0 + 150 + 150) / 100 = 3.0; caps: cloudInput 4.0, validation 5.0; value 3.0",
+        "effect": "3.0 / 10, earned entirely by coverage and currency, both of which the astronomy gets almost for free. That is why they carry only 30 % of the weight."
+      },
+      {
+        "step": "Weather live, Moon run after each evening Weather run, say 90 % of night lakes MOON_AND_CLOUD",
+        "arithmetic": "cloudIntegration 9 x 30 = 270; uncapped (270 + 150 + 150) / 100 = 5.7; cloudInput cap lifted; validation cap 5.0 holds; value 5.0",
+        "effect": "5.0 / 10 (uncapped 5.7 shown beside it)."
+      },
+      {
+        "step": "MOON-VAL-001 pre-registered and PASSED (VALIDATED)",
+        "arithmetic": "validation 10 x 40 = 400; uncapped (400 + 270 + 150 + 150) / 100 = 9.7; no cap",
+        "effect": "9.7 / 10 with the shares above. The 90 % share is an assumption for illustration, not a measurement."
+      }
+    ]
+  },
+  "improvementsDraft": {
+    "note": "Draft text for score_improvements_v1.json. NOT added there: that registry is loaded by the scorer's explanation step and published in /scores/{id}/explanation. Copy at adoption.",
+    "gate:cloudInput@4": "Turn Weather on first, then run Moon after each evening and night Weather run so the cloud span covers the fishing window (MOON-INP-001, plan section 7.1).",
+    "gate:validation@5": "Pre-register MOON-VAL-001 (dataset, sites, metric, thresholds) before reading any illuminance data, then score it.",
+    "gate:validationPartial@7": "Extend the MOON-VAL-001 comparison to cloudy nights (MOON_AND_CLOUD) and to sites near fleet lakes."
+  },
+  "adoption": {
+    "approvedBy": null,
+    "approvedAt": null,
+    "requires": [
+      "Michael approves this rubric as written or amended (approval-gated: PROJECT.md section 7)",
+      "Michael accepts or replaces the stated proxy and the proposed MOON-VAL-001 criteria, and the pre-registration is committed before data",
+      "a Cortex maintenance session: Moon is not a Cortex target Brain and its families are not registered (CG-3.1-19); /scores/moon is not a registered family",
+      "a scorer PR (score_moon(), facts, UPSTREAM, improvement entries) and a decision on the Engine score: Moon is in control.py SHADOW_BRAINS, which keeps it out of every roll-up and the Engine score today",
+      "moon_brain.contract.SCORE_NOTE updated, status ADOPTED here, and verification/fixtures/scores/score_baseline.json re-recorded in the same PR"
+    ]
+  }
+}
