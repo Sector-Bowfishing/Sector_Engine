@@ -37,8 +37,9 @@ def _rdb(rows, catalog=True):
 
 
 class World:
-    def __init__(self, robots=None):
+    def __init__(self, robots=None, iv_status=200):
         self.robots = robots or {}
+        self.iv_status = iv_status
         self.calls = []
 
     def __call__(self, url, headers):
@@ -48,6 +49,8 @@ class World:
         q = dict(urllib.parse.parse_qsl(u.query))
         if u.path == "/robots.txt":
             body = self.robots.get(u.hostname)
+            if isinstance(body, int):
+                return body, b""
             return (200, body.encode()) if body is not None else (404, b"")
         if u.hostname == "waterservices.usgs.gov" and u.path == "/nwis/site/":
             if "bBox" in q:
@@ -57,6 +60,8 @@ class World:
             sites = q["sites"].split(",")
             return 200, _rdb([r for r in WORLD["usgs"] if r["site"] in sites], catalog=False)
         if u.hostname == "waterservices.usgs.gov" and u.path == "/nwis/iv/":
+            if self.iv_status != 200:
+                return self.iv_status, b""
             ts = []
             for site in q["sites"].split(","):
                 for r in WORLD["usgs"]:
@@ -109,15 +114,20 @@ def targets():
     return {"lakes": [{k: v for k, v in l.items() if k != "outline"} for l in WORLD["lakes"]], "inputs": {"synthetic": "x"}}
 
 
-def fetcher(tmp_path, world):
-    return G.Fetcher(RULES, out=str(tmp_path / "out"), transport=world, sleep=lambda s: None)
+def fetcher(tmp_path, world, now=NOW, rules=RULES):
+    return G.Fetcher(rules, out=str(tmp_path / "out"), transport=world, sleep=lambda s: None, now=lambda: now)
 
 
-def run(tmp_path, world=None, skip_controls=True):
+def run(tmp_path, world=None, skip_controls=True, evidence=None, rules=RULES):
     world = world or World()
-    f = fetcher(tmp_path, world)
-    res = G.run_census(RULES, DIGEST, f, NOW, registry_dir(tmp_path), skip_controls=skip_controls, targets_table=targets())
+    f = fetcher(tmp_path, world, rules=rules)
+    res = G.run_census(rules, DIGEST, f, NOW, registry_dir(tmp_path), skip_controls=skip_controls, targets_table=targets(),
+                       evidence=evidence)
     return res, f, world
+
+
+TESTB_OBS_EVIDENCE = {G.series_key("cwms", "LRP", "TestB-Lake.Elev.Inst.1Hour.0.OBS"):
+                      {"provider": "cwms", "series": "TestB-Lake.Elev.Inst.1Hour.0.OBS", "origin": "USACE", "evidence": "SYNTHETIC"}}
 
 
 def lake(res, lid):
@@ -131,7 +141,8 @@ def cand(l, provider, series):
 # ------------------------------------------------------------------------------------------------------------- rules
 def test_rules_hash_is_the_committed_preregistration():
     assert DIGEST == open(G.RULES + ".sha256").read().split()[0]
-    assert RULES["rulesId"] == "LGC-2026-11-23" and RULES["notBefore"] == "2026-12-01"
+    assert RULES["rulesId"] == "LGC-2026-11-23.2" and RULES["notBefore"] == "2026-12-01T12:00:00Z"
+    assert RULES["supersedes"]["sha256"] == open(G.RULES.replace(".2.rules", ".rules") + ".sha256").read().split()[0]
     assert RULES["publication"] == {**RULES["publication"], "changesBindings": False, "changesAcceptedLists": False,
                                     "changesKnowledgeRelease": False, "changesScores": False}
     assert RULES["fetch"]["methods"] == ["GET"]
@@ -189,7 +200,7 @@ def test_fetcher_refuses_hosts_outside_the_allowlist(tmp_path):
 def test_robots_disallow_is_honoured(tmp_path):
     w = World(robots={"data.usbr.gov": "User-agent: *\nDisallow: /rise/\n"})
     f = fetcher(tmp_path, w)
-    with pytest.raises(G.Refused, match="robots"):
+    with pytest.raises(G.Refused, match="ROBOTS_DISALLOWED"):
         f.get("https://data.usbr.gov/rise/api/location")
     assert not any("/rise/api" in c for c in w.calls)
     assert f.robots_report()["data.usbr.gov"]["disallowedPaths"] == ["/rise/api/location"]
@@ -211,7 +222,12 @@ def test_classification_cases():
     assert G.classify(RULES, "BIG RIVER AT TOWN", out)[0] == "RIVER"
     assert G.classify(RULES, "X RESERVOIR NEAR Y", ins, base_class="POOL")[0] == "POOL"
     assert G.classify(RULES, "BIG RIVER AT X DAM", ins, base_class="POOL")[0] == "UNKNOWN"
-    assert G.cwms_origin(RULES, "Raw-USGS") == "USGS_COPY" and G.cwms_origin(RULES, "Raw-SHEF_SAS") == "USACE"
+    assert G.cwms_origin(RULES, "Raw-USGS") == "USGS_COPY" and G.cwms_origin(RULES, "Raw-SHEF_SAS") == "USACE_UNLABELLED"
+    for v in ("Top of Conservation", "Flood Control", "Inflow", "Upper-Rule", "Lower", "Bottom of Flood"):
+        assert G.classify(RULES, "X Lake", ins, version=v, base_class="POOL")[0] == "RULE_CURVE", v
+    assert G.classify(RULES, "X Lake", ins, sublocation="Upper", base_class="POOL")[0] == "UNKNOWN"
+    fut = G.classify(RULES, "X Lake", ins, base_class="POOL", latest="2027-01-01T00:00:00Z", now=NOW)
+    assert fut[0] == "RULE_CURVE" and "future" in fut[1][0]
 
 
 # ------------------------------------------------------------------------------------------------------------- census
@@ -232,7 +248,8 @@ def test_binding_shortlist_on_the_synthetic_world(tmp_path):
     # S9: both operator pools are inside the outline; the longer record (RISE from 1960, CWMS from 1990) comes first
     assert a["bestShortlist"] == {"provider": "rise", "station": "9001", "series": "9001", "capability": "DIRECT_OPERATOR_POOL"}
     s = res["summary"]["binding"]
-    assert s["withShortlist"] == 1 and s["ceilingIfAllShortlistPassStageB"] == 295 and s["targetReachableOnShortlist"] is False
+    # the ceiling uses the reviewed count of the target table (2 synthetic reviewed lakes), not the registration constant
+    assert s["withShortlist"] == 1 and s["reviewedNow"] == 2 and s["ceilingIfAllShortlistPassStageB"] == 3
 
 
 def test_independence_evidence_for_bound_lakes(tmp_path):
@@ -243,14 +260,28 @@ def test_independence_evidence_for_bound_lakes(tmp_path):
     copy = cand(b, "cwms", "TestB-Lake.Elev.Inst.15Minutes.0.Raw-USGS")
     assert copy["independence"]["tier"] == "NOT_INDEPENDENT" and copy["eligibleForV3"] is False
     other = cand(b, "usgs", "62614")
-    assert other["independence"]["tier"] == "INDEPENDENT_SITE" and other["eligibleForV3"] is True
+    # the bound primary is an unlabelled CWMS series: its origin is unknown across the USGS/USACE border, so never independent
+    assert other["independence"]["tier"] == "UNCERTAIN" and other["eligibleForV3"] is False
+    assert any("USGS/USACE border" in r for r in other["independence"]["reasons"])
     assert "selection" not in other  # reviewed lake: no binding shortlist
     c = lake(res, "Testc Lake|ZZ")
     assert c["geometryBasis"] == "POINT_ONLY"
     assert cand(c, "usgs", "00062")["independence"]["tier"] == "UNCERTAIN"  # bound TVA gauge location unknown
     assert res["summary"]["tvaReservoirsUsgs"]["Testc Lake|ZZ"][0]["station"] == "07000005"
     it = res["summary"]["independentTruth"]
-    assert it["v3EligibleLakeIds"] == ["Testb Lake|ZZ"]
+    assert it["v3EligibleLakeIds"] == []
+    assert res["summary"]["structuralCap"]["boundLakes"] == 2 and res["summary"]["structuralCap"]["lakesThatCanBeIndependent"] == 1
+
+
+def test_origin_evidence_is_the_only_way_across_the_border(tmp_path):
+    res, _, _ = run(tmp_path, evidence=TESTB_OBS_EVIDENCE)
+    other = cand(lake(res, "Testb Lake|ZZ"), "usgs", "62614")
+    assert other["independence"]["tier"] == "INDEPENDENT_SITE" and other["eligibleForV3"] is True
+    assert res["summary"]["independentTruth"]["v3EligibleLakeIds"] == ["Testb Lake|ZZ"]
+    with pytest.raises(SystemExit, match="origin USACE and an evidence text"):
+        p = tmp_path / "ev.json"
+        p.write_text(json.dumps([{"provider": "cwms", "series": "X", "origin": "USACE"}]))
+        G.load_origin_evidence(str(p))
 
 
 def test_no_level_value_is_written(tmp_path):
@@ -283,11 +314,19 @@ def test_s7_station_bound_by_a_reviewed_lake_is_rejected():
 
 def test_controls_disable_a_provider_that_is_not_rediscovered(tmp_path, monkeypatch):
     monkeypatch.setattr(G, "CONTROLS", [{"lakeId": "Testb Lake|ZZ", "provider": "usgs", "key": ("usgs", "07000002", "62615")},
+                                        {"lakeId": "Testa Reservoir|ZZ", "provider": "rise", "key": ("rise", "9001")},
                                         {"lakeId": "Testb Lake|ZZ", "provider": "cwms", "key": ("cwms", "NOT-THERE.Elev.Inst.1Hour.0.X")}])
     res, _, _ = run(tmp_path, skip_controls=False)
     assert res["disabledProviders"] == {"cwms": "positive control not rediscovered"}
     assert not any(c["provider"] == "cwms" for l in res["lakes"] for c in l["candidates"])
-    assert res["controls"]["results"]["usgs"][0]["found"] is True
+    assert res["controls"]["results"]["usgs"][0]["found"] is True and res["controls"]["results"]["usgs"][0]["class"] == "POOL"
+    assert "rise" not in res["disabledProviders"]
+
+
+def test_controls_require_class_pool(tmp_path, monkeypatch):
+    monkeypatch.setattr(G, "CONTROLS", [{"lakeId": "Testa Reservoir|ZZ", "provider": "usgs", "key": ("usgs", "07000003", "00062")}])
+    res, _, _ = run(tmp_path, skip_controls=False)  # found, but TAILWATER
+    assert res["disabledProviders"] == {"usgs": "positive control not rediscovered"}
 
 
 def test_controls_reference_committed_bindings():
@@ -301,3 +340,95 @@ def test_summary_text(tmp_path):
     res, _, _ = run(tmp_path)
     txt = G.summary_text(res)
     assert "BINDING: 1 unprofiled lakes" in txt and "INDEPENDENT_TRUTH" in txt and len(txt.splitlines()) <= 15
+
+
+# ------------------------------------------------------------------------------------------------------------- review fixes (LGC-2026-11-23.2)
+def test_every_networked_subcommand_refuses_before_not_before(tmp_path):
+    w = World()
+    early = dt.datetime(2026, 12, 1, 11, 59, tzinfo=dt.timezone.utc)
+    for cmd in (["controls", "--out", str(tmp_path / "c")], ["census", "--out", str(tmp_path / "x")]):
+        assert G.main(cmd, now=early, transport=w) == 2
+    assert w.calls == [] and not (tmp_path / "c").exists()
+    f = fetcher(tmp_path, w, now=early)
+    with pytest.raises(G.Refused, match="before 2026-12-01T12:00:00Z"):
+        f.get("https://waterservices.usgs.gov/nwis/site/")
+    c = G.Census(RULES, f, NOW)
+    with pytest.raises(G.Refused):
+        c.load_geometry([dict(targets()["lakes"][0])], G.REGISTRY_BASE)
+    assert w.calls == []
+    assert G.not_before(RULES) == dt.datetime(2026, 12, 1, 12, 0, tzinfo=dt.timezone.utc)
+
+
+def test_controls_subcommand_runs_after_not_before(tmp_path, monkeypatch):
+    monkeypatch.setattr(G, "load_targets", targets)
+    monkeypatch.setattr(G, "CONTROLS", [{"lakeId": "Testb Lake|ZZ", "provider": "usgs", "key": ("usgs", "07000002", "62615")}])
+    assert G.main(["controls", "--out", str(tmp_path / "c"), "--registry", "none"], now=NOW, transport=World()) == 0
+
+
+@pytest.mark.parametrize("status,allowed", [(404, True), (410, True), (403, False), (401, False), (500, False), (503, False),
+                                            (301, False), (-1, False)])
+def test_robots_status_follows_rfc9309(tmp_path, status, allowed):
+    def t(url, headers):
+        if url.endswith("/robots.txt"):
+            if status == -1:
+                raise OSError("unreachable")
+            return status, b""
+        return 200, b"ok"
+    f = fetcher(tmp_path, t)
+    if allowed:
+        assert f.get("https://data.usbr.gov/rise/api/location")[0] == 200
+    else:
+        with pytest.raises(G.Refused, match="ROBOTS_DISALLOWED"):
+            f.get("https://data.usbr.gov/rise/api/location")
+        assert {"code": "ROBOTS_DISALLOWED", "host": "data.usbr.gov", "path": "/rise/api/location"} in f.robots_disallowed()
+
+
+def test_redirects_are_refused(tmp_path):
+    f = fetcher(tmp_path, lambda url, h: (404, b"") if url.endswith("robots.txt") else (302, b""))
+    with pytest.raises(G.Refused, match="redirect 302"):
+        f.get("https://cwms-data.usace.army.mil/cwms-data/catalog/LOCATIONS")
+    assert isinstance(G._NoRedirect().redirect_request(None, None, 302, "", {}, "https://evil.example/"), type(None))
+
+
+def test_every_retry_counts_against_the_budget(tmp_path):
+    rules = dict(RULES, fetch=dict(RULES["fetch"], maxRequests=4))
+    f = fetcher(tmp_path, lambda url, h: (404, b"") if url.endswith("robots.txt") else (503, b""), rules=rules)
+    st, _ = f.get("https://waterservices.usgs.gov/nwis/site/", cache=False)
+    assert st == 503 and f.count == 4 and [r["attempt"] for r in f.log] == [1, 1, 2, 3]
+    with pytest.raises(G.Refused, match="budget 4 exhausted"):
+        f.get("https://waterservices.usgs.gov/nwis/site/?x=1", cache=False)
+    assert f.exhausted
+
+
+def test_budget_exhaustion_writes_partial_output(tmp_path):
+    rules = dict(RULES, fetch=dict(RULES["fetch"], maxRequests=12))
+    res, f, _ = run(tmp_path, rules=rules)
+    assert res["summary"]["budgetExhausted"] is True and res["summary"]["lakesDiscovered"] < 3
+    assert len(res["lakes"]) == 3 and f.count <= 12
+    G.write_outputs(str(tmp_path / "out"), res, f)
+    assert json.loads((tmp_path / "out" / "census.summary.json").read_text())["summary"]["budgetExhausted"] is True
+
+
+def test_failed_iv_chunk_is_recorded_and_the_run_completes(tmp_path):
+    res, _, _ = run(tmp_path, world=World(iv_status=500))
+    assert res["summary"]["errorsByStage"].get("usgs-iv") == 1
+    g = cand(lake(res, "Testa Reservoir|ZZ"), "usgs", "62615")
+    assert g["latestBasis"] == "catalog end date" and g["selection"]["verdict"] == "SHORTLIST"
+
+
+def test_iv_only_for_the_binding_pre_shortlist(tmp_path):
+    _, _, w = run(tmp_path)
+    iv = [dict(urllib.parse.parse_qsl(urllib.parse.urlsplit(u).query)) for u in w.calls if "/nwis/iv/" in u]
+    assert [q["sites"] for q in iv] == ["07000001"]  # not the reviewed lakes' 07000004 / 07000005, not the tailwater 07000003
+
+
+def test_rise_bound_coordinates_come_from_the_fetched_locations(tmp_path):
+    c = G.Census(RULES, fetcher(tmp_path, World()), NOW)
+    assert c.rise_item_coords(["9001", "9003"]) == {"9001": (35.03, -89.93), "9003": (40.0, -100.0)}
+
+
+def test_old_rules_file_is_kept_and_refused():
+    old = G.RULES.replace(".2.rules", ".rules")
+    assert G.sha256_file(old) == "254752ea31823ace94768a7daa658cf70bfa42b8ad0d276ebb1cae1cf86e9e3f"
+    with pytest.raises(SystemExit, match="not the current registration"):
+        G.load_rules(old)

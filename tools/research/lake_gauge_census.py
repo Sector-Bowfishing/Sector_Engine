@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Lake gauge census: GET-only, metadata-only discovery of gauge-grade level series for every directory lake (rules LGC-2026-11-23).
+"""Lake gauge census: GET-only, metadata-only discovery of gauge-grade level series for every directory lake (rules LGC-2026-11-23.2).
 
-Two purposes, one pass (docs/brains/lake-gauge-census/LGC-2026-11-23.rules.json, pre-registered and hashed before any request):
+Two purposes, one pass (docs/brains/lake-gauge-census/LGC-2026-11-23.2.rules.json, pre-registered and hashed before any request;
+it supersedes LGC-2026-11-23, which was never used):
   BINDING            unprofiled lakes (not in Lake's reviewed set): candidate pool series for the next binding batch (stage A
                      shortlist; the stage B review with level values follows the same rules as batches 1-2 and runs later).
   INDEPENDENT_TRUTH  every lake with a binding: series that are NOT the lake's bound live/fallback/history series, with
@@ -12,7 +13,10 @@ JSON:API, and Sector's public Lake Registry outlines. The TVA host, NWS NWPS/HAD
 
 It never writes Firebase, buckets, bindings, accepted lists, the knowledge release or any score. It writes only to --out.
 The one data call (USGS instantaneous values, last 12 h, shortlisted pool candidates only) keeps time stamps and drops every value
-at parse time. It refuses to run before the rules' notBefore date (the operator-truth validation, PR #243, runs 2026-11-24..30).
+at parse time. No request leaves before the rules' notBefore instant, 2026-12-01T12:00Z (the operator-truth validation, PR #243,
+runs 2026-11-24..30): the fetcher refuses it, so controls, geometry and census are all covered. Redirects are never followed,
+robots.txt follows RFC 9309 (5xx or no answer = disallow), every retry counts against the budget, and a failed chunk or lake is
+recorded while the run continues to a partial output.
 
     lakes        offline: the 621-lake target table (purpose per lake, bound series, prior research status)
     verify       check the rules file against its committed sha256
@@ -40,7 +44,8 @@ import urllib.robotparser
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
-RULES = os.path.join(REPO, "docs", "brains", "lake-gauge-census", "LGC-2026-11-23.rules.json")
+RULES = os.path.join(REPO, "docs", "brains", "lake-gauge-census", "LGC-2026-11-23.2.rules.json")
+RULES_ID = "LGC-2026-11-23.2"
 DIRECTORY = os.path.join(REPO, "brains", "moon", "runtime", "knowledge", "lakes-directory.json")
 REVIEWED = os.path.join(REPO, "jobs", "brain_platform", "sector_brain_platform", "publisher_live", "customer_lake_level_eligible.json")
 GENERATED = os.path.join(REPO, "brains", "lake", "runtime", "LakeBrain", "LakeSourceBindingsGenerated.swift")
@@ -94,7 +99,15 @@ def load_rules(path: str = RULES) -> tuple[dict, str]:
     expected = open(side, encoding="utf-8").read().split()[0]
     if digest != expected:
         raise SystemExit(f"REFUSED: rules sha256 {digest} != pre-registered {expected}")
-    return json.load(open(path, encoding="utf-8")), digest
+    rules = json.load(open(path, encoding="utf-8"))
+    if rules.get("rulesId") != RULES_ID:
+        raise SystemExit(f"REFUSED: rules {rules.get('rulesId')} are not the current registration {RULES_ID}")
+    return rules, digest
+
+
+def not_before(rules: dict) -> dt.datetime:
+    t = dt.datetime.fromisoformat(rules["notBefore"].replace("Z", "+00:00"))
+    return t if t.tzinfo else t.replace(tzinfo=dt.timezone.utc)
 
 
 def generated_bindings(path: str = GENERATED) -> list[dict]:
@@ -251,21 +264,30 @@ class Refused(Exception):
     pass
 
 
-class Fetcher:
-    """GET-only, host-allowlisted, robots-checked, rate-limited, budgeted. `transport(url, headers) -> (status, bytes)` is injectable."""
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):  # never follow; the 3xx is returned as an error
+        return None
 
-    def __init__(self, rules: dict, out: str | None = None, transport=None, sleep=time.sleep, clock=time.monotonic):
+
+class Fetcher:
+    """GET-only, host-allowlisted, robots-checked, rate-limited, budgeted, date-guarded; never follows redirects.
+    `transport(url, headers) -> (status, bytes)` and `now() -> datetime` are injectable."""
+
+    def __init__(self, rules: dict, out: str | None = None, transport=None, sleep=time.sleep, clock=time.monotonic, now=None):
         self.rules = rules
         self.hosts = set(rules["hosts"])
         self.ua = rules["fetch"]["userAgent"]
         self.gap = float(rules["fetch"]["minSecondsBetweenRequestsPerHost"])
         self.budget = int(rules["fetch"]["maxRequests"])
         self.timeout = float(rules["fetch"]["timeoutSeconds"])
+        self.not_before = not_before(rules)
         self.transport = transport or self._urllib
         self.sleep, self.clock = sleep, clock
+        self.now = now or (lambda: dt.datetime.now(dt.timezone.utc))
         self.last: dict[str, float] = {}
         self.robots: dict[str, dict] = {}
         self.count = 0
+        self.exhausted = False
         self.log: list[dict] = []
         self.out = out
         self.cache = os.path.join(out, "cache") if out else None
@@ -274,8 +296,9 @@ class Fetcher:
 
     def _urllib(self, url: str, headers: dict) -> tuple[int, bytes]:
         req = urllib.request.Request(url, headers=headers, method="GET")
+        opener = urllib.request.build_opener(_NoRedirect)
         try:
-            with urllib.request.urlopen(req, timeout=self.timeout) as r:
+            with opener.open(req, timeout=self.timeout) as r:
                 body = r.read()
                 if r.headers.get("Content-Encoding") == "gzip":
                     body = gzip.decompress(body)
@@ -290,42 +313,46 @@ class Fetcher:
         self.last[host] = self.clock()
 
     def _raw(self, url: str, headers: dict) -> tuple[int, bytes]:
+        if self.now() < self.not_before:
+            raise Refused(f"no request may be sent before {self.rules['notBefore']} ({self.rules['notBeforeReason']})")
         host = urllib.parse.urlsplit(url).hostname
         if host not in self.hosts:
             raise Refused(f"host {host} is not allowlisted")
-        if self.count >= self.budget:
-            raise Refused(f"request budget {self.budget} exhausted")
-        self._wait(host)
-        self.count += 1
         status, body = 0, b""
-        for attempt in range(3):
+        for attempt in range(3):  # every attempt counts against the budget and is logged
+            if self.count >= self.budget:
+                self.exhausted = True
+                raise Refused(f"request budget {self.budget} exhausted")
+            self._wait(host)
+            self.count += 1
             try:
                 status, body = self.transport(url, dict(headers, **{"User-Agent": self.ua}))
             except Exception as e:  # network failure: recorded, retried
-                status, body = -1, str(e).encode()
+                status, body = -1, str(e).encode()[:500]
+            self.log.append({"url": url, "attempt": attempt + 1, "status": status, "bytes": len(body), "sha256": sha256_bytes(body),
+                             "at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")})
             if status not in (-1, 429, 500, 502, 503, 504):
                 break
             self.sleep(5 * (attempt + 1))
-        self.log.append({"url": url, "status": status, "bytes": len(body), "sha256": sha256_bytes(body),
-                         "at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")})
         return status, body
 
     def robots_ok(self, url: str) -> bool:
+        """RFC 9309: 2xx parsed; 401/403 disallow all; other 4xx allow all; 5xx, a redirect or no answer disallow all."""
         parts = urllib.parse.urlsplit(url)
         host = parts.hostname
         if host not in self.robots:
             status, body = self._raw(f"{parts.scheme}://{host}/robots.txt", {})
             rp = urllib.robotparser.RobotFileParser()
-            if status == 200:
+            if 200 <= status < 300:
                 rp.parse(body.decode("utf-8", "replace").splitlines())
                 state = "PARSED"
-            elif status in (401, 403):
-                rp.disallow_all = True
-                state = f"HTTP_{status}_DISALLOW_ALL"
-            else:
+            elif 400 <= status < 500 and status not in (401, 403):
                 rp.allow_all = True
-                state = f"HTTP_{status}_ALLOW_ALL" if status > 0 else "UNREACHABLE_ALLOW_ALL"
-            self.robots[host] = {"parser": rp, "state": state, "sha256": sha256_bytes(body) if status == 200 else None, "disallowed": []}
+                state = f"HTTP_{status}_ALLOW_ALL"
+            else:
+                rp.disallow_all = True
+                state = f"HTTP_{status}_DISALLOW_ALL" if status > 0 else "UNREACHABLE_DISALLOW_ALL"
+            self.robots[host] = {"parser": rp, "state": state, "sha256": sha256_bytes(body) if 200 <= status < 300 else None, "disallowed": []}
         r = self.robots[host]
         ok = r["parser"].can_fetch(self.ua, url)
         if not ok and parts.path not in r["disallowed"]:
@@ -333,14 +360,20 @@ class Fetcher:
         return ok
 
     def get(self, url: str, params: dict | None = None, accept: str | None = None, cache: bool = True) -> tuple[int, bytes]:
+        if self.now() < self.not_before:
+            raise Refused(f"no request may be sent before {self.rules['notBefore']} ({self.rules['notBeforeReason']})")
         if params:
             url = url + ("&" if "?" in url else "?") + urllib.parse.urlencode(params, safe=",:^\\$")
+        if urllib.parse.urlsplit(url).hostname not in self.hosts:
+            raise Refused(f"host {urllib.parse.urlsplit(url).hostname} is not allowlisted")
         if not self.robots_ok(url):
-            raise Refused(f"robots.txt disallows {url}")
+            raise Refused(f"ROBOTS_DISALLOWED {urllib.parse.urlsplit(url).hostname}{urllib.parse.urlsplit(url).path}")
         key = sha256_bytes((url + "|" + (accept or "")).encode())
         if cache and self.cache and os.path.exists(os.path.join(self.cache, key)):
             return 200, open(os.path.join(self.cache, key), "rb").read()
         status, body = self._raw(url, {"Accept": accept} if accept else {})
+        if 300 <= status < 400:
+            raise Refused(f"redirect {status} from {url} (redirects are never followed)")
         if cache and self.cache and status == 200:
             open(os.path.join(self.cache, key), "wb").write(body)
         return status, body
@@ -348,6 +381,11 @@ class Fetcher:
     def robots_report(self) -> dict:
         return {h: {"state": r["state"], "sha256": r["sha256"], "disallowedPaths": r["disallowed"],
                     "terms": self.rules["hosts"].get(h, {}).get("terms")} for h, r in self.robots.items()}
+
+    def robots_disallowed(self) -> list[dict]:
+        return [{"code": "ROBOTS_DISALLOWED", "host": h, "path": p} for h, r in self.robots.items() for p in r["disallowed"]] + \
+               [{"code": "ROBOTS_DISALLOWED", "host": h, "path": "/*", "state": r["state"]}
+                for h, r in self.robots.items() if r["state"].endswith("DISALLOW_ALL")]
 
 
 # ------------------------------------------------------------------------------------------------------------------ parsers
@@ -520,13 +558,19 @@ def _has(text: str, words: list[str]) -> list[str]:
     return [w for w in words if f" {w} " in low]
 
 
-def classify(rules: dict, name: str, pos: dict, version: str = "", subparam: str = "", base_class: str | None = None) -> tuple[str, list[str]]:
+def classify(rules: dict, name: str, pos: dict, version: str = "", subparam: str = "", base_class: str | None = None,
+             sublocation: str = "", latest: str | None = None, now: dt.datetime | None = None) -> tuple[str, list[str]]:
     c = rules["classification"]
     why = []
     rc = _has(version, c["ruleCurveVersionWords"]) + _has(subparam, c["ruleCurveVersionWords"])
     if rc:
-        return "RULE_CURVE", [f"rule/guide/forecast cue {rc}"]
-    tail = _has(name, c["tailwaterWords"]) + _has(subparam, c["tailwaterWords"])
+        return "RULE_CURVE", [f"rule/guide/plan/forecast cue {rc}"]
+    t = parse_time(latest)
+    if t and now and t > now + dt.timedelta(hours=c["futureLatestToleranceHours"]):
+        return "RULE_CURVE", [f"latest time {t.isoformat()} is in the future (a plan series)"]
+    tail = _has(name, c["tailwaterWords"]) + _has(subparam, c["tailwaterWords"]) + _has(sublocation, c["tailwaterWords"])
+    if not tail and _has(sublocation, c["subLocationNotPoolWords"]):
+        return "UNKNOWN", [f"sub-location cue {_has(sublocation, c['subLocationNotPoolWords'])} (upper/lower pool or gate)"]
     pool = _has(name, c["poolWords"]) + _has(subparam, c["poolWords"])
     river = _has(name, c["riverWords"])
     near = pos["inside"] or (pos["distanceToOutlineM"] is not None and pos["distanceToOutlineM"] <= rules["selection"]["S3_position"]["insideOrWithinM"])
@@ -589,7 +633,7 @@ def cadence_from(stamps: list[str]) -> int | None:
 
 # ------------------------------------------------------------------------------------------------------------------ discovery
 class Census:
-    def __init__(self, rules: dict, fetcher: Fetcher, now: dt.datetime, usgs_api: str = "auto"):
+    def __init__(self, rules: dict, fetcher: Fetcher, now: dt.datetime, usgs_api: str = "auto", evidence: dict | None = None):
         self.r, self.f, self.now = rules, fetcher, now
         self.params = set(rules["usgs"]["parameters"])
         self.usgs_api = usgs_api
@@ -598,6 +642,7 @@ class Census:
         self._cwms_locs: dict[str, list[dict]] = {}
         self._rise_locs: list[dict] | None = None
         self._usgs_coords: dict[str, dict] = {}
+        self.evidence = evidence or {}
 
     # ---- geometry
     def load_geometry(self, lakes: list[dict], registry: str | None):
@@ -655,8 +700,9 @@ class Census:
             if r["lat"] is None:
                 continue
             pos = position(lake, r["lat"], r["lon"])
-            cls, why = classify(self.r, r["name"], pos, base_class="POOL" if r.get("siteType") in ("LK", "ES") or r["param"] in self.params else None)
             latest = max((parse_time(x.get("end")) for x in r["dataTypes"].values() if x.get("end")), default=None)
+            cls, why = classify(self.r, r["name"], pos, base_class="POOL" if r.get("siteType") in ("LK", "ES") or r["param"] in self.params else None,
+                                latest=latest.isoformat() if latest else None, now=self.now + dt.timedelta(days=1))
             begin = min((x.get("begin") for x in r["dataTypes"].values() if x.get("begin")), default=None)
             datum = self.r["usgs"]["parameterDatum"].get(r["param"])
             if datum == "SITE_DATUM":
@@ -688,19 +734,22 @@ class Census:
                 ex["dataTypes"][key] = {"begin": m["begin"], "end": m["end"], "count": None}
         return rows
 
-    def usgs_iv_timestamps(self, cands: list[dict]):
-        """Last 12 h of IV time stamps for shortlisted USGS pool candidates (values dropped at parse time)."""
-        todo = [c for c in cands if c["provider"] == "usgs" and c["class"] == "POOL" and c.get("ivAvailable")]
+    def usgs_iv_timestamps(self, todo: list[dict]):
+        """Last 12 h of IV time stamps for the pre-shortlisted USGS pool candidates (values dropped at parse time). A failed
+        chunk is recorded and skipped; its candidates keep the catalog end date."""
         for i in range(0, len(todo), 50):
             chunk = todo[i:i + 50]
-            st, body = self.f.get(USGS_IV, {"format": "json", "sites": ",".join(sorted({c["station"] for c in chunk})),
-                                            "parameterCd": ",".join(sorted({c["series"] for c in chunk})), "period": "PT12H",
-                                            "siteStatus": "all"}, cache=False)
-            if st != 200:
-                self.errors.append({"stage": "usgs-iv", "error": f"HTTP {st}", "sites": [c["station"] for c in chunk]})
+            try:
+                st, body = self.f.get(USGS_IV, {"format": "json", "sites": ",".join(sorted({c["station"] for c in chunk})),
+                                                "parameterCd": ",".join(sorted({c["series"] for c in chunk})), "period": "PT12H",
+                                                "siteStatus": "all"}, cache=False)
+                if st != 200:
+                    raise RuntimeError(f"HTTP {st}")
+                stamps = parse_iv_timestamps(body.decode())
+                del body
+            except Exception as ex:
+                self.errors.append({"stage": "usgs-iv", "error": str(ex)[:300], "sites": [c["station"] for c in chunk]})
                 continue
-            stamps = parse_iv_timestamps(body.decode())
-            del body
             for c in chunk:
                 s = stamps.get((c["station"], c["series"])) or []
                 if s:
@@ -711,10 +760,34 @@ class Census:
     def usgs_coords(self, sites: list[str]) -> dict:
         need = sorted({s for s in sites if s and s not in self._usgs_coords})
         for i in range(0, len(need), 100):
-            st, body = self.f.get(USGS_SITE, {"format": "rdb", "sites": ",".join(need[i:i + 100]), "siteStatus": "all"})
-            if st == 200:
+            try:
+                st, body = self.f.get(USGS_SITE, {"format": "rdb", "sites": ",".join(need[i:i + 100]), "siteStatus": "all"})
+                if st != 200:
+                    raise RuntimeError(f"HTTP {st}")
                 self._usgs_coords.update(parse_usgs_basic_sites(body.decode("utf-8", "replace")))
+            except Exception as ex:
+                self.errors.append({"stage": "bound-usgs-coords", "error": str(ex)[:300], "sites": need[i:i + 100]})
         return self._usgs_coords
+
+    def rise_item_coords(self, items: list[str]) -> dict:
+        """RISE item -> (lat, lon) from the already-fetched RISE locations; an item not listed there is looked up once."""
+        locs = self.rise_locations()
+        by_item = {i: l for l in locs for i in l["items"]}
+        by_id = {l["id"]: l for l in locs}
+        out = {}
+        for it in sorted(set(items)):
+            loc = by_item.get(it)
+            if loc is None:
+                try:
+                    st, body = self.f.get(RISE.format(path=f"catalog-item/{it}"), accept=RISE_ACCEPT)
+                    if st == 200:
+                        ids = _jsonapi_rel_ids(json.loads(body).get("data", {}), r"^location$")
+                        loc = by_id.get(ids[0]) if ids else None
+                except Exception as ex:
+                    self.errors.append({"stage": "bound-rise-coords", "item": it, "error": str(ex)[:300]})
+            if loc and loc["lat"] is not None:
+                out[it] = (loc["lat"], loc["lon"])
+        return out
 
     # ---- CWMS
     def cwms_locations(self, office: str) -> list[dict]:
@@ -760,7 +833,8 @@ class Census:
                             continue
                         name = " ".join(filter(None, [loc["name"].replace("-", " "), loc.get("publicName"), loc.get("longName"), cp["subLocation"]]))
                         base = "POOL" if (loc.get("kind") or "").upper() in ("PROJECT", "EMBANKMENT", "LOCK") and not cp["subLocation"] else None
-                        cls, why = classify(self.r, name, pos, version=cp["version"], subparam=cp["subParam"], base_class=base)
+                        cls, why = classify(self.r, name, pos, version=cp["version"], subparam=cp["subParam"], base_class=base,
+                                            sublocation=cp["subLocation"], latest=t["latest"], now=self.now)
                         origin = self.cwms_origin(cp["version"])
                         out.append({"provider": "cwms", "agency": "USACE", "station": office, "series": t["tsid"], "location": loc["name"],
                                     "name": loc.get("publicName") or loc.get("longName") or loc["name"], "lat": loc["lat"], "lon": loc["lon"],
@@ -818,7 +892,9 @@ class Census:
                 if "elevation" not in text.lower():
                     continue
                 base = "POOL" if re.search(r"lake/reservoir elevation|reservoir elevation|lake elevation|pool elevation", text, re.I) else None
-                cls, why = classify(self.r, f"{loc['name']} {text}", pos, base_class=base)
+                own = set(_words(loc["name"]))
+                title_cues = " ".join(w for w in _words(it["title"]) if w not in own)  # a lake named "Upper ..." is not a plan cue
+                cls, why = classify(self.r, f"{loc['name']} {text}", pos, version=title_cues, base_class=base, latest=it["end"], now=self.now)
                 out.append({"provider": "rise", "agency": "USBR", "station": iid, "series": iid, "location": loc["id"], "name": it["title"] or loc["name"],
                             "lat": loc["lat"], "lon": loc["lon"], "position": pos, "class": cls, "classWhy": why,
                             "cadenceMin": rise_minutes(it["timestep"]), "latest": it["end"], "latestBasis": "RISE catalog temporalEndDate",
@@ -843,13 +919,31 @@ class Census:
 
 # ------------------------------------------------------------------------------------------------------------------ verdicts
 def cwms_origin(rules: dict, version: str) -> str:
-    """Origin agency of a CWMS series from its version: a USGS copy, an NWS redistribution, or USACE's own."""
+    """Origin of a CWMS series from its version: a USGS copy, an NWS redistribution, or unlabelled. An unlabelled series is NOT
+    known to be USACE-operated (districts publish USGS-operated gauges under their own version names); only an origin-evidence
+    entry makes it USACE."""
     c = rules["classification"]
     if _has(version, c["usgsCopyVersionWords"]):
         return "USGS_COPY"
     if _has(version, c["nwsRedistributionVersionWords"]):
         return "NWS_REDISTRIBUTION"
-    return "USACE"
+    return "USACE_UNLABELLED"
+
+
+FAMILY = {"USGS": {"USGS"}, "USGS_COPY": {"USGS"}, "USACE": {"USACE"}, "USACE_UNLABELLED": {"USACE", "USGS"},
+          "USBR": {"USBR"}, "TVA": {"TVA"}, "NWS_REDISTRIBUTION": {"NWS"}}
+
+
+def load_origin_evidence(path: str | None) -> dict:
+    """Optional reviewed evidence that a CWMS series is USACE-operated: [{"provider","series","origin":"USACE","evidence"}]."""
+    if not path:
+        return {}
+    out = {}
+    for e in json.load(open(path, encoding="utf-8")):
+        if e.get("origin") != "USACE" or not e.get("evidence"):
+            raise SystemExit(f"REFUSED: origin-evidence entry needs origin USACE and an evidence text: {e}")
+        out[series_key(e["provider"], e.get("station"), e["series"])] = e
+    return out
 
 
 def series_key(provider: str, station, series) -> tuple:
@@ -862,9 +956,11 @@ def series_key(provider: str, station, series) -> tuple:
     return (provider, station, series)
 
 
-def bound_origin(rules: dict, ref: dict) -> str:
+def bound_origin(rules: dict, ref: dict, evidence: dict | None = None) -> str:
     p = ref["provider"]
     if p in ("cwms", "a2w"):
+        if evidence and series_key(p, ref.get("station"), ref.get("series")) in evidence:
+            return "USACE"
         return cwms_origin(rules, cwms_parts(ref.get("series") or "")["version"])
     return {"usgs": "USGS", "rise": "USBR", "tva": "TVA", "nwps": "NWS_REDISTRIBUTION", "hads": "NWS_REDISTRIBUTION"}.get(p, p.upper())
 
@@ -890,14 +986,18 @@ def within_r1(rules: dict, pos: dict) -> bool | None:
     return None
 
 
-def independence(rules: dict, c: dict, bound: list[dict], coords: dict) -> dict:
-    """Evidence that a candidate is not the lake's bound series or the same gauge (metadata only)."""
+def independence(rules: dict, c: dict, bound: list[dict], coords: dict, evidence: dict | None = None) -> dict:
+    """Evidence that a candidate is not the lake's bound series or the same gauge (metadata only). Conservative: anything the
+    metadata cannot separate is UNCERTAIN."""
     ind = rules["independence"]
     same_m, other_m = ind["sameGaugeDistanceM"], ind["otherSiteMinDistanceM"]
     origin = c["origin"]
-    reasons, dists = [], []
-    b_origins = sorted({bound_origin(rules, b) for b in bound})
-    unknown_loc = []
+    if evidence and c["provider"] == "cwms" and series_key("cwms", c["station"], c["series"]) in evidence and origin == "USACE_UNLABELLED":
+        origin = "USACE"
+    b_origins = sorted({bound_origin(rules, b, evidence) for b in bound})
+    fam = FAMILY.get(origin, {origin})
+    b_fam = set().union(*(FAMILY.get(o, {o}) for o in b_origins)) if b_origins else set()
+    dists, unknown_loc = [], []
     for b in bound:
         loc = coords.get((b["provider"], b.get("station"), b.get("series")))
         if loc:
@@ -906,31 +1006,40 @@ def independence(rules: dict, c: dict, bound: list[dict], coords: dict) -> dict:
             unknown_loc.append(f"{b['provider']}:{b.get('station')}")
     ev = {"originAgency": origin, "boundOriginAgencies": b_origins, "minDistanceToBoundGaugeM": min(dists) if dists else None,
           "boundGaugesWithUnknownLocation": unknown_loc}
+
+    def out(tier, *why):
+        return dict(ev, tier=tier, reasons=list(why))
+
     if origin == "NWS_REDISTRIBUTION":
-        return dict(ev, tier="NOT_INDEPENDENT", reasons=["NWS redistribution"])
+        return out("NOT_INDEPENDENT", "NWS redistribution")
     if c["provider"] == "usgs" and any(b["provider"] == "usgs" and b.get("station") == c["station"] for b in bound):
-        return dict(ev, tier="NOT_INDEPENDENT", reasons=["same USGS site as a bound series (other parameter or endpoint)"])
+        return out("NOT_INDEPENDENT", "same USGS site as a bound series (other parameter or endpoint)")
     if c["provider"] == "cwms":
         locs = {cwms_parts(b.get("series") or "")["location"] for b in bound if b["provider"] in ("cwms", "a2w")}
         if c.get("location") in locs:
-            return dict(ev, tier="NOT_INDEPENDENT", reasons=["same CWMS location as a bound series (other version or interval)"])
-        if origin == "USGS_COPY" and any(bound_origin(rules, b) in ("USGS", "USGS_COPY") for b in bound):
-            return dict(ev, tier="NOT_INDEPENDENT", reasons=["CWMS copy of a USGS gauge and the lake has a bound USGS series"])
-        if origin == "USGS_COPY":
-            reasons.append("CWMS copy of an unidentified USGS gauge")
-    if c["provider"] == "usgs" and any(bound_origin(rules, b) == "USGS_COPY" for b in bound):
+            return out("NOT_INDEPENDENT", "same CWMS location as a bound series (other version or interval)")
+        if origin == "USGS_COPY" and "USGS" in b_fam and any(o in ("USGS", "USGS_COPY") for o in b_origins):
+            return out("NOT_INDEPENDENT", "CWMS copy of a USGS gauge and the lake has a bound USGS series")
+    if dists and min(dists) < same_m and fam & b_fam:
+        return out("NOT_INDEPENDENT", f"possibly the same agency within {same_m} m of a bound gauge")
+    reasons = []
+    border = (origin == "USACE_UNLABELLED" and any(o in ("USGS", "USGS_COPY") for o in b_origins)) or \
+             (origin in ("USGS", "USGS_COPY") and "USACE_UNLABELLED" in b_origins)
+    if border:
+        reasons.append("origin unknown across the USGS/USACE border (unlabelled CWMS series, no origin evidence)")
+    if origin == "USGS_COPY":
+        reasons.append("CWMS copy of an unidentified USGS gauge")
+    if c["provider"] == "usgs" and "USGS_COPY" in b_origins:
         reasons.append("a bound CWMS series is a USGS copy; its USGS site is not named")
-    if dists and min(dists) < same_m and (origin in b_origins or (origin == "USGS" and "USGS_COPY" in b_origins)):
-        return dict(ev, tier="NOT_INDEPENDENT", reasons=[f"same agency within {same_m} m of a bound gauge"])
-    if reasons:
-        return dict(ev, tier="UNCERTAIN", reasons=reasons)
     if unknown_loc:
-        return dict(ev, tier="UNCERTAIN", reasons=["a bound gauge's location is unknown: " + ", ".join(unknown_loc)])
-    if origin not in b_origins and (not dists or min(dists) >= same_m):
-        return dict(ev, tier="INDEPENDENT_AGENCY", reasons=[f"origin {origin} differs from {b_origins}"])
-    if origin in b_origins and dists and min(dists) >= other_m:
-        return dict(ev, tier="INDEPENDENT_SITE", reasons=[f"same agency, different site {min(dists)} m from the nearest bound gauge"])
-    return dict(ev, tier="UNCERTAIN", reasons=["closer than the other-site distance or different agency within the same-gauge distance"])
+        reasons.append("a bound gauge's location is unknown: " + ", ".join(unknown_loc))
+    if reasons:
+        return out("UNCERTAIN", *reasons)
+    if not (fam & b_fam) and min(dists) >= same_m:
+        return out("INDEPENDENT_AGENCY", f"origin {origin} differs from {b_origins}")
+    if min(dists) >= other_m:
+        return out("INDEPENDENT_SITE", f"same agency family, different site {min(dists)} m from the nearest bound gauge")
+    return out("UNCERTAIN", "closer than the other-site distance")
 
 
 def selection(rules: dict, c: dict, now: dt.datetime, robots_ok: bool) -> tuple[str, list[str]]:
@@ -963,7 +1072,8 @@ def order_key(c: dict):
             p["distanceToOutlineM"] if p["distanceToOutlineM"] is not None else p["distanceToPointM"], c.get("begin") or "9999")
 
 
-def finalize(rules: dict, targets: list[dict], found: dict[str, list[dict]], coords: dict, now: dt.datetime, robots: dict) -> list[dict]:
+def finalize(rules: dict, targets: list[dict], found: dict[str, list[dict]], coords: dict, now: dt.datetime, robots: dict,
+             evidence: dict | None = None) -> list[dict]:
     """Per-lake verdicts: S7 uniqueness across lakes, the BINDING shortlist and the INDEPENDENT_TRUTH evidence."""
     claimed = {}
     for t in targets:
@@ -1000,7 +1110,7 @@ def finalize(rules: dict, targets: list[dict], found: dict[str, list[dict]], coo
                     v, why = "REJECT", [f"S7 {best[k][1]} has this station inside or nearer"]
                 c["selection"] = {"verdict": v, "reasons": why}
             if t["bound"]:
-                c["independence"] = independence(rules, c, t["bound"], coords)
+                c["independence"] = independence(rules, c, t["bound"], coords, evidence)
                 c["eligibleForV3"] = (c["independence"]["tier"] in ("INDEPENDENT_AGENCY", "INDEPENDENT_SITE") and c["class"] == "POOL"
                                       and within_r1(rules, c["position"]) is True and c["liveByS4"] is True)
             rows.append(c)
@@ -1014,7 +1124,7 @@ def finalize(rules: dict, targets: list[dict], found: dict[str, list[dict]], coo
     return out
 
 
-def summarize(rules: dict, lakes: list[dict]) -> dict:
+def summarize(rules: dict, lakes: list[dict], reviewed_count: int | None = None) -> dict:
     cov = rules["coverageArithmetic"]
     binding = [l for l in lakes if "BINDING" in l["purposes"]]
     sel = lambda l, v: any((c.get("selection") or {}).get("verdict") == v for c in l["candidates"])
@@ -1031,7 +1141,8 @@ def summarize(rules: dict, lakes: list[dict]) -> dict:
                 tiers[c["independence"]["tier"]] = tiers.get(c["independence"]["tier"], 0) + 1
     v3 = [l["lakeId"] for l in truth if any(c.get("eligibleForV3") for c in l["candidates"])]
     v3_reviewed = [l["lakeId"] for l in truth if l["reviewed"] and any(c.get("eligibleForV3") for c in l["candidates"])]
-    ceiling = cov["reviewedAtRegistration"] + len(with_short)
+    reviewed = reviewed_count if reviewed_count is not None else cov["reviewedAtRegistration"]
+    ceiling = reviewed + len(with_short)
     tva = {}
     for l in lakes:  # TVA reservoirs: USGS gauges are the TVA-robots-free alternative (reporting only; selection is unchanged)
         if any(b["provider"] == "tva" for b in l["bound"]) or l["lakeId"] in TVA_UNBOUND:
@@ -1042,7 +1153,7 @@ def summarize(rules: dict, lakes: list[dict]) -> dict:
     return {
         "binding": {"lakes": len(binding), "withShortlist": len(with_short), "shortlistByCapability": by_cap,
                     "handReviewOnly": len(hand_only), "noCandidate": len(binding) - len(with_short) - len(hand_only),
-                    "reviewedAtRegistration": cov["reviewedAtRegistration"], "ceilingIfAllShortlistPassStageB": ceiling,
+                    "reviewedNow": reviewed, "ceilingIfAllShortlistPassStageB": ceiling,
                     "ceilingShare": round(ceiling / cov["directoryLakeCount"], 4), "target": cov["targetReviewed"],
                     "targetReachableOnShortlist": ceiling >= cov["targetReviewed"],
                     "note": "a ceiling, not a result: every shortlisted lake still faces the stage B review (R1-R9, checks b-d, 15 ft rule)"},
@@ -1082,68 +1193,129 @@ def run_controls(census: Census, targets: dict[str, dict]) -> dict:
         res.setdefault(ctl["provider"], []).append({"control": ctl["lakeId"], "key": list(ctl["key"]), "found": bool(hit),
                                                     "class": hit[0]["class"] if hit else None, "error": err})
     for prov, rows in res.items():
-        if not all(r["found"] and r["class"] in ("POOL", "UNKNOWN") for r in rows):
+        if not all(r["found"] and r["class"] == "POOL" for r in rows):
             census.disabled[prov] = "positive control not rediscovered"
     return {"results": res, "disabledProviders": dict(census.disabled)}
 
 
 # ------------------------------------------------------------------------------------------------------------------ run
 def bound_coords(census: Census, targets: list[dict]) -> dict:
+    """Coordinates of bound gauges: USGS sites, CWMS/Access2Water locations, RISE items. TVA and NWS stay unknown."""
     coords = {}
-    sites = [b["station"] for t in targets for b in t["bound"] if b["provider"] == "usgs"]
     if "usgs" not in census.disabled:
+        known = census.usgs_coords([b["station"] for t in targets for b in t["bound"] if b["provider"] == "usgs"])
+        for t in targets:
+            for b in t["bound"]:
+                k = known.get(b["station"]) if b["provider"] == "usgs" else None
+                if k and k["lat"] is not None:
+                    coords[(b["provider"], b["station"], b.get("series"))] = (k["lat"], k["lon"])
+    if "rise" not in census.disabled:
         try:
-            known = census.usgs_coords(sites)
+            known = census.rise_item_coords([str(b["station"]) for t in targets for b in t["bound"] if b["provider"] == "rise"])
         except Exception as ex:
-            census.errors.append({"stage": "bound-usgs-coords", "error": str(ex)[:200]})
+            census.errors.append({"stage": "bound-rise-coords", "error": str(ex)[:300]})
             known = {}
         for t in targets:
             for b in t["bound"]:
-                if b["provider"] == "usgs" and b["station"] in known and known[b["station"]]["lat"] is not None:
-                    coords[(b["provider"], b["station"], b.get("series"))] = (known[b["station"]]["lat"], known[b["station"]]["lon"])
-    for t in targets:
-        for b in t["bound"]:
-            if b["provider"] in ("cwms", "a2w") and "cwms" not in census.disabled:
-                office = (b.get("station") or "").split(":")[0]
-                loc = cwms_parts(b.get("series") or "")["location"]
-                if office in census.r["cwms"]["offices"]:
-                    m = next((l for l in census.cwms_locations(office) if l["name"] == loc and l["lat"] is not None), None)
-                    if m:
-                        coords[(b["provider"], b.get("station"), b.get("series"))] = (m["lat"], m["lon"])
+                if b["provider"] == "rise" and str(b["station"]) in known:
+                    coords[(b["provider"], b["station"], b.get("series"))] = known[str(b["station"])]
+    if "cwms" not in census.disabled:
+        for t in targets:
+            for b in t["bound"]:
+                if b["provider"] not in ("cwms", "a2w"):
+                    continue
+                try:
+                    office = (b.get("station") or "").split(":")[0]
+                    loc = cwms_parts(b.get("series") or "")["location"]
+                    if office in census.r["cwms"]["offices"]:
+                        m = next((l for l in census.cwms_locations(office) if l["name"] == loc and l["lat"] is not None), None)
+                        if m:
+                            coords[(b["provider"], b.get("station"), b.get("series"))] = (m["lat"], m["lon"])
+                except Exception as ex:
+                    census.errors.append({"lakeId": t["lakeId"], "stage": "bound-cwms-coords", "error": str(ex)[:300]})
     return coords
 
 
+def pre_shortlist(rules: dict, targets: list[dict], found: dict, robots: dict) -> list[dict]:
+    """USGS POOL candidates of BINDING lakes passing S1-S3 and S6: the only rows that get the IV time-stamp call."""
+    out = []
+    for t in targets:
+        if "BINDING" not in t["purposes"]:
+            continue
+        bound = {series_key(b["provider"], b.get("station"), b.get("series")) for b in t["bound"]}
+        for c in found.get(t["lakeId"], []):
+            if (c["provider"] == "usgs" and c["class"] == "POOL" and c.get("ivAvailable") and within_r1(rules, c["position"]) is True
+                    and not (robots.get(c["host"]) or {}).get("disallowedPaths")
+                    and series_key("usgs", c["station"], c["series"]) not in bound):
+                out.append(c)
+    return out
+
+
+def structural_cap(targets: list[dict]) -> dict:
+    """Bound lakes whose every bound gauge can have known coordinates (no TVA / NWPS / HADS series): the only lakes that can get an
+    INDEPENDENT_* row under the rules."""
+    bound = [t for t in targets if t["bound"]]
+    ok = [t["lakeId"] for t in bound if all(b["provider"] in ("usgs", "cwms", "a2w", "rise") for b in t["bound"])]
+    return {"boundLakes": len(bound), "lakesThatCanBeIndependent": len(ok),
+            "reviewedLakesThatCanBeIndependent": sum(1 for t in bound if t["reviewed"] and t["lakeId"] in set(ok)),
+            "why": "a bound TVA, NWPS or HADS gauge has no published coordinates here, so every candidate on that lake is UNCERTAIN"}
+
+
 def run_census(rules: dict, digest: str, fetcher: Fetcher, now: dt.datetime, registry: str | None, only: list[str] | None = None,
-               usgs_api: str = "auto", skip_controls: bool = False, targets_table: dict | None = None) -> dict:
-    nb = dt.datetime.fromisoformat(rules["notBefore"]).replace(tzinfo=dt.timezone.utc)
-    if now < nb:
+               usgs_api: str = "auto", skip_controls: bool = False, targets_table: dict | None = None,
+               evidence: dict | None = None) -> dict:
+    if now < not_before(rules):
         raise SystemExit(f"REFUSED: the census may not run before {rules['notBefore']} ({rules['notBeforeReason']})")
     tt = targets_table or load_targets()
     targets = [dict(t) for t in tt["lakes"] if not only or t["lakeId"] in only]
-    census = Census(rules, fetcher, now, usgs_api)
-    census.load_geometry(targets, registry)
+    census = Census(rules, fetcher, now, usgs_api, evidence)
+
+    def geometry(lakes):
+        try:
+            census.load_geometry(lakes, registry)
+        except Exception as ex:  # the lakes stay POINT_ONLY
+            census.errors.append({"stage": "geometry", "error": str(ex)[:300]})
+
+    geometry(targets)
     if skip_controls:
         controls = {"skipped": True}
     else:
         ctl_ids = {c["lakeId"] for c in CONTROLS}
         ctl = {t["lakeId"]: t for t in targets if t["lakeId"] in ctl_ids}
         extra = [dict(t) for t in tt["lakes"] if t["lakeId"] in ctl_ids and t["lakeId"] not in ctl]
-        census.load_geometry(extra, registry)
+        geometry(extra)
         ctl.update({t["lakeId"]: t for t in extra})
         controls = run_controls(census, ctl)
-    found = {}
+    found, done = {}, 0
     for i, t in enumerate(targets):
+        if fetcher.exhausted:
+            break
         found[t["lakeId"]] = census.discover(t)
+        done += 1
         if i % 25 == 0:
             print(f"  {i + 1}/{len(targets)} {t['lakeId']}: {len(found[t['lakeId']])} candidates, {fetcher.count} requests", file=sys.stderr)
-    if "usgs" not in census.disabled:
-        census.usgs_iv_timestamps([c for cs in found.values() for c in cs])
-    coords = bound_coords(census, targets)
-    lakes = finalize(rules, targets, found, coords, now, fetcher.robots_report())
+    for stage, fn in (("usgs-iv", lambda: census.usgs_iv_timestamps(pre_shortlist(rules, targets, found, fetcher.robots_report()))
+                       if "usgs" not in census.disabled else None),
+                      ("bound-coords", lambda: bound_coords(census, targets))):
+        try:
+            res = fn()
+        except Exception as ex:  # partial output: record and continue
+            census.errors.append({"stage": stage, "error": str(ex)[:300]})
+            res = None
+        if stage == "bound-coords":
+            coords = res or {}
+    lakes = finalize(rules, targets, found, coords, now, fetcher.robots_report(), evidence)
+    summary = summarize(rules, lakes, reviewed_count=sum(1 for t in tt["lakes"] if t["reviewed"]))
+    errs = {}
+    for e in census.errors:
+        errs[e["stage"]] = errs.get(e["stage"], 0) + 1
+    summary.update({"errorsByStage": errs, "budgetExhausted": fetcher.exhausted, "lakesDiscovered": done, "lakesTargeted": len(targets),
+                    "robotsDisallowed": fetcher.robots_disallowed(), "structuralCap": structural_cap(targets)})
     return {"schema": "sector-lake-gauge-census-v1", "labels": LABELS, "rulesId": rules["rulesId"], "rulesSha256": digest,
             "generatedAt": now.isoformat(timespec="seconds"), "inputs": tt["inputs"], "usgsApi": usgs_api,
+            "originEvidence": sorted(e.get("series") for e in (evidence or {}).values()),
             "controls": controls, "disabledProviders": dict(census.disabled), "requests": fetcher.count,
-            "robots": fetcher.robots_report(), "errors": census.errors, "summary": summarize(rules, lakes), "lakes": lakes,
+            "robots": fetcher.robots_report(), "errors": census.errors, "summary": summary, "lakes": lakes,
             "valuesRead": "none (USGS IV time stamps only; values dropped at parse time)"}
 
 
@@ -1174,11 +1346,16 @@ def summary_text(s: dict) -> str:
              f"TVA reservoirs, USGS candidates (lakes with any / with a v3-eligible one): "
              f"{sum(1 for v in s['summary']['tvaReservoirsUsgs'].values() if v)}/{len(s['summary']['tvaReservoirsUsgs'])} / "
              f"{sum(1 for v in s['summary']['tvaReservoirsUsgs'].values() if any(c['eligibleForV3'] for c in v))}",
-             f"Geometry: outline {s['summary']['geometry']['outline']}, point only {s['summary']['geometry']['pointOnly']}"]
+             f"Geometry: outline {s['summary']['geometry']['outline']}, point only {s['summary']['geometry']['pointOnly']}",
+             f"Structural cap: {s['summary'].get('structuralCap', {}).get('lakesThatCanBeIndependent')} of "
+             f"{s['summary'].get('structuralCap', {}).get('boundLakes')} bound lakes can get an INDEPENDENT_* row (bound TVA/NWPS/HADS gauges have no coordinates)",
+             f"Errors by stage: {s['summary'].get('errorsByStage') or 'none'}; budget exhausted: {s['summary'].get('budgetExhausted')}; "
+             f"lakes discovered {s['summary'].get('lakesDiscovered')}/{s['summary'].get('lakesTargeted')}; "
+             f"robots disallowed: {len(s['summary'].get('robotsDisallowed') or [])}"]
     return "\n".join(lines)
 
 
-def main(argv=None) -> int:
+def main(argv=None, now: dt.datetime | None = None, transport=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     a = sub.add_parser("lakes")
@@ -1192,6 +1369,7 @@ def main(argv=None) -> int:
         c.add_argument("--lakes", nargs="*", help="limit to these lake ids")
         if name == "census":
             c.add_argument("--skip-controls", action="store_true", help="recorded in the output; for a resumed run only")
+            c.add_argument("--origin-evidence", help="reviewed JSON list making named CWMS series USACE-operated (none at registration)")
     s = sub.add_parser("summarize")
     s.add_argument("--summary", required=True)
     args = ap.parse_args(argv)
@@ -1208,17 +1386,24 @@ def main(argv=None) -> int:
         os.makedirs(args.out, exist_ok=True)
         json.dump(t, open(os.path.join(args.out, "targets.json"), "w"), indent=1)
         n = {p: sum(1 for l in t["lakes"] if p in l["purposes"]) for p in ("BINDING", "INDEPENDENT_TRUTH")}
-        print(f"{t['directoryCount']} lakes, reviewed {t['reviewedCount']}, purposes {n}")
+        print(f"{t['directoryCount']} lakes, reviewed {t['reviewedCount']}, purposes {n}, structural cap {structural_cap(t['lakes'])}")
         return 0
-    now = dt.datetime.now(dt.timezone.utc)
-    fetcher = Fetcher(rules, out=args.out)
+    now = now or dt.datetime.now(dt.timezone.utc)
+    if now < not_before(rules):  # every networked subcommand; the fetcher enforces it again on each request
+        print(f"REFUSED: no networked subcommand may run before {rules['notBefore']} ({rules['notBeforeReason']})", file=sys.stderr)
+        return 2
+    fetcher = Fetcher(rules, out=args.out, transport=transport, now=lambda: now)
     registry = None if args.registry == "none" else args.registry
     if args.cmd == "controls":
         tt = load_targets()
         census = Census(rules, fetcher, now, args.usgs_api)
         targets = {t["lakeId"]: dict(t) for t in tt["lakes"] if t["lakeId"] in {c["lakeId"] for c in CONTROLS}}
-        census.load_geometry(list(targets.values()), registry)
+        try:
+            census.load_geometry(list(targets.values()), registry)
+        except Exception as ex:
+            census.errors.append({"stage": "geometry", "error": str(ex)[:300]})
         res = run_controls(census, targets)
+        res["errors"] = census.errors
         os.makedirs(args.out, exist_ok=True)
         json.dump(res, open(os.path.join(args.out, "controls.json"), "w"), indent=1, default=str)
         with open(os.path.join(args.out, "controls.requests.jsonl"), "w", encoding="utf-8") as fh:
@@ -1226,7 +1411,8 @@ def main(argv=None) -> int:
                 fh.write(json.dumps(r) + "\n")
         print(json.dumps(res, indent=1, default=str))
         return 0 if not res["disabledProviders"] else 3
-    result = run_census(rules, digest, fetcher, now, registry, args.lakes, args.usgs_api, args.skip_controls)
+    result = run_census(rules, digest, fetcher, now, registry, args.lakes, args.usgs_api, args.skip_controls,
+                        evidence=load_origin_evidence(args.origin_evidence))
     shas = write_outputs(args.out, result, fetcher)
     print(summary_text(result))
     print("sha256: " + ", ".join(f"{k} {v}" for k, v in shas.items()))

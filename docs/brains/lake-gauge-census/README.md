@@ -1,4 +1,4 @@
-# Lake gauge census (LGC-2026-11-23)
+# Lake gauge census (LGC-2026-11-23.2)
 
 Status: tool and pre-registered rules only. **Nothing has been fetched.** No binding, accepted list, `LakeSourceBindingsGenerated.swift`,
 knowledge release, score or rubric changes here.
@@ -16,10 +16,11 @@ for every bound lake it lists series that are **not** the lake's bound primary, 
 
 | File | What |
 |---|---|
-| [`LGC-2026-11-23.rules.json`](LGC-2026-11-23.rules.json) + `.sha256` | The pre-registered rules: hosts and terms, classification cues, stage A selection (S1–S9), independence tiers, stage B binding review (R1–R9, checks (b)–(d), the 15 ft history/live rule), the no-relaxation clause, and `notBefore` 2026-12-01 |
+| [`LGC-2026-11-23.2.rules.json`](LGC-2026-11-23.2.rules.json) + `.sha256` (`c17feef3…`) | **Current** pre-registered rules: hosts and terms, classification cues, stage A selection (S1–S9), independence tiers and the USGS/USACE border rule, stage B binding review (R1–R9, checks (b)–(d), the 15 ft history/live rule), the no-relaxation clause, and `notBefore` 2026-12-01T12:00Z |
+| [`LGC-2026-11-23.rules.json`](LGC-2026-11-23.rules.json) + `.sha256` | First registration, kept byte for byte, **superseded and never used** ([why](LGC-2026-11-23.SUPERSEDED.md)); the tool refuses it |
 | [`MINI_REQUEST_DRAFT.md`](MINI_REQUEST_DRAFT.md) | Draft Sector_Ops #51 request for the Mac mini (not posted) |
 | `tools/research/lake_gauge_census.py` | The census (GET only, metadata only) |
-| `tools/research/tests/test_lake_gauge_census.py` + `fixtures/lake_gauge_census/world.json` | 18 offline tests on a synthetic world |
+| `tools/research/tests/test_lake_gauge_census.py` + `fixtures/lake_gauge_census/world.json` | 37 offline tests on a synthetic world |
 
 ## How the census works
 
@@ -36,15 +37,30 @@ for every bound lake it lists series that are **not** the lake's bound primary, 
    - USGS WaterServices site catalog for parameters 62614, 62615, 00062 (OGC API fallback when WaterServices fails);
    - CWMS Data API location catalog per district office, then the `Elev` time-series catalog (with extents) of each nearby location;
    - RISE locations, then their catalog items whose title names an elevation.
-5. **Classification** from metadata: `POOL`, `TAILWATER`, `RIVER`, `RULE_CURVE` (guide/rule/forecast series, the 2026-11-21 trap) or
-   `UNKNOWN`, from station names, CWMS sub-location / sub-parameter / version and the position against the outline.
-6. **Freshness and cadence** from catalog extents; for shortlisted USGS pools, the last 12 h of instantaneous-value **time stamps**
-   (values are dropped at parse time and never written or cached).
+5. **Classification** from metadata: `POOL`, `TAILWATER`, `RIVER`, `RULE_CURVE` or `UNKNOWN`, from station names, CWMS
+   sub-location / sub-parameter / version, RISE item titles and the position against the outline. Guide, curve, rule, plan, target,
+   forecast, conservation, flood, control, inflow, upper, lower, top, bottom in a version, sub-parameter or item title mean a plan
+   series (the 2026-11-21 trap), and so does a latest time in the future. A CWMS sub-location Upper/Lower is UNKNOWN.
+6. **Freshness and cadence** from catalog extents; for the BINDING pre-shortlist only (USGS POOL rows passing S1–S3 and S6), the
+   last 12 h of instantaneous-value **time stamps** (values are dropped at parse time and never written or cached).
 7. **Verdicts**: `BINDING` candidates get `SHORTLIST` / `HAND_REVIEW` / `REJECT` with the S-rule reasons; bound lakes' candidates get an
    independence tier (`INDEPENDENT_AGENCY`, `INDEPENDENT_SITE`, `UNCERTAIN`, `NOT_INDEPENDENT`) and `eligibleForV3`.
 
+**Independence is conservative.** A CWMS series whose version does not name USGS or NWS is `USACE_UNLABELLED`: its origin is unknown,
+because districts publish USGS-operated gauges under their own version names. Any pair across the USGS/USACE border with an unlabelled
+CWMS series on one side is `UNCERTAIN`, never `INDEPENDENT_AGENCY`. Only an entry in a reviewed origin-evidence file
+(`--origin-evidence`, e.g. a USACE sensor id or a documented non-USGS DCP) changes that; none exists yet.
+
+**Structural cap for v3.** A bound lake whose binding includes a TVA, NWPS or HADS gauge has no coordinates for that gauge, so every
+candidate there is `UNCERTAIN`. From the committed bindings, only **130 of 298** bound lakes (129 of 294 reviewed) can get an
+`INDEPENDENT_*` row at all, and the border rule lowers that further for lakes bound to unlabelled CWMS series. The census reports the
+live figure (`summary.structuralCap`). Bound RISE items take their coordinates from the RISE locations already fetched.
+
 Safety: GET only; hosts allowlisted (USGS, USACE CDA, USBR RISE, the Lake Registry); `www.tva.com`, NWPS, HADS and SWOT are never
-queried; robots.txt is honoured per host; 1 s between requests per host; a 9,000-request budget; writes only to `--out`.
+queried; no request before 2026-12-01T12:00Z (in the fetcher, so every subcommand); redirects never followed; robots.txt per RFC 9309
+(5xx or unreachable = disallow, recorded `ROBOTS_DISALLOWED` per path); 1 s between requests per host; every retry counts against a
+12,000-request budget; a failed request, chunk or lake is recorded under `errorsByStage` and the run still writes its output
+(`budgetExhausted` says when it stopped early); writes only to `--out`.
 
 ## After the census
 

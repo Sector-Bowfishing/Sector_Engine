@@ -52,3 +52,19 @@ No census run, no level value read, no binding, accepted list, knowledge release
 
 ## Operating contract §19
 Gap: Lake coverage (`coverage` 5 → 7 at 50%) and independent operator truth (validation v3); bowfisher decision: whether a lake's level is from the lake's own gauge or operator pool; files as above; tests as above; score before/after unchanged (no publication); field validation needed: none; not changed: live systems, schedulers, bindings, customer lists.
+
+## Review round 1 (independent review of #247 @ 85509b1a: NOT CLEAN; fixed before any request was sent)
+Rules re-registered as **LGC-2026-11-23.2** (sha256 `c17feef35f03c072cb79f4d318b465d807fc72afe5ca351f0b787cc3df382ba7`). `LGC-2026-11-23.rules.json` is kept byte for byte, marked superseded (`LGC-2026-11-23.SUPERSEDED.md`), never used, and refused by the tool. Branch merged with `origin/main` (no binding or list change came in: the reviewed set is still 294).
+
+| Finding | Fix |
+|---|---|
+| HIGH date guard only on `census` | `notBefore` 2026-12-01T12:00Z; the fetcher refuses every request before it (controls, geometry, census), and `main` refuses every networked subcommand before creating anything; tests at 11:59Z and 12:00Z |
+| HIGH unlabelled CWMS treated as USACE | `USACE_UNLABELLED`; any USGS/USACE pair with it is UNCERTAIN; only a reviewed `--origin-evidence` entry makes a CWMS series USACE (none exists) |
+| MEDIUM rule-curve cues | guide, curve, conservation, flood, control, inflow, upper, lower, top, bottom … in version / sub-parameter / RISE title (minus the lake's own name); sub-location Upper/Lower → UNKNOWN; a future latest time → RULE_CURVE, never live |
+| MEDIUM robots / redirects / retries | RFC 9309 (5xx, 3xx or no answer = disallow; 401/403 disallow; other 4xx allow); redirects never followed; every attempt logged and counted against the budget (now 12,000) |
+| MEDIUM partial output | per-chunk catch in IV and bound coordinates, per-lake catch in discovery and geometry; on budget exhaustion discovery stops and the output is still written; `errorsByStage`, `budgetExhausted`, `lakesDiscovered` in the summary |
+| MEDIUM structural cap | computed from the committed bindings: 130 of 298 bound lakes (129 of 294 reviewed) can get an INDEPENDENT_* row; in README, rules and `summary.structuralCap` (the reviewer's ≈112 estimate was close; the computed figure is used) |
+| MEDIUM RISE bound coordinates | from the already-fetched RISE locations (item → location), one lookup for an unlisted item |
+| LOW IV scope / controls / ceiling / robots / estimate | IV only for the BINDING pre-shortlist; controls require class POOL; ceiling from the live reviewed count; `ROBOTS_DISALLOWED` per host and path; request estimate 3,000–6,000 in the draft |
+
+Verification after the fixes: census tests 37 passed; `pytest tools/research` 129 passed, 2 failed (the same 2 pre-existing root-container failures); `pytest tools/architecture` 196 passed; `pytest verification` 51 passed, 3 skipped; architecture report 0 new findings; `build_engineering_status.py --check` OK; `research-check` 85 findings (unchanged), closeout 0. No file under `brains/lake`, `jobs/lake-brain`, `jobs/brain_platform` or `Sources` differs from `origin/main`.
