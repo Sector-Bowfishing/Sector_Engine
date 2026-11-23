@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Lake gauge census: GET-only, metadata-only discovery of gauge-grade level series for every directory lake (rules LGC-2026-11-23.3).
+"""Lake gauge census: GET-only, metadata-only discovery of gauge-grade level series for every directory lake (rules LGC-2026-11-23.4).
 
-Two purposes, one pass (docs/brains/lake-gauge-census/LGC-2026-11-23.3.rules.json, pre-registered and hashed before any request;
-it supersedes LGC-2026-11-23.2 and LGC-2026-11-23, which were never used):
+Two purposes, one pass (docs/brains/lake-gauge-census/LGC-2026-11-23.4.rules.json, pre-registered and hashed before any request;
+it supersedes LGC-2026-11-23.3, .2 and the first registration, none of which was ever used):
   BINDING            unprofiled lakes (not in Lake's reviewed set): candidate pool series for the next binding batch (stage A
                      shortlist; the stage B review with level values follows the same rules as batches 1-2 and runs later).
   INDEPENDENT_TRUTH  every lake with a binding: series that are NOT the lake's bound live/fallback/history series, with
@@ -44,8 +44,8 @@ import urllib.robotparser
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
-RULES = os.path.join(REPO, "docs", "brains", "lake-gauge-census", "LGC-2026-11-23.3.rules.json")
-RULES_ID = "LGC-2026-11-23.3"
+RULES = os.path.join(REPO, "docs", "brains", "lake-gauge-census", "LGC-2026-11-23.4.rules.json")
+RULES_ID = "LGC-2026-11-23.4"
 DIRECTORY = os.path.join(REPO, "brains", "moon", "runtime", "knowledge", "lakes-directory.json")
 REVIEWED = os.path.join(REPO, "jobs", "brain_platform", "sector_brain_platform", "publisher_live", "customer_lake_level_eligible.json")
 GENERATED = os.path.join(REPO, "brains", "lake", "runtime", "LakeBrain", "LakeSourceBindingsGenerated.swift")
@@ -62,6 +62,8 @@ CWMS = "https://cwms-data.usace.army.mil/cwms-data/catalog/{kind}"
 CWMS_ACCEPT = "application/json;version=2"
 RISE = "https://data.usbr.gov/rise/api/{path}"
 RISE_ACCEPT = "application/vnd.api+json"
+# Pagination caps; reaching one with pages left marks the listing truncated (never complete).
+CWMS_LOCATION_PAGES, CWMS_TS_PAGES, RISE_LOCATION_PAGES = 50, 10, 399
 
 # The five hand-written REVIEWED pilots (brains/lake/runtime/LakeBrain/LakeSourceBindings.swift `handWritten`); a test keeps the ids
 # equal to that file. TVA pilots read the TVA host (never queried here) and its operating-guide history.
@@ -265,6 +267,10 @@ class Refused(Exception):
 
 
 class OfficeUnavailable(Exception):
+    pass
+
+
+class CatalogUnavailable(Exception):
     pass
 
 
@@ -523,11 +529,23 @@ def parse_rise_locations(text: str) -> tuple[list[dict], str | None]:
     return out, nxt
 
 
+def rise_item_collector(attrs: dict) -> str | None:
+    """The collector / source / agency the RISE item's own metadata names, if any (RISE republishes other agencies' data)."""
+    for k, v in attrs.items():
+        if re.search(r"collect|source|agency|provider|organi[sz]ation|owner", k, re.I) and v not in (None, ""):
+            return json.dumps(v) if isinstance(v, (dict, list)) else str(v)
+    return None
+
+
+def rise_origin(collector: str | None) -> str:
+    return "USBR" if collector and re.search(r"reclamation|\busbr\b", collector, re.I) else "RISE_UNCONFIRMED"
+
+
 def parse_rise_item(text: str) -> dict:
     d = json.loads(text)
     o = d.get("data", {})
     a = o.get("attributes", {})
-    return {"id": str(o.get("id")), "title": a.get("itemTitle", ""), "parameter": a.get("parameterName", ""),
+    return {"collector": rise_item_collector(a),"id": str(o.get("id")), "title": a.get("itemTitle", ""), "parameter": a.get("parameterName", ""),
             "unit": a.get("parameterUnit"), "timestep": a.get("parameterTimestep"), "begin": a.get("temporalStartDate"),
             "end": a.get("temporalEndDate"), "verticalDatum": _find_key(a, r"vertical.?datum")}
 
@@ -662,7 +680,17 @@ class Census:
         self._usgs_coords: dict[str, dict] = {}
         self.evidence = evidence or {}
         self._office_failures: dict[str, int] = {}
+        self._office_truncated: set[str] = set()
+        self._rise_failures = 0
+        self._rise_truncated = False
+        self.rise_collectors: dict[str, str | None] = {}
         self.incomplete: dict[str, list[str]] = {}
+
+    def mark(self, lake: dict, code: str):
+        """Discovery for this lake is incomplete: it can never be counted as 'no candidate'."""
+        lst = self.incomplete.setdefault(lake["lakeId"], [])
+        if code not in lst:
+            lst.append(code)
 
     # ---- geometry
     def load_geometry(self, lakes: list[dict], registry: str | None):
@@ -701,6 +729,7 @@ class Census:
         w, s, e, n = self.search_box(lake)
         if (e - w) * (n - s) > 25:
             self.errors.append({"lakeId": lake["lakeId"], "stage": "usgs", "error": "search box > 25 deg2 (USGS bBox limit)"})
+            self.mark(lake, "USGS_BOX_TOO_LARGE")
             return []
         rows = None
         if self.usgs_api in ("auto", "waterservices"):
@@ -714,7 +743,7 @@ class Census:
             elif self.usgs_api == "waterservices":
                 raise RuntimeError(f"usgs site service HTTP {status}")
         if rows is None:
-            rows = self._usgs_ogc((w, s, e, n))
+            rows = self._usgs_ogc((w, s, e, n), lake)
         out = []
         for r in rows:
             if r["lat"] is None:
@@ -735,7 +764,7 @@ class Census:
                         "capabilityIfBound": self.r["selection"]["S8_capability"]["usgs"], "origin": "USGS"})
         return out
 
-    def _usgs_ogc(self, box) -> list[dict]:
+    def _usgs_ogc(self, box, lake: dict) -> list[dict]:
         w, s, e, n = box
         status, body = self.f.get(USGS_OGC.format(c="monitoring-locations"), {"bbox": f"{w:.6f},{s:.6f},{e:.6f},{n:.6f}", "f": "json", "limit": 500})
         if status != 200:
@@ -744,6 +773,8 @@ class Census:
         for loc in parse_ogc_locations(body.decode()):
             st, b2 = self.f.get(USGS_OGC.format(c="time-series-metadata"), {"monitoring_location_id": loc["ogcId"], "f": "json", "limit": 200})
             if st != 200:
+                self.errors.append({"lakeId": lake["lakeId"], "stage": "usgs-tsmeta", "site": loc["site"], "error": f"HTTP {st}"})
+                self.mark(lake, "USGS_TSMETA_UNAVAILABLE")
                 continue
             for m in parse_ogc_tsmeta(b2.decode(), self.params):
                 key = "uv" if (m.get("period") or "").lower() in ("points", "instantaneous") else "dv"
@@ -791,7 +822,10 @@ class Census:
 
     def rise_item_coords(self, items: list[str]) -> dict:
         """RISE item -> (lat, lon) from the already-fetched RISE locations; an item not listed there is looked up once."""
-        locs = self.rise_locations()
+        try:
+            locs = self.rise_locations()
+        except CatalogUnavailable:
+            locs = []
         by_item = {i: l for l in locs for i in l["items"]}
         by_id = {l["id"]: l for l in locs}
         out = {}
@@ -801,7 +835,9 @@ class Census:
                 try:
                     st, body = self.f.get(RISE.format(path=f"catalog-item/{it}"), accept=RISE_ACCEPT)
                     if st == 200:
-                        ids = _jsonapi_rel_ids(json.loads(body).get("data", {}), r"^location$")
+                        data = json.loads(body).get("data", {})
+                        self.rise_collectors[it] = rise_item_collector(data.get("attributes", {}))
+                        ids = _jsonapi_rel_ids(data, r"^location$")
                         loc = by_id.get(ids[0]) if ids else None
                 except Exception as ex:
                     self.errors.append({"stage": "bound-rise-coords", "item": it, "error": str(ex)[:300]})
@@ -816,7 +852,7 @@ class Census:
                 raise OfficeUnavailable(office)
             locs, page = [], None
             try:
-                for _ in range(50):
+                for i in range(CWMS_LOCATION_PAGES):
                     p = {"office": office, "page-size": 5000}
                     if page:
                         p["page"] = page
@@ -827,6 +863,10 @@ class Census:
                     locs += got
                     if not page or not got:
                         break
+                else:
+                    if page:  # the cap was reached with pages left: the listing is truncated, never complete
+                        self._office_truncated.add(office)
+                        self.errors.append({"stage": "cwms-locations", "office": office, "error": "pagination cap reached (truncated)"})
             except Exception as ex:  # never cached as empty: retried for the next lake, at most 3 failures per office
                 self._office_failures[office] = self._office_failures.get(office, 0) + 1
                 self.errors.append({"stage": "cwms-locations", "office": office, "error": str(ex)[:300],
@@ -842,21 +882,25 @@ class Census:
             try:
                 office_locs = self.cwms_locations(office)
             except OfficeUnavailable:
-                self.incomplete.setdefault(lake["lakeId"], []).append(f"CWMS_OFFICE_UNAVAILABLE:{office}")
+                self.mark(lake, f"CWMS_OFFICE_UNAVAILABLE:{office}")
                 continue
+            if office in self._office_truncated:
+                self.mark(lake, f"CWMS_LOCATIONS_TRUNCATED:{office}")
             for loc in office_locs:
                 if loc["lat"] is None or loc["lon"] is None or not (w <= loc["lon"] <= e and s <= loc["lat"] <= n):
                     continue
                 pos = position(lake, loc["lat"], loc["lon"])
                 like = "^" + re.escape(loc["name"]) + r"\.Elev"
                 page = None
-                for _ in range(10):
+                for i in range(CWMS_TS_PAGES):
                     p = {"office": office, "like": like, "include-extents": "true", "page-size": 500}
                     if page:
                         p["page"] = page
                     st, body = self.f.get(CWMS.format(kind="TIMESERIES"), p, accept=CWMS_ACCEPT)
                     if st != 200:
                         self.errors.append({"lakeId": lake["lakeId"], "stage": "cwms-ts", "location": loc["name"], "error": f"HTTP {st}"})
+                        self.mark(lake, f"CWMS_TS_UNAVAILABLE:{loc['name']}")
+                        page = None
                         break
                     rows, page = parse_cwms_ts(body.decode())
                     for t in rows:
@@ -875,7 +919,11 @@ class Census:
                                     "datum": loc.get("verticalDatum"), "aliases": loc.get("aliases"), "host": "cwms-data.usace.army.mil",
                                     "capabilityIfBound": self.r["selection"]["S8_capability"]["cwms"], "origin": origin})
                     if not page or not rows:
+                        page = None
                         break
+                if page:  # cap reached with pages left
+                    self.errors.append({"lakeId": lake["lakeId"], "stage": "cwms-ts", "location": loc["name"], "error": "pagination cap reached (truncated)"})
+                    self.mark(lake, f"CWMS_TS_TRUNCATED:{loc['name']}")
         return out
 
     def cwms_origin(self, version: str) -> str:
@@ -883,25 +931,45 @@ class Census:
 
     # ---- RISE
     def rise_locations(self) -> list[dict]:
+        """The RISE location listing. A failed or partial listing is never cached: it raises CatalogUnavailable and is retried
+        for the next lake, at most 3 failures per run. A listing that hits the page cap is kept but flagged truncated."""
         if self._rise_locs is None:
-            locs, url, params = [], RISE.format(path="location"), {"itemsPerPage": 100, "page": 1}
-            for page in range(1, 400):
-                params["page"] = page
-                st, body = self.f.get(url, params, accept=RISE_ACCEPT)
-                if st != 200:
-                    self.errors.append({"stage": "rise-locations", "error": f"HTTP {st}", "page": page})
-                    break
-                got, nxt = parse_rise_locations(body.decode())
-                locs += got
-                if not got or not nxt:
-                    break
+            if self._rise_failures >= 3:
+                raise CatalogUnavailable("RISE_CATALOG_UNAVAILABLE")
+            locs, url, params, nxt = [], RISE.format(path="location"), {"itemsPerPage": 100, "page": 1}, None
+            try:
+                for page in range(1, RISE_LOCATION_PAGES + 1):
+                    params["page"] = page
+                    st, body = self.f.get(url, params, accept=RISE_ACCEPT)
+                    if st != 200:
+                        raise RuntimeError(f"HTTP {st} at page {page}")
+                    got, nxt = parse_rise_locations(body.decode())
+                    locs += got
+                    if not got or not nxt:
+                        nxt = None
+                        break
+            except Exception as ex:
+                self._rise_failures += 1
+                self.errors.append({"stage": "rise-locations", "error": str(ex)[:300], "failures": self._rise_failures,
+                                    "locationsRead": len(locs)})
+                raise CatalogUnavailable("RISE_CATALOG_PARTIAL" if locs else "RISE_CATALOG_UNAVAILABLE") from ex
+            if nxt:
+                self._rise_truncated = True
+                self.errors.append({"stage": "rise-locations", "error": "pagination cap reached (truncated)"})
             self._rise_locs = locs
         return self._rise_locs
 
     def rise(self, lake: dict) -> list[dict]:
         w, s, e, n = self.search_box(lake)
         out = []
-        for loc in self.rise_locations():
+        try:
+            listing = self.rise_locations()
+        except CatalogUnavailable as ex:
+            self.mark(lake, str(ex))
+            return []
+        if self._rise_truncated:
+            self.mark(lake, "RISE_CATALOG_TRUNCATED")
+        for loc in listing:
             if loc["lat"] is None or not (w <= loc["lon"] <= e and s <= loc["lat"] <= n):
                 continue
             pos = position(lake, loc["lat"], loc["lon"])
@@ -915,11 +983,20 @@ class Census:
                         st2, b2 = self.f.get(RISE.format(path=f"catalog-record/{rec}"), accept=RISE_ACCEPT)
                         if st2 == 200:
                             items += parse_rise_record_items(b2.decode())
+                        else:
+                            self.errors.append({"lakeId": lake["lakeId"], "stage": "rise-detail", "record": rec, "error": f"HTTP {st2}"})
+                            self.mark(lake, f"RISE_DETAIL_UNAVAILABLE:{loc['id']}")
+                else:
+                    self.errors.append({"lakeId": lake["lakeId"], "stage": "rise-detail", "location": loc["id"], "error": f"HTTP {st}"})
+                    self.mark(lake, f"RISE_DETAIL_UNAVAILABLE:{loc['id']}")
             for iid in items:
                 st, body = self.f.get(RISE.format(path=f"catalog-item/{iid}"), accept=RISE_ACCEPT)
                 if st != 200:
+                    self.errors.append({"lakeId": lake["lakeId"], "stage": "rise-item", "item": iid, "error": f"HTTP {st}"})
+                    self.mark(lake, f"RISE_ITEM_UNAVAILABLE:{iid}")
                     continue
                 it = parse_rise_item(body.decode())
+                self.rise_collectors[iid] = it["collector"]
                 text = f"{it['title']} {it['parameter']}"
                 if "elevation" not in text.lower():
                     continue
@@ -931,7 +1008,8 @@ class Census:
                             "lat": loc["lat"], "lon": loc["lon"], "position": pos, "class": cls, "classWhy": why,
                             "cadenceMin": rise_minutes(it["timestep"]), "latest": it["end"], "latestBasis": "RISE catalog temporalEndDate",
                             "begin": it["begin"], "datum": it["verticalDatum"] or loc["verticalDatum"], "host": "data.usbr.gov",
-                            "capabilityIfBound": self.r["selection"]["S8_capability"]["rise"], "origin": "USBR"})
+                            "capabilityIfBound": self.r["selection"]["S8_capability"]["rise"], "collector": it["collector"],
+                            "origin": rise_origin(it["collector"])})
         return out
 
     # ---- per lake
@@ -939,15 +1017,16 @@ class Census:
         cands = []
         for prov, fn in (("usgs", self.usgs), ("cwms", self.cwms), ("rise", self.rise)):
             if prov in self.disabled:
+                self.mark(lake, f"PROVIDER_DISABLED:{prov}")
                 continue
             try:
                 cands += fn(lake)
             except Refused as ex:
                 self.errors.append({"lakeId": lake["lakeId"], "stage": prov, "error": f"REFUSED {ex}"})
-                self.incomplete.setdefault(lake["lakeId"], []).append(f"PROVIDER_FAILED:{prov}")
+                self.mark(lake, f"PROVIDER_FAILED:{prov}")
             except Exception as ex:
                 self.errors.append({"lakeId": lake["lakeId"], "stage": prov, "error": str(ex)[:300]})
-                self.incomplete.setdefault(lake["lakeId"], []).append(f"PROVIDER_FAILED:{prov}")
+                self.mark(lake, f"PROVIDER_FAILED:{prov}")
         return cands
 
 
@@ -963,18 +1042,20 @@ def cwms_origin(rules: dict, version: str) -> str:
 
 
 FAMILY = {"USGS": {"USGS"}, "USGS_COPY": {"USGS"}, "USACE": {"USACE"}, "USACE_UNLABELLED": {"USACE"},
-          "USBR": {"USBR"}, "USBR_COPY": {"USBR"}, "CDEC_COPY": {"CDEC"}, "TVA": {"TVA"}, "NWS_REDISTRIBUTION": {"NWS"}}
+          "USBR": {"USBR"}, "RISE_UNCONFIRMED": {"USBR"}, "USBR_COPY": {"USBR"}, "CDEC_COPY": {"CDEC"}, "TVA": {"TVA"}, "NWS_REDISTRIBUTION": {"NWS"}}
 COPIES = {"USGS_COPY": "USGS", "USBR_COPY": "USBR", "CDEC_COPY": "CDEC"}
 
 
 def load_origin_evidence(path: str | None) -> dict:
-    """Optional reviewed evidence that a CWMS series is USACE-operated: [{"provider","series","origin":"USACE","evidence"}]."""
+    """Optional reviewed origin evidence: [{"provider","series","origin","evidence"}]; origin USACE for a cwms series, USBR for a
+    rise item."""
     if not path:
         return {}
     out = {}
     for e in json.load(open(path, encoding="utf-8")):
-        if e.get("origin") != "USACE" or not e.get("evidence"):
-            raise SystemExit(f"REFUSED: origin-evidence entry needs origin USACE and an evidence text: {e}")
+        allowed = {"cwms": "USACE", "a2w": "USACE", "rise": "USBR"}.get(e.get("provider"))
+        if not allowed or e.get("origin") != allowed or not e.get("evidence"):
+            raise SystemExit(f"REFUSED: origin-evidence entry needs origin USACE (cwms) or USBR (rise) and an evidence text: {e}")
         out[series_key(e["provider"], e.get("station"), e["series"])] = e
     return out
 
@@ -989,13 +1070,17 @@ def series_key(provider: str, station, series) -> tuple:
     return (provider, station, series)
 
 
-def bound_origin(rules: dict, ref: dict, evidence: dict | None = None) -> str:
+def bound_origin(rules: dict, ref: dict, evidence: dict | None = None, rise_collectors: dict | None = None) -> str:
     p = ref["provider"]
     if p in ("cwms", "a2w"):
         if evidence and series_key(p, ref.get("station"), ref.get("series")) in evidence:
             return "USACE"
         return cwms_origin(rules, cwms_parts(ref.get("series") or "")["version"])
-    return {"usgs": "USGS", "rise": "USBR", "tva": "TVA", "nwps": "NWS_REDISTRIBUTION", "hads": "NWS_REDISTRIBUTION"}.get(p, p.upper())
+    if p == "rise":
+        if evidence and series_key(p, ref.get("station"), ref.get("series")) in evidence:
+            return "USBR"
+        return rise_origin((rise_collectors or {}).get(str(ref.get("series") or ref.get("station"))))
+    return {"usgs": "USGS", "tva": "TVA", "nwps": "NWS_REDISTRIBUTION", "hads": "NWS_REDISTRIBUTION"}.get(p, p.upper())
 
 
 def age_hours(c: dict, now: dt.datetime) -> float | None:
@@ -1019,15 +1104,21 @@ def within_r1(rules: dict, pos: dict) -> bool | None:
     return None
 
 
-def independence(rules: dict, c: dict, bound: list[dict], coords: dict, evidence: dict | None = None) -> dict:
+def is_derived(rules: dict, series: str | None) -> bool:
+    return bool(_has(cwms_parts(series or "")["version"], rules["classification"]["derivedVersionWords"]))
+
+
+def independence(rules: dict, c: dict, bound: list[dict], coords: dict, evidence: dict | None = None,
+                 rise_collectors: dict | None = None) -> dict:
     """Evidence that a candidate is not the lake's bound series or the same gauge (metadata only). Conservative: anything the
     metadata cannot separate is UNCERTAIN."""
     ind = rules["independence"]
     same_m, other_m = ind["sameGaugeDistanceM"], ind["otherSiteMinDistanceM"]
     origin = c["origin"]
-    if evidence and c["provider"] == "cwms" and series_key("cwms", c["station"], c["series"]) in evidence and origin == "USACE_UNLABELLED":
-        origin = "USACE"
-    b_origins = sorted({bound_origin(rules, b, evidence) for b in bound})
+    key = series_key(c["provider"], c["station"], c["series"])
+    if evidence and key in evidence:
+        origin = {"cwms": "USACE", "rise": "USBR"}.get(c["provider"], origin)
+    b_origins = sorted({bound_origin(rules, b, evidence, rise_collectors) for b in bound})
     fam = FAMILY.get(origin, {origin})
     b_fam = set().union(*(FAMILY.get(o, {o}) for o in b_origins)) if b_origins else set()
     dists, unknown_loc = [], []
@@ -1043,23 +1134,32 @@ def independence(rules: dict, c: dict, bound: list[dict], coords: dict, evidence
     def out(tier, *why):
         return dict(ev, tier=tier, reasons=list(why))
 
+    usgs_family = {"USGS", "USGS_COPY"}
     if origin == "NWS_REDISTRIBUTION":
         return out("NOT_INDEPENDENT", "NWS redistribution")
     if c["provider"] == "usgs" and any(b["provider"] == "usgs" and b.get("station") == c["station"] for b in bound):
         return out("NOT_INDEPENDENT", "same USGS site as a bound series (other parameter or endpoint)")
+    bound_cwms = [b for b in bound if b["provider"] in ("cwms", "a2w")]
+    c_derived = c["provider"] == "cwms" and is_derived(rules, c["series"])
+    b_derived = any(is_derived(rules, b.get("series")) for b in bound_cwms)
     if c["provider"] == "cwms":
-        locs = {cwms_parts(b.get("series") or "")["location"] for b in bound if b["provider"] in ("cwms", "a2w")}
-        if c.get("location") in locs:
-            return out("NOT_INDEPENDENT", "same CWMS location as a bound series (other version or interval)")
+        base = cwms_parts(c["series"])["baseLocation"]
+        if base in {cwms_parts(b.get("series") or "")["baseLocation"] for b in bound_cwms}:
+            return out("NOT_INDEPENDENT", f"same CWMS base location {base} as a bound series (sub-location, version or interval)")
     if origin in COPIES and COPIES[origin] in b_fam:
         return out("NOT_INDEPENDENT", f"CWMS copy of a {COPIES[origin]} gauge and the lake has a bound {COPIES[origin]} series")
-    unlabelled_pair = (origin == "USACE_UNLABELLED" and any(o != "USACE_UNLABELLED" and o != "USACE" for o in b_origins)) or \
-                      (origin not in ("USACE_UNLABELLED", "USACE") and "USACE_UNLABELLED" in b_origins)
-    if dists and min(dists) < same_m and (fam & b_fam or origin == "USACE_UNLABELLED" or "USACE_UNLABELLED" in b_origins):
+    unknown = origin == "USACE_UNLABELLED" or "USACE_UNLABELLED" in b_origins
+    if dists and min(dists) < same_m and (fam & b_fam or unknown or origin == "RISE_UNCONFIRMED" or "RISE_UNCONFIRMED" in b_origins):
         return out("NOT_INDEPENDENT", f"overlapping or unknown origin within {same_m} m of a bound gauge")
     reasons = []
-    if unlabelled_pair:
-        reasons.append("origin unknown: an unlabelled CWMS series on one side and another agency on the other (no origin evidence)")
+    if unknown:
+        reasons.append("origin unknown: an unlabelled CWMS series on one side (no origin evidence); two series can derive from one sensor")
+    if (origin == "RISE_UNCONFIRMED" and b_fam & {"USGS"}) or (origin in usgs_family and "RISE_UNCONFIRMED" in b_origins):
+        reasons.append("RISE item whose metadata does not name Reclamation, against a USGS series (RISE republishes USGS data)")
+    if c_derived:
+        reasons.append("derived CWMS version (Best/Rev/Comp/Calc/CCP): a derivation of another series")
+    if b_derived:
+        reasons.append("a bound CWMS series has a derived version; its inputs are not named")
     if origin in COPIES:
         reasons.append(f"CWMS copy of an unidentified {COPIES[origin]} gauge")
     for o in b_origins:
@@ -1072,7 +1172,7 @@ def independence(rules: dict, c: dict, bound: list[dict], coords: dict, evidence
     if not (fam & b_fam) and min(dists) >= same_m:
         return out("INDEPENDENT_AGENCY", f"origin {origin} differs from {b_origins}")
     if min(dists) >= other_m:
-        return out("INDEPENDENT_SITE", f"same agency family, different site {min(dists)} m from the nearest bound gauge")
+        return out("INDEPENDENT_SITE", f"same known agency family, different site {min(dists)} m from the nearest bound gauge")
     return out("UNCERTAIN", "closer than the other-site distance")
 
 
@@ -1107,7 +1207,7 @@ def order_key(c: dict):
 
 
 def finalize(rules: dict, targets: list[dict], found: dict[str, list[dict]], coords: dict, now: dt.datetime, robots: dict,
-             evidence: dict | None = None, incomplete: dict | None = None) -> list[dict]:
+             evidence: dict | None = None, incomplete: dict | None = None, rise_collectors: dict | None = None) -> list[dict]:
     """Per-lake verdicts: S7 uniqueness across lakes, the BINDING shortlist and the INDEPENDENT_TRUTH evidence."""
     claimed = {}
     for t in targets:
@@ -1144,7 +1244,7 @@ def finalize(rules: dict, targets: list[dict], found: dict[str, list[dict]], coo
                     v, why = "REJECT", [f"S7 {best[k][1]} has this station inside or nearer"]
                 c["selection"] = {"verdict": v, "reasons": why}
             if t["bound"]:
-                c["independence"] = independence(rules, c, t["bound"], coords, evidence)
+                c["independence"] = independence(rules, c, t["bound"], coords, evidence, rise_collectors)
                 c["eligibleForV3"] = (c["independence"]["tier"] in ("INDEPENDENT_AGENCY", "INDEPENDENT_SITE") and c["class"] == "POOL"
                                       and within_r1(rules, c["position"]) is True and c["liveByS4"] is True)
             rows.append(c)
@@ -1158,6 +1258,15 @@ def finalize(rules: dict, targets: list[dict], found: dict[str, list[dict]], coo
             "bestShortlist": ({"provider": shortlisted[0]["provider"], "station": shortlisted[0]["station"], "series": shortlisted[0]["series"],
                                "capability": shortlisted[0]["capabilityIfBound"]} if shortlisted else None)})
     return out
+
+
+def incomplete_codes(lakes: list[dict]) -> dict:
+    """How many lakes carry each incompleteness code (the part before ':'), over every lake and purpose."""
+    out = {}
+    for l in lakes:
+        for code in {c.split(":")[0] for c in l.get("discoveryIncomplete") or []}:
+            out[code] = out.get(code, 0) + 1
+    return dict(sorted(out.items()))
 
 
 def summarize(rules: dict, lakes: list[dict], reviewed_count: int | None = None) -> dict:
@@ -1193,6 +1302,7 @@ def summarize(rules: dict, lakes: list[dict], reviewed_count: int | None = None)
         "binding": {"lakes": len(binding), "withShortlist": len(with_short), "shortlistByCapability": by_cap,
                     "handReviewOnly": len(hand_only), "noCandidate": len(rest) - len(not_discovered) - len(incomplete),
                     "incomplete": len(incomplete), "notDiscovered": len(not_discovered),
+                    "incompleteCodesAllLakes": incomplete_codes(lakes),
                     "reviewedNow": reviewed, "ceilingIfAllShortlistPassStageB": ceiling,
                     "ceilingShare": round(ceiling / cov["directoryLakeCount"], 4), "target": cov["targetReviewed"],
                     "targetReachableOnShortlist": ceiling >= cov["targetReviewed"],
@@ -1344,7 +1454,7 @@ def run_census(rules: dict, digest: str, fetcher: Fetcher, now: dt.datetime, reg
             res = None
         if stage == "bound-coords":
             coords = res or {}
-    lakes = finalize(rules, targets, found, coords, now, fetcher.robots_report(), evidence, census.incomplete)
+    lakes = finalize(rules, targets, found, coords, now, fetcher.robots_report(), evidence, census.incomplete, census.rise_collectors)
     summary = summarize(rules, lakes, reviewed_count=sum(1 for t in tt["lakes"] if t["reviewed"]))
     errs = {}
     for e in census.errors:
@@ -1381,6 +1491,7 @@ def summary_text(s: dict) -> str:
     lines = [f"Lake gauge census {s['rulesId']} (rules sha256 {s['rulesSha256'][:12]}), {s['generatedAt']}, {s['requests']} GET requests, metadata only",
              f"Controls: {json.dumps({k: [r['found'] for r in v] for k, v in s['controls'].get('results', {}).items()})}; disabled: {s['disabledProviders'] or 'none'}",
              f"BINDING: {b['lakes']} unprofiled lakes; shortlist {b['withShortlist']} ({b['shortlistByCapability']}), hand review only {b['handReviewOnly']}, none {b['noCandidate']}, incomplete {b.get('incomplete')}, not discovered {b.get('notDiscovered')}",
+             f"Incomplete discovery by code (lakes, all purposes): {b.get('incompleteCodesAllLakes') or 'none'}",
              f"  ceiling if every shortlisted lake passes stage B: {b['ceilingIfAllShortlistPassStageB']}/621 ({b['ceilingShare']:.1%}); target {b['target']} reachable on the shortlist: {b['targetReachableOnShortlist']}",
              f"INDEPENDENT_TRUTH: {it['lakesWithBinding']} bound lakes; candidate tiers {it['candidateTiers']}; lakes with a v3-eligible candidate {it['lakesWithV3Eligible']} (reviewed {it['reviewedLakesWithV3Eligible']})",
              f"TVA reservoirs, USGS candidates (lakes with any / with a v3-eligible one): "

@@ -37,7 +37,9 @@ def _rdb(rows, catalog=True):
 
 
 class World:
-    def __init__(self, robots=None, iv_status=200, locations_fail=0):
+    def __init__(self, robots=None, iv_status=200, locations_fail=0, **faults):
+        self.faults = faults  # rise_page_status {page: status}, rise_endless, rise_item_status {item: status}, cwms_ts_status,
+        #                       cwms_ts_endless, tsmeta_status
         self.robots = robots or {}
         self.iv_status = iv_status
         self.locations_fail = locations_fail  # number of LRP location-catalog calls that fail with 500 (-1: always)
@@ -72,6 +74,21 @@ class World:
                         ts.append({"sourceInfo": {"siteCode": [{"value": site}]}, "variable": {"variableCode": [{"value": r["param"]}]},
                                    "values": [{"value": vals}]})
             return 200, json.dumps({"value": {"timeSeries": ts}}).encode()
+        if u.hostname == "api.waterdata.usgs.gov":
+            if u.path.endswith("/monitoring-locations/items"):
+                w_, s_, e_, n_ = map(float, q["bbox"].split(","))
+                feats = [{"type": "Feature", "id": f"USGS-{r['site']}", "geometry": {"type": "Point", "coordinates": [r["lon"], r["lat"]]},
+                          "properties": {"monitoring_location_name": r["name"], "site_type_code": r["tp"], "vertical_datum": r["alt_datum"]}}
+                         for r in WORLD["usgs"] if w_ <= r["lon"] <= e_ and s_ <= r["lat"] <= n_]
+                return 200, json.dumps({"type": "FeatureCollection", "features": feats}).encode()
+            if u.path.endswith("/time-series-metadata/items"):
+                if self.faults.get("tsmeta_status"):
+                    return self.faults["tsmeta_status"], b""
+                site = q["monitoring_location_id"].split("-", 1)[1]
+                feats = [{"type": "Feature", "properties": {"parameter_code": r["param"], "begin": "1990-01-01", "end": r["end"],
+                                                            "computation_period_identifier": "Points"}}
+                         for r in WORLD["usgs"] if r["site"] == site]
+                return 200, json.dumps({"type": "FeatureCollection", "features": feats}).encode()
         if u.hostname == "cwms-data.usace.army.mil":
             office = q["office"]
             if u.path.endswith("/LOCATIONS"):
@@ -79,13 +96,30 @@ class World:
                     self.locations_fail -= 1 if self.locations_fail > 0 else 0
                     return 500, b""
                 return 200, json.dumps({"entries": WORLD["cwmsLocations"].get(office, [])}).encode()
+            if self.faults.get("cwms_ts_status"):
+                return self.faults["cwms_ts_status"], b""
             rx = re.compile(q["like"])
             ents = [{"office": t["office"], "name": t["name"], "interval": t["interval"], "units": "ft",
                      "extents": [{"earliest-time": t["earliest"], "latest-time": t["latest"]}]}
                     for t in WORLD["cwmsTimeseries"] if t["office"] == office and rx.search(t["name"])]
+            if self.faults.get("cwms_ts_endless"):
+                return 200, json.dumps({"entries": ents, "next-page": "more"}).encode()
             return 200, json.dumps({"entries": ents}).encode()
         if u.hostname == "data.usbr.gov":
             if u.path == "/rise/api/location":
+                st = (self.faults.get("rise_page_status") or {}).get(int(q.get("page", 0)))
+                if st:
+                    return st, b""
+                if self.faults.get("rise_endless"):
+                    l = WORLD["riseLocations"][1]
+                    one = [{"id": l["id"], "type": "Location", "attributes": {"locationName": l["locationName"],
+                            "locationCoordinates": {"type": "Point", "coordinates": [l["lon"], l["lat"]]}}}]
+                    return 200, json.dumps({"data": one, "links": {"next": "more"}}).encode()
+                if self.faults.get("rise_two_pages") and q.get("page") == "1":
+                    l = WORLD["riseLocations"][1]
+                    one = [{"id": l["id"], "type": "Location", "attributes": {"locationName": l["locationName"],
+                            "locationCoordinates": {"type": "Point", "coordinates": [l["lon"], l["lat"]]}}}]
+                    return 200, json.dumps({"data": one, "links": {"next": "p2"}}).encode()
                 data = [{"id": l["id"], "type": "Location",
                          "attributes": {"locationName": l["locationName"], "verticalDatumName": l["verticalDatumName"],
                                         "locationCoordinates": {"type": "Point", "coordinates": [l["lon"], l["lat"]]}},
@@ -93,6 +127,8 @@ class World:
                         for l in WORLD["riseLocations"]] if q.get("page") == "1" else []
                 return 200, json.dumps({"data": data, "links": {}}).encode()
             m = re.match(r"/rise/api/catalog-item/(\d+)", u.path)
+            if m and (self.faults.get("rise_item_status") or {}).get(m.group(1)):
+                return self.faults["rise_item_status"][m.group(1)], b""
             if m and m.group(1) in WORLD["riseItems"]:
                 return 200, json.dumps({"data": {"id": int(m.group(1)), "type": "CatalogItem", "attributes": WORLD["riseItems"][m.group(1)]}}).encode()
             return 404, b""
@@ -122,11 +158,11 @@ def fetcher(tmp_path, world, now=NOW, rules=RULES):
     return G.Fetcher(rules, out=str(tmp_path / "out"), transport=world, sleep=lambda s: None, now=lambda: now)
 
 
-def run(tmp_path, world=None, skip_controls=True, evidence=None, rules=RULES):
+def run(tmp_path, world=None, skip_controls=True, evidence=None, rules=RULES, usgs_api="auto"):
     world = world or World()
     f = fetcher(tmp_path, world, rules=rules)
-    res = G.run_census(rules, DIGEST, f, NOW, registry_dir(tmp_path), skip_controls=skip_controls, targets_table=targets(),
-                       evidence=evidence)
+    res = G.run_census(rules, DIGEST, f, NOW, registry_dir(tmp_path), usgs_api=usgs_api, skip_controls=skip_controls,
+                       targets_table=targets(), evidence=evidence)
     return res, f, world
 
 
@@ -145,9 +181,10 @@ def cand(l, provider, series):
 # ------------------------------------------------------------------------------------------------------------- rules
 def test_rules_hash_is_the_committed_preregistration():
     assert DIGEST == open(G.RULES + ".sha256").read().split()[0]
-    assert RULES["rulesId"] == "LGC-2026-11-23.3" and RULES["notBefore"] == "2026-12-01T12:00:00Z"
-    assert RULES["supersedes"]["sha256"] == open(G.RULES.replace(".3.rules", ".2.rules") + ".sha256").read().split()[0]
-    assert RULES["supersedes"]["earlier"]["sha256"] == open(G.RULES.replace(".3.rules", ".rules") + ".sha256").read().split()[0]
+    assert RULES["rulesId"] == "LGC-2026-11-23.4" and RULES["notBefore"] == "2026-12-01T12:00:00Z"
+    side = lambda n: open(os.path.join(os.path.dirname(G.RULES), n + ".sha256")).read().split()[0]
+    assert RULES["supersedes"]["sha256"] == side("LGC-2026-11-23.3.rules.json")
+    assert [e["sha256"] for e in RULES["supersedes"]["earlier"]] == [side("LGC-2026-11-23.2.rules.json"), side("LGC-2026-11-23.rules.json")]
     assert RULES["publication"] == {**RULES["publication"], "changesBindings": False, "changesAcceptedLists": False,
                                     "changesKnowledgeRelease": False, "changesScores": False}
     assert RULES["fetch"]["methods"] == ["GET"]
@@ -291,7 +328,7 @@ def test_origin_evidence_is_the_only_way_across_the_border(tmp_path):
     other = cand(lake(res, "Testb Lake|ZZ"), "usgs", "62614")
     assert other["independence"]["tier"] == "INDEPENDENT_SITE" and other["eligibleForV3"] is True
     assert res["summary"]["independentTruth"]["v3EligibleLakeIds"] == ["Testb Lake|ZZ"]
-    with pytest.raises(SystemExit, match="origin USACE and an evidence text"):
+    with pytest.raises(SystemExit, match=r"origin USACE \(cwms\) or USBR \(rise\) and an evidence text"):
         p = tmp_path / "ev.json"
         p.write_text(json.dumps([{"provider": "cwms", "series": "X", "origin": "USACE"}]))
         G.load_origin_evidence(str(p))
@@ -442,7 +479,8 @@ def test_rise_bound_coordinates_come_from_the_fetched_locations(tmp_path):
 
 @pytest.mark.parametrize("name,sha", [
     ("LGC-2026-11-23.rules.json", "254752ea31823ace94768a7daa658cf70bfa42b8ad0d276ebb1cae1cf86e9e3f"),
-    ("LGC-2026-11-23.2.rules.json", "c17feef35f03c072cb79f4d318b465d807fc72afe5ca351f0b787cc3df382ba7")])
+    ("LGC-2026-11-23.2.rules.json", "c17feef35f03c072cb79f4d318b465d807fc72afe5ca351f0b787cc3df382ba7"),
+    ("LGC-2026-11-23.3.rules.json", "2a46ac96df8021c5fca08d19406f5e60eedd19e266289f9130515ecb76b5b8b1")])
 def test_superseded_rules_files_are_kept_and_refused(name, sha):
     old = os.path.join(os.path.dirname(G.RULES), name)
     assert G.sha256_file(old) == sha
@@ -470,7 +508,9 @@ CWMS_BOUND = [{"provider": "cwms", "station": "SPK", "series": "Far-Lake.Elev.In
     (_c("cwms", "Res.Elev.Inst.1Hour.0.Raw-USBR", "USBR_COPY", location="Res"), RISE_BOUND, "NOT_INDEPENDENT"),
     (_c("cwms", "Res.Elev.Inst.1Hour.0.Raw-CDEC", "CDEC_COPY", location="Res"), USGS_BOUND, "UNCERTAIN"),
     (_c("rise", "88", "USBR"), USGS_BOUND, "INDEPENDENT_AGENCY"),                                            # both labelled, far
-    (_c("cwms", "Res.Elev.Inst.1Hour.0.Raw", "USACE_UNLABELLED", location="Res"), CWMS_BOUND, "INDEPENDENT_SITE"),
+    (_c("cwms", "Res.Elev.Inst.1Hour.0.Raw", "USACE_UNLABELLED", location="Res"), CWMS_BOUND, "UNCERTAIN"),  # unlabelled vs unlabelled
+    (_c("rise", "88", "RISE_UNCONFIRMED"), USGS_BOUND, "UNCERTAIN"),                                           # RISE may republish USGS
+    (_c("usgs", "62615", "USGS"), RISE_BOUND, "UNCERTAIN"),                                                    # bound RISE unconfirmed
 ])
 def test_unlabelled_cwms_is_origin_unknown_against_every_agency(cand_, bound, tier):
     got = G.independence(RULES, cand_, bound, FAR)
@@ -522,3 +562,131 @@ def test_tva_robots_fixture_disallows_everything(tmp_path):
     with pytest.raises(G.Refused, match="ROBOTS_DISALLOWED"):
         f.get("https://data.usbr.gov/rise/api/location")
     assert "tva.com" in G.NEVER_HOSTS and "www.tva.com" in RULES["fetch"]["neverHosts"]
+
+
+# ------------------------------------------------------------------------------------------------------------- round 3 (LGC-2026-11-23.4)
+def _allegheny():
+    return next(G.bound_refs(r) for r in G.generated_bindings() if r["lakeId"] == "Allegheny Reservoir|PA")
+
+
+def _coords_for(bound, lat=41.84, lon=-79.0):
+    return {(b["provider"], b.get("station"), b.get("series")): (lat, lon) for b in bound}
+
+
+@pytest.mark.parametrize("series,tier", [
+    ("Kinzua-Lake.Elev.Inst.1Hour.0.RESOPS", "NOT_INDEPENDENT"),        # bound fallback itself, same base
+    ("Kinzua-Tailwater.Elev.Inst.1Hour.0.OBS", "NOT_INDEPENDENT"),      # same base, other sub-location
+    ("Kinzua.Elev-Pool.Inst.1Hour.0.Best-LRP", "NOT_INDEPENDENT"),      # derived version at the same base
+])
+def test_kinzua_probe_same_base_location(series, tier):
+    bound = _allegheny()
+    c = dict(_c("cwms", series, G.cwms_origin(RULES, G.cwms_parts(series)["version"]), lat=41.95, lon=-78.95),
+             location=G.cwms_parts(series)["location"])
+    assert G.independence(RULES, c, bound, _coords_for(bound))["tier"] == tier
+
+
+def test_kinzua_probe_usgs_against_unlabelled_bound_is_uncertain():
+    bound = [b for b in _allegheny() if b["provider"] != "usgs"]  # the CWMS/A2W bound series only (unlabelled OBS / RESOPS)
+    got = G.independence(RULES, _c("usgs", "62615", "USGS", lat=41.95, lon=-78.95), bound, _coords_for(bound))
+    assert got["tier"] == "UNCERTAIN" and any("unlabelled" in r for r in got["reasons"])
+
+
+def test_derivations_both_directions():
+    ev_c = {G.series_key("cwms", "S", "Other.Elev.Inst.1Hour.0.Best"): {"provider": "cwms", "series": "x", "origin": "USACE", "evidence": "S"}}
+    c = dict(_c("cwms", "Other.Elev.Inst.1Hour.0.Best", "USACE_UNLABELLED"), location="Other")
+    assert G.independence(RULES, c, USGS_BOUND, FAR, ev_c)["tier"] == "UNCERTAIN"  # derived candidate, even with evidence
+    bound = [{"provider": "cwms", "station": "SPK", "series": "Far-Lake.Elev.Inst.1Hour.0.Rev-Calc", "role": "primary"}]
+    ev_b = {G.series_key("cwms", "SPK", bound[0]["series"]): {"provider": "cwms", "series": "x", "origin": "USACE", "evidence": "S"}}
+    coords = {("cwms", "SPK", bound[0]["series"]): (36.2, -90.0)}
+    got = G.independence(RULES, _c("rise", "88", "USBR"), bound, coords, ev_b)
+    assert got["tier"] == "UNCERTAIN" and any("bound CWMS series has a derived version" in r for r in got["reasons"])
+    assert G.is_derived(RULES, "X.Elev.Inst.1Hour.0.CCP") and not G.is_derived(RULES, "X.Elev.Inst.1Hour.0.Raw-DCP")
+
+
+def test_rise_origin_needs_reclamation_named_in_metadata():
+    assert G.rise_origin(G.rise_item_collector({"sourceAgency": "Bureau of Reclamation"})) == "USBR"
+    assert G.rise_origin(G.rise_item_collector({"dataProvider": "U.S. Geological Survey"})) == "RISE_UNCONFIRMED"
+    assert G.rise_origin(None) == "RISE_UNCONFIRMED"
+    confirmed = G.independence(RULES, _c("usgs", "62615", "USGS"), RISE_BOUND, FAR, rise_collectors={"77": "Bureau of Reclamation"})
+    assert confirmed["tier"] == "INDEPENDENT_AGENCY"
+
+
+def test_unconfirmed_rise_candidate_in_the_world(tmp_path):
+    res, _, _ = run(tmp_path)
+    r = cand(lake(res, "Testa Reservoir|ZZ"), "rise", "9001")
+    assert r["origin"] == "RISE_UNCONFIRMED" and r["collector"] is None
+
+
+def _incomplete(res, lid="Testa Reservoir|ZZ"):
+    return lake(res, lid)["discoveryIncomplete"]
+
+
+def test_rise_catalog_failure_marks_lakes_and_is_retried(tmp_path):
+    res, _, w = run(tmp_path, world=World(rise_page_status={1: 404}))
+    assert "RISE_CATALOG_UNAVAILABLE" in _incomplete(res)
+    assert len([u for u in w.calls if u.split("?")[0].endswith("/rise/api/location")]) == 3  # retried per lake, max 3 failures
+
+
+def test_rise_catalog_partial_is_not_cached(tmp_path):
+    res, _, _ = run(tmp_path, world=World(rise_two_pages=True, rise_page_status={2: 404}))
+    assert "RISE_CATALOG_PARTIAL" in _incomplete(res)
+    assert not any(c["provider"] == "rise" for c in lake(res, "Testa Reservoir|ZZ")["candidates"])
+
+
+def test_rise_catalog_truncated(tmp_path, monkeypatch):
+    monkeypatch.setattr(G, "RISE_LOCATION_PAGES", 3)
+    res, _, _ = run(tmp_path, world=World(rise_endless=True))
+    assert "RISE_CATALOG_TRUNCATED" in _incomplete(res)
+
+
+def test_rise_item_failure_marks_the_lake(tmp_path):
+    res, _, _ = run(tmp_path, world=World(rise_item_status={"9001": 500}))
+    assert "RISE_ITEM_UNAVAILABLE:9001" in _incomplete(res)
+
+
+def test_cwms_timeseries_failure_and_truncation(tmp_path, monkeypatch):
+    res, _, _ = run(tmp_path, world=World(cwms_ts_status=404))
+    assert "CWMS_TS_UNAVAILABLE:TestA" in _incomplete(res)
+    monkeypatch.setattr(G, "CWMS_TS_PAGES", 2)
+    res, _, _ = run(tmp_path / "b", world=World(cwms_ts_endless=True))
+    assert "CWMS_TS_TRUNCATED:TestA" in _incomplete(res)
+
+
+def test_cwms_locations_truncated(tmp_path, monkeypatch):
+    class Endless(World):
+        def __call__(self, url, headers):
+            st, body = super().__call__(url, headers)
+            if "/catalog/LOCATIONS" in url and st == 200:
+                d = json.loads(body)
+                d["next-page"] = "more"
+                return st, json.dumps(d).encode()
+            return st, body
+    monkeypatch.setattr(G, "CWMS_LOCATION_PAGES", 2)
+    res, _, _ = run(tmp_path, world=Endless())
+    assert "CWMS_LOCATIONS_TRUNCATED:LRP" in _incomplete(res)
+
+
+def test_usgs_tsmeta_failure_marks_the_lake(tmp_path):
+    res, _, _ = run(tmp_path, world=World(tsmeta_status=503), usgs_api="ogc")
+    assert "USGS_TSMETA_UNAVAILABLE" in _incomplete(res)
+
+
+def test_ogc_path_finds_the_same_pool(tmp_path):
+    res, _, _ = run(tmp_path, usgs_api="ogc")
+    g = cand(lake(res, "Testa Reservoir|ZZ"), "usgs", "62615")
+    assert g["class"] == "POOL" and g["host"] == "api.waterdata.usgs.gov"
+
+
+def test_oversize_usgs_box_marks_the_lake(tmp_path):
+    c = G.Census(RULES, fetcher(tmp_path, World()), NOW)
+    big = {"lakeId": "Big|ZZ", "lat": 40, "lon": -90, "_polys": [[[[-100, 30], [-80, 30], [-80, 45], [-100, 45], [-100, 30]]]]}
+    assert c.usgs(big) == [] and c.incomplete["Big|ZZ"] == ["USGS_BOX_TOO_LARGE"]
+
+
+def test_disabled_provider_marks_every_lake(tmp_path, monkeypatch):
+    monkeypatch.setattr(G, "CONTROLS", [{"lakeId": "Testb Lake|ZZ", "provider": "rise", "key": ("rise", "NOPE")}])
+    res, _, _ = run(tmp_path, skip_controls=False)
+    assert all("PROVIDER_DISABLED:rise" in l["discoveryIncomplete"] for l in res["lakes"])
+    assert res["summary"]["binding"]["noCandidate"] == 0
+    assert res["summary"]["binding"]["incompleteCodesAllLakes"] == {"PROVIDER_DISABLED": 3}
+    assert "PROVIDER_DISABLED" in G.summary_text(res)
