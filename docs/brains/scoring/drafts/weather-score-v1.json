@@ -9,7 +9,7 @@
   "measurement": "Domain capability score (Cortex scoring.md SC-02, SC-03): how far Sector can trust the Weather Brain's published per-lake weather truth. Not operational health, not production readiness, not a forecast-skill metric, not comparable with any other Brain's score.",
   "question": "Per lake, does the Weather Brain publish real measured or official-forecast rain (now and expected), cloud, air temperature and a weather-change signal whose every rule could be evaluated, and has that output passed the validation pre-registered in docs/brains/WEATHER_BRAIN_PLAN.md section 5?",
   "unknownPolicy": "Unknown counts against the Brain everywhere (owner rule 2026-11-23: nothing should show unknown). A lake, tile or field that is unknown, unavailable, blocked or abstained earns 0 and stays in every denominator. Unknown is never rewarded or excluded to make a share look better. Every per-lake share therefore divides by ONE fixed denominator, all the lakes the Brain is meant to cover; a lake with no state (blocked, never computed, errored) is in it and earns 0. A Brain-level fact that is not published scores 0 and lowers completeness: both count as 0, never as excluded. Filling an unknown with an estimate is worse still: it is an invented value, which the validation checks fail, so the only way to remove an unknown is real data.",
-  "scope": "Every per-lake share divides by the whole directory (/brains/weather.directoryLakeCount, 621 lakes): a lake outside NWS coverage (BLOCKED), never computed (DISCOVERED) or errored before its first state has no /lakes/{k}/states/weather and earns 0. Validation fleet-wide.",
+  "scope": "Every per-lake share divides by the whole directory (/brains/weather.directoryLakeCount, 621 lakes), and a lake counts only if its /lakes/{k}/states/weather is fresh at scoring time: freshness.freshUntil later than the moment the scorer runs. A lake outside NWS coverage (BLOCKED), never computed, errored before its first state, or with an expired state left behind after it later errored or became BLOCKED, earns 0. Validation fleet-wide.",
   "sourceContract": "brains/weather/contracts/weather-publication-v1.json (families /lakes/{k}/states/weather, /lakeFleet/{k}/..., /brains/weather/{child}, /validation/weather); state schema brains/weather/contracts/weather-state-v1.schema.json",
   "dimensionClasses": "Cortex scoring.md SC-09: CAP bowfishing capability, COV coverage, PRED prediction quality, VAL validation against independent data, ENG engineering completion, VOL research volume. This draft has no ENG or VOL dimension.",
   "unscoredWhen": "The registry /brains/weather is absent or has never carried lastSuccessfulRun (the Brain has never published). The scorer then writes NO score block: the Brain is UNSCORED, never 0. Today this holds (the Brain is PARKED, has no live writer run, and run.py --write refuses).",
@@ -25,7 +25,7 @@
         "NOT_VALIDATED": 0,
         "PARTIAL": 5,
         "VALIDATED": 10,
-        "absent": "UNKNOWN (scores 0, excluded from completeness; the validation gate still fires)"
+        "absent": "UNKNOWN: scores 0 and lowers completeness (an unknown counts as 0, never excluded); the validation gate still fires"
       },
       "note": "The Weather publication contract declares /validation/weather; the runtime does not write it yet (only Moon and Generation do). Until it does, this dimension is UNKNOWN. See validationStatusMeaning for what each status must mean.",
       "why": "Only a check against independent stations shows the rain, temperature and change signal describe the water the bowfisher is on."
@@ -36,7 +36,7 @@
       "weight": 20,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "count of directory lakes whose /lakes/{k}/states/weather has sky.rain.lastHourIn non-null AND sky.rain.forecastNext6hIn non-null, / /brains/weather.directoryLakeCount (a lake with no state earns 0)",
+      "fact": "count of directory lakes whose state is fresh (/lakes/{k}/states/weather.freshness.freshUntil > scoring time) and has sky.rain.lastHourIn non-null AND sky.rain.forecastNext6hIn non-null / /brains/weather.directoryLakeCount",
       "scale": "share x 10",
       "why": "Rain is the weather that most changes a bowfishing night: it muddies the water and moves the lake level, and rain expected soon is the cue to re-check clarity and stage.",
       "note": "A null in either field is an unknown and earns nothing. Whether a rain-onset call was right is validation (plan 5.3), not this dimension."
@@ -47,7 +47,7 @@
       "weight": 15,
       "class": "COV",
       "movableByPackagingOnly": false,
-      "fact": "/brains/weather.supportedLakeCount / /brains/weather.directoryLakeCount",
+      "fact": "count of directory lakes with a fresh state (/lakes/{k}/states/weather.freshness.freshUntil > scoring time) / /brains/weather.directoryLakeCount",
       "scale": "coverage ladder (sector_brain_platform.scoring.ladder): 0 -> 0; > 0 -> 1; >= 5 % -> 2; >= 10 % -> 3; >= 25 % -> 5; >= 50 % -> 7; >= 75 % -> 9; >= 90 % -> 10",
       "note": "Lakes outside NWS coverage are BLOCKED (gap WX-004) and stay in the denominator: abstaining is honest, but an unknown lake counts against the Brain.",
       "why": "A lake with no Weather state gets no rain or cloud reading at all."
@@ -58,9 +58,9 @@
       "weight": 15,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "/brains/weather.readinessCounts.CALIBRATION / /brains/weather.directoryLakeCount",
+      "fact": "count of directory lakes whose state is fresh (/lakes/{k}/states/weather.freshness.freshUntil > scoring time), has kind 'observation' and an empty 'missing' list / /brains/weather.directoryLakeCount",
       "scale": "share x 10, clamped to [0, 10]",
-      "note": "Readiness CALIBRATION = state kind 'observation', not stale, and an empty 'missing' list (sector_weather.state.readiness). DEGRADED, BLOCKED and DISCOVERED lakes earn nothing and stay in the denominator.",
+      "note": "The per-lake form of readiness CALIBRATION (kind observation, nothing missing), with staleness judged at scoring time instead of the registry's readinessCounts, which only describe the last run. DEGRADED, BLOCKED, DISCOVERED and expired lakes earn nothing and stay in the denominator.",
       "why": "A stale or partly missing state can hide the rain or cloud that decides the night."
     },
     {
@@ -69,7 +69,7 @@
       "weight": 15,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "count of directory lakes whose /lakes/{k}/states/weather has weatherChange.unknown absent or an empty list, / /brains/weather.directoryLakeCount (a lake with no state earns 0)",
+      "fact": "count of directory lakes whose state is fresh (/lakes/{k}/states/weather.freshness.freshUntil > scoring time) and has weatherChange.unknown absent or an empty list / /brains/weather.directoryLakeCount",
       "scale": "share x 10",
       "note": "A rule that cannot be evaluated makes the lake WATCH (owner decision 2026-11-22), so a high WATCH share measures data gaps, not weather. This dimension credits states whose signal rests on complete inputs. It says nothing about whether the signal is right (that is validation, plan 5.3).",
       "why": "The 'weather is changing' signal (rain onset, front passage, air-temperature swing) is what makes Lake and Water Temp re-check; a rule that cannot be evaluated is an unknown and counts against."
@@ -80,7 +80,7 @@
       "weight": 5,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "count of directory lakes whose /lakes/{k}/states/weather has pressure.trend3h non-null, / /brains/weather.directoryLakeCount (a lake with no state earns 0)",
+      "fact": "count of directory lakes whose state is fresh (/lakes/{k}/states/weather.freshness.freshUntil > scoring time) and has pressure.trend3h non-null / /brains/weather.directoryLakeCount",
       "scale": "share x 10",
       "note": "The trend is still an input to the change signal. A pressure FORECAST is not credited anywhere: none exists (gap WX-003).",
       "why": "Shown in the app, but no evidence ties pressure to where target species are, so it carries a token weight."
@@ -95,7 +95,7 @@
     },
     {
       "id": "coverage",
-      "when": "supportedLakeCount / directoryLakeCount < 10 %",
+      "when": "fresh-state lakes / directoryLakeCount < 10 %",
       "cap": 3.0,
       "tiesTo": "the same coverage gate as lake-brain-score-v1"
     },
@@ -138,7 +138,7 @@
   "workedExample": {
     "derivation": "TYPED_NOT_COMPUTED (scoring.md SC-11): arithmetic written by hand from this draft, not produced by any scorer. Non-authoritative.",
     "today": {
-      "asOf": "2026-11-23 (origin/main 8d421fe)",
+      "asOf": "2026-11-23 (origin/main f5460aa)",
       "facts": "No /brains/weather registry has been written: the Brain is PARKED, has no executor, no Cloud Run job, no execution-control entry, and run.py --write refuses without an APPROVED release and WEATHER_WRITE_APPROVED=1. No /validation/weather.",
       "result": "UNSCORED (no score block). If forced through the arithmetic it would be 0.0 / 10 with completenessPct 0: every dimension UNKNOWN."
     },
@@ -175,5 +175,6 @@
       "a scorer PR: a score_weather() in sector_brain_platform/scoring.py, Weather facts in score_brains.fetch_facts, 'weather' in UPSTREAM, improvement entries, and an explicit decision whether Weather enters the Engine score (today it does not)",
       "move this file to docs/brains/scoring/, set status ADOPTED in the same PR and re-record verification/fixtures/scores/score_baseline.json"
     ]
-  }
+  },
+  "freshnessAtScoringTime": "Freshness at scoring time: every per-lake fact counts only if the lake's state is current WHEN THE SCORER RUNS, judged from a timestamp in the published state, never from a flag written at publish time. A lake whose state has expired (the Brain stopped updating it, it errored after an earlier publish, or it is now BLOCKED with an old state left behind) earns 0. Weather: /lakes/{k}/states/weather.freshness.freshUntil (adaptive, at most 4 h after the observation) must be later than scoring time. The timestamp is already published; no runtime change is needed."
 }

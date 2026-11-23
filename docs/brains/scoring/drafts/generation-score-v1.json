@@ -9,7 +9,7 @@
   "measurement": "Domain capability score (Cortex scoring.md SC-02, SC-03): how far Sector can trust the Generation Brain's published dam release picture (status, measured release, the operator's schedule). Not operational health, not production readiness, not comparable with any other Brain's score.",
   "question": "Per dam lake, does the Generation Brain say whether the dam is releasing or generating now (never unknown) and when that changes, current, from sources Sector is allowed to read, with parsers proven on real responses, and has that matched the operators' own schedules over the pre-registered week (GENERATION_BRAIN_PLAN.md section 5)?",
   "unknownPolicy": "Unknown counts against the Brain everywhere (owner rule 2026-11-23: nothing should show unknown). A lake, tile or field that is unknown, unavailable, blocked or abstained earns 0 and stays in every denominator. Unknown is never rewarded or excluded to make a share look better. Every per-lake share therefore divides by ONE fixed denominator, all the lakes the Brain is meant to cover; a lake with no state (blocked, never computed, errored) is in it and earns 0. A Brain-level fact that is not published scores 0 and lowers completeness: both count as 0, never as excluded. Filling an unknown with an estimate is worse still: it is an invented value, which the validation checks fail, so the only way to remove an unknown is real data. For Generation, a release status of UNKNOWN, and a dam lake with no published state, count against.",
-  "scope": "Every per-lake share divides by all catalog dam lakes (/brains/generation.fleet.damLakeCount, 401 in catalog generation-dams-2026-11-22.1), unbound, permission-required and errored dams included; a dam with no published slot earns 0. The 220 directory lakes without a dam have no release by definition and are not in it. Schedule coverage uses the schedule-posting groups only, for numerator and denominator alike. Validation fleet-wide.",
+  "scope": "Every per-lake share divides by all catalog dam lakes (/brains/generation.fleet.damLakeCount, 401 in catalog generation-dams-2026-11-22.1), and a dam counts only if its /lakes/{k}/states/generation is fresh at scoring time (freshness.freshUntil later than the moment the scorer runs). Unbound, permission-required and errored dams, and dams whose old state expired after a later error, earn 0. The 220 directory lakes without a dam are not in it. Schedule coverage uses the 39 schedule-posting lakes for numerator and denominator alike. Validation fleet-wide.",
   "sourceContract": "brains/generation/contracts/generation-publication-v1.json (families /lakes/{k}/states/generation, /lakeFleet/{k}/..., /snapshots/{k}/latest/generation, /brains/generation/{child}, /validation/generation, /health/brains/generation/{child}); state schema brains/generation/contracts/generation-dam-state-v1.schema.json",
   "dimensionClasses": "Cortex scoring.md SC-09: CAP, COV, PRED, VAL, ENG, VOL. This draft has no ENG or VOL dimension.",
   "unscoredWhen": "The registry /brains/generation is absent or has never carried lastSuccessfulRun. The scorer then writes NO score block: UNSCORED, never 0. Today this holds (PARKED, no executor, run.py --write refuses: BLOCKED_AWAITING_APPROVED_RELEASE).",
@@ -36,10 +36,10 @@
       "weight": 30,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "count of catalog dam lakes whose /lakeFleet/{k}/slots/generation.status is GENERATING, SPILLING, RELEASING or OFF, / /brains/generation.fleet.damLakeCount",
+      "fact": "count of catalog dam lakes whose state is fresh (/lakes/{k}/states/generation.freshness.freshUntil > scoring time) and whose release.status is GENERATING, SPILLING, RELEASING or OFF / /brains/generation.fleet.damLakeCount",
       "scale": "share x 10",
       "why": "Whether water is moving at the dam right now is the first thing a tailrace bowfisher needs; UNKNOWN answers nothing and counts against.",
-      "note": "A dam with no slot (unbound, permission required, no public data, errored) or with status UNKNOWN earns 0 and stays in the denominator. Discharge, turbine and spill numbers are secondary detail and are not scored separately."
+      "note": "Read from the state, not the lakeFleet slot, so freshness is judged at scoring time. A dam with no state, an expired state, or status UNKNOWN earns 0 and stays in the denominator. Discharge, turbine and spill numbers are secondary detail and are not scored separately."
     },
     {
       "id": "scheduleCoverage",
@@ -47,7 +47,7 @@
       "weight": 25,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "count of dam lakes in groups TVA, TVA_CUMBERLAND or SWPA_USACE (/lakes/{k}/states/generation.dam.group) whose state has a non-empty schedule.windows, / (fleet.byGroup.TVA + fleet.byGroup.TVA_CUMBERLAND + fleet.byGroup.SWPA_USACE)",
+      "fact": "count of dam lakes in groups TVA, TVA_CUMBERLAND or SWPA_USACE whose state is fresh (/lakes/{k}/states/generation.freshness.freshUntil > scoring time) and has a non-empty schedule.windows / (fleet.byGroup.TVA + fleet.byGroup.TVA_CUMBERLAND + fleet.byGroup.SWPA_USACE)",
       "scale": "share x 10",
       "note": "Numerator and denominator are the same population: the schedule-posting groups (plan section 3, 39 lakes). A lake outside those groups never counts, so binding more measured-only CWMS or RISE lakes neither raises nor lowers this share. Access today: the TVA_CUMBERLAND projects are also read through the TVA API, and TVA's robots.txt disallows all automated access (reported by the #241 review, 2026-11-23; the D-G check in source_access.json is not yet recorded), so TVA and Cumberland schedules are currently unobtainable and those 24 lakes earn 0 here until a permitted source exists (TVA permission under D-G). SWPA (15 lakes) waits on its own access check. No proxy schedule is used.",
       "why": "The next start or stop lets a bowfisher plan the night instead of guessing."
@@ -55,25 +55,13 @@
     {
       "id": "damCoverage",
       "label": "Dam lakes with a published release picture",
-      "weight": 10,
+      "weight": 15,
       "class": "COV",
       "movableByPackagingOnly": false,
-      "fact": "/brains/generation.supportedLakeCount / /brains/generation.fleet.damLakeCount",
+      "fact": "count of catalog dam lakes whose state is fresh (/lakes/{k}/states/generation.freshness.freshUntil > scoring time) and has kind OBSERVED or SCHEDULE_ONLY / /brains/generation.fleet.damLakeCount",
       "scale": "coverage ladder (sector_brain_platform.scoring.ladder)",
-      "note": "Moves only with new bindings on allowed sources AND a live state from them (GEN-BIND-001..003). A catalog entry alone does not count: supportedLakeCount counts published OBSERVED / SCHEDULE_ONLY states.",
+      "note": "Moves only with new bindings on allowed sources AND a current state from them (GEN-BIND-001..003). A catalog entry, or an old state that has expired, does not count. Absorbs the former currency dimension: with freshness judged at scoring time for every dimension, a separate 'not stale' share measured the same thing twice.",
       "why": "A dam lake with no release picture leaves the bowfisher guessing; it counts against."
-    },
-    {
-      "id": "currency",
-      "label": "Supported lakes current (not stale)",
-      "weight": 5,
-      "class": "CAP",
-      "movableByPackagingOnly": false,
-      "fact": "count of catalog dam lakes whose /lakeFleet/{k}/slots/generation has kind OBSERVED or SCHEDULE_ONLY and stale false, / /brains/generation.fleet.damLakeCount",
-      "scale": "share x 10, clamped to [0, 10]",
-      "population": "All catalog dam lakes for numerator and denominator alike. The registry staleLakeCount and supportedLakeCount are not used: they cover different lake sets (errored and UNAVAILABLE lakes are in one and not the other).",
-      "note": "A release picture past freshUntil is worse than none for the tile; the Brain marks it stale rather than serving it.",
-      "why": "An out-of-date 'releasing now' is wrong on the water, so stale lakes count against."
     }
   ],
   "gates": [
@@ -105,9 +93,9 @@
     },
     {
       "id": "coverage",
-      "when": "supportedLakeCount / fleet.damLakeCount < 10 %",
+      "when": "fresh dam lakes of kind OBSERVED or SCHEDULE_ONLY / fleet.damLakeCount < 10 %",
       "cap": 3.0,
-      "tiesTo": "the lake-brain-score-v1 coverage gate, over dam lakes. 17 of 401 readable today is 4.2 %."
+      "tiesTo": "the lake-brain-score-v1 coverage gate, over dam lakes. Nothing is published today."
     },
     {
       "id": "validation",
@@ -150,20 +138,20 @@
   "workedExample": {
     "derivation": "TYPED_NOT_COMPUTED (scoring.md SC-11): hand arithmetic from this draft, not a scorer output. Non-authoritative.",
     "today": {
-      "asOf": "2026-11-23 (origin/main 8d421fe)",
-      "facts": "No /brains/generation registry has been written (PARKED, no executor, no job; run.py --write refuses BLOCKED_AWAITING_APPROVED_RELEASE). Release NOT_RECORDED; SWPA ACCESS_CHECK_REQUIRED; only hand-built fixtures; 17 of 401 dam lakes would be readable.",
+      "asOf": "2026-11-23 (origin/main f5460aa)",
+      "facts": "No /brains/generation registry or state has been written (PARKED, no executor, no job; run.py --write refuses BLOCKED_AWAITING_APPROVED_RELEASE). Release NOT_RECORDED; SWPA ACCESS_CHECK_REQUIRED; only hand-built fixtures. The catalog binds 17 dam lakes to the TVA API, which the review reports TVA's robots.txt disallows; if D-G confirms that, none of them is readable.",
       "result": "UNSCORED (no score block). Forced through the arithmetic: 0.0 / 10, completenessPct 0."
     },
     "liftPath": [
       {
-        "step": "Illustration ONLY IF TVA access were permitted: the 17 TVA-API lakes published, each with a known status, schedule windows, not stale (an assumption, not a measurement); validation not started",
-        "arithmetic": "releasingNow 17/401 = 0.042 -> 0.4 x 30 = 12.7; scheduleCoverage 17/39 = 0.436 -> 4.4 x 25 = 109; damCoverage ladder(4.2 %) = 1 x 10 = 10; currency 17/401 -> 0.4 x 5 = 2.1; validation 0 x 30 = 0; uncapped (12.7 + 109 + 10 + 2.1) / 100 = 1.3; caps: release 2.0 (if unapproved), sourceAccess 3.0, realResponseFixtures 3.0, coverage 3.0, validation 5.0, none below 1.3",
-        "effect": "1.3 / 10. With TVA access refused, as reported, these lakes publish nothing and the Brain stays at 0 or UNSCORED."
+        "step": "Illustration ONLY IF TVA access were permitted: the 17 TVA-API lakes published and fresh at scoring time, each with a known status and schedule windows (an assumption, not a measurement); validation not started",
+        "arithmetic": "releasingNow 17/401 = 0.042 -> 0.4 x 30 = 12.7; scheduleCoverage 17/39 = 0.436 -> 4.4 x 25 = 109; damCoverage ladder(4.2 %) = 1 x 15 = 15; validation 0 x 30 = 0; uncapped (12.7 + 109 + 15) / 100 = 1.4; caps (release 2.0 if unapproved, sourceAccess 3.0, realResponseFixtures 3.0, coverage 3.0, validation 5.0) are all above 1.4",
+        "effect": "1.4 / 10. With TVA access refused, as reported, these lakes publish nothing and the Brain stays at 0 or UNSCORED."
       },
       {
         "step": "Illustration: D-G resolved with TVA permission and SWPA allowed, real fixtures recorded, the discovery pass reaching 150 dam lakes (the low end of the plan's estimate), each with a known, current status, all 39 schedule lakes posting windows, validation week PASSED",
-        "arithmetic": "releasingNow 150/401 = 0.374 -> 3.7 x 30 = 112.2; scheduleCoverage 39/39 = 10 x 25 = 250; damCoverage ladder(37 %) = 5 x 10 = 50; currency 150/401 -> 3.7 x 5 = 18.7; validation 10 x 30 = 300; uncapped (112.2 + 250 + 50 + 18.7 + 300) / 100 = 7.3; no cap",
-        "effect": "7.3 / 10 under these assumptions: the 251 dam lakes without a known status still count against. Without TVA permission the schedule share could reach at most 15/39 (SWPA only). The shares are assumptions; only the probe and the validation week replace them with measurements."
+        "arithmetic": "releasingNow 150/401 = 0.374 -> 3.7 x 30 = 112.2; scheduleCoverage 39/39 = 10 x 25 = 250; damCoverage ladder(37 %) = 5 x 15 = 75; validation 10 x 30 = 300; uncapped (112.2 + 250 + 75 + 300) / 100 = 7.4; no cap",
+        "effect": "7.4 / 10 under these assumptions: the 251 dam lakes without a fresh known status still count against. Without TVA permission the schedule share could reach at most 15/39 (SWPA only). The shares are assumptions; only the probe and the validation week replace them with measurements."
       }
     ]
   },
@@ -187,5 +175,6 @@
       "the Brain's scoreNote / scoreStatus updated, this file moved to docs/brains/scoring/ with status ADOPTED, and verification/fixtures/scores/score_baseline.json re-recorded in the same PR"
     ]
   },
-  "accessNote": "TVA's robots.txt disallows all automated access (reported by the #241 review, 2026-11-23; recorded for D-G, not yet in the knowledge release). If D-G confirms it, TVA becomes PERMISSION_REQUIRED and the 17 lakes counted 'readable today' (all read through the TVA API) are not readable until TVA gives permission. The worked examples below state their access assumption."
+  "accessNote": "TVA's robots.txt disallows all automated access (reported by the #241 review, 2026-11-23; recorded for D-G, not yet in the knowledge release). If D-G confirms it, TVA becomes PERMISSION_REQUIRED and the 17 lakes counted 'readable today' (all read through the TVA API) are not readable until TVA gives permission. The worked examples below state their access assumption.",
+  "freshnessAtScoringTime": "Freshness at scoring time: every per-lake fact counts only if the lake's state is current WHEN THE SCORER RUNS, judged from a timestamp in the published state, never from a flag written at publish time. A lake whose state has expired (the Brain stopped updating it, it errored after an earlier publish, or it is now BLOCKED with an old state left behind) earns 0. Generation: /lakes/{k}/states/generation.freshness.freshUntil must be later than scoring time. That matters here because a dam that errors after an earlier publish keeps its old lakeFleet slot and state (generation_brain/publish.py writes the slot only for a lake it published this run), so the slot's status and stale flag alone would credit it indefinitely. freshUntil is already in the state (the plan's rule: a published value stays current at most until its source's stale ceiling; a schedule-only state at most 6 h); no runtime change is needed. A NOT_DUE dam keeps a valid freshUntil and still counts, as it should."
 }

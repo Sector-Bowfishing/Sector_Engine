@@ -37,6 +37,7 @@ def test_drafts_are_marked_draft_unadopted_and_kept_out_of_the_rubric_directory(
         assert d["adoption"]["approvedBy"] is None and d["adoption"]["approvedAt"] is None
         assert sum(x["weight"] for x in d["dimensions"]) == 100
         assert d["whyForBowfishing"] and d["unknownPolicy"] and all(x.get("why") for x in d["dimensions"])
+        assert d["freshnessAtScoringTime"]                                       # per-lake facts judged when the scorer runs
         assert not os.path.exists(os.path.join(SCORING, f"{version}.json"))      # top level = rubrics the baseline hashes
 
 

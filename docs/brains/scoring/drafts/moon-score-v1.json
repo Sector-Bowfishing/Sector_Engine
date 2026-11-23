@@ -9,7 +9,7 @@
   "measurement": "Domain capability score (Cortex scoring.md SC-02, SC-03): how far Sector can trust the Moon and Night Light Brain's published on-water darkness class for tonight. Not operational health, not production readiness, not comparable with any other Brain's score.",
   "question": "Per lake, for tonight, does the Moon Brain publish a darkness call that counts the cloud (not only the clear-sky moon), for every lake it computes, and has a simple light reading shown the darkness classes come out in the right order (gap MOON-VAL-001)?",
   "unknownPolicy": "Unknown counts against the Brain everywhere (owner rule 2026-11-23: nothing should show unknown). A lake, tile or field that is unknown, unavailable, blocked or abstained earns 0 and stays in every denominator. Unknown is never rewarded or excluded to make a share look better. Every per-lake share therefore divides by ONE fixed denominator, all the lakes the Brain is meant to cover; a lake with no state (blocked, never computed, errored) is in it and earns 0. A Brain-level fact that is not published scores 0 and lowers completeness: both count as 0, never as excluded. Filling an unknown with an estimate is worse still: it is an invented value, which the validation checks fail, so the only way to remove an unknown is real data. For Moon, a night judged on the moon alone (basis MOON_ONLY: cloud unknown) is an unknown and counts against.",
-  "scope": "Every per-lake share divides by the whole directory (/brains/moon.directoryLakeCount); a lake with no night state this run (errored, or not in the run) earns 0. Polar-day lakes (basis NO_NIGHT) have no night to judge and leave only the cloud share. Validation fleet-wide.",
+  "scope": "Every per-lake share divides by the whole directory (/brains/moon.directoryLakeCount), and a lake counts only if its written /lakes/{k}/states/moon is for tonight at scoring time. A lake with no state for tonight (errored, not in the run, or the write failed) earns 0. Polar-day lakes (tonight's basis NO_NIGHT) leave only the cloud share. Validation fleet-wide.",
   "sourceContract": "brains/moon/contracts/moon-publication-v1.json (families /lakes/{k}/states/moon, /lakeFleet/{k}/..., /snapshots/{k}/latest/moonNightLight, /brains/moon/{child}, /validation/moon, /health/brains/moon/{child}); state contract brains/moon/contracts/moon-night-light-v1.json",
   "dimensionClasses": "Cortex scoring.md SC-09: CAP, COV, PRED, VAL, ENG, VOL. This draft has no ENG or VOL dimension.",
   "unscoredWhen": "The registry /brains/moon is absent (the Brain has never published). The scorer then writes NO score block: UNSCORED, never 0. Registry presence, not lastSuccessfulRun, decides this: Moon writes lastSuccessfulRun null whenever any lake errors in a run (moon_brain/publish.py), so keying on it would make the score appear and disappear. A run with errors is scored and shows up in currentNight and the health gate. Today this holds (PARKED, no executor, run.py --write refuses without an APPROVED release and MOON_WRITE_APPROVED=1).",
@@ -36,9 +36,9 @@
       "weight": 35,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "/brains/moon.breakdowns.basis.MOON_AND_CLOUD / (/brains/moon.directoryLakeCount - breakdowns.basis.NO_NIGHT)",
+      "fact": "count of directory lakes whose written state is for tonight (/lakes/{k}/states/moon.date equals the night that contains scoring time for that lake: local solar noon to local solar noon, the Brain's own 'tonight' rule) with darkness.basis MOON_AND_CLOUD / (/brains/moon.directoryLakeCount - lakes whose tonight state has basis NO_NIGHT)",
       "scale": "share x 10",
-      "note": "MOON_ONLY (cloud unknown) and a lake with no basis at all (errored or not computed) earn nothing and stay in the denominator; only NO_NIGHT lakes (polar day) are left out, because there is no night to judge. Credit needs the Weather Brain live (MOON-INP-001) and Moon run after each evening Weather run (plan section 7.1). The fixed city-glow allowance is the Engine's; a per-lake skyglow input (MOON-INP-002) is not scored until it is published.",
+      "note": "MOON_ONLY (cloud unknown), and a lake with no state for tonight, earn nothing and stay in the denominator; only lakes whose tonight state says NO_NIGHT (polar day) are left out, because there is no night to judge. Credit needs the Weather Brain live (MOON-INP-001) and Moon run after each evening Weather run (plan section 7.1). The fixed city-glow allowance is the Engine's; a per-lake skyglow input (MOON-INP-002) is not scored until it is published.",
       "why": "Cloud cancels the moon except near cities, so a darkness call without cloud can call an overcast night bright."
     },
     {
@@ -47,9 +47,9 @@
       "weight": 30,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "sum of /brains/moon.breakdowns.basis (lakes with a night state this run) / /brains/moon.directoryLakeCount",
+      "fact": "count of directory lakes whose written state is for tonight (/lakes/{k}/states/moon.date equals the night that contains scoring time for that lake: local solar noon to local solar noon, the Brain's own 'tonight' rule) / /brains/moon.directoryLakeCount",
       "scale": "share x 10, clamped to [0, 10]",
-      "note": "Counts lakes that got a darkness call this run over the whole directory, so an errored lake and a lake left out of the run both count against. Replaces a coverage dimension: Moon's supportedLakeCount is every lake in the run, errored ones included, so it measures nothing.",
+      "note": "Counts lakes whose state was actually written for tonight, read from the state itself at scoring time, over the whole directory: an errored lake, a lake left out of the run, a failed write and yesterday's state all count against. Replaces a coverage dimension: Moon's supportedLakeCount is every lake in the run, errored ones included, so it measures nothing.",
       "why": "A lake that could not be computed tonight has no darkness call; it counts against."
     }
   ],
@@ -68,7 +68,7 @@
     },
     {
       "id": "cloudInput",
-      "when": "cloudIntegration share (over the directory minus NO_NIGHT lakes) < 50 %",
+      "when": "cloudIntegration share < 50 %",
       "cap": 4.0,
       "tiesTo": "MOON-INP-001 and plan section 4: with most nights MOON_ONLY the class is a clear-sky bound, not a darkness assessment"
     },
@@ -112,13 +112,13 @@
   "workedExample": {
     "derivation": "TYPED_NOT_COMPUTED (scoring.md SC-11): hand arithmetic from this draft, not a scorer output. Non-authoritative.",
     "today": {
-      "asOf": "2026-11-23 (origin/main 8d421fe)",
+      "asOf": "2026-11-23 (origin/main f5460aa)",
       "facts": "No /brains/moon registry has been written (PARKED, no executor, no job, run.py --write refuses). Knowledge release approval NOT_RECORDED.",
       "result": "UNSCORED (no score block). Forced through the arithmetic: 0.0 / 10, completenessPct 0."
     },
     "liftPath": [
       {
-        "step": "Illustration from the recorded full-directory dry run of 2026-11-22 (MOON_BRAIN_PLAN.md section 6: 621 lakes, every lake MOON_ONLY, no lake failed), as if it had been published with an approved release",
+        "step": "Illustration from the recorded full-directory dry run of 2026-11-22 (MOON_BRAIN_PLAN.md section 6: 621 lakes, every lake MOON_ONLY, no lake failed), as if every state had been written for tonight with an approved release and scored the same night",
         "arithmetic": "validation 0 x 35 = 0; cloudIntegration 0 x 35 = 0; currentNight 10 x 30 = 300; uncapped 300 / 100 = 3.0; caps: cloudInput 4.0, validation 5.0; value 3.0",
         "effect": "3.0 / 10, earned entirely by lakes computed without error, which the astronomy gets almost for free. That is why it carries only 30 % of the weight."
       },
@@ -152,5 +152,6 @@
       "a scorer PR (score_moon(), facts, UPSTREAM, improvement entries) and a decision on the Engine score: Moon is in control.py SHADOW_BRAINS, which keeps it out of every roll-up and the Engine score today",
       "moon_brain.contract.SCORE_NOTE updated, this file moved to docs/brains/scoring/ with status ADOPTED, and verification/fixtures/scores/score_baseline.json re-recorded in the same PR"
     ]
-  }
+  },
+  "freshnessAtScoringTime": "Freshness at scoring time: every per-lake fact counts only if the lake's state is current WHEN THE SCORER RUNS, judged from a timestamp in the published state, never from a flag written at publish time. A lake whose state has expired (the Brain stopped updating it, it errored after an earlier publish, or it is now BLOCKED with an old state left behind) earns 0. Moon: the written state's 'date' must be tonight's night for that lake at scoring time. The registry breakdowns are NOT used: moon_brain/publish.py counts a lake's basis and class before its state is written, so a lake whose write then fails is still counted there. Reading the written state avoids that. No runtime change is needed for this definition; correcting the counting order in publish.py would only matter if a later version reads the breakdowns again."
 }

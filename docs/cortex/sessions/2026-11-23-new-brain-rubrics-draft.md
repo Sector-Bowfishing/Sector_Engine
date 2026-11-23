@@ -97,3 +97,15 @@ Verification, all passing:
 - verification gates, `tools/architecture` and `tools/cortex_status`: 204 passed
 - `score_baseline.py --check`: OK, and the fixture is byte-identical to main
 - engineering-status digest `--check`: OK
+
+## Third review follow-up (after review of 23c2fd0, NOT CLEAN)
+Only the rubric definitions changed. No Brain runtime code was touched.
+- **MEDIUM, freshness at scoring time.** Every per-lake fact in all three drafts now counts only if the lake's state is current when the scorer runs. This is read from a timestamp already in the published state, so no runtime change is needed:
+  - **Generation:** `freshness.freshUntil` later than scoring time. A dam that errors after an earlier publish keeps its old slot and state (`publish.py` rewrites the slot only for a lake published this run), and its state now expires to 0. `releasingNow` and `damCoverage` read the state, not the slot. The `currency` dimension is folded into `damCoverage` (now 15), because it measured the same thing once freshness applies everywhere. Examples recomputed: 1.4 (only if TVA were permitted) and 7.4.
+  - **Weather:** `freshness.freshUntil` later than scoring time for every per-lake dimension, coverage included. `fullStates` is now per-lake (kind observation, nothing missing, fresh), not the last run's `readinessCounts`.
+- **LOW items:**
+  - Generation: removed "17 readable today / covered". Nothing is published today, and the 17 are unreadable if the TVA disallow is confirmed.
+  - Weather validation "absent" now reads "scores 0 and lowers completeness". Moon and Generation gates in the explainer now say "or absent".
+  - `asOf` updated to origin/main f5460aa.
+- **LOW, Moon currentNight and cloudIntegration:** both now read the written `/lakes/{k}/states/moon` whose `date` is tonight at scoring time, not the registry `breakdowns`. `publish.py` counts a lake's basis before writing its state, so a failed write would still be counted. The draft notes that ordering and explains why reading the written state makes a runtime fix unnecessary for this definition.
+- The not-loaded test also requires `freshnessAtScoringTime` in each draft.
