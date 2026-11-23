@@ -1221,6 +1221,9 @@ def main(argv=None) -> int:
         res = run_controls(census, targets)
         os.makedirs(args.out, exist_ok=True)
         json.dump(res, open(os.path.join(args.out, "controls.json"), "w"), indent=1, default=str)
+        with open(os.path.join(args.out, "controls.requests.jsonl"), "w", encoding="utf-8") as fh:
+            for r in fetcher.log:
+                fh.write(json.dumps(r) + "\n")
         print(json.dumps(res, indent=1, default=str))
         return 0 if not res["disabledProviders"] else 3
     result = run_census(rules, digest, fetcher, now, registry, args.lakes, args.usgs_api, args.skip_controls)
