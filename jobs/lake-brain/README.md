@@ -12,5 +12,6 @@ What stays here is **offline tooling and its data**, never imported by the runti
 | `ledger/` | prospective prediction-ledger scorer |
 | `review/` | binding review pack builder and result ingestion |
 | `validation/` | rules-v2 Python mirror and the pre-registered hold-out (results committed) |
+| `validation/operator_truth/` | operator-truth validation v1: frozen sample rule, read-only runner (pre-registered in `docs/brains/LAKE_BRAIN_OPERATOR_TRUTH_PREREGISTRATION.md`; results go to the research folder, nothing is published) |
 
 Their suites run in CI's legacy job list. Moving this tooling into `brains/lake/research/tools/` needs the data files classified first (binding tables, hold-out results); that is recorded as an open structural item, not done here. Some tools default to developer-machine paths (tooling only; the runtime has none).
