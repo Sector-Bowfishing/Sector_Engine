@@ -185,3 +185,12 @@ Evaluated 2026-10-22 · `sessions/2026-10-22-internal-activation.md`. The status
 ## 2026-11-22 addendum: Generation Brain (sessions/2026-11-22-generation-brain.md)
 
 A further deployed package, `generation` (brains/generation), was added and registered DISABLED. It is not yet a column in the tables above: its cells are evaluated in the session record (BR-05/06/07/10/16/18/19 PASS, BR-11 PARTIAL: candidate release, approval NOT_RECORDED; BR-02 FINDING: not mapped to a Cortex target Brain, CG-3.1-20). `data-check` findings on the package are the same classes Depth carries (`UNREGISTERED_PATH` for the `/lakeFleet` and `/health` string fragments in publish.py; `UNMAPPED_FILE` for its brain.json path families, which wait on the Cortex registry entry). The column is added at the next full re-evaluation.
+
+## 2026-11-23 addendum: gated live writers for Weather, Moon and Generation (sessions/2026-11-23-brain-writers-weather-moon-generation.md)
+
+Rows evaluated for `weather`, `moon` and `generation` only (still not columns above):
+- BR-13 (declared write set equals runtime write set, live path): PASS for all three. `brains/{weather,moon,generation}/tests/test_live_writer.py` run `run.py --write` in-process with an in-memory recorder in place of RtdbWriter; `declared_writes.undeclared` and `unused_legacy` are empty; Weather's live write set equals its dry run key for key.
+- BR-11 (f) memory-unavailable / unapproved: PASS. `--write` refuses with exit 2 (BLOCKED_AWAITING_APPROVED_RELEASE) while every release is NOT_RECORDED, and with exit 3 without the operator-intent variable; tested by subprocess, also from each staged job context.
+- BR-21 / PL-15 / PL-18: PASS. Executors prepared but inert (`orchestrate.planned_executors` returns {} on the live manifest); deploy scripts refuse without the owner's approval and create no scheduler; M08 dispatch also refuses the three (UNREGISTERED_BRAIN). `jobs/brain-orchestrator/tests/test_prepared_brain_executors.py`.
+- PL-01 (dependency graph): PASS. Moon -> Weather edge now drives a DEPENDENCY_CHANGED trigger (inert while PARKED); new edge attribute `deferIfUpstreamStarted` (CG-3.1-21).
+- BR-02 / BA-01: FINDING unchanged (mission-audit UNREGISTERED_BRAIN for all three; CG-W-1, CG-3.1-19, CG-3.1-20).

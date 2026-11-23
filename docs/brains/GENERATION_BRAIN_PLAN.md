@@ -69,6 +69,27 @@ Registered here before any run; nothing has been run.
 6. **Validation week** (section 5) on internal runs. PASS or FAIL recorded.
 7. **Customer path** (Michael's own steps): a customer-lane copy, app reading it, tile flip. Not proposed until validation passes. The existing draft customer copy `customer/lakes/{k}/generationBinding` (Sector_Ops #53, `publisher_live/customer_generation_binding.py`, not wired) waits on a dam binding the Lake contract does not carry; the Generation catalog's bound `operator + LocationID` records are the natural source for it, as a separate reviewed change.
 
+### 6.1 How to turn it on (prepared 2026-11-23, all inert today)
+
+Prepared on `feat/brain-writers-weather-moon-generation-2026-11-23`: `deploy/` (refuses without the owner's approval, no scheduler) and an inert
+orchestrator executor (`generation-brain`). The gated writer (`run.py --write`: APPROVED release AND `GENERATION_WRITE_APPROVED=1`) already
+existed. **Still blocked on D-G and D-I (§7): do not start step 3 before both are decided.** Source access statuses are unchanged.
+
+Cost: a run reads only the bound dams whose nextCheckAt is reached; estimate about 1-2 USD/month at list price for hourly runs. Proposed cap
+2 USD/month; the execution control's `maxCostPerDay` bounds each day.
+
+| # | Who | Action | What it flips |
+|---|---|---|---|
+| 0 | Michael | Decide D-G (TVA/SWPA access) and D-I (one read per series per hour across Brains); a new release if any access status changes | blockers |
+| 1 | Michael, then an Engine PR | G-2: approve the knowledge release (after the validation week); `knowledge-release.json` `approval` APPROVED with its record | write gate (a) |
+| 2 | Cortex maintenance session, then an Engine PR | D-H: Generation as a target Brain (CG-3.1-20); re-sync `data_ownership.json` (dispatch refuses `generation` until then) | dispatch |
+| 3 | Michael (IAM) | Service account `brain-job-generation`, write access to `sector-brain` only | identity |
+| 4 | Michael (creates a cloud job: cost) | `MICHAEL_APPROVED_GENERATION_DEPLOY=yes GENERATION_WRITE_APPROVED=1 brains/generation/deploy/deploy-job.sh` | write gate (b) |
+| 5 | Engine PR (config) | `control_manifest.json` `generation`: `activityState` `ACTIVE`; `executionTarget` `{"kind": "cloud-run-job", "job": "generation-brain", "startedByOrchestrator": true, "scoped": false}`; `allowedTriggers` add `SCHEDULE`; `schedule` `{"class": "ORCHESTRATOR_OWNED", "owner": "ORCHESTRATOR", "scheduler": "brain-orchestrator", "exception": {gate, notReconstructable, "maxMonthlyUsd": 2, stop, approvedAt}}` (all five keys, or `schedule_policy` refuses); `freshness` add `"dueAfterHours": 0.75, "staleAfterHours": 3`; `costClass` `LOW`, `resources`; a `jobs.generation-brain` entry. The same PR removes `generation` from the `registered_disabled` guards; then redeploy the orchestrator | executor joins, hourly grant |
+| 6 | Michael (resumes recurring spend) | `python3 tools/ops/execution_control.py brain --changed-by michael --brain generation --enable-brain --max-runs-per-day 24 --reason "<approvalRef>"` | execution control |
+
+Off again: `execution_control.py brain --brain generation --disable`, then `activityState PARKED`; delete the job to stop all cost.
+
 ## 7. Blocking enablement (owner decisions, not code)
 
 Nothing in this section is changed by code; each must be decided before the Brain is given an execution target.
