@@ -9,18 +9,18 @@ Michael asked for draft score rubrics for the three new Brains. Router row "Scor
 - `docs/brains/scoring/drafts/{weather,moon,generation}-score-v1.json` (moved to `drafts/` in the review follow-up below): status DRAFT, `adopted: false`.
   - Each has gates, dimensions classed per SC-09 and read only from published facts, status meanings tied to the plan's pre-registered validation, a worked example, and an adoption checklist.
   - Worked examples are labelled `TYPED_NOT_COMPUTED` (SC-11).
-- `docs/brains/scoring/NEW_BRAIN_RUBRICS_DRAFT_2026-11-23.md`: the reasoning behind the choices and what the owner must approve.
-- `jobs/brain-scores/test_draft_rubrics_not_loaded.py`: the drafts are DRAFT and unadopted; `compute()` scores exactly `UPSTREAM`; there are no frozen-score or improvement-registry entries for them; and no scorer, platform or orchestrator code names a draft.
-- `verification/fixtures/scores/score_baseline.json` re-recorded. The re-record adds three rubric hashes and changes no score block and no existing hash. Without it, `score_baseline.py --check` fails on the added files.
+- `docs/brains/scoring/drafts/NEW_BRAIN_RUBRICS_DRAFT_2026-11-23.md` (now under `drafts/`): the reasoning behind the choices and what the owner must approve.
+- `jobs/brain-scores/test_draft_rubrics_not_loaded.py` (current state, after the second review): six tests. (1) The drafts are DRAFT, unadopted, under `drafts/`, with the bowfishing fields. (2) `compute()` scores exactly `UPSTREAM`. (3) There are no frozen-score or improvement-registry entries for them. (4) A static scan of scorer, platform, orchestrator, workflow and deploy files (code and config) finds no draft name and no `scoring/drafts` path. (5) A runtime recording of compute, the Engine score and the explanations shows nothing under `drafts/` is opened and the scoring directory is never listed. (6) The same recording over `score_brains.main()` (dry run, which calls `fetch_facts`) shows the Brains are not scored even when their registries exist.
+- `verification/fixtures/scores/score_baseline.json`: re-recorded in the first commit, then REVERTED to main's version when the drafts moved to `drafts/` (the baseline lists only top-level files). It is identical to main.
 
 ## Findings
 - **F1.** `score_improvements_v1.json` is read by the scorer's explanation step: `score_explanation.registry()` is called from `score_brains.py` on every write and is published in `/scores/{id}/explanation`. The task allowed entries only for a file no scorer reads, so no entries were added. The improvement text is kept in each draft's `improvementsDraft`.
 - **F2.** The Weather runtime does not write `/validation/weather`, although its publication contract declares it. Until a Brain change writes it, the Weather validation dimension stays UNKNOWN.
-- **F3.** MOON-VAL-001 has no pre-registration. The draft states a proxy (public sky-quality-meter records) and proposes criteria for the owner to decide on. It sets no thresholds.
+- **F3.** MOON-VAL-001 has no pre-registration. After the alignment pass the draft proposes a practical check: one site, about 12 nights, a sky-quality meter or a phone light meter pointed up, class order plus cloudy versus clear. The check is written down before any reading. The earlier multi-site statistical proposal was dropped. The draft sets no threshold the owner has not seen.
 - **F4.** The TVA half of decision D-G is not visible in Generation's published `sourceAccess`. The draft's gate also requires the approved release, which the plan sequences after D-G.
 - **F5.** The real-response fixture gate reads repository evidence, not an RTDB fact. The owner must decide whether that is acceptable.
 
-## Verification
+## Verification (initial commit 31ec172; later runs are in the sections below)
 - Test suites, all passing:
   - `jobs/brain-scores`: 41 passed
   - `jobs/brain_platform`: 1011 passed, 2 skipped
@@ -76,3 +76,24 @@ Michael approved merging the drafts as drafts, not adopted, on condition they se
 - **Moon:** validation is proportionate. The proxy is one site, about 12 nights, read with a sky-quality meter or a phone light meter pointed up. The proposed check is class order plus cloudy-versus-clear. This replaces the multi-site statistical proposal. Weights are now validation 35, cloud 35 and current night 30.
 - **Generation:** a new `releasingNow` (30) asks whether the dam is releasing or generating now, with UNKNOWN counting against and every published slot in the denominator. Schedule ("when it changes") rises to 25. The `measuredRelease` dimension is removed, since flow detail is secondary. Dam coverage drops to 10 and currency to 5.
 - The not-loaded test also requires `whyForBowfishing`, `unknownPolicy` and a `why` on every dimension.
+
+## Second review follow-up (after review of 466aeb7, NOT CLEAN)
+- **HIGH: Weather denominators.** Every per-lake share (rainReadout, fullStates, changeSignalEvaluable, pressureTrend) now divides by `/brains/weather.directoryLakeCount`. A BLOCKED, never-computed or errored lake has no state and earns 0. The policy was right; the formulas did not follow it, and now they do.
+- **HIGH: Generation denominators.** releasingNow and currency now divide by all 401 catalog dam lakes, with unbound, permission-required and errored dams earning 0. The worked examples are recomputed: 17 lakes give 1.3 (only if TVA access were permitted), and 150 lakes plus full validation give 7.3, no longer 9.5.
+- **MEDIUM: Generation scheduleCoverage.** The numerator and denominator are the same 39 schedule-posting lakes (TVA, TVA_CUMBERLAND, SWPA_USACE), and the clamp that hid the mismatch is gone. The review reported that TVA's robots.txt disallows all automated access. TVA and Cumberland schedules (both read through the TVA API) are therefore unobtainable today and earn 0. SWPA waits on its access check. No proxy is used. A new `accessNote` records the consequence for the 17 lakes "readable today". `source_access.json` is unchanged, because that belongs to D-G.
+- **LOW, Moon:** cloudIntegration divides by the directory minus NO_NIGHT lakes, so errored lakes count 0. currentNight is now the number of lakes with a night state over the directory.
+- **LOW, records:**
+  - This record's Done and Findings sections are updated: the explainer location, the test contents, the baseline revert, and the F3 one-site check.
+  - The explainer and `unknownPolicy` now both say an unknown lowers completeness and counts as 0, never excluded.
+- **LOW, test:**
+  - The static scan now covers config files (json, yml, sh, ini, toml, txt, Dockerfiles) in the scorer, platform and orchestrator folders, plus `.github/workflows`, `deploy/`, `deploy.sh` and the root Dockerfile. It also looks for `scoring/drafts` path globs.
+  - A new runtime test runs `score_brains.main()` as a dry run, through `fetch_facts`, over a store in which all three Brains have published registries and VALIDATED nodes. None is scored, nothing is written, and nothing under `drafts/` is read.
+- **Certification is re-collected, not only re-digested.** `collect_certification.py` re-runs every registered Brain's Cert Kit V1 suite (11 Brains, failing: none) and records the live source digest. The certification `sourceDigest`, the status report's `source.sourceDigest`, its `certificationDigest` and the live `source_digest()` are all equal (sha256:f4826c7d…, before the session-record edit, which is outside the digest roots). The same sequence ran before each earlier push.
+
+Verification, all passing:
+- `jobs/brain-scores`: 43 passed
+- `jobs/brain_platform`: 1011 passed, 2 skipped
+- `jobs/brain-orchestrator`: 339 passed
+- verification gates, `tools/architecture` and `tools/cortex_status`: 204 passed
+- `score_baseline.py --check`: OK, and the fixture is byte-identical to main
+- engineering-status digest `--check`: OK

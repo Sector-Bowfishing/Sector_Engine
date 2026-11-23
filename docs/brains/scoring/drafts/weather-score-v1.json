@@ -8,8 +8,8 @@
   "whyForBowfishing": "Bowfishers care about the weather because it changes the water and the night: rain muddies the water and moves the lake level, cloud decides whether a bright moon lights the water, and a sharp air-temperature swing or a passing front means conditions are changing and Lake and Water Temp should re-check. Barometric pressure is shown in the app, but there is no evidence it changes where target species are, so it earns very little here. The score asks: does every lake get real, current rain, cloud and temperature readings, and a 'weather is changing' signal that works?",
   "measurement": "Domain capability score (Cortex scoring.md SC-02, SC-03): how far Sector can trust the Weather Brain's published per-lake weather truth. Not operational health, not production readiness, not a forecast-skill metric, not comparable with any other Brain's score.",
   "question": "Per lake, does the Weather Brain publish real measured or official-forecast rain (now and expected), cloud, air temperature and a weather-change signal whose every rule could be evaluated, and has that output passed the validation pre-registered in docs/brains/WEATHER_BRAIN_PLAN.md section 5?",
-  "unknownPolicy": "Unknown counts against the Brain everywhere (owner rule 2026-11-23: nothing should show unknown). A lake, tile or field that is unknown, unavailable, blocked or abstained earns 0 and stays in every denominator; a fact the Brain does not publish scores 0 and lowers completeness. Unknown is never rewarded or excluded to make a share look better. Filling an unknown with an estimate is worse still: it is an invented value, which the validation checks fail, so the only way to remove an unknown is real data.",
-  "scope": "Coverage over the directory (/brains/weather.directoryLakeCount). Quality shares over the lakes the Brain supports (/brains/weather.supportedLakeCount: readiness CALIBRATION or DEGRADED) and over their published states (/lakes/{k}/states/weather). Validation fleet-wide.",
+  "unknownPolicy": "Unknown counts against the Brain everywhere (owner rule 2026-11-23: nothing should show unknown). A lake, tile or field that is unknown, unavailable, blocked or abstained earns 0 and stays in every denominator. Unknown is never rewarded or excluded to make a share look better. Every per-lake share therefore divides by ONE fixed denominator, all the lakes the Brain is meant to cover; a lake with no state (blocked, never computed, errored) is in it and earns 0. A Brain-level fact that is not published scores 0 and lowers completeness: both count as 0, never as excluded. Filling an unknown with an estimate is worse still: it is an invented value, which the validation checks fail, so the only way to remove an unknown is real data.",
+  "scope": "Every per-lake share divides by the whole directory (/brains/weather.directoryLakeCount, 621 lakes): a lake outside NWS coverage (BLOCKED), never computed (DISCOVERED) or errored before its first state has no /lakes/{k}/states/weather and earns 0. Validation fleet-wide.",
   "sourceContract": "brains/weather/contracts/weather-publication-v1.json (families /lakes/{k}/states/weather, /lakeFleet/{k}/..., /brains/weather/{child}, /validation/weather); state schema brains/weather/contracts/weather-state-v1.schema.json",
   "dimensionClasses": "Cortex scoring.md SC-09: CAP bowfishing capability, COV coverage, PRED prediction quality, VAL validation against independent data, ENG engineering completion, VOL research volume. This draft has no ENG or VOL dimension.",
   "unscoredWhen": "The registry /brains/weather is absent or has never carried lastSuccessfulRun (the Brain has never published). The scorer then writes NO score block: the Brain is UNSCORED, never 0. Today this holds (the Brain is PARKED, has no live writer run, and run.py --write refuses).",
@@ -36,7 +36,7 @@
       "weight": 20,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "/lakes/{k}/states/weather.sky.rain: lastHourIn non-null AND forecastNext6hIn non-null, share over published states",
+      "fact": "count of directory lakes whose /lakes/{k}/states/weather has sky.rain.lastHourIn non-null AND sky.rain.forecastNext6hIn non-null, / /brains/weather.directoryLakeCount (a lake with no state earns 0)",
       "scale": "share x 10",
       "why": "Rain is the weather that most changes a bowfishing night: it muddies the water and moves the lake level, and rain expected soon is the cue to re-check clarity and stage.",
       "note": "A null in either field is an unknown and earns nothing. Whether a rain-onset call was right is validation (plan 5.3), not this dimension."
@@ -58,9 +58,9 @@
       "weight": 15,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "/brains/weather.readinessCounts.CALIBRATION / /brains/weather.supportedLakeCount",
-      "scale": "share x 10, clamped to [0, 10] (both counts come from the same run's readiness map)",
-      "note": "Readiness CALIBRATION = state kind 'observation', not stale, and an empty 'missing' list (sector_weather.state.readiness). DEGRADED (stale observation or a missing tile, no estimate put in its place) earns nothing here.",
+      "fact": "/brains/weather.readinessCounts.CALIBRATION / /brains/weather.directoryLakeCount",
+      "scale": "share x 10, clamped to [0, 10]",
+      "note": "Readiness CALIBRATION = state kind 'observation', not stale, and an empty 'missing' list (sector_weather.state.readiness). DEGRADED, BLOCKED and DISCOVERED lakes earn nothing and stay in the denominator.",
       "why": "A stale or partly missing state can hide the rain or cloud that decides the night."
     },
     {
@@ -69,7 +69,7 @@
       "weight": 15,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "/lakes/{k}/states/weather.weatherChange.unknown is absent or an empty list, share over published states",
+      "fact": "count of directory lakes whose /lakes/{k}/states/weather has weatherChange.unknown absent or an empty list, / /brains/weather.directoryLakeCount (a lake with no state earns 0)",
       "scale": "share x 10",
       "note": "A rule that cannot be evaluated makes the lake WATCH (owner decision 2026-11-22), so a high WATCH share measures data gaps, not weather. This dimension credits states whose signal rests on complete inputs. It says nothing about whether the signal is right (that is validation, plan 5.3).",
       "why": "The 'weather is changing' signal (rain onset, front passage, air-temperature swing) is what makes Lake and Water Temp re-check; a rule that cannot be evaluated is an unknown and counts against."
@@ -80,7 +80,7 @@
       "weight": 5,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "/lakes/{k}/states/weather.pressure.trend3h is non-null, share over published states",
+      "fact": "count of directory lakes whose /lakes/{k}/states/weather has pressure.trend3h non-null, / /brains/weather.directoryLakeCount (a lake with no state earns 0)",
       "scale": "share x 10",
       "note": "The trend is still an input to the change signal. A pressure FORECAST is not credited anywhere: none exists (gap WX-003).",
       "why": "Shown in the app, but no evidence ties pressure to where target species are, so it carries a token weight."

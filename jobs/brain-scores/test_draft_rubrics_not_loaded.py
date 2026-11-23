@@ -52,56 +52,111 @@ def test_no_frozen_score_and_no_improvement_entries_for_draft_brains():
         assert not set(DRAFTS) & set(json.load(fh)["brains"])
 
 
-def test_no_scorer_code_names_a_draft_rubric():
-    offenders = []
-    for base in SCORER_CODE:
+SCAN_SUFFIXES = (".py", ".json", ".yml", ".yaml", ".sh", ".toml", ".cfg", ".ini", ".txt")
+SCAN_EXTRA = [os.path.join(ROOT, ".github", "workflows"), os.path.join(ROOT, "deploy"), os.path.join(ROOT, "deploy.sh"), os.path.join(ROOT, "Dockerfile")]
+DRAFT_PATH_MARKERS = ("scoring/drafts", "scoring\\drafts", "drafts/*", "drafts/**")
+
+
+def _scan_files():
+    for base in SCORER_CODE + SCAN_EXTRA:
+        if os.path.isfile(base):
+            yield base
+            continue
         for dirpath, _, files in os.walk(base):
             for f in files:
-                if not f.endswith(".py") or f == os.path.basename(__file__):
+                if f == os.path.basename(__file__) or "__pycache__" in dirpath:
                     continue
-                p = os.path.join(dirpath, f)
-                with open(p, encoding="utf-8") as fh:
-                    text = fh.read()
-                offenders += [f"{os.path.relpath(p, ROOT)}: {v}" for v in DRAFTS.values() if v in text]
+                if f.endswith(SCAN_SUFFIXES) or f.startswith("Dockerfile"):
+                    yield os.path.join(dirpath, f)
+
+
+def test_no_scorer_code_or_config_names_a_draft_rubric_or_the_drafts_folder():
+    """Code AND config (job manifests, workflows, Dockerfiles, deploy scripts): no draft scoreVersion, file name or drafts/ path glob."""
+    offenders = []
+    needles = list(DRAFTS.values()) + list(DRAFT_PATH_MARKERS)
+    for p in _scan_files():
+        with open(p, encoding="utf-8", errors="replace") as fh:
+            text = fh.read()
+        offenders += [f"{os.path.relpath(p, ROOT)}: {n}" for n in needles if n in text]
     assert offenders == []
     assert score_brains.FROZEN.endswith("frozen-scores.json")
+
+
+class _Recorder:
+    """Records every file opened and every directory listed (open, io.open, os.listdir, os.scandir; glob and os.walk use these)."""
+
+    def __init__(self, monkeypatch):
+        self.opened, self.listed = [], []
+        real_open, real_io_open, real_listdir, real_scandir = builtins.open, io.open, os.listdir, os.scandir
+
+        def path(f):
+            return os.path.abspath(os.fspath(f)) if isinstance(f, (str, bytes, os.PathLike)) else str(f)
+
+        def rec_open(f, *a, **k):
+            self.opened.append(path(f))
+            return real_open(f, *a, **k)
+
+        def rec_io_open(f, *a, **k):
+            self.opened.append(path(f))
+            return real_io_open(f, *a, **k)
+
+        def rec_listdir(p="."):
+            self.listed.append(path(p))
+            return real_listdir(p)
+
+        def rec_scandir(p="."):
+            self.listed.append(path(p))
+            return real_scandir(p)
+
+        monkeypatch.setattr(builtins, "open", rec_open)
+        monkeypatch.setattr(io, "open", rec_io_open)
+        monkeypatch.setattr(os, "listdir", rec_listdir)
+        monkeypatch.setattr(os, "scandir", rec_scandir)
+
+    def assert_no_draft_dependency(self):
+        scoring = os.path.abspath(SCORING)
+        assert [p for p in self.opened if p.startswith(os.path.abspath(DRAFT_DIR))] == []
+        assert [p for p in self.listed if p.startswith(scoring)] == []
 
 
 def test_scores_engine_score_and_explanations_do_not_read_the_scoring_directory(monkeypatch):
     """Record every file opened and every directory listed while the scorer computes all scores, the Engine score and every explanation:
     nothing under drafts/ is opened and the scoring directory is never listed, so no output depends on what that directory contains."""
-    opened, listed = [], []
-    real_open, real_io_open, real_listdir, real_scandir = builtins.open, io.open, os.listdir, os.scandir
-
-    def rec_open(f, *a, **k):
-        opened.append(os.path.abspath(os.fspath(f)) if isinstance(f, (str, bytes, os.PathLike)) else str(f))
-        return real_open(f, *a, **k)
-
-    def rec_io_open(f, *a, **k):
-        opened.append(os.path.abspath(os.fspath(f)) if isinstance(f, (str, bytes, os.PathLike)) else str(f))
-        return real_io_open(f, *a, **k)
-
-    def rec_listdir(p="."):
-        listed.append(os.path.abspath(os.fspath(p)))
-        return real_listdir(p)
-
-    def rec_scandir(p="."):
-        listed.append(os.path.abspath(os.fspath(p)))
-        return real_scandir(p)
-
     monkeypatch.setattr(score_explanation, "_REGISTRY", None)               # force the lazy registry read inside the recording
-    monkeypatch.setattr(builtins, "open", rec_open)
-    monkeypatch.setattr(io, "open", rec_io_open)
-    monkeypatch.setattr(os, "listdir", rec_listdir)
-    monkeypatch.setattr(os, "scandir", rec_scandir)
+    rec = _Recorder(monkeypatch)
     scores = compute(EMPTY_FACTS, NOW)
     engine = score_engine({}, scores, NOW)
     explanations = {bid: score_explanation.explain(bid, block) for bid, block in scores.items()}
     monkeypatch.undo()
 
     assert engine["engineScoreVersion"] == "engine-score-v1" and set(explanations) == set(UPSTREAM)
-    assert os.path.abspath(score_explanation.REGISTRY_FILE) in opened            # the recorder saw the explanation registry read
+    assert os.path.abspath(score_explanation.REGISTRY_FILE) in rec.opened        # the recorder saw the explanation registry read
+    rec.assert_no_draft_dependency()
     scoring = os.path.abspath(SCORING)
-    assert [p for p in opened if p.startswith(os.path.abspath(DRAFT_DIR))] == []
-    assert [p for p in listed if p.startswith(scoring)] == []
-    assert all(os.path.basename(p) in ("frozen-scores.json",) for p in opened if p.startswith(scoring))
+    assert all(os.path.basename(p) in ("frozen-scores.json",) for p in rec.opened if p.startswith(scoring))
+
+
+def test_score_brains_main_with_fetch_facts_ignores_draft_brains_even_when_they_publish(monkeypatch, tmp_path):
+    """The full dry-run path (main -> fetch_facts -> compute -> engine -> plan_writes with explanations -> control overview) over a store in which
+    Weather, Moon and Generation HAVE published registries and validation nodes: none of them is scored or written, and nothing under drafts/ is read."""
+    from sector_brain_platform import DryRunStore
+    tree = {"brains": {b: {"brainId": b, "health": "HEALTHY", "lastSuccessfulRun": "2026-11-23T00:00:00Z", "supportedLakeCount": 1,
+                           "directoryLakeCount": 1} for b in DRAFTS},
+            "validation": {b: {"status": "VALIDATED"} for b in DRAFTS},
+            "health": {"brains": {b: {"status": "HEALTHY"} for b in DRAFTS}}}
+    store = DryRunStore(tree)
+    monkeypatch.setattr(score_brains, "BrainRtdb", lambda *a, **k: store)
+    monkeypatch.setattr(score_brains, "check_schema", lambda db: None)
+    report = tmp_path / "report.json"
+    monkeypatch.setattr(sys, "argv", ["score_brains.py", "--report", str(report)])
+    monkeypatch.setattr(score_explanation, "_REGISTRY", None)
+    rec = _Recorder(monkeypatch)
+    rc = score_brains.main()
+    monkeypatch.undo()
+
+    assert rc in (0, None)
+    rep = json.loads(report.read_text())
+    assert set(rep["scores"]) == set(UPSTREAM)
+    assert not set(DRAFTS) & set(rep["scores"]) and not set(DRAFTS) & set((rep["engine"].get("brainScores") or {}))
+    assert store.patches == []                                                   # dry run: nothing written
+    rec.assert_no_draft_dependency()

@@ -8,8 +8,8 @@
   "whyForBowfishing": "Below a dam, what a bowfisher needs to know is simple: is the dam releasing or generating right now, and when will that change. Moving water pulls fish to the tailrace and changes where they hold and how safe the boat is, and a posted schedule lets you plan the night around the next start or stop. Flow numbers are useful detail but secondary. The score asks: for dam lakes, does the Brain say releasing or not (never unknown), and when it changes, from real operator data, and does that match what the operators posted?",
   "measurement": "Domain capability score (Cortex scoring.md SC-02, SC-03): how far Sector can trust the Generation Brain's published dam release picture (status, measured release, the operator's schedule). Not operational health, not production readiness, not comparable with any other Brain's score.",
   "question": "Per dam lake, does the Generation Brain say whether the dam is releasing or generating now (never unknown) and when that changes, current, from sources Sector is allowed to read, with parsers proven on real responses, and has that matched the operators' own schedules over the pre-registered week (GENERATION_BRAIN_PLAN.md section 5)?",
-  "unknownPolicy": "Unknown counts against the Brain everywhere (owner rule 2026-11-23: nothing should show unknown). A lake, tile or field that is unknown, unavailable, blocked or abstained earns 0 and stays in every denominator; a fact the Brain does not publish scores 0 and lowers completeness. Unknown is never rewarded or excluded to make a share look better. Filling an unknown with an estimate is worse still: it is an invented value, which the validation checks fail, so the only way to remove an unknown is real data. For Generation, a release status of UNKNOWN, and a dam lake with no published state, count against.",
-  "scope": "Coverage over DAM lakes (/brains/generation.fleet.damLakeCount, 401 in catalog generation-dams-2026-11-22.1), not the 621-lake directory: the 220 lakes without a dam have no release by definition. Quality shares over supported lakes (/brains/generation.supportedLakeCount: state kind OBSERVED or SCHEDULE_ONLY). Validation fleet-wide.",
+  "unknownPolicy": "Unknown counts against the Brain everywhere (owner rule 2026-11-23: nothing should show unknown). A lake, tile or field that is unknown, unavailable, blocked or abstained earns 0 and stays in every denominator. Unknown is never rewarded or excluded to make a share look better. Every per-lake share therefore divides by ONE fixed denominator, all the lakes the Brain is meant to cover; a lake with no state (blocked, never computed, errored) is in it and earns 0. A Brain-level fact that is not published scores 0 and lowers completeness: both count as 0, never as excluded. Filling an unknown with an estimate is worse still: it is an invented value, which the validation checks fail, so the only way to remove an unknown is real data. For Generation, a release status of UNKNOWN, and a dam lake with no published state, count against.",
+  "scope": "Every per-lake share divides by all catalog dam lakes (/brains/generation.fleet.damLakeCount, 401 in catalog generation-dams-2026-11-22.1), unbound, permission-required and errored dams included; a dam with no published slot earns 0. The 220 directory lakes without a dam have no release by definition and are not in it. Schedule coverage uses the schedule-posting groups only, for numerator and denominator alike. Validation fleet-wide.",
   "sourceContract": "brains/generation/contracts/generation-publication-v1.json (families /lakes/{k}/states/generation, /lakeFleet/{k}/..., /snapshots/{k}/latest/generation, /brains/generation/{child}, /validation/generation, /health/brains/generation/{child}); state schema brains/generation/contracts/generation-dam-state-v1.schema.json",
   "dimensionClasses": "Cortex scoring.md SC-09: CAP, COV, PRED, VAL, ENG, VOL. This draft has no ENG or VOL dimension.",
   "unscoredWhen": "The registry /brains/generation is absent or has never carried lastSuccessfulRun. The scorer then writes NO score block: UNSCORED, never 0. Today this holds (PARKED, no executor, run.py --write refuses: BLOCKED_AWAITING_APPROVED_RELEASE).",
@@ -36,10 +36,10 @@
       "weight": 30,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "/lakeFleet/{k}/slots/generation.status: share of published slots (every kind, UNAVAILABLE and DOWNSTREAM_ONLY included) whose status is GENERATING, SPILLING, RELEASING or OFF",
+      "fact": "count of catalog dam lakes whose /lakeFleet/{k}/slots/generation.status is GENERATING, SPILLING, RELEASING or OFF, / /brains/generation.fleet.damLakeCount",
       "scale": "share x 10",
       "why": "Whether water is moving at the dam right now is the first thing a tailrace bowfisher needs; UNKNOWN answers nothing and counts against.",
-      "note": "Every published slot is in the denominator, so an abstention (UNKNOWN) is never excluded. Discharge, turbine and spill numbers are secondary detail and are not scored separately."
+      "note": "A dam with no slot (unbound, permission required, no public data, errored) or with status UNKNOWN earns 0 and stays in the denominator. Discharge, turbine and spill numbers are secondary detail and are not scored separately."
     },
     {
       "id": "scheduleCoverage",
@@ -47,9 +47,9 @@
       "weight": 25,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "count of /lakes/{k}/states/generation with a non-empty schedule.windows / (fleet.byGroup.TVA + fleet.byGroup.TVA_CUMBERLAND + fleet.byGroup.SWPA_USACE)",
-      "scale": "share x 10 (capped at 10)",
-      "note": "Schedules (start / stop times) exist only for TVA, the TVA-published Cumberland projects and SWPA (plan section 3, about 39 lakes). The denominator is those groups, so binding more measured-only CWMS or RISE lakes never lowers this share (the scoring.md CG-2.8-4 concern).",
+      "fact": "count of dam lakes in groups TVA, TVA_CUMBERLAND or SWPA_USACE (/lakes/{k}/states/generation.dam.group) whose state has a non-empty schedule.windows, / (fleet.byGroup.TVA + fleet.byGroup.TVA_CUMBERLAND + fleet.byGroup.SWPA_USACE)",
+      "scale": "share x 10",
+      "note": "Numerator and denominator are the same population: the schedule-posting groups (plan section 3, 39 lakes). A lake outside those groups never counts, so binding more measured-only CWMS or RISE lakes neither raises nor lowers this share. Access today: the TVA_CUMBERLAND projects are also read through the TVA API, and TVA's robots.txt disallows all automated access (reported by the #241 review, 2026-11-23; the D-G check in source_access.json is not yet recorded), so TVA and Cumberland schedules are currently unobtainable and those 24 lakes earn 0 here until a permitted source exists (TVA permission under D-G). SWPA (15 lakes) waits on its own access check. No proxy schedule is used.",
       "why": "The next start or stop lets a bowfisher plan the night instead of guessing."
     },
     {
@@ -69,9 +69,9 @@
       "weight": 5,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "/lakeFleet/{k}/slots/generation: share of lakes with kind OBSERVED or SCHEDULE_ONLY whose stale is false, over lakes with kind OBSERVED or SCHEDULE_ONLY",
+      "fact": "count of catalog dam lakes whose /lakeFleet/{k}/slots/generation has kind OBSERVED or SCHEDULE_ONLY and stale false, / /brains/generation.fleet.damLakeCount",
       "scale": "share x 10, clamped to [0, 10]",
-      "population": "One population for numerator and denominator: the supported lakes as their fleet slots show them. The registry staleLakeCount is not used: it also counts lakes that errored or are UNAVAILABLE (generation_brain/publish.py), which supportedLakeCount excludes, so the ratio could go below zero.",
+      "population": "All catalog dam lakes for numerator and denominator alike. The registry staleLakeCount and supportedLakeCount are not used: they cover different lake sets (errored and UNAVAILABLE lakes are in one and not the other).",
       "note": "A release picture past freshUntil is worse than none for the tile; the Brain marks it stale rather than serving it.",
       "why": "An out-of-date 'releasing now' is wrong on the water, so stale lakes count against."
     }
@@ -156,14 +156,14 @@
     },
     "liftPath": [
       {
-        "step": "Illustration: the 17 readable lakes published, all with a known status and schedule windows, none stale (an assumption, not a measurement), validation not started",
-        "arithmetic": "releasingNow 10 x 30 = 300; scheduleCoverage 17/39 = 0.436 -> 4.4 x 25 = 109; damCoverage ladder(17/401 = 4.2 %) = 1 x 10 = 10; currency 10 x 5 = 50; validation 0 x 30 = 0; uncapped (300 + 109 + 10 + 50) / 100 = 4.7; caps: release 2.0 (if unapproved), sourceAccess 3.0, realResponseFixtures 3.0, coverage 3.0, validation 5.0",
-        "effect": "2.0 / 10 while the release is unapproved, 3.0 once it is approved; uncapped 4.7 shown beside it."
+        "step": "Illustration ONLY IF TVA access were permitted: the 17 TVA-API lakes published, each with a known status, schedule windows, not stale (an assumption, not a measurement); validation not started",
+        "arithmetic": "releasingNow 17/401 = 0.042 -> 0.4 x 30 = 12.7; scheduleCoverage 17/39 = 0.436 -> 4.4 x 25 = 109; damCoverage ladder(4.2 %) = 1 x 10 = 10; currency 17/401 -> 0.4 x 5 = 2.1; validation 0 x 30 = 0; uncapped (12.7 + 109 + 10 + 2.1) / 100 = 1.3; caps: release 2.0 (if unapproved), sourceAccess 3.0, realResponseFixtures 3.0, coverage 3.0, validation 5.0, none below 1.3",
+        "effect": "1.3 / 10. With TVA access refused, as reported, these lakes publish nothing and the Brain stays at 0 or UNSCORED."
       },
       {
-        "step": "D-G resolved, real fixtures recorded, discovery pass reaches 150 dam lakes (the low end of the plan's planning estimate, section 3), validation week PASSED",
-        "arithmetic": "releasingNow and currency as above (assumed) 300 + 50; scheduleCoverage 39/39 = 10 x 25 = 250; damCoverage ladder(150/401 = 37 %) = 5 x 10 = 50; validation 10 x 30 = 300; uncapped 9.5; no cap",
-        "effect": "9.5 / 10 under these assumptions. The shares are assumptions for illustration; only the probe and the validation week replace them with measurements."
+        "step": "Illustration: D-G resolved with TVA permission and SWPA allowed, real fixtures recorded, the discovery pass reaching 150 dam lakes (the low end of the plan's estimate), each with a known, current status, all 39 schedule lakes posting windows, validation week PASSED",
+        "arithmetic": "releasingNow 150/401 = 0.374 -> 3.7 x 30 = 112.2; scheduleCoverage 39/39 = 10 x 25 = 250; damCoverage ladder(37 %) = 5 x 10 = 50; currency 150/401 -> 3.7 x 5 = 18.7; validation 10 x 30 = 300; uncapped (112.2 + 250 + 50 + 18.7 + 300) / 100 = 7.3; no cap",
+        "effect": "7.3 / 10 under these assumptions: the 251 dam lakes without a known status still count against. Without TVA permission the schedule share could reach at most 15/39 (SWPA only). The shares are assumptions; only the probe and the validation week replace them with measurements."
       }
     ]
   },
@@ -186,5 +186,6 @@
       "a scorer PR (score_generation(), facts, UPSTREAM, improvement entries, fixture-index staging) and a decision whether Generation enters the Engine score (today it does not)",
       "the Brain's scoreNote / scoreStatus updated, this file moved to docs/brains/scoring/ with status ADOPTED, and verification/fixtures/scores/score_baseline.json re-recorded in the same PR"
     ]
-  }
+  },
+  "accessNote": "TVA's robots.txt disallows all automated access (reported by the #241 review, 2026-11-23; recorded for D-G, not yet in the knowledge release). If D-G confirms it, TVA becomes PERMISSION_REQUIRED and the 17 lakes counted 'readable today' (all read through the TVA API) are not readable until TVA gives permission. The worked examples below state their access assumption."
 }

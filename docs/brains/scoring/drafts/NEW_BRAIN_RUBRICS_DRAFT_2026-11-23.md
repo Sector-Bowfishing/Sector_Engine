@@ -31,11 +31,17 @@ The rubrics are built for those decisions, not for research volume. Every check 
 
 - **Unknown counts against the Brain, everywhere.** This follows Michael's rule that nothing should show unknown. Each draft has an `unknownPolicy` that applies it in four places:
   - A lake, tile or field that is unknown, unavailable, blocked or abstained earns 0 and stays in every denominator.
-  - A fact the Brain does not publish scores 0.
+  - **One fixed denominator per Brain.** Every per-lake share divides by all the lakes the Brain is meant to cover:
+    - Weather: the 621-lake directory.
+    - Moon: the directory, minus polar-day lakes for the cloud share only.
+    - Generation: the 401 catalog dam lakes. Its schedule share uses the 39 schedule-posting lakes for both numerator and denominator.
+
+    A lake with no state at all (blocked, never computed, errored) is in that denominator and earns 0.
+  - A fact the Brain does not publish scores 0 and lowers completeness. Either way an unknown counts as 0; it is never excluded.
   - No dimension excludes unknowns to make a share look better.
   - Filling an unknown with an estimate is worse: it is an invented value, which validation fails. The only way to remove an unknown is real data.
 - **Each dimension says, in one sentence (`why`), what it means for a bowfisher.**
-- **Same shape as the computed rubrics** (`lake-brain-score-v1.json`), so adoption can follow the existing scoring pattern: a 0–10 linear weighted sum with weights totalling 100, `UNKNOWN` dimensions contributing 0 and excluded from completeness, and gates that cap and never add. Each draft also has the following fields:
+- **Same shape as the computed rubrics** (`lake-brain-score-v1.json`), so adoption can follow the existing scoring pattern: a 0–10 linear weighted sum with weights totalling 100, `UNKNOWN` dimensions contributing 0 and lowering completeness (an unknown counts as 0, never as excluded), and gates that cap and never add. Each draft also has the following fields:
   - a `class` on every dimension (Cortex scoring.md SC-09). There is no ENG or VOL dimension.
   - `movableByPackagingOnly`
   - `unscoredWhen`
@@ -59,7 +65,7 @@ The rubrics are built for those decisions, not for research volume. Every check 
   - *Moon:* has no pre-registration at all, so everything in its validation block beyond the MOON-VAL-001 stop condition is new.
 - **Validation nodes the Brains overwrite.** Moon and Generation write a constant `NOT_VALIDATED` to `/validation/{id}` on every run (`publish.py`), and Weather does not write the node yet. Each therefore needs a Brain change before its validation dimension can ever move. These changes are listed in each adoption checklist.
 - **Common gates.** Health FAILED/UNKNOWN caps at 2.0. For Weather and Generation, coverage below 10 % caps at 3.0, as Lake does.
-- **One population per ratio, clamped to [0, 10].** Each share takes its numerator and denominator from the same set of lakes in the same run.
+- **One population per ratio, clamped to [0, 10].** Each share's numerator is a subset of its fixed denominator, taken from the same run.
 - **No permanently empty dimensions.** There are none for the pressure forecast (WX-003) or per-lake skyglow (MOON-INP-002). They would be 0 forever (SC-09) until the Brain publishes a fact for them.
 - **Worked examples are hand arithmetic** (`TYPED_NOT_COMPUTED`, SC-11), labelled non-authoritative. Assumed shares are marked as assumptions.
 
@@ -78,11 +84,11 @@ PARTIAL means at least one of §5.1–§5.3 passed, the others are still within 
 | Dimension | Weight | What earns points |
 |---|---|---|
 | validation | 30 | Independent stations confirm rain, temperature and the change signal (plan §5) |
-| rainReadout | 20 | share of states with both rain in the last hour and rain expected in the next 6 h (a null in either counts against) |
+| rainReadout | 20 | directory lakes (all 621; a lake with no state earns 0) with both rain in the last hour and rain expected in the next 6 h (a null in either counts against) |
 | coverage | 15 | directory ladder; BLOCKED lakes count against |
-| fullStates | 15 | share of supported lakes at readiness CALIBRATION (kind observation, not stale, nothing missing, cloud included) |
-| changeSignalEvaluable | 15 | share of states whose rain-onset, front and air-temperature-swing rules could all be evaluated (`weatherChange.unknown` absent or empty) |
-| pressureTrend | 5 | share of states with a 3 h trend. A token weight: no evidence ties pressure to where target species are |
+| fullStates | 15 | directory lakes at readiness CALIBRATION (kind observation, not stale, nothing missing, cloud included) |
+| changeSignalEvaluable | 15 | directory lakes whose rain-onset, front and air-temperature-swing rules could all be evaluated (`weatherChange.unknown` absent or empty) |
+| pressureTrend | 5 | directory lakes with a 3 h trend. A token weight: no evidence ties pressure to where target species are |
 
 **Today:** UNSCORED. No dry-run shares have been recorded yet, so the draft gives no illustrative number.
 
@@ -102,8 +108,8 @@ PARTIAL means at least one of §5.1–§5.3 passed, the others are still within 
 | Dimension | Weight | What earns points |
 |---|---|---|
 | validation (MOON-VAL-001) | 35 | A simple light reading shows the darkness class matches how dark the water is |
-| cloudIntegration | 35 | MOON_AND_CLOUD share of night lakes (`breakdowns.basis`). Cloud cancels the moon except near cities. MOON_ONLY (cloud unknown) counts against |
-| currentNight | 30 | share of lakes computed tonight without error (`readinessCounts.DEGRADED` over `supportedLakeCount`) |
+| cloudIntegration | 35 | MOON_AND_CLOUD lakes over (directory − NO_NIGHT lakes). Cloud cancels the moon except near cities. MOON_ONLY and errored lakes count against |
+| currentNight | 30 | lakes with a night state this run (sum of `breakdowns.basis`) over the directory |
 
 There is no coverage dimension. Moon's `supportedLakeCount` is every lake in the run, errored ones included, so coverage would always read 621/621 and measure nothing.
 
@@ -140,16 +146,16 @@ Coverage uses the **401 dam lakes** as its denominator, not the 621-lake directo
 | Dimension | Weight | What earns points |
 |---|---|---|
 | validation | 30 | VALIDATED = all five plan §5 metrics pass over the pre-registered week. PARTIAL = some pass, the rest not yet scored, none failed. Any failed metric = NOT_VALIDATED. |
-| releasingNow | 30 | **Is the dam releasing or generating right now?** Share of all published slots (UNAVAILABLE and DOWNSTREAM_ONLY included) whose status is GENERATING, SPILLING, RELEASING or OFF. UNKNOWN counts against |
-| scheduleCoverage | 25 | **When does it change?** Operator schedule published, over the TVA, TVA_CUMBERLAND and SWPA_USACE lakes (where operators post schedules), so binding measured-only lakes never lowers it |
+| releasingNow | 30 | **Is the dam releasing or generating right now?** Catalog dam lakes whose status is GENERATING, SPILLING, RELEASING or OFF, over all 401 dam lakes. UNKNOWN, unbound and errored dams count against |
+| scheduleCoverage | 25 | **When does it change?** TVA, TVA_CUMBERLAND and SWPA_USACE lakes with posted schedule windows, over those same 39 lakes. Today these earn 0: TVA's robots.txt disallows automated access (reported by the #241 review; D-G not yet recorded), the Cumberland projects are read through the TVA API, and SWPA waits on its access check. No proxy schedule is used |
 | damCoverage | 10 | dam lakes with a release picture; a dam lake with none counts against |
-| currency | 5 | share of supported lakes whose fleet slot is not stale, computed over one population |
+| currency | 5 | catalog dam lakes with a current (not stale) release picture, over all 401 dam lakes |
 
 Discharge, turbine and spill numbers are secondary detail. They are published but not scored on their own.
 
 **Today:** UNSCORED.
 
-**Illustration:** the 17 readable lakes, if published and fully current, would give uncapped 4.7. That is capped to 2.0 while the release is unapproved and to 3.0 afterwards.
+**Illustration** (only if TVA access were permitted): the 17 TVA-API lakes, published and fully current, would give 1.3. With 150 dam lakes known and current, all 39 schedules posted and validation passed, it would give 7.3; the 251 dams without a known status still count against. With TVA access refused, as reported, the TVA lakes publish nothing.
 
 D-I (the cross-Brain TVA read budget) blocks enablement, not the score.
 
@@ -158,7 +164,7 @@ D-I (the cross-Brain TVA read budget) blocks enablement, not the score.
 ## What Michael must approve to adopt one (per Brain)
 
 1. **The rubric.** Weights, gates, caps and status meanings, as written or amended. A new rubric is approval-gated.
-2. **Moon only.** Accept or replace the proxy and the proposed MOON-VAL-001 criteria, then commit the pre-registration before any data is read.
+2. **Moon only.** Accept or replace the practical one-site light-meter check for MOON-VAL-001, then write it down before any reading.
 3. **Generation only.** Whether the fixture gate may read repository evidence. Every other fact in these drafts is a published RTDB fact.
 4. **Brain changes to the validation node.** Weather must start writing `/validation/weather` with these status meanings. Moon and Generation must stop overwriting `/validation/moon` and `/validation/generation` with a constant `NOT_VALIDATED` on every run. Optionally, Moon could keep its previous `lastSuccessfulRun` after a run with errors, as Weather and Generation do.
 5. **Cortex.** A Cortex maintenance session (not this repository) to register the Brain and `/scores/{id}`. None of the three is a Cortex target Brain (BA-01; CG-3.1-19, CG-3.1-20).
