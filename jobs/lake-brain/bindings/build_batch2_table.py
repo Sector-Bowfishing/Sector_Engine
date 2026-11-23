@@ -103,7 +103,7 @@ HISTORY_OFFSETS = {
 
 CRITERIA = ("binding-review-v1 R1-R9 + dry-run checks b/c/d (check b on live fallbacks run 2026-11-22: any FAIL held out); R9 counts only "
             "an independent second gauge (the same gauge read through another endpoint is not R9); 15 ft history/live series rule run "
-            "2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision pending)")
+            "2026-11-22 on the Mac mini: 4 lakes flagged as written with history and live the same series (owner decision: keep in, 2026-11-23, Sector_Ops #51 comment 7089961733)")
 
 
 def apply_history_offset(rec: dict, spec: dict) -> None:
