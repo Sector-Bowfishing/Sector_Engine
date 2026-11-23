@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "kit": "BRAIN_CERT_KIT_V1",
   "collectedWith": "pytest -rA per Brain directory (tools/cortex_status/collect_certification.py)",
-  "sourceDigest": "sha256:234adb22804b43077cc831a7e9c314f1775c5e357c8ceb87d892cf925ad1e611",
+  "sourceDigest": "sha256:c19e42cc979bb4457f12ccb3c3fdf8b3e5fdb8fa3b7eb84f5fde7f171a1842fb",
   "brains": {
     "depth": {
       "directory": "brains/depth",
