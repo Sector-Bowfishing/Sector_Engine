@@ -1,0 +1,372 @@
+{
+  "rulesId": "LGC-2026-11-23.5",
+  "title": "Lake gauge census: candidate selection and candidate-to-binding review rules (pre-registered)",
+  "registeredAt": "2026-11-23",
+  "registeredBefore": "any census request was sent (none was sent under any earlier registration); no level value of any candidate has been read",
+  "labels": [
+    "INTERNAL_EXPERIMENTAL",
+    "NOT_FOR_CUSTOMERS"
+  ],
+  "purposes": {
+    "BINDING": "unprofiled directory lakes (not in Lake's reviewed set): find gauge-grade level series (DIRECT_LAKE_GAUGE or DIRECT_OPERATOR_POOL) for the next binding batch",
+    "INDEPENDENT_TRUTH": "every lake with a binding (reviewed or candidate): list series that are NOT the lake's bound live/fallback/history series, with independence evidence, so the operator-truth validation v3 can freeze a truth list from metadata alone"
+  },
+  "scope": {
+    "lakes": "all 621 directory lakes (brains/moon/runtime/knowledge/lakes-directory.json, the projection of Sources/SectorEngine/Support/LakeDirectory.swift)",
+    "reviewedSet": "jobs/brain_platform/sector_brain_platform/publisher_live/customer_lake_level_eligible.json lakeIds (Lake's REVIEWED set: 5 pilots + accepted_batch.json + accepted_batch2.json)",
+    "boundSeries": "brains/lake/runtime/LakeBrain/LakeSourceBindingsGenerated.swift (all rows, reviewed and candidate) plus the 5 hand-written pilots in LakeSourceBindings.swift",
+    "readOnlyInputs": "the census reads these files and never writes them; it records their sha256 in its output"
+  },
+  "notBefore": "2026-12-01T12:00:00Z",
+  "notBeforeReason": "the operator-truth validation (PR #243) runs 2026-11-24..30 on the Mac mini; 12 h margin after its window. Every networked path refuses before this instant (the guard is in the fetcher, so controls, geometry and census are all covered). The Mini request adds a second gate: only after #243 has posted its result on #51",
+  "excludedSources": {
+    "SWOT": "not gauge grade for sourceAuthority; SWOT-only lakes dilute the quality shares until decision R10",
+    "TVA host": "www.tva.com is never queried (robots); USGS gauges at TVA reservoirs are the alternative",
+    "NWS NWPS / IEM HADS": "redistributions of another agency's DCP; not queried, and never counted as independent truth",
+    "USGS 00065 gage height": "a local-datum stage, not an elevation; out of scope for this census"
+  },
+  "hosts": {
+    "waterservices.usgs.gov": {
+      "provider": "usgs",
+      "agency": "USGS",
+      "terms": "US Government public domain (https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits)"
+    },
+    "api.waterdata.usgs.gov": {
+      "provider": "usgs",
+      "agency": "USGS",
+      "terms": "US Government public domain (https://api.waterdata.usgs.gov/)"
+    },
+    "cwms-data.usace.army.mil": {
+      "provider": "cwms",
+      "agency": "USACE",
+      "terms": "US Government public data, no key (https://cwms-data.usace.army.mil/cwms-data/)"
+    },
+    "data.usbr.gov": {
+      "provider": "rise",
+      "agency": "USBR",
+      "terms": "US Government public domain (https://data.usbr.gov/)"
+    },
+    "storage.googleapis.com": {
+      "provider": "registry",
+      "agency": "Sector",
+      "terms": "Sector's own public Lake Registry bucket (sector-lake-registry), USGS NHD derived"
+    }
+  },
+  "fetch": {
+    "methods": [
+      "GET"
+    ],
+    "userAgent": "Sector-LakeGaugeCensus/1.0 (read-only public metadata)",
+    "minSecondsBetweenRequestsPerHost": 1.0,
+    "timeoutSeconds": 60,
+    "maxRequests": 12000,
+    "robots": "robots.txt is read once per host (RFC 9309, conservative): 2xx parsed; 401, 403 and 429 disallow all; other 4xx allow all; 5xx, a redirect or no answer disallow all. A disallowed path is never requested and is recorded ROBOTS_DISALLOWED per host and path",
+    "values": "metadata only. The one data call (USGS instantaneous values, last 12 h) is made only for USGS POOL candidates of BINDING lakes that pass S1-S3 and S6 (the pre-shortlist); it keeps time stamps and drops every value at parse time. Liveness of every other row comes from catalog extents",
+    "redirects": "never followed; a 3xx answer is recorded and treated as a failed request",
+    "retries": "at most 2 retries (429, 5xx, network error); every attempt counts against maxRequests and is logged",
+    "partialOutput": "a failed request, chunk or lake is recorded under errors (by stage) and the run continues; when the budget is exhausted the run stops discovery, finalizes what it has and sets summary.budgetExhausted; lakes not discovered are counted as notDiscovered, never as noCandidate",
+    "neverHosts": [
+      "tva.com",
+      "www.tva.com",
+      "api.water.noaa.gov",
+      "mesonet.agron.iastate.edu"
+    ],
+    "neverHostsNote": "refused by the fetcher whatever the hosts table says (TVA's robots.txt is Disallow: / for all agents; NWPS/HADS are redistributions). The census never relies on tva.com: TVA reservoirs are reached only through USGS gauges",
+    "cwmsOfficeFailures": "a failed CWMS office location catalog is never cached as empty: it is retried for the next lake, up to 3 failures per office per run; every lake discovered while an office was unavailable is marked CWMS_OFFICE_UNAVAILABLE (discovery incomplete) and is not counted as 'no candidate'",
+    "discoveryCompleteness": "every discovery failure marks the lake incomplete (summary.binding.incomplete), never noCandidate: PROVIDER_FAILED:<p>, PROVIDER_DISABLED:<p> (a failed positive control), USGS_BOX_TOO_LARGE, USGS_TSMETA_UNAVAILABLE, CWMS_OFFICE_UNAVAILABLE:<office>, CWMS_LOCATIONS_TRUNCATED:<office>, CWMS_TS_UNAVAILABLE:<location>, CWMS_TS_TRUNCATED:<location>, RISE_CATALOG_UNAVAILABLE, RISE_CATALOG_PARTIAL, RISE_CATALOG_TRUNCATED, RISE_DETAIL_UNAVAILABLE:<location>, RISE_ITEM_UNAVAILABLE:<item>, GEOMETRY_UNAVAILABLE (the Lake Registry index or the lake's outline could not be read; a lake whose registry entry has no geometry is POINT_ONLY by design, not incomplete), USGS_OGC_TRUNCATED (OGC API next links followed up to the page cap), USGS_SITE_ERROR (WaterServices answered anything but 200 or a well-formed empty result and the OGC fallback failed), USGS_SITE_NO_COORDINATES (a site row in the lake's box without coordinates), CWMS_LOCATION_NO_COORDINATES:<office> and RISE_LOCATION_NO_COORDINATES (a location without coordinates whose state is the lake's state; one without a state is counted in the summary only). A failed or partial catalog (CWMS office locations, RISE locations) is never cached: it is retried for the next lake, at most 3 failures per catalog per run. A pagination cap that is reached marks the listing truncated, never complete",
+    "usgsEmpty": "WaterServices answers 404 for an empty search; a 404 counts as an empty result only when its body says 'No sites found matching all criteria'; any other non-200 answer is a provider error (the OGC fallback is tried in auto mode)",
+    "ogcPagination": "OGC API responses are followed through their rel=next links up to the page cap; reaching the cap with a next link left marks USGS_OGC_TRUNCATED"
+  },
+  "usgs": {
+    "parameters": {
+      "62614": "lake/reservoir surface elevation, NGVD29",
+      "62615": "lake/reservoir surface elevation, NAVD88",
+      "00062": "reservoir surface elevation above a datum"
+    },
+    "parameterDatum": {
+      "62614": "NGVD29",
+      "62615": "NAVD88",
+      "00062": "SITE_DATUM"
+    }
+  },
+  "cwms": {
+    "offices": [
+      "LRB",
+      "LRC",
+      "LRE",
+      "LRH",
+      "LRL",
+      "LRN",
+      "LRP",
+      "MVK",
+      "MVM",
+      "MVN",
+      "MVP",
+      "MVR",
+      "MVS",
+      "NAB",
+      "NAE",
+      "NAN",
+      "NAO",
+      "NAP",
+      "NWDM",
+      "NWDP",
+      "NWK",
+      "NWO",
+      "NWP",
+      "NWS",
+      "NWW",
+      "POA",
+      "SAC",
+      "SAJ",
+      "SAM",
+      "SAS",
+      "SAW",
+      "SPA",
+      "SPK",
+      "SPL",
+      "SWF",
+      "SWG",
+      "SWL",
+      "SWT"
+    ],
+    "parameter": "Elev (base parameter); sub-parameters Pool / Forebay / Headwater count as pool, Tailwater never"
+  },
+  "classification": {
+    "tailwaterWords": [
+      "tailwater",
+      "tailrace",
+      "tail water",
+      "below dam",
+      "blw dam",
+      "bl dam",
+      "outflow",
+      "outlet",
+      "spillway",
+      "release",
+      "downstream",
+      "tw"
+    ],
+    "poolWords": [
+      "lake",
+      "reservoir",
+      "res",
+      "pool",
+      "forebay",
+      "headwater",
+      "hw",
+      "impoundment",
+      "pond",
+      "flowage"
+    ],
+    "riverWords": [
+      "river",
+      "creek",
+      "cr",
+      "r",
+      "fork",
+      "fk",
+      "branch",
+      "run"
+    ],
+    "ruleCurveVersionWords": [
+      "guide",
+      "curve",
+      "gc",
+      "rul",
+      "rule",
+      "plan",
+      "target",
+      "fcst",
+      "forecast",
+      "conservation",
+      "flood",
+      "control",
+      "inflow",
+      "lower",
+      "upper",
+      "top",
+      "bottom",
+      "l1",
+      "l2",
+      "l3"
+    ],
+    "classes": {
+      "POOL": "a pool/lake series inside the outline (or within R1) with no tailwater or river cue",
+      "TAILWATER": "a tailwater/outflow series, or a dam-cue station outside the outline",
+      "RIVER": "a river/creek station outside the outline with no pool cue",
+      "RULE_CURVE": "a guide/rule/plan/forecast series (the 2026-11-21 trap), any series whose latest time is in the future; never a level source",
+      "UNKNOWN": "cues conflict or are absent (including a CWMS sub-location Upper/Lower); hand review"
+    },
+    "ruleCurveApplies": "to a CWMS version and sub-parameter and to a RISE item title, never to a station or lake name",
+    "subLocationNotPoolWords": [
+      "upper",
+      "lower"
+    ],
+    "futureLatestToleranceHours": 1,
+    "futureLatest": "a latest time after the census time plus the tolerance is a rule/plan series: class RULE_CURVE, never live. Tolerance: futureLatestToleranceHours for timestamped sources (CWMS extents, RISE end dates, USGS IV); futureLatestToleranceHoursDateGranular for date-granular sources (the USGS catalog end date, which is a day)",
+    "copyVersionWords": {
+      "USGS_COPY": [
+        "usgs"
+      ],
+      "USBR_COPY": [
+        "usbr",
+        "bor",
+        "reclamation"
+      ],
+      "CDEC_COPY": [
+        "cdec",
+        "dwr"
+      ],
+      "NWS_REDISTRIBUTION": [
+        "nws",
+        "nwps",
+        "hads"
+      ]
+    },
+    "futureLatestToleranceHoursDateGranular": 24,
+    "derivedVersionWords": [
+      "best",
+      "rev",
+      "comp",
+      "calc",
+      "ccp"
+    ],
+    "derivedVersion": "a CWMS version whose lower-cased text contains any of derivedVersionWords as a substring (so Rev2, Revised, Computed, Calc1, Best-NWO all match) is a derivation of another series; conservative: a false match only makes a row UNCERTAIN"
+  },
+  "selection": {
+    "note": "Stage A, metadata only. Decides which candidates go to the stage B binding review. Applies to purpose BINDING.",
+    "S1_provider": "provider has an Engine adapter: usgs (62614/62615/00062), cwms, rise",
+    "S2_class": "classification POOL; UNKNOWN goes to HAND_REVIEW; TAILWATER, RIVER, RULE_CURVE are rejected",
+    "S3_position": {
+      "insideOrWithinM": 1500,
+      "pointOnlyWithinM": 1500,
+      "pointOnlyVerdict": "HAND_REVIEW (no outline: R1 cannot be evaluated)"
+    },
+    "S4_live": {
+      "maxAgeHours": 72,
+      "maxAgeHoursDaily": 192,
+      "dailyCadenceMinAtLeast": 1440
+    },
+    "S5_datum": "a vertical datum is named by the parameter, the site or the location; missing datum -> HAND_REVIEW",
+    "S6_host": "robots allows the path and the host terms are listed in hosts",
+    "S7_unique": "the station is not bound by another REVIEWED lake, and no other directory lake has the station inside or nearer its outline",
+    "S8_capability": {
+      "usgs": "DIRECT_LAKE_GAUGE",
+      "cwms": "DIRECT_OPERATOR_POOL",
+      "rise": "DIRECT_OPERATOR_POOL"
+    },
+    "S9_order": "per lake: DIRECT_OPERATOR_POOL before DIRECT_LAKE_GAUGE, then inside before outside, then nearer, then longer record (begin date)",
+    "verdicts": [
+      "SHORTLIST",
+      "HAND_REVIEW",
+      "REJECT"
+    ]
+  },
+  "independence": {
+    "note": "Applies to purpose INDEPENDENT_TRUTH. Evidence from metadata only; each candidate is compared with every bound live, fallback and history series of the same lake.",
+    "boundSeriesExcluded": "a candidate equal to a bound series (same provider family and series; Access2Water and CWMS are one family when the time-series id matches) is not listed as a candidate",
+    "originAgency": "usgs -> USGS; rise -> USBR only when the RISE item's own metadata names the Bureau of Reclamation (USBR / Reclamation) as collector, source or agency, otherwise RISE_UNCONFIRMED (RISE republishes other agencies' data, including USGS); cwms/a2w -> by the version label: USGS -> USGS_COPY, USBR/BOR/Reclamation -> USBR_COPY, CDEC/DWR -> CDEC_COPY, NWS/NWPS/HADS -> NWS_REDISTRIBUTION, none -> USACE_UNLABELLED (origin unknown; SHEF is a transfer format, not an origin); tva -> TVA; nwps/hads -> NWS_REDISTRIBUTION. A labelled copy belongs to the labelled agency's family. Bound RISE items are RISE_UNCONFIRMED unless the census read their metadata and it names USBR",
+    "sameGaugeDistanceM": 300,
+    "otherSiteMinDistanceM": 1000,
+    "tiers": {
+      "NOT_INDEPENDENT": "same USGS site id as a bound series; or same CWMS base location as a bound cwms/a2w series (any sub-location, version or interval); or a labelled copy of an agency the lake already has a bound series from; or an NWS redistribution; or an overlapping or unknown origin within sameGaugeDistanceM of a bound gauge",
+      "INDEPENDENT_AGENCY": "neither side is USACE_UNLABELLED or RISE_UNCONFIRMED (unless registered origin evidence resolves it), no derived version; origin agency families differ from every bound series', the site id differs, and every bound gauge has known coordinates at least sameGaugeDistanceM away",
+      "INDEPENDENT_SITE": "same known origin agency family as a bound series (USACE_UNLABELLED and RISE_UNCONFIRMED never count as known), no derived version, a different site id and base location, at least otherSiteMinDistanceM from every bound gauge with known coordinates",
+      "UNCERTAIN": "anything else, including any pair with USACE_UNLABELLED or RISE_UNCONFIRMED on either side, a derived CWMS version, a labelled copy of an agency the lake has no bound series from, and a bound gauge whose location is unknown (TVA, NWS)"
+    },
+    "eligibleForV3": "INDEPENDENT_AGENCY or INDEPENDENT_SITE, classification POOL, position inside or within S3, live by S4 from catalog extents; v3 freezes its own list from these rows under its own pre-registration",
+    "boundCoordinates": "USGS sites from the site service; CWMS/Access2Water from the office location catalog; RISE items from the fetched RISE locations (item -> location); TVA and NWS stay unknown",
+    "structuralCap": "a bound lake whose binding includes a gauge with unknown coordinates (TVA, NWPS, HADS) can never get an INDEPENDENT_* row; computed from the committed bindings at registration: 130 of 298 bound lakes (129 of 294 reviewed) can; the USGS/USACE border rule lowers the reachable number further for lakes bound to unlabelled CWMS series. The census reports the live figure",
+    "unlabelledBorder": "USACE_UNLABELLED is origin-unknown against every agency, including another USACE_UNLABELLED series (two unlabelled series can derive from one upstream sensor, and CWMS location coordinates are not sensor coordinates): any pair with USACE_UNLABELLED on either side is UNCERTAIN, never INDEPENDENT_*, unless an origin-evidence entry resolves it. An unlabelled series within sameGaugeDistanceM of any bound gauge is NOT_INDEPENDENT",
+    "labelledCopy": "a labelled copy (USGS_COPY, USBR_COPY, CDEC_COPY) is NOT_INDEPENDENT when the lake has a bound series of the same agency (it may copy that very gauge), and UNCERTAIN otherwise (the copied gauge is not identified)",
+    "riseBorder": "RISE_UNCONFIRMED is origin-unknown against every family, like USACE_UNLABELLED: any pair with RISE_UNCONFIRMED on either side (against USGS, USBR, USACE including evidence-USACE, CDEC_COPY, TVA, another RISE_UNCONFIRMED or any other origin) is UNCERTAIN, never INDEPENDENT_*; within sameGaugeDistanceM of a bound gauge it is NOT_INDEPENDENT",
+    "sameBaseLocation": "two CWMS/Access2Water series whose base location (the location id before the first '-', compared case-insensitively) is the same are NOT_INDEPENDENT (sub-locations such as Kinzua-Lake and Kinzua-Tailwater share one project)",
+    "derivations": "a CWMS series with a derived version (classification.derivedVersionWords) is NOT_INDEPENDENT against a bound series at the same base location and UNCERTAIN otherwise; the same holds in the other direction for a candidate against a bound derived series",
+    "originEvidence": "--origin-evidence: a reviewed JSON list of {provider, series, origin, evidence}; origin USACE for a cwms series, USBR for a rise item; written by the v3 pre-registration or the owner. None exists at registration"
+  },
+  "bindingReview": {
+    "note": "Stage B, run only after the census and after PR #243 has run. Uses level values. Same rules as batches 1-2 (binding-review-v1 R1-R9, the 2026-11-21 dry-run checks (b)-(d), the runner's 15 ft history/live rule). Not changeable after the census output exists.",
+    "R1_position": "gauge <= 1.5 km of the outline (point-only lakes: hand review)",
+    "R2_identity": "name similarity >= 0.5, or the gauge is inside the outline",
+    "R3_notTrap": "no tailwater, river or well gauge; no guide/rule curve series",
+    "R4_state": "the gauge's state is one of the lake's states",
+    "R5_unique": "no better-matching lake claims the gauge; not bound by another reviewed lake",
+    "R6_live": "last reading < 72 h old (daily feeds < 192 h)",
+    "R7_level": "30-day median within -25..+8 ft of the directory full pool; a lake with no full pool: n-a, then check (d) n-a and hand review",
+    "R8_datum": "the vertical datum is identified and the same for live, fallback and history (or a recorded offset)",
+    "R9_second": "an independent second origin agrees within 2 ft; n-a when none exists. The same gauge through another endpoint never counts (batch 2 rule)",
+    "check_b": "primary vs fallback within 0.5 ft; any FAIL is held",
+    "check_c": "live within 5 ft of the 7-day median",
+    "check_d": "guide curve / operating zone / full pool within 25 ft of live",
+    "historyLive": "seeded history 365-day median within 15 ft of live (historyLiveMismatch)",
+    "adapter": "the provider has an Engine adapter; otherwise the lake moves to new-provider work, not to the batch",
+    "decision": "every rule PASS or n-a and every check PASS -> proposed for the batch; any FAIL -> held with its reason; a FLAG -> hand review by the owner",
+    "noRelaxation": "the target (>= 311 reviewed lakes, 50%) is never a reason to change a rule, threshold or classification after values are seen; report the count that passes"
+  },
+  "coverageArithmetic": {
+    "directoryLakeCount": 621,
+    "reviewedAtRegistration": 294,
+    "targetReviewed": 311,
+    "gaugeGradeCapabilities": [
+      "DIRECT_OPERATOR_POOL",
+      "DIRECT_LAKE_GAUGE"
+    ],
+    "ceilingBasis": "the reviewed count read from customer_lake_level_eligible.json at run time (not this constant) plus the BINDING lakes with a SHORTLIST row"
+  },
+  "publication": {
+    "changesBindings": false,
+    "changesAcceptedLists": false,
+    "changesKnowledgeRelease": false,
+    "changesScores": false,
+    "output": "local files in --out only (census.json, census.summary.json, robots.json, request log); registered in the Lake research folder's manifest on the Mac mini"
+  },
+  "supersedes": {
+    "rulesId": "LGC-2026-11-23.4",
+    "sha256": "64ca297f43331893dd70a15edcc5a84fd76721c434c042cc67c381b616f41494",
+    "earlier": [
+      {
+        "rulesId": "LGC-2026-11-23.3",
+        "sha256": "2a46ac96df8021c5fca08d19406f5e60eedd19e266289f9130515ecb76b5b8b1"
+      },
+      {
+        "rulesId": "LGC-2026-11-23.2",
+        "sha256": "c17feef35f03c072cb79f4d318b465d807fc72afe5ca351f0b787cc3df382ba7"
+      },
+      {
+        "rulesId": "LGC-2026-11-23",
+        "sha256": "254752ea31823ace94768a7daa658cf70bfa42b8ad0d276ebb1cae1cf86e9e3f"
+      }
+    ],
+    "why": "round-4 review of PR #247 (2026-11-23) before any request was sent: run binding (one ledger, only run #1 counts, fixed arguments), registered origin evidence, RISE_UNCONFIRMED origin-unknown against every family, geometry failures, OGC pagination, WaterServices 404, derived-version matching"
+  },
+  "controls": {
+    "lakes": "Allegheny Reservoir|PA (USGS 03012520 62615; CWMS Kinzua-Lake.Elev.Inst.1Hour.0.RESOPS), Bluestone Lake|WV (USGS 03179800 62614; CWMS Bluestone-Lake.Elev.Inst.15Minutes.0.OBS), Alcova Reservoir|WY (RISE 114)",
+    "pass": "every control series of the provider is rediscovered with class POOL; otherwise the provider is disabled for the run"
+  },
+  "summaryCounts": "BINDING lakes split into withShortlist, handReviewOnly, noCandidate (discovery complete, nothing found), incomplete (discovery ran but a CWMS office or provider failed, nothing shortlisted) and notDiscovered (budget exhausted before the lake)",
+  "runBinding": {
+    "folder": "<research folder>/gauge-census/binding/LGC-2026-11-23.5/ : one global binding per rules id, inside the Lake research folder that Cortex research-path returns, never inside a run's output folder",
+    "ledger": "ledger.jsonl in the binding folder: append-only, hash-chained (each line carries the sha256 of the previous line; the first chains to sha256('genesis:<rulesId>:<rulesSha256>')), exclusive lock, fsync; the same shape as the Wind run ledger (tools/research/protocol_run_ledger.py, not yet on main); a broken chain or a clock earlier than the newest line refuses every later call",
+    "steps": {
+      "controls": "one-shot preflight (window 'all'); may run before the census",
+      "census": "one-shot (window 'all'): only run #1 counts. A run that ends before writing any output is ABORTED_NO_RESULT and does not block a retry; a run that started writing and failed is FAILED and blocks every later run; a COMPLETED run (including a budget-exhausted one) blocks every later run"
+    },
+    "outputs": "run #N writes to <binding folder>/run-<N>/ only, with create-exclusive writes (write-once); the tool chooses the folder, there is no --out for controls or census",
+    "fixedArguments": {
+      "lakes": "all",
+      "registry": "https://storage.googleapis.com/sector-lake-registry",
+      "usgsApi": "auto",
+      "originEvidence": "only files registered below"
+    },
+    "fixedArgumentsRule": "the census refuses --lakes, any --registry other than the fixed value, and any --usgs-api other than 'auto'",
+    "recorded": "the START line records every argument, the tool and rules sha256, the input file hashes, the registry source, and the cache tree hash; the END line records the output hashes, the registry index sha256, the sha256 of every outline read, the cache tree hash after the run and the request, retry and cache-hit counts; every cache hit is a line in requests.jsonl (cacheHit true, with the cached file's sha256)",
+    "cache": "<binding folder>/cache/ (metadata responses only; USGS IV is never cached); shared by the attempts of one rules id",
+    "skipControls": "--skip-controls is accepted only when the ledger shows an earlier census attempt of this rules id that ended ABORTED_NO_RESULT and a controls record with no disabled provider (a COMPLETED controls step, or the PASS line logged by that aborted attempt)"
+  },
+  "originEvidenceRegistration": {
+    "registeredFiles": [],
+    "rule": "an origin-evidence file is accepted only when its sha256 is listed in registeredFiles above or in a register-evidence LOG line of the run ledger written before census run #1 started; the census output records each file's sha256 and full text",
+    "refuse": "an entry for a CWMS series whose version already names an agency (USGS, USBR, CDEC, NWS copies stay copies) is refused; an entry must name provider, series, origin (USACE for cwms/a2w, USBR for rise) and an evidence text"
+  }
+}
