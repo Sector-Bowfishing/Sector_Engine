@@ -58,7 +58,9 @@ class Issue:
         self.calls += 1
         if self.fail:
             raise LedgerRefusal(self.fail)
-        pages = [self.comments[i:i + 3] for i in range(0, len(self.comments), 3)] or [[]]
+        listed = [c for c in self.comments if not c.get("_lagging")]
+        listed = [{k: v for k, v in c.items() if k != "_lagging"} for c in listed]
+        pages = [listed[i:i + 3] for i in range(0, len(listed), 3)] or [[]]
         return "".join(json.dumps(p) for p in pages)
 
 
@@ -140,7 +142,7 @@ def test_step_and_key_without_whitespace(root):
 def test_post_anchor_text_shape_and_genesis(root):
     L = ledger(root, anchored=False)
     text = L.post_anchor_text()
-    assert text.splitlines()[0] == f"Run anchor: {PID} {L.anchor()} fit,score,select"
+    assert text.splitlines()[0] == f"Run anchor: {PID} {L.anchor()} fit,score,select {PSHA}"
     assert "owner approval" not in text.lower() and PSHA in text and str(root.resolve()) in text
     g = json.loads(lines(root)[0])["result"]
     assert len(g["nonce"]) == 32 and g["protocol_id"] == PID and g["protocol_sha256"] == PSHA and g["root"] and g["host"]
@@ -262,7 +264,7 @@ def test_complete_needs_a_confirmed_start(root):
     L.begin("fit", "all", {}, {})
     with pytest.raises(LedgerRefusal, match="no confirmed"):
         L.complete("fit", "all", {}, {"m": 1})
-    with pytest.raises(LedgerRefusal, match="no `Run start:"):
+    with pytest.raises(LedgerRefusal, match="not listed yet.*do NOT repost"):
         L.confirm_started("fit", "all")
     with pytest.raises(LedgerRefusal, match="no confirmed"):
         L.record_outputs("fit", "all", {"r": "a" * 64})
@@ -902,7 +904,7 @@ def test_reviewer_poc_wrong_result_steps_then_replaced_ledger_refused(tmp_path):
     r.mkdir()
     issue = Issue()
     A = ledger(r, issue=issue, result_steps=frozenset())
-    assert issue.comments[0]["body"].splitlines()[0].endswith(" -")
+    assert issue.comments[0]["body"].splitlines()[0].endswith(f" - {PSHA}")
     A.begin("score", "all", {}, {})
     A.complete("score", "all", {"values": "c" * 64})
     shutil.rmtree(r / "_ledgers")
@@ -923,7 +925,7 @@ def test_poc_without_any_anchor_cannot_produce_values(tmp_path):
 
 def test_anchor_must_carry_the_genesis_result_steps(root):
     L = ledger(root, anchored=False)
-    L.issue.post(f"Run anchor: {PID} {L.anchor()} fit")  # this ledger's hash, but a different step list
+    L.issue.post(f"Run anchor: {PID} {L.anchor()} fit {PSHA}")  # this ledger's hash, but a different step list
     with pytest.raises(LedgerRefusal, match="declares result steps 'fit'"):
         L.begin("fit", "all", {}, {})
     (root.parent / "m").mkdir()
@@ -961,8 +963,68 @@ def test_confirm_result_checks_the_comment(root):
     L = ledger(root)
     go(L)
     L.complete("fit", "all", {}, {"m": 1})
-    with pytest.raises(LedgerRefusal, match="exactly one"):
+    with pytest.raises(LedgerRefusal, match="not listed yet.*do NOT repost"):
         L.confirm_result("fit", "all")
     L.issue.post(f"Run result: {PID} fit all {'a' * 64} {'b' * 64}")
-    with pytest.raises(LedgerRefusal, match="exactly one"):
+    with pytest.raises(LedgerRefusal, match="every `Run result:`"):
         L.confirm_result("fit", "all")
+
+
+# ---------- round 4: listing lag, same protocol under a new id ----------
+def test_listing_lag_then_repost_then_confirm_counts(root):
+    L = ledger(root)
+    L.begin("fit", "all", {}, {})
+    text = L.start_text("fit", "all")
+    first = L.issue.post(text)
+    first["_lagging"] = True  # posted, but the listing does not show it yet
+    with pytest.raises(LedgerRefusal, match="not listed yet: wait and retry confirm_started\\(\\); do NOT repost"):
+        L.confirm_started("fit", "all")
+    L.issue.post(text)  # the operator reposted anyway
+    del first["_lagging"]  # now both identical copies are listed
+    e = L.confirm_started("fit", "all")
+    assert e["external"]["start"]["id"] == first["id"]  # the earliest copy is the recorded one
+    L.complete("fit", "all", {}, {"metric": 0.5})
+    assert L.counts("fit", "all")
+    res = L.result_text("fit", "all")
+    L.issue.post(res)
+    L.issue.post(res)  # an identical result repost counts once too
+    L.confirm_result("fit", "all")
+    assert L.audit(check_external=True)["findings"] == []
+
+
+def test_identical_copies_count_once_but_another_hash_is_repeat(root):
+    L = ledger(root)
+    go(L)
+    L.issue.post(L.start_text("fit", "all"))  # identical copy: still fine
+    L.issue.post(f"Run start: {PID} fit all {'7' * 64}")  # another hash: neither attempt counts
+    e = L.complete("fit", "all", {}, {"m": 1})
+    assert e["counted"] is False and "2 distinct" in e["reason"]
+
+
+def test_same_protocol_sha_under_a_new_id_refused(tmp_path):
+    issue = Issue()
+    r1, r2 = tmp_path / "a", tmp_path / "b"
+    r1.mkdir(), r2.mkdir()
+    A = ledger(r1, issue=issue)
+    run_step(A)
+    B = Ledger(r2, PID + "-rerun", PSHA, result_steps=RS, gh=issue)  # identical protocol document, new id
+    B.issue = issue
+    issue.post(B.post_anchor_text())
+    with pytest.raises(LedgerRefusal, match="anchored earlier under protocol id 'wind-strong-wind-v1'.*after human review on #51"):
+        B.begin("fit", "all", {}, {})
+    C = Ledger(tmp_path / "a", PID + "-v2", OTHER, result_steps=RS, gh=issue)  # a genuinely new version (new sha) is fine
+    issue.post(C.post_anchor_text())
+    assert C.begin("fit", "all", {}, {}) == 1
+
+
+def test_anchor_without_protocol_sha_refused(root):
+    L = ledger(root, anchored=False)
+    L.issue.post(f"Run anchor: {PID} {L.anchor()} fit,score,select {OTHER}")
+    with pytest.raises(LedgerRefusal, match="carries protocol sha256"):
+        L.begin("fit", "all", {}, {})
+
+
+def test_recovery_messages_name_human_review(root):
+    ledger(root).begin("fit", "all", {}, {})
+    with pytest.raises(LedgerRefusal, match="a new protocol id, after human review on #51"):
+        ledger(root).begin("fit", "all", {}, {})

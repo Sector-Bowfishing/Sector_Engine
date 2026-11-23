@@ -27,8 +27,9 @@ confirmed, and a ``Run result:`` comment posted after ``complete()`` lets ``audi
 forged afterwards, as long as the comments still exist. **Edit screening and its blast radius:** a recorded comment is "edited" when its
 body sha256 differs from the recorded one; an unrecorded comment is "edited" when ``updated_at`` is more than 2 s after ``created_at``
 (GitHub can bump ``updated_at`` without an edit), and it matters only if it names this protocol id as an exact token. One such edit blocks
-every further step of THIS protocol (recovery: a new protocol id after human review); other protocols are unaffected. An unrecorded
-comment edited so that it no longer names the protocol id is not detected (edit history is not readable over REST). Other limits: ``for_brain`` trusts the Cortex it is given; GitHub's timestamps are
+every further step of THIS protocol (recovery: a new protocol id, after human review on #51); other protocols are unaffected. An unrecorded
+comment edited so that it no longer names the protocol id is not detected (edit history is not readable over REST). **Runners and
+agents must never edit a #51 comment that names a protocol id**; a correction is a new comment, and a mistake goes to human review. Other limits: ``for_brain`` trusts the Cortex it is given; GitHub's timestamps are
 trusted; "abort only before seeing values" cannot be enforced and is a review check every runner must pass.
 
 The rule
@@ -36,22 +37,26 @@ The rule
 1. **One ledger per protocol id, in the research folder** (``<root>/_ledgers/<protocol_id>.jsonl``). Runners open it with
    ``Ledger.for_brain(brain, protocol_id, protocol_sha256, result_steps=RESULT_STEPS)``; the root comes from ``cortex.py research-path``
    (a differing ``SECTOR_RESEARCH_ROOT`` is refused), must not lie inside any ``--out`` folder, and must equal the root in the genesis entry.
-   The ledger is bound to the protocol sha256: a changed protocol needs a new protocol id.
+   The ledger is bound to the protocol sha256: a changed protocol needs a new protocol id. The anchor line carries the protocol sha256,
+   and an anchor is refused if the same sha256 was anchored earlier under a different protocol id: the identical protocol cannot be
+   re-run under a new id (a genuinely new version has a new sha256).
 2. **Result steps are declared, not chosen per call.** ``result_steps`` is a module constant of the runner, recorded in the genesis entry
    and in the anchor comment; a reopen with a different set is refused. ``begin`` treats a step as result-producing exactly when it is in
    that set. A non-result ``begin`` is refused if #51 has any ``Run start:`` for that step.
 3. **Anchor before ANY step.** The genesis entry carries a random 128-bit nonce, the protocol id and sha256, the root, the result steps,
    the host and the time; ``anchor()`` is its sha256. Post ``post_anchor_text()`` on #51: its first line is
-   ``Run anchor: <protocol_id> <anchor> <result steps, sorted, comma-joined, or "-">``. Every ``begin`` (result step or not) refuses unless
+   ``Run anchor: <protocol_id> <anchor> <result steps, sorted, comma-joined, or "-"> <protocol_sha256>``. Every ``begin`` (result step or not) refuses unless
    the earliest ``Run anchor:`` for the protocol id carries this ledger's anchor and result steps and predates the ledger's first start.
 4. **Start record per result step.** After ``begin``, post ``start_text(step, key)`` and call ``confirm_started(step, key)`` before computing.
-   Exactly one ``Run start:`` for (protocol, step, key), carrying THIS attempt's STARTED hash, is required; anything else is REPEAT
-   (``REPEAT_DETECTED`` entry, ``RepeatDetected`` raised). ``complete()`` re-reads #51 and records ``counted: false`` unless there is still
-   exactly one ``Run start:`` and its hash is this attempt's. After ``complete()``, post ``result_text(step, key)``
+   The ``Run start:`` comments for (protocol, step, key) are counted by distinct hash, so identical copies (a repost during listing lag)
+   count once: the only hash present must be THIS attempt's STARTED hash. None listed yet means "wait and retry confirm_started(); do NOT
+   repost". Any other hash is REPEAT (``REPEAT_DETECTED`` entry, ``RepeatDetected`` raised). ``complete()`` re-reads #51 and records
+   ``counted: false`` unless this attempt's hash is still the only one. So a second start (another hash) appearing before ``complete()``
+   means neither attempt counts; only a start that completed before a second one appeared counts. After ``complete()``, post ``result_text(step, key)``
    (``Run result: <protocol> <step> <key> <completed_entry_sha256> <result_sha256>``) and call ``confirm_result(step, key)``, which
    records the comment's id and body sha256.
 5. **Only the first counted run counts.** ``begin`` refuses a (step, key) with any COMPLETED entry. A STARTED entry with no end is
-   terminal: recovery is a new protocol id. ``abort_before_result`` (same object, no output, no result) allows a retry with the next attempt
+   terminal: recovery is a new protocol id, after human review on #51. ``abort_before_result`` (same object, no output, no result) allows a retry with the next attempt
    number; once a ``Run start:`` is public, a retry is a REPEAT. ``first``/``counts``/``require`` accept only counted COMPLETED entries of
    result steps.
 6. **Inputs are bound before results** (``bind_inputs``, ``check_inputs``; ``begin`` refuses inputs that differ from bound ones).
@@ -378,7 +383,7 @@ class Ledger:
                 raise ChainBroken(f"{self.path}: line {i} belongs to protocol {e['protocol_id']!r}")
             if e["protocol_sha256"] != self.protocol_sha256:
                 raise LedgerRefusal(f"protocol {self.protocol_id} is registered with sha256 {e['protocol_sha256']}, not "
-                                    f"{self.protocol_sha256}; a changed protocol needs a new protocol id")
+                                    f"{self.protocol_sha256}; a changed protocol needs a new protocol id, after human review on #51")
             if (e["status"] == LEDGER_OPENED) != (i == 1):
                 raise ChainBroken(f"{self.path}: line {i}: LEDGER_OPENED must be the first entry and only the first")
             if e["status"] not in STATUSES:
@@ -510,23 +515,45 @@ class Ledger:
         return {"id": c.get("id"), "url": c.get("html_url"), "created_at": c.get("created_at"),
                 "body_sha256": sha256_bytes((c.get("body") or "").encode("utf-8"))}
 
+    @staticmethod
+    def _anchor_lines(comments) -> list:
+        """Every ``Run anchor:`` comment, any protocol: (time, id, tokens after the prefix, comment), earliest first."""
+        out = []
+        for c in comments:
+            first = (c.get("body") or "").lstrip().split("\n", 1)[0].split()
+            if first[:2] == ANCHOR_PREFIX.split() and len(first) > 2:
+                out.append((_parse_time(c["created_at"]), c.get("id") or 0, first[2:], c))
+        return sorted(out, key=lambda t: (t[0], t[1]))
+
     def _check_anchor(self, ents, comments, start_utc: str | None) -> dict:
         a = self._anchor_of(ents)
-        hits = sorted(self._matching(comments, ANCHOR_PREFIX, [self.protocol_id], 1)
-                      + self._matching(comments, ANCHOR_PREFIX, [self.protocol_id], 2), key=lambda t: (t[0], t[1]))
+        lines = self._anchor_lines(comments)
+        hits = [t for t in lines if t[2][0] == self.protocol_id]
         if not hits:
             raise LedgerRefusal(f"no `{ANCHOR_PREFIX} {self.protocol_id}` comment on {self.anchor_repo}#{self.anchor_issue}; post "
                                 f"post_anchor_text() there before any step")
-        created, _, vals, c = hits[0]
-        posted, steps = (vals, None) if isinstance(vals, str) else (vals[0], vals[1])
+        created, cid, toks, c = hits[0]
+        posted = toks[1].lower() if len(toks) > 1 else None
         if posted != a:
             raise LedgerRefusal(f"the earliest anchor for {self.protocol_id} on {self.anchor_repo}#{self.anchor_issue} is {posted} "
                                 f"(comment {c.get('id')}), not this ledger's {a}; this ledger is not the protocol's run ledger (a later "
-                                f"anchor is not accepted while the earliest one exists; a fresh ledger needs a new protocol id)")
+                                f"anchor is not accepted while the earliest one exists; recovery is a new protocol id, after human review on #51)")
         declared = self._steps_csv(ents[0]["result"].get("resultSteps") or [])
+        steps = toks[2] if len(toks) == 4 else None
         if steps != declared:
             raise LedgerRefusal(f"the earliest anchor for {self.protocol_id} (comment {c.get('id')}) declares result steps {steps!r}, but this "
                                 f"ledger's genesis declares {declared!r}; refused")
+        psha = toks[3].lower() if len(toks) == 4 else None
+        if psha != self.protocol_sha256:
+            raise LedgerRefusal(f"the earliest anchor for {self.protocol_id} (comment {c.get('id')}) carries protocol sha256 {psha!r}, not "
+                                f"{self.protocol_sha256}; refused")
+        for t in lines:
+            if (t[0], t[1]) >= (created, cid):
+                break
+            if len(t[2]) == 4 and t[2][3].lower() == self.protocol_sha256 and t[2][0] != self.protocol_id:
+                raise LedgerRefusal(f"protocol sha256 {self.protocol_sha256} was anchored earlier under protocol id {t[2][0]!r} (comment "
+                                    f"{t[3].get('id')}); the identical protocol cannot be re-run under a new id. A genuinely new version "
+                                    f"has a new sha256; otherwise recovery is a new protocol id, after human review on #51")
         starts = [e["utc"] for e in ents if e["status"] == STARTED]
         bound = starts[0] if starts else start_utc
         if bound is not None and not created < _parse_time(bound):
@@ -552,11 +579,13 @@ class Ledger:
         return a
 
     def post_anchor_text(self) -> str:
-        """The comment to post on Sector_Ops #51 before any step; first line ``Run anchor: <protocol_id> <anchor> <result steps>``."""
+        """The comment to post on Sector_Ops #51 before any step; first line
+        ``Run anchor: <protocol_id> <anchor> <result steps> <protocol_sha256>``."""
         with self._locked():
             ents = self._load()
         a, g = self._anchor_of(ents), ents[0]
-        return (f"{ANCHOR_PREFIX} {self.protocol_id} {a} {self._steps_csv(g['result'].get('resultSteps') or [])}\n\n"
+        return (f"{ANCHOR_PREFIX} {self.protocol_id} {a} {self._steps_csv(g['result'].get('resultSteps') or [])} "
+                f"{self.protocol_sha256}\n\n"
                 f"- protocol sha256: `{self.protocol_sha256}`\n"
                 f"- ledger: `{LEDGER_DIR}/{self.protocol_id}.jsonl` under the research root `{g['result'].get('root')}`\n"
                 f"- host: `{g['host']}`; genesis UTC: `{g['utc']}`; resolved by: `{g['result'].get('resolvedBy')}`\n\n"
@@ -565,7 +594,7 @@ class Ledger:
 
     def require_external_anchor(self, repo: str | None = None, issue: int | None = None) -> dict:
         """Refuse unless the earliest ``Run anchor:`` comment for this protocol id on ``repo``#``issue`` (default Sector_Ops #51) carries
-        this ledger's anchor and result steps, is unedited and predates the ledger's first STARTED entry. A gh failure refuses."""
+        this ledger's anchor, result steps and protocol sha256 (not anchored earlier under another id), is unedited and predates the ledger's first STARTED entry. A gh failure refuses."""
         if repo is not None:
             self.anchor_repo = repo
         if issue is not None:
@@ -582,15 +611,16 @@ class Ledger:
             st = self._my_started(ents, step, key, "start_text")
         return (f"{START_PREFIX} {self.protocol_id} {step} {key} {self._entry_sha(st)}\n\n"
                 f"- attempt {st['run']} started `{st['utc']}` on `{st['host']}`; ledger anchor `{self._anchor_of(ents)}`\n\n"
-                f"Only one `{START_PREFIX}` comment may exist for this protocol, step and key; a second one marks a repeat. "
+                f"Only one start hash may exist for this protocol, step and key; another hash marks a repeat. "
                 f"Do not edit or delete this comment.\n")
 
     def _starts(self, comments, step, key) -> list:
         return self._matching(comments, START_PREFIX, [self.protocol_id, step, key])
 
     def confirm_started(self, step: str, key: str) -> dict:
-        """Call right after posting ``start_text``. Refuses unless exactly one ``Run start:`` comment exists for (protocol, step, key)
-        and it carries this attempt's STARTED hash. More than one is REPEAT: a REPEAT_DETECTED entry is written and RepeatDetected raised."""
+        """Call right after posting ``start_text``. ``Run start:`` comments for (protocol, step, key) are counted by distinct hash; the only
+        hash present must be this attempt's STARTED hash. None listed yet: wait and retry, do NOT repost. Another hash is REPEAT: a
+        REPEAT_DETECTED entry is written and RepeatDetected raised. The recorded ref is the earliest comment carrying this hash."""
         with self._locked():
             ents = self._load()
             st = self._my_started(ents, step, key, "confirm_started")
@@ -602,15 +632,16 @@ class Ledger:
             hits = self._starts(comments, step, key)
             h = self._entry_sha(st)
             if not hits:
-                raise LedgerRefusal(f"no `{START_PREFIX} {self.protocol_id} {step} {key}` comment on {self.anchor_repo}#{self.anchor_issue}; "
-                                    f"post start_text() there first")
-            if len(hits) > 1 or hits[0][2] != h:
+                raise LedgerRefusal(f"`{START_PREFIX} {self.protocol_id} {step} {key}` on {self.anchor_repo}#{self.anchor_issue}: "
+                                    f"not listed yet: wait and retry confirm_started(); do NOT repost")
+            distinct = sorted({t[2] for t in hits})
+            if distinct != [h]:
                 ext = {"anchor": self._ref_from(anchor), "starts": [self._ref(t[3]) | {"sha": t[2]} for t in hits]}
                 self._append(ents, step=step, key=key, status=REPEAT_DETECTED, run=st["run"], external=ext,
-                             reason=f"{len(hits)} Run start comment(s); earliest carries {hits[0][2]}, this attempt {h}")
-                raise RepeatDetected(f"REPEAT: {self.protocol_id} {step}/{key} has {len(hits)} `{START_PREFIX}` comment(s) and the earliest "
-                                     f"is {'not ' if hits[0][2] != h else ''}this attempt's; the step was started before (a re-run, a new "
-                                     f"folder or a restored snapshot). Refused; any result of this step does not count")
+                             reason=f"{len(distinct)} distinct Run start hash(es) {distinct}; this attempt {h}")
+                raise RepeatDetected(f"REPEAT: {self.protocol_id} {step}/{key} has {len(distinct)} distinct `{START_PREFIX}` hash(es) and "
+                                     f"{'one is' if h in distinct else 'none is'} this attempt's {h}; the step was started more than once (a "
+                                     f"re-run, a new folder or a restored snapshot). Refused; any result of this step does not count")
             ext = {"anchor": self._ref_from(anchor), "start": self._ref(hits[0][3])}
             return dict(self._append(ents, step=step, key=key, status=START_CONFIRMED, run=st["run"], external=ext))
 
@@ -647,7 +678,7 @@ class Ledger:
             raise LedgerRefusal(f"{what}: {step}/{key} has no open attempt (call begin first)")
         if self._mine.get((step, key)) != open_["run"]:
             raise LedgerRefusal(f"{what}: {step}/{key} run {open_['run']} was begun by another process; a STARTED entry with no end is "
-                                f"terminal, and recovery is a new protocol id")
+                                f"terminal, and recovery is a new protocol id, after human review on #51")
         return open_
 
     def entries(self) -> list:
@@ -708,7 +739,8 @@ class Ledger:
 
     def confirm_result(self, step: str, key: str) -> dict:
         """Call right after posting ``result_text``. Refuses unless exactly one ``Run result:`` exists for (protocol, step, key) and it
-        carries the COMPLETED entry's hash and result hash; records the comment's id and body sha256 (RESULT_CONFIRMED)."""
+        carries the COMPLETED entry's hash and result hash (identical copies count once); records the earliest such comment's id and body
+        sha256 (RESULT_CONFIRMED). None listed yet: wait and retry, do NOT repost."""
         self._check(step, key)
         with self._locked():
             ents = self._load()
@@ -719,9 +751,13 @@ class Ledger:
                 raise LedgerRefusal(f"confirm_result: {step}/{key} is already confirmed")
             hits = self._matching(self._comments(ents), RESULT_PREFIX, [self.protocol_id, step, key], 2)
             want = [self._entry_sha(e), sha256_bytes(_canon(e["result"]).encode("ascii"))]
-            if len(hits) != 1 or hits[0][2] != want:
-                raise LedgerRefusal(f"confirm_result: {step}/{key} needs exactly one `{RESULT_PREFIX}` comment carrying {want}; found "
-                                    f"{[h[2] for h in hits]}")
+            if not hits:
+                raise LedgerRefusal(f"confirm_result: `{RESULT_PREFIX} {self.protocol_id} {step} {key}` not listed yet: wait and retry "
+                                    f"confirm_result(); do NOT repost")
+            distinct = sorted({tuple(h[2]) for h in hits})
+            if distinct != [tuple(want)]:
+                raise LedgerRefusal(f"confirm_result: {step}/{key} needs every `{RESULT_PREFIX}` comment to carry {want}; found "
+                                    f"{[list(d) for d in distinct]}")
             return dict(self._append(ents, step=step, key=key, status=RESULT_CONFIRMED, run=e["run"],
                                      external={"result": self._ref(hits[0][3])}))
 
@@ -774,18 +810,18 @@ class Ledger:
             if s_["status"] != COMPLETED:
                 continue
             tag = f"{s_['step']}/{s_['key']}"
-            starts = self._starts(comments, s_["step"], s_["key"])
+            starts = sorted({t[2] for t in self._starts(comments, s_["step"], s_["key"])})
             if len(starts) != 1:
-                findings.append(f"START_COUNT: {tag} has {len(starts)} `{START_PREFIX}` comments")
-            elif starts[0][2] != s_["started_sha256"]:
-                findings.append(f"START_MISMATCH: {tag} `{START_PREFIX}` carries {starts[0][2]}, the ledger's STARTED is {s_['started_sha256']}")
-            res = self._matching(comments, RESULT_PREFIX, [self.protocol_id, s_["step"], s_["key"]], 2)
+                findings.append(f"START_COUNT: {tag} has {len(starts)} distinct `{START_PREFIX}` hashes")
+            elif starts[0] != s_["started_sha256"]:
+                findings.append(f"START_MISMATCH: {tag} `{START_PREFIX}` carries {starts[0]}, the ledger's STARTED is {s_['started_sha256']}")
+            res = sorted({tuple(t[2]) for t in self._matching(comments, RESULT_PREFIX, [self.protocol_id, s_["step"], s_["key"]], 2)})
             if not res:
                 findings.append(f"RESULT_MISSING: {tag} has no `{RESULT_PREFIX}` comment")
             elif len(res) > 1:
-                findings.append(f"RESULT_COUNT: {tag} has {len(res)} `{RESULT_PREFIX}` comments")
-            elif res[0][2] != [s_["entry_sha256"], s_["result_sha256"]]:
-                findings.append(f"RESULT_MISMATCH: {tag} `{RESULT_PREFIX}` carries {res[0][2]}, the ledger has "
+                findings.append(f"RESULT_COUNT: {tag} has {len(res)} distinct `{RESULT_PREFIX}` values")
+            elif list(res[0]) != [s_["entry_sha256"], s_["result_sha256"]]:
+                findings.append(f"RESULT_MISMATCH: {tag} `{RESULT_PREFIX}` carries {list(res[0])}, the ledger has "
                                 f"{[s_['entry_sha256'], s_['result_sha256']]} (the ledger tail or the comment changed)")
         out["findings"] = findings
         return out
@@ -837,7 +873,7 @@ class Ledger:
 
     def begin(self, step: str, key: str, args: Mapping | None = None, inputs: Mapping | None = None) -> int:
         """Record a STARTED attempt and return its attempt number (1 for the first). Refused when (step, key) has a COMPLETED run, when an
-        earlier attempt has no end (terminal: a new protocol id is the only recovery), when ``inputs`` differ from inputs bound for
+        earlier attempt has no end (terminal: the only recovery is a new protocol id, after human review on #51), when ``inputs`` differ from inputs bound for
         (step, key), or #51 refuses: every step needs this ledger's anchor to be the protocol's earliest; a result step (one in
         ``result_steps``) then needs ``start_text`` posted and ``confirm_started`` before it computes anything; a non-result step is
         refused if #51 has a ``Run start:`` for it."""
@@ -855,7 +891,7 @@ class Ledger:
             open_ = self._open_attempt(mine)
             if open_ is not None:
                 raise LedgerRefusal(f"{self.protocol_id}: {step}/{key} run {open_['run']} STARTED at {open_['utc']} and never completed or "
-                                    f"aborted; a STARTED entry with no end is terminal for this step, and recovery is a new protocol id")
+                                    f"aborted; a STARTED entry with no end is terminal for this step, and recovery is a new protocol id, after human review on #51")
             bound = self._bound(mine)
             for name, h in hashes.items():
                 if name in bound and bound[name] != h:
@@ -934,12 +970,13 @@ class Ledger:
                                     f"call confirm_started before computing)")
             comments = self._comments(ents)
             hits = self._starts(comments, step, key)
-            n, h = len(hits), self._entry_sha(st)
-            repeat = n != 1 or hits[0][2] != h or any(e["status"] == REPEAT_DETECTED for e in mine)
+            h = self._entry_sha(st)
+            n = len({t[2] for t in hits})
+            repeat = {t[2] for t in hits} != {h} or any(e["status"] == REPEAT_DETECTED for e in mine)
             ext = dict(conf["external"], startCommentsAtComplete=n, startSha=h)
             e = self._append(ents, step=step, key=key, status=COMPLETED, run=st["run"], outputs={**prior, **hashes}, result=result,
                              counted=not repeat, external=ext,
-                             reason=(f"REPEAT: {n} `{START_PREFIX}` comment(s) at completion, or not carrying this attempt's STARTED hash; "
+                             reason=(f"REPEAT: {n} distinct `{START_PREFIX}` hash(es) at completion, not only this attempt's STARTED hash; "
                                      f"this result does not count" if repeat else None))
         return dict(e)
 
