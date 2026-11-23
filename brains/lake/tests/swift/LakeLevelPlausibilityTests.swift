@@ -175,15 +175,69 @@ final class LakeLevelPlausibilityTests: XCTestCase {
         XCTAssertFalse(f.unverified)
     }
 
-    func testADatumChangeWithNoOldReadingLeftIsPublishedFlagged() {
-        // After an outage only new-datum readings remain (4 h, fewer than the re-centring needs) and the anchor is on the old
-        // datum: not a decade slip, internally consistent → published, flagged; the anchor rejects nothing it cannot reach.
-        let ref = LakeLevelPlausibility.reference(historyFt: tahoeHistory().map(\.ft), fullPoolFt: 6229.1)
+    func hourlyRef(_ station: String) -> LevelSeriesRef {
+        LevelSeriesRef(provider: .usgs, capability: .directOperatorPool, station: station, series: "00062", cadenceMin: 60, lagMin: 60)
+    }
+
+    func testADatumChangeWithOnlyNewReadingsAndAnOldDatumAnchorIsPublishedFlagged() {
+        // History lake; the window holds only 4 h of new-datum readings (fewer than re-centring needs) and yesterday's published
+        // value on the old datum is a valid, in-band anchor. The anchor cannot reach them, but they agree with each other:
+        // published, flagged, never UNAVAILABLE.
+        let p = hourlyRef("DC")
         let t0 = iso("2026-11-23T04:00:00Z")
         let xs = (0..<4).map { LevelObservation(at: t0.addingTimeInterval(Double($0) * 3600), ft: 26.0) }
-        let f = LakeLevelPlausibility.filter(xs, sourceId: "s", reference: ref)
-        XCTAssertEqual(f.kept.count, 4)
+        var x = LakeLevelInputs(lakeId: "Lake Tahoe|NV", binding: binding([p]), capabilityIfUnbound: .noSource, fullPoolFt: 6229.1,
+                                poolBasisIsFullPool: true, poolConfidenceLow: false, live: [(p, xs, nil)], archivedHourly: [], guide: nil,
+                                baseline: nil, now: iso("2026-11-23T07:30:00Z"), processingVersion: "test")
+        x.levelReference = LakeLevelPlausibility.reference(historyFt: tahoeHistory().map(\.ft), fullPoolFt: 6229.1)
+        x.levelAnchor = LevelObservation(at: t0.addingTimeInterval(-24 * 3600), ft: 6226.0)
+        let s = LakeLevelClassifier.evaluate(x)
+        XCTAssertEqual(s.kind, .observed)
+        XCTAssertEqual(s.currentElevationFt, 26.0)
+        XCTAssertTrue((s.provenance.qualityFlags ?? []).contains("levelUnverified:\(p.sourceId)"))
+        XCTAssertFalse((s.provenance.qualityFlags ?? []).contains { $0.hasPrefix("implausible") })
+    }
+
+    func testAnUnverifiedValueNeverAnchorsItselfOnTheNextRun() throws {
+        // No-history lake (full pool 600). Run 1: a 26 ft wrong-datum reading, published and flagged.
+        let p = hourlyRef("UV")
+        func run(_ end: Date, anchor: LevelObservation?) -> LakeLevelStateRecord {
+            let xs = (0..<4).map { LevelObservation(at: end.addingTimeInterval(-Double(3 - $0) * 3600), ft: 26.0) }
+            var x = LakeLevelInputs(lakeId: "T|ST", binding: binding([p]), capabilityIfUnbound: .noSource, fullPoolFt: 600,
+                                    poolBasisIsFullPool: true, poolConfidenceLow: false, live: [(p, xs, nil)], archivedHourly: [], guide: nil,
+                                    baseline: nil, now: end.addingTimeInterval(1800), processingVersion: "test")
+            x.levelAnchor = anchor
+            return LakeLevelClassifier.evaluate(x)
+        }
+        let s1 = run(iso("2026-11-23T04:00:00Z"), anchor: nil)
+        XCTAssertEqual(s1.currentElevationFt, 26.0)
+        XCTAssertTrue((s1.provenance.qualityFlags ?? []).contains("levelUnverified:\(p.sourceId)"))
+        // Run 2 feeds run 1's published state back as the anchor: refused, so the value is still flagged.
+        XCTAssertNil(LakeBrainRunner.anchor(s1))
+        let s2 = run(iso("2026-11-23T05:00:00Z"), anchor: LakeBrainRunner.anchor(s1))
+        XCTAssertEqual(s2.currentElevationFt, 26.0)
+        XCTAssertTrue((s2.provenance.qualityFlags ?? []).contains("levelUnverified:\(p.sourceId)"))
+        // A clean published state does anchor.
+        let clean = LakeLevelClassifier.evaluate(LakeLevelInputs(
+            lakeId: "T|ST", binding: binding([p]), capabilityIfUnbound: .noSource, fullPoolFt: 600, poolBasisIsFullPool: true,
+            poolConfidenceLow: false, live: [(p, (0..<4).map { LevelObservation(at: iso("2026-11-23T04:00:00Z").addingTimeInterval(Double($0) * 3600), ft: 598) }, nil)],
+            archivedHourly: [], guide: nil, baseline: nil, now: iso("2026-11-23T07:30:00Z"), processingVersion: "test"))
+        XCTAssertEqual(try XCTUnwrap(LakeBrainRunner.anchor(clean)).ft, 598)
+    }
+
+    func testDecadeAgainstAFullPoolAloneOnlyFlagsUnlessAnAnchorConfirmsIt() {
+        // No history; full pool 600; the gauge reports ~60 ft (a datum ~10× off, or a slip: a full pool alone cannot tell).
+        let fpOnly = LakeLevelPlausibility.reference(historyFt: [], fullPoolFt: 600)
+        let t0 = iso("2026-11-23T04:00:00Z")
+        let xs = (0..<5).map { LevelObservation(at: t0.addingTimeInterval(Double($0) * 3600), ft: 60.0) }
+        let f = LakeLevelPlausibility.filter(xs, sourceId: "s", reference: fpOnly)
+        XCTAssertEqual(f.kept.count, 5, "kept, not rejected")
         XCTAssertTrue(f.unverified)
+        // A verified anchor at 598 ft yesterday confirms the slip: rejected.
+        let g = LakeLevelPlausibility.filter(xs, sourceId: "s", reference: fpOnly, anchor: LevelObservation(at: t0.addingTimeInterval(-86_400), ft: 598))
+        XCTAssertTrue(g.kept.isEmpty)
+        XCTAssertEqual(g.rejected.count, 5)
+        XCTAssertTrue(g.rejected.allSatisfy { $0.reason.hasPrefix("decade slip") })
     }
 
     func testASlippedMajorityIsRejectedAndTheGoodMinorityPublished() {
@@ -323,7 +377,9 @@ final class LakeLevelPlausibilityTests: XCTestCase {
     func testTooFewReadingsWithNoReferenceAreKept() {
         let t0 = iso("2026-05-01T00:00:00Z")
         let xs = [LevelObservation(at: t0, ft: 6226)]
-        XCTAssertTrue(LakeLevelPlausibility.filter(xs, sourceId: "s", reference: nil).rejected.isEmpty)
+        let f = LakeLevelPlausibility.filter(xs, sourceId: "s", reference: nil)
+        XCTAssertTrue(f.rejected.isEmpty)
+        XCTAssertTrue(f.unverified, "no lake reference and no self band: published, but unverified")
     }
 
     // MARK: history baselines (extends the #218 spike filter)

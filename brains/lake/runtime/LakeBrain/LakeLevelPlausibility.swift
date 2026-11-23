@@ -20,7 +20,9 @@
 //     whose MAJORITY is slipped. Only ×10 / ÷10 are tested (×100 and beyond is outside rule 0 at any real lake above 145 ft,
 //     and 0.01 is a common stage/elevation ratio). Never against a series' own median (a river gauge can rise 10× in a
 //     flood: 2 ft → 20 ft is water), so never on a nearby-gauge proxy (the classifier passes it no reference) or on a series
-//     with no reference.
+//     with no reference. A decade reading is REJECTED when a history range or an anchor (a decade of the anchor too) confirms
+//     the slip; against a directory full pool alone it is only suspect: kept, and the source marked unverified (a gauge ~10×
+//     off its full pool may be a datum, and rejecting would blank the lake).
 //
 //  1. Level band. The lake's own record sets it:
 //       lo, hi  = p01 and p99 of the lake's daily history (≥ 30 days; robust to a minority of slips, which is what the record holds),
@@ -36,19 +38,22 @@
 //     width, on the median of the readings outside it) only when ALL hold: the newest reading is outside it, at least 6
 //     readings are outside it, they span ≥ 24 h, and they fit in one band width. That is a series on another datum (the
 //     `historyLiveMismatch` lakes, a gauge re-datumed); one slip, or a day of them, never qualifies. A live series with no
-//     reference is judged against its own median ± 50 ft, and only with ≥ 3 readings (rules 0, D and 2 still apply).
+//     reference is judged against its own median ± 50 ft, and only with ≥ 3 readings (rules 0 and 2 still apply).
 //     Continuity: a reading outside the band is still ACCEPTED when it continues the accepted series smoothly (within
 //     1 ft + 2 ft/h of its accepted neighbour, no jump allowance). A real drawdown or flood that walks past the band edge is
 //     water; a slip is a jump. (Owner rule: never an older or "unknown" value when a real newer one exists.)
-//     Anchor: the lake's last published accepted value (`anchor`, ≤ 7 days old, itself passing rules 0 and D, and inside
-//     the band when the band comes from history) is an accepted reading too. A reading outside the band that is within the
-//     STEP limit of the anchor over the gap is accepted (Ross Lake after a 2-day outage, 70 ft below full pool).
-//     No in-band reading and no usable anchor: the lake is never blanked for it. The series is accepted as far as it is
-//     internally consistent (the step walk from its own median) and passes rules 0 and D, and the source is marked
-//     `unverified` (the classifier flags `levelUnverified:<sourceId>`). A lone reading with no anchor and no history is
-//     published the same way. Only when some readings ARE in the band are the out-of-band ones that do not continue them
-//     rejected (one slip among good readings; or the first hours of a datum change, which shows the last old-datum reading
-//     until the new series has 6 readings over 24 h).
+//     Anchor: the lake's last published VERIFIED value (`anchor`; the runner refuses any published state flagged
+//     levelUnverified / implausible* / allReadingsImplausible, so an unverified value never verifies itself and stays flagged
+//     run after run until the band, history or a verified anchor confirms it), ≤ 7 days old, passing rules 0 and D, and
+//     inside the band when the band comes from history. A reading outside the band within the STEP limit of the anchor over
+//     the gap is accepted (Ross Lake after a 2-day outage, 70 ft below full pool).
+//     Unverified, never blanked: (a) no in-band reading and no usable anchor: the series is accepted as far as it is
+//     internally consistent (the step walk from its own median); (b) the anchor rejected every reading but ≥ 2 of them agree
+//     within the step rule (a datum change or a new level after an outage); a lone reading stays rejected; (c) no lake
+//     reference at all and < 3 readings; (d) a kept decade-suspect reading (full pool only). In each case the source is
+//     marked `unverified` (classifier flag `levelUnverified:<sourceId>`). Only when some readings ARE in the band are the
+//     out-of-band ones that do not continue them rejected (one slip among good readings; or the first hours of a datum
+//     change, which shows the last old-datum reading until the new series has 6 readings over 24 h).
 //
 //  2. Step. Between consecutive accepted readings of one series, a change of more than
 //       stepToleranceFt + maxRateFtPerHour × hours apart     (10 ft + 2 ft/h)
@@ -189,30 +194,38 @@ public enum LakeLevelPlausibility {
         for o in readings where !physicallyPossible(ft(o)) {
             rejected.append(Rejection(sourceId: sourceId, at: o.at, rawFt: o.ft, reason: "not a lake level on any datum"))
         }
-        // D. Decade slips, against a real lake reference only.
+        let historyBand = reference.map { $0.hi > $0.lo } ?? false
+        // The anchor (binding datum already; the runner passes only a VERIFIED published value): usable when recent, possible,
+        // not a decade slip of the reference and, against a history band, inside it (checked once the band is known).
+        let anchorCandidate: LevelObservation? = anchor.flatMap { a in
+            guard let newest = possible.last, physicallyPossible(a.ft), a.at <= newest.at,
+                  newest.at.timeIntervalSince(a.at) <= maxAnchorAgeHours * 3600 else { return nil }
+            if let r = reference, isDecadeSlip(a.ft, lo: r.lo, hi: r.hi) { return nil }
+            return a
+        }
+
+        // D. Decade slips, against a real lake reference only. Rejected when the history range, or an anchor, confirms the slip;
+        //    against a full pool alone (no history, no anchor confirming it) a decade reading is only SUSPECT: kept, and the
+        //    source marked unverified (a gauge ~10× off its full pool is a datum question, not proof of a slip).
         var candidates: [LevelObservation] = []
+        var suspect: Set<Date> = []
         for o in possible {
-            if let r = reference, isDecadeSlip(ft(o), lo: r.lo, hi: r.hi) {
+            guard let r = reference, isDecadeSlip(ft(o), lo: r.lo, hi: r.hi) else { candidates.append(o); continue }
+            let confirmed = historyBand || anchorCandidate.map { isDecadeSlip(ft(o), lo: $0.ft, hi: $0.ft) } == true
+            if confirmed {
                 rejected.append(Rejection(sourceId: sourceId, at: o.at, rawFt: o.ft, reason: "decade slip (×10 or ÷10 of \(fmt(r.lo))–\(fmt(r.hi)) ft)"))
-            } else { candidates.append(o) }
+            } else { candidates.append(o); suspect.insert(o.at) }
         }
         guard !candidates.isEmpty else { return ([], rejected.sorted { $0.at < $1.at }, false) }
 
         // 1. Band (nil: the series cannot be judged by level, every candidate counts as inside).
         let b = band(for: candidates.map { (at: $0.at, ft: ft($0)) }, reference: reference)
         var inside = candidates.map { b?.contains(ft($0)) ?? true }
+        let usableAnchor: LevelObservation? = anchorCandidate.flatMap { a in (historyBand && !(b?.contains(a.ft) ?? true)) ? nil : a }
 
-        // The anchor (binding datum already): usable when recent, possible, not a decade slip and, against a history band, inside it.
-        let historyBand = reference.map { $0.hi > $0.lo } ?? false
-        let usableAnchor: LevelObservation? = anchor.flatMap { a in
-            guard let newest = candidates.last, physicallyPossible(a.ft), a.at <= newest.at,
-                  newest.at.timeIntervalSince(a.at) <= maxAnchorAgeHours * 3600 else { return nil }
-            if let r = reference, isDecadeSlip(a.ft, lo: r.lo, hi: r.hi) { return nil }
-            if historyBand, let b, !b.contains(a.ft) { return nil }
-            return a
-        }
-        // No in-band reading and no anchor: never blank the lake; judge the series by its own consistency (`unverified`).
-        var unverified = false
+        // Unverified: no lake reference and too few readings for a self band; or no in-band reading and no anchor. The lake is
+        // never blanked for it: the series is judged by its own consistency and published with `levelUnverified`.
+        var unverified = reference == nil && b == nil
         if !inside.contains(true), usableAnchor == nil {
             unverified = true
             inside = Array(repeating: true, count: candidates.count)
@@ -250,6 +263,25 @@ public enum LakeLevelPlausibility {
         }
         var accepted = Array(repeating: false, count: candidates.count)
         for (i, n) in nodes.enumerated() { if let c = n.candidate, ok[i] { accepted[c] = true } }
+        // The anchor (or band) rejected every reading, but ≥ 2 of them agree with each other within the step rule: the series
+        // moved (a datum change, a new level after an outage). Publish it unverified rather than leave the lake UNAVAILABLE.
+        // A lone reading cannot show that and stays rejected.
+        if !accepted.contains(true), candidates.count >= 2 {
+            let all = candidates.map(ft)
+            if let med = median(all), let seed = all.indices.min(by: { abs(all[$0] - med) < abs(all[$1] - med) }) {
+                var self_ = Array(repeating: false, count: all.count)
+                self_[seed] = true
+                for dir in [1, -1] {
+                    var last = seed, i = seed + dir
+                    while i >= 0, i < all.count {
+                        let h = candidates[i].at.timeIntervalSince(candidates[last].at) / 3600
+                        if abs(all[i] - all[last]) <= stepLimit(hours: h) { self_[i] = true; last = i }
+                        i += dir
+                    }
+                }
+                if self_.filter({ $0 }).count >= 2 { accepted = self_; unverified = true; inside = Array(repeating: true, count: candidates.count) }
+            }
+        }
         var kept: [LevelObservation] = []
         for (i, o) in candidates.enumerated() {
             if accepted[i] { kept.append(o); continue }
@@ -261,6 +293,7 @@ public enum LakeLevelPlausibility {
             }
             rejected.append(Rejection(sourceId: sourceId, at: o.at, rawFt: o.ft, reason: why))
         }
+        if kept.contains(where: { suspect.contains($0.at) }) { unverified = true }
         return (kept, rejected.sorted { $0.at < $1.at }, unverified && !kept.isEmpty)
     }
 

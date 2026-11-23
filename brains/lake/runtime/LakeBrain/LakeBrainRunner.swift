@@ -242,10 +242,16 @@ public enum LakeBrainRunner {
                                    warnings: warnings, dryRunCandidate: dryRunCandidate)
     }
 
-    /// The last published accepted level as a plausibility anchor: an OBSERVED state's value (binding datum) and its time.
+    /// Quality flags that make a published value unfit to anchor the next run: an unverified value must never verify itself.
+    static let anchorRefusingFlagPrefixes = ["levelUnverified", "implausible", "allReadingsImplausible"]
+
+    /// The last published accepted level as a plausibility anchor: an OBSERVED state's value (binding datum) and its time, only
+    /// when the state carries none of `anchorRefusingFlagPrefixes`. So "unverified" carries forward: a value accepted on its
+    /// own consistency stays flagged run after run until the band, history or a verified anchor confirms it.
     static func anchor(_ published: LakeLevelStateRecord?) -> LevelObservation? {
         guard let p = published, p.kind == .observed, let ft = p.currentElevationFt,
               let at = BrainPlatform.parseTime(p.observationTime) else { return nil }
+        if (p.provenance.qualityFlags ?? []).contains(where: { f in anchorRefusingFlagPrefixes.contains { f.hasPrefix($0) } }) { return nil }
         return LevelObservation(at: at, ft: ft)
     }
 
