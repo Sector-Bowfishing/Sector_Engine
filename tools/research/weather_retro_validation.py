@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
-"""Weather Brain retrospective validation: read-only runner for protocol WX-RETRO-2026-11-23.3 (gaps WX-001, WX-002).
+"""Weather Brain retrospective validation: read-only runner for protocol WX-RETRO-2026-11-23.4 (gaps WX-001, WX-002).
 
-The protocol (docs/brains/weather-retro-validation/WX-RETRO-2026-11-23.3.protocol.json; .2 and v1 are SUPERSEDED, refused and never run) amends WEATHER_BRAIN_PLAN.md section 5 to grade
+The protocol (docs/brains/weather-retro-validation/WX-RETRO-2026-11-23.4.protocol.json; .3, .2 and v1 are SUPERSEDED, refused and never run) amends WEATHER_BRAIN_PLAN.md section 5 to grade
 the same criteria on a PAST window. It was pre-registered and hashed before any data was fetched. This runner replays the Brain's own
 pure logic (sector_weather.reading.assemble, sector_weather.signal.evaluate) on archived station reports. It only reads public sources and
-writes local files under --out. It never writes Firebase or any database, never changes a score, rubric, knowledge release or schedule.
+writes local files only inside the run folder (--run) and the run log (--run-log). It never writes Firebase or any database, never changes a score, rubric, knowledge release or schedule.
 
     verify            check the protocol's sha256 against the committed sidecar
-    fetch-stations    lake directory + NWS /points and station lists (the Brain's own station selection)
-    fetch-asos        IEM ASOS/AWOS archive per station for the protocol window
-    fetch-recent      per station, back to back: IEM archive and NWS observation API for the last 7 days (substitution check R-SUB)
-    fetch-fronts      WPC coded surface bulletins (CODSUS) from the IEM text-product archive
-    grade             offline: R-SUB, R-5.1R, R-5.2, R-5.3 -> report.json (labels INTERNAL_EXPERIMENTAL, NOT_FOR_CUSTOMERS)
+    fetch-stations    --run R: lake directory + NWS /points and station lists (the Brain's own station selection) -> R/stations/
+    fetch-asos        --run R: IEM ASOS/AWOS archive per station for the protocol window -> R/asos/
+    fetch-recent      --run R: per station, back to back, IEM archive and NWS observation API for the last 7 days -> R/recent/
+    fetch-fronts      --run R: WPC coded surface bulletins (CODSUS) from the IEM text-product archive -> R/fronts/
+    bind              --run R: write-once R/run-manifest.json; fixes inputs, failures, exclusions and populations; NO comparison
+    grade             --run R --run-log L: refuses unless disk == manifest; logs START, grades, writes R/report.json, logs RESULT
+Every output is write-once; the station list comes only from R/stations/stations.json (protocol designRule, binding, runLog).
 """
 from __future__ import annotations
 
@@ -28,6 +30,7 @@ import sys
 import time
 import urllib.parse
 import urllib.request
+import uuid
 from datetime import datetime, timedelta, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -42,17 +45,18 @@ from sector_weather.publish import _miles  # noqa: E402
 from sector_weather.reading import assemble, tendency  # noqa: E402
 from sector_weather.signal import evaluate  # noqa: E402
 
-PROTOCOL = os.path.join(REPO, "docs", "brains", "weather-retro-validation", "WX-RETRO-2026-11-23.3.protocol.json")
-EXPECTED_PROTOCOL_ID = "WX-RETRO-2026-11-23.3"
+PROTOCOL = os.path.join(REPO, "docs", "brains", "weather-retro-validation", "WX-RETRO-2026-11-23.4.protocol.json")
+EXPECTED_PROTOCOL_ID = "WX-RETRO-2026-11-23.4"
 SUPERSEDED_SHA256 = {"6e08d42ed7e808a7a9775e885f865233e7ba2bb2279e4fbb8e0171634ed37ab8",   # WX-RETRO-2026-11-23
-                     "01eac7bc56033154dcf64ee365826a0da1c4d33cd921cec7ec76e79df48eb58c"}   # WX-RETRO-2026-11-23.2
+                     "01eac7bc56033154dcf64ee365826a0da1c4d33cd921cec7ec76e79df48eb58c",   # WX-RETRO-2026-11-23.2
+                     "492c1befe2707ce559c5999da7931548e69728c9fffadf16524813efdb5ec7c7"}   # WX-RETRO-2026-11-23.3
 LABELS = ["INTERNAL_EXPERIMENTAL", "NOT_FOR_CUSTOMERS", "RETROSPECTIVE"]
 ALLOWED_HOSTS = {"api.weather.gov", "mesonet.agron.iastate.edu", "sector-engine-e43utajroa-uc.a.run.app"}
 ENGINE = "https://sector-engine-e43utajroa-uc.a.run.app"
 IEM_ASOS = "https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py"
 IEM_AFOS = "https://mesonet.agron.iastate.edu/cgi-bin/afos/retrieve.py"
 NWS = "https://api.weather.gov"
-USER_AGENT = os.environ.get("SECTOR_WEATHER_USER_AGENT") or "Sector-WeatherRetroValidation/0.3 (io.sector.co; read-only public data)"
+USER_AGENT = os.environ.get("SECTOR_WEATHER_USER_AGENT") or "Sector-WeatherRetroValidation/0.4 (io.sector.co; read-only public data)"
 KT_TO_MPH = 1.150779
 INDEPENDENT_MAX_MI = 25.0
 FRONT_MAX_MI = 50.0
@@ -60,6 +64,8 @@ FRONT_TYPES = ("COLD", "WARM", "OCFNT")
 FRONT_KEYWORDS = ("HIGHS", "LOWS", "COLD", "WARM", "STNRY", "OCFNT", "TROF")
 MI_PER_DEG_LAT = 69.05
 MIN_SEPARATION_MI = 3.0
+COVERAGE_MIN = 0.75                                                    # protocol exclusionsCountAgainst.minimum
+CRITERIA = ("R-5.1R", "R-5.2", "RAIN_ONSET", "FRONT_PASSAGE")
 
 
 # ----------------------------------------------------------------------------------------------------------------- protocol
@@ -211,13 +217,46 @@ def select_stations(lake: dict, stations: list[dict]) -> dict:
             "candidates": cands}
 
 
+STAGES = ("stations", "asos", "recent", "fronts")
+MANIFEST = "run-manifest.json"
+REPORT = "report.json"
+
+
+def _new_stage(run: str, stage: str) -> str:
+    """Write-once: a stage folder is created by exactly one fetch; an existing one is refused (protocol binding.runFolder)."""
+    d = os.path.join(run, stage)
+    try:
+        os.makedirs(d, exist_ok=False)
+    except FileExistsError:
+        raise SystemExit(f"REFUSED: {d} exists; every run output is write-once (start a new run folder)") from None
+    return d
+
+
+def load_stations(run: str) -> tuple[dict, str]:
+    """stations/stations.json, refused unless its sha256 equals the one fetch-stations recorded."""
+    f = os.path.join(run, "stations", "stations.json")
+    prov = _load_prov(os.path.join(run, "stations"))
+    rec = next((x for x in prov or [] if x.get("file") == "stations.json"), None)
+    if not os.path.exists(f) or rec is None:
+        raise SystemExit("REFUSED: no stations/stations.json with a provenance record (run fetch-stations first)")
+    digest = sha256_file(f)
+    if digest != rec.get("sha256"):
+        raise SystemExit(f"REFUSED: stations.json sha256 {digest} != recorded {rec.get('sha256')}")
+    return json.load(open(f)), digest
+
+
 def cmd_fetch_stations(a) -> int:
+    load_protocol()
+    d = _new_stage(a.run, "stations")
     http = Http(pace_s=0.25)
     if a.directory:
         raw = open(a.directory, "rb").read()
+        src = f"file:{os.path.basename(a.directory)}"
     else:
         raw = http.get(f"{ENGINE}/lakes", "application/json")
-    directory = json.loads(raw)["lakes"]
+        src = f"{ENGINE}/lakes"
+    body = json.loads(raw)
+    directory = body["lakes"]
     ids = [x for x in (a.lakes or "").split(",") if x]
     lakes = [l for l in directory if not ids or l["id"] in ids]
     if a.limit:
@@ -237,11 +276,13 @@ def cmd_fetch_stations(a) -> int:
         except RuntimeError as err:
             e.update(status="ERROR", reason=str(err)[:200])
         out.append(e)
-    os.makedirs(a.out, exist_ok=True)
-    doc = {"labels": LABELS, "createdAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-           "directory": {"count": len(directory), "sha256": sha256_bytes(raw)}, "subset": bool(ids or a.limit), "lakes": out}
-    with open(os.path.join(a.out, "stations.json"), "w") as fh:
-        json.dump(doc, fh, indent=1)
+    count = body.get("count", len(directory))
+    doc = {"labels": LABELS, "createdAt": _now_iso(), "directory": {"count": count, "listed": len(directory), "sha256": sha256_bytes(raw),
+                                                                  "source": src},
+           "subset": bool(ids or a.limit) or len(out) != count, "lakes": out}
+    prov = []
+    _save(d, "stations.json", json.dumps(doc, indent=1).encode(), prov, src)
+    _write_prov(d, prov)
     print(json.dumps({"lakes": len(out), "status": {s: sum(1 for x in out if x["status"] == s) for s in ("OK", "BLOCKED", "ERROR")},
                       "requests": http.requests, "subset": doc["subset"]}))
     return 0
@@ -273,42 +314,44 @@ def iem_params(station: str, frm: datetime, to: datetime) -> list[tuple[str, str
 
 def cmd_fetch_asos(a) -> int:
     p, _ = load_protocol()
-    doc = json.load(open(a.stations))
+    doc, _ = load_stations(a.run)
+    d = _new_stage(a.run, "asos")
     brain, cand = station_sets(doc)
     frm, to = ts(p["windows"]["archiveFetch"]["from"]), ts(p["windows"]["archiveFetch"]["to"])
     http, prov = Http(pace_s=1.0), []
     for s in brain + cand:
         url = IEM_ASOS + "?" + urllib.parse.urlencode(iem_params(s, frm, to))
         try:
-            _save(a.out, f"window/{s}.csv", http.get(url, "text/csv"), prov, url, station=s)
+            _save(d, f"window/{s}.csv", http.get(url, "text/csv"), prov, url, station=s, kind="window")
         except (FileNotFoundError, RuntimeError) as e:
-            prov.append({"file": f"window/{s}.csv", "station": s, "source": url, "error": str(e)[:200], "fetchedAt": _now_iso()})
-    _write_prov(a.out, prov)
+            prov.append({"file": f"window/{s}.csv", "station": s, "kind": "window", "source": url, "error": str(e)[:200], "fetchedAt": _now_iso()})
+    _write_prov(d, prov)
     print(json.dumps({"stations": len(brain) + len(cand), "errors": sum(1 for x in prov if "error" in x), "requests": http.requests}))
     return 0
 
 
 def cmd_fetch_recent(a) -> int:
     """R-SUB inputs, per station back to back: the IEM archive and the NWS observation API for the same last 7 days (protocol
-    substitutionCheck.data). Every fetch time and every error is recorded; nothing is skipped silently."""
+    substitutionCheck.data). Stations come only from the run's stations.json. Every fetch time and every error is recorded."""
     load_protocol()
-    doc = json.load(open(a.stations))
+    doc, _ = load_stations(a.run)
+    d = _new_stage(a.run, "recent")
     brain, cand = station_sets(doc)
     iem_http, nws_http, prov = Http(pace_s=1.0), Http(pace_s=0.25), []
     for s in brain + cand:
         now = datetime.now(timezone.utc).replace(second=0, microsecond=0)
         url = IEM_ASOS + "?" + urllib.parse.urlencode(iem_params(s, now - timedelta(days=7), now))
         try:
-            _save(a.out, f"iem/{s}.csv", iem_http.get(url, "text/csv"), prov, url, station=s, kind="iem")
+            _save(d, f"iem/{s}.csv", iem_http.get(url, "text/csv"), prov, url, station=s, kind="iem")
         except (FileNotFoundError, RuntimeError) as e:
             prov.append({"file": f"iem/{s}.csv", "station": s, "kind": "iem", "source": url, "error": str(e)[:200], "fetchedAt": _now_iso()})
         start = (now - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
         url = f"{NWS}/stations/{urllib.parse.quote(s)}/observations?start={start}&limit=500"
         try:
-            _save(a.out, f"nws/{s}.json", nws_http.get(url, "application/geo+json"), prov, url, station=s, kind="nws")
+            _save(d, f"nws/{s}.json", nws_http.get(url, "application/geo+json"), prov, url, station=s, kind="nws")
         except (FileNotFoundError, RuntimeError) as e:
             prov.append({"file": f"nws/{s}.json", "station": s, "kind": "nws", "source": url, "error": str(e)[:200], "fetchedAt": _now_iso()})
-    _write_prov(a.out, prov)
+    _write_prov(d, prov)
     print(json.dumps({"stations": len(brain) + len(cand), "errors": sum(1 for x in prov if "error" in x),
                       "requests": iem_http.requests + nws_http.requests}))
     return 0
@@ -316,13 +359,18 @@ def cmd_fetch_recent(a) -> int:
 
 def cmd_fetch_fronts(a) -> int:
     p, _ = load_protocol()
+    load_stations(a.run)
+    d = _new_stage(a.run, "fronts")
     frm, to = ts(p["windows"]["frontFetch"]["from"]), ts(p["windows"]["frontFetch"]["to"])
     http, prov = Http(pace_s=1.0), []
     url = IEM_AFOS + "?" + urllib.parse.urlencode({"pil": "CODSUS", "sdate": frm.strftime("%Y-%m-%d"),
                                                    "edate": (to + timedelta(days=1)).strftime("%Y-%m-%d"), "limit": "9999", "fmt": "text", "order": "asc"})
-    _save(os.path.join(a.out, "codsus.txt"), http.get(url, "text/plain"), prov, url)
-    _write_prov(a.out, prov)
-    print(json.dumps({"requests": http.requests}))
+    try:
+        _save(d, "codsus.txt", http.get(url, "text/plain"), prov, url, kind="fronts")
+    except (FileNotFoundError, RuntimeError) as e:
+        prov.append({"file": "codsus.txt", "kind": "fronts", "source": url, "error": str(e)[:200], "fetchedAt": _now_iso()})
+    _write_prov(d, prov)
+    print(json.dumps({"requests": http.requests, "errors": sum(1 for x in prov if "error" in x)}))
     return 0
 
 
@@ -606,51 +654,30 @@ def _load_prov(root: str) -> list | None:
     return json.load(open(f)).get("items") if os.path.exists(f) else None
 
 
-def substitution_check(stations: list[str], recent_dir: str | None) -> dict:
-    """R-SUB (protocol substitutionCheck): NWS API vs IEM archive for the last 7 days, per metric (value and null agreement), wet-conditioned
-    precipitation agreement, coverage, a per-station coverage floor and fetch failures. NOT_GRADED when the inputs are missing or the archive
-    and NWS fetches of any station are more than 1 h apart. Returns per-metric results and the FLAGGED stations with their reason."""
-    empty = {"metrics": {}, "flaggedStations": {}}
-    if not recent_dir or not os.path.isdir(os.path.join(recent_dir, "nws")):
-        return {"result": "NOT_GRADED", "reason": "no NWS API data supplied (fetch-recent)", **empty}
-    prov = _load_prov(recent_dir)
-    if prov is None:
-        return {"result": "NOT_GRADED", "reason": "no provenance.json: fetch times unknown", **empty}
-    times, errors = {}, {}
-    for it in prov:
-        st, kind = it.get("station"), it.get("kind")
-        if not st or kind not in ("iem", "nws"):
-            continue
-        if "error" in it:
-            errors.setdefault(st, []).append(f"{kind}: {it['error']}")
-        elif it.get("fetchedAt"):
-            times.setdefault(st, {})[kind] = ts(it["fetchedAt"])
-    late = sorted(s for s, t in times.items() if "iem" in t and "nws" in t and abs(t["iem"] - t["nws"]) > CONTEMPORANEITY)
-    if late:
-        return {"result": "NOT_GRADED", "reason": "FETCH_NOT_CONTEMPORANEOUS: archive and NWS fetches more than 1 h apart", "stations": late[:50],
-                **empty}
+def substitution_check(stations: list[str], recent_dir: str, bound: dict) -> dict:
+    """R-SUB metrics (protocol substitutionCheck): NWS API vs IEM archive for the last 7 days, per metric (value and null agreement) and
+    wet-conditioned. Which stations exist, failed or are flagged, and whether R-SUB can be graded at all, come ONLY from the bound manifest
+    (bind decided them before any comparison). Flagged stations still contribute their pairs; failed ones have none."""
+    st = bound.get("stationStatus") or {}
+    flagged = {s: v["flag"] for s, v in st.items() if v.get("flag")}
+    sub_status = bound.get("substitution") or {}
+    if sub_status.get("status") != "BOUND":
+        return {"result": "NOT_GRADED", "reason": sub_status.get("reason", "not bound"), "metrics": {}, "flaggedStations": flagged}
     iem = Archive(os.path.join(recent_dir, "iem"))
     val = {k: [0, 0] for k in list(SUB_FIELDS) + ["presentWeatherPresence", "presentWeatherCode", *WET_METRICS]}
     nul = {k: [0, 0] for k in SUB_FIELDS}
     n_nws = matched = 0
-    per_station, flagged = {}, {}
     for s in stations:
-        f = os.path.join(recent_dir, "nws", f"{s}.json")
-        if s in errors or not os.path.exists(f) or not os.path.exists(os.path.join(recent_dir, "iem", f"{s}.csv")):
-            flagged[s] = "FETCH_FAILED"
-            per_station[s] = {"fetchFailed": errors.get(s, ["no response file"])}
+        if (st.get(s) or {}).get("recentIem") != "OK" or (st.get(s) or {}).get("recentNws") != "OK":
             continue
-        nws = decode_observations(json.load(open(f)))
+        nws = decode_observations(json.load(open(os.path.join(recent_dir, "nws", f"{s}.json"))))
         ser = iem.get(s)
-        sn = sm = 0
         for o in nws:
             n_nws += 1
-            sn += 1
             m = ser.nearest(o.at, 2, lambda x: True)
             if m is None:
                 continue
             matched += 1
-            sm += 1
             for k, (attr, tol) in SUB_FIELDS.items():
                 a, b = getattr(o, attr), getattr(m, attr)
                 nul[k][1] += 1
@@ -681,10 +708,6 @@ def substitution_check(stations: list[str], recent_dir: str | None) -> dict:
                 val["wetPrecipitation"][0] += wa == wb
                 val["wetPresentWeatherPresence"][1] += 1
                 val["wetPresentWeatherPresence"][0] += pa == pb
-        cov = _rate(sm, sn)
-        per_station[s] = {"nwsReports": sn, "matched": sm, "coverage": cov}
-        if sn >= STATION_MIN_REPORTS and cov is not None and cov < STATION_COVERAGE_FLOOR:
-            flagged[s] = "COVERAGE_FLOOR"
     metrics = {}
     for k, (n, d) in val.items():
         r = _rate(n, d)
@@ -706,10 +729,159 @@ def substitution_check(stations: list[str], recent_dir: str | None) -> dict:
     gate_metrics = sorted({m for ms in SUB_GATES.values() for m in ms})
     ok_all = coverage["result"] == "PASS" and all(_metric_ok(metrics, m) for m in gate_metrics)
     return {"result": "PASS" if ok_all else ("NOT_GRADED" if not n_nws else "FAIL"), "coverage": coverage, "metrics": metrics,
-            "perStation": per_station, "flaggedStations": dict(sorted(flagged.items())),
+            "flaggedStations": dict(sorted(flagged.items())),
             "marks": {"value>=": SUB_VALUE_MIN, "null>=": SUB_NULL_MIN, "coverage>=": SUB_COVERAGE_MIN, "minPairs": SUB_MIN_PAIRS,
-                      "wet>=": WET_VALUE_MIN, "wetMinPairs": WET_MIN_PAIRS, "stationCoverageFloor": STATION_COVERAGE_FLOOR,
-                      "stationMinReports": STATION_MIN_REPORTS, "contemporaneity": "1 h"}}
+                      "wet>=": WET_VALUE_MIN, "wetMinPairs": WET_MIN_PAIRS}}
+
+
+# ----------------------------------------------------------------------------------------------------------------- bind (no comparison)
+def _stage_files(run: str) -> dict:
+    """relpath -> sha256 for every file in the four stage folders (the exact set grade requires on disk)."""
+    out = {}
+    for stage in STAGES:
+        root = os.path.join(run, stage)
+        for d, dirs, files in os.walk(root):
+            dirs[:] = [x for x in dirs if x != "__pycache__"]
+            for f in files:
+                p = os.path.join(d, f)
+                out[os.path.relpath(p, run).replace(os.sep, "/")] = sha256_file(p)
+    return dict(sorted(out.items()))
+
+
+def _fetch_status(run: str, stage: str, prov: list, station: str | None, kind: str, rel: str) -> str:
+    """OK only with a record, no error, a fetchedAt and the file present with the recorded sha256; a hash mismatch REFUSES."""
+    rec = [x for x in prov if x.get("kind") == kind and x.get("station") == station]
+    if len(rec) != 1 or "error" in rec[0] or not rec[0].get("fetchedAt"):
+        return "FETCH_FAILED"
+    f = os.path.join(run, stage, rel)
+    if not os.path.exists(f):
+        return "FETCH_FAILED"
+    if sha256_file(f) != rec[0].get("sha256"):
+        raise SystemExit(f"REFUSED: {stage}/{rel} sha256 differs from its provenance record")
+    return "OK"
+
+
+def bind(p: dict, protocol_sha: str, run: str) -> dict:
+    """The write-once binding (protocol designRule, binding): reads provenance, hashes, timestamps and row presence only. It never compares
+    a Brain value with truth. Fixes the station list, every input file, every failure, each lake's exclusion or independent station, and the
+    population of every criterion."""
+    for stage in STAGES:
+        if not os.path.isdir(os.path.join(run, stage)):
+            raise SystemExit(f"REFUSED: stage {stage}/ missing; run every fetch step before bind")
+    doc, stations_sha = load_stations(run)
+    w60 = window(p, "changeSignal_5_3")
+    provs = {stage: _load_prov(os.path.join(run, stage)) for stage in STAGES}
+    for stage, pv in provs.items():
+        if pv is None:
+            raise SystemExit(f"REFUSED: {stage}/provenance.json missing")
+        recorded = {f"{stage}/{x['file']}" for x in pv if "file" in x and "error" not in x}
+        on_disk = {k for k in _stage_files(run) if k.startswith(stage + "/") and k != f"{stage}/provenance.json"}
+        extra = sorted(on_disk - recorded)
+        if extra:
+            raise SystemExit(f"REFUSED: files with no provenance record: {extra[:5]}")
+    brain, cand = station_sets(doc)
+    status, times = {}, {}
+    for s in brain + cand:
+        e = {"window": _fetch_status(run, "asos", provs["asos"], s, "window", f"window/{s}.csv"),
+             "recentIem": _fetch_status(run, "recent", provs["recent"], s, "iem", f"iem/{s}.csv"),
+             "recentNws": _fetch_status(run, "recent", provs["recent"], s, "nws", f"nws/{s}.json"), "flag": None}
+        if "FETCH_FAILED" in (e["window"], e["recentIem"], e["recentNws"]):
+            e["flag"] = "FETCH_FAILED"
+        else:
+            t = {x["kind"]: ts(x["fetchedAt"]) for x in provs["recent"] if x.get("station") == s and x.get("kind") in ("iem", "nws")}
+            times[s] = t
+            nws_t = [o.at for o in decode_observations(json.load(open(os.path.join(run, "recent", "nws", f"{s}.json"))))]
+            iem_s = Series(parse_iem_csv(open(os.path.join(run, "recent", "iem", f"{s}.csv"), encoding="utf-8").read(), s))
+            hit = sum(1 for t_ in nws_t if iem_s.nearest(t_, 2, lambda x: True) is not None)       # timestamps only
+            e["recentCoverage"] = _rate(hit, len(nws_t))
+            if len(nws_t) >= STATION_MIN_REPORTS and e["recentCoverage"] < STATION_COVERAGE_FLOOR:
+                e["flag"] = "COVERAGE_FLOOR"
+        status[s] = e
+    late = sorted(s for s, t in times.items() if abs(t["iem"] - t["nws"]) > CONTEMPORANEITY)
+    substitution = ({"status": "NOT_GRADED", "reason": "FETCH_NOT_CONTEMPORANEOUS: archive and NWS fetches more than 1 h apart",
+                     "stations": late[:50]} if late else {"status": "BOUND"})
+
+    fr = [x for x in provs["fronts"] if x.get("kind") == "fronts"]
+    fronts = {"status": "FETCH_FAILED"}
+    if _fetch_status(run, "fronts", provs["fronts"], None, "fronts", "codsus.txt") == "OK" and len(fr) == 1:
+        an = parse_codsus(open(os.path.join(run, "fronts", "codsus.txt"), encoding="utf-8", errors="replace").read(),
+                          w60[0] + (w60[1] - w60[0]) / 2)
+        n = sum(1 for t, a in an.items() if a["eligible"] and w60[0] - timedelta(hours=3) <= t <= w60[1] + timedelta(hours=3))
+        fronts = {"status": "OK" if n else "NO_ELIGIBLE_ANALYSIS", "eligibleAnalyses": n}
+
+    arch = Archive(os.path.join(run, "asos", "window"))
+    lakes, population, exclusions = [], {c: 0 for c in CRITERIA}, {c: {} for c in CRITERIA}
+
+    def exclude(crits, reason):
+        for c in crits:
+            exclusions[c][reason] = exclusions[c].get(reason, 0) + 1
+
+    for lake in doc["lakes"]:
+        e = {"id": lake["id"], "lat": lake["lat"], "lon": lake["lon"], "criteria": {c: False for c in CRITERIA}}
+        if lake.get("status") != "OK":
+            e["excluded"] = "BLOCKED" if lake.get("status") == "BLOCKED" else "ERROR"
+            exclude(CRITERIA, e["excluded"])
+            lakes.append(e)
+            continue
+        sids = [s["id"] for s in lake["brainStations"]]
+        e["brainStations"] = sids
+        flags = [status[s]["flag"] for s in sids if status[s]["flag"]]
+        if flags:
+            e["excluded"] = "SUBSTITUTION_FETCH_FAILED" if "FETCH_FAILED" in flags else "SUBSTITUTION_STATION"
+            exclude(CRITERIA, e["excluded"])
+            lakes.append(e)
+            continue
+        e["criteria"]["R-5.1R"] = True
+        skipped, ind = [], None
+        for c in lake["candidates"]:
+            f = status[c["id"]]["flag"]
+            if f:
+                skipped.append({"id": c["id"], "reason": f})
+            elif not len(arch.get(c["id"]).between(*w60)):
+                skipped.append({"id": c["id"], "reason": "NO_ARCHIVE_ROWS_IN_WINDOW"})
+            else:
+                ind = c
+                break
+        e["skippedCandidates"] = skipped
+        if ind is None:
+            e["excludedFrom5_2and5_3"] = "NO_INDEPENDENT_STATION"
+            exclude(("R-5.2", "RAIN_ONSET", "FRONT_PASSAGE"), "NO_INDEPENDENT_STATION")
+        else:
+            e["independent"] = {"id": ind["id"], "distanceMi": ind["distanceMi"], "distanceToBrainStationMi": ind.get("distanceToBrainStationMi")}
+            e["criteria"]["R-5.2"] = True
+            if any(o.precip_1h_in is not None for o in arch.get(ind["id"]).between(*w60)):
+                e["criteria"]["RAIN_ONSET"] = True
+            else:
+                exclude(("RAIN_ONSET",), "NO_PRECIP_SENSOR")
+            if fronts["status"] == "OK":
+                e["criteria"]["FRONT_PASSAGE"] = True
+            else:
+                exclude(("FRONT_PASSAGE",), "FRONTS_" + fronts["status"])
+        lakes.append(e)
+    for e in lakes:
+        for c in CRITERIA:
+            population[c] += e["criteria"][c]
+    directory_count = int(doc["directory"]["count"])
+    return {"schema": "sector-weather-retro-run-manifest-v1", "protocolId": p["protocolId"], "protocolSha256": protocol_sha,
+            "runId": str(uuid.uuid4()), "boundAt": _now_iso(), "labels": LABELS,
+            "stationsSha256": stations_sha, "directoryCount": directory_count, "lakesInStations": len(doc["lakes"]),
+            "subset": bool(doc.get("subset")) or len(doc["lakes"]) != directory_count,
+            "files": _stage_files(run), "stationStatus": status, "substitution": substitution, "fronts": fronts,
+            "population": population, "exclusions": exclusions, "lakes": lakes}
+
+
+def verify_run(manifest: dict, protocol_sha: str, run: str) -> None:
+    """grade's gate: the protocol is the bound one and the files on disk match the manifest EXACTLY (no change, no extra, no missing)."""
+    if manifest.get("protocolSha256") != protocol_sha:
+        raise SystemExit("REFUSED: run-manifest.json was bound under another protocol")
+    disk = _stage_files(run)
+    want = manifest.get("files") or {}
+    if disk != want:
+        diff = sorted(set(disk) ^ set(want)) + sorted(k for k in set(disk) & set(want) if disk[k] != want[k])
+        raise SystemExit(f"REFUSED: files on disk differ from run-manifest.json: {diff[:5]}")
+    _, sha = load_stations(run)
+    if sha != manifest.get("stationsSha256"):
+        raise SystemExit("REFUSED: stations.json differs from the bound one")
 
 
 def _metric_ok(metrics: dict, name: str) -> bool:
@@ -732,60 +904,47 @@ def _spans(p: dict) -> list[tuple[set, datetime, datetime]]:
     return [(set(x["lakes"]), ts(x["from"]), ts(x["to"])) for x in p.get("excludedSpans") or []]
 
 
-def grade(p: dict, stations_doc: dict, asos_dir: str, recent_dir: str | None = None, fronts_text: str | None = None) -> dict:
+def grade(p: dict, manifest: dict, run: str, run_number: int = 1) -> dict:
+    """Grade a BOUND run (protocol designRule): the population, independent stations, exclusions and every input come from the manifest;
+    nothing here adds or removes a lake. Every exclusion counts against the Brain through the per-criterion coverage minimum."""
     T = C.THRESHOLDS
     protocol_id = p["protocolId"]
     w60, w30, w14 = window(p, "changeSignal_5_3"), window(p, "representativeness_5_2"), window(p, "fidelity_5_1")
     spans = _spans(p)
-    arch = Archive(os.path.join(asos_dir, "window"))
-    analyses = parse_codsus(fronts_text, w60[0] + (w60[1] - w60[0]) / 2) if fronts_text else {}
+    arch = Archive(os.path.join(run, "asos", "window"))
+    fronts_ok = (manifest.get("fronts") or {}).get("status") == "OK"
+    analyses = {}
+    if fronts_ok:
+        analyses = parse_codsus(open(os.path.join(run, "fronts", "codsus.txt"), encoding="utf-8", errors="replace").read(),
+                                w60[0] + (w60[1] - w60[0]) / 2)
     eligible_times = sorted(t for t, a in analyses.items() if a["eligible"])
-    fronts_ok = bool(eligible_times)
 
-    ok_lakes = [l for l in stations_doc["lakes"] if l.get("status") == "OK"]
-    sub_stations = sorted({s["id"] for l in ok_lakes for s in l["brainStations"]} | {c["id"] for l in ok_lakes for c in l["candidates"]})
-    sub = substitution_check(sub_stations, recent_dir)
-    flagged = dict(sub.get("flaggedStations") or {})                   # station -> FETCH_FAILED | COVERAGE_FLOOR
+    sub_stations = sorted(manifest.get("stationStatus") or {})
+    sub = substitution_check(sub_stations, os.path.join(run, "recent"), manifest)
     gate = gates(sub)
 
-    def flag_reason(ids):
-        rs = [flagged[i] for i in ids if i in flagged]
-        return None if not rs else ("SUBSTITUTION_FETCH_FAILED" if "FETCH_FAILED" in rs else "SUBSTITUTION_STATION")
-
-    excluded = {"BLOCKED": 0, "ERROR": 0, "SUBSTITUTION_FETCH_FAILED": 0, "SUBSTITUTION_STATION": 0, "NO_INDEPENDENT_STATION": 0,
-                "NO_PRECIP_SENSOR": 0}
-    span_excluded = {"instants": 0, "values": 0, "truthEvents": 0, "brainEvents": 0}
+    span_excluded = {"instants": 0, "values": 0, "truthEvents": 0, "brainEvents": 0, "truthReports": 0}
     fid = {"values": 0, "match": 0, "provenance": 0, "mismatches": [], "lakes": set()}
     rep = {"pressure": [], "trend": [], "temp": [], "slpOnlyExcluded": 0, "truthNoReport": 0, "truthTrendNull": 0, "brainTrendNull": 0,
-           "availP": [0, 0], "availT": [0, 0]}
+           "pressureTruthNoReport": 0, "tempTruthNoReport": 0, "availP": [0, 0], "availT": [0, 0]}
     rain = {"truth": 0, "det": 0, "truthEval": 0, "detEval": 0, "brain": 0, "hits": 0, "lakes": set()}
     front = {"truth": 0, "det": 0, "truthEval": 0, "detEval": 0, "brain": 0, "hits": 0, "unjudgeable": 0, "lakes": set()}
-    change_hours, graded, independents = {}, [], []
+    change_hours, independents = {}, []
     hp_steady = C.TREND_3H_STEADY_INHG / C.HPA_TO_INHG
 
-    for lake in stations_doc["lakes"]:
-        if lake.get("status") != "OK":
-            excluded["BLOCKED" if lake.get("status") == "BLOCKED" else "ERROR"] += 1
-            continue
+    for lake in manifest["lakes"]:
+        crit = lake["criteria"]
+        if not crit["R-5.1R"]:
+            continue                                                     # excluded in bind; counted in manifest.exclusions
         lid = lake["id"]
-        sids = [s["id"] for s in lake["brainStations"]]
-        why = flag_reason(sids)
-        if why:
-            excluded[why] += 1
-            continue
+        sids = lake["brainStations"]
         lake_spans = [(a, b) for ls, a, b in spans if lid in ls]
 
         def in_span(t, _sp=lake_spans):
             return t is not None and any(a <= t < b for a, b in _sp)
 
-        ind = next((c for c in lake["candidates"] if len(arch.get(c["id"]).between(*w60))), None)
-        if ind is not None and ind["id"] in flagged:
-            excluded[flag_reason([ind["id"]])] += 1                       # still graded for R-5.1R
-            ind = None
-        elif ind is None:
-            excluded["NO_INDEPENDENT_STATION"] += 1                       # still graded for R-5.1R
-        else:
-            graded.append(lid)
+        ind = lake.get("independent") if crit["R-5.2"] else None
+        if ind:
             independents.append({"lake": lid, "station": ind["id"], "distanceMi": ind["distanceMi"],
                                  "distanceToBrainStationMi": ind.get("distanceToBrainStationMi")})
         ser = {s: arch.get(s) for s in sids}
@@ -871,6 +1030,8 @@ def grade(p: dict, stations_doc: dict, asos_dir: str, recent_dir: str | None = N
                         io_ = iser.nearest(pr["at"], 30, lambda o: o.alt_hpa is not None and not in_span(o.at))
                         if io_ is not None:
                             rep["pressure"].append({"lake": lid, "err": abs(raw - io_.alt_hpa), "kind": pr["kind"], "band": band})
+                        else:
+                            rep["pressureTruthNoReport"] += 1
                 elif pr is None and not p_span:
                     trend_ref = (now, None, "none")
                 if trend_ref is not None:
@@ -892,15 +1053,15 @@ def grade(p: dict, stations_doc: dict, asos_dir: str, recent_dir: str | None = N
                     io_ = iser.nearest(tv["at"], 30, lambda o: o.temp_f is not None and not in_span(o.at))
                     if io_ is not None:
                         rep["temp"].append({"lake": lid, "err": abs(tv["value"] - io_.temp_f), "band": band})
+                    else:
+                        rep["tempTruthNoReport"] += 1
         if iser is None:
             continue
         change_hours[lid] = round(n_change / max(n_inst / (7 * 24), 1e-9), 2)
 
         # R-5.3 rain onset (truth definition and 2 h merge: amendment additions)
         tol = timedelta(hours=2)
-        if not any(o.precip_1h_in is not None for o in iser.between(*w60)):
-            excluded["NO_PRECIP_SENSOR"] += 1
-        else:
+        if crit["RAIN_ONSET"]:                                           # NO_PRECIP_SENSOR was decided in bind
             bev = [t for t in merge_events(ev["RAIN_ONSET"]) if w60[0] <= t < w60[1]]
             truth = []
             for t in rain_onsets(iser, w60[0], w60[1], T["measurablePrecipIn"]):
@@ -908,7 +1069,13 @@ def grade(p: dict, stations_doc: dict, asos_dir: str, recent_dir: str | None = N
                     span_excluded["truthEvents"] += 1
                 else:
                     truth.append(t)
-            wet = [o.at for o in iser.between(w60[0] - tol, w60[1] + tol) if o.precip_1h_in is not None and o.precip_1h_in >= T["measurablePrecipIn"]]
+            wet = []
+            for o in iser.between(w60[0] - tol, w60[1] + tol):
+                if o.precip_1h_in is not None and o.precip_1h_in >= T["measurablePrecipIn"]:
+                    if in_span(o.at):
+                        span_excluded["truthReports"] += 1                # an excluded-span report never makes a hit
+                    else:
+                        wet.append(o.at)
             rain["brain"] += len(bev)
             rain["hits"] += sum(any(abs(t - x) <= tol for x in wet) for t in bev)
             for t in truth:
@@ -921,7 +1088,7 @@ def grade(p: dict, stations_doc: dict, asos_dir: str, recent_dir: str | None = N
             if bev or truth:
                 rain["lakes"].add(lid)
         # R-5.3 front passage
-        if fronts_ok:
+        if fronts_ok and crit["FRONT_PASSAGE"]:
             tol3 = timedelta(hours=3)
             bev = [t for t in merge_events(ev["FRONT_PASSAGE"]) if w60[0] <= t < w60[1]]
             eps = []
@@ -947,7 +1114,7 @@ def grade(p: dict, stations_doc: dict, asos_dir: str, recent_dir: str | None = N
                 front["lakes"].add(lid)
 
     # ---- results
-    subset = bool(stations_doc.get("subset"))
+    subset = bool(manifest.get("subset"))
     n_f = fid["values"]
     r51 = {"label": "Replay self-consistency check (R-5.1R). NOT the plan's 5.1; never stands in for it.",
            "values": n_f, "lakes": len(fid["lakes"]), "matchShare": _rate(fid["match"], n_f), "provenanceShare": _rate(fid["provenance"], n_f),
@@ -982,6 +1149,7 @@ def grade(p: dict, stations_doc: dict, asos_dir: str, recent_dir: str | None = N
                                  "airTemperature": {"share": _rate(*rep["availT"]), "instants": rep["availT"][1]}},
            "trendCounts": {"brainTrendNullCountedAsDisagreement": rep["brainTrendNull"], "truthNoReportExcluded": rep["truthNoReport"],
                            "truthTrendNullExcluded": rep["truthTrendNull"]},
+           "maeCounts": {"pressureTruthNoReportExcluded": rep["pressureTruthNoReport"], "airTempTruthNoReportExcluded": rep["tempTruthNoReport"]},
            "excluded": {"slpOnlyBrainValues": rep["slpOnlyExcluded"]}}
     parts = [r52[k]["result"] for k in ("pressureMAE_hPa", "trend3hAgreement", "airTempMAE_F")]
     r52["result"] = "FAIL" if "FAIL" in parts else ("INSUFFICIENT" if "INSUFFICIENT" in parts else "PASS")
@@ -1000,27 +1168,35 @@ def grade(p: dict, stations_doc: dict, asos_dir: str, recent_dir: str | None = N
         fp["unjudgeableBrainEventsExcludedFromFAR"] = front["unjudgeable"]
         fp["amendmentAdditions"] = ["Brain events merged within 2 h", "Brain events with no eligible analysis within +/- 3 h excluded from FAR"]
     else:
-        fp = {"result": "NOT_GRADED", "reason": "no eligible high-resolution coded surface bulletin in the window" if fronts_text
-              else "no front bulletins supplied (fetch-fronts)"}
+        fp = {"result": "NOT_GRADED", "reason": f"fronts {(manifest.get('fronts') or {}).get('status')} (bound in run-manifest.json)"}
 
-    qualifiers = ["SUBSET"] if subset else []
+    qualifiers = (["SUBSET"] if subset else []) + (["REPEAT_RUN"] if run_number != 1 else [])
+    directory = max(int(manifest.get("directoryCount") or 0), 1)
 
-    def finalise(r, crit):
+    def finalise(r, crit, pop_key):
+        r["metricsResult"] = r["result"]
+        n = (manifest.get("population") or {}).get(pop_key, 0)
+        cov = round(n / directory, 4)
+        r["coverage"] = {"lakes": n, "directoryLakes": directory, "share": cov, "minimum": COVERAGE_MIN,
+                         "excludedByReason": (manifest.get("exclusions") or {}).get(pop_key, {}),
+                         "rule": "every excluded lake counts against the Brain (protocol exclusionsCountAgainst)"}
+        if r["result"] != "NOT_GRADED" and cov < COVERAGE_MIN:
+            r["result"], r["reason"] = "FAIL", "COVERAGE_BELOW_MINIMUM"
         r["computedResult"] = r["result"]
         r["substitutionGate"] = gate[crit]
         q = []
         if not gate[crit]["ok"]:
             q.append("SUBSTITUTION_UNCERTAIN")
-        if subset and r["result"] in ("PASS", "FAIL"):
+        if (subset or run_number != 1) and r["result"] in ("PASS", "FAIL"):
             r["result"] = "NOT_GRADED"
         elif q and r["result"] == "PASS":
             r["result"] = "NOT_GRADED"
         r["qualifiers"] = qualifiers + q
 
-    finalise(r51, "R-5.1R")
-    finalise(r52, "R-5.2")
-    finalise(fp, "R-5.3.FRONT_PASSAGE")
-    finalise(ro, "R-5.3.RAIN_ONSET")
+    finalise(r51, "R-5.1R", "R-5.1R")
+    finalise(r52, "R-5.2", "R-5.2")
+    finalise(fp, "R-5.3.FRONT_PASSAGE", "FRONT_PASSAGE")
+    finalise(ro, "R-5.3.RAIN_ONSET", "RAIN_ONSET")
     parts = [ro["result"], fp["result"]]
     r53 = {"RAIN_ONSET": ro, "FRONT_PASSAGE": fp,
            "result": "FAIL" if "FAIL" in parts else ("PASS" if parts == ["PASS", "PASS"] else
@@ -1029,8 +1205,10 @@ def grade(p: dict, stations_doc: dict, asos_dir: str, recent_dir: str | None = N
                                          "lakes": len(change_hours)}}
     if any("SUBSTITUTION_UNCERTAIN" in x.get("qualifiers", []) for x in (r51, r52, ro, fp)):
         qualifiers = qualifiers + ["SUBSTITUTION_UNCERTAIN"]
-    return {"labels": LABELS, "protocolId": protocol_id, "qualifiers": qualifiers,
-            "lakes": {"inStationsFile": len(stations_doc["lakes"]), "gradedFor5_2and5_3": len(graded), "excluded": excluded,
+    return {"labels": LABELS, "protocolId": protocol_id, "qualifiers": qualifiers, "runId": manifest.get("runId"),
+            "runNumber": run_number, "priorRuns": run_number - 1, "counts": run_number == 1 and not subset,
+            "lakes": {"directory": manifest.get("directoryCount"), "inStationsFile": manifest.get("lakesInStations"),
+                      "population": manifest.get("population"), "exclusions": manifest.get("exclusions"),
                       "excludedSpans": span_excluded, "independentStations": independents},
             "R-SUB": sub, "R-5.1R": r51, "R-5.2": r52, "R-5.3": r53,
             "note": "Evidence for /validation/weather only; writes nothing, sets no status, changes no score (protocol resultStates.rubricMapping)."}
@@ -1044,21 +1222,54 @@ def _median(xs):
     return xs[m] if len(xs) % 2 else round((xs[m - 1] + xs[m]) / 2, 2)
 
 
+def cmd_bind(a) -> int:
+    p, digest = load_protocol()
+    out = os.path.join(a.run, MANIFEST)
+    if os.path.exists(out):
+        raise SystemExit(f"REFUSED: {out} exists; the binding is write-once")
+    m = bind(p, digest, a.run)
+    with open(out, "x") as fh:
+        json.dump(m, fh, indent=1, sort_keys=True)
+    print(json.dumps({"runId": m["runId"], "subset": m["subset"], "population": m["population"], "directory": m["directoryCount"],
+                      "substitution": m["substitution"]["status"], "fronts": m["fronts"]["status"], "manifestSha256": sha256_file(out)}))
+    return 0
+
+
+def _log(path: str, entry: dict) -> None:
+    with open(path, "a", encoding="utf-8") as fh:
+        fh.write(json.dumps(entry, sort_keys=True) + "\n")
+        fh.flush()
+        os.fsync(fh.fileno())
+
+
 def cmd_grade(a) -> int:
     p, digest = load_protocol()
-    stations_doc = json.load(open(a.stations))
-    fronts = open(a.fronts, encoding="utf-8", errors="replace").read() if a.fronts else None
-    rep = grade(p, stations_doc, a.asos, a.recent, fronts)
-    rep["protocolSha256"] = digest
-    rep["release"] = C.RELEASE.get("releaseId")
-    rep["thresholdsVersion"] = C.THRESHOLDS_VERSION
-    rep["inputs"] = {"stations.json": sha256_file(a.stations), "asos": tree_sha256(a.asos), "recent": tree_sha256(a.recent) if a.recent else None,
-                     "fronts": sha256_file(a.fronts) if a.fronts else None}
-    rep["gradedAt"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
-    with open(a.out, "w") as fh:
+    out = os.path.join(a.run, REPORT)
+    if os.path.exists(out):
+        raise SystemExit(f"REFUSED: {out} exists; reports are write-once")
+    mpath = os.path.join(a.run, MANIFEST)
+    if not os.path.exists(mpath):
+        raise SystemExit("REFUSED: no run-manifest.json (run bind first)")
+    manifest = json.load(open(mpath))
+    verify_run(manifest, digest, a.run)
+    msha = sha256_file(mpath)
+    prior = 0
+    if os.path.exists(a.run_log):
+        prior = sum(1 for ln in open(a.run_log, encoding="utf-8") if ln.strip() and json.loads(ln).get("event") == "START")
+    run_number = prior + 1
+    _log(a.run_log, {"event": "START", "at": _now_iso(), "runNumber": run_number, "runId": manifest["runId"], "manifestSha256": msha,
+                     "protocolSha256": digest})                                    # before any comparison: a crashed run still counts
+    rep = grade(p, manifest, a.run, run_number)
+    rep.update({"protocolSha256": digest, "manifestSha256": msha, "release": C.RELEASE.get("releaseId"),
+                "thresholdsVersion": C.THRESHOLDS_VERSION, "gradedAt": _now_iso(),
+                "onlyRunOneCounts": "protocol runLog: only runNumber 1 counts; later runs are NOT_GRADED (REPEAT_RUN)"})
+    with open(out, "x") as fh:
         json.dump(rep, fh, indent=1, sort_keys=True, default=str)
-    print(json.dumps({k: rep[k]["result"] for k in ("R-SUB", "R-5.1R", "R-5.2", "R-5.3")} | {"qualifiers": rep["qualifiers"], "report": a.out}))
+    results = {k: rep[k]["result"] for k in ("R-SUB", "R-5.1R", "R-5.2")}
+    results.update({"RAIN_ONSET": rep["R-5.3"]["RAIN_ONSET"]["result"], "FRONT_PASSAGE": rep["R-5.3"]["FRONT_PASSAGE"]["result"]})
+    _log(a.run_log, {"event": "RESULT", "at": _now_iso(), "runNumber": run_number, "runId": manifest["runId"], "manifestSha256": msha,
+                     "reportSha256": sha256_file(out), "results": results, "qualifiers": rep["qualifiers"]})
+    print(json.dumps(results | {"runNumber": run_number, "qualifiers": rep["qualifiers"], "report": out}))
     return 0
 
 
@@ -1067,29 +1278,23 @@ def main(argv=None) -> int:
     sp = ap.add_subparsers(dest="cmd", required=True)
     sp.add_parser("verify")
     s = sp.add_parser("fetch-stations")
-    s.add_argument("--out", required=True)
+    s.add_argument("--run", required=True)
     s.add_argument("--directory")
     s.add_argument("--lakes", default="")
     s.add_argument("--limit", type=int, default=0)
-    for name in ("fetch-asos", "fetch-recent"):
+    for name in ("fetch-asos", "fetch-recent", "fetch-fronts", "bind"):
         s = sp.add_parser(name)
-        s.add_argument("--stations", required=True)
-        s.add_argument("--out", required=True)
-    s = sp.add_parser("fetch-fronts")
-    s.add_argument("--out", required=True)
+        s.add_argument("--run", required=True)
     s = sp.add_parser("grade")
-    s.add_argument("--stations", required=True)
-    s.add_argument("--asos", required=True)
-    s.add_argument("--recent", help="the fetch-recent output folder (iem/, nws/, provenance.json)")
-    s.add_argument("--fronts")
-    s.add_argument("--out", required=True)
+    s.add_argument("--run", required=True)
+    s.add_argument("--run-log", required=True, help="append-only JSON-lines run log in the research folder (protocol runLog)")
     a = ap.parse_args(argv)
     if a.cmd == "verify":
         _, d = load_protocol()
         print(f"OK protocol sha256 {d}")
         return 0
     return {"fetch-stations": cmd_fetch_stations, "fetch-asos": cmd_fetch_asos, "fetch-recent": cmd_fetch_recent,
-            "fetch-fronts": cmd_fetch_fronts, "grade": cmd_grade}[a.cmd](a)
+            "fetch-fronts": cmd_fetch_fronts, "bind": cmd_bind, "grade": cmd_grade}[a.cmd](a)
 
 
 if __name__ == "__main__":

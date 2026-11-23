@@ -1,4 +1,4 @@
-"""Offline tests for the Weather retrospective validation runner (protocol WX-RETRO-2026-11-23.3; .2 and v1 superseded). No network: every input is a fixture.
+"""Offline tests for the Weather retrospective validation runner (protocol WX-RETRO-2026-11-23.4; .3, .2 and v1 superseded). No network: every input is a fixture.
 Synthetic archive rows are labelled SYNTHETIC; the NWS responses are the Weather Brain's RECORDED fixtures of 2026-11-06."""
 import copy
 import json
@@ -26,7 +26,8 @@ def rec(name):
 # ------------------------------------------------------------------------------------------------ protocol
 def test_protocol_hash_verifies_and_matches_the_registered_value():
     p, d = W.load_protocol()
-    assert p["protocolId"] == "WX-RETRO-2026-11-23.3"
+    assert p["protocolId"] == "WX-RETRO-2026-11-23.4"
+    assert "BOUND before any comparison" in p["designRule"] and "every exclusion counts against the Brain" in p["designRule"]
     assert d == open(W.PROTOCOL + ".sha256").read().split()[0]
     assert p["status"] == "PRE-REGISTERED" and "RETROSPECTIVE" in p["labels"]
 
@@ -34,7 +35,8 @@ def test_protocol_hash_verifies_and_matches_the_registered_value():
 def test_superseded_protocols_are_kept_unchanged_and_refused():
     d = os.path.dirname(W.PROTOCOL)
     for name, digest in (("WX-RETRO-2026-11-23.protocol.json", "6e08d42ed7e808a7a9775e885f865233e7ba2bb2279e4fbb8e0171634ed37ab8"),
-                         ("WX-RETRO-2026-11-23.2.protocol.json", "01eac7bc56033154dcf64ee365826a0da1c4d33cd921cec7ec76e79df48eb58c")):
+                         ("WX-RETRO-2026-11-23.2.protocol.json", "01eac7bc56033154dcf64ee365826a0da1c4d33cd921cec7ec76e79df48eb58c"),
+                         ("WX-RETRO-2026-11-23.3.protocol.json", "492c1befe2707ce559c5999da7931548e69728c9fffadf16524813efdb5ec7c7")):
         path = os.path.join(d, name)
         assert W.sha256_file(path) == digest == open(path + ".sha256").read().split()[0]   # byte-identical
         with pytest.raises(SystemExit, match="SUPERSEDED"):
@@ -45,7 +47,7 @@ def test_superseded_protocols_are_kept_unchanged_and_refused():
 
 def test_a_protocol_with_another_id_or_superseded_status_is_refused(tmp_path):
     p = json.load(open(W.PROTOCOL))
-    for change, msg in (({"protocolId": "WX-RETRO-2026-11-23.4"}, "is not"), ({"status": "SUPERSEDED"}, "SUPERSEDED")):
+    for change, msg in (({"protocolId": "WX-RETRO-2026-11-23.5"}, "is not"), ({"status": "SUPERSEDED"}, "SUPERSEDED")):
         f = tmp_path / f"p{len(msg)}.json"
         f.write_text(json.dumps(p | change))
         (tmp_path / (f.name + ".sha256")).write_text(W.sha256_file(str(f)) + "  x\n")
@@ -246,25 +248,94 @@ def test_front_distance_and_episodes():
     assert eps == [(datetime(2026, 10, 15, 15, tzinfo=UTC), datetime(2026, 10, 15, 15, tzinfo=UTC))]
 
 
-# ------------------------------------------------------------------------------------------------ substitution check (recorded NWS vs adapter)
-def _recent_dir(root, stations, iem_rows, nws_docs, minutes_apart=1, errors=()):
-    """A fetch-recent output folder: iem/<id>.csv, nws/<id>.json and provenance.json with fetch times."""
-    (root / "iem").mkdir(parents=True, exist_ok=True)
-    (root / "nws").mkdir(parents=True, exist_ok=True)
-    items, t0 = [], datetime(2026, 11, 23, 12, 0, tzinfo=UTC)
-    for s_ in stations:
-        if s_ in iem_rows:
-            (root / "iem" / f"{s_}.csv").write_text("\n".join(iem_rows[s_]))
-        items.append({"station": s_, "kind": "iem", "file": f"iem/{s_}.csv", "fetchedAt": t0.strftime("%Y-%m-%dT%H:%M:%SZ")})
-        it = {"station": s_, "kind": "nws", "file": f"nws/{s_}.json",
-              "fetchedAt": (t0 + timedelta(minutes=minutes_apart)).strftime("%Y-%m-%dT%H:%M:%SZ")}
-        if s_ in errors:
-            it["error"] = "HTTP 500 after 4 attempts"
-        elif s_ in nws_docs:
-            (root / "nws" / f"{s_}.json").write_text(json.dumps(nws_docs[s_]))
-        items.append(it)
-    (root / "provenance.json").write_text(json.dumps({"items": items}))
-    return str(root)
+# ------------------------------------------------------------------------------------------------ run folders (what the fetch steps write)
+def _rows(sid, start, hours, rain_from=None, temp=60.0, alti=30.00, gap=None, shift_at=None, wet_at=None):
+    """SYNTHETIC hourly archive rows. gap=(a, b): no report in [a, b). shift_at: from then on wind 300 deg and 8 F colder (a front).
+    wet_at: a predicate on the report time that makes it rain."""
+    rows = [HEADER]
+    for h in range(hours):
+        t = start + timedelta(hours=h)
+        if gap and gap[0] <= t < gap[1]:
+            continue
+        wet = (rain_from is not None and t >= rain_from) or (wet_at is not None and wet_at(t))
+        shifted = shift_at is not None and t >= shift_at
+        rows.append(",".join([W.iem_id(sid), t.strftime("%Y-%m-%d %H:%M"), f"{temp - (8 if shifted else 0):.2f}", "50.00", "70.0",
+                              "300.00" if shifted else "180.00", "8.00", f"{alti:.2f}", "1016.00", "0.0500" if wet else "0.0000",
+                              "OVC", "null", "null", "null", "-RA" if wet else "null"]))
+    return "\n".join(rows)
+
+
+class Run:
+    """Builds a run folder exactly as the fetch steps do (stage folders, provenance records with sha256 and fetchedAt)."""
+
+    def __init__(self, tmp_path, frm="2026-11-10T00:00:00Z", to="2026-11-11T00:00:00Z", lake=LAKE, real_protocol=False):
+        p, self.sha = W.load_protocol()
+        self.p = copy.deepcopy(p)
+        if not real_protocol:
+            for k in ("changeSignal_5_3", "representativeness_5_2", "fidelity_5_1"):
+                self.p["windows"][k].update({"from": frm, "to": to})
+        st = W.decode_stations(rec("guntersville-stations.json")) + [{"id": "KSYN1", "name": "SYNTHETIC", "lat": 34.50, "lon": -86.26}]
+        sel = W.select_stations(lake, st)
+        self.ind = sel["candidates"][0]["id"]
+        self.lakes = [dict(lake, status="OK", **sel)]
+        self.brain = [s["id"] for s in sel["brainStations"]]
+        self.directory_count = None
+        self.window, self.iem, self.nws, self.errors, self.minutes_apart = {}, {}, {}, {}, 1
+        self.codsus = ""
+        self.run = str(tmp_path / "run")
+
+    def stations(self):
+        return sorted(set(self.brain) | {c["id"] for l in self.lakes if l["status"] == "OK" for c in l["candidates"]})
+
+    def build(self):
+        r = self.run
+        count = self.directory_count if self.directory_count is not None else len(self.lakes)
+        doc = {"directory": {"count": count, "sha256": "x"}, "subset": False, "lakes": self.lakes}
+        t0 = datetime(2026, 11, 23, 12, 0, tzinfo=UTC)
+
+        def put(stage, rel, data, rec_, items):
+            path = os.path.join(r, stage, rel)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            open(path, "w").write(data)
+            items.append(dict(rec_, file=rel, sha256=W.sha256_file(path)))
+
+        def prov(stage, items):
+            os.makedirs(os.path.join(r, stage), exist_ok=True)
+            json.dump({"items": items}, open(os.path.join(r, stage, "provenance.json"), "w"))
+
+        it = []
+        put("stations", "stations.json", json.dumps(doc), {"fetchedAt": t0.isoformat()}, it)
+        prov("stations", it)
+        it = []
+        for s_ in self.stations():
+            if ("window", s_) in self.errors:
+                it.append({"station": s_, "kind": "window", "file": f"window/{s_}.csv", "error": "HTTP 500", "fetchedAt": t0.isoformat()})
+            else:
+                put("asos", f"window/{s_}.csv", self.window.get(s_, HEADER), {"station": s_, "kind": "window", "fetchedAt": t0.isoformat()}, it)
+        prov("asos", it)
+        it = []
+        for s_ in self.stations():
+            for kind, rel, data, dt in (("iem", f"iem/{s_}.csv", self.iem.get(s_, HEADER), 0),
+                                        ("nws", f"nws/{s_}.json", json.dumps(self.nws.get(s_, {"features": []})), self.minutes_apart)):
+                at = (t0 + timedelta(minutes=dt)).strftime("%Y-%m-%dT%H:%M:%SZ")
+                if (kind, s_) in self.errors:
+                    it.append({"station": s_, "kind": kind, "file": rel, "error": "HTTP 500 after 4 attempts", "fetchedAt": at})
+                else:
+                    put("recent", rel, data, {"station": s_, "kind": kind, "fetchedAt": at}, it)
+        prov("recent", it)
+        it = []
+        put("fronts", "codsus.txt", self.codsus, {"kind": "fronts", "fetchedAt": t0.isoformat()}, it)
+        prov("fronts", it)
+        return self
+
+    def bind(self):
+        return W.bind(self.p, self.sha, self.run)
+
+    def grade(self, run_number=1):
+        return W.grade(self.p, self.bind(), self.run, run_number)
+
+
+START = datetime(2026, 11, 9, 10, 53, tzinfo=UTC)
 
 
 def _iem_copy_of(nws, sid):
@@ -274,14 +345,18 @@ def _iem_copy_of(nws, sid):
         alti = None if o.alt_hpa is None else round(o.alt_hpa * 0.0295299830714, 2)
         rows.append(",".join([W.iem_id(sid), o.at.strftime("%Y-%m-%d %H:%M"), f(o.temp_f), f(o.dew_f), f(o.rh), "null", "null",
                               f(alti), f(o.slp_hpa), f(o.precip_1h_in, 4), "null", "null", "null", "null", "null"]))
-    return rows
+    return "\n".join(rows)
 
 
+# ------------------------------------------------------------------------------------------------ substitution check
 def test_substitution_check_agrees_when_the_archive_carries_the_same_reports(tmp_path):
     doc = rec("guntersville-obs-KBFZ.json")
     nws = W.decode_observations(doc)
     assert nws
-    r = W.substitution_check(["KBFZ"], _recent_dir(tmp_path / "r", ["KBFZ"], {"KBFZ": _iem_copy_of(nws, "KBFZ")}, {"KBFZ": doc}))
+    R = Run(tmp_path)
+    R.nws["KBFZ"], R.iem["KBFZ"] = doc, _iem_copy_of(nws, "KBFZ")
+    m_ = R.build().bind()
+    r = W.substitution_check(["KBFZ"], os.path.join(R.run, "recent"), m_)
     m = r["metrics"]
     assert r["coverage"]["share"] == 1.0 and m["temperature"]["value"]["agreement"] == 1.0
     assert m["pressure"]["value"]["pairs"] == 0 or m["pressure"]["value"]["agreement"] == 1.0
@@ -293,27 +368,7 @@ def test_substitution_check_agrees_when_the_archive_carries_the_same_reports(tmp
     assert m["temperature"]["value"]["result"] == "INSUFFICIENT"                             # < 1000 pairs
     g = W.gates(r)
     assert not g["R-5.2"]["ok"] and "temperature" in g["R-5.2"]["notPassing"]
-    assert r["flaggedStations"] == {}
-    assert W.substitution_check(["K8A1"], None)["result"] == "NOT_GRADED"
-
-
-def test_substitution_check_is_not_graded_when_fetches_are_not_contemporaneous(tmp_path):
-    doc = rec("guntersville-obs-KBFZ.json")
-    rows = {"KBFZ": _iem_copy_of(W.decode_observations(doc), "KBFZ")}
-    r = W.substitution_check(["KBFZ"], _recent_dir(tmp_path / "r", ["KBFZ"], rows, {"KBFZ": doc}, minutes_apart=61))
-    assert r["result"] == "NOT_GRADED" and r["reason"].startswith("FETCH_NOT_CONTEMPORANEOUS")
-    assert not any(v["ok"] for v in W.gates(r).values())
-    r = W.substitution_check(["KBFZ"], _recent_dir(tmp_path / "s", ["KBFZ"], rows, {"KBFZ": doc}, minutes_apart=59))
-    assert not r.get("reason", "").startswith("FETCH_NOT_CONTEMPORANEOUS")
-
-
-def test_a_failed_nws_fetch_is_flagged_never_skipped(tmp_path):
-    doc = rec("guntersville-obs-KBFZ.json")
-    rows = {"KBFZ": _iem_copy_of(W.decode_observations(doc), "KBFZ"), "K4A6": [HEADER]}
-    r = W.substitution_check(["KBFZ", "K4A6", "K8A1"], _recent_dir(tmp_path / "r", ["KBFZ", "K4A6", "K8A1"], rows, {"KBFZ": doc},
-                                                                    errors=("K4A6",)))
-    assert r["flaggedStations"] == {"K4A6": "FETCH_FAILED", "K8A1": "FETCH_FAILED"}           # an error, and a missing response file
-    assert "HTTP 500" in r["perStation"]["K4A6"]["fetchFailed"][0]
+    assert m_["stationStatus"]["KBFZ"]["flag"] is None
 
 
 def test_gates_need_value_and_null_agreement_and_coverage():
@@ -336,53 +391,154 @@ def test_gates_need_value_and_null_agreement_and_coverage():
     assert not any(v["ok"] for v in W.gates(sub).values())
 
 
-def test_a_station_below_the_coverage_floor_is_flagged(tmp_path):
+# ------------------------------------------------------------------------------------------------ bind: decided before any comparison
+def test_bind_records_failures_and_flags_from_provenance_and_timestamps_only(tmp_path):
+    R = Run(tmp_path)
     base = datetime(2026, 11, 20, 0, 53, tzinfo=UTC)
-    feats = [{"properties": {"station": "https://api.weather.gov/stations/KLOW", "timestamp": (base + timedelta(hours=h)).isoformat(),
-                             "temperature": {"unitCode": "wmoUnit:degC", "value": 10.0}}} for h in range(30)]
-    rows = [HEADER] + [f"KLOW,{(base + timedelta(hours=h)).strftime('%Y-%m-%d %H:%M')},50.00" + ",null" * 12 for h in range(10)]
-    r = W.substitution_check(["KLOW"], _recent_dir(tmp_path / "r", ["KLOW"], {"KLOW": rows}, {"KLOW": {"features": feats}}))
-    assert r["flaggedStations"] == {"KLOW": "COVERAGE_FLOOR"} and r["perStation"]["KLOW"]["coverage"] == pytest.approx(10 / 30, abs=1e-3)
+    R.nws["K4A6"] = {"features": [{"properties": {"station": "https://api.weather.gov/stations/K4A6", "timestamp": (base + timedelta(hours=h)).isoformat(),
+                                                   "temperature": {"unitCode": "wmoUnit:degC", "value": 10.0}}} for h in range(30)]}
+    R.iem["K4A6"] = "\n".join([HEADER] + [f"4A6,{(base + timedelta(hours=h)).strftime('%Y-%m-%d %H:%M')},50.00" + ",null" * 12
+                                          for h in range(10)])
+    R.errors = {("nws", "KBFZ"): 1}
+    m = R.build().bind()
+    st = m["stationStatus"]
+    assert st["KBFZ"]["flag"] == "FETCH_FAILED" and st["KBFZ"]["recentNws"] == "FETCH_FAILED"
+    assert st["K4A6"]["flag"] == "COVERAGE_FLOOR" and st["K4A6"]["recentCoverage"] == pytest.approx(10 / 30, abs=1e-3)
+    lake = m["lakes"][0]
+    assert lake["excluded"] == "SUBSTITUTION_FETCH_FAILED" and not any(lake["criteria"].values())
+    assert m["exclusions"]["R-5.2"] == {"SUBSTITUTION_FETCH_FAILED": 1} and m["population"]["R-5.1R"] == 0
+
+
+def test_a_missing_fetch_time_or_missing_file_is_fetch_failed(tmp_path):
+    R = Run(tmp_path).build()
+    prov = json.load(open(os.path.join(R.run, "asos", "provenance.json")))
+    for it in prov["items"]:
+        if it.get("station") == "K8A1":
+            del it["fetchedAt"]
+    json.dump(prov, open(os.path.join(R.run, "asos", "provenance.json"), "w"))
+    os.remove(os.path.join(R.run, "recent", "iem", "K4A6.csv"))
+    prov = json.load(open(os.path.join(R.run, "recent", "provenance.json")))
+    prov["items"] = [x for x in prov["items"] if not (x.get("station") == "K4A6" and x.get("kind") == "iem")]
+    json.dump(prov, open(os.path.join(R.run, "recent", "provenance.json"), "w"))
+    st = R.bind()["stationStatus"]
+    assert st["K8A1"]["window"] == "FETCH_FAILED" and st["K4A6"]["recentIem"] == "FETCH_FAILED"
+
+
+def test_bind_refuses_a_hash_mismatch_or_an_unrecorded_file(tmp_path):
+    R = Run(tmp_path).build()
+    with open(os.path.join(R.run, "asos", "window", "KBFZ.csv"), "a") as fh:
+        fh.write("\nBFZ,2026-11-10 00:53,99.00" + ",null" * 12)
+    with pytest.raises(SystemExit, match="sha256 differs"):
+        R.bind()
+    R2 = Run(tmp_path / "b").build()
+    open(os.path.join(R2.run, "asos", "window", "KEXTRA.csv"), "w").write(HEADER)
+    with pytest.raises(SystemExit, match="no provenance record"):
+        R2.bind()
+
+
+def test_independent_fallback_follows_the_bound_rule(tmp_path):
+    R = Run(tmp_path)
+    st = W.decode_stations(rec("guntersville-stations.json")) + [{"id": "KSYN1", "name": "SYNTHETIC", "lat": 34.50, "lon": -86.26},
+                                                                  {"id": "KSYN2", "name": "SYNTHETIC", "lat": 34.60, "lon": -86.26}]
+    R.lakes = [dict(LAKE, status="OK", **W.select_stations(LAKE, st))]
+    for s_ in R.brain + ["KSYN2"]:
+        R.window[s_] = _rows(s_, START, 42)
+    R.errors = {("nws", "KSYN1"): 1}
+    lake = R.build().bind()["lakes"][0]
+    assert lake["independent"]["id"] == "KSYN2"
+    assert lake["skippedCandidates"] == [{"id": "KSYN1", "reason": "FETCH_FAILED"}]
+
+
+def test_contemporaneity_is_bound_and_blocks_every_pass(tmp_path):
+    R = Run(tmp_path)
+    R.minutes_apart = 61
+    m = R.build().bind()
+    assert m["substitution"]["status"] == "NOT_GRADED" and m["substitution"]["reason"].startswith("FETCH_NOT_CONTEMPORANEOUS")
+    r = W.grade(R.p, m, R.run)
+    assert r["R-SUB"]["result"] == "NOT_GRADED" and "SUBSTITUTION_UNCERTAIN" in r["qualifiers"]
+
+
+def test_fetch_steps_take_stations_only_from_the_recorded_stations_json(tmp_path):
+    R = Run(tmp_path).build()
+    f = os.path.join(R.run, "stations", "stations.json")
+    open(f, "a").write(" ")
+    with pytest.raises(SystemExit, match="stations.json sha256"):
+        W.load_stations(R.run)
+    with pytest.raises(SystemExit, match="exists"):
+        W._new_stage(R.run, "asos")                                                          # write-once stage folders
+
+
+# ------------------------------------------------------------------------------------------------ grade: exact disk match, run log, write-once
+def _cli_run(tmp_path, name="run"):
+    """A real-protocol run folder with one BLOCKED lake (nothing to grade), for the CLI gates."""
+    R = Run(tmp_path / name, real_protocol=True)
+    R.lakes = [{"id": "Nowhere|XX", "lat": 0, "lon": 0, "status": "BLOCKED"}]
+    R.brain = []
+    R.build()
+    assert W.main(["bind", "--run", R.run]) == 0
+    return R
+
+
+def test_grade_refuses_when_disk_differs_from_the_manifest(tmp_path):
+    R = _cli_run(tmp_path)
+    open(os.path.join(R.run, "fronts", "codsus.txt"), "a").write("VALID 111015Z\n")
+    with pytest.raises(SystemExit, match="differ from run-manifest"):
+        W.main(["grade", "--run", R.run, "--run-log", str(tmp_path / "RUNS.jsonl")])
+    with pytest.raises(SystemExit, match="write-once"):
+        W.main(["bind", "--run", R.run])
+
+
+def test_run_log_only_run_one_counts_and_reports_are_write_once(tmp_path):
+    log = str(tmp_path / "RUNS.jsonl")
+    R1 = _cli_run(tmp_path, "r1")
+    assert W.main(["grade", "--run", R1.run, "--run-log", log]) == 0
+    rep1 = json.load(open(os.path.join(R1.run, "report.json")))
+    assert rep1["runNumber"] == 1 and rep1["priorRuns"] == 0 and "REPEAT_RUN" not in rep1["qualifiers"]
+    with pytest.raises(SystemExit, match="write-once"):
+        W.main(["grade", "--run", R1.run, "--run-log", log])
+    R2 = _cli_run(tmp_path, "r2")
+    assert W.main(["grade", "--run", R2.run, "--run-log", log]) == 0
+    rep2 = json.load(open(os.path.join(R2.run, "report.json")))
+    assert rep2["runNumber"] == 2 and "REPEAT_RUN" in rep2["qualifiers"] and rep2["counts"] is False
+    assert all(rep2[k]["result"] in ("NOT_GRADED", "INSUFFICIENT") for k in ("R-5.1R", "R-5.2"))
+    events = [json.loads(x)["event"] for x in open(log)]
+    assert events == ["START", "RESULT", "START", "RESULT"]
+    assert rep1["protocolSha256"] == open(W.PROTOCOL + ".sha256").read().split()[0]
+
+
+def test_excluded_lakes_count_against_the_brain_through_coverage(tmp_path):
+    R = Run(tmp_path)
+    R.window = {s_: _rows(s_, START, 42) for s_ in R.brain + [R.ind]}
+    R.directory_count = 2                                                                    # half the directory is bound
+    R.lakes.append({"id": "Nowhere|XX", "lat": 0, "lon": 0, "status": "BLOCKED"})
+    r = R.build().grade()
+    cov = r["R-5.2"]["coverage"]
+    assert cov["share"] == 0.5 and cov["excludedByReason"] == {"BLOCKED": 1}
+    assert r["R-5.2"]["metricsResult"] == "INSUFFICIENT" and r["R-5.2"]["computedResult"] == "FAIL"
+    assert r["R-5.2"]["reason"] == "COVERAGE_BELOW_MINIMUM"
+
+
+def test_a_short_stations_file_is_subset_and_cannot_pass_or_fail(tmp_path):
+    R = Run(tmp_path)
+    R.directory_count = 621
+    m = R.build().bind()
+    assert m["subset"] is True
+    r = W.grade(R.p, m, R.run)
+    assert "SUBSET" in r["qualifiers"] and all(r[k]["result"] not in ("PASS", "FAIL") for k in ("R-5.1R", "R-5.2"))
+
 
 # ------------------------------------------------------------------------------------------------ end to end (SYNTHETIC archive)
-def _write_station(path, sid, start, hours, rain_from=None, temp=60.0, alti=30.00, step=0.0, gap=None, shift_at=None):
-    """SYNTHETIC hourly archive rows. gap=(a, b): no report in [a, b). shift_at: from then on wind 300 deg and 8 F colder (a front)."""
-    rows = [HEADER]
-    for h in range(hours):
-        t = start + timedelta(hours=h)
-        if gap and gap[0] <= t < gap[1]:
-            continue
-        wet = rain_from is not None and t >= rain_from
-        shifted = shift_at is not None and t >= shift_at
-        rows.append(",".join([W.iem_id(sid), t.strftime("%Y-%m-%d %H:%M"), f"{temp - (8 if shifted else 0):.2f}", "50.00", "70.0",
-                              "300.00" if shifted else "180.00", "8.00",
-                              f"{alti - step * h:.2f}", "1016.00", "0.0500" if wet else "0.0000", "OVC", "null", "null", "null",
-                              "-RA" if wet else "null"]))
-    with open(os.path.join(path, f"{sid}.csv"), "w") as fh:
-        fh.write("\n".join(rows))
-
-
 def test_grade_end_to_end_on_synthetic_archive(tmp_path):
-    p, _ = W.load_protocol()
-    p = copy.deepcopy(p)
-    for k in ("changeSignal_5_3", "representativeness_5_2", "fidelity_5_1"):
-        p["windows"][k].update({"from": "2026-11-10T00:00:00Z", "to": "2026-11-11T00:00:00Z"})
-    st = W.decode_stations(rec("guntersville-stations.json")) + [{"id": "KSYN1", "name": "SYNTHETIC", "lat": 34.50, "lon": -86.26}]
-    sel = W.select_stations(LAKE, st)
-    ind = sel["candidates"][0]["id"]
-    doc = {"subset": True, "lakes": [dict(LAKE, status="OK", **sel), {"id": "Nowhere|XX", "lat": 0, "lon": 0, "status": "BLOCKED"}]}
-    win = tmp_path / "asos" / "window"
-    win.mkdir(parents=True)
-    start = datetime(2026, 11, 9, 10, 53, tzinfo=UTC)
+    R = Run(tmp_path)
     rain = datetime(2026, 11, 10, 12, 53, tzinfo=UTC)
-    for s in ("K8A1", "KBFZ", "K4A6"):
-        _write_station(win, s, start, 42, rain_from=rain if s == "K8A1" else None)
-    _write_station(win, ind, start, 42, rain_from=rain + timedelta(hours=1), temp=62.0, alti=30.02)
-    r = W.grade(p, doc, str(tmp_path / "asos"), None, None)
-
-    assert r["lakes"]["excluded"]["BLOCKED"] == 1 and r["lakes"]["gradedFor5_2and5_3"] == 1
+    for s_ in R.brain:
+        R.window[s_] = _rows(s_, START, 42, rain_from=rain if s_ == "K8A1" else None)
+    R.window[R.ind] = _rows(R.ind, START, 42, rain_from=rain + timedelta(hours=1), temp=62.0, alti=30.02)
+    R.lakes.append({"id": "Nowhere|XX", "lat": 0, "lon": 0, "status": "BLOCKED"})
+    r = R.build().grade()
+    assert r["lakes"]["exclusions"]["R-5.2"] == {"BLOCKED": 1} and r["lakes"]["population"]["R-5.2"] == 1
     assert r["R-5.1R"]["matchShare"] == 1.0 and r["R-5.1R"]["provenanceShare"] == 1.0 and r["R-5.1R"]["values"] > 0
-    assert r["R-5.1R"]["computedResult"] == "INSUFFICIENT"                                      # 1 lake < 20
+    assert r["R-5.1R"]["metricsResult"] == "INSUFFICIENT"                                      # 1 lake < 20
     assert "NOT the plan's 5.1" in r["R-5.1R"]["label"]
     assert r["lakes"]["independentStations"][0]["distanceToBrainStationMi"] >= 3.0
     pm = r["R-5.2"]["pressureMAE_hPa"]
@@ -391,9 +547,8 @@ def test_grade_end_to_end_on_synthetic_archive(tmp_path):
     assert r["R-5.2"]["trend3hAgreement"]["value"] == 1.0                                     # both steady
     ro = r["R-5.3"]["RAIN_ONSET"]
     assert ro["brainEvents"] == 1 and ro["hits"] == 1 and ro["truthEvents"] == 1 and ro["detected"] == 1
-    assert ro["result"] == "INSUFFICIENT"
-    assert r["R-5.3"]["FRONT_PASSAGE"]["result"] == "NOT_GRADED"
-    assert "SUBSET" in r["qualifiers"] and "SUBSTITUTION_UNCERTAIN" in r["qualifiers"]
+    assert r["R-5.3"]["FRONT_PASSAGE"]["result"] == "NOT_GRADED"                               # no eligible bulletin bound
+    assert "SUBSTITUTION_UNCERTAIN" in r["qualifiers"]
     assert all(r[k]["result"] != "PASS" for k in ("R-5.1R", "R-5.2", "R-5.3"))
     assert set(r["labels"]) >= {"INTERNAL_EXPERIMENTAL", "NOT_FOR_CUSTOMERS"}
 
@@ -415,117 +570,72 @@ def test_rain_truth_onset_needs_a_measured_dry_lookback():
     assert W.rain_onsets(s, base, base + timedelta(hours=3), 0.01) == [base + timedelta(hours=1)]
 
 
-def test_grade_cli_writes_only_the_report(tmp_path):
-    (tmp_path / "asos" / "window").mkdir(parents=True)
-    stations = tmp_path / "stations.json"
-    stations.write_text(json.dumps({"subset": True, "lakes": []}))
-    before = set(os.listdir(tmp_path))
-    out = tmp_path / "report.json"
-    assert W.main(["grade", "--stations", str(stations), "--asos", str(tmp_path / "asos"), "--out", str(out)]) == 0
-    assert set(os.listdir(tmp_path)) - before == {"report.json"}
-    rep = json.loads(out.read_text())
-    assert rep["protocolSha256"] == open(W.PROTOCOL + ".sha256").read().split()[0]
-    assert rep["thresholdsVersion"] == "weather-change-thresholds-v1"
-
-
-def _setup(tmp_path, frm, to, lake=LAKE):
-    p, _ = W.load_protocol()
-    p = copy.deepcopy(p)
-    for k in ("changeSignal_5_3", "representativeness_5_2", "fidelity_5_1"):
-        p["windows"][k].update({"from": frm, "to": to})
-    st = W.decode_stations(rec("guntersville-stations.json")) + [{"id": "KSYN1", "name": "SYNTHETIC", "lat": 34.50, "lon": -86.26}]
-    sel = W.select_stations(lake, st)
-    win = tmp_path / "asos" / "window"
-    win.mkdir(parents=True)
-    return p, {"subset": True, "lakes": [dict(lake, status="OK", **sel)]}, win, sel["candidates"][0]["id"]
-
-
 def test_pod_is_graded_on_all_truth_and_a_miss_without_brain_data_counts(tmp_path):
-    p, doc, win, ind = _setup(tmp_path, "2026-11-10T00:00:00Z", "2026-11-11T00:00:00Z")
-    start = datetime(2026, 11, 9, 10, 53, tzinfo=UTC)
-    r1 = datetime(2026, 11, 10, 6, 53, tzinfo=UTC)
+    R = Run(tmp_path)
+    r1, later = datetime(2026, 11, 10, 6, 53, tzinfo=UTC), datetime(2026, 11, 10, 15, 53, tzinfo=UTC)
     gap = (datetime(2026, 11, 10, 3, 0, tzinfo=UTC), datetime(2026, 11, 10, 10, 0, tzinfo=UTC))  # the Brain's stations are silent
-    rows = [HEADER]
-    for h in range(42):
-        t = start + timedelta(hours=h)
-        wet = r1 <= t < r1 + timedelta(hours=2) or t >= datetime(2026, 11, 10, 15, 53, tzinfo=UTC)
-        rows.append(",".join([W.iem_id(ind), t.strftime("%Y-%m-%d %H:%M"), "60.00", "50.00", "70.0", "180.00", "8.00", "30.00",
-                              "1016.00", "0.0500" if wet else "0.0000", "OVC", "null", "null", "null", "-RA" if wet else "null"]))
-    (win / f"{ind}.csv").write_text("\n".join(rows))
-    for s_ in ("K8A1", "KBFZ", "K4A6"):
-        _write_station(win, s_, start, 42, rain_from=datetime(2026, 11, 10, 15, 53, tzinfo=UTC) if s_ == "K8A1" else None, gap=gap)
-    ro = W.grade(p, doc, str(tmp_path / "asos"))["R-5.3"]["RAIN_ONSET"]
+    R.window[R.ind] = _rows(R.ind, START, 42, wet_at=lambda t: r1 <= t < r1 + timedelta(hours=2) or t >= later)
+    for s_ in R.brain:
+        R.window[s_] = _rows(s_, START, 42, rain_from=later if s_ == "K8A1" else None, gap=gap)
+    ro = R.build().grade()["R-5.3"]["RAIN_ONSET"]
     assert ro["truthEvents"] == 2 and ro["detected"] == 1 and ro["POD"] == 0.5               # the silent-data onset is a MISS
     sec = ro["secondaryEvaluableOnly"]
     assert sec["truthEvents"] == 1 and sec["POD"] == 1.0 and sec["label"].startswith("SECONDARY")
     assert any("3 h dry lookback" in a for a in ro["amendmentAdditions"])
 
 
-def test_disclosed_fixture_span_is_not_graded(tmp_path):
-    p, doc, win, ind = _setup(tmp_path, "2026-11-06T00:00:00Z", "2026-11-07T02:00:00Z")
+def test_disclosed_fixture_span_is_not_graded_and_its_reports_make_no_hit(tmp_path):
+    R = Run(tmp_path, "2026-11-06T00:00:00Z", "2026-11-07T02:00:00Z")
     start = datetime(2026, 11, 5, 10, 53, tzinfo=UTC)
-    for s_ in ("K8A1", "KBFZ", "K4A6", ind):
-        _write_station(win, s_, start, 42)
-    r = W.grade(p, doc, str(tmp_path / "asos"))
+    for s_ in R.brain:
+        R.window[s_] = _rows(s_, start, 42)
+    R.window[R.ind] = _rows(R.ind, start, 42, wet_at=lambda t: datetime(2026, 11, 6, 10, tzinfo=UTC) <= t < datetime(2026, 11, 6, 12, tzinfo=UTC))
+    r = R.build().grade()
     ex = r["lakes"]["excludedSpans"]
     assert ex["instants"] == 17                                   # 07:10Z .. 23:10Z for Guntersville
     assert ex["values"] > 0                                       # 00:10Z on 11-07 would publish the 23:53Z report: excluded
-    other = W.grade(p, {"subset": True, "lakes": [dict(doc["lakes"][0], id="Elsewhere|AL")]}, str(tmp_path / "asos"))
-    assert other["lakes"]["excludedSpans"]["instants"] == 0
+    assert ex["truthReports"] == 2 and ex["truthEvents"] == 1     # wet reports inside the span: no truth onset, no hit
 
 
 def test_front_hits_and_unjudgeable_brain_fronts_are_kept_out_of_far(tmp_path):
-    p, doc, win, ind = _setup(tmp_path, "2026-11-10T00:00:00Z", "2026-11-11T00:00:00Z")
-    start = datetime(2026, 11, 9, 10, 53, tzinfo=UTC)
     shift = datetime(2026, 11, 10, 14, 53, tzinfo=UTC)
-    for s_ in ("K8A1", "KBFZ", "K4A6", ind):
-        _write_station(win, s_, start, 42, shift_at=shift)
     near = "\n".join(["000", "ASUS01 KWBC 101600", "CODSUS", "VALID 111015Z", "COLD 3500863 3400863", ""])     # through the lake at 15Z
     far = "\n".join(["000", "ASUS01 KWBC 102200", "CODSUS", "VALID 111021Z", "COLD 4500900 4400900", ""])      # 45N, 6 h later
-    a = W.grade(p, doc, str(tmp_path / "asos"), None, near)["R-5.3"]["FRONT_PASSAGE"]
+    out = []
+    for name, txt in (("a", near), ("b", far)):
+        R = Run(tmp_path / name)
+        for s_ in R.brain + [R.ind]:
+            R.window[s_] = _rows(s_, START, 42, shift_at=shift)
+        R.codsus = txt
+        out.append(R.build().grade()["R-5.3"]["FRONT_PASSAGE"])
+    a, b = out
     assert a["brainEvents"] == 1 and a["hits"] == 1 and a["truthEvents"] == 1 and a["detected"] == 1
-    b = W.grade(p, doc, str(tmp_path / "asos"), None, far)["R-5.3"]["FRONT_PASSAGE"]
     assert b["unjudgeableBrainEventsExcludedFromFAR"] == 1 and b["brainEvents"] == 0 and b["truthEvents"] == 0
 
 
-def test_a_null_brain_trend_counts_against_the_brain_and_availability_is_reported(tmp_path):
-    p, doc, win, ind = _setup(tmp_path, "2026-11-10T00:00:00Z", "2026-11-11T00:00:00Z")
-    start = datetime(2026, 11, 9, 10, 53, tzinfo=UTC)
+def test_a_null_brain_trend_counts_against_the_brain_and_truth_gaps_are_counted(tmp_path):
+    R = Run(tmp_path)
     gap = (datetime(2026, 11, 10, 6, 0, tzinfo=UTC), datetime(2026, 11, 10, 12, 0, tzinfo=UTC))   # the Brain's stations are silent 6 h
-    for s_ in ("K8A1", "KBFZ", "K4A6"):
-        _write_station(win, s_, start, 42, gap=gap)
-    _write_station(win, ind, start, 42)
-    r52 = W.grade(p, doc, str(tmp_path / "asos"))["R-5.2"]
-    tr, av, tc = r52["trend3hAgreement"], r52["brainAvailability"], r52["trendCounts"]
-    assert tc["brainTrendNullCountedAsDisagreement"] > 0 and tc["truthNoReportExcluded"] == 0
-    assert tr["value"] < 1.0                                                                   # every truth trend is steady like the Brain's
-    agree = sum(1 for _ in range(tr["pairs"])) - tc["brainTrendNullCountedAsDisagreement"]
-    assert tr["value"] == pytest.approx(agree / tr["pairs"], abs=1e-4)
+    ind_gap = (datetime(2026, 11, 10, 18, 0, tzinfo=UTC), datetime(2026, 11, 10, 21, 0, tzinfo=UTC))
+    for s_ in R.brain:
+        R.window[s_] = _rows(s_, START, 42, gap=gap)
+    R.window[R.ind] = _rows(R.ind, START, 42, gap=ind_gap)
+    r52 = R.build().grade()["R-5.2"]
+    tr, av, tc, mc = r52["trend3hAgreement"], r52["brainAvailability"], r52["trendCounts"], r52["maeCounts"]
+    assert tc["brainTrendNullCountedAsDisagreement"] > 0
+    assert tr["value"] == pytest.approx((tr["pairs"] - tc["brainTrendNullCountedAsDisagreement"]) / tr["pairs"], abs=1e-4)
     assert av["pressure"]["instants"] == 24 and av["pressure"]["share"] < 1.0                 # unknowns stay in the denominator
-    assert av["airTemperature"]["share"] == av["pressure"]["share"]
-
-
-def test_a_lake_whose_brain_station_fetch_failed_is_excluded_and_counted(tmp_path):
-    p, doc, win, ind = _setup(tmp_path, "2026-11-10T00:00:00Z", "2026-11-11T00:00:00Z")
-    start = datetime(2026, 11, 9, 10, 53, tzinfo=UTC)
-    for s_ in ("K8A1", "KBFZ", "K4A6", ind):
-        _write_station(win, s_, start, 42)
-    sts = [s_["id"] for s_ in doc["lakes"][0]["brainStations"]] + [c["id"] for c in doc["lakes"][0]["candidates"]]
-    rd = _recent_dir(tmp_path / "recent", sts, {s_: [HEADER] for s_ in sts}, {s_: {"features": []} for s_ in sts}, errors=("KBFZ",))
-    r = W.grade(p, doc, str(tmp_path / "asos"), rd)
-    assert r["R-SUB"]["flaggedStations"]["KBFZ"] == "FETCH_FAILED"
-    assert r["lakes"]["excluded"]["SUBSTITUTION_FETCH_FAILED"] == 1 and r["R-5.1R"]["values"] == 0
+    assert mc["pressureTruthNoReportExcluded"] > 0 and mc["airTempTruthNoReportExcluded"] > 0  # truth gaps counted, not silent
 
 
 def test_a_front_episode_overlapping_the_fixture_span_is_excluded(tmp_path):
-    lake = {"id": "Guntersville|AL", "lat": 34.42, "lon": -86.26}
-    p, doc, win, ind = _setup(tmp_path, "2026-11-06T00:00:00Z", "2026-11-08T00:00:00Z", lake=lake)
+    R = Run(tmp_path, "2026-11-06T00:00:00Z", "2026-11-08T00:00:00Z")
     start = datetime(2026, 11, 5, 10, 53, tzinfo=UTC)
-    for s_ in ("K8A1", "KBFZ", "K4A6", ind):
-        _write_station(win, s_, start, 66)
-    # an episode at 11-07 01Z..02Z: both endpoints are after the span (ends 11-07 00Z), but its +/- 3 h window overlaps it
-    txt = "\n".join(["000", "ASUS01 KWBC 070100", "CODSUS", "VALID 110701Z", "COLD 3500863 3400863",
-                     "000", "ASUS01 KWBC 070400", "CODSUS", "VALID 110704Z", "COLD 3500863 3400863",
-                     "000", "ASUS01 KWBC 071800", "CODSUS", "VALID 110718Z", "COLD 3500863 3400863", ""])
-    fp = W.grade(p, doc, str(tmp_path / "asos"), None, txt)["R-5.3"]["FRONT_PASSAGE"]
+    for s_ in R.brain + [R.ind]:
+        R.window[s_] = _rows(s_, start, 66)
+    # an episode at 11-07 01Z..04Z: both endpoints are after the span (ends 11-07 00Z), but its +/- 3 h window overlaps it
+    R.codsus = "\n".join(["000", "ASUS01 KWBC 070100", "CODSUS", "VALID 110701Z", "COLD 3500863 3400863",
+                          "000", "ASUS01 KWBC 070400", "CODSUS", "VALID 110704Z", "COLD 3500863 3400863",
+                          "000", "ASUS01 KWBC 071800", "CODSUS", "VALID 110718Z", "COLD 3500863 3400863", ""])
+    fp = R.build().grade()["R-5.3"]["FRONT_PASSAGE"]
     assert fp["truthEvents"] == 1                                                              # only the 18Z episode remains
