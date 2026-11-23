@@ -27,9 +27,9 @@ confirmed, and a ``Run result:`` comment posted after ``complete()`` lets ``audi
 forged afterwards, as long as the comments still exist. **Edit screening and its blast radius:** a recorded comment is "edited" when its
 body sha256 differs from the recorded one; an unrecorded comment is "edited" when ``updated_at`` is more than 2 s after ``created_at``
 (GitHub can bump ``updated_at`` without an edit), and it matters only if it names this protocol id as an exact token. One such edit blocks
-every further step of THIS protocol (recovery: a new protocol id, after human review on #51); other protocols are unaffected. An unrecorded
-comment edited so that it no longer names the protocol id is not detected (edit history is not readable over REST). **Runners and
-agents must never edit a #51 comment that names a protocol id**; a correction is a new comment, and a mistake goes to human review. Other limits: ``for_brain`` trusts the Cortex it is given; GitHub's timestamps are
+every further step of THIS protocol (recovery needs a new protocol id AND a revised protocol document (new sha256) that records the #51 human review); other protocols are unaffected. An unrecorded
+comment edited so that it no longer names the protocol id is not detected (edit history is not readable over REST). **Nobody edits a #51
+comment that names a protocol id**; a correction is a new comment, and a mistake goes to human review. Other limits: ``for_brain`` trusts the Cortex it is given; GitHub's timestamps are
 trusted; "abort only before seeing values" cannot be enforced and is a review check every runner must pass.
 
 The rule
@@ -56,10 +56,12 @@ The rule
    (``Run result: <protocol> <step> <key> <completed_entry_sha256> <result_sha256>``) and call ``confirm_result(step, key)``, which
    records the comment's id and body sha256.
 5. **Only the first counted run counts.** ``begin`` refuses a (step, key) with any COMPLETED entry. A STARTED entry with no end is
-   terminal: recovery is a new protocol id, after human review on #51. ``abort_before_result`` (same object, no output, no result) allows a retry with the next attempt
+   terminal: recovery needs a new protocol id AND a revised protocol document (new sha256) that records the #51 human review. ``abort_before_result`` (same object, no output, no result) allows a retry with the next attempt
    number; once a ``Run start:`` is public, a retry is a REPEAT. ``first``/``counts``/``require`` accept only counted COMPLETED entries of
    result steps.
 6. **Inputs are bound before results** (``bind_inputs``, ``check_inputs``; ``begin`` refuses inputs that differ from bound ones).
+7. **Every (step, key) is fixed by the protocol**: declared constants of the runner or values read from the protocol file, never derived
+   from the time, the folder, the host or the run. A key that changes between runs would make a re-run look like a new step.
 
 Entries
 -------
@@ -383,7 +385,7 @@ class Ledger:
                 raise ChainBroken(f"{self.path}: line {i} belongs to protocol {e['protocol_id']!r}")
             if e["protocol_sha256"] != self.protocol_sha256:
                 raise LedgerRefusal(f"protocol {self.protocol_id} is registered with sha256 {e['protocol_sha256']}, not "
-                                    f"{self.protocol_sha256}; a changed protocol needs a new protocol id, after human review on #51")
+                                    f"{self.protocol_sha256}; a changed protocol (new sha256) needs a new protocol id")
             if (e["status"] == LEDGER_OPENED) != (i == 1):
                 raise ChainBroken(f"{self.path}: line {i}: LEDGER_OPENED must be the first entry and only the first")
             if e["status"] not in STATUSES:
@@ -537,7 +539,8 @@ class Ledger:
         if posted != a:
             raise LedgerRefusal(f"the earliest anchor for {self.protocol_id} on {self.anchor_repo}#{self.anchor_issue} is {posted} "
                                 f"(comment {c.get('id')}), not this ledger's {a}; this ledger is not the protocol's run ledger (a later "
-                                f"anchor is not accepted while the earliest one exists; recovery is a new protocol id, after human review on #51)")
+                                f"anchor is not accepted while the earliest one exists; recovery needs a new protocol id AND a revised protocol document "
+                                f"(new sha256) that records the #51 human review)")
         declared = self._steps_csv(ents[0]["result"].get("resultSteps") or [])
         steps = toks[2] if len(toks) == 4 else None
         if steps != declared:
@@ -552,8 +555,8 @@ class Ledger:
                 break
             if len(t[2]) == 4 and t[2][3].lower() == self.protocol_sha256 and t[2][0] != self.protocol_id:
                 raise LedgerRefusal(f"protocol sha256 {self.protocol_sha256} was anchored earlier under protocol id {t[2][0]!r} (comment "
-                                    f"{t[3].get('id')}); the identical protocol cannot be re-run under a new id. A genuinely new version "
-                                    f"has a new sha256; otherwise recovery is a new protocol id, after human review on #51")
+                                    f"{t[3].get('id')}); the identical protocol cannot be re-run under a new id; recovery needs a new protocol id "
+                                    f"AND a revised protocol document (new sha256) that records the #51 human review")
         starts = [e["utc"] for e in ents if e["status"] == STARTED]
         bound = starts[0] if starts else start_utc
         if bound is not None and not created < _parse_time(bound):
@@ -678,7 +681,8 @@ class Ledger:
             raise LedgerRefusal(f"{what}: {step}/{key} has no open attempt (call begin first)")
         if self._mine.get((step, key)) != open_["run"]:
             raise LedgerRefusal(f"{what}: {step}/{key} run {open_['run']} was begun by another process; a STARTED entry with no end is "
-                                f"terminal, and recovery is a new protocol id, after human review on #51")
+                                f"terminal, and recovery needs a new protocol id AND a revised protocol document (new sha256) that "
+                                f"records the #51 human review")
         return open_
 
     def entries(self) -> list:
@@ -873,7 +877,7 @@ class Ledger:
 
     def begin(self, step: str, key: str, args: Mapping | None = None, inputs: Mapping | None = None) -> int:
         """Record a STARTED attempt and return its attempt number (1 for the first). Refused when (step, key) has a COMPLETED run, when an
-        earlier attempt has no end (terminal: the only recovery is a new protocol id, after human review on #51), when ``inputs`` differ from inputs bound for
+        earlier attempt has no end (terminal: recovery needs a new protocol id AND a revised protocol document (new sha256) that records the #51 human review), when ``inputs`` differ from inputs bound for
         (step, key), or #51 refuses: every step needs this ledger's anchor to be the protocol's earliest; a result step (one in
         ``result_steps``) then needs ``start_text`` posted and ``confirm_started`` before it computes anything; a non-result step is
         refused if #51 has a ``Run start:`` for it."""
@@ -891,7 +895,8 @@ class Ledger:
             open_ = self._open_attempt(mine)
             if open_ is not None:
                 raise LedgerRefusal(f"{self.protocol_id}: {step}/{key} run {open_['run']} STARTED at {open_['utc']} and never completed or "
-                                    f"aborted; a STARTED entry with no end is terminal for this step, and recovery is a new protocol id, after human review on #51")
+                                    f"aborted; a STARTED entry with no end is terminal for this step, and recovery needs a new protocol id AND a "
+                                    f"revised protocol document (new sha256) that records the #51 human review")
             bound = self._bound(mine)
             for name, h in hashes.items():
                 if name in bound and bound[name] != h:

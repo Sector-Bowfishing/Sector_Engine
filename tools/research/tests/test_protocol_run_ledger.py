@@ -1010,7 +1010,7 @@ def test_same_protocol_sha_under_a_new_id_refused(tmp_path):
     B = Ledger(r2, PID + "-rerun", PSHA, result_steps=RS, gh=issue)  # identical protocol document, new id
     B.issue = issue
     issue.post(B.post_anchor_text())
-    with pytest.raises(LedgerRefusal, match="anchored earlier under protocol id 'wind-strong-wind-v1'.*after human review on #51"):
+    with pytest.raises(LedgerRefusal, match="anchored earlier under protocol id 'wind-strong-wind-v1'.*revised protocol document \\(new sha256\\) that records the #51 human review"):
         B.begin("fit", "all", {}, {})
     C = Ledger(tmp_path / "a", PID + "-v2", OTHER, result_steps=RS, gh=issue)  # a genuinely new version (new sha) is fine
     issue.post(C.post_anchor_text())
@@ -1026,5 +1026,5 @@ def test_anchor_without_protocol_sha_refused(root):
 
 def test_recovery_messages_name_human_review(root):
     ledger(root).begin("fit", "all", {}, {})
-    with pytest.raises(LedgerRefusal, match="a new protocol id, after human review on #51"):
+    with pytest.raises(LedgerRefusal, match="a new protocol id AND a revised protocol document \\(new sha256\\) that records the #51 human review"):
         ledger(root).begin("fit", "all", {}, {})

@@ -42,7 +42,7 @@ The hash chain detects accidental corruption and careless edits, not a forger. T
 | A ledger with a wrong `result_steps` produces values in a non-result step, is deleted and replaced by a "corrected" ledger (the round-3 PoC) | refused: every `begin`, result or not, requires this ledger's anchor to be the protocol's earliest, so ledger A had to anchor first and ledger B's later anchor is refused. The anchor's first line carries the result steps (`Run anchor: <protocol> <anchor> <steps,comma-joined or ->`), which must match the genesis |
 | A second start hash appears before `complete()` | neither attempt counts: the first completes with `counted: false`, and the second is refused as REPEAT. Only a start that completed before a second hash appeared counts. `first`/`counts`/`require` accept only counted COMPLETED entries of result steps |
 | Copied ledger | refused (the genesis root must equal the root) |
-| Edited records | refused: a recorded anchor, start or result comment whose body sha256 differs from the one recorded at confirm time; an unrecorded comment naming the protocol id as an exact token whose `updated_at` is more than 2 s after `created_at` (GitHub can bump `updated_at` without an edit). **Blast radius:** such an edit blocks every further step of this protocol only (recovery: a new protocol id, after human review on #51); other protocols are unaffected |
+| Edited records | refused: a recorded anchor, start or result comment whose body sha256 differs from the one recorded at confirm time; an unrecorded comment naming the protocol id as an exact token whose `updated_at` is more than 2 s after `created_at` (GitHub can bump `updated_at` without an edit). **Blast radius:** such an edit blocks every further step of this protocol only (recovery needs a new protocol id AND a revised protocol document (new sha256) that records the #51 human review); other protocols are unaffected |
 | Ledger tail forged after the result was posted | detectable afterwards: `audit(check_external=True)` compares the `Run result:` comment (`<completed_entry_sha256> <result_sha256>`) with the ledger |
 
 | Stated limit | Note |
@@ -50,7 +50,7 @@ The hash chain detects accidental corruption and careless edits, not a forger. T
 | Deleting or editing one's own #51 comments | not preventable; edit history is not readable over REST. `audit()` reports recorded comment ids that are missing, whose body changed, or that no longer start with `Run `. An unrecorded comment edited so that it no longer names the protocol id is not detected |
 | Forging ledger lines | not preventable locally; detectable only against comments that still exist |
 | Abort after seeing values | not enforceable; a review check every runner must pass |
-| Editing #51 comments | runners and agents must **never** edit a #51 comment that names a protocol id; a correction is a new comment, and a mistake goes to human review |
+| Editing #51 comments | **nobody** edits a #51 comment that names a protocol id; a correction is a new comment, and a mistake goes to human review |
 | Cortex and GitHub | `for_brain` trusts the `cortex_home` it is given; GitHub timestamps are trusted |
 
 ### Choices made (reversible, stated)
@@ -65,7 +65,7 @@ The hash chain detects accidental corruption and careless edits, not a forger. T
 - **Anchor before any step.** Every `begin` checks the anchor, and the anchor must predate the ledger's first STARTED entry of any kind. The anchor line carries the result steps.
 - **Recorded comments.** The anchor and start refs (recorded at `confirm_started`) and the result ref (recorded at `confirm_result`) carry `body_sha256`, and edits are judged by that sha. Unrecorded comments use the `updated_at` rule with a 2 s grace.
 - **Retries.** A retry after `abort_before_result` is clean only if no `Run start:` was posted. Once one is public, the retry is a REPEAT.
-- **One object per attempt.** `confirm_started`, `record_outputs`, `complete` and `abort_before_result` are accepted only from the object that began the attempt. A dangling STARTED is terminal, and recovery is a new protocol id, after human review on #51.
+- **One object per attempt.** `confirm_started`, `record_outputs`, `complete` and `abort_before_result` are accepted only from the object that began the attempt. A dangling STARTED is terminal, and recovery needs a new protocol id AND a revised protocol document (new sha256) that records the #51 human review.
 - **gh failures.** A gh failure refuses. A failed `complete()` can be retried by the same object.
 - **Head file.** It is repaired only when it is exactly one entry behind.
 - **Step and key names.** `step` and `key` may not contain whitespace.
@@ -92,10 +92,11 @@ The hash chain detects accidental corruption and careless edits, not a forger. T
   1. Declares `RESULT_STEPS = frozenset({...})` as a module constant.
   2. Opens the ledger with `Ledger.for_brain(brain, protocol_id, sha256(protocol doc), forbid_under=[args.out], result_steps=RESULT_STEPS)`.
   3. Posts `post_anchor_text()` on #51 once, before any step.
-  4. Calls `bind_inputs`.
-  5. For each result step: `begin`, post `start_text`, `confirm_started`, compute, `record_outputs`, `complete`, post `result_text`, `confirm_result`.
-  6. Calls `require` for earlier result steps.
-  7. Prints `audit()` in its reports.
+  4. Fixes every (step, key) by the protocol: declared constants or values read from the protocol file, never derived from the time, the folder, the host or the run.
+  5. Calls `bind_inputs`.
+  6. For each result step: `begin`, post `start_text`, `confirm_started`, compute, `record_outputs`, `complete`, post `result_text`, `confirm_result`.
+  7. Calls `require` for earlier result steps.
+  8. Prints `audit()` in its reports.
 - Every runner's review must check that it never aborts after computing values. The ledger cannot enforce this.
 - The stated limits are in the threat model above.
 - Smoke tests:
