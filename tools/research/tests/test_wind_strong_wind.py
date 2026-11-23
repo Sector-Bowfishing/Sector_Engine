@@ -1,6 +1,5 @@
-"""Protocol WSW-2026-11-23-R4 runner (run binding, inputs, accounting, budget, fit, scoring), SYNTHETIC fixtures, offline.
-
-Formerly R3: guards, accounting, budget, M-B fit maths and scoring on SYNTHETIC fixtures (offline)."""
+"""Protocol WSW-2026-11-23-R5 runner (shared run ledger, inputs, accounting, budget, fit, scoring), SYNTHETIC fixtures, offline.
+No test reaches GitHub: #51 is a fake issue, and the Mac mini session's 'post once' is simulated by posting the pending text."""
 import datetime as dt
 import io
 import json
@@ -10,17 +9,63 @@ import shutil
 import subprocess
 import sys
 import urllib.error
+from pathlib import Path
 
 import pytest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
+import protocol_run_ledger as PRL  # noqa: E402
 import wind_strong_wind as W  # noqa: E402
 
 UTC = dt.timezone.utc
 FOLDER = os.path.dirname(W.PROTOCOL)
-SUPERSEDED = [os.path.join(FOLDER, f"WSW-2026-11-23{x}.protocol.json") for x in ("", "-R2", "-R3")]
+SUPERSEDED = [os.path.join(FOLDER, f"WSW-2026-11-23{x}.protocol.json") for x in ("", "-R2", "-R3", "-R4")]
 FLAT_FIT = {"knots": [[0.0, 0.0], [10.0, 0.0]]}
+CURRENT = {}
+ISSUE_PATH = "repos/Sector-Bowfishing/Sector_Ops/issues/51/comments?per_page=100"
+
+
+class Issue:
+    """A fake Sector_Ops #51 behind `gh api --paginate` (pages of 3, concatenated arrays)."""
+
+    def __init__(self):
+        self.comments, self.next_id = [], 1000
+        self.clock = dt.datetime(2000, 1, 1, tzinfo=UTC)
+
+    def post(self, body):
+        self.clock += dt.timedelta(minutes=1)
+        t = self.clock.strftime("%Y-%m-%dT%H:%M:%SZ")
+        self.comments.append({"id": self.next_id, "created_at": t, "updated_at": t, "body": body, "user": {"login": "mini"},
+                              "html_url": f"https://example.invalid/51#issuecomment-{self.next_id}"})
+        self.next_id += 1
+
+    def __call__(self, path):
+        assert path == ISSUE_PATH, path
+        pages = [self.comments[i:i + 3] for i in range(0, len(self.comments), 3)] or [[]]
+        return "".join(json.dumps(p) for p in pages)
+
+
+@pytest.fixture(autouse=True)
+def no_network(monkeypatch):
+    monkeypatch.delenv(PRL.ENV_ROOT, raising=False)
+    monkeypatch.setattr(PRL, "_gh_api", lambda path: (_ for _ in ()).throw(AssertionError(f"real gh reached: {path}")))
+    monkeypatch.setattr(W, "_sleep", lambda s: None)
+
+
+@pytest.fixture
+def home(tmp_path, monkeypatch):
+    """A SYNTHETIC research root (the research-path folder for wind) with --out inside it, a fake #51, and the anchor posted."""
+    root = tmp_path / "Sector Research" / "wind-brain"
+    out = root / "run"
+    out.mkdir(parents=True)
+    issue = Issue()
+    monkeypatch.setattr(W, "_open_ledger", lambda forbid_under=(): PRL.Ledger(root, W.PROTOCOL_ID, W.REGISTERED_SHA256, forbid_under,
+                                                                          result_steps=W.RESULT_STEPS, gh=issue))
+    monkeypatch.setattr(W, "publish", lambda led, key, kind, text: issue.post(text) or "posted")    # the session posts once
+    assert W.main(["anchor"]) == 0
+    CURRENT["issue"] = issue
+    return out
 
 
 def _clock(monkeypatch, iso):
@@ -41,50 +86,48 @@ def _acc(rows, **kw):
     return a
 
 
-@pytest.fixture
-def home(tmp_path, monkeypatch):
-    """A SYNTHETIC research home: <tmp>/home/wind-brain, with --out inside it."""
-    folder = tmp_path / "home" / "wind-brain"
-    folder.mkdir(parents=True)
-    monkeypatch.setenv("SECTOR_RESEARCH_HOME", str(tmp_path / "home"))
-    out = folder / "run"
-    out.mkdir()
-    return out
-
-
 def _put_fit(out):
-    """A completed fit recorded in the run ledger (as `fit` does) and its file in --out."""
+    """A counted fit:cal_h1 through the runner's own result_step (begin, start, compute, complete, result)."""
     _, psha = W.load_protocol()
-    led = W.ledger()
-    with led.step("fit", "cal_h1", {"synthetic": True}) as run:
-        run.writing()
+    led = W._open_ledger()
+
+    def compute(run):
         (out / W.FIT_FILE).write_text(json.dumps(dict(FLAT_FIT, protocolSha256=psha)))
-        run.outputs = {"fitSha256": W.sha256_file(str(out / W.FIT_FILE))}
-    return run.outputs["fitSha256"]
+        return {"fit": out / W.FIT_FILE}, {"n": 0, "runNumber": run}
+    entry, _ = W.result_step(led, "fit", "fit:cal_h1", {"synthetic": True}, {}, compute)
+    return entry["outputs"]["fit"]
+
+
+def _store(out, window):
+    root = out / window / "store"
+    for d in ("nbm", "metar", "grids"):
+        (root / d).mkdir(parents=True, exist_ok=True)
+        (root / d / "synthetic.json").write_text("{}")
+    return root
 
 
 def _put_rows(out, window, rows):
-    """rows.jsonl + accounting.json + the input manifest, recorded in the run ledger (as `rows` does)."""
-    led = W.ledger()
-    d = out / window
-    d.mkdir(exist_ok=True)
-    man = W.input_manifest(window, str(out))
-    with led.step("rows", window, {"synthetic": True}) as run:
-        msha = W.L.write_once_json(os.path.join(W.binding_folder(), f"input-manifest-{window}.json"), man)
-        run.writing()
-        (d / "rows.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
-        (d / "accounting.json").write_text(json.dumps(_acc(rows)))
-        run.outputs = {"rowsSha256": W.sha256_file(str(d / "rows.jsonl")), "accountingSha256": W.sha256_file(str(d / "accounting.json")),
-                       "inputManifestSha256": msha}
+    """A counted rows:<window> with bound inputs (as `rows` does)."""
+    store = _store(out, window)
+    led = W._open_ledger()
+    files = W.input_files(window, str(store))
+    led.bind_inputs("rows", f"rows:{window}", files)
+
+    def compute(run):
+        (out / window / "rows.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+        (out / window / "accounting.json").write_text(json.dumps(_acc(rows)))
+        return {"rows": out / window / "rows.jsonl", "accounting": out / window / "accounting.json"}, {"runNumber": run}
+    W.result_step(led, "rows", f"rows:{window}", {"synthetic": True}, files, compute)
 
 
 # ------------------------------------------------------------------------------------------------------------------ protocol
 def test_protocol_is_pinned_and_matches_runner_constants():
     proto, sha = W.load_protocol()
-    assert sha == W.REGISTERED_SHA256 and proto["protocolId"] == W.PROTOCOL_ID == "WSW-2026-11-23-R4"
-    assert [s["protocolId"] for s in proto["supersedes"]] == ["WSW-2026-11-23-R3", "WSW-2026-11-23-R2", "WSW-2026-11-23"]
+    assert sha == W.REGISTERED_SHA256 and proto["protocolId"] == W.PROTOCOL_ID == "WSW-2026-11-23-R5"
+    assert [s["protocolId"] for s in proto["supersedes"]] == ["WSW-2026-11-23-R4", "WSW-2026-11-23-R3", "WSW-2026-11-23-R2", "WSW-2026-11-23"]
+    assert sorted(proto["runBinding"]["resultSteps"]) == sorted(W.RESULT_STEPS)
+    assert proto["runBinding"]["keys"] == W.ledger_keys()
     assert tuple(proto["stations"]["ids"]) == W.STATION_IDS and proto["stations"]["lakesJsonSha256"] == W.LAKES_JSON_SHA256
-    assert "protocol-runs/WSW-2026-11-23-R4" in proto["runBinding"]["folder"]
     assert proto["forecastRows"]["leads"] == list(W.LEADS)
     assert proto["methods"]["M-B"]["fit"]["levels"] == list(W.LEVELS)
     assert proto["methods"]["M-B"]["fit"]["minimumRows"] == W.MIN_FIT_ROWS
@@ -112,12 +155,13 @@ def test_superseded_and_changed_protocols_are_refused(tmp_path):
 def test_superseded_protocols_are_byte_identical():
     for old, sha in zip(SUPERSEDED, ("b9a55721f7a6d2853462c1080bbec384c3a30e3429fce70b10c2872c77449346",
                                      "ba05492be82102fdba170b8dd5181ec557505622246e6a780c52a6ffc129633b",
-                                     "82f96596197d6af32e43b9e01ce152e922f3a0c0a42993641993a2da0fda68a2")):
+                                     "82f96596197d6af32e43b9e01ce152e922f3a0c0a42993641993a2da0fda68a2",
+                                     "c0e86f6afa9de57d33c71d4eb049d4b1c95e403ad4a9c966edd16c7e9aaf77ca")):
         assert W.sha256_file(old) == sha
 
 
 def test_no_hidden_clock_or_protocol_flags():
-    for flag in ("--now", "--protocol", "--boot", "--fit", "--rows"):
+    for flag in ("--now", "--protocol", "--boot", "--fit", "--rows", "--max-pairs"):
         with pytest.raises(SystemExit):
             W.main(["verify", flag, "x"])
 
@@ -179,31 +223,44 @@ def test_fit_refuses_rows_outside_cal_h1_and_gappy_cal_h1():
 
 
 # ---------------------------------------------------------------------------------------------------------- fit sha ordering
-def test_past_window_steps_need_the_ledger_fit_sha(home, monkeypatch):
+def test_keys_are_fixed_by_the_protocol():
+    assert W.key_for("fetch", "pw", "smoke") == "fetch:pw:smoke" and W.key_for("rows", "h2") == "rows:h2"
+    for bad in (("fetch", "pw", "2025-06"), ("fetch", "cal_h1", "smoke"), ("rows", "cal_h1", None)):
+        with pytest.raises(W.Refused):
+            W.key_for(*bad)
+
+
+def test_no_step_runs_before_the_anchor(tmp_path, monkeypatch):
+    root = tmp_path / "Sector Research" / "wind-brain"
+    (root / "run").mkdir(parents=True)
+    issue = Issue()
+    monkeypatch.setattr(W, "_open_ledger", lambda forbid_under=(): PRL.Ledger(root, W.PROTOCOL_ID, W.REGISTERED_SHA256, forbid_under,
+                                                                          result_steps=W.RESULT_STEPS, gh=issue))
+    assert W.main(["fetch", "--window", "cal_h1", "--month", "2026-05", "--out", str(root / "run"), "--min-free-gb", "0"]) == 3
+    assert not issue.comments and not any(e["status"] == PRL.STARTED for e in W._open_ledger().entries())
+
+
+def test_past_window_steps_need_the_counted_fit_sha(home, monkeypatch):
     out = str(home)
-    assert W.main(["fetch", "--window", "pw", "--out", out]) == 3                      # no fit in the ledger
+    assert W.main(["fetch", "--window", "pw", "--month", "smoke", "--out", out]) == 3     # no counted fit
     fsha = _put_fit(home)
-    for cmd in ("fetch", "rows", "score"):
-        assert W.main([cmd, "--window", "pw", "--out", out]) == 3                      # no --fit-sha
+    assert any(c["body"].startswith(f"Run result: {W.PROTOCOL_ID} fit fit:cal_h1") for c in CURRENT["issue"].comments)
+    for cmd in ("rows", "score"):
+        assert W.main([cmd, "--window", "pw", "--out", out]) == 3
         assert W.main([cmd, "--window", "pw", "--out", out, "--fit-sha", "0" * 64]) == 3
-    assert W.main(["fetch", "--window", "pw", "--out", out, "--fit-sha", fsha, "--min-free-gb", "1e9"]) == 3
+    assert W.main(["fetch", "--window", "pw", "--month", "smoke", "--out", out, "--fit-sha", "0" * 64]) == 3
+    assert W.main(["fetch", "--window", "pw", "--month", "smoke", "--out", out, "--fit-sha", fsha, "--min-free-gb", "1e9"]) == 3
     (home / W.FIT_FILE).write_text(json.dumps(dict(FLAT_FIT, protocolSha256=W.REGISTERED_SHA256, other=1)))
-    assert W.main(["fetch", "--window", "pw", "--out", out, "--fit-sha", fsha]) == 3   # file in --out is not the ledger's fit
-    refused = [e for e in W.ledger().entries() if e["kind"] == "REFUSED"]
-    assert len(refused) >= 8                                                             # every refusal is recorded
+    assert W.main(["fetch", "--window", "pw", "--month", "smoke", "--out", out, "--fit-sha", fsha]) == 3   # --out file is not the ledger's
     _clock(monkeypatch, "2026-11-23T23:00:00")
-    assert W.main(["fetch", "--window", "h2", "--out", out, "--fit-sha", fsha]) == 3
+    assert W.main(["fetch", "--window", "h2", "--month", "2026-10", "--out", out, "--fit-sha", fsha]) == 3
 
 
-def test_out_must_be_inside_the_research_folder_and_lakes_json_is_pinned(home, tmp_path, monkeypatch):
+def test_out_must_be_inside_the_research_root_and_lakes_json_is_pinned(home, tmp_path, monkeypatch):
     elsewhere = tmp_path / "bootdisk"
     elsewhere.mkdir()
     assert W.main(["fit", "--out", str(elsewhere)]) == 3
-    monkeypatch.setenv("SECTOR_RESEARCH_HOME", str(tmp_path / "nope"))
-    assert W.main(["fit", "--out", str(home)]) == 3                                     # research folder must exist
-    monkeypatch.delenv("SECTOR_RESEARCH_HOME")
-    assert W.main(["fit", "--out", str(home)]) == 3                                     # no machine-local default
-    monkeypatch.setenv("SECTOR_RESEARCH_HOME", str(tmp_path / "home"))
+    assert W.main(["fit", "--out", str(home.parent)]) == 3                               # the root itself is not an --out
     monkeypatch.setattr(W, "LAKES_JSON_SHA256", "0" * 64)
     with pytest.raises(W.Refused):
         W.check_lakes()
@@ -211,15 +268,32 @@ def test_out_must_be_inside_the_research_folder_and_lakes_json_is_pinned(home, t
     W.check_lakes()
 
 
-def test_a_second_fit_is_refused_from_any_out(home, tmp_path):
+def test_a_second_fit_is_refused_from_any_out(home):
     _put_fit(home)
     other = home.parent / "run2"
     other.mkdir()
     assert W.main(["fit", "--out", str(other)]) == 3
-    assert W.ledger().completed("fit", "cal_h1")["outputs"]["fitSha256"] == W.sha256_file(str(home / W.FIT_FILE))
+    assert W._open_ledger().require("fit", "fit:cal_h1")["outputs"]["fit"] == W.sha256_file(str(home / W.FIT_FILE))
 
 
-# -------------------------------------------------------------------------------------------------------------------- budget
+def test_a_fetch_abort_allows_a_retry_and_a_completed_month_is_not_refetched(home, monkeypatch):
+    calls = []
+
+    def fake_fetch(window, out, max_pairs, month, budget, min_free_gb):
+        calls.append(month)
+        if len(calls) == 1:
+            raise OSError("synthetic I/O error")
+        return {"budget": {"bytes": 0}}
+    monkeypatch.setattr(W, "do_fetch", fake_fetch)
+    args = ["fetch", "--window", "cal_h1", "--month", "2026-05", "--out", str(home), "--min-free-gb", "0"]
+    with pytest.raises(OSError):
+        W.main(args)
+    assert W.main(args) == 0                                                             # attempt 2 after ABORTED_BEFORE_RESULT
+    assert W.main(args) == 3                                                             # completed: one-shot
+    statuses = [e["status"] for e in W._open_ledger().entries() if e["key"] == "fetch:cal_h1:2026-05"]
+    assert statuses == [PRL.STARTED, PRL.ABORTED, PRL.STARTED, PRL.COMPLETED]
+
+
 class _Resp(io.BytesIO):
     def __enter__(self):
         return self
@@ -427,13 +501,21 @@ def test_score_is_one_shot_across_outs_and_uses_2000_resamples(home, monkeypatch
     sha = ["--fit-sha", fsha]
     assert W.main(["score", "--window", "pw", "--out", out] + sha) == 0
     res = json.loads((home / "pw" / "wsw-result.json").read_text())
-    assert res["runNumber"] == 1 and res["fitSha256"] == fsha and res["admission"].startswith("none")
-    assert {"gitCommit", "runnerSha256", "windRuntime"} <= set(res["code"]) and res["inputManifestSha256"]
+    assert res["runNumber"] == 1 and res["fitSha256"] == fsha and res["admission"].startswith("none") and res["ledgerAnchor"]
+    assert {"gitCommit", "runnerSha256", "windRuntime", "ledgerModuleSha256"} <= set(res["code"]) and res["inputHashes"]
+    led = W._open_ledger()
+    assert led.require("score", "score:pw")["counted"] is True
     (home / "pw" / "wsw-result.json").unlink()                                          # deleting the result does not reopen it
     assert W.main(["score", "--window", "pw", "--out", out] + sha) == 3
-    assert W.main(["rows", "--window", "pw", "--out", out] + sha) == 3                  # rows are one-shot too
-    assert W.main(["fetch", "--window", "pw", "--out", out] + sha) == 3                 # inputs are fixed after rows
+    other = home.parent / "run2"
+    other.mkdir()
+    assert W.main(["score", "--window", "pw", "--out", str(other)] + sha) == 3          # nor does a new --out
+    assert W.main(["rows", "--window", "pw", "--out", out] + sha) == 3
+    assert W.main(["fetch", "--window", "pw", "--month", "2025-02", "--out", out] + sha) == 3   # inputs fixed after rows
     assert calls == ["pw"]
+    starts = [c for c in CURRENT["issue"].comments if c["body"].startswith(f"Run start: {W.PROTOCOL_ID} score score:pw")]
+    assert len(starts) == 1
+    assert W.main(["audit"]) == 0
     import inspect
     assert inspect.signature(real).parameters["boot_n"].default == 2000
 
@@ -441,26 +523,26 @@ def test_score_is_one_shot_across_outs_and_uses_2000_resamples(home, monkeypatch
 def test_score_refuses_when_inputs_changed_after_rows(home, monkeypatch):
     monkeypatch.setattr(W, "score", lambda rows, fit, acc, window, _r=W.score: _r(rows, fit, acc, window, boot_n=20))
     fsha = _put_fit(home)
-    metar = home / "pw" / "store" / "metar"
-    metar.mkdir(parents=True)
-    (metar / "20250102.json.gz").write_bytes(b"synthetic")
     _put_rows(home, "pw", _rows())
-    (metar / "20250102.json.gz").unlink()                                               # a deleted observation day
+    (home / "pw" / "store" / "metar" / "synthetic.json").unlink()                       # a deleted observation file
     assert W.main(["score", "--window", "pw", "--out", str(home), "--fit-sha", fsha]) == 3
-    assert W.ledger().attempts("score", "pw")[0]["status"] == "ABORTED_NO_RESULT"
-    (metar / "20250102.json.gz").write_bytes(b"synthetic")                              # restored exactly: run #2 counts
+    assert not any(e["key"] == "score:pw" for e in W._open_ledger().entries())           # refused before begin
+    (home / "pw" / "store" / "metar" / "synthetic.json").write_text("{}")                # restored exactly
     assert W.main(["score", "--window", "pw", "--out", str(home), "--fit-sha", fsha]) == 0
-    assert json.loads((home / "pw" / "wsw-result.json").read_text())["runNumber"] == 2
 
 
-def test_h2_is_refused_when_the_ledger_shows_an_early_h2_line(home, monkeypatch):
-    fsha = _put_fit(home)
-    led = W.ledger()
-    led.log("rows", "h2", "LOG", {"synthetic": "a run before unseal"})                  # e.g. a machine with a wrong clock
+def test_clock_guards(home, monkeypatch):
+    _put_fit(home)
+    _clock(monkeypatch, "2026-11-01T00:00:00")                                          # earlier than the ledger's entries
+    with pytest.raises(W.Refused):
+        W.guard_clock(W._open_ledger(), "pw")
+    led = W._open_ledger()
+    led.begin("fetch", "fetch:h2:2026-10", {"synthetic": "an H2 entry before unseal"})
+    led.abort_before_result("fetch", "fetch:h2:2026-10", "synthetic")
     _clock(monkeypatch, "2027-01-02T00:00:00")
-    assert W.main(["score", "--window", "h2", "--out", str(home), "--fit-sha", fsha]) == 3
-    _clock(monkeypatch, "2026-11-01T00:00:00")                                          # a clock earlier than the ledger
-    assert W.main(["fetch", "--window", "pw", "--out", str(home), "--fit-sha", fsha]) == 3
+    with pytest.raises(W.Refused):
+        W.guard_clock(W._open_ledger(), "h2")
+    W.guard_clock(W._open_ledger(), "pw")
 
 
 # ------------------------------------------------------------------------------------------------------------------ runtime
@@ -550,7 +632,7 @@ def test_cal_h1_rows_never_load_h2_truth(tmp_path):
     assert {r["obs"] for r in rows if r["station"] == "HSV" and r["init"].startswith("2026-10-06T00")} == {2.0, None}
 
 
-def test_fetch_never_requests_h2_days_for_cal_h1_and_counts_bytes(tmp_path, monkeypatch, home):
+def test_fetch_never_requests_h2_days_for_cal_h1_and_counts_bytes(tmp_path, monkeypatch):
     """No network: the runtime ingest functions are stubbed; the budgeted fetch is the one installed by do_fetch."""
     pytest.importorskip("numpy")
     pytest.importorskip("eccodes")
@@ -571,10 +653,11 @@ def test_fetch_never_requests_h2_days_for_cal_h1_and_counts_bytes(tmp_path, monk
 
     monkeypatch.setattr(ingest, "ingest_nbm_cycle", fake_cycle)
     monkeypatch.setattr(ingest, "ingest_metar_day", fake_metar)
-    res = W.do_fetch("cal_h1", str(tmp_path), month="2026-10", min_free_gb=0, opener=_Opener([b"abc"] * 200))
+    budget = W.Budget(str(tmp_path / "budget-cal_h1.json"))
+    res = W.do_fetch("cal_h1", str(tmp_path), month="2026-10", budget=budget, min_free_gb=0, opener=_Opener([b"abc"] * 200))
     assert max(days) == dt.date(2026, 10, 6) and max(cycles) < W.H2_START
     assert res["budget"]["bytes"] == 3 * (len(days) + len(cycles))
-    assert json.loads(open(os.path.join(W.binding_folder(), "budget-cal_h1.json")).read())["bytes"] == res["budget"]["bytes"]
+    assert json.loads((tmp_path / "budget-cal_h1.json").read_text())["bytes"] == res["budget"]["bytes"]
     assert (grib.fetch, ingest.fetch) == real
     with pytest.raises(W.Refused):
-        W.do_fetch("cal_h1", str(tmp_path / "again"), month="2026-09", min_free_gb=1e9, opener=_Opener([]))
+        W.do_fetch("cal_h1", str(tmp_path / "again"), month="2026-09", budget=budget, min_free_gb=1e9, opener=_Opener([]))
