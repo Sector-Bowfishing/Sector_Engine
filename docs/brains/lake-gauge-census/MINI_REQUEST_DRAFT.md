@@ -6,7 +6,7 @@ DRAFT. Not posted. Michael posts it on Sector_Ops #51 if he agrees.
 
 **Do not change** bindings, `accepted_batch*.json`, `LakeSourceBindingsGenerated.swift`, the Lake knowledge release, `customer_lake_level_eligible.json`, any score, RTDB, buckets, Pulse jobs or schedules. Do not create cloud jobs. Do not read or judge any level value (stage B is a separate request). Start in the Lake research folder that Cortex `research-path sector/engine lake-brain` returns, write outputs only there, and end with a research closeout.
 
-Use the Engine checkout at the merged commit of the PR named below (or that PR's branch if it has not merged). Rules: `docs/brains/lake-gauge-census/LGC-2026-11-23.rules.json`, sha256 254752ea31823ace94768a7daa658cf70bfa42b8ad0d276ebb1cae1cf86e9e3f. Tool: `tools/research/lake_gauge_census.py`.
+Use the Engine checkout at the merged commit of Sector_Engine PR #247 (or its branch `research/lake-gauge-census-2026-11-23` if it has not merged). Rules: `docs/brains/lake-gauge-census/LGC-2026-11-23.rules.json`, sha256 254752ea31823ace94768a7daa658cf70bfa42b8ad0d276ebb1cae1cf86e9e3f. Tool: `tools/research/lake_gauge_census.py`.
 
 1. `python3 tools/research/lake_gauge_census.py verify` must print the sha256 above. Stop if it does not.
 2. `python3 tools/research/lake_gauge_census.py lakes --out <folder>/gauge-census/<date>` (offline; expect 621 lakes, 294 reviewed, BINDING 327).
