@@ -44,7 +44,7 @@ Repository: Sector-Bowfishing/sector_engine · Branch: research/protocol-run-led
 |---|---|---|
 | New tests | `python3 -m pytest -q tools/research/tests/test_protocol_run_ledger.py` | 29 passed |
 | Research tools suite | `python3 -m pytest -q tools/research` | 121 passed, 2 failed; both failures are pre-existing in this environment: the session runs as root, so the read-only-folder tests (`test_campaign.py::test_cleanup_removes_read_only_campaign_files_but_nothing_else`, `test_discovery.py::test_read_only_sources_folder_is_never_modified`) cannot see a permission error. They do not import the new module; CI runs as a normal user |
-| Engineering status | `collect_certification.py`; `build_engineering_status.py --write`; `--check` | run before the push (see PR) |
+| Engineering status | `collect_certification.py`; `build_engineering_status.py --write`; `--check` | certification failing: none; status written with no diff; `--check` OK |
 
 ## 5. Open items
 - The four runners adopt the module in their own PRs (#245–#248): construct `Ledger(research_path, protocol_id, sha256(protocol doc), forbid_under=[args.out])`, bind inputs before computing, `begin`/`record_outputs`/`complete`, `require` earlier steps, and print `head()` into reports.
