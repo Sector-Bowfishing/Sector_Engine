@@ -222,8 +222,8 @@ def test_interrupted_head_update_is_repaired_not_refused(root):
     head = (root / "_ledgers" / f"{PID}.head.json").read_bytes()
     L.complete("fit", "all", {}, {})
     (root / "_ledgers" / f"{PID}.head.json").write_bytes(head)  # the process stopped after the append, before the head write
-    assert ledger(root).head()["seq"] == 2
-    assert L.verify_chain() == 2
+    assert ledger(root).head()["seq"] == 3
+    assert L.verify_chain() == 3
 
 
 def test_chain_fields_and_entry_contents(root, tmp_path):
@@ -233,14 +233,16 @@ def test_chain_fields_and_entry_contents(root, tmp_path):
     L.begin("fit", "all", {"alpha": 0.05}, {"data": inp})
     L.complete("fit", "all", {"fit": "b" * 64}, {"n": 3})
     ls = lines(root)
-    a, b = json.loads(ls[0]), json.loads(ls[1])
-    assert set(a) == set(PRL.FIELDS)
-    assert a["seq"] == 1 and a["prev_entry_sha256"] == PRL.GENESIS
-    assert b["prev_entry_sha256"] == hashlib.sha256(ls[0]).hexdigest()
+    o, a, b = json.loads(ls[0]), json.loads(ls[1]), json.loads(ls[2])
+    assert set(a) == set(PRL.FIELDS) == set(o)
+    assert o["seq"] == 1 and o["prev_entry_sha256"] == PRL.GENESIS and o["status"] == "LEDGER_OPENED"
+    assert o["result"]["root"] == str(root.resolve()) and o["result"]["resolvedBy"] == "explicit-root" and o["result"]["host"]
+    assert a["seq"] == 2 and a["prev_entry_sha256"] == hashlib.sha256(ls[0]).hexdigest()
+    assert b["prev_entry_sha256"] == hashlib.sha256(ls[1]).hexdigest()
     assert a["inputs"] == {"data": PRL.sha256_file(inp)} and a["args"] == {"alpha": 0.05}
     assert a["status"] == "STARTED" and b["status"] == "COMPLETED" and b["run"] == 1
     assert a["host"] and a["utc"].endswith("Z") and a["protocol_sha256"] == PSHA
-    assert L.head() == {"protocol_id": PID, "protocol_sha256": PSHA, "seq": 2, "entry_sha256": hashlib.sha256(ls[1]).hexdigest()}
+    assert L.head() == {"protocol_id": PID, "protocol_sha256": PSHA, "seq": 3, "entry_sha256": hashlib.sha256(ls[2]).hexdigest()}
 
 
 # ---------- protocol binding ----------
@@ -296,7 +298,7 @@ def test_input_change_detected(root, tmp_path):
     hashes = L.bind_inputs("score", "all", {"gauges": f})
     assert L.check_inputs("score", "all", {"gauges": f}) == hashes
     L.bind_inputs("score", "all", {"gauges": f})  # identical re-bind is a no-op
-    assert len(lines(root)) == 1
+    assert len(lines(root)) == 2
     f.write_text("lake,level\na,2\n")
     with pytest.raises(LedgerRefusal, match="changed since it was bound"):
         L.check_inputs("score", "all", {"gauges": f})
@@ -370,7 +372,7 @@ def test_concurrent_begin_only_one_wins(root):
     results = [q.get(timeout=5) for _ in range(n)]
     assert [r for r in results if r[0] == "ok"] == [("ok", 1)]
     assert sum(r[0] == "refused" for r in results) == n - 1
-    assert ledger(root).verify_chain() == 1
+    assert ledger(root).verify_chain() == 2  # one LEDGER_OPENED, one STARTED
 
 
 def test_sha256_helpers(tmp_path):
@@ -379,3 +381,101 @@ def test_sha256_helpers(tmp_path):
     assert PRL.sha256_file(f) == hashlib.sha256(b"abc").hexdigest()
     with pytest.raises(LedgerRefusal):
         PRL.sha256_tree(f)
+
+
+# ---------- for_brain and the anchor ----------
+def fake_cortex(tmp_path, printed, rc=0):
+    home = tmp_path / "cortex"
+    (home / "tools").mkdir(parents=True)
+    (home / "tools" / "cortex.py").write_text(
+        "import sys\n"
+        "assert sys.argv[1:3] == ['research-path', 'sector/engine'], sys.argv\n"
+        f"print({str(printed)!r} if sys.argv[3] == 'wind' else '/nowhere')\n"
+        "print('# brain=wind folder=wind-brain exists=True manifest=True')\n"
+        f"sys.exit({rc})\n")
+    return home
+
+
+def test_for_brain_resolves_root_with_research_path_and_records_it(root, tmp_path):
+    home = fake_cortex(tmp_path, root)
+    L = Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home)
+    assert L.root == root.resolve()
+    first = json.loads(lines(root)[0])
+    assert first["status"] == "LEDGER_OPENED" and first["result"]["resolvedBy"] == "cortex-research-path"
+    assert first["result"]["brain"] == "wind" and first["result"]["root"] == str(root.resolve()) and first["result"]["host"]
+    assert L.anchor() == hashlib.sha256(lines(root)[0]).hexdigest()
+    run_step(L)
+    with pytest.raises(LedgerRefusal, match="already ran"):
+        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home).begin("fit", "all", {}, {})
+
+
+def test_for_brain_refuses_env_root_that_differs_and_accepts_equal(root, tmp_path, monkeypatch):
+    home = fake_cortex(tmp_path, root)
+    other = tmp_path / "chosen"
+    other.mkdir()
+    monkeypatch.setenv(PRL.ENV_ROOT, str(other))
+    with pytest.raises(LedgerRefusal, match="not the research-path folder"):
+        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home)
+    assert not (other / "_ledgers").exists()
+    monkeypatch.setenv(PRL.ENV_ROOT, str(root))
+    assert Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home).root == root.resolve()
+
+
+def test_for_brain_refuses_without_cortex_or_on_failure(root, tmp_path, monkeypatch):
+    monkeypatch.delenv(PRL.ENV_CORTEX, raising=False)
+    with pytest.raises(LedgerRefusal, match="Cortex location unknown"):
+        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path)
+    with pytest.raises(LedgerRefusal, match="failed"):
+        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=fake_cortex(tmp_path, root, rc=2))
+    home2 = tmp_path / "c2"
+    home2.mkdir()
+    with pytest.raises(LedgerRefusal, match="no Cortex tool"):
+        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home2)
+    with pytest.raises(LedgerRefusal, match="invalid brain"):
+        Ledger.for_brain("../x", PID, PSHA, repo=tmp_path, cortex_home=home2)
+
+
+def test_for_brain_refuses_a_research_path_that_does_not_exist(tmp_path):
+    home = fake_cortex(tmp_path, tmp_path / "absent")
+    with pytest.raises(LedgerRefusal, match="does not exist"):
+        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home)
+
+
+def test_anchor_detects_a_recreated_ledger(root):
+    L = ledger(root)
+    posted = L.anchor()
+    run_step(L)
+    assert L.verify_anchor(posted) == posted
+    for f in (root / "_ledgers").iterdir():  # delete ledger and head together, then start again
+        f.unlink()
+    L2 = ledger(root)
+    L2.begin("fit", "all", {}, {})  # locally the fresh ledger looks fine ...
+    with pytest.raises(ChainBroken, match="invalid"):
+        L2.verify_anchor(posted)  # ... but it does not match the #51-posted anchor
+
+
+def test_ledger_opened_only_first(root):
+    L = ledger(root)
+    p = root / "_ledgers" / f"{PID}.jsonl"
+    first = json.loads(lines(root)[0])
+    run_step(L)
+    ls = p.read_bytes().splitlines()
+    fake = dict(first, seq=4, prev_entry_sha256=hashlib.sha256(ls[-1]).hexdigest())
+    line = PRL._canon(fake).encode()
+    p.write_bytes(p.read_bytes() + line + b"\n")
+    (root / "_ledgers" / f"{PID}.head.json").write_text(PRL._canon({"protocol_id": PID, "seq": 4, "entry_sha256": hashlib.sha256(line).hexdigest()}))
+    with pytest.raises(ChainBroken, match="LEDGER_OPENED"):
+        L.verify_chain()
+
+
+def test_retry_after_abort_gets_next_attempt_and_abort_refused_after_result(root):
+    L = ledger(root)
+    assert L.begin("fit", "all", {}, {}) == 1
+    L.abort_before_result("fit", "all", "network down")
+    assert L.begin("fit", "all", {}, {}) == 2
+    L.abort_before_result("fit", "all", "network down again")
+    assert L.begin("fit", "all", {}, {}) == 3
+    L.complete("fit", "all", {}, {"r": 1})
+    assert L.counts("fit", "all", 3) and not L.counts("fit", "all", 1)
+    with pytest.raises(LedgerRefusal, match="no open attempt"):
+        L.abort_before_result("fit", "all", "after the result")

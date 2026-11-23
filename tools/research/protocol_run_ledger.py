@@ -9,14 +9,20 @@ folder instead, keyed by the protocol id, so a re-run is refused wherever its ou
 
 The rule
 --------
-1. **One ledger per protocol id, in the research folder.** The file is ``<root>/_ledgers/<protocol_id>.jsonl``. ``root`` is the folder that
-   ``cortex.py research-path sector/engine <brain|shared>`` returns (pass it in, or set ``SECTOR_RESEARCH_ROOT``). It must already exist and
-   must not lie inside any ``--out`` folder (``forbid_under``). The ledger is bound to the protocol document's sha256: a different hash for the
-   same id is refused, so editing the protocol after a run needs a new protocol id.
+1. **One ledger per protocol id, in the research folder.** The file is ``<root>/_ledgers/<protocol_id>.jsonl``. Runners open it with
+   ``Ledger.for_brain(brain, protocol_id, protocol_sha256)``, which takes ``root`` from ``cortex.py research-path sector/engine <brain>``
+   and refuses a ``SECTOR_RESEARCH_ROOT`` that differs from it; a freely chosen root would be a fresh ledger, the same back door as
+   ``--out``. (``Ledger(root, ...)`` with an explicit root is for tests.) The root must already exist and must not lie inside any ``--out``
+   folder (``forbid_under``). The ledger is bound to the protocol document's sha256: a different hash for the same id is refused, so
+   editing the protocol after a run needs a new protocol id.
+1a. **The anchor is the binding record.** A new ledger's first entry (``LEDGER_OPENED``) records the resolved root, the Brain and the
+   machine. Its hash, ``anchor()``, is posted on Sector_Ops #51 when the ledger is created (by the runner session or the Mac mini request).
+   That posted hash is the binding record: a ledger whose first entry does not match it (``verify_anchor(posted)``) is invalid, whatever
+   its chain says. This is what makes deleting and recreating a ledger detectable.
 2. **Only run #1 counts.** ``begin`` refuses a (step, key) that has a COMPLETED entry, or a STARTED attempt that was neither completed nor
    aborted (a crash after start is treated as a possible look at the result). A later attempt is allowed only after
-   ``abort_before_result``, which is refused once any output was recorded. The first COMPLETED entry is the result
-   (``first``/``counts``); there can never be a second.
+   ``abort_before_result``, which is allowed only while no output and no result were recorded for the attempt. A retry after an abort
+   gets the next attempt number. Only the first COMPLETED entry counts (``first``/``counts``); there can never be a second.
 3. **Inputs are bound before results.** ``bind_inputs`` records input hashes for a (step, key) before that step has a result and refuses to
    re-bind them differently; ``begin`` refuses inputs that differ from the bound ones; ``check_inputs`` refuses any file that changed. Later
    steps bind earlier results with ``require(step, key)`` and compare (for example a fit sha or a selection hash).
@@ -24,15 +30,15 @@ The rule
 Entries
 -------
 Each line is one JSON object (sorted keys, compact): ``seq``, ``utc``, ``protocol_id``, ``protocol_sha256``, ``step``, ``key``, ``status``
-(``STARTED``, ``OUTPUTS_RECORDED``, ``COMPLETED``, ``ABORTED_BEFORE_RESULT``, ``INPUTS_BOUND``), ``run``, ``args``, ``inputs`` {name: sha256},
+(``LEDGER_OPENED`` first and only first, then ``STARTED``, ``OUTPUTS_RECORDED``, ``COMPLETED``, ``ABORTED_BEFORE_RESULT``, ``INPUTS_BOUND``), ``run``, ``args``, ``inputs`` {name: sha256},
 ``outputs`` {name: sha256}, ``result`` (small dict), ``reason``, ``git_commit``, ``git_dirty``, ``host`` and ``prev_entry_sha256`` (sha256 of
 the previous line's bytes; 64 zeros for the first). A side file ``<protocol_id>.head.json`` records the last seq and line hash, so editing or
 truncating the tail is detected too. Every write takes an exclusive ``fcntl`` lock, re-reads and verifies the chain, appends, flushes and
 fsyncs.
 
-Limits (stated, not hidden): this stops accidental and casual re-runs and makes edits detectable. It cannot stop someone who deletes the
-ledger and its head together, or who points ``root`` at another folder. Runners should therefore print the ledger head
-(``Ledger.head()``) into their reports and keep the ledger in the research folder's manifest and backups.
+Limits (stated, not hidden): locally this stops accidental and casual re-runs and makes edits detectable. Deleting the ledger and its
+head together is detected only against the #51-posted anchor. Runners also print ``anchor()`` and ``head()`` into their reports and keep
+the ledger in the research folder's manifest and backups.
 """
 from __future__ import annotations
 
@@ -45,6 +51,7 @@ import os
 import re
 import socket
 import subprocess
+import sys
 from pathlib import Path
 from typing import Iterable, Mapping
 
@@ -59,7 +66,10 @@ OUTPUTS_RECORDED = "OUTPUTS_RECORDED"
 COMPLETED = "COMPLETED"
 ABORTED = "ABORTED_BEFORE_RESULT"
 INPUTS_BOUND = "INPUTS_BOUND"
-STATUSES = (STARTED, OUTPUTS_RECORDED, COMPLETED, ABORTED, INPUTS_BOUND)
+LEDGER_OPENED = "LEDGER_OPENED"
+STATUSES = (LEDGER_OPENED, STARTED, OUTPUTS_RECORDED, COMPLETED, ABORTED, INPUTS_BOUND)
+CORTEX_PACK = "sector/engine"
+ENV_CORTEX = "CORTEX_HOME"
 RESULT_MAX_BYTES = 8192
 FIELDS = ("seq", "utc", "protocol_id", "protocol_sha256", "step", "key", "status", "run", "args", "inputs", "outputs", "result", "reason",
           "git_commit", "git_dirty", "host", "prev_entry_sha256")
@@ -157,7 +167,9 @@ def _inside(path: Path, parent: Path) -> bool:
 class Ledger:
     """The run ledger of one pre-registered protocol. See the module docstring for the rule."""
 
-    def __init__(self, root, protocol_id: str, protocol_sha256: str, forbid_under: Iterable = (), *, repo=None):
+    def __init__(self, root, protocol_id: str, protocol_sha256: str, forbid_under: Iterable = (), *, repo=None, _opened_by=None):
+        """Plain constructor with an explicit ``root``, for tests and tooling. Runners use ``Ledger.for_brain`` so the root is the one
+        Cortex resolves, never a folder the operator chose."""
         env = os.environ.get(ENV_ROOT) or None
         if root is None and env is None:
             raise LedgerRefusal(f"no research root: pass the folder `cortex.py research-path` returns, or set {ENV_ROOT}")
@@ -186,7 +198,56 @@ class Ledger:
         self._git = None
         self.dir.mkdir(exist_ok=True)
         with self._locked():
-            self._load()  # refuses a broken chain or another protocol hash now, before any work starts
+            ents = self._load()  # refuses a broken chain or another protocol hash now, before any work starts
+            if not ents:
+                opened = {"root": str(self.root), "host": socket.gethostname(), "resolvedBy": "explicit-root", "brain": None}
+                opened.update(_opened_by or {})
+                self._append(ents, status=LEDGER_OPENED, result=opened)
+
+    @classmethod
+    def for_brain(cls, brain: str, protocol_id: str, protocol_sha256: str, repo=".", forbid_under: Iterable = (), *, cortex_home=None,
+                  pack: str = CORTEX_PACK) -> "Ledger":
+        """The runner constructor. Resolves the root with ``cortex.py research-path <pack> <brain>`` (Cortex at ``cortex_home`` or
+        ``$CORTEX_HOME``, run in ``repo``). ``SECTOR_RESEARCH_ROOT``, if set, must equal that output or the call is refused. A new ledger
+        records the resolved root, the Brain and the machine in its first entry, whose hash is the anchor (``anchor()``)."""
+        if not isinstance(brain, str) or not _ID.match(brain):
+            raise LedgerRefusal(f"invalid brain {brain!r}")
+        home = cortex_home or os.environ.get(ENV_CORTEX)
+        if not home:
+            raise LedgerRefusal(f"Cortex location unknown: pass cortex_home or set {ENV_CORTEX}; the root is never guessed")
+        tool = Path(home).expanduser() / "tools" / "cortex.py"
+        if not tool.is_file():
+            raise LedgerRefusal(f"no Cortex tool at {tool}")
+        cmd = [sys.executable, str(tool), "research-path", pack, brain]
+        try:
+            r = subprocess.run(cmd, cwd=str(repo), capture_output=True, text=True, timeout=60)
+        except (OSError, subprocess.SubprocessError) as e:
+            raise LedgerRefusal(f"research-path failed: {e}") from None
+        paths = [ln.strip() for ln in r.stdout.splitlines() if ln.strip() and not ln.startswith("#")]
+        if r.returncode != 0 or not paths:
+            raise LedgerRefusal(f"research-path {pack} {brain} failed (exit {r.returncode}): {(r.stderr or r.stdout).strip()[:300]}")
+        resolved = Path(paths[0]).expanduser().resolve()
+        env = os.environ.get(ENV_ROOT)
+        if env and Path(env).expanduser().resolve() != resolved:
+            raise LedgerRefusal(f"{ENV_ROOT}={env} is not the research-path folder for {brain} ({resolved}); refused")
+        return cls(resolved, protocol_id, protocol_sha256, forbid_under, repo=Path(repo).resolve(),
+                   _opened_by={"resolvedBy": "cortex-research-path", "brain": brain, "pack": pack, "root": str(resolved)})
+
+    def anchor(self) -> str:
+        """sha256 of the ledger's first line (the LEDGER_OPENED entry). Post it on Sector_Ops #51 when the ledger is created: that posted
+        hash is the binding record, and a ledger whose first entry does not match it is invalid."""
+        with self._locked():
+            ents = self._load()
+        if not ents or ents[0]["status"] != LEDGER_OPENED:
+            raise ChainBroken(f"{self.path}: first entry is not LEDGER_OPENED")
+        return sha256_bytes(_canon(ents[0]).encode("ascii"))
+
+    def verify_anchor(self, expected_hash: str) -> str:
+        """Refuse unless the first entry's hash equals ``expected_hash`` (the one posted on #51). Returns the anchor."""
+        a = self.anchor()
+        if not isinstance(expected_hash, str) or a != expected_hash.strip().lower():
+            raise ChainBroken(f"{self.path}: anchor {a} does not match the posted anchor {expected_hash!r}; this ledger is invalid")
+        return a
 
     # ---------- locking, reading, verifying ----------
     @contextlib.contextmanager
@@ -230,6 +291,8 @@ class Ledger:
             if e["protocol_sha256"] != self.protocol_sha256:
                 raise LedgerRefusal(f"protocol {self.protocol_id} is registered with sha256 {e['protocol_sha256']}, not "
                                     f"{self.protocol_sha256}; a changed protocol needs a new protocol id")
+            if (e["status"] == LEDGER_OPENED) != (i == 1):
+                raise ChainBroken(f"{self.path}: line {i}: LEDGER_OPENED must be the first entry and only the first")
             if e["status"] not in STATUSES:
                 raise ChainBroken(f"{self.path}: line {i} has unknown status {e['status']!r}")
             entries.append(e)
