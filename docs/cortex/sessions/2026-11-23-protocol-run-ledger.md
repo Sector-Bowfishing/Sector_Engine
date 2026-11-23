@@ -22,21 +22,32 @@ Repository: Sector-Bowfishing/sector_engine · Branch: research/protocol-run-led
 | Shared run ledger module + tests | Safe (requested, additive) | F1 | `tools/research/protocol_run_ledger.py`, `tools/research/tests/test_protocol_run_ledger.py` |
 | Cortex gap entry | Record | F2 | `docs/cortex/CORTEX_GAPS.md` (CG-3.1-27; main ends at CG-3.1-24, #245/#246 use 25/26) |
 
-**Choices made (reversible, stated):**
-- Extra status `OUTPUTS_RECORDED` and method `record_outputs`: abort is refused "if any output was recorded", so a runner needs a way to record an output before the result summary; once recorded the attempt can no longer be aborted. Extra status `INPUTS_BOUND` is what `bind_inputs` writes.
-- A head file `<protocol_id>.head.json` beside the ledger, because a hash chain alone cannot detect an edit or truncation of its last line. A head exactly one entry behind (process stopped between append and head write) is repaired under the lock; anything else is refused.
-- `counts(step, key, run=None)`: there can only be one COMPLETED per (step, key), so `counts` is True for that first COMPLETED run; with `run`, only if that run is it.
-- `root` must exist (a typo would otherwise silently start a fresh ledger); `root` and `SECTOR_RESEARCH_ROOT` both set and different is refused.
-- **Coordinator follow-up (same session):** a freely chosen root is the same back door as `--out`. Added `Ledger.for_brain(brain, protocol_id, protocol_sha256, repo=".")`, which resolves the root by running Cortex `research-path sector/engine <brain>` (Cortex from `cortex_home` or `$CORTEX_HOME`, never guessed), and refuses a `SECTOR_RESEARCH_ROOT` that differs from that output. Every new ledger now starts with a `LEDGER_OPENED` entry (resolved root, Brain, machine, how it was resolved), and `LEDGER_OPENED` is valid only as the first entry. `anchor()` returns that entry's hash and `verify_anchor(expected)` checks it. The anchor posted on Sector_Ops #51 is the binding record: a ledger whose first entry does not match it is invalid, which makes deleting and recreating a ledger detectable. `Ledger(root, …)` stays available for tests. Abort rule: abort is allowed only while the attempt has no output and no result; a retry gets the next attempt number; only the first COMPLETED counts.
-- **Coordinator follow-up 2 (same session): external anchor.** Reviews of the census and Wind ledgers showed that deleting the ledger folder, or choosing a new one, still produces a fresh run #1 that looks valid, because nothing outside the machine pins it.
-  - The genesis entry `LEDGER_OPENED` now also carries a random 128-bit nonce, the protocol id and sha256, the resolved research root, the host and the UTC time.
-  - `post_anchor_text()` returns the comment to post on Sector_Ops #51. Its first line is `Run anchor: <protocol_id> <anchor>`, and it never carries an "Owner approval" header.
-  - `require_external_anchor(repo="Sector-Bowfishing/Sector_Ops", issue=51)` reads the issue's comments with `gh api --paginate`. The `gh` call can be injected through the constructor's `gh=` argument. The check refuses unless the **earliest** `Run anchor:` comment for the protocol id carries this ledger's anchor and was created before the ledger's first result-producing STARTED entry. A later anchor comment for the same protocol never counts, and a gh failure refuses.
-  - `begin(..., result_producing=True)` runs this check. **The default is True (choice: fail closed).** Fetch steps pass `result_producing=False`, and STARTED entries record the flag.
-  - A STARTED entry with no end is **terminal** for its (step, key). `abort_before_result`, `record_outputs` and `complete` are accepted only from the `Ledger` object that began the attempt. Recovery from a killed run is a new protocol id.
-  - A read-only `gh api` smoke test of Sector_Ops #51 parsed 372 comments over several pages and found 0 anchors. Nothing was posted.
-- Input/output values may be a `Path` (file → `sha256_file`, directory → `sha256_tree`) or a sha256 hex string.
-- Extra entry fields `protocol_id`, `protocol_sha256` (the protocol binding is checked on every line), `reason` and `git_dirty`.
+### Threat model (written after the review of 420ab9f; it replaces stronger claims made earlier in this session)
+The ledger is meant to stop **accidental re-runs** and **re-runs by a session or agent that does not disclose itself**. It does that with a local hash-chained ledger and with public, timestamped comments on Sector_Ops #51, which a local copy cannot take back.
+
+| Threat | Handling |
+|---|---|
+| Same command again, new `--out`, new process | refused (COMPLETED exists, or a dangling STARTED is terminal) |
+| New research folder or deleted ledger (fresh genesis) | refused: the earliest `Run anchor:` for the protocol carries another anchor |
+| Ledger rolled back to a snapshot | the restored run must post a second `Run start:` for (protocol, step, key) → REPEAT; without posting it cannot confirm or complete |
+| Second `Run start:` appearing while a run is in progress | `complete()` records the result with `counted: false` |
+| Local edits, reordering, truncation, copied ledger | refused (hash chain, head file, genesis root must equal the root) |
+| Edited `Run anchor:` / `Run start:` comment, or an edited comment that mentions the protocol id | refused |
+| **Deliberate deletion of #51 comments** (an admin) | **not preventable from inside the repo — a stated limit.** Every result-producing COMPLETED entry records its anchor and start comment ids and URLs; `audit(check_external=True)` reports missing ones, so a deletion is detectable by anyone holding the ledger or a report that printed `audit()` |
+| **Abort after seeing values** | **not enforceable** — a review check every runner must pass (record outputs as soon as written; never abort after computing a result) |
+| A forged Cortex | `for_brain` trusts the `cortex_home` it is given |
+| GitHub timestamps / comment author | trusted as recorded / not checked |
+
+### Choices made (reversible, stated)
+- `result_producing=True` is the default for `begin`, so a runner that forgets the flag fails closed. Fetch steps pass `False`. Such attempts cannot call `record_outputs` and cannot record a result summary.
+- Statuses beyond the requested three: `LEDGER_OPENED` (genesis), `INPUTS_BOUND`, `START_CONFIRMED`, `REPEAT_DETECTED` and `OUTPUTS_RECORDED`. Entry fields beyond the requested ones: `protocol_id`, `protocol_sha256`, `reason`, `result_producing`, `counted`, `external` and `git_dirty`.
+- REPEAT works as follows. `confirm_started` raises `RepeatDetected` and writes `REPEAT_DETECTED`. A result-producing `complete()` requires a `START_CONFIRMED`, and then re-reads #51. If the start-comment count is not 1, or a `REPEAT_DETECTED` exists for the step, the COMPLETED entry gets `counted: false`. `require()` refuses a result that does not count.
+- A retry after `abort_before_result` is clean only if the aborted attempt never posted a `Run start:`. Once a start comment is public, a retry is a REPEAT.
+- `record_outputs`, `confirm_started`, `complete` and `abort_before_result` are accepted only from the `Ledger` object that called `begin`. A dangling STARTED is terminal, and recovery is a new protocol id.
+- When `complete()` hits a gh failure it refuses. The attempt stays open, so the same object can call `complete()` again.
+- The head file catches edits to the last line and truncation. It is repaired only when it is exactly one entry behind, which is what an interrupted append leaves.
+- `step` and `key` may not contain whitespace, because they are tokens on the comment's first line.
+- `os.write` is looped until every byte is written.
 
 ## 3a. Standing checks
 | Check | Result | Evidence |
@@ -50,14 +61,24 @@ Repository: Sector-Bowfishing/sector_engine · Branch: research/protocol-run-led
 ## 4. Verification
 | Check | Command | Result |
 |---|---|---|
-| New tests | `python3 -m pytest -q tools/research/tests/test_protocol_run_ledger.py` | 46 passed |
-| Research tools suite | `python3 -m pytest -q tools/research` | 138 passed, 2 failed; both failures are pre-existing in this environment: the session runs as root, so the read-only-folder tests (`test_campaign.py::test_cleanup_removes_read_only_campaign_files_but_nothing_else`, `test_discovery.py::test_read_only_sources_folder_is_never_modified`) cannot see a permission error. They do not import the new module; CI runs as a normal user |
+| New tests | `python3 -m pytest -q tools/research/tests/test_protocol_run_ledger.py` | 59 passed |
+| Research tools suite | `python3 -m pytest -q tools/research` | 151 passed, 2 failed; both failures are pre-existing in this environment: the session runs as root, so the read-only-folder tests (`test_campaign.py::test_cleanup_removes_read_only_campaign_files_but_nothing_else`, `test_discovery.py::test_read_only_sources_folder_is_never_modified`) cannot see a permission error. They do not import the new module; CI runs as a normal user |
 | Engineering status | `collect_certification.py`; `build_engineering_status.py --write`; `--check` | certification failing: none; status written with no diff; `--check` OK |
 
 ## 5. Open items
-- The four runners adopt the module in their own PRs (#245–#248): construct `Ledger(research_path, protocol_id, sha256(protocol doc), forbid_under=[args.out])`, bind inputs before computing, `begin`/`record_outputs`/`complete`, `require` earlier steps, and print `head()` into reports.
-- Limits stated in the module: deleting or replacing the ledger is caught only by the external anchor. The check trusts GitHub's comment timestamps and does not check who posted the comment. Runners must post `post_anchor_text()` on #51 before their first result-producing step, either the runner session or a Mac mini request.
-- Smoke test against the real Cortex extract: `for_brain('wind', …)` with `SECTOR_RESEARCH_HOME` set to a scratch folder resolved `<home>/wind-brain` and recorded it in `LEDGER_OPENED`. The folder was removed afterwards.
+- The four runners adopt the module in their own PRs (#245–#248). Each runner:
+  1. Opens the ledger with `Ledger.for_brain(brain, protocol_id, sha256(protocol doc), forbid_under=[args.out])`.
+  2. Posts `post_anchor_text()` on #51 once, before any result-producing step.
+  3. Binds inputs before computing.
+  4. For each result-producing step, calls `begin`, posts `start_text`, calls `confirm_started`, then computes.
+  5. Calls `record_outputs` as soon as outputs are written, then `complete`.
+  6. Calls `require` for earlier steps.
+  7. Prints `audit()` into its reports.
+- Every runner's review must check that it never aborts after computing values. The ledger cannot enforce this.
+- Stated limits are in the threat model above: deliberate deletion of #51 comments, abort after seeing values, a forged Cortex, and GitHub timestamps and comment authors being trusted.
+- Smoke tests:
+  - `for_brain('wind', …)` against the real Cortex extract, with `SECTOR_RESEARCH_HOME` set to a scratch folder. It resolved `<home>/wind-brain` and recorded it in `LEDGER_OPENED`. The folder was removed afterwards.
+  - A read-only `gh api` listing of Sector_Ops #51 parsed 372 comments over several pages. Nothing was posted.
 
 ## 6. Decisions required and approvals
 None. Approvals used: the standing owner approvals in `CLAUDE.md` (branch, push, PR). Not merged.
