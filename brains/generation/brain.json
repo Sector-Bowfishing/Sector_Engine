@@ -140,7 +140,7 @@
       "fam.snapshots",
       "fam.validation"
     ],
-    "internalExecution": "none: registered DISABLED (control manifest PARKED, executionTarget none, no execution-control entry); dry runs only (run.py --dry-run). Even INTERNAL writes refuse without an APPROVED release (run.py --write)",
+    "internalExecution": "none: registered DISABLED (control manifest PARKED, executionTarget none, no execution-control entry); dry runs only (run.py --dry-run). Even INTERNAL writes refuse without an APPROVED release and GENERATION_WRITE_APPROVED=1 (run.py --write). Prepared, inert: brains/generation/deploy/ (refuses without the owner's deploy approval; creates no scheduler) and the orchestrator's planned generation-brain executor. Also blocked on D-G and D-I. Turning it on: GENERATION_BRAIN_PLAN.md section 6.1",
     "execution": {
       "authority": "brain-orchestrator",
       "trigger": "TIME",
