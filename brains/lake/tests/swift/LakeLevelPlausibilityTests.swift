@@ -41,8 +41,10 @@ final class LakeLevelPlausibilityTests: XCTestCase {
     /// Eight daily manual readings ending today 08:00Z; the newest is the decimal slip seen on 2026-11-23.
     func cwmsDaily(newest: Double) -> [LevelObservation] {
         let end = iso("2026-11-23T08:00:00Z")
-        return (0..<8).map { i in
-            LevelObservation(at: end.addingTimeInterval(-Double(7 - i) * 86_400), ft: i == 7 ? newest : 6225.98 + Double(i) * 0.01)
+        return (0..<8).map { (i: Int) -> LevelObservation in
+            let at: Date = end.addingTimeInterval(-Double(7 - i) * 86_400)
+            let ft: Double = i == 7 ? newest : 6225.98 + Double(i) * 0.01
+            return LevelObservation(at: at, ft: ft)
         }
     }
 
