@@ -12,6 +12,8 @@ whole directory, reading each lake's last published state for the planner (GET).
   (a) the verified knowledge release is APPROVED (else exit 2, BLOCKED_AWAITING_APPROVED_RELEASE), and
   (b) WEATHER_WRITE_APPROVED=1 is set (operator intent; else exit 3).
 Dry-run inputs (--directory, --published, --now, --lakes, --limit) are refused with --write (exit 3): files never feed a real write.
+--point-cache FILE (default $SECTOR_WEATHER_POINT_CACHE) keeps the /points -> gridpoint/stations resolution between runs (client.PointCache,
+30 days, revalidated on 404/redirect). It must be outside the repository checkout (exit 2 otherwise): it is runtime data, never committed.
 The Brain is registered DISABLED (control manifest PARKED, executionTarget none, absent from the execution control): nothing starts it.
 Turning it on is the owner checklist in WEATHER_BRAIN_PLAN.md section 6.1.
 """
@@ -24,13 +26,32 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))       # the job image runs run.py beside its packages (deploy/deploy-job.sh)
 from sector_weather import contract as C, knowledge as K  # noqa: E402
-from sector_weather.client import LiveSource, PointCache  # noqa: E402
+from sector_weather.client import LiveSource, PointCache, default_point_cache_path  # noqa: E402
 from sector_weather.publish import LIVE_MODE, run  # noqa: E402
 
 ENGINE_URL = "https://sector-engine-e43utajroa-uc.a.run.app"
 RTDB_URL = os.environ.get("BRAIN_RTDB_URL", "https://sector-brain.firebaseio.com")
 WRITE_INTENT_ENV = "WEATHER_WRITE_APPROVED"
 DRY_RUN_ONLY = ("directory", "published", "now", "lakes", "limit")
+
+
+REPO_ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+
+
+def point_cache_path(given: str | None) -> str | None:
+    """The cache file to use (--point-cache, else $SECTOR_WEATHER_POINT_CACHE), refused (SystemExit 2) inside the repository checkout."""
+    path = default_point_cache_path(given)
+    if path and os.path.exists(os.path.join(REPO_ROOT, ".git")):            # a checkout (a job image has no .git: nothing to protect there)
+        root = os.path.realpath(REPO_ROOT)
+        if os.path.commonpath([os.path.realpath(path), root]) == root:
+            print("REFUSED (nothing read or written): the point cache must be outside the repository checkout (runtime data, never committed)",
+                  file=sys.stderr)
+            raise SystemExit(2)
+    return path
+
+
+def cache_report(cache: PointCache) -> dict:
+    return {**cache.stats, "file": "configured" if cache.path else "none", **({"loadError": cache.load_error} if cache.load_error else {})}
 
 
 def fetch_directory(url: str) -> list[dict]:
@@ -77,14 +98,15 @@ def live_write(a) -> int:
     directory = fetch_directory(a.engine)
     now = datetime.now(timezone.utc)
     published = read_published(writer, directory)
-    cache = PointCache(a.point_cache)
+    cache = PointCache(point_cache_path(a.point_cache))
     src = LiveSource()
     out = run(directory, src, cache, published, now, None, publish_mode=LIVE_MODE)
     cache.save()
     writer.patch(out["updates"])
     print(json.dumps({"ok": not out["errors"], "lakes": len(out["states"]), "writes": len(out["updates"]),
                       "readiness": {r: list(out["readiness"].values()).count(r) for r in set(out["readiness"].values())},
-                      "errors": out["errors"][:5], "requests": src.http.requests, "knowledgeRelease": C.RELEASE["releaseId"], "published": True}, indent=1))
+                      "errors": out["errors"][:5], "requests": src.http.requests, "pointCache": cache_report(cache),
+                      "knowledgeRelease": C.RELEASE["releaseId"], "published": True}, indent=1))
     return 0 if not out["errors"] else 1
 
 
@@ -110,7 +132,7 @@ def main(argv=None) -> int:
         ids = [l["id"] for l in directory[: a.limit]]
     now = datetime.fromisoformat(a.now.replace("Z", "+00:00")) if a.now else datetime.now(timezone.utc)
     published = json.load(open(a.published)) if a.published else {}
-    cache = PointCache(a.point_cache)
+    cache = PointCache(point_cache_path(a.point_cache))
     src = LiveSource()
     out = run(directory, src, cache, published, now, ids)
     cache.save()
@@ -118,7 +140,7 @@ def main(argv=None) -> int:
     store.patch(out["updates"])
     store.dump(a.dry_run)
     print(json.dumps({"ok": not out["errors"], "lakes": len(out["states"]), "readiness": {r: list(out["readiness"].values()).count(r) for r in set(out["readiness"].values())},
-                      "errors": out["errors"][:5], "requests": src.http.requests, "dryRunFile": a.dry_run}, indent=1))
+                      "errors": out["errors"][:5], "requests": src.http.requests, "pointCache": cache_report(cache), "dryRunFile": a.dry_run}, indent=1))
     return 0 if not out["errors"] else 1
 
 

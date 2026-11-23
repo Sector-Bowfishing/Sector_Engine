@@ -127,3 +127,32 @@ estimate 1-3.5 USD/month at list price for hourly runs. Proposed cap 4 USD/month
 | 6 | Michael (resumes recurring spend) | `python3 tools/ops/execution_control.py brain --changed-by michael --brain moon --enable-brain --max-runs-per-day 24 --reason "<approvalRef>"`. Check `maxStartsPerCycle` (default 2) still covers every enabled Brain: Moon and Weather both start in the same cycle once both are on | execution control |
 
 Off again: `execution_control.py brain --brain moon --disable`, then `activityState PARKED`; delete the job to stop all cost.
+
+### 7.2 Running on Sector Pulse instead of a cloud job (decision 2026-11-23; prepared, all inert)
+
+Decision recorded in chat (Michael, 2026-11-23 01:44 CT), not an Owner approval comment: the new Weather, Moon and Generation Brains run on the
+Mac mini through Sector Pulse instead of as Cloud Run jobs, so a run costs nothing. **`brains/moon/deploy/deploy-job.sh` is superseded by Pulse, pending
+Michael's enablement**: it stays in the repository unchanged (not deleted) and is not to be run while this route is chosen. Nothing below is
+enabled, deployed or run by the PR that prepared it (branch `ops/new-brains-on-pulse-2026-11-23`).
+
+Prepared: `runtime/artifact_entry.py` (the shared `sector_brain_platform.python_artifact_entry`): the unchanged publish step into the Brain's
+DryRunWriter, the previous state read from the live Brain database (GET only, `--read-rtdb`, the read token), ONE sealed artifact stored
+create-only and handed off with `--emit`. It keeps `run.py --write`'s gates: an APPROVED knowledge release (exit 2) AND
+`MOON_WRITE_APPROVED=1` (exit 3). It writes no database and no bucket; the central Publisher is the only writer once the Brain is CENTRAL.
+Sector-Pulse catalog entry `moon-central` (disabled; WHILE_LEASE_HELD: no cron of its own, it runs once per cycle the Orchestrator grants Pulse
+the lease: after each completed Weather run, through the evening and night (§4 run timing)).
+
+The Weather edge keeps its semantics (`deferIfUpstreamStarted: false`): the entry never waits for a Weather run. It reads Weather's last
+completed published states (within `maxAgeHours` 3), so an in-flight Weather run cannot hold Moon back; a lake without a fresh Weather state gets
+the labelled MOON_ONLY answer. When Moon runs stays the Orchestrator's DEPENDENCY_CHANGED grant, not a Pulse cron.
+
+| # | Who | Action (replaces the cloud-job steps above) |
+|---|---|---|
+| 1 | Michael, then an Engine PR | Approve the knowledge release (step "approve" above) |
+| 2 | Cortex maintenance session, then an Engine PR | Register the Brain's families / target Brain (dispatch refuses it until then) |
+| 3 | Michael | Order review: the Brain is not in `cutover_order.json` (PL-10); a hybrid-stage fragment `tools/ops/hybrid-stage/moon.json` and `hybrid_stage.py apply` follow the order review (as Wind, Water Temp) |
+| 4 | Michael (IAM) | The per-Brain lease/artifact bindings for Pulse (the W-H1 / WT-H1 pattern, B=moon) |
+| 5 | Engine PR (config) | `control_manifest.json`: `activityState` ACTIVE and an execution target the Orchestrator grants to the runner (as the CENTRAL Brains); remove the Brain from the `registered_disabled` guards; redeploy the Orchestrator and Publisher |
+| 6 | Michael on the Mac mini | Merge the Sector-Pulse PR, update Pulse; set `jobs.dataRoot` to the data SSD folder; Keychain items as the catalog entry declares; enable `moon-central` in Pulse; set `MOON_WRITE_APPROVED=1` for the Pulse job environment |
+| 7 | Michael (resumes execution) | `tools/ops/execution_control.py brain --brain moon --enable-brain ...` with the approvalRef |
+

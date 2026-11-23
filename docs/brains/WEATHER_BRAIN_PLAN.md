@@ -127,7 +127,7 @@ Nothing below has been done. Each step is the owner's or a reviewed PR; the orde
 
 | # | Who | Action | What it flips |
 |---|---|---|---|
-| 1 | Session (pre-approved read-only) | Step 1 dry run on all 621 lakes; record requests and run time. **Cost check:** the job's point cache (`--point-cache /tmp/...`) is ephemeral, so every run re-resolves `/points` and `/stations` (about 2 x 621 extra NWS requests at 0.25 s pacing). If one run exceeds about 2 min, the 2 USD cap is at risk. **Open owner decision before step 7:** persist the point cache (a Weather-owned Brain DB node or a small GCS object owned by `weather`; a new write path needing registration and approval) or accept the extra requests (`docs/NWS_PROVIDER.md`). Not implemented | nothing |
+| 1 | Session (pre-approved read-only) | Step 1 dry run on all 621 lakes; record requests and run time. **Cost check:** the job's point cache (`--point-cache /tmp/...`) is ephemeral, so every run re-resolves `/points` and `/stations` (about 2 x 621 extra NWS requests at 0.25 s pacing). If one run exceeds about 2 min, the 2 USD cap is at risk. **Open owner decision before step 7:** persist the point cache (a Weather-owned Brain DB node or a small GCS object owned by `weather`; a new write path needing registration and approval) or accept the extra requests (`docs/NWS_PROVIDER.md`). Not implemented for the cloud job; on the Pulse route (§6.2) the cache is a durable file on the Mac mini's data SSD | nothing |
 | 2 | Michael, then an Engine PR | Record the thresholds approval (given in chat: Sector_Ops #51 comment 7085207021): `runtime/knowledge/knowledge-release.json` `approval` -> `{"status": "APPROVED", "record": "<repo path of the approval record>"}`, `brain.json` `knowledge.stores[0].approval` and `operations.knowledgeLoading.approved`. The file digests do not change | write gate (a) |
 | 3 | Cortex maintenance session, then an Engine PR | §6 step 3: register the Weather families and Weather as a target Brain; re-sync `jobs/brain_platform/sector_brain_platform/data_ownership.json`. Until then the orchestrator's M08 dispatch refuses `weather` (`UNREGISTERED_BRAIN`) | dispatch |
 | 4 | Michael (IAM) | Create the service account `brain-job-weather` with write access to the Brain RTDB `sector-brain` only (identity split, Sector_Ops #19). The deploy script never creates or grants an identity | identity |
@@ -136,6 +136,36 @@ Nothing below has been done. Each step is the owner's or a reviewed PR; the orde
 | 7 | Michael (resumes recurring spend) | `python3 tools/ops/execution_control.py brain --changed-by michael --brain weather --enable-brain --max-runs-per-day 24 --reason "<approvalRef>"`. Check `maxStartsPerCycle` (default 2) still covers every enabled Brain | execution control |
 
 Off again: `execution_control.py brain --brain weather --disable` (immediate), then `activityState PARKED`; delete the job to stop all cost.
+
+### 6.2 Running on Sector Pulse instead of a cloud job (decision 2026-11-23; prepared, all inert)
+
+Decision recorded in chat (Michael, 2026-11-23 01:44 CT), not an Owner approval comment: the new Weather, Moon and Generation Brains run on the
+Mac mini through Sector Pulse instead of as Cloud Run jobs, so a run costs nothing. **`brains/weather/deploy/deploy-job.sh` is superseded by Pulse, pending
+Michael's enablement**: it stays in the repository unchanged (not deleted) and is not to be run while this route is chosen. Nothing below is
+enabled, deployed or run by the PR that prepared it (branch `ops/new-brains-on-pulse-2026-11-23`).
+
+Prepared: `runtime/artifact_entry.py` (the shared `sector_brain_platform.python_artifact_entry`): the unchanged publish step into the Brain's
+DryRunWriter, the previous state read from the live Brain database (GET only, `--read-rtdb`, the read token), ONE sealed artifact stored
+create-only and handed off with `--emit`. It keeps `run.py --write`'s gates: an APPROVED knowledge release (exit 2) AND
+`WEATHER_WRITE_APPROVED=1` (exit 3). It writes no database and no bucket; the central Publisher is the only writer once the Brain is CENTRAL.
+Sector-Pulse catalog entry `weather-central` (disabled; WHILE_LEASE_HELD: no cron of its own, it runs once per cycle the Orchestrator grants Pulse
+the lease: Weather is due on every hourly grant, `dueAfterHours` 0.75, `staleAfterHours` 3).
+
+The /points cost question in step 1 is answered for this route: `--point-cache` (default `$SECTOR_WEATHER_POINT_CACHE`) keeps the
+`/points` -> gridpoint/stations resolution in a durable file in the job's data folder on the data SSD (`{data}/nws-points-cache.json`), keyed by
+lake id + coordinate (4 decimals), 30 days, revalidated in-run when a cached grid URL answers 404 or a redirect (`client.PointCache`). It is never
+committed (`run.py` refuses a path inside the checkout). The NWS contact User-Agent comes from the Mac mini's Keychain into
+`SECTOR_WEATHER_USER_AGENT`; it is in neither repository.
+
+| # | Who | Action (replaces the cloud-job steps above) |
+|---|---|---|
+| 1 | Michael, then an Engine PR | Approve the knowledge release (step "approve" above) |
+| 2 | Cortex maintenance session, then an Engine PR | Register the Brain's families / target Brain (dispatch refuses it until then) |
+| 3 | Michael | Order review: the Brain is not in `cutover_order.json` (PL-10); a hybrid-stage fragment `tools/ops/hybrid-stage/weather.json` and `hybrid_stage.py apply` follow the order review (as Wind, Water Temp) |
+| 4 | Michael (IAM) | The per-Brain lease/artifact bindings for Pulse (the W-H1 / WT-H1 pattern, B=weather) |
+| 5 | Engine PR (config) | `control_manifest.json`: `activityState` ACTIVE and an execution target the Orchestrator grants to the runner (as the CENTRAL Brains); remove the Brain from the `registered_disabled` guards; redeploy the Orchestrator and Publisher |
+| 6 | Michael on the Mac mini | Merge the Sector-Pulse PR, update Pulse; set `jobs.dataRoot` to the data SSD folder; Keychain items as the catalog entry declares; enable `weather-central` in Pulse; set `WEATHER_WRITE_APPROVED=1` for the Pulse job environment |
+| 7 | Michael (resumes execution) | `tools/ops/execution_control.py brain --brain weather --enable-brain ...` with the approvalRef |
 
 ## 7. Open questions for the owner
 

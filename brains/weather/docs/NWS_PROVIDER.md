@@ -30,7 +30,13 @@ requests per run (about 5 more minutes). That must be measured on the first dry 
 
 **Open owner decision before turn-on step 7 (plan §6.1):** persist the point cache, for example as a Weather-owned node in the Brain DB or a
 small GCS object owned by `weather` (either is a new write path and needs its own registration and approval), or accept the extra requests
-and their cost against the 2 USD/month cap. Nothing persists the cache today.
+and their cost against the 2 USD/month cap. The cloud job still persists nothing.
+
+**Pulse route (decision recorded in chat, Michael 2026-11-23; WEATHER_BRAIN_PLAN.md §6.2):** the point cache is a durable local file in the
+runner's data folder (`--point-cache` or `$SECTOR_WEATHER_POINT_CACHE`; never inside the checkout, never committed). Entries are keyed by lake id +
+the coordinate at the 4 decimals `/points` is called with and kept 30 days. A cached gridpoint URL that answers 404 or a redirect (301/308) is
+re-resolved in the same run; a cached station that answers 404 or redirects drops the entry so the next run re-resolves it. An unreadable or
+foreign cache file is ignored and rewritten. With a warm cache a run makes no `/points` or station-list request.
 
 ## Coverage
 

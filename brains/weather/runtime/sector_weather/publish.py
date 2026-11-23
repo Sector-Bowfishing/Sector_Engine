@@ -10,7 +10,7 @@ import traceback
 from datetime import datetime
 
 from . import contract as C
-from .client import FetchError, OutOfCoverage
+from .client import FetchError, Moved, OutOfCoverage
 from .freshness import due
 from .nws import decode_grid, decode_observations, decode_point, decode_stations
 from .reading import assemble
@@ -35,9 +35,14 @@ def _miles(lat1, lon1, lat2, lon2):
 
 def resolve_point(lake: dict, source, cache, now: datetime) -> dict:
     """The lake's NWS grid cell and its nearest stations (cached static metadata). {outOfCoverage: True} outside NWS coverage."""
-    e = cache.get(lake["id"], now) if cache else None
+    return _resolve(lake, source, cache, now)[0]
+
+
+def _resolve(lake: dict, source, cache, now: datetime, refresh: bool = False) -> tuple[dict, bool]:
+    """(entry, from_cache). refresh=True skips the cache (revalidation after a 404/redirect on a URL the cache gave)."""
+    e = cache.get(lake, now) if cache and not refresh else None
     if e:
-        return e
+        return e, True
     try:
         pt = decode_point(source.point(lake["lat"], lake["lon"]))
         if pt is None:
@@ -48,8 +53,22 @@ def resolve_point(lake: dict, source, cache, now: datetime) -> dict:
     except OutOfCoverage:
         e = {"outOfCoverage": True, "cachedAt": C.iso(now)}
     if cache:
-        cache.put(lake["id"], e)
-    return e
+        cache.put(lake, e)
+    return e, False
+
+
+def _fetch_grid(source, url: str, pt: dict, grids: dict, errors: list) -> None:
+    if url in grids:
+        return
+    try:
+        grids[url] = decode_grid(source.grid(url))
+    except Moved as e:
+        grids[url] = decode_grid(e.doc) if e.doc is not None else None
+        if e.doc is None:
+            errors.append(f"grid {pt['gridpoint']}: {e}"[:200])
+    except (FetchError, OutOfCoverage) as e:
+        grids[url] = None
+        errors.append(f"grid {pt['gridpoint']}: {e}"[:200])
 
 
 DRY_RUN_MODE = "DRY_RUN (no live writer in this version)"
@@ -61,7 +80,7 @@ def run(directory: list[dict], source, cache, published: dict, now: datetime, la
     """-> {updates, states, report}. `published` is lakeId -> the last published state (for the planner); never raises for one lake."""
     now = now.replace(microsecond=0)
     lakes = [l for l in directory if not lake_ids or l["id"] in lake_ids]
-    grids, obs = {}, {}
+    grids, obs, stale_urls = {}, {}, set()
     states, ready, reasons, errors = {}, {}, {}, []
     for lake in lakes:
         lid = lake["id"]
@@ -72,7 +91,10 @@ def run(directory: list[dict], source, cache, published: dict, now: datetime, la
                 ready[lid] = readiness(published[lid])
                 reasons[lid] = ["not due"]
                 continue
-            pt = resolve_point(lake, source, cache, now)
+            pt, cached = _resolve(lake, source, cache, now)
+            if cached and not pt.get("outOfCoverage") and pt["forecastGridData"] in stale_urls:
+                cache.invalidate(lake)                           # another lake already found this cached grid URL gone or moved
+                pt, cached = _resolve(lake, source, cache, now, refresh=True)
             if pt.get("outOfCoverage"):
                 ready[lid], reasons[lid] = "BLOCKED", ["outside NWS coverage"]
                 continue
@@ -80,7 +102,22 @@ def run(directory: list[dict], source, cache, published: dict, now: datetime, la
             if url not in grids:
                 try:
                     grids[url] = decode_grid(source.grid(url))
-                except (FetchError, OutOfCoverage) as e:
+                except (Moved, OutOfCoverage) as e:
+                    if cached:                                   # the cached resolution is stale: revalidate /points once, in this run
+                        stale_urls.add(url)
+                        cache.invalidate(lake)
+                        pt, cached = _resolve(lake, source, cache, now, refresh=True)
+                        if pt.get("outOfCoverage"):
+                            ready[lid], reasons[lid] = "BLOCKED", ["outside NWS coverage"]
+                            continue
+                        url = pt["forecastGridData"]
+                        _fetch_grid(source, url, pt, grids, errors)
+                    elif isinstance(e, Moved) and e.doc is not None:
+                        grids[url] = decode_grid(e.doc)          # a fresh resolution that NWS redirects: the redirected body as before
+                    else:
+                        grids[url] = None
+                        errors.append(f"grid {pt['gridpoint']}: {e}"[:200])
+                except FetchError as e:
                     grids[url] = None
                     errors.append(f"grid {pt['gridpoint']}: {e}"[:200])
             sids = [s["id"] for s in pt["stations"]]
@@ -88,9 +125,17 @@ def run(directory: list[dict], source, cache, published: dict, now: datetime, la
                 if s not in obs:
                     try:
                         obs[s] = decode_observations(source.observations(s, now))
+                    except Moved as e:                           # a moved station: use what NWS sent, re-resolve the stations next run
+                        obs[s] = decode_observations(e.doc) if e.doc is not None else []
+                        if e.doc is None:
+                            errors.append(f"observations {s}: {e}"[:200])
+                        if cached:
+                            cache.invalidate(lake)
                     except (FetchError, OutOfCoverage) as e:
                         obs[s] = []
                         errors.append(f"observations {s}: {e}"[:200])
+                        if cached and isinstance(e, OutOfCoverage):
+                            cache.invalidate(lake)               # a cached station that answers 404: re-resolve the stations next run
             rd = assemble(sids, {s: obs[s] for s in sids}, grids[url], now)
             st = build_state(lake, rd, pt, now)
             states[lid], ready[lid], reasons[lid] = st, readiness(st), why
