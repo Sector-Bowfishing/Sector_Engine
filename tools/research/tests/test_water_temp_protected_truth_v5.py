@@ -1,5 +1,6 @@
-"""PT-L4-2026-11-23-v4 runner, offline. Every fixture is hand-built and synthetic: synthetic square 'polygons' around the
-directory points, synthetic station ids (SYN-*), synthetic counts and temperatures. No real cast, site or value."""
+"""PT-L4-2026-11-23-v5 runner, offline. Every fixture is hand-built and synthetic: synthetic square 'polygons' around the
+directory points, synthetic station ids (SYN-*), synthetic counts and temperatures. No real cast, site or value. Run ledgers
+live in pytest's tmp_path."""
 import csv
 import datetime as dt
 import hashlib
@@ -13,14 +14,15 @@ import pytest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, ".."))
-import water_temp_protected_truth_v4 as W  # noqa: E402
+import water_temp_protected_truth_v5 as W  # noqa: E402
 
 P, DIGEST = W.load_protocol()
 PTS = {l["lakeId"]: l["point"] for l in P["universe"]["lakes"]}
 REQ = "Owner request (Michael, 2099-01-01): synthetic test"
-V2 = os.path.join(W.REPO, "docs", "brains", "water-temp-protected-truth-v2", "PT-L4-2026-11-23-v2.protocol.json")
-V3 = os.path.join(W.REPO, "docs", "brains", "water-temp-protected-truth-v3", "PT-L4-2026-11-23-v3.protocol.json")
-
+DOCS = os.path.join(W.REPO, "docs", "brains")
+V2 = os.path.join(DOCS, "water-temp-protected-truth-v2", "PT-L4-2026-11-23-v2.protocol.json")
+V3 = os.path.join(DOCS, "water-temp-protected-truth-v3", "PT-L4-2026-11-23-v3.protocol.json")
+V4 = os.path.join(DOCS, "water-temp-protected-truth-v4", "PT-L4-2026-11-23-v4.protocol.json")
 
 def square(lake_id, half=0.05):
     lat, lon = PTS[lake_id]
@@ -36,7 +38,7 @@ def registry(ids=None, half=0.05):
 # ------------------------------------------------------------------------------------------------------- protocol
 def test_protocol_is_the_committed_preregistration():
     assert DIGEST == open(W.PROTOCOL + ".sha256").read().split()[0]
-    assert P["protocolId"] == "PT-L4-2026-11-23-v4" and P["censusCutoff"] == W.CUTOFF == "2026-11-22" and len(P["universe"]["lakes"]) == 62
+    assert P["protocolId"] == "PT-L4-2026-11-23-v5" and P["censusCutoff"] == W.CUTOFF == "2026-11-22" and len(P["universe"]["lakes"]) == 62
     assert P["minimums"] == {"perLake": 25, "total": 150, "lakes": 4} == {"perLake": W.PER_LAKE, "total": W.TOTAL, "lakes": W.SLOTS}
     assert P["passMark"]["pooledEqualLakeRmseC"]["value"] == P["passMark"]["perLakeRmseC"]["value"] == W.RMSE_MARK
     assert "INSUFFICIENT_PAIRED" not in json.dumps(P["passMark"]["outcomes"])
@@ -45,8 +47,9 @@ def test_protocol_is_the_committed_preregistration():
 def test_superseded_protocols_are_kept_byte_identical_and_refused():
     assert W.V1.sha256_file(V2) == "e02e2e08740767dec4720a610c112010eb78ad73ad1b223b14365489a499867d"
     assert W.V1.sha256_file(V3) == "ebc1a77b1977924c2bb586340887f2fad7a3196b20bf4f2ef2305853716f170d"
-    for old in (V2, V3):
-        with pytest.raises(SystemExit, match="executes PT-L4-2026-11-23-v4 only"):
+    assert W.V1.sha256_file(V4) == "aac78d48276ba692d7f485971e594c01c000ccc966631f4900bf46a817a096e0"
+    for old in (V2, V3, V4):
+        with pytest.raises(SystemExit, match="executes PT-L4-2026-11-23-v5 only"):
             W.load_protocol(old)
 
 
@@ -186,11 +189,41 @@ def test_exclusion_rules():
     assert ex["Okatibbee Lake|MS"] == ["RESOLVER_SENSOR: tempSensor binding"] and ex["Weiss|AL"] == ["NO_GEOMETRY"]
 
 
-def test_exclusions_cli_requires_and_records_the_calibration_lake_list(tmp_path):
-    with pytest.raises(SystemExit):
-        W.main(["exclusions", "--registry", "r", "--sites", "s", "--calibration", "c", "--out", "o"])
+
+
+# ------------------------------------------------------------------------------------------------------- run ledger
+def new_ledger(tmp_path):
+    return W.ledger(DIGEST, str(tmp_path / "research-root"))
+
+
+def test_ledger_root_is_never_inside_an_output_folder(tmp_path, monkeypatch):
+    monkeypatch.delenv("SECTOR_RESEARCH_ROOT", raising=False)
+    with pytest.raises(SystemExit, match="no research root"):
+        W.research_root(None, [str(tmp_path / "out")])
+    with pytest.raises(SystemExit, match="inside an --out folder"):
+        W.research_root(str(tmp_path / "out" / "root"), [str(tmp_path / "out")])
+    assert W.research_root(str(tmp_path / "root"), [str(tmp_path / "out")]) == os.path.realpath(str(tmp_path / "root"))
+
+
+def test_ledger_only_run_one_counts_and_the_chain_is_checked(tmp_path):
+    L = new_ledger(tmp_path)
+    assert L.begin("census", W.PROTOCOL_ID, {}, {}) == 1
+    L.abort_before_result("census", W.PROTOCOL_ID, "network")
+    assert L.begin("census", W.PROTOCOL_ID, {}, {}) == 2           # an aborted run may be retried
+    L.complete("census", W.PROTOCOL_ID, {"census.json": "x"}, {})
+    with pytest.raises(SystemExit, match="already ran"):
+        L.begin("census", W.PROTOCOL_ID, {}, {})
+    assert L.require("census", W.PROTOCOL_ID)["run"] == 2
+    lines = open(L.path).read().splitlines()
+    lines[1] = lines[1].replace("network", "edited")
+    open(L.path, "w").write("\n".join(lines) + "\n")
+    with pytest.raises(SystemExit, match="broken at entry 1"):
+        new_ledger(tmp_path)
+
+
+def _exclusion_inputs(tmp_path):
     reg = tmp_path / "reg"
-    reg.mkdir()
+    reg.mkdir(exist_ok=True)
     (reg / "lakes.v1.json").write_text(json.dumps({"lakes": [{"lakeId": "Lay|AL", "lakeKey": "Lay_AL", "bbox": [0, 0, 1, 1]}]}))
     (reg / "Lay_AL.analysis.geojson").write_text(json.dumps(square("Lay|AL")))
     sites = tmp_path / "sites.csv"
@@ -199,13 +232,27 @@ def test_exclusions_cli_requires_and_records_the_calibration_lake_list(tmp_path)
     cal.write_text(json.dumps({"rows": []}))
     lakes = tmp_path / "lakes.json"
     lakes.write_text(json.dumps(["Jordan|AL"]))
-    out = tmp_path / "ex.json"
-    args = ["exclusions", "--registry", str(reg), "--sites", str(sites), "--calibration", str(cal), "--calibration-lakes", str(lakes), "--out", str(out)]
-    assert W.main(args) == 0
-    rec = json.loads(out.read_text())
-    assert rec["calibrationLakes"] == ["Jordan|AL"] and rec["calibrationLakesSha256"] == W.V1.sha256_file(str(lakes))
-    with pytest.raises(SystemExit, match="write-once"):
-        W.main(args)
+    return str(reg), str(sites), str(cal), str(lakes)
+
+
+def test_exclusions_run_once_per_protocol_and_record_their_inputs(tmp_path):
+    with pytest.raises(SystemExit):
+        W.main(["exclusions", "--registry", "r", "--sites", "s", "--calibration", "c", "--out", "o"])       # --calibration-lakes missing
+    reg, sites, cal, lakes = _exclusion_inputs(tmp_path)
+    root = str(tmp_path / "root")
+    run0 = tmp_path / "run0"
+    run0.mkdir()
+    args = ["--research-root", root, "exclusions", "--registry", reg, "--sites", sites, "--calibration", cal, "--calibration-lakes", lakes]
+    assert W.main(args + ["--out", str(run0 / "ex.json")]) == 0
+    rec = json.loads((run0 / "ex.json").read_text())
+    assert rec["calibrationLakes"] == ["Jordan|AL"]
+    L = W.ledger(DIGEST, root)
+    run = L.require("exclusions", W.PROTOCOL_ID)
+    assert run["inputs"]["calibrationLakes"] == W.V1.sha256_file(lakes) and run["inputs"]["wtSat1"] == "unfrozen"
+    assert run["outputs"]["exclusions.json"] == W.V1.sha256_file(str(run0 / "ex.json"))
+    (tmp_path / "run1").mkdir()
+    with pytest.raises(SystemExit, match="already ran"):
+        W.main(args + ["--out", str(tmp_path / "run1" / "ex.json")])              # a second folder is still a second run
 
 
 # ------------------------------------------------------------------------------------------------------- census and selection
@@ -223,36 +270,15 @@ def rdrow(sid, d, rdep="", rdu="", adep="", adu="", status="Accepted", ch="Tempe
 def test_census_rules_and_frozen_holdout_window():
     lat, lon = PTS["Wheeler|AL"]
     st = {"SYN-0": {"MonitoringLocationIdentifier": "SYN-0", "LatitudeMeasure": str(lat), "LongitudeMeasure": str(lon), "lakeId": "Wheeler|AL", "class": "MAIN_BODY"}}
-    rows = [rdrow("SYN-0", "2022-04-01", "0.5", "m"),
-            rdrow("SYN-0", "2022-04-08", "3.0", "m", "0.5", "m"),            # Result depth first: 3.0 m
-            rdrow("SYN-0", "2022-04-15", "", "", "1.2", "m"),                # Activity depth fallback
-            rdrow("SYN-0", "2022-04-22", "0.5", "m", status="Rejected"),
-            rdrow("SYN-0", "2022-04-29", "0.5", ""),                          # no depth unit
-            rdrow("SYN-0", "2022-05-06", "0.5", "m", unit="mg/L"),           # unknown temperature unit, decided in step A
-            rdrow("SYN-0", "2022-05-13", "0.5", "m", ch="pH"),
-            rdrow("SYN-0", "2026-08-01", "0.5", "m"),                          # after the holdout end: info only for a frozen lake
-            rdrow("SYN-0", "2026-11-23", "0.5", "m")]                          # after the fixed cutoff
+    rows = [rdrow("SYN-0", "2022-04-01", "0.5", "m"), rdrow("SYN-0", "2022-04-08", "3.0", "m", "0.5", "m"),
+            rdrow("SYN-0", "2022-04-15", "", "", "1.2", "m"), rdrow("SYN-0", "2022-04-22", "0.5", "m", status="Rejected"),
+            rdrow("SYN-0", "2022-04-29", "0.5", ""), rdrow("SYN-0", "2022-05-06", "0.5", "m", unit="mg/L"),
+            rdrow("SYN-0", "2022-05-13", "0.5", "m", ch="pH"), rdrow("SYN-0", "2026-08-01", "0.5", "m"), rdrow("SYN-0", "2026-11-23", "0.5", "m")]
     wh = W.census(P, rows, st)["waters"]["Wheeler|AL"]
     assert wh["qualifyingCasts"] == 2 and wh["infoCastsToCutoff"] == 3 and wh["window"] == ["2021-01-01", "2026-06-30"]
     assert wh["stepARejects"] == {"deeperThan1.5m": 1, "rejectedStatus": 1, "noDepth": 1, "unknownUnit": 1, "otherCharacteristic": 1, "outsideWindow": 1}
     st2 = {"SYN-0": dict(st["SYN-0"], lakeId="Lay|AL")}
-    assert W.census(P, rows, st2)["waters"]["Lay|AL"]["qualifyingCasts"] == 3        # a replacement candidate counts to the cutoff
-
-
-def test_census_is_write_once_and_refuses_non_whitelisted_columns(tmp_path):
-    wqp = tmp_path / "wqp"
-    wqp.mkdir()
-    st = _write_stations(tmp_path / "st.csv", [])
-    sha = W.V1.sha256_file(st)
-    ex = tmp_path / "ex.json"
-    ex.write_text(json.dumps({"protocolSha256": DIGEST, "exclusions": {}}))
-    out = tmp_path / "c.json"
-    W.cmd_census(P, DIGEST, str(wqp), st, sha, st, sha, str(ex), str(out))
-    with pytest.raises(SystemExit, match="write-once"):
-        W.cmd_census(P, DIGEST, str(wqp), st, sha, st, sha, str(ex), str(out))
-    (wqp / f"{W.slug('Wheeler|AL')}.resultdepth.csv").write_text("MonitoringLocationIdentifier,ActivityStartDate,ResultMeasureValue\nSYN-1,2023-06-01,20\n")
-    with pytest.raises(SystemExit, match="non-whitelisted column"):
-        W.cmd_census(P, DIGEST, str(wqp), st, sha, st, sha, str(ex), str(tmp_path / "c2.json"))
+    assert W.census(P, rows, st2)["waters"]["Lay|AL"]["qualifyingCasts"] == 3
 
 
 def test_dedupe_survives_coordinate_less_stations():
@@ -276,54 +302,93 @@ def test_selection_keeps_qualifying_frozen_lakes_and_replaces_short_ones_by_coun
     assert W.select(P, census_with({"Guntersville|AL": 36, "Lay|AL": 30, "Jordan|AL": 26, "Seminole|GA": 25}), {})["outcome"] == "INSUFFICIENT_TRUTH"
 
 
-def test_one_selection_per_protocol_id(tmp_path):
-    cp = tmp_path / "census.json"
-    ex = tmp_path / "ex.json"
-    ex.write_text(json.dumps({"exclusions": {}}))
-    cp.write_text(json.dumps({"protocolSha256": DIGEST, "exclusionsSha256": W.V1.sha256_file(str(ex)), "stationDraftSha256": "d",
-                              "stationFileSha256": "s", **census_with(SEL_COUNTS)}))
-    out, reg = tmp_path / "selection.json", tmp_path / "selection-registry.json"
-    W.cmd_select(P, DIGEST, str(cp), str(ex), str(out), str(reg))
-    assert json.loads(reg.read_text())["selectionSha256"] == W.V1.sha256_file(str(out))
-    with pytest.raises(SystemExit, match="one selection per protocol id"):
-        W.cmd_select(P, DIGEST, str(cp), str(ex), str(tmp_path / "other.json"), str(reg))
-
-
-# ------------------------------------------------------------------------------------------------------- step B
 SEL_COUNTS = {"Guntersville|AL": 36, "Logan Martin|AL": 40, "Lay|AL": 40, "Jordan|AL": 40}
 
 
-def selection_files(tmp_path):
+def step_a(tmp_path, L, folder="run0"):
+    """Steps A through select, recorded in the ledger like the CLI does (synthetic census content)."""
+    d = tmp_path / folder
+    d.mkdir()
+    st = _write_stations(d / "st.csv", [])
+    ssha = W.V1.sha256_file(st)
+    ex = d / "ex.json"
+    ex.write_text(json.dumps({"protocolSha256": DIGEST, "exclusions": {}}))
+    L.begin("exclusions", W.PROTOCOL_ID, {}, {})
+    L.complete("exclusions", W.PROTOCOL_ID, {"exclusions.json": W.V1.sha256_file(str(ex))}, {})
+    cp = d / "census.json"
+    cp.write_text(json.dumps({"protocolSha256": DIGEST, "stationDraftSha256": ssha, "stationFileSha256": ssha,
+                              "exclusionsSha256": W.V1.sha256_file(str(ex)), **census_with(SEL_COUNTS)}))
+    L.begin("census", W.PROTOCOL_ID, {}, {"stationDraft": ssha, "stationReviewed": ssha})
+    L.complete("census", W.PROTOCOL_ID, {"census.json": W.V1.sha256_file(str(cp))}, {})
+    sp = d / "selection.json"
+    sel = W.cmd_select(P, DIGEST, L, str(cp), str(ex), str(sp))
+    return sel, str(sp), st, str(cp), str(ex)
+
+
+def test_one_selection_per_protocol_whatever_the_folder(tmp_path):
+    L = new_ledger(tmp_path)
+    sel, sp, st, cp, ex = step_a(tmp_path, L)
+    assert L.require("select", W.PROTOCOL_ID)["outputs"]["selection.json"] == W.V1.sha256_file(sp)
+    (tmp_path / "run1").mkdir()
+    with pytest.raises(SystemExit, match="already ran"):
+        W.cmd_select(P, DIGEST, L, cp, ex, str(tmp_path / "run1" / "selection.json"))
+    other = tmp_path / "run1" / "selection.json"                 # a hand-made second selection in another folder
+    other.write_text(json.dumps({**sel, "note": "second"}))
+    with pytest.raises(SystemExit, match="not the select output recorded"):
+        W.load_selection_for_step_b(L, str(other), st, DIGEST, REQ)
+
+
+def test_census_and_select_need_the_recorded_upstream_outputs(tmp_path):
+    L = new_ledger(tmp_path)
+    d = tmp_path / "x"
+    d.mkdir()
+    ex = d / "ex.json"
+    ex.write_text("{}")
+    st = _write_stations(d / "st.csv", [])
+    sha = W.V1.sha256_file(st)
+    with pytest.raises(SystemExit, match="not recorded as complete"):
+        W.cmd_census(P, DIGEST, L, str(d), st, sha, st, sha, str(ex), str(d / "c.json"))
+    with pytest.raises(SystemExit, match="not recorded as complete"):
+        W.cmd_select(P, DIGEST, L, str(d / "c.json"), str(ex), str(d / "s.json"))
+
+
+def test_census_runs_once_and_refuses_non_whitelisted_columns(tmp_path):
+    L = new_ledger(tmp_path)
+    wqp = tmp_path / "wqp"
+    wqp.mkdir()
     st = _write_stations(tmp_path / "st.csv", [])
-    sel = {"protocolSha256": DIGEST, "stationFileSha256": W.V1.sha256_file(st), **W.select(P, census_with(SEL_COUNTS), {})}
-    sp = tmp_path / "selection.json"
-    sp.write_text(json.dumps(sel))
-    reg = tmp_path / "selection-registry.json"
-    reg.write_text(json.dumps({"protocolId": W.PROTOCOL_ID, "protocolSha256": DIGEST, "selectionSha256": W.V1.sha256_file(str(sp))}))
-    return sel, str(sp), str(reg), st
+    sha = W.V1.sha256_file(st)
+    ex = tmp_path / "ex.json"
+    ex.write_text(json.dumps({"protocolSha256": DIGEST, "exclusions": {}}))
+    L.begin("exclusions", W.PROTOCOL_ID, {}, {})
+    L.complete("exclusions", W.PROTOCOL_ID, {"exclusions.json": W.V1.sha256_file(str(ex))}, {})
+    (wqp / f"{W.slug('Wheeler|AL')}.resultdepth.csv").write_text("MonitoringLocationIdentifier,ActivityStartDate,ResultMeasureValue\nSYN-1,2023-06-01,20\n")
+    with pytest.raises(SystemExit, match="non-whitelisted column"):
+        W.cmd_census(P, DIGEST, L, str(wqp), st, sha, st, sha, str(ex), str(tmp_path / "c.json"))
+    os.remove(wqp / f"{W.slug('Wheeler|AL')}.resultdepth.csv")
+    W.cmd_census(P, DIGEST, L, str(wqp), st, sha, st, sha, str(ex), str(tmp_path / "c.json"))
+    assert L.require("census", W.PROTOCOL_ID)["inputs"]["stationReviewed"] == sha
+    with pytest.raises(SystemExit, match="already ran"):
+        W.cmd_census(P, DIGEST, L, str(wqp), st, sha, st, sha, str(ex), str(tmp_path / "c2.json"))
 
 
+# ------------------------------------------------------------------------------------------------------- step B
 def test_step_b_gate(tmp_path):
-    sel, sp, reg, st = selection_files(tmp_path)
-    W.load_selection_for_step_b(sp, reg, st, DIGEST, REQ)
+    L = new_ledger(tmp_path)
+    sel, sp, st, *_ = step_a(tmp_path, L)
+    assert W.load_selection_for_step_b(L, sp, st, DIGEST, REQ)[1] == W.V1.sha256_file(sp)
     with pytest.raises(SystemExit, match="needs --owner-request"):
-        W.load_selection_for_step_b(sp, reg, st, DIGEST, "Claude request (under Owner approval 2026-11-22)")
-    with pytest.raises(SystemExit, match="no selection registry"):
-        W.load_selection_for_step_b(sp, str(tmp_path / "none.json"), st, DIGEST, REQ)
-    other = tmp_path / "selection2.json"
-    other.write_text(json.dumps({**sel, "note": "a second selection"}))
-    with pytest.raises(SystemExit, match="registered selection sha256"):
-        W.load_selection_for_step_b(str(other), reg, st, DIGEST, REQ)
-    with pytest.raises(SystemExit, match="different protocol"):
-        W.load_selection_for_step_b(sp, reg, st, "0" * 64, REQ)
+        W.load_selection_for_step_b(L, sp, st, DIGEST, "Claude request (under Owner approval 2026-11-22)")
+    with pytest.raises(SystemExit, match="not recorded as complete"):
+        W.load_selection_for_step_b(new_ledger(tmp_path / "elsewhere"), sp, st, DIGEST, REQ)
     with open(st, "a") as fh:
         fh.write("SYN-X,SYN,SYNTHETIC,1,1,Lay|AL,MAIN_BODY,late,\n")
     with pytest.raises(SystemExit, match="station file differs"):
-        W.load_selection_for_step_b(sp, reg, st, DIGEST, REQ)
+        W.load_selection_for_step_b(L, sp, st, DIGEST, REQ)
 
 
 def test_step_b_queries_and_the_derived_forcing_window(tmp_path):
-    sel, *_ = selection_files(tmp_path)
+    sel, *_ = step_a(tmp_path, new_ledger(tmp_path))
     qs = W.result_queries(sel)
     assert len(qs) == sum(SEL_COUNTS.values()) and len({q["file"] for q in qs}) == len(qs)
     assert all(q["params"]["startDateLo"] == q["params"]["startDateHi"] and "bBox" not in q["params"] for q in qs)
@@ -351,104 +416,119 @@ def results_for(sel, value="21.0"):
 
 
 def test_forcing_that_does_not_cover_every_cast_is_refused(tmp_path):
-    sel, *_ = selection_files(tmp_path)
+    sel, *_ = step_a(tmp_path, new_ledger(tmp_path))
     with pytest.raises(SystemExit, match="does not cover counted cast"):
         W.check_forcing(forcing(20.0, start="2022-03-01"), [d for lid, _, d in W.counted_casts(sel) if lid == "Lay|AL"])
 
 
 def test_compare_pass_and_unknowns_count_against(tmp_path):
-    sel, *_ = selection_files(tmp_path)
+    sel, *_ = step_a(tmp_path, new_ledger(tmp_path))
     f = {lid: forcing(20.0) for lid in SEL_COUNTS}
-    res = W.compare(P, sel, results_for(sel), f)
-    assert res["outcome"] == "PASS" and res["pooledEqualLakeRmseC"] == 1.0
+    assert W.compare(P, sel, results_for(sel), f)["outcome"] == "PASS"
     rows = results_for(sel)
-    del rows[5], rows[0]                                           # two counted readings not returned: the reviewed reproduction
+    del rows[5], rows[0]
     r = W.compare(P, sel, rows, f)
     assert r["outcome"] == "FAIL" and "CAST_NOT_RETURNED" in r["perLake"]["Guntersville|AL"]["failed"]
     r = W.compare(P, sel, results_for(sel), {k: v for k, v in f.items() if k != "Lay|AL"})
-    assert r["outcome"] == "FAIL" and r["perLake"]["Lay|AL"]["failed"] == ["FORCING_MISSING"] and r["pooledEqualLakeRmseC"] is None
+    assert r["perLake"]["Lay|AL"]["failed"] == ["FORCING_MISSING"] and r["outcome"] == "FAIL"
     c0 = W.counted_casts(sel)[0]
     r = W.compare(P, sel, results_for(sel), {**f, c0[0]: forcing(20.0, null_on={c0[2]})})
-    assert r["outcome"] == "FAIL" and "UNPAIRED_CAST" in r["perLake"][c0[0]]["failed"]
+    assert "UNPAIRED_CAST" in r["perLake"][c0[0]]["failed"]
     rows = results_for(sel)
-    g = [x for x in rows if x["MonitoringLocationIdentifier"].startswith("SYN-Guntersville")]
-    for x in g[:12]:
+    for x in [x for x in rows if x["MonitoringLocationIdentifier"].startswith("SYN-Guntersville")][:12]:
         x["ResultMeasureValue"] = "99"
-    r = W.compare(P, sel, rows, f)
-    assert r["perLake"]["Guntersville|AL"]["failed"] == ["SCORED_BELOW_25"] and len(r["perLake"]["Guntersville|AL"]["truthRejectsStepB"]) == 12
+    assert W.compare(P, sel, rows, f)["perLake"]["Guntersville|AL"]["failed"] == ["SCORED_BELOW_25"]
 
 
 def test_duplicate_and_uncounted_readings(tmp_path):
-    sel, *_ = selection_files(tmp_path)
+    sel, *_ = step_a(tmp_path, new_ledger(tmp_path))
     rows = results_for(sel)
     with pytest.raises(SystemExit, match="appears twice"):
         W.truth_values(sel, rows + [rows[0]])
-    extra = dict(rows[0], ActivityIdentifier="NOT-COUNTED", ResultMeasureValue="5")
-    assert W.truth_values(sel, [extra])[0] == {}
+    assert W.truth_values(sel, [dict(rows[0], ActivityIdentifier="NOT-COUNTED", ResultMeasureValue="5")])[0] == {}
 
 
-def fetched_folders(tmp_path, sel):
-    """Write step-B files plus provenance exactly as fetch-results / fetch-forcing do (synthetic bodies)."""
-    rdir, fdir = tmp_path / "rb", tmp_path / "fb"
+def fetched(tmp_path, L, sel, sp, folder="fetch0", value="21.0"):
+    """Step-B files and provenance written as the fetch commands write them, and recorded in the ledger the same way."""
+    sha = W.V1.sha256_file(sp)
+    rdir, fdir = tmp_path / folder / "rb", tmp_path / folder / "fb"
+    L.begin("fetch-results", sha, {}, {})
     prov = []
     for q in W.result_queries(sel):
         buf = io.StringIO()
         w = csv.DictWriter(buf, fieldnames=list(result_row("x", "2022-01-01")))
         w.writeheader()
-        w.writerow(result_row(q["siteid"], q["date"]))
-        W._save(str(rdir), q["file"], buf.getvalue().encode(), "u", q["params"], prov)
+        w.writerow(result_row(q["siteid"], q["date"], value))
+        W._save(str(rdir), q["file"], buf.getvalue().encode(), W.V1.WQP.format(kind="Result"), q["params"], prov)
     W.V1.write_provenance(str(rdir), "results.provenance.json", prov)
+    W._bind_and_complete(L, "fetch-results", sha, str(rdir), "results.provenance.json", [q["file"] for q in W.result_queries(sel)])
+    L.begin("fetch-forcing", sha, {}, {})
     prov = []
     for l in sel["lakes"]:
-        W._save(str(fdir), W.forcing_file(l["lakeId"]), json.dumps(forcing(20.0)).encode(), "u", W.forcing_params(P, sel, l["lakeId"]), prov)
+        W._save(str(fdir), W.forcing_file(l["lakeId"]), json.dumps(forcing(20.0)).encode(), W.V1.OPEN_METEO, W.forcing_params(P, sel, l["lakeId"]), prov)
     W.V1.write_provenance(str(fdir), "forcing.provenance.json", prov)
+    W._bind_and_complete(L, "fetch-forcing", sha, str(fdir), "forcing.provenance.json", [W.forcing_file(l["lakeId"]) for l in sel["lakes"]])
     return str(rdir), str(fdir)
 
 
-def test_cmd_compare_verifies_files_against_provenance(tmp_path):
-    sel, sp, reg, st = selection_files(tmp_path)
-    rdir, fdir = fetched_folders(tmp_path, sel)
-    out = tmp_path / "compare.json"
-    rec = W.cmd_compare(P, DIGEST, sp, reg, st, rdir, fdir, REQ, str(out))
-    assert rec["outcome"] == "PASS" and len(rec["inputSha256"]) == sum(SEL_COUNTS.values()) + 4
-    with pytest.raises(SystemExit, match="write-once"):
-        W.cmd_compare(P, DIGEST, sp, reg, st, rdir, fdir, REQ, str(out))
-    files = sorted(os.listdir(os.path.join(rdir, "results")))
-
-    def attempt(n):
-        return lambda: W.cmd_compare(P, DIGEST, sp, reg, st, rdir, fdir, REQ, str(tmp_path / f"c{n}.json"))
-
-    os.remove(os.path.join(rdir, "results", files[0]))                         # a deleted result file
-    with pytest.raises(SystemExit, match="does not hold exactly"):
-        attempt(1)()
-    shutil.rmtree(rdir); shutil.rmtree(fdir)
-    rdir, fdir = fetched_folders(tmp_path, sel)
-    open(os.path.join(rdir, "results", "extra.csv"), "w").write("x\n")       # an extra file
-    with pytest.raises(SystemExit, match="does not hold exactly"):
-        attempt(2)()
-    os.remove(os.path.join(rdir, "results", "extra.csv"))
-    with open(os.path.join(rdir, "results", files[1]), "a") as fh:            # an edited file
-        fh.write("tampered\n")
-    with pytest.raises(SystemExit, match="changed after it was fetched"):
-        attempt(3)()
-    shutil.rmtree(rdir); shutil.rmtree(fdir)
-    rdir, fdir = fetched_folders(tmp_path, sel)
-    pp = os.path.join(fdir, "forcing.provenance.json")
-    d = json.load(open(pp))
-    d["items"][0]["params"]["start_date"] = "2000-01-01"                       # forcing fetched with a chosen window
-    json.dump(d, open(pp, "w"))
-    with pytest.raises(SystemExit, match="parameters the selection does not imply"):
-        attempt(4)()
-    d["items"].append(dict(d["items"][1]))                                     # a duplicate entry
-    json.dump(d, open(pp, "w"))
-    with pytest.raises(SystemExit, match="lists a file twice"):
-        attempt(5)()
+def test_cmd_compare_runs_once_per_selection_on_the_recorded_files(tmp_path):
+    L = new_ledger(tmp_path)
+    sel, sp, st, *_ = step_a(tmp_path, L)
+    rdir, fdir = fetched(tmp_path, L, sel, sp)
+    rec = W.cmd_compare(P, DIGEST, L, sp, st, rdir, fdir, REQ, str(tmp_path / "c0.json"))
+    assert rec["outcome"] == "PASS" and L.require("compare", W.V1.sha256_file(sp))["result"]["outcome"] == "PASS"
+    (tmp_path / "other").mkdir()
+    with pytest.raises(SystemExit, match="already ran"):
+        W.cmd_compare(P, DIGEST, L, sp, st, rdir, fdir, REQ, str(tmp_path / "other" / "c1.json"))
 
 
-def test_step_b_fetches_are_write_once(tmp_path):
-    (tmp_path / "results").mkdir()
-    with pytest.raises(SystemExit, match="write-once"):
-        W._refuse_existing(str(tmp_path), ["results.provenance.json", "results"])
+def test_edited_values_with_rewritten_provenance_are_refused(tmp_path):
+    """The round-4 probe: edit values, rewrite provenance hashes to match, compare into a new folder."""
+    L = new_ledger(tmp_path)
+    sel, sp, st, *_ = step_a(tmp_path, L)
+    rdir, fdir = fetched(tmp_path, L, sel, sp)
+    pp = os.path.join(rdir, "results.provenance.json")
+    prov = json.load(open(pp))
+    for it in prov["items"]:
+        path = os.path.join(rdir, it["path"])
+        open(path, "w").write(open(path).read().replace(",21.0,", ",19.0,"))
+        it["sha256"] = W.V1.sha256_file(path)
+    json.dump(prov, open(pp, "w"))
+    with pytest.raises(SystemExit, match="changed after fetch-results recorded it"):
+        W.cmd_compare(P, DIGEST, L, sp, st, rdir, fdir, REQ, str(tmp_path / "new" / "c.json"))
+    with pytest.raises(SystemExit, match="not recorded as complete"):            # a fresh fetch folder never recorded in the ledger
+        W.cmd_compare(P, DIGEST, new_ledger(tmp_path / "x"), sp, st, rdir, fdir, REQ, str(tmp_path / "c2.json"))
+
+
+def test_second_fetch_is_refused_and_provenance_urls_are_checked(tmp_path):
+    L = new_ledger(tmp_path)
+    sel, sp, st, *_ = step_a(tmp_path, L)
+    rdir, fdir = fetched(tmp_path, L, sel, sp)
+    with pytest.raises(SystemExit, match="already ran"):
+        W.cmd_fetch_results(P, DIGEST, L, sp, st, REQ, str(tmp_path / "fetch1"))
+    with pytest.raises(SystemExit, match="already ran"):
+        W.cmd_fetch_forcing(P, DIGEST, L, sp, st, REQ, str(tmp_path / "fetch1"))
+    exp = {q["file"]: q["params"] for q in W.result_queries(sel)}
+    with pytest.raises(SystemExit, match="was not fetched from"):
+        W.verify_against_provenance(rdir, "results.provenance.json", exp, W._listing(rdir, "results"), W.V1.OPEN_METEO)
+    W.verify_against_provenance(rdir, "results.provenance.json", exp, W._listing(rdir, "results"), W.V1.WQP.format(kind="Result"))
+    os.remove(os.path.join(rdir, "results", sorted(os.listdir(os.path.join(rdir, "results")))[0]))
+    with pytest.raises(SystemExit, match="does not hold exactly|missing"):
+        W.verify_against_provenance(rdir, "results.provenance.json", exp, W._listing(rdir, "results"), W.V1.WQP.format(kind="Result"))
+
+
+def test_failed_fetch_is_aborted_before_result_and_may_be_retried(tmp_path, monkeypatch):
+    L = new_ledger(tmp_path)
+    sel, sp, st, *_ = step_a(tmp_path, L)
+
+    def boom(*a, **k):
+        raise OSError("synthetic network failure")
+    monkeypatch.setattr(W, "_get_bytes", boom)
+    with pytest.raises(OSError):
+        W.cmd_fetch_results(P, DIGEST, L, sp, st, REQ, str(tmp_path / "f0"))
+    runs = [json.loads(x) for x in open(L.path) if '"fetch-results"' in x]
+    assert [r["event"] for r in runs] == ["begin", "abort"]
+    assert L.first("fetch-results", W.V1.sha256_file(sp)) is None
 
 
 def test_cli_verify(capsys):

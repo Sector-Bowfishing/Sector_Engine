@@ -1,24 +1,28 @@
 #!/usr/bin/env python3
-"""Water Temp Level-4 protected truth, protocol v4 (PT-L4-2026-11-23-v4, gap WATER-VAL-001): read-only runner.
+"""Water Temp Level-4 protected truth, protocol v5 (PT-L4-2026-11-23-v5, gap WATER-VAL-001): read-only runner.
 
-Protocol: docs/brains/water-temp-protected-truth-v4/PT-L4-2026-11-23-v4.protocol.json. The runner refuses any other protocol,
-including the superseded v2 and v3. It reads public sources and writes local files in --out only. It never writes Firebase,
-never changes a score, binding or schedule, and never indexes a temperature value in step A.
+Protocol: docs/brains/water-temp-protected-truth-v5/PT-L4-2026-11-23-v5.protocol.json. The runner refuses any other protocol,
+including the superseded v2, v3 and v4. It reads public sources and writes local files in --out only, plus one append-only run
+ledger per protocol id under the research root (<root>/_ledgers/, never inside an --out folder). It never writes Firebase, never
+changes a score, binding or schedule, and never indexes a temperature value in step A.
 
-Step A v4 (counts only; census cutoff fixed by the protocol):
+Run binding: exclusions, census and select run once per protocol id, and fetch-forcing, fetch-results and compare once per
+selection, whatever output folder is chosen; the run ledger refuses a second run (only run #1 counts).
+
+Step A v5 (counts only; census cutoff fixed by the protocol):
     verify          protocol id and sha256 == committed sidecar
     fetch-registry  Lake Registry v1 index + analysis polygons for the universe (public bucket)
     fetch-usgs      USGS OGC metadata, stored as whitelisted properties (ids, site type, parameter, geometry)
     fetch-wqp       WQP Station / Activity metadata and Result-depth rows (with the unit code), as whitelisted columns only
-    exclusions      M0_TUNING / RESOLVER_SENSOR / WT_SAT_1 / NO_GEOMETRY per candidate water
+    exclusions      once per protocol (ledger); M0_TUNING / RESOLVER_SENSOR / WT_SAT_1 / NO_GEOMETRY per candidate water
     stations        draft station classes; a reviewer may reclassify the draft's UNCLASSIFIED rows only, with a reviewNote
-    census          write-once; counted casts and readings per water, bound to the posted draft and reviewed hashes
-    select          write-once; retain/replace by counts only; also writes the write-once selection registry
-Step B (opens values; every command needs the selection, its registry, the reviewed station file and --owner-request,
-which is a string check and not proof of approval: the request posted on Sector_Ops #51 is the control):
-    fetch-forcing   write-once; exactly the window the selection implies; refused if it does not cover every counted cast
-    fetch-results   write-once; one WQP Result query per counted cast
-    compare         write-once; files verified one-to-one against provenance; unknowns count against
+    census          once per protocol (ledger); bound to the posted draft and reviewed hashes and the recorded exclusions
+    select          once per protocol (ledger: the selection registry); retain/replace by counts only
+Step B (opens values; every command needs the ledger's selection, the reviewed station file and --owner-request, which is a
+string check and not proof of approval: the request posted on Sector_Ops #51 is the control):
+    fetch-forcing   once per selection; exactly the window the selection implies; file hashes bound in the ledger
+    fetch-results   once per selection; one WQP Result query per counted cast; file hashes bound in the ledger
+    compare         once per selection; files checked against the ledger and the provenance; unknowns count against
 """
 from __future__ import annotations
 
@@ -39,10 +43,14 @@ import urllib.request
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import water_temp_protected_truth as V1  # noqa: E402  (shared helpers: hashing, classes, units, metrics, the M0 implementation)
+try:                                                    # the shared Engine module, once it is on main
+    import protocol_run_ledger as RL  # noqa: E402
+except ImportError:                                     # until then, the vendored shim with the same API
+    import _wt_protocol_run_ledger_shim as RL  # noqa: E402
 
 REPO = V1.REPO
-PROTOCOL_ID = "PT-L4-2026-11-23-v4"
-PROTOCOL = os.path.join(REPO, "docs", "brains", "water-temp-protected-truth-v4", f"{PROTOCOL_ID}.protocol.json")
+PROTOCOL_ID = "PT-L4-2026-11-23-v5"
+PROTOCOL = os.path.join(REPO, "docs", "brains", "water-temp-protected-truth-v5", f"{PROTOCOL_ID}.protocol.json")
 TEMP_SENSORS = os.path.join(REPO, "docs", "data", "temp_sensors.csv")
 LABELS = V1.LABELS
 PER_LAKE, TOTAL, SLOTS = 25, 150, 4
@@ -609,28 +617,6 @@ def _write_once(path: str, rec: dict) -> None:
         raise SystemExit(f"REFUSED: {os.path.basename(path)} already exists (write-once)")
 
 
-def cmd_census(p: dict, digest: str, wqp: str, draft: str, draft_sha: str, reviewed: str, reviewed_sha: str, excl_path: str, out: str) -> dict:
-    if os.path.exists(out):
-        raise SystemExit(f"REFUSED: {os.path.basename(out)} already exists (write-once)")
-    stations = load_reviewed(draft, draft_sha, reviewed, reviewed_sha)
-    depth = []
-    for w in waters(p):
-        path = os.path.join(wqp, f"{slug(w['lakeId'])}.resultdepth.csv")
-        if os.path.exists(path):
-            rows = V1.read_csv(path)
-            if rows and any(k not in RESULT_DEPTH_COLUMNS for k in rows[0]):
-                raise SystemExit("REFUSED: a result-depth file carries a non-whitelisted column; step A never stores values")
-            depth += rows
-    excl = json.load(open(excl_path, encoding="utf-8"))
-    if excl.get("protocolSha256") != digest:
-        raise SystemExit("REFUSED: exclusions made under a different protocol")
-    rec = {"labels": LABELS, "protocolId": p["protocolId"], "protocolSha256": digest, "step": "A_census_v4", "valuesOpened": False,
-           "cutoff": CUTOFF, "stationDraftSha256": draft_sha, "stationFileSha256": reviewed_sha,
-           "exclusionsSha256": V1.sha256_file(excl_path), "authoritativeScoresUnchanged": True, **census(p, depth, stations)}
-    _write_once(out, rec)
-    return rec
-
-
 # ----------------------------------------------------------------------------------------------------------- selection
 def select(p: dict, census_rec: dict, excl: dict) -> dict:
     """Count-only retain/replace rule. Uses no value of any kind."""
@@ -650,46 +636,207 @@ def select(p: dict, census_rec: dict, excl: dict) -> dict:
             "rankedPool": [{"lakeId": l, "qualifyingCasts": counts[l]} for l in pool]}
 
 
-def cmd_select(p: dict, digest: str, census_path: str, excl_path: str, out: str, registry_path: str) -> dict:
+# ----------------------------------------------------------------------------------------------------------- run ledger
+def research_root(arg: str | None, outs: list[str]) -> str:
+    """The research root that holds the run ledger: --research-root, else SECTOR_RESEARCH_ROOT. Refused when missing or when it
+    lies inside an --out folder (a ledger next to the outputs could be recreated with them)."""
+    root = arg or os.environ.get("SECTOR_RESEARCH_ROOT")
+    if not root:
+        raise SystemExit("REFUSED: no research root: pass --research-root (the folder research-path returns) or set SECTOR_RESEARCH_ROOT")
+    r = os.path.realpath(root)
+    for o in outs:
+        if not o:
+            continue
+        oo = os.path.realpath(o)
+        if r == oo or r.startswith(oo.rstrip(os.sep) + os.sep):
+            raise SystemExit("REFUSED: the research root lies inside an --out folder")
+    return r
+
+
+def ledger(digest: str, root: str):
+    return RL.Ledger(root, PROTOCOL_ID, digest)
+
+
+def _require_output(L, step: str, key: str, name: str, path: str) -> dict:
+    rec = L.require(step, key)
+    if rec["outputs"].get(name) != V1.sha256_file(path):
+        raise SystemExit(f"REFUSED: {os.path.basename(path)} is not the {step} output recorded in the run ledger")
+    return rec
+
+
+def cmd_exclusions(p: dict, digest: str, L, reg_dir: str, sites_path: str, calibration: str, calibration_lakes: str,
+                   wt_sat_1: str | None, out: str) -> dict:
+    sites = V1.read_csv(sites_path)
+    missing = unresolved_calibration(sites, calibration)
+    if missing:
+        raise SystemExit(f"REFUSED: M0 calibration sites without coordinates: {missing}")
+    cal_lakes = json.load(open(calibration_lakes, encoding="utf-8"))
+    if not isinstance(cal_lakes, list):
+        raise SystemExit("REFUSED: --calibration-lakes must be a JSON list")
+    sat = set(json.load(open(wt_sat_1, encoding="utf-8"))) if wt_sat_1 else set()
+    if os.path.exists(out):
+        raise SystemExit(f"REFUSED: {os.path.basename(out)} already exists (write-once)")
+    inputs = {"sites.csv": V1.sha256_file(sites_path), "calibration": V1.sha256_file(calibration),
+              "calibrationLakes": V1.sha256_file(calibration_lakes), "wtSat1": V1.sha256_file(wt_sat_1) if wt_sat_1 else "unfrozen",
+              "registryTree": RL.sha256_tree(reg_dir)}
+    L.begin("exclusions", PROTOCOL_ID, {"out": os.path.basename(out)}, inputs)
+    try:
+        ex = exclusions(p, load_registry(reg_dir), sites, set(cal_lakes), bound_lakes(), sat)
+        rec = {"labels": LABELS, "protocolId": p["protocolId"], "protocolSha256": digest,
+               "wtSat1List": sorted(sat) if sat else "unfrozen: LK-in-polygon rule", "sitesSha256": inputs["sites.csv"],
+               "calibrationSha256": inputs["calibration"], "calibrationLakes": sorted(cal_lakes),
+               "calibrationLakesSha256": inputs["calibrationLakes"], "exclusions": ex}
+        _write_once(out, rec)
+    except BaseException as e:
+        L.abort_before_result("exclusions", PROTOCOL_ID, f"{type(e).__name__}: {e}")
+        raise
+    L.complete("exclusions", PROTOCOL_ID, {"exclusions.json": V1.sha256_file(out)},
+               {"excluded": sum(1 for v in ex.values() if v), "eligible": sum(1 for v in ex.values() if not v)})
+    return rec
+
+
+def cmd_census(p: dict, digest: str, L, wqp: str, draft: str, draft_sha: str, reviewed: str, reviewed_sha: str, excl_path: str, out: str) -> dict:
+    if os.path.exists(out):
+        raise SystemExit(f"REFUSED: {os.path.basename(out)} already exists (write-once)")
+    _require_output(L, "exclusions", PROTOCOL_ID, "exclusions.json", excl_path)
+    stations = load_reviewed(draft, draft_sha, reviewed, reviewed_sha)
+    depth = []
+    for w in waters(p):
+        path = os.path.join(wqp, f"{slug(w['lakeId'])}.resultdepth.csv")
+        if os.path.exists(path):
+            rows = V1.read_csv(path)
+            if rows and any(k not in RESULT_DEPTH_COLUMNS for k in rows[0]):
+                raise SystemExit("REFUSED: a result-depth file carries a non-whitelisted column; step A never stores values")
+            depth += rows
+    excl = json.load(open(excl_path, encoding="utf-8"))
+    if excl.get("protocolSha256") != digest:
+        raise SystemExit("REFUSED: exclusions made under a different protocol")
+    inputs = {"stationDraft": draft_sha, "stationReviewed": reviewed_sha, "exclusions.json": V1.sha256_file(excl_path),
+              "wqpTree": RL.sha256_tree(wqp)}
+    L.begin("census", PROTOCOL_ID, {"out": os.path.basename(out)}, inputs)
+    try:
+        rec = {"labels": LABELS, "protocolId": p["protocolId"], "protocolSha256": digest, "step": "A_census_v5", "valuesOpened": False,
+               "cutoff": CUTOFF, "stationDraftSha256": draft_sha, "stationFileSha256": reviewed_sha,
+               "exclusionsSha256": inputs["exclusions.json"], "wqpTreeSha256": inputs["wqpTree"], "authoritativeScoresUnchanged": True,
+               **census(p, depth, stations)}
+        _write_once(out, rec)
+    except BaseException as e:
+        L.abort_before_result("census", PROTOCOL_ID, f"{type(e).__name__}: {e}")
+        raise
+    L.complete("census", PROTOCOL_ID, {"census.json": V1.sha256_file(out)}, {})
+    return rec
+
+
+def cmd_select(p: dict, digest: str, L, census_path: str, excl_path: str, out: str) -> dict:
+    _require_output(L, "census", PROTOCOL_ID, "census.json", census_path)
+    _require_output(L, "exclusions", PROTOCOL_ID, "exclusions.json", excl_path)
     c = json.load(open(census_path, encoding="utf-8"))
     if c.get("protocolSha256") != digest:
         raise SystemExit("REFUSED: census made under a different protocol")
-    if V1.sha256_file(excl_path) != c.get("exclusionsSha256"):
-        raise SystemExit("REFUSED: exclusions file changed after the census")
-    for path in (out, registry_path):
-        if os.path.exists(path):
-            raise SystemExit(f"REFUSED: {os.path.basename(path)} already exists (one selection per protocol id)")
+    if os.path.exists(out):
+        raise SystemExit(f"REFUSED: {os.path.basename(out)} already exists (write-once)")
     excl = json.load(open(excl_path, encoding="utf-8"))["exclusions"]
-    rec = {"labels": LABELS, "protocolId": p["protocolId"], "protocolSha256": digest, "step": "A_selection_v4", "valuesOpened": False,
-           "censusSha256": V1.sha256_file(census_path), "stationDraftSha256": c["stationDraftSha256"], "stationFileSha256": c["stationFileSha256"],
-           "exclusionsSha256": c["exclusionsSha256"], "authoritativeScoresUnchanged": True, **select(p, c, excl)}
-    _write_once(out, rec)
-    _write_once(registry_path, {"protocolId": p["protocolId"], "protocolSha256": digest, "selectionSha256": V1.sha256_file(out),
-                                "recordedAt": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
-                                "rule": "the first selection sha256 posted on Sector_Ops #51 for this protocol id is the only valid one"})
+    L.begin("select", PROTOCOL_ID, {"out": os.path.basename(out)}, {"census.json": V1.sha256_file(census_path), "exclusions.json": V1.sha256_file(excl_path)})
+    try:
+        rec = {"labels": LABELS, "protocolId": p["protocolId"], "protocolSha256": digest, "step": "A_selection_v5", "valuesOpened": False,
+               "censusSha256": V1.sha256_file(census_path), "stationDraftSha256": c["stationDraftSha256"], "stationFileSha256": c["stationFileSha256"],
+               "exclusionsSha256": c["exclusionsSha256"], "authoritativeScoresUnchanged": True, **select(p, c, excl)}
+        _write_once(out, rec)
+    except BaseException as e:
+        L.abort_before_result("select", PROTOCOL_ID, f"{type(e).__name__}: {e}")
+        raise
+    L.complete("select", PROTOCOL_ID, {"selection.json": V1.sha256_file(out)}, {"outcome": rec["outcome"]})
     return rec
 
 
 # ----------------------------------------------------------------------------------------------------------- step B
-def load_selection_for_step_b(sel_path: str, registry_path: str, stations_path: str, digest: str, owner_request: str | None) -> dict:
+def load_selection_for_step_b(L, sel_path: str, stations_path: str, digest: str, owner_request: str | None) -> tuple[dict, str]:
+    """The ledger's selection (the only valid one), checked against the files given. Returns (selection, its sha256)."""
     if not owner_request or not owner_request.startswith("Owner request (Michael, "):
         raise SystemExit("REFUSED: step B opens protected values and needs --owner-request 'Owner request (Michael, ...)' "
                          "(a string check; the request posted on Sector_Ops #51 is the control)")
-    if not os.path.exists(registry_path):
-        raise SystemExit("REFUSED: no selection registry; step B runs only on the registered selection")
-    reg = json.load(open(registry_path, encoding="utf-8"))
-    if reg.get("protocolId") != PROTOCOL_ID or reg.get("protocolSha256") != digest:
-        raise SystemExit("REFUSED: the selection registry belongs to a different protocol")
-    if V1.sha256_file(sel_path) != reg.get("selectionSha256"):
-        raise SystemExit("REFUSED: selection.json differs from the registered selection sha256")
+    rec = _require_output(L, "select", PROTOCOL_ID, "selection.json", sel_path)
+    if rec["result"].get("outcome") != "SELECTED":
+        raise SystemExit("REFUSED: the recorded selection is not SELECTED; protected values stay closed")
     sel = json.load(open(sel_path, encoding="utf-8"))
-    if sel.get("protocolSha256") != digest:
-        raise SystemExit("REFUSED: selection made under a different protocol")
-    if sel.get("outcome") != "SELECTED":
-        raise SystemExit("REFUSED: selection is not SELECTED; protected values stay closed")
-    if V1.sha256_file(stations_path) != sel.get("stationFileSha256"):
-        raise SystemExit("REFUSED: the station file differs from the one the selection was made with")
-    return sel
+    if sel.get("protocolSha256") != digest or sel.get("outcome") != "SELECTED":
+        raise SystemExit("REFUSED: selection does not match this protocol or is not SELECTED")
+    census = L.require("census", PROTOCOL_ID)
+    if V1.sha256_file(stations_path) != sel.get("stationFileSha256") or sel.get("stationFileSha256") != census["inputs"].get("stationReviewed"):
+        raise SystemExit("REFUSED: the station file differs from the one the census recorded")
+    return sel, V1.sha256_file(sel_path)
+
+
+def _bind_and_complete(L, step: str, key: str, out: str, prov_name: str, files: list[str]) -> None:
+    names = files + [prov_name]
+    L.bind_inputs(step, key, {n: os.path.join(out, n) for n in names})
+    L.complete(step, key, {prov_name: V1.sha256_file(os.path.join(out, prov_name))}, {"files": len(files)})
+
+
+def cmd_fetch_forcing(p: dict, digest: str, L, sel_path: str, stations: str, owner_request: str, out: str) -> dict:
+    sel, sel_sha = load_selection_for_step_b(L, sel_path, stations, digest, owner_request)
+    names = [forcing_file(l["lakeId"]) for l in sel["lakes"]]
+    _refuse_existing(out, ["forcing.provenance.json"] + names)
+    L.begin("fetch-forcing", sel_sha, {"out": "forcing"}, {"selection.json": sel_sha})
+    try:
+        prov = []
+        for l in sel["lakes"]:
+            params = forcing_params(p, sel, l["lakeId"])
+            body = _get_bytes(V1.OPEN_METEO, params)
+            check_forcing(json.loads(body), [d for lid, _, d in counted_casts(sel) if lid == l["lakeId"]])
+            _save(out, forcing_file(l["lakeId"]), body, V1.OPEN_METEO, params, prov)
+        V1.write_provenance(out, "forcing.provenance.json", prov)
+    except BaseException as e:
+        L.abort_before_result("fetch-forcing", sel_sha, f"{type(e).__name__}: {e}")
+        raise
+    _bind_and_complete(L, "fetch-forcing", sel_sha, out, "forcing.provenance.json", names)
+    return {"files": len(names)}
+
+
+def cmd_fetch_results(p: dict, digest: str, L, sel_path: str, stations: str, owner_request: str, out: str) -> dict:
+    sel, sel_sha = load_selection_for_step_b(L, sel_path, stations, digest, owner_request)
+    _refuse_existing(out, ["results.provenance.json", "results"])
+    qs = result_queries(sel)
+    L.begin("fetch-results", sel_sha, {"out": "results"}, {"selection.json": sel_sha})
+    try:
+        prov, url = [], V1.WQP.format(kind="Result")
+        for q in qs:
+            _save(out, q["file"], _get_bytes(url, q["params"]), url, q["params"], prov)
+        V1.write_provenance(out, "results.provenance.json", prov)
+    except BaseException as e:
+        L.abort_before_result("fetch-results", sel_sha, f"{type(e).__name__}: {e}")
+        raise
+    _bind_and_complete(L, "fetch-results", sel_sha, out, "results.provenance.json", [q["file"] for q in qs])
+    return {"queries": len(qs)}
+
+
+def verify_against_provenance(folder: str, prov_name: str, expected: dict, listing: list[str], url: str) -> dict:
+    """expected: {relative file: params}. Refuse unless the provenance lists exactly those files once each, with those params
+    and the expected endpoint URL, the folder holds exactly those files, and every sha256 matches. Returns {file: sha256}."""
+    pp = os.path.join(folder, prov_name)
+    if not os.path.exists(pp):
+        raise SystemExit(f"REFUSED: {prov_name} is missing")
+    items = json.load(open(pp, encoding="utf-8")).get("items") or []
+    paths = [i.get("path") for i in items]
+    if len(paths) != len(set(paths)):
+        raise SystemExit(f"REFUSED: {prov_name} lists a file twice")
+    if set(paths) != set(expected):
+        raise SystemExit(f"REFUSED: {prov_name} does not list exactly the files the selection implies "
+                         f"(missing {sorted(set(expected) - set(paths))[:3]}, extra {sorted(set(paths) - set(expected))[:3]})")
+    if sorted(listing) != sorted(expected):
+        raise SystemExit(f"REFUSED: the folder does not hold exactly the provenance files "
+                         f"(missing {sorted(set(expected) - set(listing))[:3]}, extra {sorted(set(listing) - set(expected))[:3]})")
+    hashes = {}
+    for i in items:
+        if i.get("url") != url:
+            raise SystemExit(f"REFUSED: {i['path']} was not fetched from {url}")
+        if i.get("params") != expected[i["path"]]:
+            raise SystemExit(f"REFUSED: {i['path']} was fetched with parameters the selection does not imply")
+        h = V1.sha256_file(os.path.join(folder, i["path"]))
+        if h != i.get("sha256"):
+            raise SystemExit(f"REFUSED: {i['path']} changed after it was fetched")
+        hashes[i["path"]] = h
+    return hashes
 
 
 def counted_casts(sel: dict) -> list[tuple[str, str, str]]:
@@ -736,56 +883,6 @@ def _refuse_existing(out: str, names: list[str]) -> None:
     for n in names:
         if os.path.exists(os.path.join(out, n)):
             raise SystemExit(f"REFUSED: {n} already exists in the output folder (write-once)")
-
-
-def cmd_fetch_forcing(p: dict, digest: str, sel_path: str, registry: str, stations: str, owner_request: str, out: str) -> dict:
-    sel = load_selection_for_step_b(sel_path, registry, stations, digest, owner_request)
-    _refuse_existing(out, ["forcing.provenance.json"] + [forcing_file(l["lakeId"]) for l in sel["lakes"]])
-    prov = []
-    for l in sel["lakes"]:
-        params = forcing_params(p, sel, l["lakeId"])
-        body = _get_bytes(V1.OPEN_METEO, params)
-        check_forcing(json.loads(body), [d for lid, _, d in counted_casts(sel) if lid == l["lakeId"]])
-        _save(out, forcing_file(l["lakeId"]), body, V1.OPEN_METEO, params, prov)
-    V1.write_provenance(out, "forcing.provenance.json", prov)
-    return {"files": len(prov)}
-
-
-def cmd_fetch_results(p: dict, digest: str, sel_path: str, registry: str, stations: str, owner_request: str, out: str) -> dict:
-    sel = load_selection_for_step_b(sel_path, registry, stations, digest, owner_request)
-    _refuse_existing(out, ["results.provenance.json", "results"])
-    prov, url = [], V1.WQP.format(kind="Result")
-    for q in result_queries(sel):
-        _save(out, q["file"], _get_bytes(url, q["params"]), url, q["params"], prov)
-    V1.write_provenance(out, "results.provenance.json", prov)
-    return {"queries": len(prov)}
-
-
-def verify_against_provenance(folder: str, prov_name: str, expected: dict, listing: list[str]) -> dict:
-    """expected: {relative file: params}. Refuse unless the provenance lists exactly those files once each, with those params,
-    the folder holds exactly those files, and every sha256 matches. Returns {file: sha256}."""
-    pp = os.path.join(folder, prov_name)
-    if not os.path.exists(pp):
-        raise SystemExit(f"REFUSED: {prov_name} is missing")
-    items = json.load(open(pp, encoding="utf-8")).get("items") or []
-    paths = [i.get("path") for i in items]
-    if len(paths) != len(set(paths)):
-        raise SystemExit(f"REFUSED: {prov_name} lists a file twice")
-    if set(paths) != set(expected):
-        raise SystemExit(f"REFUSED: {prov_name} does not list exactly the files the selection implies "
-                         f"(missing {sorted(set(expected) - set(paths))[:3]}, extra {sorted(set(paths) - set(expected))[:3]})")
-    if sorted(listing) != sorted(expected):
-        raise SystemExit(f"REFUSED: the folder does not hold exactly the provenance files "
-                         f"(missing {sorted(set(expected) - set(listing))[:3]}, extra {sorted(set(listing) - set(expected))[:3]})")
-    hashes = {}
-    for i in items:
-        if i.get("params") != expected[i["path"]]:
-            raise SystemExit(f"REFUSED: {i['path']} was fetched with parameters the selection does not imply")
-        h = V1.sha256_file(os.path.join(folder, i["path"]))
-        if h != i.get("sha256"):
-            raise SystemExit(f"REFUSED: {i['path']} changed after it was fetched")
-        hashes[i["path"]] = h
-    return hashes
 
 
 def truth_values(sel: dict, results: list[dict]) -> tuple[dict, dict, dict]:
@@ -867,7 +964,7 @@ def compare(p: dict, sel: dict, results: list[dict], forcing: dict) -> dict:
     outcome = "PASS" if pooled is not None and pooled <= RMSE_MARK and all(lake_pass.values()) else "FAIL"
     for v in per.values():
         v.pop("mseC2", None)
-    return {"labels": LABELS, "protocolId": p["protocolId"], "step": "B_compare_v4", "valuesOpened": True,
+    return {"labels": LABELS, "protocolId": p["protocolId"], "step": "B_compare_v5", "valuesOpened": True,
             "model": "surface-energy-balance-v2 (M0, k = 0.09)", "m0ImplementationSha256": m0_sha, "perLake": per,
             "perLakePass": lake_pass, "pooledEqualLakeRmseC": None if pooled is None else round(pooled, 4), "outcome": outcome,
             "authoritativeScoresUnchanged": True,
@@ -881,37 +978,42 @@ def _listing(folder: str, sub: str | None = None, suffix: str = "") -> list[str]
     return sorted((f"{sub}/{n}" if sub else n) for n in os.listdir(base) if n.endswith(suffix) and os.path.isfile(os.path.join(base, n)))
 
 
-def cmd_compare(p: dict, digest: str, sel_path: str, registry: str, stations: str, results_dir: str, forcing_dir: str,
+def cmd_compare(p: dict, digest: str, L, sel_path: str, stations: str, results_dir: str, forcing_dir: str,
                 owner_request: str, out: str) -> dict:
+    """Every check runs before the run is begun. Once begun, values are read and the run is never aborted: a crash leaves the
+    run open, and a second compare for the selection stays refused."""
     if os.path.exists(out):
         raise SystemExit("REFUSED: a comparison result already exists; compare is write-once")
-    sel = load_selection_for_step_b(sel_path, registry, stations, digest, owner_request)
+    sel, sel_sha = load_selection_for_step_b(L, sel_path, stations, digest, owner_request)
     exp_results = {q["file"]: q["params"] for q in result_queries(sel)}
-    rhash = verify_against_provenance(results_dir, "results.provenance.json", exp_results, _listing(results_dir, "results"))
-    fprov = os.path.join(forcing_dir, "forcing.provenance.json")
-    fitems = json.load(open(fprov, encoding="utf-8")).get("items") or [] if os.path.exists(fprov) else []
-    present = {i.get("path") for i in fitems}
-    exp_forcing = {forcing_file(l["lakeId"]): forcing_params(p, sel, l["lakeId"]) for l in sel["lakes"] if forcing_file(l["lakeId"]) in present}
-    fhash = verify_against_provenance(forcing_dir, "forcing.provenance.json", exp_forcing, _listing(forcing_dir, None, ".forcing.json")) if fitems else {}
-    if not fitems and _listing(forcing_dir, None, ".forcing.json"):
-        raise SystemExit("REFUSED: forcing files without forcing.provenance.json")
+    exp_forcing = {forcing_file(l["lakeId"]): forcing_params(p, sel, l["lakeId"]) for l in sel["lakes"]}
+    L.check_inputs("fetch-results", sel_sha, {n: os.path.join(results_dir, n) for n in list(exp_results) + ["results.provenance.json"]})
+    L.check_inputs("fetch-forcing", sel_sha, {n: os.path.join(forcing_dir, n) for n in list(exp_forcing) + ["forcing.provenance.json"]})
+    rhash = verify_against_provenance(results_dir, "results.provenance.json", exp_results, _listing(results_dir, "results"), V1.WQP.format(kind="Result"))
+    fhash = verify_against_provenance(forcing_dir, "forcing.provenance.json", exp_forcing, _listing(forcing_dir, None, ".forcing.json"), V1.OPEN_METEO)
+    inputs = {**{f"results:{k}": v for k, v in rhash.items()}, **{f"forcing:{k}": v for k, v in fhash.items()}}
+    L.begin("compare", sel_sha, {"out": os.path.basename(out)}, {"selection.json": sel_sha, "inputs": RL_digest(inputs)})
     results = []
     for f in sorted(exp_results):
         results += V1.read_csv(os.path.join(results_dir, f))
-    forcing = {l["lakeId"]: json.load(open(os.path.join(forcing_dir, forcing_file(l["lakeId"])), encoding="utf-8"))
-               for l in sel["lakes"] if forcing_file(l["lakeId"]) in exp_forcing}
+    forcing = {l["lakeId"]: json.load(open(os.path.join(forcing_dir, forcing_file(l["lakeId"])), encoding="utf-8")) for l in sel["lakes"]}
     rec = compare(p, sel, results, forcing)
-    rec.update({"protocolSha256": digest, "selectionSha256": V1.sha256_file(sel_path), "stationFileSha256": sel["stationFileSha256"],
-                "inputSha256": {**{f"results:{k}": v for k, v in rhash.items()}, **{f"forcing:{k}": v for k, v in fhash.items()}},
-                "ownerRequest": owner_request})
+    rec.update({"protocolSha256": digest, "selectionSha256": sel_sha, "stationFileSha256": sel["stationFileSha256"],
+                "inputSha256": inputs, "ownerRequest": owner_request})
     _write_once(out, rec)
+    L.complete("compare", sel_sha, {"compare.json": V1.sha256_file(out)}, {"outcome": rec["outcome"], "pooledEqualLakeRmseC": rec["pooledEqualLakeRmseC"]})
     return rec
+
+
+def RL_digest(d: dict) -> str:
+    return hashlib.sha256(json.dumps(d, sort_keys=True).encode("utf-8")).hexdigest()
 
 
 # ----------------------------------------------------------------------------------------------------------- CLI
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--protocol", default=PROTOCOL)
+    ap.add_argument("--research-root", default=None, help="folder research-path returns (default: SECTOR_RESEARCH_ROOT); holds the run ledger")
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("verify")
     s = sub.add_parser("fetch-registry"); s.add_argument("--out", required=True)
@@ -926,17 +1028,21 @@ def main(argv=None) -> int:
     s.add_argument("--stations-draft", required=True); s.add_argument("--stations-draft-sha256", required=True)
     s.add_argument("--stations", required=True); s.add_argument("--stations-sha256", required=True)
     s.add_argument("--exclusions", required=True); s.add_argument("--out", required=True)
-    s = sub.add_parser("select"); s.add_argument("--census", required=True); s.add_argument("--exclusions", required=True)
-    s.add_argument("--out", required=True); s.add_argument("--selection-registry", required=True)
+    s = sub.add_parser("select"); s.add_argument("--census", required=True); s.add_argument("--exclusions", required=True); s.add_argument("--out", required=True)
     for name in ("fetch-forcing", "fetch-results", "compare"):
-        s = sub.add_parser(name); s.add_argument("--selection", required=True); s.add_argument("--selection-registry", required=True)
+        s = sub.add_parser(name); s.add_argument("--selection", required=True)
         s.add_argument("--stations", required=True); s.add_argument("--owner-request"); s.add_argument("--out", required=True)
         if name == "compare":
             s.add_argument("--results", required=True); s.add_argument("--forcing", required=True)
     a = ap.parse_args(argv)
     p, digest = load_protocol(a.protocol)
+    outs = [getattr(a, "out", None), getattr(a, "results", None), getattr(a, "forcing", None)]
+    if a.cmd in ("compare",):
+        outs = [os.path.dirname(os.path.abspath(a.out)), a.results, a.forcing]
+    needs_ledger = a.cmd in ("exclusions", "census", "select", "fetch-forcing", "fetch-results", "compare")
+    L = ledger(digest, research_root(a.research_root, outs)) if needs_ledger else None
     if a.cmd == "verify":
-        res = {"protocolId": p["protocolId"], "sha256": digest, "censusCutoff": CUTOFF, "status": "OK"}
+        res = {"protocolId": p["protocolId"], "sha256": digest, "censusCutoff": CUTOFF, "ledgerModule": RL.__name__, "status": "OK"}
     elif a.cmd == "fetch-registry":
         res = cmd_fetch_registry(p, a.out)
     elif a.cmd == "fetch-usgs":
@@ -944,36 +1050,23 @@ def main(argv=None) -> int:
     elif a.cmd == "fetch-wqp":
         res = cmd_fetch_wqp(p, load_registry(a.registry), a.out)
     elif a.cmd == "exclusions":
-        sites = V1.read_csv(a.sites)
-        missing = unresolved_calibration(sites, a.calibration)
-        if missing:
-            raise SystemExit(f"REFUSED: M0 calibration sites without coordinates: {missing}")
-        cal_lakes = json.load(open(a.calibration_lakes, encoding="utf-8"))
-        if not isinstance(cal_lakes, list):
-            raise SystemExit("REFUSED: --calibration-lakes must be a JSON list")
-        sat = set(json.load(open(a.wt_sat_1, encoding="utf-8"))) if a.wt_sat_1 else set()
-        ex = exclusions(p, load_registry(a.registry), sites, set(cal_lakes), bound_lakes(), sat)
-        rec = {"labels": LABELS, "protocolId": p["protocolId"], "protocolSha256": digest,
-               "wtSat1List": sorted(sat) if sat else "unfrozen: LK-in-polygon rule", "sitesSha256": V1.sha256_file(a.sites),
-               "calibrationSha256": V1.sha256_file(a.calibration), "calibrationLakes": sorted(cal_lakes),
-               "calibrationLakesSha256": V1.sha256_file(a.calibration_lakes), "exclusions": ex}
-        _write_once(a.out, rec)
-        res = {"excluded": sum(1 for v in ex.values() if v), "eligible": sum(1 for v in ex.values() if not v)}
+        rec = cmd_exclusions(p, digest, L, a.registry, a.sites, a.calibration, a.calibration_lakes, a.wt_sat_1, a.out)
+        res = {"excluded": sum(1 for v in rec["exclusions"].values() if v), "eligible": sum(1 for v in rec["exclusions"].values() if not v)}
     elif a.cmd == "stations":
         res = cmd_stations(p, load_registry(a.registry), a.wqp, a.out)
     elif a.cmd == "census":
-        r = cmd_census(p, digest, a.wqp, a.stations_draft, a.stations_draft_sha256, a.stations, a.stations_sha256, a.exclusions, a.out)
+        r = cmd_census(p, digest, L, a.wqp, a.stations_draft, a.stations_draft_sha256, a.stations, a.stations_sha256, a.exclusions, a.out)
         res = {"waters": {k: {kk: vv for kk, vv in v.items() if kk != "casts"} for k, v in r["waters"].items()}}
     elif a.cmd == "select":
-        r = cmd_select(p, digest, a.census, a.exclusions, a.out, a.selection_registry)
+        r = cmd_select(p, digest, L, a.census, a.exclusions, a.out)
         res = {"outcome": r["outcome"], "lakes": [(l["lakeId"], l["qualifyingCasts"]) for l in r["lakes"]], "total": r["total"],
                "selectionSha256": V1.sha256_file(a.out)}
     elif a.cmd == "fetch-forcing":
-        res = cmd_fetch_forcing(p, digest, a.selection, a.selection_registry, a.stations, a.owner_request, a.out)
+        res = cmd_fetch_forcing(p, digest, L, a.selection, a.stations, a.owner_request, a.out)
     elif a.cmd == "fetch-results":
-        res = cmd_fetch_results(p, digest, a.selection, a.selection_registry, a.stations, a.owner_request, a.out)
+        res = cmd_fetch_results(p, digest, L, a.selection, a.stations, a.owner_request, a.out)
     else:
-        r = cmd_compare(p, digest, a.selection, a.selection_registry, a.stations, a.results, a.forcing, a.owner_request, a.out)
+        r = cmd_compare(p, digest, L, a.selection, a.stations, a.results, a.forcing, a.owner_request, a.out)
         res = {k: r[k] for k in ("outcome", "pooledEqualLakeRmseC", "perLakePass")}
     print(json.dumps(res, indent=1))
     return 0
