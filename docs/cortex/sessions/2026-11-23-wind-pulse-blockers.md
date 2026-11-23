@@ -43,7 +43,7 @@ Repository: Sector-Bowfishing/sector_engine · Branch: fix/wind-pulse-blockers-2
 | Memory 4 memory unavailable | wind | PASS | exit 2 on release failure; read error seals nothing | BR-11 f, BR-16 |
 | Memory 5 separation + approval | wind | PASS | approval record now exists | BR-11 d, g, PL-06 |
 | Memory 6 Pulse independence | wind | PARTIAL | bounded staleness documented, failover off, not customer-eligible; offline behaviour not exercised | PL-13 |
-| data-check | repo | 2 new heuristic false positives (CG-3.1-22) | 543 vs 541 on main | FD-01 |
+| data-check | repo | 2 new heuristic false positives (CG-3.1-24) | 543 vs 541 on main | FD-01 |
 | mission-audit | repo | no Wind finding (4 pre-existing) | `mission-audit --repo .` | BA-07 |
 | ops-check `--repo` | repo | 0 findings | | IO |
 | Security triggers | Wind producer / reader | SEC-06: no rules or grants changed; the live read is GET-only through the existing read token. rules-check and bundle-scan not applicable (no rules, no public build) | | SEC-01…13 |
@@ -86,7 +86,7 @@ Approvals used: the standing owner approvals in `CLAUDE.md` (branch, push, PR). 
 Tested: every code path above with local fixtures (no network, no database). Not run: the Mac mini check, any shadow window, any Pulse job, any live read. The shadow and continuity tools have never run on real archives.
 
 ## 8. Cortex gaps
-CG-3.1-22 (data-check false positives on HTTP endpoint names and prefix filters; `ops-check --status` crashes on a non-JSON document).
+CG-3.1-24 (data-check false positives on HTTP endpoint names and prefix filters; `ops-check --status` crashes on a non-JSON document).
 
 ## 9. Next step
 The Sector-Pulse change for `wind-central` (`--read-rtdb` + the read credential), then the Mac mini continuity run.
