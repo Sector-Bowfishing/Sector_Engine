@@ -20,11 +20,8 @@
     "docs/brains/scoring/fish-capability-cohorts-v1.json": "b8761ec34929573ded8f8945c8a3de4b4e1df7624dc3f185e80a4443a716e0b5",
     "docs/brains/scoring/fish-capability-cohorts-v2.json": "214b6ddd7d451e11b4e31bcaa6afb438eb6ebe7dcdbd3bd7c04cda76996a486d",
     "docs/brains/scoring/fish-capability-publication.json": "25643beaaa7ef3d76e82df125627570572cd79432c20a8b4cada0f37fecbd95e",
-    "docs/brains/scoring/generation-score-v1.json": "d563e0b5cb93b89dbed0b739d6393515d99e5b11e7f4068612a6498185c8177d",
     "docs/brains/scoring/lake-brain-score-v1.json": "f4074d7741508820f3b79277ee86de56cd10eaac5affe4f6f931bc1c2465b175",
-    "docs/brains/scoring/moon-score-v1.json": "9814619caea1fec1cc57c8fe45855894a47ff4ea56ae73e21ed7d0431b1c5762",
     "docs/brains/scoring/sector-intelligence-score-v1.json": "6cc2053c99e85aeb0b1ba22b2a999dd6e946bf5f7198309a2c4c1a75594a154d",
-    "docs/brains/scoring/weather-score-v1.json": "15a57348c37c85c4e89f43194066fa93103d40b82519890d50c6b7ba1d33a89f",
     "docs/brains/scoring/wind-specialist-capability-v2.json": "31d6325c9e0ef5bb2f65017d753861d353a1caa07944423dd791e1ae67466584"
   },
   "schemaVersion": "1.0.0",

@@ -6,7 +6,7 @@ Standards: Rehtac Cortex 3.1.6 @ a785035 (extracted read-only with `git archive`
 Michael asked for draft score rubrics for the three new Brains. Router row "Scoring" applies: scoring.md SC-01…SC-15; sources `jobs/brain-scores/`, `sector_brain_platform/scoring.py`, `docs/brains/scoring/`. Adopting a rubric and changing a score are gated (PROJECT.md §7), so both stay out of scope. Nothing here publishes or changes a score.
 
 ## Done
-- `docs/brains/scoring/{weather,moon,generation}-score-v1.json`: status DRAFT, `adopted: false`.
+- `docs/brains/scoring/drafts/{weather,moon,generation}-score-v1.json` (moved to `drafts/` in the review follow-up below): status DRAFT, `adopted: false`.
   - Each has gates, dimensions classed per SC-09 and read only from published facts, status meanings tied to the plan's pre-registered validation, a worked example, and an adoption checklist.
   - Worked examples are labelled `TYPED_NOT_COMPUTED` (SC-11).
 - `docs/brains/scoring/NEW_BRAIN_RUBRICS_DRAFT_2026-11-23.md`: the reasoning behind the choices and what the owner must approve.
@@ -44,3 +44,26 @@ Michael asked for draft score rubrics for the three new Brains. Router row "Scor
 - The extracted Cortex in the session scratchpad is disposable.
 - No research data was created.
 - `worktree-check` lists `/home/claude/se_wt_wind` as REMOVABLE_MERGED. It was not created by this session and was left untouched.
+
+## Review follow-up (same branch, after review of 31ec172)
+The review found scorer output byte-identical, and made these content findings. All are fixed:
+1. **PARTIAL no longer credits a FAILED criterion** (Weather, Generation; Moon aligned). PARTIAL now means some pre-registered criteria PASSED and the rest are NOT YET SCORED, with none FAILED. Any FAIL, and for Weather any INSUFFICIENT sample, gives NOT_VALIDATED. Each draft has a `newInThisDraft` note saying what the plans do not define. The doc now separates what comes from the plans from what is new.
+2. **Adoption lists now include the Brain change for Moon and Generation.** Both runtimes write a constant NOT_VALIDATED to `/validation/{id}` on every run, and that has to change first.
+3. **Moon UNSCORED is keyed on registry presence.** Moon nulls `lastSuccessfulRun` whenever any lake errors. Keeping the previous value is listed as an optional Brain change.
+4. **Generation currency uses one population**, the fleet slots of supported lakes, clamped to [0, 10]. Registry `staleLakeCount` also counts errored lakes, so it is no longer used.
+5. **Smaller fixes:**
+   - Weather `fullStates` label now matches readiness CALIBRATION.
+   - Weather `changeSignalEvaluable` now credits a `weatherChange.unknown` that is absent or empty.
+   - Moon's coverage dimension is dropped: it is always 621/621. currentNight now has weight 30, and the illustration numbers are unchanged.
+   - The not-loaded test now records every file opened and every directory listed while all scores, the Engine score and all explanations are computed. It asserts nothing under `drafts/` is opened and the scoring directory is never listed.
+6. **Drafts moved to `docs/brains/scoring/drafts/`.**
+   - `score_baseline.py` lists only top-level files, so the baseline fixture is restored to main's version and is no longer re-recorded.
+   - `source_digest.py` covers the whole `docs/brains/scoring/` tree, so the engineering-status digest still moves with the drafts; it is regenerated.
+
+Verification after the fixes, all passing:
+- `jobs/brain-scores`: 42 passed
+- `jobs/brain_platform`: 1011 passed, 2 skipped
+- `jobs/brain-orchestrator`: 335 passed
+- verification gates, `tools/architecture` and `tools/cortex_status`: 204 passed
+- `score_baseline.py --check`: OK, with the fixture identical to main
+- engineering-status digest `--check`: OK

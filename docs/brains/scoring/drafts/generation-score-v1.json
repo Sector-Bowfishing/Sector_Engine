@@ -4,7 +4,7 @@
   "scale": 10,
   "status": "DRAFT",
   "adopted": false,
-  "statusNote": "DRAFT, NOT ADOPTED. Drafted 2026-11-23 at the owner's request, for Michael's review. No scorer loads this file: it is not in jobs/brain-scores/score_brains.py UPSTREAM, sector_brain_platform/scoring.py has no Generation rubric, and jobs/brain-scores/test_draft_rubrics_not_loaded.py fails if either changes while this status is DRAFT. The Brain's registry keeps scoreStatus NOT_ESTABLISHED until adoption. Rationale: docs/brains/scoring/NEW_BRAIN_RUBRICS_DRAFT_2026-11-23.md.",
+  "statusNote": "DRAFT, NOT ADOPTED. Drafted 2026-11-23 at the owner's request, for Michael's review. No scorer loads this file: it is not in jobs/brain-scores/score_brains.py UPSTREAM, sector_brain_platform/scoring.py has no Generation rubric, and jobs/brain-scores/test_draft_rubrics_not_loaded.py fails if either changes while this status is DRAFT. The Brain's registry keeps scoreStatus NOT_ESTABLISHED until adoption. Rationale: docs/brains/scoring/drafts/NEW_BRAIN_RUBRICS_DRAFT_2026-11-23.md. Kept under drafts/ so the score baseline (verification/integration/score_baseline.py, top-level files only) does not treat it as a rubric.",
   "measurement": "Domain capability score (Cortex scoring.md SC-02, SC-03): how far Sector can trust the Generation Brain's published dam release picture (status, measured release, the operator's schedule). Not operational health, not production readiness, not comparable with any other Brain's score.",
   "question": "Per dam lake, does the Generation Brain publish the operator's measured release and posted schedule, current, from sources Sector is allowed to read, with parsers proven on real responses, and has the published picture matched the operators' own schedules over the pre-registered week (GENERATION_BRAIN_PLAN.md section 5)?",
   "scope": "Coverage over DAM lakes (/brains/generation.fleet.damLakeCount, 401 in catalog generation-dams-2026-11-22.1), not the 621-lake directory: the 220 lakes without a dam have no release by definition. Quality shares over supported lakes (/brains/generation.supportedLakeCount: state kind OBSERVED or SCHEDULE_ONLY). Validation fleet-wide.",
@@ -58,8 +58,9 @@
       "weight": 10,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "1 - /brains/generation.staleLakeCount / /brains/generation.supportedLakeCount",
-      "scale": "(1 - share) x 10",
+      "fact": "/lakeFleet/{k}/slots/generation: share of lakes with kind OBSERVED or SCHEDULE_ONLY whose stale is false, over lakes with kind OBSERVED or SCHEDULE_ONLY",
+      "scale": "share x 10, clamped to [0, 10]",
+      "population": "One population for numerator and denominator: the supported lakes as their fleet slots show them. The registry staleLakeCount is not used: it also counts lakes that errored or are UNAVAILABLE (generation_brain/publish.py), which supportedLakeCount excludes, so the ratio could go below zero.",
       "note": "A release picture past freshUntil is worse than none for the tile; the Brain marks it stale rather than serving it."
     }
   ],
@@ -106,14 +107,15 @@
       "id": "validationPartial",
       "when": "/validation/generation.status is PARTIAL",
       "cap": 7.0,
-      "tiesTo": "GENERATION_BRAIN_PLAN.md section 5"
+      "tiesTo": "GENERATION_BRAIN_PLAN.md section 5: some metrics passed, the rest not yet scored, none failed"
     }
   ],
   "validationStatusMeaning": {
     "source": "docs/brains/GENERATION_BRAIN_PLAN.md section 5, registered before any run. Thresholds are the plan's (not restated or moved here); a FAIL is reported as a FAIL.",
+    "newInThisDraft": "The plan says PASS needs all five metrics and a FAIL is reported as a FAIL; it defines no partial tier. The PARTIAL tier and its 7.0 cap are new in this draft and need the owner's approval.",
     "VALIDATED": "All five pre-registered metrics PASS (hour agreement, transition latency, schedule fidelity, no invented values, freshness) over the 7-day window (>= 2 weekdays, >= 1 weekend day) on every lake with a schedule bound and readable, at least the 17 bound today.",
-    "PARTIAL": "Metrics 3 (schedule fidelity), 4 (no invented values) and 5 (freshness) PASS; metric 1 or 2 FAILED or not yet scored.",
-    "NOT_VALIDATED": "Anything else. Metric 4 failing (an invented unit count, a sourceless discharge, a status other than UNKNOWN with no source) is always NOT_VALIDATED.",
+    "PARTIAL": "Some of the five metrics PASS and the rest are NOT YET SCORED (for example metrics 4 and 5, checked on every published state, pass before the week ends); none FAILED.",
+    "NOT_VALIDATED": "Nothing scored yet, or ANY metric FAILED. A failed metric is never credited; the status stays NOT_VALIDATED until a new week, run under the same pre-registered thresholds, passes.",
     "whoSetsIt": "The validation record under docs/cortex/ (plan section 5) and the reviewed change that writes /validation/generation, never the scorer."
   },
   "notGatedHere": "D-I (one read per series per hour across Brains, for TVA observed data) blocks enablement for TVA lakes, not the score; while it is open those lakes publish nothing, which the coverage dimension already shows.",
@@ -162,10 +164,11 @@
     "approvedAt": null,
     "requires": [
       "Michael approves this rubric as written or amended (approval-gated: PROJECT.md section 7)",
+      "a Brain change: generation_brain/publish.py writes a constant NOT_VALIDATED to /validation/generation on every run, which would overwrite any validation record; it must carry the recorded validation status instead (or stop writing the node once a record exists)",
       "Michael decides whether the realResponseFixtures gate may read repository evidence (every other fact here is a published RTDB fact)",
       "a Cortex maintenance session: Generation is not a Cortex target Brain (D-H, CG-3.1-20); /scores/generation is not a registered family",
       "a scorer PR (score_generation(), facts, UPSTREAM, improvement entries, fixture-index staging) and a decision whether Generation enters the Engine score (today it does not)",
-      "the Brain's scoreNote / scoreStatus updated, status ADOPTED here, and verification/fixtures/scores/score_baseline.json re-recorded in the same PR"
+      "the Brain's scoreNote / scoreStatus updated, this file moved to docs/brains/scoring/ with status ADOPTED, and verification/fixtures/scores/score_baseline.json re-recorded in the same PR"
     ]
   }
 }

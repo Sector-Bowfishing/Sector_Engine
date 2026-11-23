@@ -4,7 +4,7 @@
   "scale": 10,
   "status": "DRAFT",
   "adopted": false,
-  "statusNote": "DRAFT, NOT ADOPTED. Drafted 2026-11-23 at the owner's request, for Michael's review. No scorer loads this file: it is not in jobs/brain-scores/score_brains.py UPSTREAM, sector_brain_platform/scoring.py has no Weather rubric, and jobs/brain-scores/test_draft_rubrics_not_loaded.py fails if either changes while this status is DRAFT. Adopting it (a new rubric) is an owner decision (Cortex sector/engine PROJECT.md section 7). Rationale: docs/brains/scoring/NEW_BRAIN_RUBRICS_DRAFT_2026-11-23.md.",
+  "statusNote": "DRAFT, NOT ADOPTED. Drafted 2026-11-23 at the owner's request, for Michael's review. No scorer loads this file: it is not in jobs/brain-scores/score_brains.py UPSTREAM, sector_brain_platform/scoring.py has no Weather rubric, and jobs/brain-scores/test_draft_rubrics_not_loaded.py fails if either changes while this status is DRAFT. Adopting it (a new rubric) is an owner decision (Cortex sector/engine PROJECT.md section 7). Rationale: docs/brains/scoring/drafts/NEW_BRAIN_RUBRICS_DRAFT_2026-11-23.md. Kept under drafts/ so the score baseline (verification/integration/score_baseline.py, top-level files only) does not treat it as a rubric.",
   "measurement": "Domain capability score (Cortex scoring.md SC-02, SC-03): how far Sector can trust the Weather Brain's published per-lake weather truth. Not operational health, not production readiness, not a forecast-skill metric, not comparable with any other Brain's score.",
   "question": "Per lake, does the Weather Brain publish real measured or official-forecast Sky, Barometric Pressure (with its 3 h trend), Air Temperature and Humidity, and a weather-change signal whose every rule could be evaluated, and has that output passed the validation pre-registered in docs/brains/WEATHER_BRAIN_PLAN.md section 5?",
   "scope": "Coverage over the directory (/brains/weather.directoryLakeCount). Quality shares over the lakes the Brain supports (/brains/weather.supportedLakeCount: readiness CALIBRATION or DEGRADED) and over their published states (/lakes/{k}/states/weather). Validation fleet-wide.",
@@ -34,12 +34,12 @@
     },
     {
       "id": "fullStates",
-      "label": "States on a fresh station observation with all four tiles",
+      "label": "Supported lakes at readiness CALIBRATION (kind observation, not stale, nothing missing)",
       "weight": 20,
       "class": "CAP",
       "movableByPackagingOnly": false,
       "fact": "/brains/weather.readinessCounts.CALIBRATION / /brains/weather.supportedLakeCount",
-      "scale": "share x 10",
+      "scale": "share x 10, clamped to [0, 10] (both counts come from the same run's readiness map)",
       "note": "Readiness CALIBRATION = state kind 'observation', not stale, and an empty 'missing' list (sector_weather.state.readiness). DEGRADED (stale observation or a missing tile, no estimate put in its place) earns nothing here."
     },
     {
@@ -48,7 +48,7 @@
       "weight": 15,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "/lakes/{k}/states/weather.weatherChange.unknown is an empty list, share over published states",
+      "fact": "/lakes/{k}/states/weather.weatherChange.unknown is absent or an empty list, share over published states",
       "scale": "share x 10",
       "note": "A rule that cannot be evaluated makes the lake WATCH (owner decision 2026-11-22), so a high WATCH share measures data gaps, not weather. This dimension credits states whose signal rests on complete inputs. It says nothing about whether the signal is right (that is validation, plan 5.3)."
     },
@@ -86,14 +86,15 @@
       "id": "validationPartial",
       "when": "/validation/weather.status is PARTIAL",
       "cap": 7.0,
-      "tiesTo": "WEATHER_BRAIN_PLAN.md section 5: the change-signal check (5.3, 60 days) or the representativeness check (5.2, 30 days) has not passed yet"
+      "tiesTo": "WEATHER_BRAIN_PLAN.md section 5: some pre-registered checks have passed, the rest are not yet scored (their windows are still running), and none has failed"
     }
   ],
   "validationStatusMeaning": {
     "source": "docs/brains/WEATHER_BRAIN_PLAN.md section 5, pre-registered 2026-11-22 before any data. Thresholds are not restated here; they are the plan's, and a failed criterion is reported, never tuned away.",
+    "newInThisDraft": "The plan defines PASS and FAIL per criterion and no partial tier (a failed criterion keeps its gap open). The PARTIAL tier, its 7.0 cap, and treating INSUFFICIENT like FAIL for this status are new in this draft and need the owner's approval.",
     "VALIDATED": "5.1 fidelity PASS (14 days), 5.2 representativeness PASS on its 30-day window with the minimum sample met (500 pairs, 20 lakes), and 5.3 change signal PASS for both RAIN_ONSET and FRONT_PASSAGE on its 60-day window.",
-    "PARTIAL": "5.1 fidelity PASS and at least one of 5.2 or 5.3 scored PASS; the other not yet scored, INSUFFICIENT, or FAILED.",
-    "NOT_VALIDATED": "Anything else, including 5.1 FAILED (a published value that does not match its station is the one failure this Brain may not have) and any INSUFFICIENT sample. INSUFFICIENT is never PASS.",
+    "PARTIAL": "At least one of 5.1, 5.2, 5.3 scored PASS, every other criterion NOT YET SCORED (its window still running), and none FAILED or INSUFFICIENT.",
+    "NOT_VALIDATED": "Nothing scored yet, or ANY criterion FAILED or INSUFFICIENT. A failed criterion is never credited; it stays NOT_VALIDATED until a new, separately pre-registered version (for example a thresholds-v2 release) passes. INSUFFICIENT is never PASS.",
     "whoSetsIt": "The Weather Brain's validation record (a reviewed change that writes /validation/weather), never the scorer and never Ops."
   },
   "movesUp": [
@@ -123,8 +124,8 @@
         "effect": "Dimensions become SCORED from live facts. The validation gate caps the value at 5.0 whatever the shares; below 10 % coverage the coverage gate caps it at 3.0. No number is given: no full-directory dry run has been recorded yet (plan section 6.1 step 1), so the shares are unknown."
       },
       {
-        "step": "Plan 5.1 and 5.2 PASS (about 30 days after activation)",
-        "effect": "PARTIAL: validation dimension 5 / 10 (1.5 points of 3.0), cap rises to 7.0."
+        "step": "Plan 5.1 and 5.2 PASS (about 30 days after activation), 5.3 still running, nothing failed",
+        "effect": "PARTIAL: validation dimension 5 / 10 (1.5 points of 3.0), cap rises to 7.0. If any criterion fails instead, the status stays NOT_VALIDATED and the 5.0 cap holds."
       },
       {
         "step": "Plan 5.3 PASS (about 60 days after activation)",
@@ -134,7 +135,7 @@
   },
   "improvementsDraft": {
     "note": "Draft text for jobs/brain_platform/sector_brain_platform/score_improvements_v1.json. NOT added there: that registry is loaded by the scorer's explanation step (score_explanation.registry(), called from score_brains.py) and is copied into /scores/{id}/explanation. Copy these only when the rubric is adopted.",
-    "gate:validation@5": "Score the pre-registered fidelity (5.1) and representativeness (5.2) checks on the windows the plan fixes; a PASS on both makes /validation/weather PARTIAL.",
+    "gate:validation@5": "Score the pre-registered fidelity (5.1) and representativeness (5.2) checks on the windows the plan fixes; passes with nothing failed make /validation/weather PARTIAL. A failure keeps it NOT_VALIDATED.",
     "gate:validationPartial@7": "Score the 60-day change-signal check (5.3). A FAIL produces a thresholds-v2 proposal with its reason; the v1 result is kept and reported.",
     "gate:coverage@3": "Enable the Brain for the whole directory; lakes outside NWS coverage stay BLOCKED and are counted (WX-004).",
     "dimension:changeSignalEvaluable": "Close the input gaps behind each unevaluable rule (the 'unknown' reasons the plan's step 1 dry run records)."
@@ -147,7 +148,7 @@
       "a Brain change that writes /validation/weather with the status meanings above (declared in the publication contract, not written by the runtime today)",
       "a Cortex maintenance session: Weather is not one of the Cortex target Brains (BA-01) and /scores/weather is not a registered family",
       "a scorer PR: a score_weather() in sector_brain_platform/scoring.py, Weather facts in score_brains.fetch_facts, 'weather' in UPSTREAM, improvement entries, and an explicit decision whether Weather enters the Engine score (today it does not)",
-      "set status ADOPTED here in the same PR and re-record verification/fixtures/scores/score_baseline.json"
+      "move this file to docs/brains/scoring/, set status ADOPTED in the same PR and re-record verification/fixtures/scores/score_baseline.json"
     ]
   }
 }
