@@ -192,7 +192,7 @@
   "lakeFleet/Lake_Hartwell_SC/readiness/lake" : "CALIBRATION",
   "lakeFleet/Lake_Hartwell_SC/riverSystem" : "Savannah",
   "lakeFleet/Lake_Hartwell_SC/slots/lake" : {
-    "issueCount" : 0,
+    "issueCount" : 1,
     "lastUpdatedAt" : "2026-06-01T12:30:00Z",
     "levelState" : "IN_ZONE",
     "readiness" : "CALIBRATION",
@@ -206,7 +206,7 @@
   "lakeFleet/Pickwick_Lake_TN/readiness/lake" : "CALIBRATION",
   "lakeFleet/Pickwick_Lake_TN/riverSystem" : "Tennessee",
   "lakeFleet/Pickwick_Lake_TN/slots/lake" : {
-    "issueCount" : 0,
+    "issueCount" : 1,
     "lastUpdatedAt" : "2026-06-01T12:30:00Z",
     "levelState" : "IN_ZONE",
     "readiness" : "CALIBRATION",
@@ -234,7 +234,7 @@
   "lakeFleet/Wilson_AL/readiness/lake" : "CALIBRATION",
   "lakeFleet/Wilson_AL/riverSystem" : "Tennessee",
   "lakeFleet/Wilson_AL/slots/lake" : {
-    "issueCount" : 0,
+    "issueCount" : 1,
     "lastUpdatedAt" : "2026-06-01T12:30:00Z",
     "levelState" : "IN_ZONE",
     "readiness" : "CALIBRATION",
@@ -453,6 +453,17 @@
     "unit" : "ft"
   },
   "lakes/Lake_Hartwell_SC/brain" : {
+    "activeIssues" : [
+      {
+        "brainId" : "lake-brain",
+        "id" : "level-unverified",
+        "kind" : "data-quality",
+        "lakeId" : "Lake Hartwell|SC",
+        "severity" : "warning",
+        "since" : "2026-06-01T12:30:00Z",
+        "title" : "Level outside the lake's reference band with no recent accepted value to confirm it (cwms:SAS:Hartwell.Elev-Pool.Inst.1Hour.0.Raw-SHEF_SAS); published as reported"
+      }
+    ],
     "characteristics" : {
       "context" : {
         "chainPosition" : {
@@ -657,6 +668,7 @@
       "inputAgeHours" : 0.5,
       "modelVersion" : "lake-level-rules-v2",
       "qualityFlags" : [
+        "levelUnverified:cwms:SAS:Hartwell.Elev-Pool.Inst.1Hour.0.Raw-SHEF_SAS",
         "rateBaselineLimited",
         "trend24hFallback",
         "noOperatorFloodPoolThreshold",
@@ -684,6 +696,17 @@
     "unit" : "ft"
   },
   "lakes/Pickwick_Lake_TN/brain" : {
+    "activeIssues" : [
+      {
+        "brainId" : "lake-brain",
+        "id" : "level-unverified",
+        "kind" : "data-quality",
+        "lakeId" : "Pickwick Lake|TN",
+        "severity" : "warning",
+        "since" : "2026-06-01T12:30:00Z",
+        "title" : "Level outside the lake's reference band with no recent accepted value to confirm it (tva:PICT1); published as reported"
+      }
+    ],
     "characteristics" : {
       "context" : {
         "chainPosition" : {
@@ -866,6 +889,7 @@
       "inputAgeHours" : 0.5,
       "modelVersion" : "lake-level-rules-v2",
       "qualityFlags" : [
+        "levelUnverified:tva:PICT1",
         "rateBaselineLimited",
         "trend24hFallback",
         "noOperatorFloodPoolThreshold",
@@ -1102,6 +1126,17 @@
     "unit" : "ft"
   },
   "lakes/Wilson_AL/brain" : {
+    "activeIssues" : [
+      {
+        "brainId" : "lake-brain",
+        "id" : "level-unverified",
+        "kind" : "data-quality",
+        "lakeId" : "Wilson|AL",
+        "severity" : "warning",
+        "since" : "2026-06-01T12:30:00Z",
+        "title" : "Level outside the lake's reference band with no recent accepted value to confirm it (tva:WLSA1); published as reported"
+      }
+    ],
     "characteristics" : {
       "context" : {
         "chainPosition" : {
@@ -1284,6 +1319,7 @@
       "inputAgeHours" : 0.5,
       "modelVersion" : "lake-level-rules-v2",
       "qualityFlags" : [
+        "levelUnverified:tva:WLSA1",
         "rateBaselineLimited",
         "trend24hFallback",
         "noOperatorFloodPoolThreshold",
@@ -1437,6 +1473,7 @@
       "inputAgeHours" : 0.5,
       "modelVersion" : "lake-level-rules-v2",
       "qualityFlags" : [
+        "levelUnverified:cwms:SAS:Hartwell.Elev-Pool.Inst.1Hour.0.Raw-SHEF_SAS",
         "rateBaselineLimited",
         "trend24hFallback",
         "noOperatorFloodPoolThreshold",
@@ -1513,6 +1550,7 @@
       "inputAgeHours" : 0.5,
       "modelVersion" : "lake-level-rules-v2",
       "qualityFlags" : [
+        "levelUnverified:tva:PICT1",
         "rateBaselineLimited",
         "trend24hFallback",
         "noOperatorFloodPoolThreshold",
@@ -1665,6 +1703,7 @@
       "inputAgeHours" : 0.5,
       "modelVersion" : "lake-level-rules-v2",
       "qualityFlags" : [
+        "levelUnverified:tva:WLSA1",
         "rateBaselineLimited",
         "trend24hFallback",
         "noOperatorFloodPoolThreshold",

@@ -57,6 +57,9 @@ public struct LakeBrainLakeResult: Sendable {
     public var historyRows: Int
     public var historyWritten: Bool
     public var errors: [String]
+    /// Rejected implausible readings with their raw values (LakeLevelPlausibility). Warnings, never errors: an old slip is
+    /// re-read (and re-reported) every run while it is inside the live window, so it must not count toward health.
+    public var warnings: [String] = []
     /// The binding was a CANDIDATE evaluated as if reviewed (candidate dry run).
     public var dryRunCandidate = false
 }
@@ -67,6 +70,8 @@ public struct LakeBrainRunResult: Sendable {
     public var durationMs = 0
     public var writeError: String? = nil
     public var archiveErrors: [String] = []
+    /// Per-lake data-quality warnings (rejected implausible readings); printed by the job, not counted in health.
+    public var warnings: [String] = []
     public var presenceError: String? = nil
     /// Prediction ledger outcome: object path (nil when nothing was written), record count, and a warning if the write failed.
     public var ledgerObject: String? = nil
@@ -131,6 +136,7 @@ public enum LakeBrainRunner {
         if dryRunCandidate { binding?.status = .reviewed }
         let gen = BrainPlatform.iso(now)
         var errors: [String] = []
+        var warnings: [String] = []
         var state: LakeLevelStateRecord?
         var baseline: LakeLevelBaseline?
         var historyRows = 0
@@ -187,7 +193,8 @@ public enum LakeBrainRunner {
                     do { try await archive.write(LakeDailyHistory.path(lake.id), LakeDailyHistory.encode(merged), contentType: "text/csv"); historyWritten = true }
                     catch { errors.append("history write: \(error)") }
                 }
-                let b = LakeBaselineBuilder.build(lakeId: lake.id, daily: merged, today: today, poolBasisIsFullPool: lake.poolBasis == .fullPool)
+                let b = LakeBaselineBuilder.build(lakeId: lake.id, daily: merged, today: today, poolBasisIsFullPool: lake.poolBasis == .fullPool,
+                                                  fullPoolFt: lake.fullPoolFt)
                 baseline = b
                 if let archive, b.status != .none, (try? await archive.read(LakeBaselineBuilder.path(b))) == nil {
                     do { try await archive.write(LakeBaselineBuilder.path(b), try BrainJSON.encode(b), contentType: "application/json") }
@@ -195,13 +202,18 @@ public enum LakeBrainRunner {
                 }
                 let coordinate = lake.coordinate
                 let rain = await feeds.rainNext12h(lat: coordinate.latitude, lon: coordinate.longitude, now: now)
-                state = LakeLevelClassifier.evaluate(LakeLevelInputs(
+                let inputs = LakeLevelInputs(
                     lakeId: lake.id, binding: binding, capabilityIfUnbound: binding.capability,
                     fullPoolFt: lake.fullPoolFt, poolBasisIsFullPool: lake.poolBasis == .fullPool,
                     poolConfidenceLow: lake.poolConfidence == .low || lake.poolConfidence == nil,
                     live: liveResults, archivedHourly: archivedHourly, guide: guide, baseline: b,
                     now: now, processingVersion: options.processingVersion, releaseBySource: releaseBySource,
-                    rainNext12hIn: rain))
+                    rainNext12hIn: rain,
+                    levelReference: LakeLevelPlausibility.reference(historyFt: merged.map(\.ft), fullPoolFt: lake.fullPoolFt),
+                    levelAnchor: anchor(published))
+                state = LakeLevelClassifier.evaluate(inputs)
+                // Rejected readings are run warnings with their raw value (Sector_Ops #51, Lake Tahoe 2026-11-23); not errors.
+                warnings = LakeLevelClassifier.screened(inputs).rejections.map(LakeLevelPlausibility.warning)
             } else {
                 state = published
             }
@@ -227,7 +239,21 @@ public enum LakeBrainRunner {
                                               archiveURI: archive?.uri, dryRunCandidate: dryRunCandidate)
         return LakeBrainLakeResult(lakeId: lake.id, plan: plan, state: state, profile: profile, presence: presenceRecords,
                                    baseline: baseline, historyRows: historyRows, historyWritten: historyWritten, errors: errors,
-                                   dryRunCandidate: dryRunCandidate)
+                                   warnings: warnings, dryRunCandidate: dryRunCandidate)
+    }
+
+    /// Quality flags about the published CURRENT value that make it unfit to anchor the next run: an unverified value must never
+    /// verify itself. `implausibleReading:` is not one: it names an older rejected reading, not the value that was published.
+    static let anchorRefusingFlagPrefixes = ["levelUnverified", "implausibleLatestRejected", "allReadingsImplausible"]
+
+    /// The last published accepted level as a plausibility anchor: an OBSERVED state's value (binding datum) and its time, only
+    /// when the state carries none of `anchorRefusingFlagPrefixes`. So "unverified" carries forward: a value accepted on its
+    /// own consistency stays flagged run after run until the band, history or a verified anchor confirms it.
+    static func anchor(_ published: LakeLevelStateRecord?) -> LevelObservation? {
+        guard let p = published, p.kind == .observed, let ft = p.currentElevationFt,
+              let at = BrainPlatform.parseTime(p.observationTime) else { return nil }
+        if (p.provenance.qualityFlags ?? []).contains(where: { f in anchorRefusingFlagPrefixes.contains { f.hasPrefix($0) } }) { return nil }
+        return LevelObservation(at: at, ft: ft)
     }
 
     /// True when the archive already holds a daily value for yesterday (lake-local) or later, so an hourly run can skip the
@@ -363,6 +389,7 @@ public enum LakeBrainRunner {
         out.sort { $0.lakeId < $1.lakeId }
         result.lakes = out
         result.archiveErrors = out.flatMap { r in r.errors.map { "\(r.lakeId): \($0)" } }
+        result.warnings = out.flatMap { r in r.warnings.map { "\(r.lakeId): \($0)" } }
         result.health = health(out, writeFailed: false)
         let learnedRainPoints = await feeds.rainPoints()
         if let archive, !learnedRainPoints.isEmpty, learnedRainPoints != knownRainPoints,
