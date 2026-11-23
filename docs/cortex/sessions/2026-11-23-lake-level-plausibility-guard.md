@@ -66,3 +66,14 @@ Re-sweep with the revised rules (Python mirror): 288 bound lakes, 102 batch-2 ch
 | LOW digit transposition | Documented as a known limit (header and integration doc) |
 
 Re-sweep (Python mirror, revised rules): 288 bound lakes, 102 batch-2 checks, 47 fixture series: 0 real readings rejected (only the trap rows). El Vado and Navajo would be `levelUnverified` only in a hypothetical run without their history and without an anchor; their 51 / 63 years of history set the band.
+
+## 9. Round-3 review fixes (PR #249 review at 3025e68)
+- The PR was dirty after #241: merged origin/main (engineering-status conflict resolved by taking main and re-running the digest sequence), commit 7f83d79c.
+| Finding | Fix |
+|---|---|
+| HIGH an unverified value anchored the next run and was then published unflagged | `LakeBrainRunner.anchor` refuses states flagged `levelUnverified*`, `implausible*`, `allReadingsImplausible`; "unverified" therefore carries forward until the band, history or a verified anchor confirms it (test: run 1 → flagged, run 2 fed run 1's state → still flagged) |
+| MEDIUM history lake, only new-datum readings (< 6 or < 24 h) with a valid in-band anchor → UNAVAILABLE | If the walk accepts nothing but ≥ 2 readings agree within the step rule, they are published `levelUnverified`; a lone reading stays rejected. Test passes the old-datum anchor and asserts published + flagged |
+| LOW no history, no full pool, < 3 readings → published unflagged | `levelUnverified` |
+| LOW rule D vs a full pool alone could reject a gauge ~10× off | Flag only (kept, `levelUnverified`) unless an anchor confirms the slip; history-backed D still rejects |
+
+Sweep: the revisions add no rejection path without an anchor (the committed probe data carries none), so the round-2 result stands: 0 real readings rejected.
