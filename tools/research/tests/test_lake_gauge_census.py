@@ -37,9 +37,10 @@ def _rdb(rows, catalog=True):
 
 
 class World:
-    def __init__(self, robots=None, iv_status=200):
+    def __init__(self, robots=None, iv_status=200, locations_fail=0):
         self.robots = robots or {}
         self.iv_status = iv_status
+        self.locations_fail = locations_fail  # number of LRP location-catalog calls that fail with 500 (-1: always)
         self.calls = []
 
     def __call__(self, url, headers):
@@ -74,6 +75,9 @@ class World:
         if u.hostname == "cwms-data.usace.army.mil":
             office = q["office"]
             if u.path.endswith("/LOCATIONS"):
+                if office == "LRP" and self.locations_fail:
+                    self.locations_fail -= 1 if self.locations_fail > 0 else 0
+                    return 500, b""
                 return 200, json.dumps({"entries": WORLD["cwmsLocations"].get(office, [])}).encode()
             rx = re.compile(q["like"])
             ents = [{"office": t["office"], "name": t["name"], "interval": t["interval"], "units": "ft",
@@ -141,8 +145,9 @@ def cand(l, provider, series):
 # ------------------------------------------------------------------------------------------------------------- rules
 def test_rules_hash_is_the_committed_preregistration():
     assert DIGEST == open(G.RULES + ".sha256").read().split()[0]
-    assert RULES["rulesId"] == "LGC-2026-11-23.2" and RULES["notBefore"] == "2026-12-01T12:00:00Z"
-    assert RULES["supersedes"]["sha256"] == open(G.RULES.replace(".2.rules", ".rules") + ".sha256").read().split()[0]
+    assert RULES["rulesId"] == "LGC-2026-11-23.3" and RULES["notBefore"] == "2026-12-01T12:00:00Z"
+    assert RULES["supersedes"]["sha256"] == open(G.RULES.replace(".3.rules", ".2.rules") + ".sha256").read().split()[0]
+    assert RULES["supersedes"]["earlier"]["sha256"] == open(G.RULES.replace(".3.rules", ".rules") + ".sha256").read().split()[0]
     assert RULES["publication"] == {**RULES["publication"], "changesBindings": False, "changesAcceptedLists": False,
                                     "changesKnowledgeRelease": False, "changesScores": False}
     assert RULES["fetch"]["methods"] == ["GET"]
@@ -193,8 +198,10 @@ def test_refused_before_not_before(tmp_path):
 def test_fetcher_refuses_hosts_outside_the_allowlist(tmp_path):
     f = fetcher(tmp_path, World())
     for url in ("https://www.tva.com/RestApi/observed-data-48-hours/X", "https://api.water.noaa.gov/nwps/v1/gauges/X"):
-        with pytest.raises(G.Refused, match="not allowlisted"):
+        with pytest.raises(G.Refused, match="never queried|not allowlisted"):
             f.get(url)
+    with pytest.raises(G.Refused, match="not allowlisted"):
+        f.get("https://example.org/x")
 
 
 def test_robots_disallow_is_honoured(tmp_path):
@@ -223,11 +230,17 @@ def test_classification_cases():
     assert G.classify(RULES, "X RESERVOIR NEAR Y", ins, base_class="POOL")[0] == "POOL"
     assert G.classify(RULES, "BIG RIVER AT X DAM", ins, base_class="POOL")[0] == "UNKNOWN"
     assert G.cwms_origin(RULES, "Raw-USGS") == "USGS_COPY" and G.cwms_origin(RULES, "Raw-SHEF_SAS") == "USACE_UNLABELLED"
+    assert G.cwms_origin(RULES, "Raw-USBR") == "USBR_COPY" and G.cwms_origin(RULES, "Raw-CDEC") == "CDEC_COPY"
+    assert G.cwms_origin(RULES, "Rev-NWS") == "NWS_REDISTRIBUTION"
     for v in ("Top of Conservation", "Flood Control", "Inflow", "Upper-Rule", "Lower", "Bottom of Flood"):
         assert G.classify(RULES, "X Lake", ins, version=v, base_class="POOL")[0] == "RULE_CURVE", v
     assert G.classify(RULES, "X Lake", ins, sublocation="Upper", base_class="POOL")[0] == "UNKNOWN"
     fut = G.classify(RULES, "X Lake", ins, base_class="POOL", latest="2027-01-01T00:00:00Z", now=NOW)
     assert fut[0] == "RULE_CURVE" and "future" in fut[1][0]
+    later = lambda h: (NOW + dt.timedelta(hours=h)).isoformat()
+    assert G.classify(RULES, "X Lake", ins, base_class="POOL", latest=later(2), now=NOW)[0] == "RULE_CURVE"  # timestamped: 1 h
+    assert G.classify(RULES, "X Lake", ins, base_class="POOL", latest=later(20), now=NOW, date_granular=True)[0] == "POOL"
+    assert G.classify(RULES, "X Lake", ins, base_class="POOL", latest=later(30), now=NOW, date_granular=True)[0] == "RULE_CURVE"
 
 
 # ------------------------------------------------------------------------------------------------------------- census
@@ -262,7 +275,7 @@ def test_independence_evidence_for_bound_lakes(tmp_path):
     other = cand(b, "usgs", "62614")
     # the bound primary is an unlabelled CWMS series: its origin is unknown across the USGS/USACE border, so never independent
     assert other["independence"]["tier"] == "UNCERTAIN" and other["eligibleForV3"] is False
-    assert any("USGS/USACE border" in r for r in other["independence"]["reasons"])
+    assert any("unlabelled CWMS series" in r for r in other["independence"]["reasons"])
     assert "selection" not in other  # reviewed lake: no binding shortlist
     c = lake(res, "Testc Lake|ZZ")
     assert c["geometryBasis"] == "POINT_ONLY"
@@ -365,8 +378,8 @@ def test_controls_subcommand_runs_after_not_before(tmp_path, monkeypatch):
     assert G.main(["controls", "--out", str(tmp_path / "c"), "--registry", "none"], now=NOW, transport=World()) == 0
 
 
-@pytest.mark.parametrize("status,allowed", [(404, True), (410, True), (403, False), (401, False), (500, False), (503, False),
-                                            (301, False), (-1, False)])
+@pytest.mark.parametrize("status,allowed", [(404, True), (410, True), (403, False), (401, False), (429, False), (500, False),
+                                            (503, False), (301, False), (-1, False)])
 def test_robots_status_follows_rfc9309(tmp_path, status, allowed):
     def t(url, headers):
         if url.endswith("/robots.txt"):
@@ -427,8 +440,85 @@ def test_rise_bound_coordinates_come_from_the_fetched_locations(tmp_path):
     assert c.rise_item_coords(["9001", "9003"]) == {"9001": (35.03, -89.93), "9003": (40.0, -100.0)}
 
 
-def test_old_rules_file_is_kept_and_refused():
-    old = G.RULES.replace(".2.rules", ".rules")
-    assert G.sha256_file(old) == "254752ea31823ace94768a7daa658cf70bfa42b8ad0d276ebb1cae1cf86e9e3f"
+@pytest.mark.parametrize("name,sha", [
+    ("LGC-2026-11-23.rules.json", "254752ea31823ace94768a7daa658cf70bfa42b8ad0d276ebb1cae1cf86e9e3f"),
+    ("LGC-2026-11-23.2.rules.json", "c17feef35f03c072cb79f4d318b465d807fc72afe5ca351f0b787cc3df382ba7")])
+def test_superseded_rules_files_are_kept_and_refused(name, sha):
+    old = os.path.join(os.path.dirname(G.RULES), name)
+    assert G.sha256_file(old) == sha
     with pytest.raises(SystemExit, match="not the current registration"):
         G.load_rules(old)
+
+
+# ------------------------------------------------------------------------------------------------------------- round 2 (LGC-2026-11-23.3)
+def _c(provider, series, origin, lat=36.0, lon=-90.0, location=None):
+    return {"provider": provider, "station": "S", "series": series, "origin": origin, "lat": lat, "lon": lon, "location": location}
+
+
+FAR = {("rise", "77", "77"): (36.2, -90.0), ("usgs", "08000001", "62615"): (36.2, -90.0),
+       ("cwms", "SPK", "Far-Lake.Elev.Inst.1Hour.0.Raw"): (36.2, -90.0)}
+RISE_BOUND = [{"provider": "rise", "station": "77", "series": "77", "role": "primary"}]
+USGS_BOUND = [{"provider": "usgs", "station": "08000001", "series": "62615", "role": "primary"}]
+CWMS_BOUND = [{"provider": "cwms", "station": "SPK", "series": "Far-Lake.Elev.Inst.1Hour.0.Raw", "role": "primary"}]
+
+
+@pytest.mark.parametrize("cand_,bound,tier", [
+    (_c("cwms", "Res.Elev.Inst.1Hour.0.Raw", "USACE_UNLABELLED", location="Res"), RISE_BOUND, "UNCERTAIN"),   # unlabelled vs USBR
+    (_c("rise", "88", "USBR"), CWMS_BOUND, "UNCERTAIN"),                                                     # USBR vs unlabelled
+    (_c("usgs", "62615", "USGS"), CWMS_BOUND, "UNCERTAIN"),                                                  # USGS vs unlabelled
+    (_c("cwms", "Res.Elev.Inst.1Hour.0.Raw", "USACE_UNLABELLED", location="Res"), USGS_BOUND, "UNCERTAIN"),  # unlabelled vs USGS
+    (_c("cwms", "Res.Elev.Inst.1Hour.0.Raw-USBR", "USBR_COPY", location="Res"), RISE_BOUND, "NOT_INDEPENDENT"),
+    (_c("cwms", "Res.Elev.Inst.1Hour.0.Raw-CDEC", "CDEC_COPY", location="Res"), USGS_BOUND, "UNCERTAIN"),
+    (_c("rise", "88", "USBR"), USGS_BOUND, "INDEPENDENT_AGENCY"),                                            # both labelled, far
+    (_c("cwms", "Res.Elev.Inst.1Hour.0.Raw", "USACE_UNLABELLED", location="Res"), CWMS_BOUND, "INDEPENDENT_SITE"),
+])
+def test_unlabelled_cwms_is_origin_unknown_against_every_agency(cand_, bound, tier):
+    got = G.independence(RULES, cand_, bound, FAR)
+    assert got["tier"] == tier, got
+
+
+def test_origin_evidence_resolves_an_unlabelled_series_against_usbr():
+    c = _c("cwms", "Res.Elev.Inst.1Hour.0.Raw", "USACE_UNLABELLED", location="Res")
+    ev = {G.series_key("cwms", "S", c["series"]): {"provider": "cwms", "series": c["series"], "origin": "USACE", "evidence": "SYNTHETIC"}}
+    assert G.independence(RULES, c, RISE_BOUND, FAR, ev)["tier"] == "INDEPENDENT_AGENCY"
+
+
+def test_failed_office_catalog_is_not_cached_and_marks_the_lake(tmp_path):
+    res, f, w = run(tmp_path, world=World(locations_fail=3))  # the first get (3 attempts) fails, the next succeeds
+    a, b = lake(res, "Testa Reservoir|ZZ"), lake(res, "Testb Lake|ZZ")
+    assert a["discoveryIncomplete"] == ["CWMS_OFFICE_UNAVAILABLE:LRP"] and not any(c["provider"] == "cwms" for c in a["candidates"])
+    assert b["discoveryIncomplete"] == [] and any(c["provider"] == "cwms" for c in b["candidates"])  # retried, not cached empty
+
+
+def test_office_failures_stop_after_three(tmp_path):
+    res, f, w = run(tmp_path, world=World(locations_fail=-1))
+    lrp = [u for u in w.calls if "/LOCATIONS" in u and "office=LRP" in u]
+    assert len(lrp) == 9  # 3 failed gets x 3 attempts, then no more requests
+    assert all("CWMS_OFFICE_UNAVAILABLE:LRP" in l["discoveryIncomplete"] for l in res["lakes"])
+
+
+def test_binding_counts_keep_incomplete_and_undiscovered_apart():
+    def l(lid, **kw):
+        return dict({"lakeId": lid, "purposes": ["BINDING"], "reviewed": False, "bound": [], "candidates": [], "discovered": True,
+                     "discoveryIncomplete": [], "geometryBasis": "OUTLINE", "bestShortlist": None}, **kw)
+    lakes = [l("a"), l("b", discoveryIncomplete=["CWMS_OFFICE_UNAVAILABLE:LRP"]), l("c", discovered=False), l("d", discovered=False)]
+    b = G.summarize(RULES, lakes, reviewed_count=294)["binding"]
+    assert (b["noCandidate"], b["incomplete"], b["notDiscovered"]) == (1, 1, 2)
+
+
+def test_tva_is_never_queried_even_if_allowlisted(tmp_path):
+    tva = open(os.path.join(HERE, "fixtures", "lake_gauge_census", "tva_robots.txt")).read()
+    rules = dict(RULES, hosts=dict(RULES["hosts"], **{"www.tva.com": {"provider": "tva", "agency": "TVA", "terms": "x"}}))
+    w = World(robots={"www.tva.com": tva})
+    f = fetcher(tmp_path, w, rules=rules)
+    with pytest.raises(G.Refused, match="never queried"):
+        f.get("https://www.tva.com/RestApi/observed-data-48-hours/GVDA1")
+    assert w.calls == []
+
+
+def test_tva_robots_fixture_disallows_everything(tmp_path):
+    tva = open(os.path.join(HERE, "fixtures", "lake_gauge_census", "tva_robots.txt")).read()
+    f = fetcher(tmp_path, World(robots={"data.usbr.gov": tva}))  # TVA's file served by an allowlisted host
+    with pytest.raises(G.Refused, match="ROBOTS_DISALLOWED"):
+        f.get("https://data.usbr.gov/rise/api/location")
+    assert "tva.com" in G.NEVER_HOSTS and "www.tva.com" in RULES["fetch"]["neverHosts"]

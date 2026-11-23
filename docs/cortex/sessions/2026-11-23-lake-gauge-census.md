@@ -68,3 +68,18 @@ Rules re-registered as **LGC-2026-11-23.2** (sha256 `c17feef35f03c072cb79f4d318b
 | LOW IV scope / controls / ceiling / robots / estimate | IV only for the BINDING pre-shortlist; controls require class POOL; ceiling from the live reviewed count; `ROBOTS_DISALLOWED` per host and path; request estimate 3,000–6,000 in the draft |
 
 Verification after the fixes: census tests 37 passed; `pytest tools/research` 129 passed, 2 failed (the same 2 pre-existing root-container failures); `pytest tools/architecture` 196 passed; `pytest verification` 51 passed, 3 skipped; architecture report 0 new findings; `build_engineering_status.py --check` OK; `research-check` 85 findings (unchanged), closeout 0. No file under `brains/lake`, `jobs/lake-brain`, `jobs/brain_platform` or `Sources` differs from `origin/main`.
+
+## Review round 2 (independent review of #247 @ 46a81bde: NOT CLEAN; round-1 fixes confirmed; fixed before any request was sent)
+Rules re-registered as **LGC-2026-11-23.3** (sha256 `2a46ac96df8021c5fca08d19406f5e60eedd19e266289f9130515ecb76b5b8b1`). `LGC-2026-11-23.2.rules.json` is kept byte for byte, marked superseded (`LGC-2026-11-23.2.SUPERSEDED.md`), never used, and refused by the tool, as is the first registration. No fetch of `origin` this round.
+
+| Finding | Fix |
+|---|---|
+| HIGH border covered only USGS/USACE | an unlabelled CWMS series is origin-unknown against every other agency (USGS, USBR, CDEC, TVA, states, labelled copies): UNCERTAIN unless an origin-evidence entry exists; USBR/BOR/Reclamation and CDEC/DWR labels in a CWMS version are parsed as `USBR_COPY` / `CDEC_COPY` (NOT_INDEPENDENT against a bound series of that agency, otherwise UNCERTAIN); tests in both directions (unlabelled vs RISE, RISE vs unlabelled, USGS vs unlabelled, unlabelled vs USGS, Raw-USBR vs RISE, Raw-CDEC vs USGS), plus the positive cases (RISE vs USGS far apart, evidence-resolved unlabelled vs RISE) |
+| MEDIUM failed office catalog cached empty | never cached; retried for the next lake, at most 3 failures per office per run; each lake discovered while an office was down carries `CWMS_OFFICE_UNAVAILABLE:<office>` in `discoveryIncomplete`; tests for recovery and for the cap (9 requests = 3 gets × 3 attempts) |
+| LOW budget-undiscovered lakes in noCandidate | BINDING counts are now `noCandidate` (complete, nothing found), `incomplete` and `notDiscovered` |
+| LOW USGS future tolerance | registered text now has `futureLatestToleranceHoursDateGranular` 24 for the date-granular USGS catalog end date; the code uses it (no extra day) |
+| LOW robots 429 | disallow-all, stated in the rules |
+| LOW stale text | PR body no longer says 9,000; Mini draft manifest source is "LGC-2026-11-23.3 census" |
+| TVA | `tva.com`, NWPS and HADS are refused by the fetcher even if a rules file listed them; `tva_robots.txt` fixture (`Disallow: /`) proves robots handling would block it too; TVA reservoirs are reached only through USGS gauges |
+
+Verification after the fixes: census tests 53 passed; `pytest tools/research` 145 passed, 2 failed (the same 2 pre-existing root-container failures); `pytest tools/architecture` 196 passed; `pytest verification` 51 passed, 3 skipped; architecture report 0 new findings; `build_engineering_status.py --check` OK; `research-check` 85 findings (unchanged), closeout 0. No file under `brains/lake`, `jobs/lake-brain`, `jobs/brain_platform` or `Sources` differs from `origin/main`.

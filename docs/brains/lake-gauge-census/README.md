@@ -1,4 +1,4 @@
-# Lake gauge census (LGC-2026-11-23.2)
+# Lake gauge census (LGC-2026-11-23.3)
 
 Status: tool and pre-registered rules only. **Nothing has been fetched.** No binding, accepted list, `LakeSourceBindingsGenerated.swift`,
 knowledge release, score or rubric changes here.
@@ -16,11 +16,12 @@ for every bound lake it lists series that are **not** the lake's bound primary, 
 
 | File | What |
 |---|---|
-| [`LGC-2026-11-23.2.rules.json`](LGC-2026-11-23.2.rules.json) + `.sha256` (`c17feef3…`) | **Current** pre-registered rules: hosts and terms, classification cues, stage A selection (S1–S9), independence tiers and the USGS/USACE border rule, stage B binding review (R1–R9, checks (b)–(d), the 15 ft history/live rule), the no-relaxation clause, and `notBefore` 2026-12-01T12:00Z |
+| [`LGC-2026-11-23.3.rules.json`](LGC-2026-11-23.3.rules.json) + `.sha256` (`2a46ac96…`) | **Current** pre-registered rules: hosts and terms, classification cues, stage A selection (S1–S9), independence tiers and the unlabelled-CWMS border rule, stage B binding review (R1–R9, checks (b)–(d), the 15 ft history/live rule), the no-relaxation clause, and `notBefore` 2026-12-01T12:00Z |
+| [`LGC-2026-11-23.2.rules.json`](LGC-2026-11-23.2.rules.json) + `.sha256` | Second registration, kept byte for byte, **superseded and never used** ([why](LGC-2026-11-23.2.SUPERSEDED.md)); the tool refuses it |
 | [`LGC-2026-11-23.rules.json`](LGC-2026-11-23.rules.json) + `.sha256` | First registration, kept byte for byte, **superseded and never used** ([why](LGC-2026-11-23.SUPERSEDED.md)); the tool refuses it |
 | [`MINI_REQUEST_DRAFT.md`](MINI_REQUEST_DRAFT.md) | Draft Sector_Ops #51 request for the Mac mini (not posted) |
 | `tools/research/lake_gauge_census.py` | The census (GET only, metadata only) |
-| `tools/research/tests/test_lake_gauge_census.py` + `fixtures/lake_gauge_census/world.json` | 37 offline tests on a synthetic world |
+| `tools/research/tests/test_lake_gauge_census.py` + `fixtures/lake_gauge_census/world.json` | 53 offline tests on a synthetic world (plus `tva_robots.txt`, TVA's `Disallow: /` file) |
 
 ## How the census works
 
@@ -46,9 +47,12 @@ for every bound lake it lists series that are **not** the lake's bound primary, 
 7. **Verdicts**: `BINDING` candidates get `SHORTLIST` / `HAND_REVIEW` / `REJECT` with the S-rule reasons; bound lakes' candidates get an
    independence tier (`INDEPENDENT_AGENCY`, `INDEPENDENT_SITE`, `UNCERTAIN`, `NOT_INDEPENDENT`) and `eligibleForV3`.
 
-**Independence is conservative.** A CWMS series whose version does not name USGS or NWS is `USACE_UNLABELLED`: its origin is unknown,
-because districts publish USGS-operated gauges under their own version names. Any pair across the USGS/USACE border with an unlabelled
-CWMS series on one side is `UNCERTAIN`, never `INDEPENDENT_AGENCY`. Only an entry in a reviewed origin-evidence file
+**Independence is conservative.** A CWMS version that names USGS, USBR (or BOR / Reclamation) or CDEC (or DWR) is a copy of that
+agency's gauge (`USGS_COPY`, `USBR_COPY`, `CDEC_COPY`): NOT_INDEPENDENT when the lake already has a bound series of that agency,
+UNCERTAIN otherwise. A version that names NWS/NWPS/HADS is a redistribution. Any other CWMS version is `USACE_UNLABELLED`: its origin is
+unknown, because districts publish other agencies' gauges under their own version names. Any pair with an unlabelled CWMS series on
+one side and any other agency (USGS, USBR, CDEC, TVA, a state, a labelled copy) on the other is `UNCERTAIN`, never independent; two
+unlabelled CWMS series at sites at least 1 km apart can be `INDEPENDENT_SITE`. Only an entry in a reviewed origin-evidence file
 (`--origin-evidence`, e.g. a USACE sensor id or a documented non-USGS DCP) changes that; none exists yet.
 
 **Structural cap for v3.** A bound lake whose binding includes a TVA, NWPS or HADS gauge has no coordinates for that gauge, so every
@@ -58,9 +62,11 @@ live figure (`summary.structuralCap`). Bound RISE items take their coordinates f
 
 Safety: GET only; hosts allowlisted (USGS, USACE CDA, USBR RISE, the Lake Registry); `www.tva.com`, NWPS, HADS and SWOT are never
 queried; no request before 2026-12-01T12:00Z (in the fetcher, so every subcommand); redirects never followed; robots.txt per RFC 9309
-(5xx or unreachable = disallow, recorded `ROBOTS_DISALLOWED` per path); 1 s between requests per host; every retry counts against a
+(401/403/429, 5xx, a redirect or no answer = disallow, recorded `ROBOTS_DISALLOWED` per path); `tva.com`, NWPS and HADS are refused by the fetcher even if a rules file listed them (TVA's robots.txt is `Disallow: /`); 1 s between requests per host; every retry counts against a
 12,000-request budget; a failed request, chunk or lake is recorded under `errorsByStage` and the run still writes its output
-(`budgetExhausted` says when it stopped early); writes only to `--out`.
+(`budgetExhausted` says when it stopped early). A failed CWMS office catalog is never cached as empty: it is retried for the next lake
+(at most 3 failures per office), and every lake discovered while it was down is marked `CWMS_OFFICE_UNAVAILABLE`. BINDING counts keep
+`noCandidate` (complete discovery, nothing found) apart from `incomplete` and `notDiscovered` (budget). Writes only to `--out`.
 
 ## After the census
 

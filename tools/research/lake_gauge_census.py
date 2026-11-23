@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Lake gauge census: GET-only, metadata-only discovery of gauge-grade level series for every directory lake (rules LGC-2026-11-23.2).
+"""Lake gauge census: GET-only, metadata-only discovery of gauge-grade level series for every directory lake (rules LGC-2026-11-23.3).
 
-Two purposes, one pass (docs/brains/lake-gauge-census/LGC-2026-11-23.2.rules.json, pre-registered and hashed before any request;
-it supersedes LGC-2026-11-23, which was never used):
+Two purposes, one pass (docs/brains/lake-gauge-census/LGC-2026-11-23.3.rules.json, pre-registered and hashed before any request;
+it supersedes LGC-2026-11-23.2 and LGC-2026-11-23, which were never used):
   BINDING            unprofiled lakes (not in Lake's reviewed set): candidate pool series for the next binding batch (stage A
                      shortlist; the stage B review with level values follows the same rules as batches 1-2 and runs later).
   INDEPENDENT_TRUTH  every lake with a binding: series that are NOT the lake's bound live/fallback/history series, with
@@ -44,8 +44,8 @@ import urllib.robotparser
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
-RULES = os.path.join(REPO, "docs", "brains", "lake-gauge-census", "LGC-2026-11-23.2.rules.json")
-RULES_ID = "LGC-2026-11-23.2"
+RULES = os.path.join(REPO, "docs", "brains", "lake-gauge-census", "LGC-2026-11-23.3.rules.json")
+RULES_ID = "LGC-2026-11-23.3"
 DIRECTORY = os.path.join(REPO, "brains", "moon", "runtime", "knowledge", "lakes-directory.json")
 REVIEWED = os.path.join(REPO, "jobs", "brain_platform", "sector_brain_platform", "publisher_live", "customer_lake_level_eligible.json")
 GENERATED = os.path.join(REPO, "brains", "lake", "runtime", "LakeBrain", "LakeSourceBindingsGenerated.swift")
@@ -264,6 +264,14 @@ class Refused(Exception):
     pass
 
 
+class OfficeUnavailable(Exception):
+    pass
+
+
+# Hosts the census never contacts, whatever a rules file says: TVA (robots.txt Disallow: / for all agents), NWPS and HADS.
+NEVER_HOSTS = {"tva.com", "www.tva.com", "api.water.noaa.gov", "mesonet.agron.iastate.edu"}
+
+
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):  # never follow; the 3xx is returned as an error
         return None
@@ -276,6 +284,7 @@ class Fetcher:
     def __init__(self, rules: dict, out: str | None = None, transport=None, sleep=time.sleep, clock=time.monotonic, now=None):
         self.rules = rules
         self.hosts = set(rules["hosts"])
+        self.never = set(rules["fetch"].get("neverHosts") or []) | NEVER_HOSTS
         self.ua = rules["fetch"]["userAgent"]
         self.gap = float(rules["fetch"]["minSecondsBetweenRequestsPerHost"])
         self.budget = int(rules["fetch"]["maxRequests"])
@@ -312,10 +321,15 @@ class Fetcher:
             self.sleep(self.gap - (t - self.last[host]))
         self.last[host] = self.clock()
 
+    def _never(self, host: str | None) -> bool:
+        return bool(host) and any(host == h or host.endswith("." + h) for h in self.never)
+
     def _raw(self, url: str, headers: dict) -> tuple[int, bytes]:
         if self.now() < self.not_before:
             raise Refused(f"no request may be sent before {self.rules['notBefore']} ({self.rules['notBeforeReason']})")
         host = urllib.parse.urlsplit(url).hostname
+        if self._never(host):
+            raise Refused(f"host {host} is never queried")
         if host not in self.hosts:
             raise Refused(f"host {host} is not allowlisted")
         status, body = 0, b""
@@ -337,7 +351,7 @@ class Fetcher:
         return status, body
 
     def robots_ok(self, url: str) -> bool:
-        """RFC 9309: 2xx parsed; 401/403 disallow all; other 4xx allow all; 5xx, a redirect or no answer disallow all."""
+        """RFC 9309, conservative: 2xx parsed; 401/403/429 disallow all; other 4xx allow all; 5xx, a redirect or no answer disallow all."""
         parts = urllib.parse.urlsplit(url)
         host = parts.hostname
         if host not in self.robots:
@@ -346,7 +360,7 @@ class Fetcher:
             if 200 <= status < 300:
                 rp.parse(body.decode("utf-8", "replace").splitlines())
                 state = "PARSED"
-            elif 400 <= status < 500 and status not in (401, 403):
+            elif 400 <= status < 500 and status not in (401, 403, 429):
                 rp.allow_all = True
                 state = f"HTTP_{status}_ALLOW_ALL"
             else:
@@ -364,6 +378,8 @@ class Fetcher:
             raise Refused(f"no request may be sent before {self.rules['notBefore']} ({self.rules['notBeforeReason']})")
         if params:
             url = url + ("&" if "?" in url else "?") + urllib.parse.urlencode(params, safe=",:^\\$")
+        if self._never(urllib.parse.urlsplit(url).hostname):
+            raise Refused(f"host {urllib.parse.urlsplit(url).hostname} is never queried")
         if urllib.parse.urlsplit(url).hostname not in self.hosts:
             raise Refused(f"host {urllib.parse.urlsplit(url).hostname} is not allowlisted")
         if not self.robots_ok(url):
@@ -559,14 +575,16 @@ def _has(text: str, words: list[str]) -> list[str]:
 
 
 def classify(rules: dict, name: str, pos: dict, version: str = "", subparam: str = "", base_class: str | None = None,
-             sublocation: str = "", latest: str | None = None, now: dt.datetime | None = None) -> tuple[str, list[str]]:
+             sublocation: str = "", latest: str | None = None, now: dt.datetime | None = None,
+             date_granular: bool = False) -> tuple[str, list[str]]:
     c = rules["classification"]
     why = []
     rc = _has(version, c["ruleCurveVersionWords"]) + _has(subparam, c["ruleCurveVersionWords"])
     if rc:
         return "RULE_CURVE", [f"rule/guide/plan/forecast cue {rc}"]
     t = parse_time(latest)
-    if t and now and t > now + dt.timedelta(hours=c["futureLatestToleranceHours"]):
+    tol = c["futureLatestToleranceHoursDateGranular"] if date_granular else c["futureLatestToleranceHours"]
+    if t and now and t > now + dt.timedelta(hours=tol):
         return "RULE_CURVE", [f"latest time {t.isoformat()} is in the future (a plan series)"]
     tail = _has(name, c["tailwaterWords"]) + _has(subparam, c["tailwaterWords"]) + _has(sublocation, c["tailwaterWords"])
     if not tail and _has(sublocation, c["subLocationNotPoolWords"]):
@@ -643,6 +661,8 @@ class Census:
         self._rise_locs: list[dict] | None = None
         self._usgs_coords: dict[str, dict] = {}
         self.evidence = evidence or {}
+        self._office_failures: dict[str, int] = {}
+        self.incomplete: dict[str, list[str]] = {}
 
     # ---- geometry
     def load_geometry(self, lakes: list[dict], registry: str | None):
@@ -702,7 +722,7 @@ class Census:
             pos = position(lake, r["lat"], r["lon"])
             latest = max((parse_time(x.get("end")) for x in r["dataTypes"].values() if x.get("end")), default=None)
             cls, why = classify(self.r, r["name"], pos, base_class="POOL" if r.get("siteType") in ("LK", "ES") or r["param"] in self.params else None,
-                                latest=latest.isoformat() if latest else None, now=self.now + dt.timedelta(days=1))
+                                latest=latest.isoformat() if latest else None, now=self.now, date_granular=True)
             begin = min((x.get("begin") for x in r["dataTypes"].values() if x.get("begin")), default=None)
             datum = self.r["usgs"]["parameterDatum"].get(r["param"])
             if datum == "SITE_DATUM":
@@ -792,19 +812,26 @@ class Census:
     # ---- CWMS
     def cwms_locations(self, office: str) -> list[dict]:
         if office not in self._cwms_locs:
+            if self._office_failures.get(office, 0) >= 3:
+                raise OfficeUnavailable(office)
             locs, page = [], None
-            for _ in range(50):
-                p = {"office": office, "page-size": 5000}
-                if page:
-                    p["page"] = page
-                st, body = self.f.get(CWMS.format(kind="LOCATIONS"), p, accept=CWMS_ACCEPT)
-                if st != 200:
-                    self.errors.append({"stage": "cwms-locations", "office": office, "error": f"HTTP {st}"})
-                    break
-                got, page = parse_cwms_locations(body.decode())
-                locs += got
-                if not page or not got:
-                    break
+            try:
+                for _ in range(50):
+                    p = {"office": office, "page-size": 5000}
+                    if page:
+                        p["page"] = page
+                    st, body = self.f.get(CWMS.format(kind="LOCATIONS"), p, accept=CWMS_ACCEPT)
+                    if st != 200:
+                        raise RuntimeError(f"HTTP {st}")
+                    got, page = parse_cwms_locations(body.decode())
+                    locs += got
+                    if not page or not got:
+                        break
+            except Exception as ex:  # never cached as empty: retried for the next lake, at most 3 failures per office
+                self._office_failures[office] = self._office_failures.get(office, 0) + 1
+                self.errors.append({"stage": "cwms-locations", "office": office, "error": str(ex)[:300],
+                                    "failures": self._office_failures[office]})
+                raise OfficeUnavailable(office) from ex
             self._cwms_locs[office] = locs
         return self._cwms_locs[office]
 
@@ -812,7 +839,12 @@ class Census:
         w, s, e, n = self.search_box(lake)
         out = []
         for office in self.r["cwms"]["offices"]:
-            for loc in self.cwms_locations(office):
+            try:
+                office_locs = self.cwms_locations(office)
+            except OfficeUnavailable:
+                self.incomplete.setdefault(lake["lakeId"], []).append(f"CWMS_OFFICE_UNAVAILABLE:{office}")
+                continue
+            for loc in office_locs:
                 if loc["lat"] is None or loc["lon"] is None or not (w <= loc["lon"] <= e and s <= loc["lat"] <= n):
                     continue
                 pos = position(lake, loc["lat"], loc["lon"])
@@ -912,26 +944,27 @@ class Census:
                 cands += fn(lake)
             except Refused as ex:
                 self.errors.append({"lakeId": lake["lakeId"], "stage": prov, "error": f"REFUSED {ex}"})
+                self.incomplete.setdefault(lake["lakeId"], []).append(f"PROVIDER_FAILED:{prov}")
             except Exception as ex:
                 self.errors.append({"lakeId": lake["lakeId"], "stage": prov, "error": str(ex)[:300]})
+                self.incomplete.setdefault(lake["lakeId"], []).append(f"PROVIDER_FAILED:{prov}")
         return cands
 
 
 # ------------------------------------------------------------------------------------------------------------------ verdicts
 def cwms_origin(rules: dict, version: str) -> str:
-    """Origin of a CWMS series from its version: a USGS copy, an NWS redistribution, or unlabelled. An unlabelled series is NOT
-    known to be USACE-operated (districts publish USGS-operated gauges under their own version names); only an origin-evidence
-    entry makes it USACE."""
-    c = rules["classification"]
-    if _has(version, c["usgsCopyVersionWords"]):
-        return "USGS_COPY"
-    if _has(version, c["nwsRedistributionVersionWords"]):
-        return "NWS_REDISTRIBUTION"
+    """Origin of a CWMS series from its version label: a labelled copy (USGS / USBR / CDEC), an NWS redistribution, or unlabelled.
+    An unlabelled series is origin-unknown (districts publish other agencies' gauges under their own version names); only an
+    origin-evidence entry makes it USACE."""
+    for origin, words in rules["classification"]["copyVersionWords"].items():
+        if _has(version, words):
+            return origin
     return "USACE_UNLABELLED"
 
 
-FAMILY = {"USGS": {"USGS"}, "USGS_COPY": {"USGS"}, "USACE": {"USACE"}, "USACE_UNLABELLED": {"USACE", "USGS"},
-          "USBR": {"USBR"}, "TVA": {"TVA"}, "NWS_REDISTRIBUTION": {"NWS"}}
+FAMILY = {"USGS": {"USGS"}, "USGS_COPY": {"USGS"}, "USACE": {"USACE"}, "USACE_UNLABELLED": {"USACE"},
+          "USBR": {"USBR"}, "USBR_COPY": {"USBR"}, "CDEC_COPY": {"CDEC"}, "TVA": {"TVA"}, "NWS_REDISTRIBUTION": {"NWS"}}
+COPIES = {"USGS_COPY": "USGS", "USBR_COPY": "USBR", "CDEC_COPY": "CDEC"}
 
 
 def load_origin_evidence(path: str | None) -> dict:
@@ -1018,19 +1051,20 @@ def independence(rules: dict, c: dict, bound: list[dict], coords: dict, evidence
         locs = {cwms_parts(b.get("series") or "")["location"] for b in bound if b["provider"] in ("cwms", "a2w")}
         if c.get("location") in locs:
             return out("NOT_INDEPENDENT", "same CWMS location as a bound series (other version or interval)")
-        if origin == "USGS_COPY" and "USGS" in b_fam and any(o in ("USGS", "USGS_COPY") for o in b_origins):
-            return out("NOT_INDEPENDENT", "CWMS copy of a USGS gauge and the lake has a bound USGS series")
-    if dists and min(dists) < same_m and fam & b_fam:
-        return out("NOT_INDEPENDENT", f"possibly the same agency within {same_m} m of a bound gauge")
+    if origin in COPIES and COPIES[origin] in b_fam:
+        return out("NOT_INDEPENDENT", f"CWMS copy of a {COPIES[origin]} gauge and the lake has a bound {COPIES[origin]} series")
+    unlabelled_pair = (origin == "USACE_UNLABELLED" and any(o != "USACE_UNLABELLED" and o != "USACE" for o in b_origins)) or \
+                      (origin not in ("USACE_UNLABELLED", "USACE") and "USACE_UNLABELLED" in b_origins)
+    if dists and min(dists) < same_m and (fam & b_fam or origin == "USACE_UNLABELLED" or "USACE_UNLABELLED" in b_origins):
+        return out("NOT_INDEPENDENT", f"overlapping or unknown origin within {same_m} m of a bound gauge")
     reasons = []
-    border = (origin == "USACE_UNLABELLED" and any(o in ("USGS", "USGS_COPY") for o in b_origins)) or \
-             (origin in ("USGS", "USGS_COPY") and "USACE_UNLABELLED" in b_origins)
-    if border:
-        reasons.append("origin unknown across the USGS/USACE border (unlabelled CWMS series, no origin evidence)")
-    if origin == "USGS_COPY":
-        reasons.append("CWMS copy of an unidentified USGS gauge")
-    if c["provider"] == "usgs" and "USGS_COPY" in b_origins:
-        reasons.append("a bound CWMS series is a USGS copy; its USGS site is not named")
+    if unlabelled_pair:
+        reasons.append("origin unknown: an unlabelled CWMS series on one side and another agency on the other (no origin evidence)")
+    if origin in COPIES:
+        reasons.append(f"CWMS copy of an unidentified {COPIES[origin]} gauge")
+    for o in b_origins:
+        if o in COPIES and c["provider"] != "cwms" and COPIES[o] in fam:
+            reasons.append(f"a bound CWMS series is a {COPIES[o]} copy; the copied gauge is not named")
     if unknown_loc:
         reasons.append("a bound gauge's location is unknown: " + ", ".join(unknown_loc))
     if reasons:
@@ -1073,7 +1107,7 @@ def order_key(c: dict):
 
 
 def finalize(rules: dict, targets: list[dict], found: dict[str, list[dict]], coords: dict, now: dt.datetime, robots: dict,
-             evidence: dict | None = None) -> list[dict]:
+             evidence: dict | None = None, incomplete: dict | None = None) -> list[dict]:
     """Per-lake verdicts: S7 uniqueness across lakes, the BINDING shortlist and the INDEPENDENT_TRUTH evidence."""
     claimed = {}
     for t in targets:
@@ -1118,6 +1152,8 @@ def finalize(rules: dict, targets: list[dict], found: dict[str, list[dict]], coo
         shortlisted = [c for c in rows if (c.get("selection") or {}).get("verdict") == "SHORTLIST"]
         out.append({k2: v2 for k2, v2 in t.items() if not k2.startswith("_")} | {
             "geometryBasis": "OUTLINE" if t.get("_polys") else "POINT_ONLY",
+            "discovered": lid in found,
+            "discoveryIncomplete": sorted(set((incomplete or {}).get(lid, []))),
             "candidates": rows,
             "bestShortlist": ({"provider": shortlisted[0]["provider"], "station": shortlisted[0]["station"], "series": shortlisted[0]["series"],
                                "capability": shortlisted[0]["capabilityIfBound"]} if shortlisted else None)})
@@ -1130,6 +1166,9 @@ def summarize(rules: dict, lakes: list[dict], reviewed_count: int | None = None)
     sel = lambda l, v: any((c.get("selection") or {}).get("verdict") == v for c in l["candidates"])
     with_short = [l for l in binding if sel(l, "SHORTLIST")]
     hand_only = [l for l in binding if not sel(l, "SHORTLIST") and sel(l, "HAND_REVIEW")]
+    rest = [l for l in binding if not sel(l, "SHORTLIST") and not sel(l, "HAND_REVIEW")]
+    not_discovered = [l for l in rest if l.get("discovered") is False]
+    incomplete = [l for l in rest if l.get("discovered") is not False and l.get("discoveryIncomplete")]
     by_cap = {}
     for l in with_short:
         by_cap[l["bestShortlist"]["capability"]] = by_cap.get(l["bestShortlist"]["capability"], 0) + 1
@@ -1152,7 +1191,8 @@ def summarize(rules: dict, lakes: list[dict], reviewed_count: int | None = None)
                                 for c in l["candidates"] if c["provider"] == "usgs" and not c.get("boundToThisLake")]
     return {
         "binding": {"lakes": len(binding), "withShortlist": len(with_short), "shortlistByCapability": by_cap,
-                    "handReviewOnly": len(hand_only), "noCandidate": len(binding) - len(with_short) - len(hand_only),
+                    "handReviewOnly": len(hand_only), "noCandidate": len(rest) - len(not_discovered) - len(incomplete),
+                    "incomplete": len(incomplete), "notDiscovered": len(not_discovered),
                     "reviewedNow": reviewed, "ceilingIfAllShortlistPassStageB": ceiling,
                     "ceilingShare": round(ceiling / cov["directoryLakeCount"], 4), "target": cov["targetReviewed"],
                     "targetReachableOnShortlist": ceiling >= cov["targetReviewed"],
@@ -1304,7 +1344,7 @@ def run_census(rules: dict, digest: str, fetcher: Fetcher, now: dt.datetime, reg
             res = None
         if stage == "bound-coords":
             coords = res or {}
-    lakes = finalize(rules, targets, found, coords, now, fetcher.robots_report(), evidence)
+    lakes = finalize(rules, targets, found, coords, now, fetcher.robots_report(), evidence, census.incomplete)
     summary = summarize(rules, lakes, reviewed_count=sum(1 for t in tt["lakes"] if t["reviewed"]))
     errs = {}
     for e in census.errors:
@@ -1340,7 +1380,7 @@ def summary_text(s: dict) -> str:
     b, it = s["summary"]["binding"], s["summary"]["independentTruth"]
     lines = [f"Lake gauge census {s['rulesId']} (rules sha256 {s['rulesSha256'][:12]}), {s['generatedAt']}, {s['requests']} GET requests, metadata only",
              f"Controls: {json.dumps({k: [r['found'] for r in v] for k, v in s['controls'].get('results', {}).items()})}; disabled: {s['disabledProviders'] or 'none'}",
-             f"BINDING: {b['lakes']} unprofiled lakes; shortlist {b['withShortlist']} ({b['shortlistByCapability']}), hand review only {b['handReviewOnly']}, none {b['noCandidate']}",
+             f"BINDING: {b['lakes']} unprofiled lakes; shortlist {b['withShortlist']} ({b['shortlistByCapability']}), hand review only {b['handReviewOnly']}, none {b['noCandidate']}, incomplete {b.get('incomplete')}, not discovered {b.get('notDiscovered')}",
              f"  ceiling if every shortlisted lake passes stage B: {b['ceilingIfAllShortlistPassStageB']}/621 ({b['ceilingShare']:.1%}); target {b['target']} reachable on the shortlist: {b['targetReachableOnShortlist']}",
              f"INDEPENDENT_TRUTH: {it['lakesWithBinding']} bound lakes; candidate tiers {it['candidateTiers']}; lakes with a v3-eligible candidate {it['lakesWithV3Eligible']} (reviewed {it['reviewedLakesWithV3Eligible']})",
              f"TVA reservoirs, USGS candidates (lakes with any / with a v3-eligible one): "
