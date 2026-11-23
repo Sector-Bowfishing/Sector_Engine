@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
-"""Water Temp Level-4 protected truth, protocol v3 (PT-L4-2026-11-23-v3, gap WATER-VAL-001): read-only runner.
+"""Water Temp Level-4 protected truth, protocol v4 (PT-L4-2026-11-23-v4, gap WATER-VAL-001): read-only runner.
 
-Protocol: docs/brains/water-temp-protected-truth-v3/PT-L4-2026-11-23-v3.protocol.json. The runner refuses any other protocol,
-including the superseded v2. It reads public sources and writes local files in --out only. It never writes Firebase, never
-changes a score, binding or schedule, and never indexes a temperature value in step A.
+Protocol: docs/brains/water-temp-protected-truth-v4/PT-L4-2026-11-23-v4.protocol.json. The runner refuses any other protocol,
+including the superseded v2 and v3. It reads public sources and writes local files in --out only. It never writes Firebase,
+never changes a score, binding or schedule, and never indexes a temperature value in step A.
 
-Step A v3 (counts only):
+Step A v4 (counts only; census cutoff fixed by the protocol):
     verify          protocol id and sha256 == committed sidecar
     fetch-registry  Lake Registry v1 index + analysis polygons for the universe (public bucket)
     fetch-usgs      USGS OGC metadata, stored as whitelisted properties (ids, site type, parameter, geometry)
-    fetch-wqp       WQP Station / Activity metadata and Result-depth rows, each stored as whitelisted columns only
+    fetch-wqp       WQP Station / Activity metadata and Result-depth rows (with the unit code), as whitelisted columns only
     exclusions      M0_TUNING / RESOLVER_SENSOR / WT_SAT_1 / NO_GEOMETRY per candidate water
-    stations        draft station classes; a reviewer may reclassify UNCLASSIFIED rows only, with a reviewNote
-    census          counted casts and readings per water, bound to the reviewed station file's posted sha256
-    select          retain/replace by counts only; writes selection.json (post its sha256 before step B)
-Step B (opens values; every command needs the posted selection sha256, the reviewed station file and --owner-request,
+    stations        draft station classes; a reviewer may reclassify the draft's UNCLASSIFIED rows only, with a reviewNote
+    census          write-once; counted casts and readings per water, bound to the posted draft and reviewed hashes
+    select          write-once; retain/replace by counts only; also writes the write-once selection registry
+Step B (opens values; every command needs the selection, its registry, the reviewed station file and --owner-request,
 which is a string check and not proof of approval: the request posted on Sector_Ops #51 is the control):
-    fetch-forcing   forcing for exactly the window the selection implies, refused if it does not cover every counted cast
-    fetch-results   one WQP Result query per counted cast
-    compare         write-once comparison; unknowns count against (unpaired cast or missing forcing fails the lake)
+    fetch-forcing   write-once; exactly the window the selection implies; refused if it does not cover every counted cast
+    fetch-results   write-once; one WQP Result query per counted cast
+    compare         write-once; files verified one-to-one against provenance; unknowns count against
 """
 from __future__ import annotations
 
@@ -41,12 +41,13 @@ sys.path.insert(0, HERE)
 import water_temp_protected_truth as V1  # noqa: E402  (shared helpers: hashing, classes, units, metrics, the M0 implementation)
 
 REPO = V1.REPO
-PROTOCOL_ID = "PT-L4-2026-11-23-v3"
-PROTOCOL = os.path.join(REPO, "docs", "brains", "water-temp-protected-truth-v3", f"{PROTOCOL_ID}.protocol.json")
+PROTOCOL_ID = "PT-L4-2026-11-23-v4"
+PROTOCOL = os.path.join(REPO, "docs", "brains", "water-temp-protected-truth-v4", f"{PROTOCOL_ID}.protocol.json")
 TEMP_SENSORS = os.path.join(REPO, "docs", "data", "temp_sensors.csv")
 LABELS = V1.LABELS
 PER_LAKE, TOTAL, SLOTS = 25, 150, 4
 HOLDOUT_END = "2026-06-30"
+CUTOFF = "2026-11-22"
 WINDOW_START = "2021-01-01"
 SPIN_UP_DAYS = 46
 MI10_KM = 16.0934
@@ -58,14 +59,14 @@ ALLOWED = {"www.waterqualitydata.us": "/data/", "archive-api.open-meteo.com": "/
            "storage.googleapis.com": "/sector-lake-registry/", "api.waterdata.usgs.gov": "/ogcapi/v0/collections/"}
 FORCING_DAILY = "temperature_2m_mean,shortwave_radiation_sum,wind_speed_10m_mean,relative_humidity_2m_mean"
 
-# Stored columns (protocol stepA). Nothing named ResultMeasure*, no comment or free-text columns.
+# Stored columns (protocol stepA). Never ResultMeasureValue; the only ResultMeasure column is the unit code. No free text.
 STATION_COLUMNS = ("OrganizationIdentifier", "MonitoringLocationIdentifier", "MonitoringLocationName", "MonitoringLocationTypeName",
                    "LatitudeMeasure", "LongitudeMeasure", "HorizontalCoordinateReferenceSystemDatumName")
 ACTIVITY_COLUMNS = ("OrganizationIdentifier", "MonitoringLocationIdentifier", "ActivityIdentifier", "ActivityTypeCode", "ActivityMediaName",
                     "ActivityStartDate", "ActivityStartTime/Time", "ActivityStartTime/TimeZoneCode",
                     "ActivityDepthHeightMeasure/MeasureValue", "ActivityDepthHeightMeasure/MeasureUnitCode")
 RESULT_DEPTH_COLUMNS = ("OrganizationIdentifier", "MonitoringLocationIdentifier", "ActivityIdentifier", "ActivityStartDate",
-                        "CharacteristicName", "ResultStatusIdentifier",
+                        "CharacteristicName", "ResultStatusIdentifier", "ResultMeasure/MeasureUnitCode",
                         "ActivityDepthHeightMeasure/MeasureValue", "ActivityDepthHeightMeasure/MeasureUnitCode",
                         "ResultDepthHeightMeasure/MeasureValue", "ResultDepthHeightMeasure/MeasureUnitCode")
 USGS_PROPERTIES = ("monitoring_location_id", "site_type_code", "parameter_code")
@@ -77,6 +78,8 @@ def load_protocol(path: str = PROTOCOL) -> tuple[dict, str]:
     p, digest = V1.load_protocol(path)
     if p.get("protocolId") != PROTOCOL_ID:
         raise SystemExit(f"REFUSED: this runner executes {PROTOCOL_ID} only, not {p.get('protocolId')}")
+    if p.get("censusCutoff") != CUTOFF:
+        raise SystemExit("REFUSED: the protocol's census cutoff differs from the runner's")
     return p, digest
 
 
@@ -455,9 +458,11 @@ def cmd_stations(p: dict, reg: dict, wqp: str, out_csv: str) -> dict:
     return {"stations": len(rows), "byClass": counts}
 
 
-def load_reviewed(draft_path: str, reviewed_path: str, posted_sha256: str) -> dict:
-    """The reviewed station file, checked against its posted hash and the draft (protocol stepA.stations)."""
-    if V1.sha256_file(reviewed_path) != posted_sha256:
+def load_reviewed(draft_path: str, draft_sha: str, reviewed_path: str, reviewed_sha: str) -> dict:
+    """The reviewed station file, checked against both posted hashes and the hashed draft (protocol stepA.stations)."""
+    if V1.sha256_file(draft_path) != draft_sha:
+        raise SystemExit("REFUSED: the draft station file's sha256 differs from the posted draft hash")
+    if V1.sha256_file(reviewed_path) != reviewed_sha:
         raise SystemExit("REFUSED: the station file's sha256 differs from the posted reviewed-file hash")
     draft = {r["MonitoringLocationIdentifier"]: r for r in V1.read_csv(draft_path)}
     rev = {r["MonitoringLocationIdentifier"]: r for r in V1.read_csv(reviewed_path)}
@@ -465,14 +470,18 @@ def load_reviewed(draft_path: str, reviewed_path: str, posted_sha256: str) -> di
         raise SystemExit("REFUSED: the reviewed station file adds or removes stations")
     for sid, r in rev.items():
         d = draft[sid]
-        for f in ("OrganizationIdentifier", "MonitoringLocationName", "LatitudeMeasure", "LongitudeMeasure"):
+        for f in ("OrganizationIdentifier", "MonitoringLocationName", "LatitudeMeasure", "LongitudeMeasure", "reason"):
             if (r.get(f) or "") != (d.get(f) or ""):
                 raise SystemExit(f"REFUSED: station {sid} field {f} changed in review")
-        if (r.get("class"), r.get("lakeId") or "") != (d.get("class"), d.get("lakeId") or ""):
-            if d.get("class") != "UNCLASSIFIED":
-                raise SystemExit(f"REFUSED: station {sid} was {d.get('class')}; only UNCLASSIFIED rows may be reclassified")
-            if not (r.get("reviewNote") or "").strip():
-                raise SystemExit(f"REFUSED: station {sid} was reclassified without a reviewNote")
+        changed = (r.get("class"), r.get("lakeId") or "") != (d.get("class"), d.get("lakeId") or "")
+        if changed and d.get("class") != "UNCLASSIFIED":
+            raise SystemExit(f"REFUSED: station {sid} was {d.get('class')} in the draft; only UNCLASSIFIED rows may be reviewed")
+        if (d.get("lakeId") or "") and (r.get("lakeId") or "") != d["lakeId"]:
+            raise SystemExit(f"REFUSED: station {sid} keeps the draft's lake {d['lakeId']}")
+        if changed and not (r.get("reviewNote") or "").strip():
+            raise SystemExit(f"REFUSED: station {sid} was reclassified without a reviewNote")
+        if not changed and (r.get("reviewNote") or "") != (d.get("reviewNote") or ""):
+            raise SystemExit(f"REFUSED: station {sid} has a reviewNote but was not reclassified")
         if r.get("class") == "MAIN_BODY" and (V1._f(r.get("LatitudeMeasure")) is None or V1._f(r.get("LongitudeMeasure")) is None or not r.get("lakeId")):
             raise SystemExit(f"REFUSED: MAIN_BODY station {sid} has no coordinates or lake")
     return rev
@@ -501,12 +510,18 @@ def reading_depth(r: dict):
     return d
 
 
+def unit_known(unit) -> bool:
+    return (unit or "").lower().replace(" ", "") in ("degc", "deg.c", "c", "degf", "deg.f", "f")
+
+
 def reading_status(r: dict) -> str | None:
-    """None if the row is a counted reading by metadata, else the reject reason."""
+    """None if the row is a counted reading by metadata (step A and step B alike), else the reject reason."""
     if (r.get("CharacteristicName") or "").strip() != V1.CHARACTERISTIC:
         return "otherCharacteristic"
     if (r.get("ResultStatusIdentifier") or "").strip().lower() == "rejected":
         return "rejectedStatus"
+    if not unit_known(r.get("ResultMeasure/MeasureUnitCode")):
+        return "unknownUnit"
     d = reading_depth(r)
     if d is None:
         return "noDepth"
@@ -547,9 +562,11 @@ def _dedupe(casts: dict, stations: dict) -> dict:
     return keep
 
 
-def census(p: dict, depth_rows: list[dict], stations: dict, cutoff: str) -> dict:
-    casts = {}
-    rejects = {}
+def census(p: dict, depth_rows: list[dict], stations: dict) -> dict:
+    """Counted casts per water. Replacement candidates: WINDOW_START..CUTOFF. Frozen lakes: WINDOW_START..HOLDOUT_END only
+    (their count to CUTOFF is reported for information)."""
+    frozen = set(p["frozenLakes"])
+    casts, rejects = {}, {}
 
     def rej(lid, why):
         rejects.setdefault(lid or "(unassigned)", {}).setdefault(why, 0)
@@ -562,7 +579,7 @@ def census(p: dict, depth_rows: list[dict], stations: dict, cutoff: str) -> dict
         if not s or s.get("class") != "MAIN_BODY" or not lid:
             rej(lid, "notMainBody")
             continue
-        if not V1._date_in_window(d, WINDOW_START, cutoff):
+        if not V1._date_in_window(d, WINDOW_START, CUTOFF):
             rej(lid, "outsideWindow")
             continue
         why = reading_status(r)
@@ -574,33 +591,43 @@ def census(p: dict, depth_rows: list[dict], stations: dict, cutoff: str) -> dict
     qual = _dedupe(casts, stations)
     per = {}
     for w in waters(p):
-        keys = sorted(k for k in qual if k[0] == w["lakeId"])
-        per[w["lakeId"]] = {"qualifyingCasts": len(keys), "casts": {"|".join(k): sorted(qual[k]["readings"]) for k in keys},
-                            "stepARejects": rejects.get(w["lakeId"], {})}
-        if w["lakeId"] in p["frozenLakes"]:
-            per[w["lakeId"]]["qualifyingCastsToFrozenHoldoutEnd"] = sum(1 for k in keys if k[2] <= HOLDOUT_END)
+        lid = w["lakeId"]
+        all_keys = sorted(k for k in qual if k[0] == lid)
+        keys = [k for k in all_keys if k[2] <= HOLDOUT_END] if lid in frozen else all_keys
+        per[lid] = {"qualifyingCasts": len(keys), "window": [WINDOW_START, HOLDOUT_END if lid in frozen else CUTOFF],
+                    "casts": {"|".join(k): sorted(qual[k]["readings"]) for k in keys}, "stepARejects": rejects.get(lid, {})}
+        if lid in frozen:
+            per[lid]["infoCastsToCutoff"] = len(all_keys)
     return {"waters": per, "unassignedRejects": rejects.get("(unassigned)", {})}
 
 
-def cmd_census(p: dict, digest: str, wqp: str, draft: str, reviewed: str, reviewed_sha: str, excl_path: str, cutoff: str, out: str) -> dict:
-    stations = load_reviewed(draft, reviewed, reviewed_sha)
+def _write_once(path: str, rec: dict) -> None:
+    try:
+        with open(path, "x", encoding="utf-8") as fh:
+            json.dump(rec, fh, indent=1)
+    except FileExistsError:
+        raise SystemExit(f"REFUSED: {os.path.basename(path)} already exists (write-once)")
+
+
+def cmd_census(p: dict, digest: str, wqp: str, draft: str, draft_sha: str, reviewed: str, reviewed_sha: str, excl_path: str, out: str) -> dict:
+    if os.path.exists(out):
+        raise SystemExit(f"REFUSED: {os.path.basename(out)} already exists (write-once)")
+    stations = load_reviewed(draft, draft_sha, reviewed, reviewed_sha)
     depth = []
     for w in waters(p):
         path = os.path.join(wqp, f"{slug(w['lakeId'])}.resultdepth.csv")
         if os.path.exists(path):
             rows = V1.read_csv(path)
-            if rows and any(k.startswith("ResultMeasure") or k not in RESULT_DEPTH_COLUMNS for k in rows[0]):
+            if rows and any(k not in RESULT_DEPTH_COLUMNS for k in rows[0]):
                 raise SystemExit("REFUSED: a result-depth file carries a non-whitelisted column; step A never stores values")
             depth += rows
     excl = json.load(open(excl_path, encoding="utf-8"))
     if excl.get("protocolSha256") != digest:
         raise SystemExit("REFUSED: exclusions made under a different protocol")
-    res = census(p, depth, stations, cutoff)
-    rec = {"labels": LABELS, "protocolId": p["protocolId"], "protocolSha256": digest, "step": "A_census_v3", "valuesOpened": False,
-           "cutoff": cutoff, "stationFileSha256": reviewed_sha, "stationDraftSha256": V1.sha256_file(draft),
-           "exclusionsSha256": V1.sha256_file(excl_path), "authoritativeScoresUnchanged": True, **res}
-    with open(out, "w", encoding="utf-8") as fh:
-        json.dump(rec, fh, indent=1)
+    rec = {"labels": LABELS, "protocolId": p["protocolId"], "protocolSha256": digest, "step": "A_census_v4", "valuesOpened": False,
+           "cutoff": CUTOFF, "stationDraftSha256": draft_sha, "stationFileSha256": reviewed_sha,
+           "exclusionsSha256": V1.sha256_file(excl_path), "authoritativeScoresUnchanged": True, **census(p, depth, stations)}
+    _write_once(out, rec)
     return rec
 
 
@@ -619,34 +646,42 @@ def select(p: dict, census_rec: dict, excl: dict) -> dict:
             "lakes": [{"lakeId": l, "qualifyingCasts": counts[l], "casts": census_rec["waters"][l]["casts"]} for l in chosen],
             "total": total, "needed": {"perLake": PER_LAKE, "total": TOTAL, "lakes": SLOTS},
             "shortfall": None if outcome == "SELECTED" else {"lakesWith25": len(chosen), "total": total},
-            "frozenLakeStatus": {l: ("EXCLUDED: " + "; ".join(excl[l])) if excl.get(l) else f"{counts.get(l, 0)} casts" for l in p["frozenLakes"]},
+            "frozenLakeStatus": {l: ("EXCLUDED: " + "; ".join(excl[l])) if excl.get(l) else f"{counts.get(l, 0)} casts to {HOLDOUT_END}" for l in p["frozenLakes"]},
             "rankedPool": [{"lakeId": l, "qualifyingCasts": counts[l]} for l in pool]}
 
 
-def cmd_select(p: dict, digest: str, census_path: str, excl_path: str, out: str) -> dict:
+def cmd_select(p: dict, digest: str, census_path: str, excl_path: str, out: str, registry_path: str) -> dict:
     c = json.load(open(census_path, encoding="utf-8"))
     if c.get("protocolSha256") != digest:
         raise SystemExit("REFUSED: census made under a different protocol")
     if V1.sha256_file(excl_path) != c.get("exclusionsSha256"):
         raise SystemExit("REFUSED: exclusions file changed after the census")
-    if os.path.exists(out):
-        raise SystemExit("REFUSED: selection.json already exists (write-once)")
+    for path in (out, registry_path):
+        if os.path.exists(path):
+            raise SystemExit(f"REFUSED: {os.path.basename(path)} already exists (one selection per protocol id)")
     excl = json.load(open(excl_path, encoding="utf-8"))["exclusions"]
-    rec = {"labels": LABELS, "protocolId": p["protocolId"], "protocolSha256": digest, "step": "A_selection_v3", "valuesOpened": False,
-           "censusSha256": V1.sha256_file(census_path), "stationFileSha256": c["stationFileSha256"], "exclusionsSha256": c["exclusionsSha256"],
-           "authoritativeScoresUnchanged": True, **select(p, c, excl)}
-    with open(out, "w", encoding="utf-8") as fh:
-        json.dump(rec, fh, indent=1)
+    rec = {"labels": LABELS, "protocolId": p["protocolId"], "protocolSha256": digest, "step": "A_selection_v4", "valuesOpened": False,
+           "censusSha256": V1.sha256_file(census_path), "stationDraftSha256": c["stationDraftSha256"], "stationFileSha256": c["stationFileSha256"],
+           "exclusionsSha256": c["exclusionsSha256"], "authoritativeScoresUnchanged": True, **select(p, c, excl)}
+    _write_once(out, rec)
+    _write_once(registry_path, {"protocolId": p["protocolId"], "protocolSha256": digest, "selectionSha256": V1.sha256_file(out),
+                                "recordedAt": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
+                                "rule": "the first selection sha256 posted on Sector_Ops #51 for this protocol id is the only valid one"})
     return rec
 
 
 # ----------------------------------------------------------------------------------------------------------- step B
-def load_selection_for_step_b(sel_path: str, posted_sha: str, stations_path: str, digest: str, owner_request: str | None) -> dict:
+def load_selection_for_step_b(sel_path: str, registry_path: str, stations_path: str, digest: str, owner_request: str | None) -> dict:
     if not owner_request or not owner_request.startswith("Owner request (Michael, "):
         raise SystemExit("REFUSED: step B opens protected values and needs --owner-request 'Owner request (Michael, ...)' "
                          "(a string check; the request posted on Sector_Ops #51 is the control)")
-    if not posted_sha or V1.sha256_file(sel_path) != posted_sha:
-        raise SystemExit("REFUSED: selection.json differs from the posted selection sha256")
+    if not os.path.exists(registry_path):
+        raise SystemExit("REFUSED: no selection registry; step B runs only on the registered selection")
+    reg = json.load(open(registry_path, encoding="utf-8"))
+    if reg.get("protocolId") != PROTOCOL_ID or reg.get("protocolSha256") != digest:
+        raise SystemExit("REFUSED: the selection registry belongs to a different protocol")
+    if V1.sha256_file(sel_path) != reg.get("selectionSha256"):
+        raise SystemExit("REFUSED: selection.json differs from the registered selection sha256")
     sel = json.load(open(sel_path, encoding="utf-8"))
     if sel.get("protocolSha256") != digest:
         raise SystemExit("REFUSED: selection made under a different protocol")
@@ -673,6 +708,10 @@ def forcing_params(p: dict, sel: dict, lake_id: str) -> dict:
     return {"latitude": lat, "longitude": lon, "start_date": start, "end_date": end, "timezone": "auto", "daily": FORCING_DAILY}
 
 
+def forcing_file(lake_id: str) -> str:
+    return f"{slug(lake_id)}.forcing.json"
+
+
 def check_forcing(forc: dict, dates: list[str]) -> None:
     """Refuse forcing that does not contain every day from 45 days before each counted cast to the cast."""
     have = set((forc.get("daily") or {}).get("time") or [])
@@ -687,41 +726,77 @@ def result_queries(sel: dict) -> list[dict]:
     out = []
     for lid, sid, d in counted_casts(sel):
         day = dt.date.fromisoformat(d).strftime("%m-%d-%Y")
-        out.append({"lakeId": lid, "siteid": sid, "date": d,
+        out.append({"lakeId": lid, "siteid": sid, "date": d, "file": f"results/{slug(lid)}__{slug(sid)}__{d}.csv",
                     "params": {"siteid": sid, "characteristicName": V1.CHARACTERISTIC, "startDateLo": day, "startDateHi": day,
                                "mimeType": "csv", "zip": "no"}})
     return out
 
 
-def cmd_fetch_forcing(p: dict, digest: str, sel_path: str, sel_sha: str, stations: str, owner_request: str, out: str) -> dict:
-    sel = load_selection_for_step_b(sel_path, sel_sha, stations, digest, owner_request)
+def _refuse_existing(out: str, names: list[str]) -> None:
+    for n in names:
+        if os.path.exists(os.path.join(out, n)):
+            raise SystemExit(f"REFUSED: {n} already exists in the output folder (write-once)")
+
+
+def cmd_fetch_forcing(p: dict, digest: str, sel_path: str, registry: str, stations: str, owner_request: str, out: str) -> dict:
+    sel = load_selection_for_step_b(sel_path, registry, stations, digest, owner_request)
+    _refuse_existing(out, ["forcing.provenance.json"] + [forcing_file(l["lakeId"]) for l in sel["lakes"]])
     prov = []
     for l in sel["lakes"]:
         params = forcing_params(p, sel, l["lakeId"])
         body = _get_bytes(V1.OPEN_METEO, params)
         check_forcing(json.loads(body), [d for lid, _, d in counted_casts(sel) if lid == l["lakeId"]])
-        _save(out, f"{slug(l['lakeId'])}.forcing.json", body, V1.OPEN_METEO, params, prov)
+        _save(out, forcing_file(l["lakeId"]), body, V1.OPEN_METEO, params, prov)
     V1.write_provenance(out, "forcing.provenance.json", prov)
     return {"files": len(prov)}
 
 
-def cmd_fetch_results(p: dict, digest: str, sel_path: str, sel_sha: str, stations: str, owner_request: str, out: str) -> dict:
-    sel = load_selection_for_step_b(sel_path, sel_sha, stations, digest, owner_request)
+def cmd_fetch_results(p: dict, digest: str, sel_path: str, registry: str, stations: str, owner_request: str, out: str) -> dict:
+    sel = load_selection_for_step_b(sel_path, registry, stations, digest, owner_request)
+    _refuse_existing(out, ["results.provenance.json", "results"])
     prov, url = [], V1.WQP.format(kind="Result")
     for q in result_queries(sel):
-        _save(out, f"results/{slug(q['lakeId'])}__{slug(q['siteid'])}__{q['date']}.csv", _get_bytes(url, q["params"]), url, q["params"], prov)
+        _save(out, q["file"], _get_bytes(url, q["params"]), url, q["params"], prov)
     V1.write_provenance(out, "results.provenance.json", prov)
     return {"queries": len(prov)}
 
 
-def truth_values(sel: dict, results: list[dict]) -> tuple[dict, dict]:
-    """{castKey: surface deg C} from the counted readings only, and {castKey: [reject reasons]} (protocol truthUnit)."""
+def verify_against_provenance(folder: str, prov_name: str, expected: dict, listing: list[str]) -> dict:
+    """expected: {relative file: params}. Refuse unless the provenance lists exactly those files once each, with those params,
+    the folder holds exactly those files, and every sha256 matches. Returns {file: sha256}."""
+    pp = os.path.join(folder, prov_name)
+    if not os.path.exists(pp):
+        raise SystemExit(f"REFUSED: {prov_name} is missing")
+    items = json.load(open(pp, encoding="utf-8")).get("items") or []
+    paths = [i.get("path") for i in items]
+    if len(paths) != len(set(paths)):
+        raise SystemExit(f"REFUSED: {prov_name} lists a file twice")
+    if set(paths) != set(expected):
+        raise SystemExit(f"REFUSED: {prov_name} does not list exactly the files the selection implies "
+                         f"(missing {sorted(set(expected) - set(paths))[:3]}, extra {sorted(set(paths) - set(expected))[:3]})")
+    if sorted(listing) != sorted(expected):
+        raise SystemExit(f"REFUSED: the folder does not hold exactly the provenance files "
+                         f"(missing {sorted(set(expected) - set(listing))[:3]}, extra {sorted(set(listing) - set(expected))[:3]})")
+    hashes = {}
+    for i in items:
+        if i.get("params") != expected[i["path"]]:
+            raise SystemExit(f"REFUSED: {i['path']} was fetched with parameters the selection does not imply")
+        h = V1.sha256_file(os.path.join(folder, i["path"]))
+        if h != i.get("sha256"):
+            raise SystemExit(f"REFUSED: {i['path']} changed after it was fetched")
+        hashes[i["path"]] = h
+    return hashes
+
+
+def truth_values(sel: dict, results: list[dict]) -> tuple[dict, dict, dict]:
+    """({castKey: surface deg C}, {castKey: [truth rejects]}, {castKey: [counted readings not returned]}) from the counted
+    readings only (protocol truthUnit). Refuses duplicate reading ids."""
     counted = {}
     for l in sel["lakes"]:
         for k, readings in l["casts"].items():
             lid, sid, d = V1._split_key(k)
             counted[(sid, d)] = ((lid, sid, d), set(readings))
-    vals, rejects = {}, {}
+    vals, rejects, seen = {}, {}, set()
     for r in results:
         key = (r.get("MonitoringLocationIdentifier"), r.get("ActivityStartDate", ""))
         if key not in counted or reading_status(r) is not None:
@@ -730,39 +805,46 @@ def truth_values(sel: dict, results: list[dict]) -> tuple[dict, dict]:
         rid = reading_id(r)
         if rid not in ids:
             continue
+        if (cast, rid) in seen:
+            raise SystemExit(f"REFUSED: reading {rid} appears twice in the step-B results")
+        seen.add((cast, rid))
         t = V1.to_c(r.get("ResultMeasureValue"), r.get("ResultMeasure/MeasureUnitCode"))
         if t is None:
-            rejects.setdefault(cast, []).append(f"{rid}: unknown unit or no value")
+            rejects.setdefault(cast, []).append(f"{rid}: no value")
             continue
         if not (-0.5 <= t <= 40.0):
             rejects.setdefault(cast, []).append(f"{rid}: outside -0.5..40 C")
             continue
         vals.setdefault(cast, {})[rid] = (reading_depth(r), t)
+    not_returned = {}
     for cast, ids in counted.values():
-        got = set(vals.get(cast, {}))
-        for rid in sorted(ids - got - {x.split(": ")[0] for x in rejects.get(cast, [])}):
-            rejects.setdefault(cast, []).append(f"{rid}: counted reading not returned in step B")
+        missing = sorted(rid for rid in ids if (cast, rid) not in seen)
+        if missing:
+            not_returned[cast] = missing
     out = {}
     for cast, rs in vals.items():
         top = [t for dpt, t in rs.values() if dpt <= 1.0]
         out[cast] = sum(top) / len(top) if top else sorted(rs.values())[0][1]
-    return out, rejects
+    return out, rejects, not_returned
 
 
 def compare(p: dict, sel: dict, results: list[dict], forcing: dict) -> dict:
     m0_daily, m0_for_date, m0_sha = V1.m0_functions()
-    truth, rejects = truth_values(sel, results)
+    truth, rejects, not_returned = truth_values(sel, results)
     per = {}
     for l in sel["lakes"]:
         lid = l["lakeId"]
-        dates = [d for x, _, d in counted_casts(sel) if x == lid]
         casts = [c for c in counted_casts(sel) if c[0] == lid]
-        lake_rej = {"|".join(c): rejects[c] for c in casts if c in rejects}
-        no_value = [c for c in casts if c not in truth]
+        rec = {"counted": len(casts), "truthRejectsStepB": {"|".join(c): rejects[c] for c in casts if c in rejects},
+               "notReturned": {"|".join(c): not_returned[c] for c in casts if c in not_returned}, "failed": []}
+        if rec["notReturned"]:
+            rec["failed"].append("CAST_NOT_RETURNED")
         if lid not in forcing:
-            per[lid] = {"n": 0, "failed": "FORCING_MISSING", "truthRejectsStepB": lake_rej}
+            rec["failed"].append("FORCING_MISSING")
+            rec["n"] = 0
+            per[lid] = rec
             continue
-        check_forcing(forcing[lid], dates)
+        check_forcing(forcing[lid], [c[2] for c in casts])
         forc = m0_daily(forcing[lid]["daily"])
         pairs, unpaired = [], []
         for c in casts:
@@ -773,46 +855,56 @@ def compare(p: dict, sel: dict, results: list[dict], forcing: dict) -> dict:
                 unpaired.append("|".join(c))
                 continue
             pairs.append((c[2], m, truth[c]))
-        rec = {**V1.lake_metrics(pairs), "counted": len(casts), "castsWithoutTruth": len(no_value), "unpairedCasts": unpaired,
-               "truthRejectsStepB": lake_rej}
+        rec.update({**V1.lake_metrics(pairs), "castsWithoutTruth": sum(1 for c in casts if c not in truth), "unpairedCasts": unpaired})
         if unpaired:
-            rec["failed"] = "UNPAIRED_CAST"
-        elif rec["n"] < PER_LAKE:
-            rec["failed"] = "SCORED_BELOW_25"
+            rec["failed"].append("UNPAIRED_CAST")
+        if rec["n"] < PER_LAKE:
+            rec["failed"].append("SCORED_BELOW_25")
         per[lid] = rec
-    scored = {k: v for k, v in per.items() if "failed" not in v}
+    scored = {k: v for k, v in per.items() if not v["failed"]}
     pooled = math.sqrt(sum(v["mseC2"] for v in scored.values()) / len(scored)) if len(scored) == SLOTS else None
-    lake_pass = {k: ("failed" not in v and v["rmseC"] <= RMSE_MARK) for k, v in per.items()}
+    lake_pass = {k: (not v["failed"] and v["rmseC"] <= RMSE_MARK) for k, v in per.items()}
     outcome = "PASS" if pooled is not None and pooled <= RMSE_MARK and all(lake_pass.values()) else "FAIL"
     for v in per.values():
         v.pop("mseC2", None)
-    return {"labels": LABELS, "protocolId": p["protocolId"], "step": "B_compare_v3", "valuesOpened": True,
+    return {"labels": LABELS, "protocolId": p["protocolId"], "step": "B_compare_v4", "valuesOpened": True,
             "model": "surface-energy-balance-v2 (M0, k = 0.09)", "m0ImplementationSha256": m0_sha, "perLake": per,
             "perLakePass": lake_pass, "pooledEqualLakeRmseC": None if pooled is None else round(pooled, 4), "outcome": outcome,
             "authoritativeScoresUnchanged": True,
             "scoreImpact": "none: the frozen water-temp block changes only by an owner decision in a separate change"}
 
 
-def cmd_compare(p: dict, digest: str, sel_path: str, sel_sha: str, stations: str, results_dir: str, forcing_dir: str,
+def _listing(folder: str, sub: str | None = None, suffix: str = "") -> list[str]:
+    base = os.path.join(folder, sub) if sub else folder
+    if not os.path.isdir(base):
+        return []
+    return sorted((f"{sub}/{n}" if sub else n) for n in os.listdir(base) if n.endswith(suffix) and os.path.isfile(os.path.join(base, n)))
+
+
+def cmd_compare(p: dict, digest: str, sel_path: str, registry: str, stations: str, results_dir: str, forcing_dir: str,
                 owner_request: str, out: str) -> dict:
     if os.path.exists(out):
         raise SystemExit("REFUSED: a comparison result already exists; compare is write-once")
-    sel = load_selection_for_step_b(sel_path, sel_sha, stations, digest, owner_request)
-    results, forcing, inputs = [], {}, {}
-    rdir = os.path.join(results_dir, "results")
-    for name in sorted(os.listdir(rdir)) if os.path.isdir(rdir) else []:
-        results += V1.read_csv(os.path.join(rdir, name))
-        inputs[f"results/{name}"] = V1.sha256_file(os.path.join(rdir, name))
-    for l in sel["lakes"]:
-        fp = os.path.join(forcing_dir, f"{slug(l['lakeId'])}.forcing.json")
-        if os.path.exists(fp):
-            forcing[l["lakeId"]] = json.load(open(fp, encoding="utf-8"))
-            inputs[f"forcing/{os.path.basename(fp)}"] = V1.sha256_file(fp)
+    sel = load_selection_for_step_b(sel_path, registry, stations, digest, owner_request)
+    exp_results = {q["file"]: q["params"] for q in result_queries(sel)}
+    rhash = verify_against_provenance(results_dir, "results.provenance.json", exp_results, _listing(results_dir, "results"))
+    fprov = os.path.join(forcing_dir, "forcing.provenance.json")
+    fitems = json.load(open(fprov, encoding="utf-8")).get("items") or [] if os.path.exists(fprov) else []
+    present = {i.get("path") for i in fitems}
+    exp_forcing = {forcing_file(l["lakeId"]): forcing_params(p, sel, l["lakeId"]) for l in sel["lakes"] if forcing_file(l["lakeId"]) in present}
+    fhash = verify_against_provenance(forcing_dir, "forcing.provenance.json", exp_forcing, _listing(forcing_dir, None, ".forcing.json")) if fitems else {}
+    if not fitems and _listing(forcing_dir, None, ".forcing.json"):
+        raise SystemExit("REFUSED: forcing files without forcing.provenance.json")
+    results = []
+    for f in sorted(exp_results):
+        results += V1.read_csv(os.path.join(results_dir, f))
+    forcing = {l["lakeId"]: json.load(open(os.path.join(forcing_dir, forcing_file(l["lakeId"])), encoding="utf-8"))
+               for l in sel["lakes"] if forcing_file(l["lakeId"]) in exp_forcing}
     rec = compare(p, sel, results, forcing)
-    rec.update({"protocolSha256": digest, "selectionSha256": sel_sha, "stationFileSha256": sel["stationFileSha256"],
-                "inputSha256": inputs, "ownerRequest": owner_request})
-    with open(out, "x", encoding="utf-8") as fh:
-        json.dump(rec, fh, indent=1)
+    rec.update({"protocolSha256": digest, "selectionSha256": V1.sha256_file(sel_path), "stationFileSha256": sel["stationFileSha256"],
+                "inputSha256": {**{f"results:{k}": v for k, v in rhash.items()}, **{f"forcing:{k}": v for k, v in fhash.items()}},
+                "ownerRequest": owner_request})
+    _write_once(out, rec)
     return rec
 
 
@@ -830,19 +922,21 @@ def main(argv=None) -> int:
     s.add_argument("--calibration-lakes", required=True, help="JSON list of directory ids in the M0 calibration set (may be [])")
     s.add_argument("--wt-sat-1", default=None, help="committed WT-SAT-1 lake list (JSON list), once frozen"); s.add_argument("--out", required=True)
     s = sub.add_parser("stations"); s.add_argument("--registry", required=True); s.add_argument("--wqp", required=True); s.add_argument("--out", required=True)
-    s = sub.add_parser("census"); s.add_argument("--wqp", required=True); s.add_argument("--stations-draft", required=True)
-    s.add_argument("--stations", required=True); s.add_argument("--stations-sha256", required=True); s.add_argument("--exclusions", required=True)
-    s.add_argument("--cutoff", default=(dt.date.today() - dt.timedelta(days=1)).isoformat()); s.add_argument("--out", required=True)
-    s = sub.add_parser("select"); s.add_argument("--census", required=True); s.add_argument("--exclusions", required=True); s.add_argument("--out", required=True)
+    s = sub.add_parser("census"); s.add_argument("--wqp", required=True)
+    s.add_argument("--stations-draft", required=True); s.add_argument("--stations-draft-sha256", required=True)
+    s.add_argument("--stations", required=True); s.add_argument("--stations-sha256", required=True)
+    s.add_argument("--exclusions", required=True); s.add_argument("--out", required=True)
+    s = sub.add_parser("select"); s.add_argument("--census", required=True); s.add_argument("--exclusions", required=True)
+    s.add_argument("--out", required=True); s.add_argument("--selection-registry", required=True)
     for name in ("fetch-forcing", "fetch-results", "compare"):
-        s = sub.add_parser(name); s.add_argument("--selection", required=True); s.add_argument("--selection-sha256", required=True)
+        s = sub.add_parser(name); s.add_argument("--selection", required=True); s.add_argument("--selection-registry", required=True)
         s.add_argument("--stations", required=True); s.add_argument("--owner-request"); s.add_argument("--out", required=True)
         if name == "compare":
             s.add_argument("--results", required=True); s.add_argument("--forcing", required=True)
     a = ap.parse_args(argv)
     p, digest = load_protocol(a.protocol)
     if a.cmd == "verify":
-        res = {"protocolId": p["protocolId"], "sha256": digest, "status": "OK"}
+        res = {"protocolId": p["protocolId"], "sha256": digest, "censusCutoff": CUTOFF, "status": "OK"}
     elif a.cmd == "fetch-registry":
         res = cmd_fetch_registry(p, a.out)
     elif a.cmd == "fetch-usgs":
@@ -863,24 +957,23 @@ def main(argv=None) -> int:
                "wtSat1List": sorted(sat) if sat else "unfrozen: LK-in-polygon rule", "sitesSha256": V1.sha256_file(a.sites),
                "calibrationSha256": V1.sha256_file(a.calibration), "calibrationLakes": sorted(cal_lakes),
                "calibrationLakesSha256": V1.sha256_file(a.calibration_lakes), "exclusions": ex}
-        with open(a.out, "w", encoding="utf-8") as fh:
-            json.dump(rec, fh, indent=1)
+        _write_once(a.out, rec)
         res = {"excluded": sum(1 for v in ex.values() if v), "eligible": sum(1 for v in ex.values() if not v)}
     elif a.cmd == "stations":
         res = cmd_stations(p, load_registry(a.registry), a.wqp, a.out)
     elif a.cmd == "census":
-        r = cmd_census(p, digest, a.wqp, a.stations_draft, a.stations, a.stations_sha256, a.exclusions, a.cutoff, a.out)
+        r = cmd_census(p, digest, a.wqp, a.stations_draft, a.stations_draft_sha256, a.stations, a.stations_sha256, a.exclusions, a.out)
         res = {"waters": {k: {kk: vv for kk, vv in v.items() if kk != "casts"} for k, v in r["waters"].items()}}
     elif a.cmd == "select":
-        r = cmd_select(p, digest, a.census, a.exclusions, a.out)
+        r = cmd_select(p, digest, a.census, a.exclusions, a.out, a.selection_registry)
         res = {"outcome": r["outcome"], "lakes": [(l["lakeId"], l["qualifyingCasts"]) for l in r["lakes"]], "total": r["total"],
                "selectionSha256": V1.sha256_file(a.out)}
     elif a.cmd == "fetch-forcing":
-        res = cmd_fetch_forcing(p, digest, a.selection, a.selection_sha256, a.stations, a.owner_request, a.out)
+        res = cmd_fetch_forcing(p, digest, a.selection, a.selection_registry, a.stations, a.owner_request, a.out)
     elif a.cmd == "fetch-results":
-        res = cmd_fetch_results(p, digest, a.selection, a.selection_sha256, a.stations, a.owner_request, a.out)
+        res = cmd_fetch_results(p, digest, a.selection, a.selection_registry, a.stations, a.owner_request, a.out)
     else:
-        r = cmd_compare(p, digest, a.selection, a.selection_sha256, a.stations, a.results, a.forcing, a.owner_request, a.out)
+        r = cmd_compare(p, digest, a.selection, a.selection_registry, a.stations, a.results, a.forcing, a.owner_request, a.out)
         res = {k: r[k] for k in ("outcome", "pooledEqualLakeRmseC", "perLakePass")}
     print(json.dumps(res, indent=1))
     return 0
