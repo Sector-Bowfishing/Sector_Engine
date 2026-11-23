@@ -51,8 +51,11 @@
 //     internally consistent (the step walk from its own median); (b) the anchor rejected every reading but ≥ 2 of them agree
 //     within the step rule (a datum change or a new level after an outage); a lone reading stays rejected; (c) no lake
 //     reference at all and < 3 readings; (d) a kept decade-suspect reading (full pool only); (e) a band re-centred on the
-//     series at a lake with no history range (full pool only): a consistent wrong-datum or wrong-unit feed (feet vs metres)
-//     re-centres just as well as a real datum change. In each case the source is
+//     series at a lake with no history range (full pool only), UNLESS every accepted reading since a verified anchor follows
+//     the previous one within the continuity rule: a consistent wrong-datum or wrong-unit feed (feet vs metres) re-centres
+//     just as well as a real drawdown, but only the drawdown links back to a verified value without a jump. Verification
+//     therefore carries forward by continuity; it never depends on the history source being available (TVA's operating
+//     guide may be removed). In each case the source is
 //     marked `unverified` (classifier flag `levelUnverified:<sourceId>`). Only when some readings ARE in the band are the
 //     out-of-band ones that do not continue them rejected (one slip among good readings; or the first hours of a datum
 //     change, which shows the last old-datum reading until the new series has 6 readings over 24 h).
@@ -180,6 +183,19 @@ public enum LakeLevelPlausibility {
         return (Reference(lo: med, hi: med, marginFt: minMarginFt, basis: "series median"), false)
     }
 
+    /// Every accepted reading at or after the anchor follows the previous one (the anchor first) within `continuityLimit`.
+    static func continuouslyLinked(_ kept: [(at: Date, ft: Double)], to anchor: LevelObservation?) -> Bool {
+        guard let a = anchor else { return false }
+        let after = kept.filter { $0.at >= a.at }.sorted { $0.at < $1.at }
+        guard !after.isEmpty else { return false }
+        var prev = (at: a.at, ft: a.ft)
+        for o in after {
+            if abs(o.ft - prev.ft) > continuityLimit(hours: o.at.timeIntervalSince(prev.at) / 3600) { return false }
+            prev = o
+        }
+        return true
+    }
+
     static func stepLimit(hours: Double) -> Double { stepToleranceFt + maxRateFtPerHour * abs(hours) }
     static func continuityLimit(hours: Double) -> Double { continuityToleranceFt + maxRateFtPerHour * abs(hours) }
 
@@ -232,9 +248,7 @@ public enum LakeLevelPlausibility {
 
         // Unverified: no lake reference and too few readings for a self band; or no in-band reading and no anchor. The lake is
         // never blanked for it: the series is judged by its own consistency and published with `levelUnverified`.
-        // A band re-centred on the series is only as good as the series: without a history range behind the lake (full pool
-        // only), a consistent wrong-datum or wrong-unit feed would look verified. It stays unverified.
-        var unverified = (reference == nil && b == nil) || (recentred && !historyBand)
+        var unverified = reference == nil && b == nil
         if !inside.contains(true), usableAnchor == nil {
             unverified = true
             inside = Array(repeating: true, count: candidates.count)
@@ -303,6 +317,12 @@ public enum LakeLevelPlausibility {
             rejected.append(Rejection(sourceId: sourceId, at: o.at, rawFt: o.ft, reason: why))
         }
         if kept.contains(where: { suspect.contains($0.at) }) { unverified = true }
+        // A band re-centred on the series is only as good as the series: without a history range behind the lake (full pool
+        // only), a consistent wrong-datum or wrong-unit feed would look verified. Verification then carries forward by
+        // continuity alone: the source is verified only when every accepted reading since a VERIFIED anchor follows the one
+        // before it within the continuity rule (≤ 1 ft + 2 ft/h). A real drawdown walked out of the band from a verified value
+        // stays verified run after run (Ross Lake in winter); a jump (wrong datum, metres) or no anchor leaves it unverified.
+        if recentred, !historyBand, !continuouslyLinked(kept.map { (at: $0.at, ft: ft($0)) }, to: usableAnchor) { unverified = true }
         return (kept, rejected.sorted { $0.at < $1.at }, unverified && !kept.isEmpty)
     }
 

@@ -151,6 +151,71 @@ final class LakeLevelPlausibilityTests: XCTestCase {
         XCTAssertFalse((u.provenance.qualityFlags ?? []).contains { $0.hasPrefix("implausible") })
     }
 
+    func testRossWinterDrawdownStaysVerifiedByContinuityAcrossTenDaysOfRuns() {
+        // No history; full pool 1,602.5 → band 1,552.5–1,652.5. Hourly feed falling 1,560 → 1,500 ft at 0.25 ft/h over 10 days.
+        // The band re-centres once the lake has been below 1,552.5 for a day; every run's value links back to the verified
+        // anchor at the start by continuity, so it is published unflagged on every run.
+        let p = LevelSeriesRef(provider: .usgs, capability: .directOperatorPool, station: "ROSS", series: "00062", cadenceMin: 60, lagMin: 60)
+        let t0 = iso("2026-12-01T00:00:00Z")
+        let series = (0...240).map { h in LevelObservation(at: t0.addingTimeInterval(Double(h) * 3600), ft: 1560 - 0.25 * Double(h)) }
+        func run(atHour h: Int, anchor: LevelObservation?) -> LakeLevelStateRecord {
+            let end = t0.addingTimeInterval(Double(h) * 3600)
+            let window = series.filter { $0.at <= end && end.timeIntervalSince($0.at) <= 192 * 3600 }
+            var x = LakeLevelInputs(lakeId: "Ross Lake|WA", binding: binding([p]), capabilityIfUnbound: .noSource, fullPoolFt: 1602.5,
+                                    poolBasisIsFullPool: true, poolConfidenceLow: false, live: [(p, window, nil)], archivedHourly: [], guide: nil,
+                                    baseline: nil, now: end.addingTimeInterval(1800), processingVersion: "test")
+            x.levelAnchor = anchor
+            return LakeLevelClassifier.evaluate(x)
+        }
+        var anchor: LevelObservation? = series[0]                 // verified: inside the full-pool band
+        var sawRecentredRun = false
+        for h in stride(from: 6, through: 240, by: 6) {
+            let s = run(atHour: h, anchor: anchor)
+            let flags = s.provenance.qualityFlags ?? []
+            XCTAssertEqual(s.currentElevationFt, 1560 - 0.25 * Double(h), "hour \(h)")
+            XCTAssertFalse(flags.contains { $0.hasPrefix("levelUnverified") || $0.hasPrefix("implausible") }, "hour \(h): \(flags)")
+            anchor = LakeBrainRunner.anchor(s)
+            XCTAssertNotNil(anchor, "hour \(h)")
+            if 1560 - 0.25 * Double(h) < 1552.5 - 6 { sawRecentredRun = true }
+        }
+        XCTAssertTrue(sawRecentredRun)
+        // The same series with no anchor: published, but flagged.
+        let none = run(atHour: 240, anchor: nil)
+        XCTAssertEqual(none.currentElevationFt, 1500)
+        XCTAssertTrue((none.provenance.qualityFlags ?? []).contains("levelUnverified:\(p.sourceId)"))
+    }
+
+    func testDouglasWinterPoolWithLittleOrNoOperatorGuideHistoryStaysVerifiedOnceAnchored() async throws {
+        // Douglas Lake (full pool 993.88 ft; history only from TVA's operating guide, which may be removed). The guide returns
+        // fewer than 30 rows, or none, so the band is the full pool alone. Winter drawdown at ~0.21 ft/h to ~50 ft under.
+        let lake = try XCTUnwrap(LakeDirectory.all.first { $0.id == "Douglas Lake|TN" })
+        var o = LakeBrainRunOptions(); o.force = true
+        let slope = -5.0 / 24
+        let nowB = iso("2026-12-10T12:00:00Z"), nowC = nowB.addingTimeInterval(86_400)
+        for rows in [10, 0] {
+            let few = (0..<rows).map { DailyLevel(date: LakeLevelCalendar.dayString(nowB.addingTimeInterval(-Double($0 + 1) * 86_400), timeZone: utc), ft: 950, sourceId: "tva:operating-guide:DUGT1") }
+            // Run B: the lake is just leaving the band (19 h below it): verified, publishable as an anchor.
+            let b = await LakeBrainRunner.evaluateLake(lake, feeds: LedgerFeeds(history: few, liveFt: 940, slopePerHour: slope), archive: nil, presence: nil,
+                                                       published: nil, previousProfile: nil, options: o, now: nowB)
+            let sb = try XCTUnwrap(b.state)
+            XCTAssertEqual(sb.currentElevationFt, 940, "rows \(rows)")
+            XCTAssertFalse((sb.provenance.qualityFlags ?? []).contains { $0.hasPrefix("levelUnverified") || $0.hasPrefix("implausible") }, "rows \(rows)")
+            XCTAssertNotNil(LakeBrainRunner.anchor(sb))
+            // Run C a day later: 43 h below the band, so it re-centres; linked to run B's value by continuity → still verified.
+            let c = await LakeBrainRunner.evaluateLake(lake, feeds: LedgerFeeds(history: few, liveFt: 935, slopePerHour: slope), archive: nil, presence: nil,
+                                                       published: sb, previousProfile: b.profile, options: o, now: nowC)
+            let sc = try XCTUnwrap(c.state)
+            XCTAssertEqual(sc.kind, .observed)
+            XCTAssertEqual(sc.currentElevationFt, 935, "rows \(rows)")
+            XCTAssertFalse((sc.provenance.qualityFlags ?? []).contains { $0.hasPrefix("levelUnverified") || $0.hasPrefix("implausible") }, "rows \(rows): \(sc.provenance.qualityFlags ?? [])")
+            // With no anchor the same run is published but flagged, never UNAVAILABLE.
+            let u = await LakeBrainRunner.evaluateLake(lake, feeds: LedgerFeeds(history: few, liveFt: 935, slopePerHour: slope), archive: nil, presence: nil,
+                                                       published: nil, previousProfile: nil, options: o, now: nowC)
+            XCTAssertEqual(u.state?.currentElevationFt, 935)
+            XCTAssertTrue((u.state?.provenance.qualityFlags ?? []).contains { $0.hasPrefix("levelUnverified") }, "rows \(rows)")
+        }
+    }
+
     func testAProxyFloodTenfoldIsPublished() {
         // A river gauge used as a proxy: 2 ft → 20 ft over 36 h. No lake reference, no decade rule.
         let p = LevelSeriesRef(provider: .usgs, capability: .nearbyGaugeProxy, station: "RIV", series: "00065", cadenceMin: 60, lagMin: 60)

@@ -24,7 +24,7 @@ Repository: Sector-Bowfishing/sector_engine · Branch: fix/lake-level-plausibili
 | Tests | Safe | `brains/lake/tests/swift/LakeLevelPlausibilityTests.swift` | 46af638e |
 | Certification + engineering-status digests | Record | `docs/cortex/engineering-status/**` | this branch |
 
-> **Superseded (2026-11-23):** the rule below is the first version (commit 46af638e). The shipped behaviour is the one in §7–§10 and in `docs/brains/LAKE_BRAIN_INTEGRATION.md` §7 (rules 0, D, 1, 2; anchor; `levelUnverified`; flags without raw values; rejections as run warnings).
+> **Superseded (2026-11-23):** the rule below is the first version (commit 46af638e). The shipped behaviour is the one in §7–§11 and in `docs/brains/LAKE_BRAIN_INTEGRATION.md` §7 (rules 0, D, 1, 2; anchor; `levelUnverified`; flags without raw values; rejections as run warnings).
 
 **Rule chosen in the first version (reversible choices, stated):** band = p01–p99 of the lake's own daily history (+ directory full pool when it agrees) ± max(that range, 50 ft); full pool ± 50 ft without history; re-centred on the series median when fewer than half of the series is inside (another datum, the `historyLiveMismatch` lakes); step > 10 ft (= `spikeToleranceFt`) + 2 ft/h × gap; absolute −300…14,505 ft backstop. The shown value falls back by the existing selection (last valid reading within the source's stale rule, else the next bound source). Flags: `implausibleReading:<src>@<t>=<raw>` (≤ 5 + count), `implausibleLatestRejected:<src>`, `allReadingsImplausible`.
 
@@ -88,3 +88,9 @@ Sweep: the revisions add no rejection path without an anchor (the committed prob
 | LOW §3 out of date | Marked superseded, pointing here |
 
 **Run golden (`brains/lake/tests/golden/lake_run_updates.json`) changes, deliberately:** its FakeFeeds lakes have no history and a flat 593.8 ft; three of them have a directory full pool more than 50 ft away (Pickwick 414, Wilson 507.7, Hartwell 660), so their band is re-centred on a full-pool-only reference and they are now honestly `levelUnverified:<src>` with a `level-unverified` profile issue (`issueCount` 1). No Swift toolchain here: the golden was edited surgically (flag first in `qualityFlags`, issue object in sorted-key order) and is verified by `LakePublicationFixtureTests` in CI. Python consumers of the golden: `jobs/brain_platform` 1011 passed, `brains/lake` 81 passed.
+
+## 11. Round-5 review fixes (PR #249 review at 82d5235)
+| Finding | Fix |
+|---|---|
+| MEDIUM a real winter drawdown at a no-history lake (Ross) re-centred the band and was flagged `levelUnverified` for months | Verification carries forward by continuity: a re-centred, full-pool-only source is verified when every accepted reading since a VERIFIED anchor follows the previous one within 1 ft + 2 ft/h (`continuouslyLinked`). Test: Ross hourly 1,560 → 1,500 ft at 0.25 ft/h over 10 days, a run every 6 h, each run anchored by the previous one: unflagged on every run; the same series with no anchor is flagged. The 26 ft and metres-feed tests stay flagged (no verified anchor) |
+| LOW TVA operating-guide history short or absent | Runner-level test for Douglas Lake (full pool 993.88) with 10 and 0 guide rows: run B (19 h below the band) verified; run C a day later (re-centred) verified through run B's anchor; the same run with no anchor published and flagged. The guard does not depend on the TVA source (its robots.txt disallows automated reads; removal is Michael's pending decision) |
