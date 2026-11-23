@@ -187,9 +187,13 @@ class Http:
         raise RuntimeError(f"{err} after {self.attempts} attempts: {url}")
 
 
+_SAVED = [0]                                                           # files saved by the running step (in-memory count)
+
+
 def _save(root: str, rel: str, data: bytes, prov: list, source: str, **extra) -> None:
     path = os.path.join(root, rel)
     os.makedirs(os.path.dirname(path), exist_ok=True)
+    _SAVED[0] += 1                                                     # counted before the write: a partial file is a saved file
     with open(path, "wb") as fh:
         fh.write(data)
     prov.append({"file": rel, "source": source, "sha256": sha256_bytes(data), "bytes": len(data), "fetchedAt": _now_iso(), **extra})
@@ -240,7 +244,10 @@ def _new_stage(run: str, stage: str) -> str:
     try:
         os.makedirs(d, exist_ok=False)
     except FileExistsError:
-        raise SystemExit(f"REFUSED: {d} exists; every run output is write-once (start a new run folder)") from None
+        raise SystemExit(f"REFUSED: {d} exists; every run output is write-once, and the run ledger lets each step complete once. A step "
+                         f"aborted before it saved any file removes its empty folder and may be retried here; a step that saved a file "
+                         f"stays STARTED (terminal): recovery needs a new protocol id AND a revised protocol document recorded in a #51 "
+                         f"human review") from None
     return d
 
 
@@ -281,15 +288,35 @@ def _require_stage(L, run: str, stage: str) -> str:
     return have
 
 
-def _ledger_step(run: str, step: str, inputs: dict, work) -> int:
-    """A non-result ledger step: begin (anchor checked by the ledger), work, complete with the stage tree hash. An exception before
-    complete aborts the attempt (nothing compared) and is re-raised; the stage folder stays, so the step cannot be redone in this run."""
+def _has_files(path: str) -> bool:
+    if os.path.isfile(path):
+        return True
+    return any(files for _, _, files in os.walk(path)) if os.path.isdir(path) else False
+
+
+def _ledger_step(run: str, step: str, inputs: dict, work, out_path: str) -> int:
+    """A non-result ledger step: begin (anchor checked by the ledger), work, complete with the output hash.
+
+    On an exception (including an interrupt) before complete:
+      * nothing saved yet (no file under ``out_path`` AND the in-memory save count is 0): the attempt is aborted before any result, the
+        empty stage folder is removed, and the step may be retried (the ledger gives it the next attempt number);
+      * a file was saved: the attempt is left STARTED, which the ledger treats as terminal. A retry would refetch a moving 7-day window
+        and could change FETCH_FAILED / COVERAGE_FLOOR flags, so it is never allowed: recovery needs a new protocol id AND a revised
+        protocol document recorded in a #51 human review."""
     L = open_ledger(run)
     L.begin(step, KEY, args={}, inputs=inputs)
+    _SAVED[0] = 0
     try:
         outputs = work()
     except BaseException as e:
-        L.abort_before_result(step, KEY, f"{type(e).__name__}: {e}"[:500] or "aborted")
+        if _SAVED[0] == 0 and not _has_files(out_path):
+            L.abort_before_result(step, KEY, f"{type(e).__name__} before any file was saved: {e}"[:500])
+            if os.path.isdir(out_path):
+                os.rmdir(out_path)                                       # empty: created by this attempt, nothing in it
+        else:
+            print(f"TERMINAL: {step} saved {_SAVED[0]} file(s) under {out_path} before {type(e).__name__}; the ledger attempt stays "
+                  f"STARTED and this step can never run again under {EXPECTED_PROTOCOL_ID}. Recovery needs a new protocol id AND a "
+                  f"revised protocol document recorded in a #51 human review. Do not delete or edit the run folder.", file=sys.stderr)
         raise
     L.complete(step, KEY, outputs=outputs)
     return 0
@@ -305,7 +332,7 @@ def cmd_fetch_stations(a) -> int:
     load_protocol()
     if os.path.exists(os.path.join(a.run, "stations")):
         raise SystemExit(f"REFUSED: {a.run}/stations exists; every run output is write-once")
-    return _ledger_step(a.run, "fetch-stations", {}, lambda: _fetch_stations(a.run))
+    return _ledger_step(a.run, "fetch-stations", {}, lambda: _fetch_stations(a.run), os.path.join(a.run, "stations"))
 
 
 def _fetch_stations(run: str) -> dict:
@@ -375,7 +402,7 @@ def cmd_fetch_asos(a) -> int:
     L = open_ledger(a.run)
     _require_stage(L, a.run, "stations")
     return _ledger_step(a.run, "fetch-asos", {"stations": PRL.Path(a.run, "stations")} | {"stations.json": PRL.Path(a.run, "stations", "stations.json")},
-                        lambda: _fetch_asos(a.run))
+                        lambda: _fetch_asos(a.run), os.path.join(a.run, "asos"))
 
 
 def _fetch_asos(run: str) -> dict:
@@ -404,7 +431,7 @@ def cmd_fetch_recent(a) -> int:
     L = open_ledger(a.run)
     _require_stage(L, a.run, "stations")
     return _ledger_step(a.run, "fetch-recent", {"stations": PRL.Path(a.run, "stations")} | {"stations.json": PRL.Path(a.run, "stations", "stations.json")},
-                        lambda: _fetch_recent(a.run))
+                        lambda: _fetch_recent(a.run), os.path.join(a.run, "recent"))
 
 
 def _fetch_recent(run: str) -> dict:
@@ -442,7 +469,7 @@ def cmd_fetch_fronts(a) -> int:
     L = open_ledger(a.run)
     _require_stage(L, a.run, "stations")
     return _ledger_step(a.run, "fetch-fronts", {"stations": PRL.Path(a.run, "stations")} | {"stations.json": PRL.Path(a.run, "stations", "stations.json")},
-                        lambda: _fetch_fronts(a.run))
+                        lambda: _fetch_fronts(a.run), os.path.join(a.run, "fronts"))
 
 
 def _fetch_fronts(run: str) -> dict:
@@ -1332,7 +1359,7 @@ def cmd_bind(a) -> int:
                           "substitution": m["substitution"]["status"], "fronts": m["fronts"]["status"], "manifestSha256": sha256_file(out)}))
         return {"run-manifest.json": PRL.Path(out)}
 
-    return _ledger_step(a.run, "bind", trees, work)
+    return _ledger_step(a.run, "bind", trees, work, out)
 
 
 def _post_hook(kind: str, text: str, run: str) -> None:

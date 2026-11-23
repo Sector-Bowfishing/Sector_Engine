@@ -773,3 +773,76 @@ def test_a_front_episode_overlapping_the_fixture_span_is_excluded(tmp_path):
                           "000", "ASUS01 KWBC 071800", "CODSUS", "VALID 110718Z", "COLD 3500863 3400863", ""])
     fp = R.build().grade()["R-5.3"]["FRONT_PASSAGE"]
     assert fp["truthEvents"] == 1                                                              # only the 18Z episode remains
+
+
+def _stations_only(tmp_path, ledgered):
+    """A run whose stations stage is complete in the ledger and whose fronts stage does not exist yet."""
+    R = _real_run(tmp_path)
+    shutil.rmtree(os.path.join(R.run, "fronts"))
+    L = _anchor(ledgered, R.run)
+    L.begin("fetch-stations", W.KEY, args={}, inputs={})
+    L.complete("fetch-stations", W.KEY, outputs={"stations": Path(R.run, "stations")})
+    return R
+
+
+def _good_fronts(run):
+    d = W._new_stage(run, "fronts")
+    prov = []
+    W._save(d, "codsus.txt", b"", prov, "https://mesonet.agron.iastate.edu/x", kind="fronts")
+    W._write_prov(d, prov)
+    return {"fronts": Path(d)}
+
+
+def test_an_interrupt_before_the_first_save_aborts_and_the_retry_is_allowed(tmp_path, ledgered, monkeypatch):
+    R = _stations_only(tmp_path, ledgered)
+
+    def interrupted(run):
+        W._new_stage(run, "fronts")
+        raise KeyboardInterrupt("operator")
+    monkeypatch.setattr(W, "_fetch_fronts", interrupted)
+    with pytest.raises(KeyboardInterrupt):
+        W.main(["fetch-fronts", "--run", R.run])
+    ents = [e for e in ledgered["open"](R.run).entries() if e["step"] == "fetch-fronts"]
+    assert [e["status"] for e in ents] == ["STARTED", "ABORTED_BEFORE_RESULT"]
+    assert not os.path.exists(os.path.join(R.run, "fronts"))                 # the empty stage folder is removed
+    monkeypatch.setattr(W, "_fetch_fronts", _good_fronts)
+    assert W.main(["fetch-fronts", "--run", R.run]) == 0
+    ents = [e for e in ledgered["open"](R.run).entries() if e["step"] == "fetch-fronts"]
+    assert ents[-1]["status"] == "COMPLETED" and ents[-1]["run"] == 2
+
+
+def test_an_interrupt_after_one_save_is_terminal_and_the_retry_is_refused(tmp_path, ledgered, monkeypatch, capsys):
+    R = _stations_only(tmp_path, ledgered)
+
+    def interrupted(run):
+        d = W._new_stage(run, "fronts")
+        W._save(d, "codsus.txt", b"VALID 111015Z\n", [], "https://mesonet.agron.iastate.edu/x", kind="fronts")
+        raise KeyboardInterrupt("operator")
+    monkeypatch.setattr(W, "_fetch_fronts", interrupted)
+    with pytest.raises(KeyboardInterrupt):
+        W.main(["fetch-fronts", "--run", R.run])
+    assert "new protocol id" in capsys.readouterr().err
+    ents = [e for e in ledgered["open"](R.run).entries() if e["step"] == "fetch-fronts"]
+    assert [e["status"] for e in ents] == ["STARTED"]                        # left open: terminal
+    assert os.path.exists(os.path.join(R.run, "fronts", "codsus.txt"))      # nothing deleted
+    monkeypatch.setattr(W, "_fetch_fronts", _good_fronts)
+    with pytest.raises(SystemExit, match="exists"):
+        W.main(["fetch-fronts", "--run", R.run])
+    shutil.rmtree(os.path.join(R.run, "fronts"))                             # even with the folder gone, the ledger refuses
+    with pytest.raises(W.PRL.LedgerRefusal, match="never completed"):
+        W.main(["fetch-fronts", "--run", R.run])
+
+
+def test_a_saved_file_counts_even_if_the_folder_was_emptied(tmp_path, ledgered, monkeypatch):
+    R = _stations_only(tmp_path, ledgered)
+
+    def interrupted(run):
+        d = W._new_stage(run, "fronts")
+        W._save(d, "codsus.txt", b"x", [], "https://mesonet.agron.iastate.edu/x", kind="fronts")
+        os.remove(os.path.join(d, "codsus.txt"))
+        raise RuntimeError("boom")
+    monkeypatch.setattr(W, "_fetch_fronts", interrupted)
+    with pytest.raises(RuntimeError):
+        W.main(["fetch-fronts", "--run", R.run])
+    ents = [e for e in ledgered["open"](R.run).entries() if e["step"] == "fetch-fronts"]
+    assert [e["status"] for e in ents] == ["STARTED"]                        # the in-memory save count decides too
