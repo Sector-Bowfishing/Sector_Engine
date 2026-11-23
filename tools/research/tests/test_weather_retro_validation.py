@@ -1,4 +1,4 @@
-"""Offline tests for the Weather retrospective validation runner (protocol WX-RETRO-2026-11-23.2; v1 superseded). No network: every input is a fixture.
+"""Offline tests for the Weather retrospective validation runner (protocol WX-RETRO-2026-11-23.3; .2 and v1 superseded). No network: every input is a fixture.
 Synthetic archive rows are labelled SYNTHETIC; the NWS responses are the Weather Brain's RECORDED fixtures of 2026-11-06."""
 import copy
 import json
@@ -26,17 +26,31 @@ def rec(name):
 # ------------------------------------------------------------------------------------------------ protocol
 def test_protocol_hash_verifies_and_matches_the_registered_value():
     p, d = W.load_protocol()
-    assert p["protocolId"] == "WX-RETRO-2026-11-23.2"
+    assert p["protocolId"] == "WX-RETRO-2026-11-23.3"
     assert d == open(W.PROTOCOL + ".sha256").read().split()[0]
     assert p["status"] == "PRE-REGISTERED" and "RETROSPECTIVE" in p["labels"]
 
 
-def test_v1_is_kept_unchanged_and_superseded():
-    v1 = os.path.join(os.path.dirname(W.PROTOCOL), "WX-RETRO-2026-11-23.protocol.json")
-    p1, d1 = W.load_protocol(v1)                                                             # its hash still verifies
-    assert d1 == "6e08d42ed7e808a7a9775e885f865233e7ba2bb2279e4fbb8e0171634ed37ab8"
+def test_superseded_protocols_are_kept_unchanged_and_refused():
+    d = os.path.dirname(W.PROTOCOL)
+    for name, digest in (("WX-RETRO-2026-11-23.protocol.json", "6e08d42ed7e808a7a9775e885f865233e7ba2bb2279e4fbb8e0171634ed37ab8"),
+                         ("WX-RETRO-2026-11-23.2.protocol.json", "01eac7bc56033154dcf64ee365826a0da1c4d33cd921cec7ec76e79df48eb58c")):
+        path = os.path.join(d, name)
+        assert W.sha256_file(path) == digest == open(path + ".sha256").read().split()[0]   # byte-identical
+        with pytest.raises(SystemExit, match="SUPERSEDED"):
+            W.load_protocol(path)
     p, _ = W.load_protocol()
-    assert p["supersedes"]["sha256"] == d1 and W.PROTOCOL != v1
+    assert {x["sha256"] for x in p["supersedes"]} == W.SUPERSEDED_SHA256
+
+
+def test_a_protocol_with_another_id_or_superseded_status_is_refused(tmp_path):
+    p = json.load(open(W.PROTOCOL))
+    for change, msg in (({"protocolId": "WX-RETRO-2026-11-23.4"}, "is not"), ({"status": "SUPERSEDED"}, "SUPERSEDED")):
+        f = tmp_path / f"p{len(msg)}.json"
+        f.write_text(json.dumps(p | change))
+        (tmp_path / (f.name + ".sha256")).write_text(W.sha256_file(str(f)) + "  x\n")
+        with pytest.raises(SystemExit, match=msg):
+            W.load_protocol(str(f))
 
 
 def test_disclosed_fixtures_are_excluded_spans():
@@ -63,6 +77,10 @@ def test_protocol_marks_are_the_plans():
     assert "NOT the plan's 5.1" in c["R-5.1R"]["plan"]
     assert "ALL truth" in c["R-5.3"]["RAIN_ONSET"]["PODpopulation"] and "ALL episodes" in c["R-5.3"]["FRONT_PASSAGE"]["PODpopulation"]
     assert "<= 1.0 hPa" in c["R-5.2"]["metrics"]["pressureMAE"] and ">= 0.80" in c["R-5.2"]["metrics"]["trend3hAgreement"]
+    assert "COUNTS AS A DISAGREEMENT" in c["R-5.2"]["metrics"]["trend3hAgreement"] and "unknown counts against" in p["unknownsRule"]
+    g = p["substitutionCheck"]["gating"]
+    assert "seaLevelPressure" in g["R-5.2"] and "seaLevelPressure" in g["R-5.3.FRONT_PASSAGE"]
+    assert {"wetPrecipitation", "wetPresentWeatherPresence"} <= set(g["R-5.3.RAIN_ONSET"])
     assert "<= 3.0 deg F" in c["R-5.2"]["metrics"]["airTempMAE"]
     assert c["R-5.3"]["RAIN_ONSET"]["pass"] == "POD >= 0.8 and FAR <= 0.3"
     assert c["R-5.3"]["FRONT_PASSAGE"]["pass"] == "POD >= 0.6 and FAR <= 0.4"
@@ -89,7 +107,8 @@ def test_redirects_are_refused():
     import urllib.request
     with pytest.raises(RuntimeError, match="REFUSED redirect"):
         W._NoRedirect().redirect_request(urllib.request.Request("https://api.weather.gov/x"), None, 301, "Moved", {}, "https://elsewhere.example/")
-    assert W.USER_AGENT.startswith("Sector-WeatherRetroValidation/0.2") or os.environ.get("SECTOR_WEATHER_USER_AGENT")
+    p, _ = W.load_protocol()
+    assert os.environ.get("SECTOR_WEATHER_USER_AGENT") or W.USER_AGENT in p["execution"]["userAgent"]        # runner and protocol agree
 
 
 # ------------------------------------------------------------------------------------------------ station selection (recorded NWS list)
@@ -228,39 +247,91 @@ def test_front_distance_and_episodes():
 
 
 # ------------------------------------------------------------------------------------------------ substitution check (recorded NWS vs adapter)
-def test_substitution_check_agrees_when_the_archive_carries_the_same_reports(tmp_path):
-    nws = W.decode_observations(rec("guntersville-obs-KBFZ.json"))
-    assert nws
+def _recent_dir(root, stations, iem_rows, nws_docs, minutes_apart=1, errors=()):
+    """A fetch-recent output folder: iem/<id>.csv, nws/<id>.json and provenance.json with fetch times."""
+    (root / "iem").mkdir(parents=True, exist_ok=True)
+    (root / "nws").mkdir(parents=True, exist_ok=True)
+    items, t0 = [], datetime(2026, 11, 23, 12, 0, tzinfo=UTC)
+    for s_ in stations:
+        if s_ in iem_rows:
+            (root / "iem" / f"{s_}.csv").write_text("\n".join(iem_rows[s_]))
+        items.append({"station": s_, "kind": "iem", "file": f"iem/{s_}.csv", "fetchedAt": t0.strftime("%Y-%m-%dT%H:%M:%SZ")})
+        it = {"station": s_, "kind": "nws", "file": f"nws/{s_}.json",
+              "fetchedAt": (t0 + timedelta(minutes=minutes_apart)).strftime("%Y-%m-%dT%H:%M:%SZ")}
+        if s_ in errors:
+            it["error"] = "HTTP 500 after 4 attempts"
+        elif s_ in nws_docs:
+            (root / "nws" / f"{s_}.json").write_text(json.dumps(nws_docs[s_]))
+        items.append(it)
+    (root / "provenance.json").write_text(json.dumps({"items": items}))
+    return str(root)
+
+
+def _iem_copy_of(nws, sid):
     rows = [HEADER]
+    f = lambda v, nd=2: "null" if v is None else f"{v:.{nd}f}"  # noqa: E731
     for o in nws:
-        f = lambda v, nd=2: "null" if v is None else f"{v:.{nd}f}"  # noqa: E731
         alti = None if o.alt_hpa is None else round(o.alt_hpa * 0.0295299830714, 2)
-        rows.append(",".join(["BFZ", o.at.strftime("%Y-%m-%d %H:%M"), f(o.temp_f), f(o.dew_f), f(o.rh), "null", "null",
+        rows.append(",".join([W.iem_id(sid), o.at.strftime("%Y-%m-%d %H:%M"), f(o.temp_f), f(o.dew_f), f(o.rh), "null", "null",
                               f(alti), f(o.slp_hpa), f(o.precip_1h_in, 4), "null", "null", "null", "null", "null"]))
-    (tmp_path / "recent").mkdir()
-    (tmp_path / "recent" / "KBFZ.csv").write_text("\n".join(rows))
-    (tmp_path / "nws").mkdir()
-    shutil.copy(os.path.join(REC, "guntersville-obs-KBFZ.json"), tmp_path / "nws" / "KBFZ.json")
-    r = W.substitution_check(["KBFZ"], W.Archive(str(tmp_path / "recent")), str(tmp_path / "nws"))
+    return rows
+
+
+def test_substitution_check_agrees_when_the_archive_carries_the_same_reports(tmp_path):
+    doc = rec("guntersville-obs-KBFZ.json")
+    nws = W.decode_observations(doc)
+    assert nws
+    r = W.substitution_check(["KBFZ"], _recent_dir(tmp_path / "r", ["KBFZ"], {"KBFZ": _iem_copy_of(nws, "KBFZ")}, {"KBFZ": doc}))
     m = r["metrics"]
     assert r["coverage"]["share"] == 1.0 and m["temperature"]["value"]["agreement"] == 1.0
     assert m["pressure"]["value"]["pairs"] == 0 or m["pressure"]["value"]["agreement"] == 1.0
-    assert set(m) >= {"temperature", "dewPoint", "pressure", "windSpeed", "windDirection", "precipitation", "presentWeatherPresence"}
+    assert set(m) >= {"temperature", "dewPoint", "pressure", "seaLevelPressure", "windSpeed", "windDirection", "precipitation",
+                      "presentWeatherPresence", "wetPrecipitation", "wetPresentWeatherPresence"}
+    assert "null" in m["seaLevelPressure"] and "null" not in m["wetPrecipitation"]
+    assert m["wetPrecipitation"]["value"]["marks"] == {"agreement>=": 0.95, "minPairs": 200}
     assert m["windSpeed"]["null"]["agreement"] < 1.0                                         # wind left null in the archive copy: measured
     assert m["temperature"]["value"]["result"] == "INSUFFICIENT"                             # < 1000 pairs
     g = W.gates(r)
     assert not g["R-5.2"]["ok"] and "temperature" in g["R-5.2"]["notPassing"]
-    assert r["flaggedStations"] == []
-    assert W.substitution_check(["K8A1"], W.Archive(None), None)["result"] == "NOT_GRADED"
+    assert r["flaggedStations"] == {}
+    assert W.substitution_check(["K8A1"], None)["result"] == "NOT_GRADED"
+
+
+def test_substitution_check_is_not_graded_when_fetches_are_not_contemporaneous(tmp_path):
+    doc = rec("guntersville-obs-KBFZ.json")
+    rows = {"KBFZ": _iem_copy_of(W.decode_observations(doc), "KBFZ")}
+    r = W.substitution_check(["KBFZ"], _recent_dir(tmp_path / "r", ["KBFZ"], rows, {"KBFZ": doc}, minutes_apart=61))
+    assert r["result"] == "NOT_GRADED" and r["reason"].startswith("FETCH_NOT_CONTEMPORANEOUS")
+    assert not any(v["ok"] for v in W.gates(r).values())
+    r = W.substitution_check(["KBFZ"], _recent_dir(tmp_path / "s", ["KBFZ"], rows, {"KBFZ": doc}, minutes_apart=59))
+    assert not r.get("reason", "").startswith("FETCH_NOT_CONTEMPORANEOUS")
+
+
+def test_a_failed_nws_fetch_is_flagged_never_skipped(tmp_path):
+    doc = rec("guntersville-obs-KBFZ.json")
+    rows = {"KBFZ": _iem_copy_of(W.decode_observations(doc), "KBFZ"), "K4A6": [HEADER]}
+    r = W.substitution_check(["KBFZ", "K4A6", "K8A1"], _recent_dir(tmp_path / "r", ["KBFZ", "K4A6", "K8A1"], rows, {"KBFZ": doc},
+                                                                    errors=("K4A6",)))
+    assert r["flaggedStations"] == {"K4A6": "FETCH_FAILED", "K8A1": "FETCH_FAILED"}           # an error, and a missing response file
+    assert "HTTP 500" in r["perStation"]["K4A6"]["fetchFailed"][0]
 
 
 def test_gates_need_value_and_null_agreement_and_coverage():
     ok = {"value": {"result": "PASS"}, "null": {"result": "PASS"}}
-    sub = {"coverage": {"result": "PASS"}, "metrics": {k: dict(ok) for k in W.SUB_FIELDS} | {"presentWeatherPresence": {"value": {"result": "PASS"}}}}
+    sub = {"coverage": {"result": "PASS"}, "metrics": {k: dict(ok) for k in W.SUB_FIELDS} | {
+        k: {"value": {"result": "PASS"}} for k in ("presentWeatherPresence", *W.WET_METRICS)}}
     assert all(v["ok"] for v in W.gates(sub).values())
     sub["metrics"]["windDirection"] = {"value": {"result": "PASS"}, "null": {"result": "FAIL"}}
     g = W.gates(sub)
     assert not g["R-5.3.FRONT_PASSAGE"]["ok"] and g["R-5.3.RAIN_ONSET"]["ok"] and g["R-5.2"]["ok"]
+    sub["metrics"]["windDirection"] = dict(ok)
+    sub["metrics"]["seaLevelPressure"] = {"value": {"result": "FAIL"}, "null": {"result": "PASS"}}
+    g = W.gates(sub)
+    assert not g["R-5.2"]["ok"] and not g["R-5.3.FRONT_PASSAGE"]["ok"] and g["R-5.3.RAIN_ONSET"]["ok"]
+    sub["metrics"]["seaLevelPressure"] = dict(ok)
+    sub["metrics"]["wetPrecipitation"] = {"value": {"result": "INSUFFICIENT"}}
+    g = W.gates(sub)
+    assert not g["R-5.3.RAIN_ONSET"]["ok"] and g["R-5.2"]["ok"]
     sub["coverage"]["result"] = "FAIL"
     assert not any(v["ok"] for v in W.gates(sub).values())
 
@@ -269,14 +340,9 @@ def test_a_station_below_the_coverage_floor_is_flagged(tmp_path):
     base = datetime(2026, 11, 20, 0, 53, tzinfo=UTC)
     feats = [{"properties": {"station": "https://api.weather.gov/stations/KLOW", "timestamp": (base + timedelta(hours=h)).isoformat(),
                              "temperature": {"unitCode": "wmoUnit:degC", "value": 10.0}}} for h in range(30)]
-    (tmp_path / "nws").mkdir()
-    (tmp_path / "nws" / "KLOW.json").write_text(json.dumps({"features": feats}))
-    (tmp_path / "recent").mkdir()
     rows = [HEADER] + [f"KLOW,{(base + timedelta(hours=h)).strftime('%Y-%m-%d %H:%M')},50.00" + ",null" * 12 for h in range(10)]
-    (tmp_path / "recent" / "KLOW.csv").write_text("\n".join(rows))
-    r = W.substitution_check(["KLOW"], W.Archive(str(tmp_path / "recent")), str(tmp_path / "nws"))
-    assert r["flaggedStations"] == ["KLOW"] and r["perStation"]["KLOW"]["coverage"] == pytest.approx(10 / 30, abs=1e-3)
-
+    r = W.substitution_check(["KLOW"], _recent_dir(tmp_path / "r", ["KLOW"], {"KLOW": rows}, {"KLOW": {"features": feats}}))
+    assert r["flaggedStations"] == {"KLOW": "COVERAGE_FLOOR"} and r["perStation"]["KLOW"]["coverage"] == pytest.approx(10 / 30, abs=1e-3)
 
 # ------------------------------------------------------------------------------------------------ end to end (SYNTHETIC archive)
 def _write_station(path, sid, start, hours, rain_from=None, temp=60.0, alti=30.00, step=0.0, gap=None, shift_at=None):
@@ -420,3 +486,46 @@ def test_front_hits_and_unjudgeable_brain_fronts_are_kept_out_of_far(tmp_path):
     assert a["brainEvents"] == 1 and a["hits"] == 1 and a["truthEvents"] == 1 and a["detected"] == 1
     b = W.grade(p, doc, str(tmp_path / "asos"), None, far)["R-5.3"]["FRONT_PASSAGE"]
     assert b["unjudgeableBrainEventsExcludedFromFAR"] == 1 and b["brainEvents"] == 0 and b["truthEvents"] == 0
+
+
+def test_a_null_brain_trend_counts_against_the_brain_and_availability_is_reported(tmp_path):
+    p, doc, win, ind = _setup(tmp_path, "2026-11-10T00:00:00Z", "2026-11-11T00:00:00Z")
+    start = datetime(2026, 11, 9, 10, 53, tzinfo=UTC)
+    gap = (datetime(2026, 11, 10, 6, 0, tzinfo=UTC), datetime(2026, 11, 10, 12, 0, tzinfo=UTC))   # the Brain's stations are silent 6 h
+    for s_ in ("K8A1", "KBFZ", "K4A6"):
+        _write_station(win, s_, start, 42, gap=gap)
+    _write_station(win, ind, start, 42)
+    r52 = W.grade(p, doc, str(tmp_path / "asos"))["R-5.2"]
+    tr, av, tc = r52["trend3hAgreement"], r52["brainAvailability"], r52["trendCounts"]
+    assert tc["brainTrendNullCountedAsDisagreement"] > 0 and tc["truthNoReportExcluded"] == 0
+    assert tr["value"] < 1.0                                                                   # every truth trend is steady like the Brain's
+    agree = sum(1 for _ in range(tr["pairs"])) - tc["brainTrendNullCountedAsDisagreement"]
+    assert tr["value"] == pytest.approx(agree / tr["pairs"], abs=1e-4)
+    assert av["pressure"]["instants"] == 24 and av["pressure"]["share"] < 1.0                 # unknowns stay in the denominator
+    assert av["airTemperature"]["share"] == av["pressure"]["share"]
+
+
+def test_a_lake_whose_brain_station_fetch_failed_is_excluded_and_counted(tmp_path):
+    p, doc, win, ind = _setup(tmp_path, "2026-11-10T00:00:00Z", "2026-11-11T00:00:00Z")
+    start = datetime(2026, 11, 9, 10, 53, tzinfo=UTC)
+    for s_ in ("K8A1", "KBFZ", "K4A6", ind):
+        _write_station(win, s_, start, 42)
+    sts = [s_["id"] for s_ in doc["lakes"][0]["brainStations"]] + [c["id"] for c in doc["lakes"][0]["candidates"]]
+    rd = _recent_dir(tmp_path / "recent", sts, {s_: [HEADER] for s_ in sts}, {s_: {"features": []} for s_ in sts}, errors=("KBFZ",))
+    r = W.grade(p, doc, str(tmp_path / "asos"), rd)
+    assert r["R-SUB"]["flaggedStations"]["KBFZ"] == "FETCH_FAILED"
+    assert r["lakes"]["excluded"]["SUBSTITUTION_FETCH_FAILED"] == 1 and r["R-5.1R"]["values"] == 0
+
+
+def test_a_front_episode_overlapping_the_fixture_span_is_excluded(tmp_path):
+    lake = {"id": "Guntersville|AL", "lat": 34.42, "lon": -86.26}
+    p, doc, win, ind = _setup(tmp_path, "2026-11-06T00:00:00Z", "2026-11-08T00:00:00Z", lake=lake)
+    start = datetime(2026, 11, 5, 10, 53, tzinfo=UTC)
+    for s_ in ("K8A1", "KBFZ", "K4A6", ind):
+        _write_station(win, s_, start, 66)
+    # an episode at 11-07 01Z..02Z: both endpoints are after the span (ends 11-07 00Z), but its +/- 3 h window overlaps it
+    txt = "\n".join(["000", "ASUS01 KWBC 070100", "CODSUS", "VALID 110701Z", "COLD 3500863 3400863",
+                     "000", "ASUS01 KWBC 070400", "CODSUS", "VALID 110704Z", "COLD 3500863 3400863",
+                     "000", "ASUS01 KWBC 071800", "CODSUS", "VALID 110718Z", "COLD 3500863 3400863", ""])
+    fp = W.grade(p, doc, str(tmp_path / "asos"), None, txt)["R-5.3"]["FRONT_PASSAGE"]
+    assert fp["truthEvents"] == 1                                                              # only the 18Z episode remains

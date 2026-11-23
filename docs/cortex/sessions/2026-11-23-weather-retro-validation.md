@@ -80,3 +80,18 @@ Merged `origin/main` (no force-push). Still nothing fetched, so the protocol was
 | LOW UA / redirects / bytecode | One User-Agent (`SECTOR_WEATHER_USER_AGENT` or `Sector-WeatherRetroValidation/0.2 …`) for all hosts, stated in the protocol; redirects refused; Mini runs with `PYTHONDONTWRITEBYTECODE=1`, `python3 -I` |
 
 Gap renumbered CG-3.1-24 → CG-3.1-26 (collision with #244 / #245). Verification: 26 runner tests pass; `tools/research` 118 passed, 2 pre-existing failures (root permission); `verify` OK for v2 and v1; engineering-status digest regenerated and `--check` OK; Mini draft updated to v2.
+
+## Review round 3 (independent review of 951f6dd6: NOT CLEAN), re-registered as .3 before any data
+Still nothing fetched. **`WX-RETRO-2026-11-23.3`**, sha256 `492c1befe2707ce559c5999da7931548e69728c9fffadf16524813efdb5ec7c7`, committed **alone** in `90876982` (the protocol file only; its sidecar and the README followed in `978ca7c4`, the runner after). `.2` (`01eac7bc…`) and v1 (`6e08d42e…`) are byte-identical and marked SUPERSEDED in the folder README.
+
+| Finding | Fix |
+|---|---|
+| HIGH R-5.2 dropped pairs where the Brain's trend3h was null | Owner rule (unknowns count against the Brain) stated in `unknownsRule`. A null Brain trend counts as a disagreement; trend pairs are also formed at instants with no Brain pressure. Only truth-side gaps are excluded, counted separately (`truthNoReport`, `truthTrendNull`). `brainAvailability` (pressure and air temperature) is reported with every graded instant in the denominator |
+| MEDIUM superseded protocols loadable | `load_protocol` refuses any id other than `.3`, `status` SUPERSEDED, and the v1/.2 hashes; the test that loaded v1 now asserts both are refused and byte-identical |
+| MEDIUM failed NWS fetch silently skipped | `fetch-recent` records every error; a station with an error or no response file is FLAGGED `FETCH_FAILED`; its lakes are excluded and counted as `SUBSTITUTION_FETCH_FAILED` |
+| MEDIUM no SLP in R-SUB | `seaLevelPressure` value (≤ 0.15 hPa) and null agreement, gating R-5.2, FRONT_PASSAGE (and R-5.1R, which also reads mslp for its offset; choice stated here) |
+| MEDIUM no wet-conditioned agreement | `wetPrecipitation` and `wetPresentWeatherPresence` over pairs where either side shows precipitation: ≥ 200 pairs, ≥ 0.95, gating RAIN_ONSET |
+| LOW span overlap | a front episode whose matching window [first − 3 h, last + 3 h] overlaps the fixture span is excluded |
+| LOW contemporaneity | `fetch-asos` now fetches only the window; the new `fetch-recent` fetches the IEM archive and NWS for each station back to back; `grade` returns R-SUB NOT_GRADED (FETCH_NOT_CONTEMPORANEOUS) when any station's two fetch times are more than 1 h apart |
+
+Verification: 32 runner tests pass; `tools/research` 124 passed, 2 pre-existing failures (root permission); `verify` OK on `.3`; engineering-status digest regenerated, `--check` OK; Mini draft, plan §5.4, research README, GAPS lines and PR body cite `.3`. Temp files for edits and the PR body used unique names in the session scratchpad and were removed.

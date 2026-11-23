@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Weather Brain retrospective validation: read-only runner for protocol WX-RETRO-2026-11-23.2 (gaps WX-001, WX-002).
+"""Weather Brain retrospective validation: read-only runner for protocol WX-RETRO-2026-11-23.3 (gaps WX-001, WX-002).
 
-The protocol (docs/brains/weather-retro-validation/WX-RETRO-2026-11-23.2.protocol.json; v1 is SUPERSEDED and never run) amends WEATHER_BRAIN_PLAN.md section 5 to grade
+The protocol (docs/brains/weather-retro-validation/WX-RETRO-2026-11-23.3.protocol.json; .2 and v1 are SUPERSEDED, refused and never run) amends WEATHER_BRAIN_PLAN.md section 5 to grade
 the same criteria on a PAST window. It was pre-registered and hashed before any data was fetched. This runner replays the Brain's own
 pure logic (sector_weather.reading.assemble, sector_weather.signal.evaluate) on archived station reports. It only reads public sources and
 writes local files under --out. It never writes Firebase or any database, never changes a score, rubric, knowledge release or schedule.
 
     verify            check the protocol's sha256 against the committed sidecar
     fetch-stations    lake directory + NWS /points and station lists (the Brain's own station selection)
-    fetch-asos        IEM ASOS/AWOS archive per station for the protocol window, plus the last 7 days for the substitution check
-    fetch-nws-recent  NWS observation API, last 7 days, per Brain station (substitution check R-SUB)
+    fetch-asos        IEM ASOS/AWOS archive per station for the protocol window
+    fetch-recent      per station, back to back: IEM archive and NWS observation API for the last 7 days (substitution check R-SUB)
     fetch-fronts      WPC coded surface bulletins (CODSUS) from the IEM text-product archive
     grade             offline: R-SUB, R-5.1R, R-5.2, R-5.3 -> report.json (labels INTERNAL_EXPERIMENTAL, NOT_FOR_CUSTOMERS)
 """
@@ -42,14 +42,17 @@ from sector_weather.publish import _miles  # noqa: E402
 from sector_weather.reading import assemble, tendency  # noqa: E402
 from sector_weather.signal import evaluate  # noqa: E402
 
-PROTOCOL = os.path.join(REPO, "docs", "brains", "weather-retro-validation", "WX-RETRO-2026-11-23.2.protocol.json")
+PROTOCOL = os.path.join(REPO, "docs", "brains", "weather-retro-validation", "WX-RETRO-2026-11-23.3.protocol.json")
+EXPECTED_PROTOCOL_ID = "WX-RETRO-2026-11-23.3"
+SUPERSEDED_SHA256 = {"6e08d42ed7e808a7a9775e885f865233e7ba2bb2279e4fbb8e0171634ed37ab8",   # WX-RETRO-2026-11-23
+                     "01eac7bc56033154dcf64ee365826a0da1c4d33cd921cec7ec76e79df48eb58c"}   # WX-RETRO-2026-11-23.2
 LABELS = ["INTERNAL_EXPERIMENTAL", "NOT_FOR_CUSTOMERS", "RETROSPECTIVE"]
 ALLOWED_HOSTS = {"api.weather.gov", "mesonet.agron.iastate.edu", "sector-engine-e43utajroa-uc.a.run.app"}
 ENGINE = "https://sector-engine-e43utajroa-uc.a.run.app"
 IEM_ASOS = "https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py"
 IEM_AFOS = "https://mesonet.agron.iastate.edu/cgi-bin/afos/retrieve.py"
 NWS = "https://api.weather.gov"
-USER_AGENT = os.environ.get("SECTOR_WEATHER_USER_AGENT") or "Sector-WeatherRetroValidation/0.2 (io.sector.co; read-only public data)"
+USER_AGENT = os.environ.get("SECTOR_WEATHER_USER_AGENT") or "Sector-WeatherRetroValidation/0.3 (io.sector.co; read-only public data)"
 KT_TO_MPH = 1.150779
 INDEPENDENT_MAX_MI = 25.0
 FRONT_MAX_MI = 50.0
@@ -85,7 +88,8 @@ def tree_sha256(root: str) -> str | None:
 
 
 def load_protocol(path: str = PROTOCOL) -> tuple[dict, str]:
-    """Load the protocol and refuse it unless its sha256 equals the committed sidecar (pre-registration is immutable)."""
+    """Load the protocol and refuse it unless its sha256 equals the committed sidecar (pre-registration is immutable), it is the current
+    protocol id, and it is neither marked SUPERSEDED nor a superseded hash (protocol supersedesRule)."""
     digest = sha256_file(path)
     side = path + ".sha256"
     if not os.path.exists(side):
@@ -93,7 +97,12 @@ def load_protocol(path: str = PROTOCOL) -> tuple[dict, str]:
     expected = open(side, encoding="utf-8").read().split()[0]
     if digest != expected:
         raise SystemExit(f"REFUSED: protocol sha256 {digest} != pre-registered {expected}")
-    return json.load(open(path, encoding="utf-8")), digest
+    p = json.load(open(path, encoding="utf-8"))
+    if digest in SUPERSEDED_SHA256 or str(p.get("status", "")).upper() == "SUPERSEDED":
+        raise SystemExit(f"REFUSED: protocol {p.get('protocolId')} ({digest[:12]}) is SUPERSEDED")
+    if p.get("protocolId") != EXPECTED_PROTOCOL_ID:
+        raise SystemExit(f"REFUSED: protocol id {p.get('protocolId')!r} is not {EXPECTED_PROTOCOL_ID!r}")
+    return p, digest
 
 
 def ts(s: str) -> datetime:
@@ -160,12 +169,16 @@ class Http:
         raise RuntimeError(f"{err} after {self.attempts} attempts: {url}")
 
 
-def _save(path: str, data: bytes, prov: list, source: str) -> None:
+def _save(root: str, rel: str, data: bytes, prov: list, source: str, **extra) -> None:
+    path = os.path.join(root, rel)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "wb") as fh:
         fh.write(data)
-    prov.append({"file": os.path.basename(path), "source": source, "sha256": sha256_bytes(data), "bytes": len(data),
-                 "fetchedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")})
+    prov.append({"file": rel, "source": source, "sha256": sha256_bytes(data), "bytes": len(data), "fetchedAt": _now_iso(), **extra})
+
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _write_prov(out: str, prov: list) -> None:
@@ -266,29 +279,38 @@ def cmd_fetch_asos(a) -> int:
     http, prov = Http(pace_s=1.0), []
     for s in brain + cand:
         url = IEM_ASOS + "?" + urllib.parse.urlencode(iem_params(s, frm, to))
-        _save(os.path.join(a.out, "window", f"{s}.csv"), http.get(url, "text/csv"), prov, url)
-    now = datetime.now(timezone.utc).replace(second=0, microsecond=0)
-    for s in brain + cand:                                             # R-SUB: the same 7 days the NWS API still serves (truth stations too)
-        url = IEM_ASOS + "?" + urllib.parse.urlencode(iem_params(s, now - timedelta(days=7), now))
-        _save(os.path.join(a.out, "recent", f"{s}.csv"), http.get(url, "text/csv"), prov, url)
+        try:
+            _save(a.out, f"window/{s}.csv", http.get(url, "text/csv"), prov, url, station=s)
+        except (FileNotFoundError, RuntimeError) as e:
+            prov.append({"file": f"window/{s}.csv", "station": s, "source": url, "error": str(e)[:200], "fetchedAt": _now_iso()})
     _write_prov(a.out, prov)
-    print(json.dumps({"stations": len(brain) + len(cand), "requests": http.requests}))
+    print(json.dumps({"stations": len(brain) + len(cand), "errors": sum(1 for x in prov if "error" in x), "requests": http.requests}))
     return 0
 
 
-def cmd_fetch_nws_recent(a) -> int:
+def cmd_fetch_recent(a) -> int:
+    """R-SUB inputs, per station back to back: the IEM archive and the NWS observation API for the same last 7 days (protocol
+    substitutionCheck.data). Every fetch time and every error is recorded; nothing is skipped silently."""
+    load_protocol()
     doc = json.load(open(a.stations))
     brain, cand = station_sets(doc)
-    http, prov = Http(pace_s=0.25), []
-    start = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    iem_http, nws_http, prov = Http(pace_s=1.0), Http(pace_s=0.25), []
     for s in brain + cand:
+        now = datetime.now(timezone.utc).replace(second=0, microsecond=0)
+        url = IEM_ASOS + "?" + urllib.parse.urlencode(iem_params(s, now - timedelta(days=7), now))
+        try:
+            _save(a.out, f"iem/{s}.csv", iem_http.get(url, "text/csv"), prov, url, station=s, kind="iem")
+        except (FileNotFoundError, RuntimeError) as e:
+            prov.append({"file": f"iem/{s}.csv", "station": s, "kind": "iem", "source": url, "error": str(e)[:200], "fetchedAt": _now_iso()})
+        start = (now - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
         url = f"{NWS}/stations/{urllib.parse.quote(s)}/observations?start={start}&limit=500"
         try:
-            _save(os.path.join(a.out, f"{s}.json"), http.get(url, "application/geo+json"), prov, url)
+            _save(a.out, f"nws/{s}.json", nws_http.get(url, "application/geo+json"), prov, url, station=s, kind="nws")
         except (FileNotFoundError, RuntimeError) as e:
-            prov.append({"file": f"{s}.json", "source": url, "error": str(e)[:200]})
+            prov.append({"file": f"nws/{s}.json", "station": s, "kind": "nws", "source": url, "error": str(e)[:200], "fetchedAt": _now_iso()})
     _write_prov(a.out, prov)
-    print(json.dumps({"stations": len(brain) + len(cand), "requests": http.requests}))
+    print(json.dumps({"stations": len(brain) + len(cand), "errors": sum(1 for x in prov if "error" in x),
+                      "requests": iem_http.requests + nws_http.requests}))
     return 0
 
 
@@ -558,13 +580,16 @@ def grade_pod_far(det, n_truth, hits, n_brain, lakes, pod_min, far_max, n_min=30
 
 
 SUB_FIELDS = {                                                         # metric -> (Obs attribute, tolerance) for value + null agreement
-    "temperature": ("temp_f", 0.2), "dewPoint": ("dew_f", 0.2), "pressure": ("alt_hpa", 0.35), "windSpeed": ("wind_mph", 1.2),
-    "windDirection": ("wind_dir", 5.0), "precipitation": ("precip_1h_in", None)}
-SUB_GATES = {"R-5.1R": ["temperature", "pressure"], "R-5.2": ["temperature", "pressure"],
-             "R-5.3.RAIN_ONSET": ["precipitation", "presentWeatherPresence"],
-             "R-5.3.FRONT_PASSAGE": ["windSpeed", "windDirection", "pressure", "temperature", "dewPoint"]}
+    "temperature": ("temp_f", 0.2), "dewPoint": ("dew_f", 0.2), "pressure": ("alt_hpa", 0.35), "seaLevelPressure": ("slp_hpa", 0.15),
+    "windSpeed": ("wind_mph", 1.2), "windDirection": ("wind_dir", 5.0), "precipitation": ("precip_1h_in", None)}
+WET_METRICS = ("wetPrecipitation", "wetPresentWeatherPresence")
+SUB_GATES = {"R-5.1R": ["temperature", "pressure", "seaLevelPressure"], "R-5.2": ["temperature", "pressure", "seaLevelPressure"],
+             "R-5.3.RAIN_ONSET": ["precipitation", "presentWeatherPresence", "wetPrecipitation", "wetPresentWeatherPresence"],
+             "R-5.3.FRONT_PASSAGE": ["windSpeed", "windDirection", "pressure", "seaLevelPressure", "temperature", "dewPoint"]}
 SUB_MIN_PAIRS, SUB_VALUE_MIN, SUB_NULL_MIN, SUB_COVERAGE_MIN = 1000, 0.99, 0.98, 0.95
+WET_MIN_PAIRS, WET_VALUE_MIN = 200, 0.95
 STATION_MIN_REPORTS, STATION_COVERAGE_FLOOR = 20, 0.90
+CONTEMPORANEITY = timedelta(hours=1)
 
 
 def _ang(a, b):
@@ -576,21 +601,47 @@ def _present(icon, text) -> bool:
     return weather_code(icon, text, None) in PRECIP_CODES
 
 
-def substitution_check(stations: list[str], recent: Archive, nws_dir: str | None) -> dict:
-    """R-SUB (protocol substitutionCheck): NWS API vs IEM archive for the last 7 days, per metric (value and null agreement), coverage, and a
-    per-station coverage floor. Returns per-metric results and the FLAGGED stations; gates() turns it into per-criterion gates."""
-    if not nws_dir or not os.path.isdir(nws_dir):
-        return {"result": "NOT_GRADED", "reason": "no NWS API data supplied (fetch-nws-recent)", "metrics": {}, "flaggedStations": []}
-    val = {k: [0, 0] for k in list(SUB_FIELDS) + ["presentWeatherPresence", "presentWeatherCode"]}
+def _load_prov(root: str) -> list | None:
+    f = os.path.join(root or "", "provenance.json")
+    return json.load(open(f)).get("items") if os.path.exists(f) else None
+
+
+def substitution_check(stations: list[str], recent_dir: str | None) -> dict:
+    """R-SUB (protocol substitutionCheck): NWS API vs IEM archive for the last 7 days, per metric (value and null agreement), wet-conditioned
+    precipitation agreement, coverage, a per-station coverage floor and fetch failures. NOT_GRADED when the inputs are missing or the archive
+    and NWS fetches of any station are more than 1 h apart. Returns per-metric results and the FLAGGED stations with their reason."""
+    empty = {"metrics": {}, "flaggedStations": {}}
+    if not recent_dir or not os.path.isdir(os.path.join(recent_dir, "nws")):
+        return {"result": "NOT_GRADED", "reason": "no NWS API data supplied (fetch-recent)", **empty}
+    prov = _load_prov(recent_dir)
+    if prov is None:
+        return {"result": "NOT_GRADED", "reason": "no provenance.json: fetch times unknown", **empty}
+    times, errors = {}, {}
+    for it in prov:
+        st, kind = it.get("station"), it.get("kind")
+        if not st or kind not in ("iem", "nws"):
+            continue
+        if "error" in it:
+            errors.setdefault(st, []).append(f"{kind}: {it['error']}")
+        elif it.get("fetchedAt"):
+            times.setdefault(st, {})[kind] = ts(it["fetchedAt"])
+    late = sorted(s for s, t in times.items() if "iem" in t and "nws" in t and abs(t["iem"] - t["nws"]) > CONTEMPORANEITY)
+    if late:
+        return {"result": "NOT_GRADED", "reason": "FETCH_NOT_CONTEMPORANEOUS: archive and NWS fetches more than 1 h apart", "stations": late[:50],
+                **empty}
+    iem = Archive(os.path.join(recent_dir, "iem"))
+    val = {k: [0, 0] for k in list(SUB_FIELDS) + ["presentWeatherPresence", "presentWeatherCode", *WET_METRICS]}
     nul = {k: [0, 0] for k in SUB_FIELDS}
     n_nws = matched = 0
-    per_station, flagged = {}, []
+    per_station, flagged = {}, {}
     for s in stations:
-        f = os.path.join(nws_dir, f"{s}.json")
-        if not os.path.exists(f):
+        f = os.path.join(recent_dir, "nws", f"{s}.json")
+        if s in errors or not os.path.exists(f) or not os.path.exists(os.path.join(recent_dir, "iem", f"{s}.csv")):
+            flagged[s] = "FETCH_FAILED"
+            per_station[s] = {"fetchFailed": errors.get(s, ["no response file"])}
             continue
         nws = decode_observations(json.load(open(f)))
-        ser = recent.get(s)
+        ser = iem.get(s)
         sn = sm = 0
         for o in nws:
             n_nws += 1
@@ -616,27 +667,38 @@ def substitution_check(stations: list[str], recent: Archive, nws_dir: str | None
                     ok = abs(a - b) <= tol
                 val[k][1] += 1
                 val[k][0] += ok
+            pa, pb = _present(o.icon, o.text), _present(None, m.text)
             val["presentWeatherPresence"][1] += 1
-            val["presentWeatherPresence"][0] += _present(o.icon, o.text) == _present(None, m.text)
+            val["presentWeatherPresence"][0] += pa == pb
             ca, cb = weather_code(o.icon, o.text, None), weather_code(None, m.text, None)
             if ca is not None and cb is not None:
                 val["presentWeatherCode"][1] += 1
                 val["presentWeatherCode"][0] += ca == cb
+            wa = o.precip_1h_in is not None and o.precip_1h_in >= 0.01
+            wb = m.precip_1h_in is not None and m.precip_1h_in >= 0.01
+            if wa or wb or pa or pb:                                     # WET-CONDITIONED: either side shows precipitation
+                val["wetPrecipitation"][1] += 1
+                val["wetPrecipitation"][0] += wa == wb
+                val["wetPresentWeatherPresence"][1] += 1
+                val["wetPresentWeatherPresence"][0] += pa == pb
         cov = _rate(sm, sn)
         per_station[s] = {"nwsReports": sn, "matched": sm, "coverage": cov}
         if sn >= STATION_MIN_REPORTS and cov is not None and cov < STATION_COVERAGE_FLOOR:
-            flagged.append(s)
+            flagged[s] = "COVERAGE_FLOOR"
     metrics = {}
     for k, (n, d) in val.items():
         r = _rate(n, d)
-        res = "INSUFFICIENT" if d < SUB_MIN_PAIRS else ("PASS" if r >= SUB_VALUE_MIN else "FAIL")
-        e = {"value": {"result": res, "agreement": r, "pairs": d}}
+        lo, mark = (WET_MIN_PAIRS, WET_VALUE_MIN) if k in WET_METRICS else (SUB_MIN_PAIRS, SUB_VALUE_MIN)
+        res = "INSUFFICIENT" if d < lo else ("PASS" if r >= mark else "FAIL")
+        e = {"value": {"result": res, "agreement": r, "pairs": d, "marks": {"agreement>=": mark, "minPairs": lo}}}
         if k in nul:
             rn = _rate(*nul[k])
             e["null"] = {"result": "INSUFFICIENT" if nul[k][1] < SUB_MIN_PAIRS else ("PASS" if rn >= SUB_NULL_MIN else "FAIL"),
                          "agreement": rn, "pairs": nul[k][1]}
         if k == "presentWeatherCode":
             e["note"] = "reported only, no gate"
+        if k in WET_METRICS:
+            e["note"] = "wet-conditioned: pairs where either side shows precipitation"
         metrics[k] = e
     cov = _rate(matched, n_nws)
     coverage = {"result": "NOT_GRADED" if not n_nws else ("PASS" if cov >= SUB_COVERAGE_MIN else "FAIL"), "share": cov,
@@ -644,9 +706,10 @@ def substitution_check(stations: list[str], recent: Archive, nws_dir: str | None
     gate_metrics = sorted({m for ms in SUB_GATES.values() for m in ms})
     ok_all = coverage["result"] == "PASS" and all(_metric_ok(metrics, m) for m in gate_metrics)
     return {"result": "PASS" if ok_all else ("NOT_GRADED" if not n_nws else "FAIL"), "coverage": coverage, "metrics": metrics,
-            "perStation": per_station, "flaggedStations": sorted(flagged),
+            "perStation": per_station, "flaggedStations": dict(sorted(flagged.items())),
             "marks": {"value>=": SUB_VALUE_MIN, "null>=": SUB_NULL_MIN, "coverage>=": SUB_COVERAGE_MIN, "minPairs": SUB_MIN_PAIRS,
-                      "stationCoverageFloor": STATION_COVERAGE_FLOOR, "stationMinReports": STATION_MIN_REPORTS}}
+                      "wet>=": WET_VALUE_MIN, "wetMinPairs": WET_MIN_PAIRS, "stationCoverageFloor": STATION_COVERAGE_FLOOR,
+                      "stationMinReports": STATION_MIN_REPORTS, "contemporaneity": "1 h"}}
 
 
 def _metric_ok(metrics: dict, name: str) -> bool:
@@ -669,27 +732,32 @@ def _spans(p: dict) -> list[tuple[set, datetime, datetime]]:
     return [(set(x["lakes"]), ts(x["from"]), ts(x["to"])) for x in p.get("excludedSpans") or []]
 
 
-def grade(p: dict, stations_doc: dict, asos_dir: str, nws_dir: str | None = None, fronts_text: str | None = None) -> dict:
+def grade(p: dict, stations_doc: dict, asos_dir: str, recent_dir: str | None = None, fronts_text: str | None = None) -> dict:
     T = C.THRESHOLDS
     protocol_id = p["protocolId"]
     w60, w30, w14 = window(p, "changeSignal_5_3"), window(p, "representativeness_5_2"), window(p, "fidelity_5_1")
     spans = _spans(p)
     arch = Archive(os.path.join(asos_dir, "window"))
-    recent = Archive(os.path.join(asos_dir, "recent"))
     analyses = parse_codsus(fronts_text, w60[0] + (w60[1] - w60[0]) / 2) if fronts_text else {}
     eligible_times = sorted(t for t, a in analyses.items() if a["eligible"])
     fronts_ok = bool(eligible_times)
 
     ok_lakes = [l for l in stations_doc["lakes"] if l.get("status") == "OK"]
     sub_stations = sorted({s["id"] for l in ok_lakes for s in l["brainStations"]} | {c["id"] for l in ok_lakes for c in l["candidates"]})
-    sub = substitution_check(sub_stations, recent, nws_dir)
-    flagged = set(sub.get("flaggedStations") or [])
+    sub = substitution_check(sub_stations, recent_dir)
+    flagged = dict(sub.get("flaggedStations") or {})                   # station -> FETCH_FAILED | COVERAGE_FLOOR
     gate = gates(sub)
 
-    excluded = {"BLOCKED": 0, "ERROR": 0, "SUBSTITUTION_STATION": 0, "NO_INDEPENDENT_STATION": 0, "NO_PRECIP_SENSOR": 0}
+    def flag_reason(ids):
+        rs = [flagged[i] for i in ids if i in flagged]
+        return None if not rs else ("SUBSTITUTION_FETCH_FAILED" if "FETCH_FAILED" in rs else "SUBSTITUTION_STATION")
+
+    excluded = {"BLOCKED": 0, "ERROR": 0, "SUBSTITUTION_FETCH_FAILED": 0, "SUBSTITUTION_STATION": 0, "NO_INDEPENDENT_STATION": 0,
+                "NO_PRECIP_SENSOR": 0}
     span_excluded = {"instants": 0, "values": 0, "truthEvents": 0, "brainEvents": 0}
     fid = {"values": 0, "match": 0, "provenance": 0, "mismatches": [], "lakes": set()}
-    rep = {"pressure": [], "trend": [], "temp": [], "slpOnlyExcluded": 0, "trendNullExcluded": 0}
+    rep = {"pressure": [], "trend": [], "temp": [], "slpOnlyExcluded": 0, "truthNoReport": 0, "truthTrendNull": 0, "brainTrendNull": 0,
+           "availP": [0, 0], "availT": [0, 0]}
     rain = {"truth": 0, "det": 0, "truthEval": 0, "detEval": 0, "brain": 0, "hits": 0, "lakes": set()}
     front = {"truth": 0, "det": 0, "truthEval": 0, "detEval": 0, "brain": 0, "hits": 0, "unjudgeable": 0, "lakes": set()}
     change_hours, graded, independents = {}, [], []
@@ -701,8 +769,9 @@ def grade(p: dict, stations_doc: dict, asos_dir: str, nws_dir: str | None = None
             continue
         lid = lake["id"]
         sids = [s["id"] for s in lake["brainStations"]]
-        if flagged & set(sids):
-            excluded["SUBSTITUTION_STATION"] += 1
+        why = flag_reason(sids)
+        if why:
+            excluded[why] += 1
             continue
         lake_spans = [(a, b) for ls, a, b in spans if lid in ls]
 
@@ -711,7 +780,7 @@ def grade(p: dict, stations_doc: dict, asos_dir: str, nws_dir: str | None = None
 
         ind = next((c for c in lake["candidates"] if len(arch.get(c["id"]).between(*w60))), None)
         if ind is not None and ind["id"] in flagged:
-            excluded["SUBSTITUTION_STATION"] += 1                         # still graded for R-5.1R
+            excluded[flag_reason([ind["id"]])] += 1                       # still graded for R-5.1R
             ind = None
         elif ind is None:
             excluded["NO_INDEPENDENT_STATION"] += 1                       # still graded for R-5.1R
@@ -746,12 +815,13 @@ def grade(p: dict, stations_doc: dict, asos_dir: str, nws_dir: str | None = None
             if not any(u.startswith("front:") for u in sig["unknown"]):
                 evaluable["FRONT_PASSAGE"].append(now)
             pr, tv = rd.pressure, rd.values.get("airTemperatureF")
+            p_span = t_span = False
             if pr is not None and in_span(pr.get("at")):
                 span_excluded["values"] += 1
-                pr = None
+                pr, p_span = None, True
             if tv is not None and in_span(tv.get("at")):
                 span_excluded["values"] += 1
-                tv = None
+                tv, t_span = None, True
             # R-5.1R replay self-consistency: each distinct published value checked once against its own station's archive row
             if w14[0] <= now < w14[1]:
                 if pr and ("p", pr.get("station"), pr.get("at")) not in seen:
@@ -782,8 +852,18 @@ def grade(p: dict, stations_doc: dict, asos_dir: str, nws_dir: str | None = None
                         fid["mismatches"].append({"lake": lid, "tile": "airTemperature", "station": tv.get("station"), "at": C.iso(tv.get("at"))})
             # R-5.2 representativeness
             if iser is not None and w30[0] <= now < w30[1]:
+                has_t = bool(tv and tv.get("origin") == "observation")
+                if not p_span:                                            # Brain availability: every graded instant is in the denominator
+                    rep["availP"][1] += 1
+                    rep["availP"][0] += pr is not None
+                if not t_span:
+                    rep["availT"][1] += 1
+                    rep["availT"][0] += has_t
+                # trend: one pair per Brain pressure observation, and one per instant with NO Brain pressure (unknown counts against)
+                trend_ref = None
                 if pr and ("rp", pr["station"], pr["at"]) not in seen:
                     seen.add(("rp", pr["station"], pr["at"]))
+                    trend_ref = (pr["at"], pr.get("trend3h"), pr["kind"])
                     if pr.get("seaLevelOffsetHPa") is None and pr["kind"] == "seaLevel":
                         rep["slpOnlyExcluded"] += 1
                     else:
@@ -791,13 +871,22 @@ def grade(p: dict, stations_doc: dict, asos_dir: str, nws_dir: str | None = None
                         io_ = iser.nearest(pr["at"], 30, lambda o: o.alt_hpa is not None and not in_span(o.at))
                         if io_ is not None:
                             rep["pressure"].append({"lake": lid, "err": abs(raw - io_.alt_hpa), "kind": pr["kind"], "band": band})
-                            ind_series = [(o.at, o.alt_hpa) for o in iser.between(io_.at - timedelta(hours=5), io_.at) if o.alt_hpa is not None]
-                            it3 = tendency(io_.alt_hpa, io_.at, ind_series, 3, hp_steady)
-                            bt3 = pr.get("trend3h")
-                            if it3 is None or bt3 is None:
-                                rep["trendNullExcluded"] += 1
-                            else:
-                                rep["trend"].append({"lake": lid, "agree": it3["trend"] == bt3["trend"], "kind": pr["kind"], "band": band})
+                elif pr is None and not p_span:
+                    trend_ref = (now, None, "none")
+                if trend_ref is not None:
+                    ref_at, bt3, kind = trend_ref
+                    io_ = iser.nearest(ref_at, 30, lambda o: o.alt_hpa is not None and not in_span(o.at))
+                    if io_ is None:
+                        rep["truthNoReport"] += 1
+                    else:
+                        ind_series = [(o.at, o.alt_hpa) for o in iser.between(io_.at - timedelta(hours=5), io_.at) if o.alt_hpa is not None]
+                        it3 = tendency(io_.alt_hpa, io_.at, ind_series, 3, hp_steady)
+                        if it3 is None:
+                            rep["truthTrendNull"] += 1
+                        else:
+                            rep["brainTrendNull"] += bt3 is None
+                            rep["trend"].append({"lake": lid, "agree": bt3 is not None and it3["trend"] == bt3["trend"], "kind": kind,
+                                                 "band": band})
                 if tv and tv.get("origin") == "observation" and ("rt", tv["station"], tv["at"]) not in seen:
                     seen.add(("rt", tv["station"], tv["at"]))
                     io_ = iser.nearest(tv["at"], 30, lambda o: o.temp_f is not None and not in_span(o.at))
@@ -839,7 +928,7 @@ def grade(p: dict, stations_doc: dict, asos_dir: str, nws_dir: str | None = None
             for a, b in front_episodes(lake["lat"], lake["lon"], analyses):
                 if b < w60[0] or a >= w60[1]:
                     continue
-                if in_span(a) or in_span(b):
+                if any(a - tol3 < sb and b + tol3 >= sa for sa, sb in lake_spans):   # matching window overlaps the span at all
                     span_excluded["truthEvents"] += 1
                     continue
                 eps.append((a, b))
@@ -888,7 +977,12 @@ def grade(p: dict, stations_doc: dict, asos_dir: str, nws_dir: str | None = None
     r52 = {"pressureMAE_hPa": metric(rep["pressure"], mae, lambda v: v <= 1.0),
            "trend3hAgreement": metric(rep["trend"], share, lambda v: v >= 0.80),
            "airTempMAE_F": metric(rep["temp"], mae, lambda v: v <= 3.0),
-           "excluded": {"slpOnlyBrainValues": rep["slpOnlyExcluded"], "trendNull": rep["trendNullExcluded"]}}
+           "brainAvailability": {"label": "REPORTED, no pass mark: share of graded instants with a Brain value (unknowns in the denominator)",
+                                 "pressure": {"share": _rate(*rep["availP"]), "instants": rep["availP"][1]},
+                                 "airTemperature": {"share": _rate(*rep["availT"]), "instants": rep["availT"][1]}},
+           "trendCounts": {"brainTrendNullCountedAsDisagreement": rep["brainTrendNull"], "truthNoReportExcluded": rep["truthNoReport"],
+                           "truthTrendNullExcluded": rep["truthTrendNull"]},
+           "excluded": {"slpOnlyBrainValues": rep["slpOnlyExcluded"]}}
     parts = [r52[k]["result"] for k in ("pressureMAE_hPa", "trend3hAgreement", "airTempMAE_F")]
     r52["result"] = "FAIL" if "FAIL" in parts else ("INSUFFICIENT" if "INSUFFICIENT" in parts else "PASS")
 
@@ -954,11 +1048,11 @@ def cmd_grade(a) -> int:
     p, digest = load_protocol()
     stations_doc = json.load(open(a.stations))
     fronts = open(a.fronts, encoding="utf-8", errors="replace").read() if a.fronts else None
-    rep = grade(p, stations_doc, a.asos, a.nws, fronts)
+    rep = grade(p, stations_doc, a.asos, a.recent, fronts)
     rep["protocolSha256"] = digest
     rep["release"] = C.RELEASE.get("releaseId")
     rep["thresholdsVersion"] = C.THRESHOLDS_VERSION
-    rep["inputs"] = {"stations.json": sha256_file(a.stations), "asos": tree_sha256(a.asos), "nws": tree_sha256(a.nws) if a.nws else None,
+    rep["inputs"] = {"stations.json": sha256_file(a.stations), "asos": tree_sha256(a.asos), "recent": tree_sha256(a.recent) if a.recent else None,
                      "fronts": sha256_file(a.fronts) if a.fronts else None}
     rep["gradedAt"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
@@ -977,7 +1071,7 @@ def main(argv=None) -> int:
     s.add_argument("--directory")
     s.add_argument("--lakes", default="")
     s.add_argument("--limit", type=int, default=0)
-    for name in ("fetch-asos", "fetch-nws-recent"):
+    for name in ("fetch-asos", "fetch-recent"):
         s = sp.add_parser(name)
         s.add_argument("--stations", required=True)
         s.add_argument("--out", required=True)
@@ -986,7 +1080,7 @@ def main(argv=None) -> int:
     s = sp.add_parser("grade")
     s.add_argument("--stations", required=True)
     s.add_argument("--asos", required=True)
-    s.add_argument("--nws")
+    s.add_argument("--recent", help="the fetch-recent output folder (iem/, nws/, provenance.json)")
     s.add_argument("--fronts")
     s.add_argument("--out", required=True)
     a = ap.parse_args(argv)
@@ -994,7 +1088,7 @@ def main(argv=None) -> int:
         _, d = load_protocol()
         print(f"OK protocol sha256 {d}")
         return 0
-    return {"fetch-stations": cmd_fetch_stations, "fetch-asos": cmd_fetch_asos, "fetch-nws-recent": cmd_fetch_nws_recent,
+    return {"fetch-stations": cmd_fetch_stations, "fetch-asos": cmd_fetch_asos, "fetch-recent": cmd_fetch_recent,
             "fetch-fronts": cmd_fetch_fronts, "grade": cmd_grade}[a.cmd](a)
 
 
