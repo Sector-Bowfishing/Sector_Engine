@@ -130,3 +130,18 @@ Verification: 43 runner tests pass (8 new ledger tests against a mocked #51: anc
 
 ## Round 6 (independent review of 303026df: NOT CLEAN, one HIGH), runner change only
 `_ledger_step` aborted a fetch on any exception, even after per-station files were saved, so a retry could refetch a moving 7-day window and change FETCH_FAILED / COVERAGE_FLOOR flags. Now `abort_before_result` is called only when nothing was saved: no file under the step's output path AND the in-memory save count (`_SAVED`, incremented in `_save` before each write) is 0; the empty stage folder is then removed so the step may be retried in the same run folder (the ledger gives it attempt 2). Otherwise the attempt is left STARTED (terminal), nothing is deleted, and the runner prints that recovery needs a new protocol id AND a revised protocol document recorded in a #51 human review. `bind` follows the same rule (its output is run-manifest.json). The `_ledger_step` docstring and the `_new_stage` refusal text say this. Tests: an interrupt before the first save aborts and the retry completes as attempt 2; an interrupt after one save is terminal, the retry is refused by the existing folder and, with the folder gone, by the ledger ("never completed"); a saved-then-removed file still counts. No protocol change (.5 unchanged). 46 runner tests pass; `tools/research` 217 passed, 2 pre-existing failures (root permission); engineering-status digest regenerated, `--check` OK.
+
+## Round 7 (delta review of 5345ae5e): every write is counted
+- **The fix.** Every file write in the runner now goes through one helper, `_write_file`. It increments `_SAVED` before it creates any directory or writes any byte. The writes it covers:
+  - archive and NWS responses (`_save`) and `provenance.json` (`_write_prov`);
+  - `run-manifest.json` in `bind`;
+  - the ledger start and result texts, `report.json` and `ledger-audit.json`, which are write-once and opened exclusively.
+- **Abort path.** It removes only an empty directory tree, bottom-up. A removal failure is printed and never masks the original exception.
+- **New tests (6):**
+  - an AST test fails if any write happens outside `_write_file`: `open` for writing, `json.dump`, `write_text`/`write_bytes`, `os.replace`/`rename`, or `shutil` copies. Directory creation is allowed only in `_write_file` and `_new_stage`;
+  - an interrupt after only `provenance.json` is written is terminal;
+  - an interrupt inside the writer, after the count but before any directory, is terminal;
+  - a `bind` interrupt before the manifest aborts, and the retry completes;
+  - a `bind` interrupt after the manifest is written is terminal, and the ledger refuses the retry even with the manifest removed;
+  - the empty-tree removal removes only directories.
+- **Results.** No protocol change. 52 runner tests pass. `tools/research` has 2 failures, the root-permission tests that already fail in this container. The engineering-status digest was regenerated, and `--check` passes.

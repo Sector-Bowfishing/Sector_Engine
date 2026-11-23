@@ -846,3 +846,112 @@ def test_a_saved_file_counts_even_if_the_folder_was_emptied(tmp_path, ledgered, 
         W.main(["fetch-fronts", "--run", R.run])
     ents = [e for e in ledgered["open"](R.run).entries() if e["step"] == "fetch-fronts"]
     assert [e["status"] for e in ents] == ["STARTED"]                        # the in-memory save count decides too
+
+
+def test_every_file_write_goes_through_the_counted_helper():
+    """Any open() for writing, json.dump to a file, write_text/write_bytes, os.replace/rename or shutil copy outside _write_file fails;
+    directories may be created only by _write_file and _new_stage."""
+    import ast
+    tree = ast.parse(open(W.__file__).read())
+    bad = []
+    for fn in [n for n in ast.walk(tree) if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]:
+        for c in [n for n in ast.walk(fn) if isinstance(n, ast.Call)]:
+            f = c.func
+            name = f.id if isinstance(f, ast.Name) else (f.attr if isinstance(f, ast.Attribute) else "")
+            owner = f.value.id if isinstance(f, ast.Attribute) and isinstance(f.value, ast.Name) else ""
+            if name == "open":
+                mode = c.args[1].value if len(c.args) > 1 and isinstance(c.args[1], ast.Constant) else next(
+                    (k.value.value for k in c.keywords if k.arg == "mode" and isinstance(k.value, ast.Constant)), "r")
+                if not isinstance(mode, str) or any(ch in mode for ch in "wxa+"):
+                    if fn.name != "_write_file":
+                        bad.append((fn.name, c.lineno, "open"))
+            elif (owner, name) in (("json", "dump"), ("os", "replace"), ("os", "rename"), ("shutil", "copy"), ("shutil", "copyfile"),
+                                   ("shutil", "move")) or name in ("write_text", "write_bytes"):
+                bad.append((fn.name, c.lineno, f"{owner}.{name}"))
+            elif (owner, name) in (("os", "makedirs"), ("os", "mkdir")) and fn.name not in ("_write_file", "_new_stage"):
+                bad.append((fn.name, c.lineno, f"{owner}.{name}"))
+    assert bad == []
+
+
+def test_remove_empty_tree_removes_directories_only(tmp_path):
+    d = tmp_path / "stage"
+    (d / "a" / "b").mkdir(parents=True)
+    W._remove_empty_tree(str(d))
+    assert not d.exists()
+    (d / "a").mkdir(parents=True)
+    (d / "a" / "f.txt").write_text("x")
+    W._remove_empty_tree(str(d))
+    assert (d / "a" / "f.txt").exists()                                       # a file anywhere: nothing removed
+
+
+def test_an_interrupt_after_only_provenance_is_written_is_terminal(tmp_path, ledgered, monkeypatch):
+    R = _stations_only(tmp_path, ledgered)
+
+    def interrupted(run):
+        d = W._new_stage(run, "fronts")
+        W._write_prov(d, [])
+        raise KeyboardInterrupt("operator")
+    monkeypatch.setattr(W, "_fetch_fronts", interrupted)
+    with pytest.raises(KeyboardInterrupt):
+        W.main(["fetch-fronts", "--run", R.run])
+    ents = [e for e in ledgered["open"](R.run).entries() if e["step"] == "fetch-fronts"]
+    assert [e["status"] for e in ents] == ["STARTED"]
+
+
+def test_an_interrupt_inside_the_writer_after_counting_is_terminal(tmp_path, ledgered, monkeypatch):
+    R = _stations_only(tmp_path, ledgered)
+
+    def interrupted(run):
+        d = W._new_stage(run, "fronts")
+        real = W.os.makedirs
+        monkeypatch.setattr(W.os, "makedirs", lambda *a, **k: (_ for _ in ()).throw(KeyboardInterrupt("during makedirs")))
+        try:
+            W._save(d, "x/codsus.txt", b"x", [], "https://mesonet.agron.iastate.edu/x", kind="fronts")
+        finally:
+            monkeypatch.setattr(W.os, "makedirs", real)
+    monkeypatch.setattr(W, "_fetch_fronts", interrupted)
+    with pytest.raises(KeyboardInterrupt):
+        W.main(["fetch-fronts", "--run", R.run])
+    ents = [e for e in ledgered["open"](R.run).entries() if e["step"] == "fetch-fronts"]
+    assert [e["status"] for e in ents] == ["STARTED"]                        # counted before any directory or byte
+
+
+def _fetched_but_not_bound(tmp_path, ledgered):
+    R = _real_run(tmp_path)
+    _anchor(ledgered, R.run)
+    _fetched(ledgered, R)
+    return R
+
+
+def test_a_bind_interrupt_before_the_manifest_aborts_and_bind_may_retry(tmp_path, ledgered, monkeypatch):
+    R = _fetched_but_not_bound(tmp_path, ledgered)
+    real_bind = W.bind
+    monkeypatch.setattr(W, "bind", lambda *a, **k: (_ for _ in ()).throw(KeyboardInterrupt("operator")))
+    with pytest.raises(KeyboardInterrupt):
+        W.main(["bind", "--run", R.run])
+    assert not os.path.exists(os.path.join(R.run, W.MANIFEST))
+    ents = [e for e in ledgered["open"](R.run).entries() if e["step"] == "bind"]
+    assert [e["status"] for e in ents] == ["STARTED", "ABORTED_BEFORE_RESULT"]
+    monkeypatch.setattr(W, "bind", real_bind)
+    assert W.main(["bind", "--run", R.run]) == 0
+    assert [e for e in ledgered["open"](R.run).entries() if e["step"] == "bind"][-1]["status"] == "COMPLETED"
+
+
+def test_a_bind_interrupt_after_the_manifest_is_written_is_terminal(tmp_path, ledgered, monkeypatch):
+    R = _fetched_but_not_bound(tmp_path, ledgered)
+    real_write = W._write_file
+
+    def write_then_interrupt(path, data, exclusive=False):
+        real_write(path, data, exclusive)
+        if path.endswith(W.MANIFEST):
+            raise KeyboardInterrupt("operator")
+    monkeypatch.setattr(W, "_write_file", write_then_interrupt)
+    with pytest.raises(KeyboardInterrupt):
+        W.main(["bind", "--run", R.run])
+    assert os.path.exists(os.path.join(R.run, W.MANIFEST))
+    ents = [e for e in ledgered["open"](R.run).entries() if e["step"] == "bind"]
+    assert [e["status"] for e in ents] == ["STARTED"]
+    monkeypatch.setattr(W, "_write_file", real_write)
+    os.remove(os.path.join(R.run, W.MANIFEST))
+    with pytest.raises(W.PRL.LedgerRefusal, match="never completed"):
+        W.main(["bind", "--run", R.run])

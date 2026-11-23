@@ -190,12 +190,17 @@ class Http:
 _SAVED = [0]                                                           # files saved by the running step (in-memory count)
 
 
-def _save(root: str, rel: str, data: bytes, prov: list, source: str, **extra) -> None:
-    path = os.path.join(root, rel)
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    _SAVED[0] += 1                                                     # counted before the write: a partial file is a saved file
-    with open(path, "wb") as fh:
+def _write_file(path: str, data: bytes, exclusive: bool = False) -> None:
+    """THE only file writer of this runner (a test enforces it). It counts the save BEFORE creating any directory or byte, so a step
+    interrupted at any point after this call is terminal, never aborted (protocol runLedger; review of #246)."""
+    _SAVED[0] += 1
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    with open(path, "xb" if exclusive else "wb") as fh:
         fh.write(data)
+
+
+def _save(root: str, rel: str, data: bytes, prov: list, source: str, **extra) -> None:
+    _write_file(os.path.join(root, rel), data)
     prov.append({"file": rel, "source": source, "sha256": sha256_bytes(data), "bytes": len(data), "fetchedAt": _now_iso(), **extra})
 
 
@@ -204,8 +209,7 @@ def _now_iso() -> str:
 
 
 def _write_prov(out: str, prov: list) -> None:
-    with open(os.path.join(out, "provenance.json"), "w") as fh:
-        json.dump({"labels": LABELS, "items": prov}, fh, indent=1)
+    _write_file(os.path.join(out, "provenance.json"), json.dumps({"labels": LABELS, "items": prov}, indent=1).encode())
 
 
 # ----------------------------------------------------------------------------------------------------------------- stations
@@ -288,6 +292,18 @@ def _require_stage(L, run: str, stage: str) -> str:
     return have
 
 
+def _remove_empty_tree(path: str) -> None:
+    """Remove ``path`` if it is a directory tree with no file at all (bottom-up, directories only). A failure is reported, never raised,
+    so it cannot mask the exception that ended the step."""
+    if not os.path.isdir(path) or _has_files(path):
+        return
+    try:
+        for d, _, _ in sorted(os.walk(path), key=lambda t: -len(t[0])):
+            os.rmdir(d)
+    except OSError as err:
+        print(f"note: could not remove the empty folder {path}: {err}", file=sys.stderr)
+
+
 def _has_files(path: str) -> bool:
     if os.path.isfile(path):
         return True
@@ -311,8 +327,7 @@ def _ledger_step(run: str, step: str, inputs: dict, work, out_path: str) -> int:
     except BaseException as e:
         if _SAVED[0] == 0 and not _has_files(out_path):
             L.abort_before_result(step, KEY, f"{type(e).__name__} before any file was saved: {e}"[:500])
-            if os.path.isdir(out_path):
-                os.rmdir(out_path)                                       # empty: created by this attempt, nothing in it
+            _remove_empty_tree(out_path)                                 # directories only, created by this attempt; never masks `e`
         else:
             print(f"TERMINAL: {step} saved {_SAVED[0]} file(s) under {out_path} before {type(e).__name__}; the ledger attempt stays "
                   f"STARTED and this step can never run again under {EXPECTED_PROTOCOL_ID}. Recovery needs a new protocol id AND a "
@@ -1351,8 +1366,7 @@ def cmd_bind(a) -> int:
 
     def work():
         m = bind(p, digest, a.run)
-        with open(out, "x") as fh:
-            json.dump(m, fh, indent=1, sort_keys=True)
+        _write_file(out, json.dumps(m, indent=1, sort_keys=True).encode(), exclusive=True)
         L2 = open_ledger(a.run)
         L2.bind_inputs("grade", KEY, grade_inputs(a.run))
         print(json.dumps({"runId": m["runId"], "subset": m["subset"], "population": m["population"], "directory": m["directoryCount"],
@@ -1366,8 +1380,7 @@ def _post_hook(kind: str, text: str, run: str) -> None:
     """Write the comment to post (write-once) and tell the operator. The ledger never posts; the session running the protocol posts it on
     Sector_Ops #51 as a research record (never an Owner header), once, and never edits it. Tests replace this hook."""
     path = os.path.join(run, f"ledger-{kind}.txt")
-    with open(path, "x") as fh:
-        fh.write(text)
+    _write_file(path, text.encode(), exclusive=True)
     print(f"POST THIS ON Sector_Ops #51 NOW (once; never edit it): {path}", file=sys.stderr, flush=True)
 
 
@@ -1408,8 +1421,7 @@ def cmd_grade(a) -> int:
                 "thresholdsVersion": C.THRESHOLDS_VERSION, "gradedAt": _now_iso(),
                 "counting": "protocol runLedger.counting: only the ledger's counted COMPLETED grade counts (see ledger-audit.json)"})
     out = os.path.join(a.run, REPORT)
-    with open(out, "x") as fh:
-        json.dump(rep, fh, indent=1, sort_keys=True, default=str)
+    _write_file(out, json.dumps(rep, indent=1, sort_keys=True, default=str).encode(), exclusive=True)
     L.record_outputs("grade", KEY, {"report.json": PRL.Path(out)})
     results = {k: rep[k]["result"] for k in ("R-SUB", "R-5.1R", "R-5.2")}
     results.update({"RAIN_ONSET": rep["R-5.3"]["RAIN_ONSET"]["result"], "FRONT_PASSAGE": rep["R-5.3"]["FRONT_PASSAGE"]["result"]})
@@ -1417,8 +1429,8 @@ def cmd_grade(a) -> int:
                        result={"results": results, "qualifiers": rep["qualifiers"], "reportSha256": sha256_file(out), "manifestSha256": msha})
     _post_hook("result", L.result_text("grade", KEY), a.run)
     _await_confirm(L.confirm_result, "grade", a.max_wait_min * 60)
-    with open(os.path.join(a.run, "ledger-audit.json"), "x") as fh:
-        json.dump(L.audit(check_external=True), fh, indent=1, sort_keys=True, default=str)
+    _write_file(os.path.join(a.run, "ledger-audit.json"),
+                json.dumps(L.audit(check_external=True), indent=1, sort_keys=True, default=str).encode(), exclusive=True)
     print(json.dumps(results | {"counted": entry["counted"], "qualifiers": rep["qualifiers"], "report": out}))
     return 0
 
