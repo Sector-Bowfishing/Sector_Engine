@@ -640,7 +640,7 @@
     "state": "CENTRAL"
   },
   "blockers": [
-    "the 7-day shadow equivalence (Sector_Ops #49): where it runs (the cloud plan restarts the legacy writer, against 'no cloud runs until Pulse works'; on Pulse it needs a redesign: there is no legacy write to compare with)",
+    "the 7-day shadow (Sector_Ops #49, D4): redesign done 2026-11-23, pre-registered as wind-pulse-shadow-v1 (docs/architecture/production/WIND_PULSE_SHADOW_PROTOCOL_V1.md, runner tools/ops/wind_pulse_shadow.py). Open, owner steps: a Pulse shadow job (hourly, --read-rtdb, no --emit) scheduled and the window start named; the retention job scheduled (C5); and whether the flip waits for a PASS or the first publish is held until it",
     "archive continuity: the Mac mini's local Wind archive vs gs://sector-wind-candidate/wind/v1 (the previous-state bookkeeping)",
     "knowledge release approval for wind not recorded; Engine #90 and a new knowledge release; the lifecycle the artifact declares",
     "the app wind source decisions WS-1..WS-4 (customer-visible, separate)",
