@@ -11,7 +11,8 @@
    "currentEvidence": [
     "wind-measurements-evidence-v1:strongWind",
     "wind-measurements-evidence-v1:atmospheric",
-    "confidence_flag (EXPLORATORY)"
+    "confidence_flag (EXPLORATORY)",
+    "WSW-2026-11-23-R5 (pre-registered 2026-11-23, docs/brains/wind-strong-wind/, supersedes R4, R3, R2 and WSW-2026-11-23, none run: M-A P90 exceedance, M-B CAL+H1 quantile mapping; past-window NBM v4.2 test 2025-01..05 pending on the Mac mini, H2 at unseal)"
    ],
    "stopCondition": "Stop when a method pre-registered before 2027-01-01 has been scored once on H2 (NBM probability recalibration first; RRFS first fair look 2027-01-01, decision-grade 2027-04-01), or when no candidate source remains. Never tune on H2.",
    "expectedOutput": "One sealed-holdout result per pre-registered method with an accept/reject recommendation; if accepted, a versioned strong-wind signal the exposure assessment may use to lower (never raise) confidence.",

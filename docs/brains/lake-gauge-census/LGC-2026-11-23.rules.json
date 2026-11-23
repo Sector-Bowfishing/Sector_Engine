@@ -1,0 +1,123 @@
+{
+  "rulesId": "LGC-2026-11-23",
+  "title": "Lake gauge census: candidate selection and candidate-to-binding review rules (pre-registered)",
+  "registeredAt": "2026-11-23",
+  "registeredBefore": "any census request was sent; no level value of any candidate has been read",
+  "labels": ["INTERNAL_EXPERIMENTAL", "NOT_FOR_CUSTOMERS"],
+  "purposes": {
+    "BINDING": "unprofiled directory lakes (not in Lake's reviewed set): find gauge-grade level series (DIRECT_LAKE_GAUGE or DIRECT_OPERATOR_POOL) for the next binding batch",
+    "INDEPENDENT_TRUTH": "every lake with a binding (reviewed or candidate): list series that are NOT the lake's bound live/fallback/history series, with independence evidence, so the operator-truth validation v3 can freeze a truth list from metadata alone"
+  },
+  "scope": {
+    "lakes": "all 621 directory lakes (brains/moon/runtime/knowledge/lakes-directory.json, the projection of Sources/SectorEngine/Support/LakeDirectory.swift)",
+    "reviewedSet": "jobs/brain_platform/sector_brain_platform/publisher_live/customer_lake_level_eligible.json lakeIds (Lake's REVIEWED set: 5 pilots + accepted_batch.json + accepted_batch2.json)",
+    "boundSeries": "brains/lake/runtime/LakeBrain/LakeSourceBindingsGenerated.swift (all rows, reviewed and candidate) plus the 5 hand-written pilots in LakeSourceBindings.swift",
+    "readOnlyInputs": "the census reads these files and never writes them; it records their sha256 in its output"
+  },
+  "notBefore": "2026-12-01",
+  "notBeforeReason": "the operator-truth validation (PR #243) runs 2026-11-24..30 on the Mac mini; the census must not share its hosts, time window or machine budget",
+  "excludedSources": {
+    "SWOT": "not gauge grade for sourceAuthority; SWOT-only lakes dilute the quality shares until decision R10",
+    "TVA host": "www.tva.com is never queried (robots); USGS gauges at TVA reservoirs are the alternative",
+    "NWS NWPS / IEM HADS": "redistributions of another agency's DCP; not queried, and never counted as independent truth",
+    "USGS 00065 gage height": "a local-datum stage, not an elevation; out of scope for this census"
+  },
+  "hosts": {
+    "waterservices.usgs.gov": {"provider": "usgs", "agency": "USGS", "terms": "US Government public domain (https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits)"},
+    "api.waterdata.usgs.gov": {"provider": "usgs", "agency": "USGS", "terms": "US Government public domain (https://api.waterdata.usgs.gov/)"},
+    "cwms-data.usace.army.mil": {"provider": "cwms", "agency": "USACE", "terms": "US Government public data, no key (https://cwms-data.usace.army.mil/cwms-data/)"},
+    "data.usbr.gov": {"provider": "rise", "agency": "USBR", "terms": "US Government public domain (https://data.usbr.gov/)"},
+    "storage.googleapis.com": {"provider": "registry", "agency": "Sector", "terms": "Sector's own public Lake Registry bucket (sector-lake-registry), USGS NHD derived"}
+  },
+  "fetch": {
+    "methods": ["GET"],
+    "userAgent": "Sector-LakeGaugeCensus/1.0 (read-only public metadata)",
+    "minSecondsBetweenRequestsPerHost": 1.0,
+    "timeoutSeconds": 60,
+    "maxRequests": 9000,
+    "robots": "robots.txt is read once per host; a disallowed path is never requested and the host's candidates are recorded ROBOTS_DISALLOWED",
+    "values": "metadata only. The one data call (USGS instantaneous values, last 12 h, shortlisted pool candidates only) keeps time stamps and drops every value at parse time; no level value is written, compared or judged"
+  },
+  "usgs": {
+    "parameters": {"62614": "lake/reservoir surface elevation, NGVD29", "62615": "lake/reservoir surface elevation, NAVD88", "00062": "reservoir surface elevation above a datum"},
+    "parameterDatum": {"62614": "NGVD29", "62615": "NAVD88", "00062": "SITE_DATUM"}
+  },
+  "cwms": {
+    "offices": ["LRB", "LRC", "LRE", "LRH", "LRL", "LRN", "LRP", "MVK", "MVM", "MVN", "MVP", "MVR", "MVS", "NAB", "NAE", "NAN", "NAO", "NAP", "NWDM", "NWDP", "NWK", "NWO", "NWP", "NWS", "NWW", "POA", "SAC", "SAJ", "SAM", "SAS", "SAW", "SPA", "SPK", "SPL", "SWF", "SWG", "SWL", "SWT"],
+    "parameter": "Elev (base parameter); sub-parameters Pool / Forebay / Headwater count as pool, Tailwater never"
+  },
+  "classification": {
+    "tailwaterWords": ["tailwater", "tailrace", "tail water", "below dam", "blw dam", "bl dam", "outflow", "outlet", "spillway", "release", "downstream", "tw"],
+    "poolWords": ["lake", "reservoir", "res", "pool", "forebay", "headwater", "hw", "impoundment", "pond", "flowage"],
+    "riverWords": ["river", "creek", "cr", "r", "fork", "fk", "branch", "run"],
+    "ruleCurveVersionWords": ["guide curve", "gc", "rul", "rule", "plan", "target", "fcst", "forecast", "top of", "bottom of", "l1", "l2", "l3"],
+    "usgsCopyVersionWords": ["usgs"],
+    "nwsRedistributionVersionWords": ["nws", "nwps", "hads"],
+    "classes": {
+      "POOL": "a pool/lake series inside the outline (or within R1) with no tailwater or river cue",
+      "TAILWATER": "a tailwater/outflow series, or a dam-cue station outside the outline",
+      "RIVER": "a river/creek station outside the outline with no pool cue",
+      "RULE_CURVE": "a guide/rule/forecast series (the 2026-11-21 trap); never a level source",
+      "UNKNOWN": "cues conflict or are absent; hand review"
+    }
+  },
+  "selection": {
+    "note": "Stage A, metadata only. Decides which candidates go to the stage B binding review. Applies to purpose BINDING.",
+    "S1_provider": "provider has an Engine adapter: usgs (62614/62615/00062), cwms, rise",
+    "S2_class": "classification POOL; UNKNOWN goes to HAND_REVIEW; TAILWATER, RIVER, RULE_CURVE are rejected",
+    "S3_position": {"insideOrWithinM": 1500, "pointOnlyWithinM": 1500, "pointOnlyVerdict": "HAND_REVIEW (no outline: R1 cannot be evaluated)"},
+    "S4_live": {"maxAgeHours": 72, "maxAgeHoursDaily": 192, "dailyCadenceMinAtLeast": 1440},
+    "S5_datum": "a vertical datum is named by the parameter, the site or the location; missing datum -> HAND_REVIEW",
+    "S6_host": "robots allows the path and the host terms are listed in hosts",
+    "S7_unique": "the station is not bound by another REVIEWED lake, and no other directory lake has the station inside or nearer its outline",
+    "S8_capability": {"usgs": "DIRECT_LAKE_GAUGE", "cwms": "DIRECT_OPERATOR_POOL", "rise": "DIRECT_OPERATOR_POOL"},
+    "S9_order": "per lake: DIRECT_OPERATOR_POOL before DIRECT_LAKE_GAUGE, then inside before outside, then nearer, then longer record (begin date)",
+    "verdicts": ["SHORTLIST", "HAND_REVIEW", "REJECT"]
+  },
+  "independence": {
+    "note": "Applies to purpose INDEPENDENT_TRUTH. Evidence from metadata only; each candidate is compared with every bound live, fallback and history series of the same lake.",
+    "boundSeriesExcluded": "a candidate equal to a bound series (same provider family and series; Access2Water and CWMS are one family when the time-series id matches) is not listed as a candidate",
+    "originAgency": "usgs -> USGS; rise -> USBR; cwms/a2w -> USACE unless the version names USGS (-> USGS copy) or NWS/NWPS/HADS (-> NWS redistribution; SHEF alone is a transfer format, not an origin); tva -> TVA; nwps/hads -> NWS redistribution (origin unknown)",
+    "sameGaugeDistanceM": 300,
+    "otherSiteMinDistanceM": 1000,
+    "tiers": {
+      "NOT_INDEPENDENT": "same USGS site id as a bound series; or same CWMS location id as a bound cwms/a2w series; or a CWMS USGS copy when the lake has a bound USGS series; or an NWS redistribution; or same origin agency within sameGaugeDistanceM",
+      "INDEPENDENT_AGENCY": "origin agency differs from every bound series' origin, the site id differs, and the bound gauges with known coordinates are at least sameGaugeDistanceM away",
+      "INDEPENDENT_SITE": "same origin agency as a bound series but a different site id at least otherSiteMinDistanceM from every bound gauge with known coordinates",
+      "UNCERTAIN": "anything else, including a bound gauge whose location is unknown (TVA, NWS) closer than the rules can exclude, or a CWMS USGS copy whose USGS site is not identifiable"
+    },
+    "eligibleForV3": "INDEPENDENT_AGENCY or INDEPENDENT_SITE, classification POOL, position inside or within S3, live by S4; v3 freezes its own list from these rows under its own pre-registration"
+  },
+  "bindingReview": {
+    "note": "Stage B, run only after the census and after PR #243 has run. Uses level values. Same rules as batches 1-2 (binding-review-v1 R1-R9, the 2026-11-21 dry-run checks (b)-(d), the runner's 15 ft history/live rule). Not changeable after the census output exists.",
+    "R1_position": "gauge <= 1.5 km of the outline (point-only lakes: hand review)",
+    "R2_identity": "name similarity >= 0.5, or the gauge is inside the outline",
+    "R3_notTrap": "no tailwater, river or well gauge; no guide/rule curve series",
+    "R4_state": "the gauge's state is one of the lake's states",
+    "R5_unique": "no better-matching lake claims the gauge; not bound by another reviewed lake",
+    "R6_live": "last reading < 72 h old (daily feeds < 192 h)",
+    "R7_level": "30-day median within -25..+8 ft of the directory full pool; a lake with no full pool: n-a, then check (d) n-a and hand review",
+    "R8_datum": "the vertical datum is identified and the same for live, fallback and history (or a recorded offset)",
+    "R9_second": "an independent second origin agrees within 2 ft; n-a when none exists. The same gauge through another endpoint never counts (batch 2 rule)",
+    "check_b": "primary vs fallback within 0.5 ft; any FAIL is held",
+    "check_c": "live within 5 ft of the 7-day median",
+    "check_d": "guide curve / operating zone / full pool within 25 ft of live",
+    "historyLive": "seeded history 365-day median within 15 ft of live (historyLiveMismatch)",
+    "adapter": "the provider has an Engine adapter; otherwise the lake moves to new-provider work, not to the batch",
+    "decision": "every rule PASS or n-a and every check PASS -> proposed for the batch; any FAIL -> held with its reason; a FLAG -> hand review by the owner",
+    "noRelaxation": "the target (>= 311 reviewed lakes, 50%) is never a reason to change a rule, threshold or classification after values are seen; report the count that passes"
+  },
+  "coverageArithmetic": {
+    "directoryLakeCount": 621,
+    "reviewedAtRegistration": 294,
+    "targetReviewed": 311,
+    "gaugeGradeCapabilities": ["DIRECT_OPERATOR_POOL", "DIRECT_LAKE_GAUGE"]
+  },
+  "publication": {
+    "changesBindings": false,
+    "changesAcceptedLists": false,
+    "changesKnowledgeRelease": false,
+    "changesScores": false,
+    "output": "local files in --out only (census.json, census.summary.json, robots.json, request log); registered in the Lake research folder's manifest on the Mac mini"
+  }
+}

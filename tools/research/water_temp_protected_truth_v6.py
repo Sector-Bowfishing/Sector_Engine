@@ -859,16 +859,33 @@ def load_selection_for_step_b(L, sel_path: str, stations_path: str, digest: str,
     return sel, V1.sha256_file(sel_path)
 
 
+TERMINAL_FETCH = ("{step}/{key} received {n} value-bearing body(ies) before it failed, so this attempt is TERMINAL: it is left "
+                  "STARTED and is never aborted, because a retry after seeing values is a peek. Recovery needs a new protocol id AND a "
+                  "revised protocol document (new sha256) that records the #51 human review. Cause: {cause}")
+
+
 def _fetch_step(L, step: str, sel_sha: str, out: str, prov_name: str, names: list[str], fetch) -> dict:
-    """A non-result fetch: begin, fetch(), bind every file and the provenance, complete."""
+    """A non-result fetch. fetch(receive) calls receive(name, body) the moment each response body arrives, before it parses or
+    writes it: receive binds the body's sha256 in the ledger at once, so the audit trail shows what was received. A failure before
+    the first body may abort (the step can be retried); after it, the attempt is terminal and is never aborted (protocol
+    runLedger.runsThatCount: abort only before any value is seen)."""
     key = STEP_KEYS[step]
     L.begin(step, key, {}, {"selection.json": sel_sha})
+    received = []
+
+    def receive(name: str, body: bytes) -> None:
+        received.append(name)                               # values are in hand from here on, whatever happens next
+        L.bind_inputs(step, key, {name: RL.sha256_bytes(body)})
+
     try:
-        fetch()
+        fetch(receive)
         L.bind_inputs(step, key, {n: Path(out, n) for n in names + [prov_name]})
     except BaseException as e:
-        L.abort_before_result(step, key, f"{type(e).__name__}: {str(e)[:200]}")
-        raise
+        cause = f"{type(e).__name__}: {str(e)[:200]}"
+        if not received:
+            L.abort_before_result(step, key, cause)
+            raise
+        raise SystemExit("REFUSED (terminal): " + TERMINAL_FETCH.format(step=step, key=key, n=len(received), cause=cause)) from e
     L.complete(step, key, {prov_name: V1.sha256_file(os.path.join(out, prov_name))})
     return {"files": len(names)}
 
@@ -878,11 +895,12 @@ def cmd_fetch_forcing(p: dict, digest: str, L, sel_path: str, stations: str, own
     names = [forcing_file(l["lakeId"]) for l in sel["lakes"]]
     _refuse_existing(out, ["forcing.provenance.json"] + names)
 
-    def fetch():
+    def fetch(receive):
         prov = []
         for l in sel["lakes"]:
             params = forcing_params(p, sel, l["lakeId"])
             body = _get_bytes(V1.OPEN_METEO, params)
+            receive(forcing_file(l["lakeId"]), body)
             check_forcing(json.loads(body), [d for lid, _, d in counted_casts(sel) if lid == l["lakeId"]])
             _save(out, forcing_file(l["lakeId"]), body, V1.OPEN_METEO, params, prov)
         V1.write_provenance(out, "forcing.provenance.json", prov)
@@ -894,10 +912,12 @@ def cmd_fetch_results(p: dict, digest: str, L, sel_path: str, stations: str, own
     _refuse_existing(out, ["results.provenance.json", "results"])
     qs = result_queries(sel)
 
-    def fetch():
+    def fetch(receive):
         prov, url = [], V1.WQP.format(kind="Result")
         for q in qs:
-            _save(out, q["file"], _get_bytes(url, q["params"]), url, q["params"], prov)
+            body = _get_bytes(url, q["params"])
+            receive(q["file"], body)
+            _save(out, q["file"], body, url, q["params"], prov)
         V1.write_provenance(out, "results.provenance.json", prov)
     return _fetch_step(L, "fetch-results", sel_sha, out, "results.provenance.json", [q["file"] for q in qs], fetch)
 

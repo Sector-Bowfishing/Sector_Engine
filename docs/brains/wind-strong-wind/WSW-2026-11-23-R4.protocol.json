@@ -1,0 +1,229 @@
+{
+  "schema": "sector-wind-strong-wind-protocol-v1",
+  "protocolId": "WSW-2026-11-23-R4",
+  "supersedes": [
+    {
+      "protocolId": "WSW-2026-11-23-R3",
+      "sha256": "82f96596197d6af32e43b9e01ce152e922f3a0c0a42993641993a2da0fda68a2",
+      "status": "SUPERSEDED, NEVER RUN. Nothing was fetched, fitted or scored under it.",
+      "why": "Independent review of PR #245 at aa354125: every one-shot guard (fit, rows, score, H2, fit sha, budget) was bound to the --out folder, so a second folder could re-run a step and pick the better result. R4 binds each protocol id to one global run ledger in the Wind research folder, records the fit sha there, fixes the inputs in a write-once manifest before rows, charges rows without an observation more strictly, and pins the station set."
+    },
+    {
+      "protocolId": "WSW-2026-11-23-R2",
+      "sha256": "ba05492be82102fdba170b8dd5181ec557505622246e6a780c52a6ffc129633b",
+      "status": "SUPERSEDED, NEVER RUN. Nothing was fetched, fitted or scored under it.",
+      "why": "Independent review of PR #245 at 6f538190: (1) its CAL+H1 METAR range reached into H2 days (2026-10-08); (2) rows that could not be built or forecast were dropped silently instead of being counted, against the owner's rule that unknowns count against a method; (3) the fit's sha256 was not required to be recorded before the past-window fetch. All three are protocol-level, so a new id is registered before any runner change."
+    },
+    {
+      "protocolId": "WSW-2026-11-23",
+      "sha256": "b9a55721f7a6d2853462c1080bbec384c3a30e3429fce70b10c2872c77449346",
+      "status": "SUPERSEDED, NEVER RUN.",
+      "why": "Its past window (2025-11..2026-04) had already been read by W1/W1b and the golden decoder fixture."
+    }
+  ],
+  "brainId": "wind",
+  "gap": "WIND-CNF-001",
+  "rubricItemsInformed": [
+    "WI4 (strong-wind event detection, 10 pts)"
+  ],
+  "status": "PRE-REGISTERED",
+  "preRegisteredAt": "2026-11-23",
+  "preRegisteredBy": "Claude (Engine research session, branch research/wind-strong-wind-method-2026-11-23)",
+  "ownerDirection": "Sector_Ops #51 comment 7093610553 (Michael, 2026-11-23: new research directions that make Brains stronger are pre-approved; publishing any score or validation change, rubric adoption, customer-visible changes, IAM, spending and cloud jobs still go to him first). Storage on the research SSD: Michael via the coordinator, 2026-11-23.",
+  "dataExaminedBeforeRegistration": {
+    "thisSession": "No NBM grib2 file, NBM .idx listing, METAR/ASOS observation or other value from any window below was fetched or read by this session. One request for a 2025-11-15 NBM .idx listing (metadata, under the superseded protocol, outside this protocol's windows) was refused by the network proxy and returned nothing. Nothing was fetched under R2 or R3 either.",
+    "readBeforeByTheProject": [
+      "CAL+H1 (NBM v5.0 inits 2026-05-06..2026-10-06) at the 8 frozen stations: the whole Stage 2/3 Wind research, including the WI4 fact (49 events, POD 0) and the CAL-only probability recalibration (prob_recal.py) and forcing study (forcing_eval.py).",
+      "W1 and W1b: NBM (via Open-Meteo ncep_nbm_conus) and best_match night wind vs nearest-airport ASOS/AWOS, valid 2025-11-01..2026-09-30, about 150 sample lakes plus the four live lakes, leads 0 h, ~24 h and days 3-8, including >= 15 mph POD/FAR (APP_WIND_SOURCE_REVIEW_V1.md).",
+      "The golden decoder fixture: NBM inits 2026-03-08 02-03Z decoded at the frozen stations (golden_stage1.json).",
+      "The Wind discovery avenue iem-wind (tools/research/discovery.json): IEM hourly sustained wind and gust at HSV, DCU and MSL (three of the 8 frozen stations) and five other airports, calendar years 2015-2024, reduced to calm-night counts by month. This is why the past window below starts on 2025-01-02 and not 2024-11-01.",
+      "Wave-memory VAL (wave_memory.py): Great Lakes NDBC buoy wind and waves 2024-2025. Different stations, no NBM; not truth for this protocol.",
+      "W-NOW-1..3 (the pW15 rule's private pre-registrations) are not in this repository; their windows are NOT_VERIFIED here. The runtime constant EXPECT_THR names them NBM v5.0 qmd thresholds, so they are expected to be v5.0 inits (2026-05 or later). The operator checks the private manifest (Mini request step 2).",
+      "Open-Meteo archive daily reanalysis forcing (temperature_2m_mean, shortwave_radiation_sum, wind_speed_10m_mean, relative_humidity_2m_mean) at lake points, used as Water Temp model inputs by the discovery avenues (tools/research/discovery.py, experiments.py) and the xb-wt-fish cross-Brain experiment, with years that include 2025. It is a daily-mean model wind at lake points: not NBM, not the 8 stations' observations, and never scored against strong-wind events. Disclosed because it is wind data from the past window."
+    ],
+    "pastWindowCheck": "Searched brains/wind, docs/brains/wind, docs/cortex/sessions and tools/research on 2026-11-23 (after merging origin/main f5460aac) for 2024-11..2025-05 dates and year ranges: none besides iem-wind (to 2024-12-31 local) and the wave-memory buoys. No repository tool or W-study reads NBM or the 8 stations' observations for 2025-01-02..2025-05-27. Re-checked for R3 on 2026-11-23: unchanged, apart from the Open-Meteo forcing listed above. Unchanged for R4."
+  },
+  "purpose": "Lift Wind's largest missing block: strong-wind nights are not forecast (deterministic NBM v5.0 POD 0 at every lead on 49 observed night >= 15 mph events, CAL+H1). Pre-register two candidate detection methods, an independent past-window test on data the project has not read, and the one-shot confirmatory test on H2 at unseal.",
+  "windows": {
+    "CAL_H1": {
+      "role": "fitting only (method M-B). Already consumed by earlier Wind research.",
+      "inits": [
+        "2026-05-06T00:00Z",
+        "2026-10-06T23:00Z"
+      ],
+      "nbmVersion": "NBM v5.0",
+      "source": "Where it lives is not recorded in this repository: research tools default to a per-user macOS cache folder (historical/v50), so the existing Stage 3C corpus may be on Michael's MacBook Pro. Nothing may run on the MacBook Pro. If an intact copy is on the Mac mini, rows are built from it in place; otherwise the runner fetches the CAL_H1 synoptic night pairs on the Mac mini (fetch --window cal_h1). Either way the fit uses exactly the rows defined in forecastRows.",
+      "truthCap": "No CAL+H1 observation day or valid time on or after the H2 start (2026-10-07T00:00Z) is fetched or loaded. CAL+H1 pairs whose valid time is on or after it (2026-10-06 12Z lead 18 and 18Z lead 12) are not planned. METAR days for CAL+H1 end on 2026-10-06."
+    },
+    "PW": {
+      "role": "independent past-window test",
+      "inits": [
+        "2025-01-02T00:00Z",
+        "2025-05-26T18:00Z"
+      ],
+      "nbmVersion": "pre-v4.3 (NOAA/MDL NBM v4.2; the runtime labels inits before 2025-05-27 12Z 'NBM pre-v4.3'). Not verified in this session that the open-data bucket still serves these cycles with qmd percentiles.",
+      "whyThisWindow": "The cool season 2024-11..2024-12 is excluded because iem-wind read 2024 observations at three frozen stations; the window ends before NBM v4.3 so it holds one model generation.",
+      "fetchOrder": "The runner refuses a past-window or H2 fetch, rows or score unless the run ledger holds a completed fit and --fit-sha equals the sha recorded there. The fit sha is posted on Sector_Ops #51 before any past-window fetch."
+    },
+    "H2": {
+      "role": "confirmatory, one shot, at unseal. Sealed until 2027-01-01 (brains/wind/BRAIN_OPERATING_CONTRACT.md section 9).",
+      "inits": [
+        "2026-10-07T00:00Z",
+        "2026-12-31T18:00Z"
+      ],
+      "nbmVersion": "NBM v5.0",
+      "sharedNight": "CAL+H1 inits of 2026-10-06 have valid times on the night of 2026-10-07 (01-08Z), and those observations were read in CAL+H1. H2 rows with a valid date of 2026-10-07 are therefore excluded from the H2 score.",
+      "rule": "The runner reads the system clock and refuses any H2 fetch, row build or score before 2027-01-01T00:00Z (seal: brains/wind/BRAIN_OPERATING_CONTRACT.md section 9 'Research initiation rules'; prob_recal.py H2_OPEN; brains/wind/research/GAPS.json WIND-CNF-001 stopCondition). Never tune on H2. The runner also refuses H2 if the run ledger shows any earlier H2 step that was not refused, and refuses any step if the system clock is earlier than the newest ledger entry. Reliance on the system clock is disclosed: a machine whose clock is set forward could open H2 early; the ledger and the #51 record make such a run visible."
+    }
+  },
+  "versionTransferCaveat": {
+    "statement": "The past window is NBM pre-v4.3 (v4.2) in winter and spring; CAL+H1 and H2 are NBM v5.0. Two generations separate them: v4.3 (2025-05-27) and v5.0 (2026-05-05, which re-calibrated wind speed and gust, SCN 26-24). A past-window result measures the methods on an older model and is NOT a measurement of today's forecast.",
+    "consequences": [
+      "M-B is fitted on v5.0 (CAL+H1, May-October) and applied to v4.2 (PW, January-May). Any v4.2/v5.0 difference in the upper tail of 10 m speed shifts its map: a PW failure of M-B can be a version artifact, and a PW pass does not prove v5.0 skill.",
+      "M-A has no fitted parameter; it transfers only through the definition and calibration of the qmd 90% level, which may differ between v4.2 and v5.0.",
+      "B0 on PW is a v4.2 measurement. It never replaces the v5.0 CAL+H1 WI4 fact.",
+      "Season differs too (CAL+H1 warm season, PW winter-spring, H2 autumn-early winter); the season effect cannot be separated from the version effect on PW.",
+      "If the bucket has no qmd 90% level for PW, M-A is NOT_EVALUABLE there; B0 and M-B are still scored, but the past window then tests only M-B."
+    ],
+    "howTheResultIsUsed": "PW evidence can reach INDEPENDENTLY_VALIDATED only for the NBM v4.2 winter-spring regime, and is labelled so. Only the H2 confirmatory score (same generation, v5.0) can close WIND-CNF-001 under its stop condition."
+  },
+  "stations": {
+    "ids": [
+      "15M",
+      "4A6",
+      "8A1",
+      "9A4",
+      "DCU",
+      "HSV",
+      "MSL",
+      "SNH"
+    ],
+    "set": "8A1, 4A6 Guntersville; DCU, HSV, 9A4 Wheeler; MSL Wilson; SNH, 15M Pickwick (brains/wind/runtime/lakes.json)",
+    "lakesJsonSha256": "1ded19e9b838b08d659cb9a7572f4569bacab0ff81bccebccbcc546270dede51",
+    "rule": "The runner refuses to run if lakes.json differs from this sha256 or its station set differs from these 8 ids.",
+    "note": "Four are AWOS, four ASOS; the IEM archive serves both. Same stations as the WI4 fact."
+  },
+  "truth": {
+    "source": "Iowa Environmental Mesonet ASOS/AWOS archive (https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py), report types 3 and 4, fields sknt, drct, gust. Registered research source iem-asos. Independent of every forecast.",
+    "pairing": "For each station and valid hour, the report within 10 minutes of the top of the hour, nearest wins (sector_wind.validate.load_obs). Missing sknt = no observation (row dropped).",
+    "units": "knots x 0.514444 = m/s, rounded to 0.01 (sector_wind.ingest.ingest_metar_day)."
+  },
+  "forecastRows": {
+    "inits": "synoptic cycles only (00, 06, 12, 18Z), in every window including the CAL_H1 fit, because the qmd percentiles that M-A needs exist only for those cycles.",
+    "leads": [
+      1,
+      3,
+      6,
+      12,
+      18
+    ],
+    "night": "valid hour (UTC) in 01..08 inclusive (sector_wind.validate._night), as the WI4 fact. In local time this is 19:00-02:59 CST or 20:00-03:59 CDT: the local window shifts by one hour at the daylight-saving change (2025-03-09 is inside PW). It is not the pW15 shadow's local-standard night (pw15.local_night).",
+    "pairs": "00Z leads 1/3/6, 06Z lead 1, 12Z lead 18, 18Z lead 12 (the synoptic (init, lead) pairs whose valid hour is night).",
+    "fetch": "sector_wind.ingest.ingest_nbm_cycle (same decoder, row-scan fix and self-check as the corpus) into a local store; NBM core WIND/WDIR/GUST and qmd WIND 10/50/90% and GUST 90% levels at 10 m. Only lake cut-outs are written to disk.",
+    "stationValue": "bilinear blend of the lake cut-out at the station (sector_wind.interp.CutoutIndex.weights). Deterministic speed: blend_wind (as validate.collect). P90 speed: blend of speedP90.",
+    "missing": "See accounting: nothing is dropped silently."
+  },
+  "event": {
+    "definition": "observed sustained 10 m speed >= 15 mph (6.7056 m/s) at a night valid hour (scoreboard dimension 1 / WI4 event)."
+  },
+  "methods": {
+    "B0": {
+      "name": "deterministic NBM (reference)",
+      "rule": "forecast event iff blended deterministic speed >= 6.7056 m/s",
+      "parameters": "none"
+    },
+    "M-A": {
+      "name": "NBM P90 exceedance",
+      "rule": "forecast event iff blended qmd WIND 90% level >= 6.7056 m/s",
+      "parameters": "none fitted",
+      "relationToPw15": "M-A is close to the frozen pW15 rule: 'P90 >= 15 mph' is roughly 'pW15 >= 0.10', where the pW15 shadow flag uses pW15 >= 0.15 and only when deterministic NBM is under 15 mph. They are different thresholds on the same qmd tail, not independent evidence."
+    },
+    "M-B": {
+      "name": "night upper-tail quantile mapping",
+      "rule": "forecast event iff QM(blended deterministic speed) >= 6.7056 m/s",
+      "fit": {
+        "data": "CAL_H1 only: every scored row (forecastRows, accounting) of the CAL_H1 synoptic night pairs, pairs (deterministic speed, observed speed) where both exist, pooled over stations and leads. The runner refuses a fit row whose init is outside 2026-05-06T00Z..2026-10-06T23Z or whose valid time is on or after 2026-10-07T00Z, and refuses to fit if any planned CAL_H1 cycle is missing or incomplete. The fit refuses if any planned CAL_H1 observation day file is missing, or if more than 5% of planned rows (15% at any station) have no observation; rows without an observation are excluded from the fit pairs and counted in the fit's accounting. With --corpus-store, the corpus path and the tree hash of its nbm/ and metar/ objects are recorded in the run ledger at fit time.",
+        "levels": [
+          0.5,
+          0.9,
+          0.95,
+          0.97,
+          0.98,
+          0.99,
+          0.995,
+          0.998,
+          0.999
+        ],
+        "quantile": "linear interpolation between order statistics (type 7)",
+        "map": "F_k = forecast quantile at level k, O_k = observed quantile at level k, D_k = O_k - F_k. QM(f) = f + D(f) with D linear in f between consecutive (F_k, D_k); D = D at the lowest knot below it and D = D at the highest knot above it. Ties in F_k are merged into one knot whose D is the mean of the tied D_k.",
+        "minimumRows": 5000,
+        "output": "wsw-mb-fit.json, written once, with its sha256 recorded in the run ledger at fit time (write-once). Every later past-window or H2 step must be given --fit-sha equal to that ledger entry (not merely the file in --out). The sha is also posted on Sector_Ops #51 as the public record, before any past-window fetch."
+      }
+    }
+  },
+  "scoring": {
+    "rowSet": "scored rows: every built row that has an observation. All methods are scored on the same rows; a missing method value is 'no event forecast' (accounting.forecastSideValueGaps).",
+    "perLead": "hits, misses, false alarms, POD, FAR, CSI, observed and forecast events",
+    "pooled": "the same over all leads",
+    "wi4Credit": "as the production scorer (sector_brain_platform.wind_measurements WI4 with measurement_evidence): over the leads that have rows, min POD credit (linear 0 -> 0, 0.5 -> 1; no observed events at a lead -> 0) x min FAR credit (linear 0.8 -> 0, 0.5 -> 1; no forecast events -> 1); no observed events at all -> 0. A lead with no rows is left out, as production does.",
+    "scoreboardGate": "scoreboard.py dimension 1: over the leads that have rows, POD >= 0.5 and (FAR <= 0.5 or no forecast events) at every lead.",
+    "uncertainty": "block bootstrap over UTC valid dates, exactly 2000 resamples, seed 20261123, for pooled POD, FAR, CSI and the paired difference CSI(method) - CSI(B0). The resample count is fixed in code.",
+    "multipleComparisons": {
+      "PW": "two candidates (M-A, M-B): Bonferroni; lower bound = 1.25th percentile of the paired CSI difference.",
+      "H2": "the H2 candidate family across protocols is four rules: the frozen pW15 rule (p* = 0.15, W-NOW-2/3; it only lowers confidence), the CAL-only probability recalibration (prob_recal.py, E15), M-A and M-B. Bonferroni over four: the H2 lower bound for M-A and M-B is the 0.625th percentile. The other two are scored under their own pre-registrations; this protocol does not score them."
+    }
+  },
+  "decision": {
+    "minimumEvidence": "at least 25 observed events in the scored rows; otherwise INSUFFICIENT_EVENTS. INCOMPLETE and NOT_EVALUABLE as in accounting. None of these is ever a pass.",
+    "supported": "per method: the lower bound of CSI(method) - CSI(B0) > 0, pooled POD >= 0.25 and pooled FAR <= 0.80.",
+    "reporting": "every outcome is reported together with the method's WI4 credit and scoreboard gate, so SUPPORTED is never shown alone.",
+    "pastWindowOutcome": "SUPPORTED | NOT_SUPPORTED | INSUFFICIENT_EVENTS | NOT_EVALUABLE | INCOMPLETE per method, labelled 'NBM v4.2 winter-spring (version-transfer caveat)'.",
+    "h2Outcome": "the same rule on H2, once, with the four-rule correction. SUPPORTED on H2 -> recommendation ACCEPT for a versioned strong-wind signal that may only LOWER the exposure assessment's confidence (WIND-CNF-001 expectedOutput); otherwise REJECT. Both methods are scored on H2 whatever the PW result.",
+    "noChangesAfterResults": "No method is chosen, re-fitted or re-thresholded after a PW or H2 result. A changed method needs a new protocol id and data not used to choose it (RS-18, RS-30)."
+  },
+  "outputsAndAdmission": {
+    "labels": [
+      "INTERNAL_EXPERIMENTAL",
+      "NOT_FOR_CUSTOMERS"
+    ],
+    "writes": "local files under the Wind research folder that Cortex research-path returns, on the Mac mini's research SSD. Never the boot disk and never Michael's MacBook Pro. No Firebase, no bucket, no score file, no evidence file in the repository, no schedule, no cloud job. A recorded result is never overwritten, and the run ledger (runBinding) makes every step's first run the only one that counts.",
+    "admission": "Nothing here changes WI4, the wind-measurements-evidence file, frozen-scores.json or any published score. A future evidence change is proposed as a candidate block through jobs/brain-scores/refresh_wind_score.py (anything other than live reliability is HELD) and Michael's decision. Whether a post-processed signal may earn WI4 credit ('deterministic' in the item) is a rubric-governance question for Michael."
+  },
+  "budget": {
+    "enforcedInCode": "per window, a cumulative byte counter and wall clock across runs (budget-<window>.json in the runBinding folder). Every attempt is counted, retries and partial reads included; redirects are refused; free space is checked before each cycle and each observation day; the budget is saved after each cycle and day and on SIGTERM/SIGINT. Limit: a SIGKILL or power loss loses at most the accounting of the cycle in progress.",
+    "downloadBytesPerWindow": 60000000000,
+    "wallClockHoursPerWindow": 48,
+    "hosts": [
+      "noaa-nbm-grib2-pds.s3.amazonaws.com (NOAA Open Data Dissemination, public, no credentials)",
+      "mesonet.agron.iastate.edu (IEM, public)"
+    ],
+    "hostCheck": "every request's host is checked against this list before it is sent, and redirects are refused, so a request never leaves the list"
+  },
+  "accounting": {
+    "principle": "Unknowns count against a method (Michael's rule). Every planned station-row is accounted for, and every result carries the counts below.",
+    "counts": [
+      "plannedPairs and plannedRows (= planned pairs x 8 stations)",
+      "missingCycles (a planned lake cycle with no stored object)",
+      "incompleteCycles (stored with status other than 'complete', or without the planned lead)",
+      "rowsBuilt",
+      "obsMissing (per station too)",
+      "b0Missing",
+      "p90Missing",
+      "rowsScored"
+    ],
+    "forecastSideCycleGaps": "If any planned lake cycle is missing or incomplete, the window result is INCOMPLETE for every method and earns nothing. The rows file is still written (with the counts) so the gap is visible.",
+    "forecastSideValueGaps": "A row with an observation whose method value is missing (B0/M-B: no deterministic speed at the station; M-A: no 90% level) is scored as 'no event forecast' for that method: a miss when the event happened. It is counted (b0Missing, p90Missing), never dropped.",
+    "truthSideGaps": "A planned observation day with no stored METAR file makes fit and rows refuse (it is a truth-side cycle gap). A row with no observation (no report within 10 minutes of the hour) has no truth, so it cannot be scored; it is counted (obsMissing, per station) and charged against every method through the window: if more than 5% of planned rows overall, or more than 15% of planned rows at any one station, have no observation, the window result is INCOMPLETE for every method and earns nothing. Rows are never deleted between fetch and rows without detection: the input manifest (runBinding) fixes the stores before rows are built.",
+    "qmdAbsent": "If fewer than 80% of the scored rows have a 90% level, M-A is NOT_EVALUABLE (the bucket likely serves no qmd percentiles for that generation); B0 and M-B are still scored."
+  },
+  "runBinding": {
+    "principle": "One global binding per protocol id, independent of --out: only the first run of each step counts.",
+    "folder": "<the Wind research folder that Cortex research-path returns>/protocol-runs/WSW-2026-11-23-R4/. The runner resolves the research folder as Cortex does (SECTOR_RESEARCH_HOME, else ~/Desktop/Development/Sector Research, then wind-brain), refuses if it does not exist, and refuses an --out that is not inside it.",
+    "ledger": "ledger.jsonl, append-only, one line per invocation of fit, fetch, rows and score (including refused and failed ones): sequence number, UTC time, step, window, status (STARTED, COMPLETED, ABORTED_NO_RESULT, FAILED, REFUSED), inputs' hashes, outputs' hashes, run number, and the sha256 of the previous line (a hash chain; a broken chain makes the runner refuse).",
+    "oneShot": "fit (one per protocol), rows and score (one per window) are one-shot: the runner refuses a second attempt unless every earlier attempt of that step and window is recorded ABORTED_NO_RESULT (an error before any output was written). An attempt left STARTED (for example after a SIGKILL) blocks the step; continuing then needs a new protocol id. Only run #1 counts, and the result shows its run number.",
+    "fetchIsResumable": "fetch is logged but not one-shot (month-by-month and resumable).",
+    "inputManifest": "input-manifest-<window>.json, write-once, written BEFORE rows are built: tree hashes (sha256-tree-v1) of the window store's nbm/ and metar/ objects, the lakes.json sha256, the runner file sha256, the Wind runtime tree hash and the repository git commit (with a dirty flag). If it already exists (after an aborted rows attempt) it must match exactly. score recomputes it and refuses on any difference, so a deleted, added or changed input is detected and refused.",
+    "budgetAndFitRecord": "budget-<window>.json and the fit record live in the same folder, written atomically; fetch, rows and score update them.",
+    "results": "every result records its run number, the ledger line hash, the input manifest sha256, the runner and Wind runtime hashes and the git commit."
+  }
+}

@@ -574,18 +574,59 @@ def test_provenance_urls_are_checked(tmp_path, monkeypatch):
     W.verify_against_provenance(rdir, "results.provenance.json", exp, W._listing(rdir, "results"), W.V1.WQP.format(kind="Result"))
 
 
-def test_failed_fetch_is_aborted_before_result_and_may_be_retried(tmp_path, monkeypatch):
+def test_failure_on_the_first_request_aborts_and_the_retry_is_allowed(tmp_path, monkeypatch):
     L = new_ledger(tmp_path)
     sel, sp, st, *_ = step_a(tmp_path, L)
 
     def boom(*a, **k):
-        raise OSError("synthetic network failure")
+        raise OSError("synthetic network failure before any body")
     monkeypatch.setattr(W, "_get_bytes", boom)
     with pytest.raises(OSError):
         W.cmd_fetch_results(P, DIGEST, L, sp, st, REQ, str(tmp_path / "f0"))
     assert [e["status"] for e in L.entries() if e["step"] == "fetch-results"] == [RL.STARTED, RL.ABORTED]
     fake_sources(monkeypatch)
     assert W.cmd_fetch_results(P, DIGEST, L, sp, st, REQ, str(tmp_path / "f1"))["files"] == sum(SEL_COUNTS.values())
+
+
+def test_failure_after_a_value_body_is_terminal_and_the_retry_is_refused(tmp_path, monkeypatch):
+    """The review's peek-and-retry PoC: two value bodies arrive, the third request fails, the operator retries with new bytes."""
+    L = new_ledger(tmp_path)
+    sel, sp, st, *_ = step_a(tmp_path, L)
+    fake_sources(monkeypatch, value="35.0")
+    good, n = W._get_bytes, {"i": 0}
+
+    def flaky(url, params=None):
+        n["i"] += 1
+        if n["i"] == 3:
+            raise OSError("synthetic failure after 2 value bodies")
+        return good(url, params)
+    monkeypatch.setattr(W, "_get_bytes", flaky)
+    with pytest.raises(SystemExit, match=r"TERMINAL.*new protocol id AND a revised protocol document"):
+        W.cmd_fetch_results(P, DIGEST, L, sp, st, REQ, str(tmp_path / "f0"))
+    ents = [e for e in L.entries() if e["step"] == "fetch-results"]
+    assert RL.ABORTED not in [e["status"] for e in ents] and ents[0]["status"] == RL.STARTED
+    bound = {k: v for e in ents if e["status"] == RL.INPUTS_BOUND for k, v in e["inputs"].items()}
+    on_disk = sorted(os.listdir(tmp_path / "f0" / "results"))
+    assert len(bound) == 2 and sorted(k.split("/", 1)[1] for k in bound) == on_disk      # what was received is in the trail
+    assert all(bound[f"results/{f}"] == W.V1.sha256_file(str(tmp_path / "f0" / "results" / f)) for f in on_disk)
+    fake_sources(monkeypatch, value="21.0")
+    with pytest.raises(RL.LedgerRefusal, match="never completed or aborted"):
+        W.cmd_fetch_results(P, DIGEST, L, sp, st, REQ, str(tmp_path / "f1"))
+    with pytest.raises(RL.LedgerRefusal, match="no COMPLETED run"):
+        W.cmd_compare(P, DIGEST, L, sp, st, str(tmp_path / "f1"), str(tmp_path / "fb"), REQ, str(tmp_path / "c.json"), publisher(L))
+
+
+def test_forcing_refused_after_its_body_arrived_is_terminal(tmp_path, monkeypatch):
+    L = new_ledger(tmp_path)
+    sel, sp, st, *_ = step_a(tmp_path, L)
+    monkeypatch.setattr(W, "_get_bytes", lambda url, params=None: json.dumps(forcing(20.0, start="2023-01-01")).encode())
+    with pytest.raises(SystemExit, match="TERMINAL"):
+        W.cmd_fetch_forcing(P, DIGEST, L, sp, st, REQ, str(tmp_path / "fb"))
+    ents = [e for e in L.entries() if e["step"] == "fetch-forcing"]
+    assert [e["status"] for e in ents] == [RL.STARTED, RL.INPUTS_BOUND]
+    fake_sources(monkeypatch)
+    with pytest.raises(RL.LedgerRefusal, match="never completed or aborted"):
+        W.cmd_fetch_forcing(P, DIGEST, L, sp, st, REQ, str(tmp_path / "fb2"))
 
 
 def test_cli_verify(capsys):
