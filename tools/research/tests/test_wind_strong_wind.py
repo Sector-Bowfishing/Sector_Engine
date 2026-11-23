@@ -235,3 +235,20 @@ def test_rows_from_a_synthetic_store(tmp_path):
     assert rows[(sid, 1)]["obs"] == 7.2 and rows[(sid, 1)]["b0"] == pytest.approx(5.0) and rows[(sid, 1)]["p90"] == pytest.approx(7.5)
     assert rows[(sid, 3)]["obs"] == 3.1 and rows[(sid, 6)]["obs"] is None
     assert rows[(sid, 1)]["nbmVersion"] == "NBM v4.3"
+
+
+def test_month_by_month_covers_the_window_exactly():
+    months = ["2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04"]
+    parts = [p for m in months for p in W.month_pairs("pw", m)]
+    assert parts == W.night_pairs("pw")
+    with pytest.raises(W.Refused):
+        W.month_pairs("pw", "2026-05")
+
+
+def test_fetch_refuses_a_full_volume_before_any_download(tmp_path):
+    _, psha = W.load_protocol()
+    (tmp_path / W.FIT_FILE).write_text(json.dumps(dict(FLAT_FIT, protocolSha256=psha)))
+    assert W.guard_free_space(str(tmp_path / "pw" / "store"), None) > 0
+    assert _cli("fetch", "--window", "pw", "--out", str(tmp_path), "--month", "2025-11", "--min-free-gb", "1e9") == 3
+    assert _cli("fetch", "--window", "pw", "--out", str(tmp_path), "--month", "2026-07") == 3
+    assert not (tmp_path / "pw").exists()

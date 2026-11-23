@@ -10,6 +10,7 @@ or a schedule, and admits nothing: every output is labelled INTERNAL_EXPERIMENTA
     plan  --window pw|h2       (init, lead) pairs and the message estimate; no network
     fit   --corpus-store DIR   M-B quantile map from CAL+H1 night rows only (reads the existing corpus store in place)
     fetch --window pw|h2       NBM synoptic night (init, lead) pairs + IEM days into --out/<window>/store
+                               [--month YYYY-MM] one init month at a time; [--min-free-gb N] refuse on a full volume
                                (pw: refused until the fit file exists; h2: refused before 2027-01-01)
     rows  --window pw|h2       station rows (obs, B0 speed, P90 speed) -> --out/<window>/rows.jsonl
     score --window pw|h2       B0 / M-A / M-B per lead + pooled, WI4 credit, scoreboard gate, bootstrap, decision
@@ -323,12 +324,36 @@ def collect_fit_pairs(corpus_store: str) -> list[tuple[float, float]]:
     return [(r["rec"][0], r["rec"][3]) for r in recs if validate._night(r["validTime"])]
 
 
-def do_fetch(window: str, out: str, max_pairs: int | None = None) -> dict:
+def month_pairs(window: str, month: str | None) -> list[tuple[dt.datetime, int]]:
+    """Night pairs of the window, limited to one init month (YYYY-MM) when given."""
+    pairs = night_pairs(window)
+    if month is None:
+        return pairs
+    sel = [p for p in pairs if f"{p[0]:%Y-%m}" == month]
+    if not sel:
+        raise Refused(f"REFUSED: month {month} has no init in the {window} window")
+    return sel
+
+
+def guard_free_space(path: str, min_free_gb: float | None) -> float:
+    """Free space (GB) on the volume holding path; refused below min_free_gb."""
+    import shutil
+    probe = path
+    while not os.path.exists(probe):
+        probe = os.path.dirname(probe) or "."
+    free = shutil.disk_usage(probe).free / 1e9
+    if min_free_gb is not None and free < min_free_gb:
+        raise Refused(f"REFUSED: {free:.1f} GB free on the output volume (< {min_free_gb:g} GB); nothing fetched")
+    return free
+
+
+def do_fetch(window: str, out: str, max_pairs: int | None = None, month: str | None = None) -> dict:
     ingest, _, store, _ = _runtime()
     check_hosts([ingest.NBM_CORE, ingest.NBM_QMD, ingest.IEM])
     cfg = _cfg(ingest)
     st = store.LocalStore(os.path.join(out, window, "store"))
-    pairs = night_pairs(window)[:max_pairs] if max_pairs else night_pairs(window)
+    pairs = month_pairs(window, month)
+    pairs = pairs[:max_pairs] if max_pairs else pairs
     by_init: dict[dt.datetime, list[int]] = {}
     for t, l in pairs:
         by_init.setdefault(t, []).append(l)
@@ -348,7 +373,7 @@ def do_fetch(window: str, out: str, max_pairs: int | None = None) -> dict:
             days += 1
         d += dt.timedelta(days=1)
     st.flush_ledger()
-    return {"window": window, "cyclesFetched": done, "cyclesNotComplete": failed, "metarDaysFetched": days}
+    return {"window": window, "month": month, "cyclesFetched": done, "cyclesNotComplete": failed, "metarDaysFetched": days}
 
 
 def build_rows(window: str, out: str) -> list[dict]:
@@ -406,6 +431,8 @@ def main(argv=None) -> int:
     ap.add_argument("--fit", help="path to wsw-mb-fit.json (default <out>/wsw-mb-fit.json)")
     ap.add_argument("--rows", help="score: rows.jsonl (default <out>/<window>/rows.jsonl)")
     ap.add_argument("--max-pairs", type=int, help="fetch: smoke-test limit")
+    ap.add_argument("--month", help="fetch: one init month YYYY-MM (month-by-month runs)")
+    ap.add_argument("--min-free-gb", type=float, help="fetch: refuse unless the output volume has this much free space")
     ap.add_argument("--boot", type=int, default=BOOT_N, help=argparse.SUPPRESS)
     ap.add_argument("--now", help=argparse.SUPPRESS)
     ap.add_argument("--protocol", default=PROTOCOL, help=argparse.SUPPRESS)
@@ -438,7 +465,12 @@ def main(argv=None) -> int:
         guard_window(a.window, _now(a), a.cmd)
         fit, fsha = load_fit(fit_path, psha)
         if a.cmd == "fetch":
-            print(json.dumps(do_fetch(a.window, a.out, a.max_pairs), indent=1))
+            if a.month:
+                month_pairs(a.window, a.month)
+            free = guard_free_space(a.out, a.min_free_gb)
+            res = do_fetch(a.window, a.out, a.max_pairs, a.month)
+            res["freeGbBefore"] = round(free, 1)
+            print(json.dumps(res, indent=1))
             return 0
         rows_path = a.rows or os.path.join(a.out, a.window, "rows.jsonl")
         if a.cmd == "rows":
