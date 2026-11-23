@@ -90,6 +90,32 @@ Cost: a run reads only the bound dams whose nextCheckAt is reached; estimate abo
 
 Off again: `execution_control.py brain --brain generation --disable`, then `activityState PARKED`; delete the job to stop all cost.
 
+### 6.2 Running on Sector Pulse instead of a cloud job (decision 2026-11-23; prepared, all inert)
+
+Decision recorded in chat (Michael, 2026-11-23 01:44 CT), not an Owner approval comment: the new Weather, Moon and Generation Brains run on the
+Mac mini through Sector Pulse instead of as Cloud Run jobs, so a run costs nothing. **`brains/generation/deploy/deploy-job.sh` is superseded by Pulse, pending
+Michael's enablement**: it stays in the repository unchanged (not deleted) and is not to be run while this route is chosen. Nothing below is
+enabled, deployed or run by the PR that prepared it (branch `ops/new-brains-on-pulse-2026-11-23`).
+
+Prepared: `runtime/artifact_entry.py` (the shared `sector_brain_platform.python_artifact_entry`): the unchanged publish step into the Brain's
+DryRunWriter, the previous state read from the live Brain database (GET only, `--read-rtdb`, the read token), ONE sealed artifact stored
+create-only and handed off with `--emit`. It keeps `run.py --write`'s gates: an APPROVED knowledge release (exit 2) AND
+`GENERATION_WRITE_APPROVED=1` (exit 3). It writes no database and no bucket; the central Publisher is the only writer once the Brain is CENTRAL.
+Sector-Pulse catalog entry `generation-central` (disabled; WHILE_LEASE_HELD: no cron of its own, it runs once per cycle the Orchestrator grants Pulse
+the lease: hourly, reading only dams whose nextCheckAt is reached).
+
+D-G and D-I (§7) still block enablement on this route.
+
+| # | Who | Action (replaces the cloud-job steps above) |
+|---|---|---|
+| 1 | Michael, then an Engine PR | Approve the knowledge release (step "approve" above) |
+| 2 | Cortex maintenance session, then an Engine PR | Register the Brain's families / target Brain (dispatch refuses it until then) |
+| 3 | Michael | Order review: the Brain is not in `cutover_order.json` (PL-10); a hybrid-stage fragment `tools/ops/hybrid-stage/generation.json` and `hybrid_stage.py apply` follow the order review (as Wind, Water Temp) |
+| 4 | Michael (IAM) | The per-Brain lease/artifact bindings for Pulse (the W-H1 / WT-H1 pattern, B=generation) |
+| 5 | Engine PR (config) | `control_manifest.json`: `activityState` ACTIVE and an execution target the Orchestrator grants to the runner (as the CENTRAL Brains); remove the Brain from the `registered_disabled` guards; redeploy the Orchestrator and Publisher |
+| 6 | Michael on the Mac mini | Merge the Sector-Pulse PR, update Pulse; set `jobs.dataRoot` to the data SSD folder; Keychain items as the catalog entry declares; enable `generation-central` in Pulse. **Write approval** is the Pulse owner config `publication.generationWriteApproved` = `"1"` in `config.json` (owner-only), which Pulse renders into `GENERATION_WRITE_APPROVED` for the job; unset, the entry refuses (exit 3) |
+| 7 | Michael (resumes execution) | `tools/ops/execution_control.py brain --brain generation --enable-brain ...` with the approvalRef |
+
 ## 7. Blocking enablement (owner decisions, not code)
 
 Nothing in this section is changed by code; each must be decided before the Brain is given an execution target.
