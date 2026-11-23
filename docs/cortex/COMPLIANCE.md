@@ -194,3 +194,17 @@ Rows evaluated for `weather`, `moon` and `generation` only (still not columns ab
 - BR-21 / PL-15 / PL-18: PASS. Executors prepared but inert (`orchestrate.planned_executors` returns {} on the live manifest); deploy scripts refuse without the owner's approval and create no scheduler; M08 dispatch also refuses the three (UNREGISTERED_BRAIN). `jobs/brain-orchestrator/tests/test_prepared_brain_executors.py`.
 - PL-01 (dependency graph): PASS. Moon -> Weather edge now drives a DEPENDENCY_CHANGED trigger (inert while PARKED); new edge attribute `deferIfUpstreamStarted` (CG-3.1-21).
 - BR-02 / BA-01: FINDING unchanged (mission-audit UNREGISTERED_BRAIN for all three; CG-W-1, CG-3.1-19, CG-3.1-20).
+
+## 2026-11-23 addendum: Wind onto Pulse, code blockers (sessions/2026-11-23-wind-pulse-blockers.md)
+
+Rows evaluated for `wind` only:
+- BR-11 (a, e) release loading and lineage: PASS. `verified_release()` checks every file digest and the release digest (`sha256:690adf50…`, unchanged); sealed artifacts carry `knowledgeRelease`, `manifestRef`, `manifestSha256` (`test_build_seals_one_bundle_with_the_release_lineage`).
+- BR-11 (b, c) store and owner: PASS. `PACKAGED_IN_IMAGE`, owner `wind`, declared in `brains/wind/brain.json` `knowledge.stores`.
+- BR-11 (d) promotion traces to an approval: **PASS (was NOT_RECORDED)**. `docs/cortex/approvals/wind-knowledge-2026-10-20.1.md`, owner chat 2026-11-23 06:21Z, Sector_Ops #51 comment 7093271287; scope INTERNAL + CALIBRATION, not customer-eligible. `PackagedReleaseResolver` accepts it.
+- BR-11 (f) / BR-16 memory unavailable: PASS. `artifact_entry.py` refuses (exit 2, nothing stored) on a missing or tampered release; a live-previous read error seals nothing (exit 3) (`test_a_read_failure_seals_nothing`).
+- BR-10 developer-machine dependency: PASS. Scan of `brains/wind/runtime`, `brains/wind/deploy` and the three new tools for user/absolute paths, `HOME`/`expanduser`, `localhost`, research paths: no hits. The new tools take every location as an argument.
+- PL-13 Pulse independence: PARTIAL. Wind would run only on Pulse with failover off; the continuity path is bounded staleness (`staleAfterHours` 1.5, lakes DEGRADED/stale), documented in `WIND_CUTOVER_PULSE_V1.md`. Wind is not customer-eligible, so no customer path depends on Pulse. Pulse-offline behaviour was not exercised in this session.
+- PL-06 / FD-15 single writer, W-H2: PASS (Engine side). A hand-off needs `--read-rtdb`; a read-live seal never advances local bookkeeping; `live_previous` reads `lakeFleet/{k}/readiness/wind`, the field `publish()` writes (`test_live_previous.py`, 3 tests fail on the old path). The Pulse `wind-central` catalog does not yet pass `--read-rtdb` (Sector-Pulse change, open).
+- Watchdog scope, W-H3: PASS (staged). `tools/ops/hybrid-stage/wind.json` pins all 621 directory lakes; `brains/wind/tests/test_watchdog_scope.py` proves every lake key of a sealed write set is on it and that D3's live + national list alone is not enough.
+- data-check: 2 new findings vs `origin/main` (543 vs 541), both static-heuristic false positives: `/activity` (a test's path-prefix filter, `brains/wind/tests/test_live_previous.py`) and `/lakes` (the Engine HTTP endpoint named in `tools/ops/wind_watchdog_lakes.py` help text). CG-3.1-22.
+- mission-audit: no Wind finding (4 pre-existing: LEGACY_COMBINED fish; UNREGISTERED_BRAIN generation, moon, weather). ops-check `--repo`: 0 findings.
