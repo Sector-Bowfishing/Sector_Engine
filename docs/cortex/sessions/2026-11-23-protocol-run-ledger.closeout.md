@@ -6,7 +6,7 @@ Task: shared protocol run ledger for pre-registered research runners · Folder: 
 ```
 
 ## Preserved results
-No local data was created. Committed on branch `research/protocol-run-ledger-2026-11-23`: the module, its tests, the session record and CG-3.1-27. Tests write only to pytest temporary folders.
+No local data was created. Committed on branch `research/protocol-run-ledger-2026-11-23`: the module, its tests, the session record and CG-3.1-27. Tests write only to pytest temporary folders. The for_brain smoke test used a scratch research home in the session scratchpad and removed it. The anchor smoke test was a read-only `gh api` listing of Sector_Ops #51 and posted nothing.
 
 ## Manifests updated
 none (no research data; when a runner first writes `<research folder>/_ledgers/`, that session registers the ledger in the folder's manifest)

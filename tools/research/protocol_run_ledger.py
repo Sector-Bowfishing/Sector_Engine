@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Protocol run ledger: one append-only, hash-chained record per pre-registered research protocol. Stdlib only, no network.
+"""Protocol run ledger: one append-only, hash-chained record per pre-registered research protocol. Stdlib only. The only
+network use is a read of the anchor issue's comments through the ``gh`` CLI (``require_external_anchor``).
 
 Why it exists
 -------------
@@ -15,14 +16,22 @@ The rule
    ``--out``. (``Ledger(root, ...)`` with an explicit root is for tests.) The root must already exist and must not lie inside any ``--out``
    folder (``forbid_under``). The ledger is bound to the protocol document's sha256: a different hash for the same id is refused, so
    editing the protocol after a run needs a new protocol id.
-1a. **The anchor is the binding record.** A new ledger's first entry (``LEDGER_OPENED``) records the resolved root, the Brain and the
-   machine. Its hash, ``anchor()``, is posted on Sector_Ops #51 when the ledger is created (by the runner session or the Mac mini request).
-   That posted hash is the binding record: a ledger whose first entry does not match it (``verify_anchor(posted)``) is invalid, whatever
-   its chain says. This is what makes deleting and recreating a ledger detectable.
-2. **Only run #1 counts.** ``begin`` refuses a (step, key) that has a COMPLETED entry, or a STARTED attempt that was neither completed nor
-   aborted (a crash after start is treated as a possible look at the result). A later attempt is allowed only after
-   ``abort_before_result``, which is allowed only while no output and no result were recorded for the attempt. A retry after an abort
-   gets the next attempt number. Only the first COMPLETED entry counts (``first``/``counts``); there can never be a second.
+1a. **The external anchor is the binding record.** A new ledger's first entry (``LEDGER_OPENED``) carries a random 128-bit nonce, the
+   protocol id and sha256, the resolved research root, the host and the UTC time. Its sha256 is ``anchor()``. Before any result-producing
+   step, the runner posts ``post_anchor_text()`` as a comment on Sector_Ops #51 (it starts with ``Run anchor: <protocol_id> <anchor>`` and
+   never carries an "Owner approval" header). ``begin(..., result_producing=True)`` (the default) calls ``require_external_anchor()``, which
+   reads the issue's comments with ``gh api`` and refuses unless the **earliest** ``Run anchor:`` comment for this protocol id carries this
+   ledger's anchor and was created before the ledger's first result-producing STARTED entry. A later anchor comment for the same protocol
+   id never counts, so deleting the ledger folder or choosing another one can never produce a new run #1: the new ledger's anchor differs
+   from the earliest posted one. If ``gh`` is unavailable or the call fails, the step is refused. A ledger whose first entry does not match
+   the earliest posted anchor is invalid. Steps that cannot see results (a fetch) pass ``result_producing=False`` and may run before the
+   anchor is posted.
+2. **Only run #1 counts.** ``begin`` refuses a (step, key) that has a COMPLETED entry. A STARTED entry with no end (the process was
+   killed, the machine rebooted) is **terminal** for that (step, key): the attempt may have seen a result, so ``begin`` refuses it forever
+   and the only recovery is a **new protocol id** (with its own anchor). ``abort_before_result`` is the in-process exit for a failure before
+   any result: it is allowed only from the same ``Ledger`` object that began the attempt, and only while no output and no result were
+   recorded. A retry after an abort gets the next attempt number. Only the first COMPLETED entry counts (``first``/``counts``); there can
+   never be a second. ``record_outputs`` and ``complete`` are also accepted only from the object that began the attempt.
 3. **Inputs are bound before results.** ``bind_inputs`` records input hashes for a (step, key) before that step has a result and refuses to
    re-bind them differently; ``begin`` refuses inputs that differ from the bound ones; ``check_inputs`` refuses any file that changed. Later
    steps bind earlier results with ``require(step, key)`` and compare (for example a fit sha or a selection hash).
@@ -31,14 +40,15 @@ Entries
 -------
 Each line is one JSON object (sorted keys, compact): ``seq``, ``utc``, ``protocol_id``, ``protocol_sha256``, ``step``, ``key``, ``status``
 (``LEDGER_OPENED`` first and only first, then ``STARTED``, ``OUTPUTS_RECORDED``, ``COMPLETED``, ``ABORTED_BEFORE_RESULT``, ``INPUTS_BOUND``), ``run``, ``args``, ``inputs`` {name: sha256},
-``outputs`` {name: sha256}, ``result`` (small dict), ``reason``, ``git_commit``, ``git_dirty``, ``host`` and ``prev_entry_sha256`` (sha256 of
+``outputs`` {name: sha256}, ``result`` (small dict), ``reason``, ``result_producing`` (STARTED only), ``git_commit``, ``git_dirty``, ``host`` and ``prev_entry_sha256`` (sha256 of
 the previous line's bytes; 64 zeros for the first). A side file ``<protocol_id>.head.json`` records the last seq and line hash, so editing or
 truncating the tail is detected too. Every write takes an exclusive ``fcntl`` lock, re-reads and verifies the chain, appends, flushes and
 fsyncs.
 
-Limits (stated, not hidden): locally this stops accidental and casual re-runs and makes edits detectable. Deleting the ledger and its
-head together is detected only against the #51-posted anchor. Runners also print ``anchor()`` and ``head()`` into their reports and keep
-the ledger in the research folder's manifest and backups.
+Limits (stated, not hidden): locally the ledger stops re-runs and makes edits detectable; deleting or replacing it is caught only by the
+external anchor, so result-producing steps never skip ``require_external_anchor``. The anchor check trusts the comment timestamps GitHub
+records and does not check who posted the comment. Runners also print ``anchor()`` and ``head()`` into their reports and keep the ledger
+in the research folder's manifest and backups.
 """
 from __future__ import annotations
 
@@ -49,6 +59,7 @@ import hashlib
 import json
 import os
 import re
+import secrets
 import socket
 import subprocess
 import sys
@@ -70,9 +81,12 @@ LEDGER_OPENED = "LEDGER_OPENED"
 STATUSES = (LEDGER_OPENED, STARTED, OUTPUTS_RECORDED, COMPLETED, ABORTED, INPUTS_BOUND)
 CORTEX_PACK = "sector/engine"
 ENV_CORTEX = "CORTEX_HOME"
+ANCHOR_PREFIX = "Run anchor:"
+ANCHOR_REPO = "Sector-Bowfishing/Sector_Ops"
+ANCHOR_ISSUE = 51
 RESULT_MAX_BYTES = 8192
 FIELDS = ("seq", "utc", "protocol_id", "protocol_sha256", "step", "key", "status", "run", "args", "inputs", "outputs", "result", "reason",
-          "git_commit", "git_dirty", "host", "prev_entry_sha256")
+          "result_producing", "git_commit", "git_dirty", "host", "prev_entry_sha256")
 _ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 _HEX = re.compile(r"^[0-9a-f]{64}$")
 _REPO = Path(__file__).resolve().parents[2]
@@ -160,6 +174,39 @@ def _git(repo: Path):
         return None, None
 
 
+def _gh_api(path: str) -> str:
+    """``gh api --paginate <path>`` stdout. Raises LedgerRefusal when gh is missing or fails: the anchor is never assumed."""
+    try:
+        r = subprocess.run(["gh", "api", "--paginate", path], capture_output=True, text=True, timeout=120)
+    except (OSError, subprocess.SubprocessError) as e:
+        raise LedgerRefusal(f"gh api unavailable ({e}); the external anchor cannot be checked, so the step is refused") from None
+    if r.returncode != 0:
+        raise LedgerRefusal(f"gh api {path} failed (exit {r.returncode}): {r.stderr.strip()[:300]}; the step is refused")
+    return r.stdout
+
+
+def _json_arrays(text: str) -> list:
+    """Parse ``gh api --paginate`` output: one or more concatenated JSON arrays."""
+    dec, i, out = json.JSONDecoder(), 0, []
+    text = text.strip()
+    while i < len(text):
+        try:
+            obj, j = dec.raw_decode(text, i)
+        except ValueError:
+            raise LedgerRefusal("gh api returned output that is not JSON; the step is refused") from None
+        if not isinstance(obj, list):
+            raise LedgerRefusal("gh api returned JSON that is not a list of comments; the step is refused")
+        out.extend(obj)
+        i = j
+        while i < len(text) and text[i].isspace():
+            i += 1
+    return out
+
+
+def _parse_time(value: str) -> dt.datetime:
+    return dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+
 def _inside(path: Path, parent: Path) -> bool:
     return path == parent or parent in path.parents
 
@@ -167,7 +214,8 @@ def _inside(path: Path, parent: Path) -> bool:
 class Ledger:
     """The run ledger of one pre-registered protocol. See the module docstring for the rule."""
 
-    def __init__(self, root, protocol_id: str, protocol_sha256: str, forbid_under: Iterable = (), *, repo=None, _opened_by=None):
+    def __init__(self, root, protocol_id: str, protocol_sha256: str, forbid_under: Iterable = (), *, repo=None, gh=None,
+                 anchor_repo: str = ANCHOR_REPO, anchor_issue: int = ANCHOR_ISSUE, _opened_by=None):
         """Plain constructor with an explicit ``root``, for tests and tooling. Runners use ``Ledger.for_brain`` so the root is the one
         Cortex resolves, never a folder the operator chose."""
         env = os.environ.get(ENV_ROOT) or None
@@ -196,17 +244,21 @@ class Ledger:
         self.head_path = self.dir / f"{protocol_id}.head.json"
         self.lock_path = self.dir / f"{protocol_id}.lock"
         self._git = None
+        self._gh = gh or _gh_api  # injectable for tests: callable(api_path) -> stdout of `gh api --paginate`
+        self.anchor_repo, self.anchor_issue = anchor_repo, int(anchor_issue)
+        self._mine = {}  # (step, key) -> attempt begun by THIS object; only it may record outputs, complete or abort
         self.dir.mkdir(exist_ok=True)
         with self._locked():
             ents = self._load()  # refuses a broken chain or another protocol hash now, before any work starts
             if not ents:
-                opened = {"root": str(self.root), "host": socket.gethostname(), "resolvedBy": "explicit-root", "brain": None}
+                opened = {"nonce": secrets.token_hex(16), "protocol_id": protocol_id, "protocol_sha256": protocol_sha256,
+                          "root": str(self.root), "host": socket.gethostname(), "resolvedBy": "explicit-root", "brain": None}
                 opened.update(_opened_by or {})
                 self._append(ents, status=LEDGER_OPENED, result=opened)
 
     @classmethod
     def for_brain(cls, brain: str, protocol_id: str, protocol_sha256: str, repo=".", forbid_under: Iterable = (), *, cortex_home=None,
-                  pack: str = CORTEX_PACK) -> "Ledger":
+                  pack: str = CORTEX_PACK, **kwargs) -> "Ledger":
         """The runner constructor. Resolves the root with ``cortex.py research-path <pack> <brain>`` (Cortex at ``cortex_home`` or
         ``$CORTEX_HOME``, run in ``repo``). ``SECTOR_RESEARCH_ROOT``, if set, must equal that output or the call is refused. A new ledger
         records the resolved root, the Brain and the machine in its first entry, whose hash is the anchor (``anchor()``)."""
@@ -230,24 +282,72 @@ class Ledger:
         env = os.environ.get(ENV_ROOT)
         if env and Path(env).expanduser().resolve() != resolved:
             raise LedgerRefusal(f"{ENV_ROOT}={env} is not the research-path folder for {brain} ({resolved}); refused")
-        return cls(resolved, protocol_id, protocol_sha256, forbid_under, repo=Path(repo).resolve(),
+        return cls(resolved, protocol_id, protocol_sha256, forbid_under, repo=Path(repo).resolve(), **kwargs,
                    _opened_by={"resolvedBy": "cortex-research-path", "brain": brain, "pack": pack, "root": str(resolved)})
 
-    def anchor(self) -> str:
-        """sha256 of the ledger's first line (the LEDGER_OPENED entry). Post it on Sector_Ops #51 when the ledger is created: that posted
-        hash is the binding record, and a ledger whose first entry does not match it is invalid."""
-        with self._locked():
-            ents = self._load()
+    def _anchor_of(self, ents) -> str:
         if not ents or ents[0]["status"] != LEDGER_OPENED:
             raise ChainBroken(f"{self.path}: first entry is not LEDGER_OPENED")
         return sha256_bytes(_canon(ents[0]).encode("ascii"))
 
+    def anchor(self) -> str:
+        """sha256 of the ledger's first line (the LEDGER_OPENED genesis with its random nonce)."""
+        with self._locked():
+            return self._anchor_of(self._load())
+
     def verify_anchor(self, expected_hash: str) -> str:
-        """Refuse unless the first entry's hash equals ``expected_hash`` (the one posted on #51). Returns the anchor."""
+        """Refuse unless the first entry's hash equals ``expected_hash``. Returns the anchor."""
         a = self.anchor()
         if not isinstance(expected_hash, str) or a != expected_hash.strip().lower():
             raise ChainBroken(f"{self.path}: anchor {a} does not match the posted anchor {expected_hash!r}; this ledger is invalid")
         return a
+
+    def post_anchor_text(self) -> str:
+        """The exact comment body to post on Sector_Ops #51 before any result-producing step. Its first line is
+        ``Run anchor: <protocol_id> <anchor>``."""
+        with self._locked():
+            ents = self._load()
+        a, g = self._anchor_of(ents), ents[0]
+        return (f"{ANCHOR_PREFIX} {self.protocol_id} {a}\n\n"
+                f"- protocol sha256: `{self.protocol_sha256}`\n"
+                f"- ledger: `{LEDGER_DIR}/{self.protocol_id}.jsonl` under the research root `{g['result'].get('root')}`\n"
+                f"- host: `{g['host']}`; genesis UTC: `{g['utc']}`; resolved by: `{g['result'].get('resolvedBy')}`\n\n"
+                f"The earliest `{ANCHOR_PREFIX}` comment for this protocol id is the binding record; a later one never counts.\n")
+
+    def _require_external(self, ents, start_utc: str | None = None) -> dict:
+        """Core of require_external_anchor; call under the lock with the loaded entries."""
+        a = self._anchor_of(ents)
+        raw = self._gh(f"repos/{self.anchor_repo}/issues/{self.anchor_issue}/comments?per_page=100")
+        cands = []
+        for c in _json_arrays(raw):
+            body = (c.get("body") or "") if isinstance(c, dict) else ""
+            first = body.lstrip().split("\n", 1)[0].split()
+            if len(first) >= 4 and " ".join(first[:2]) == ANCHOR_PREFIX and first[2] == self.protocol_id and c.get("created_at"):
+                cands.append((_parse_time(c["created_at"]), c.get("id") or 0, first[3].lower(), c))
+        if not cands:
+            raise LedgerRefusal(f"no `{ANCHOR_PREFIX} {self.protocol_id}` comment on {self.anchor_repo}#{self.anchor_issue}; post "
+                                f"post_anchor_text() there before any result-producing step")
+        created, _, posted, c = min(cands, key=lambda t: (t[0], t[1]))
+        if posted != a:
+            raise LedgerRefusal(f"the earliest anchor for {self.protocol_id} on {self.anchor_repo}#{self.anchor_issue} is {posted} "
+                                f"(comment {c.get('id')}), not this ledger's {a}; this ledger is not the protocol's run ledger (a later "
+                                f"anchor never counts; a fresh ledger needs a new protocol id)")
+        starts = [e["utc"] for e in ents if e["status"] == STARTED and e.get("result_producing")]
+        bound = starts[0] if starts else start_utc
+        if bound is not None and not created < _parse_time(bound):
+            raise LedgerRefusal(f"anchor comment {c.get('id')} was created at {c['created_at']}, not before the first result-producing "
+                                f"start ({bound}); the anchor must be posted before results can be seen")
+        return {"anchor": a, "comment_id": c.get("id"), "created_at": c["created_at"], "url": c.get("html_url")}
+
+    def require_external_anchor(self, repo: str | None = None, issue: int | None = None) -> dict:
+        """Refuse unless the earliest ``Run anchor:`` comment for this protocol id on ``repo``#``issue`` (default Sector_Ops #51) carries
+        this ledger's anchor and predates the first result-producing STARTED entry. A gh failure refuses. Returns the matched comment."""
+        if repo is not None:
+            self.anchor_repo = repo
+        if issue is not None:
+            self.anchor_issue = int(issue)
+        with self._locked():
+            return self._require_external(self._load(), dt.datetime.now(dt.timezone.utc).isoformat())
 
     # ---------- locking, reading, verifying ----------
     @contextlib.contextmanager
@@ -335,7 +435,7 @@ class Ledger:
              "utc": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
              "protocol_id": self.protocol_id, "protocol_sha256": self.protocol_sha256,
              "step": None, "key": None, "status": None, "run": None, "args": {}, "inputs": {}, "outputs": {}, "result": None,
-             "reason": None, "git_commit": self._git[0], "git_dirty": self._git[1], "host": socket.gethostname(),
+             "reason": None, "result_producing": None, "git_commit": self._git[0], "git_dirty": self._git[1], "host": socket.gethostname(),
              "prev_entry_sha256": prev}
         e.update(fields)
         line = _canon(e).encode("ascii")
@@ -450,9 +550,11 @@ class Ledger:
                 raise LedgerRefusal(f"{step}/{key}: input {name!r} changed since it was bound ({bound[name]} -> {h})")
         return hashes
 
-    def begin(self, step: str, key: str, args: Mapping | None = None, inputs: Mapping | None = None) -> int:
+    def begin(self, step: str, key: str, args: Mapping | None = None, inputs: Mapping | None = None, *,
+              result_producing: bool = True) -> int:
         """Record a STARTED attempt and return its attempt number (1 for the first). Refused when (step, key) has a COMPLETED run, when an
-        earlier attempt is still open (started, never completed or aborted), or when ``inputs`` differ from inputs bound for (step, key)."""
+        earlier attempt has no end (terminal: a new protocol id is the only recovery), when ``inputs`` differ from inputs bound for
+        (step, key), or, for a result-producing step (the default), when ``require_external_anchor`` refuses."""
         self._check(step, key)
         args = dict(args or {})
         _canon(args)
@@ -467,13 +569,17 @@ class Ledger:
             open_ = self._open_attempt(mine)
             if open_ is not None:
                 raise LedgerRefusal(f"{self.protocol_id}: {step}/{key} run {open_['run']} STARTED at {open_['utc']} and never completed or "
-                                    f"aborted; if no result was produced or seen, call abort_before_result first")
+                                    f"aborted; a STARTED entry with no end is terminal for this step, and recovery is a new protocol id")
             bound = self._bound(mine)
             for name, h in hashes.items():
                 if name in bound and bound[name] != h:
                     raise LedgerRefusal(f"{step}/{key}: input {name!r} differs from the bound input ({bound[name]} -> {h})")
+            if result_producing:
+                self._require_external(ents, dt.datetime.now(dt.timezone.utc).isoformat())
             run = 1 + sum(1 for e in mine if e["status"] == STARTED)
-            self._append(ents, step=step, key=key, status=STARTED, run=run, args=args, inputs=hashes)
+            self._append(ents, step=step, key=key, status=STARTED, run=run, args=args, inputs=hashes,
+                         result_producing=bool(result_producing))
+            self._mine[(step, key)] = run
         return run
 
     def _require_open(self, ents, step, key, what):
@@ -481,6 +587,9 @@ class Ledger:
         open_ = self._open_attempt(self._of(ents, step, key))
         if open_ is None:
             raise LedgerRefusal(f"{what}: {step}/{key} has no open attempt (call begin first)")
+        if self._mine.get((step, key)) != open_["run"]:
+            raise LedgerRefusal(f"{what}: {step}/{key} run {open_['run']} was begun by another process; a STARTED entry with no end is "
+                                f"terminal, and recovery is a new protocol id")
         return open_
 
     @staticmethod
@@ -530,7 +639,8 @@ class Ledger:
         with self._locked():
             ents = self._load()
             open_ = self._require_open(ents, step, key, "abort_before_result")
-            if self._recorded_outputs(self._of(ents, step, key), open_["run"]):
-                raise LedgerRefusal(f"{step}/{key} run {open_['run']} already recorded outputs; it cannot be aborted before a result")
+            if self._recorded_outputs(self._of(ents, step, key), open_["run"]) or any(
+                    e["run"] == open_["run"] and e["result"] is not None for e in self._of(ents, step, key)):
+                raise LedgerRefusal(f"{step}/{key} run {open_['run']} already recorded outputs or a result; it cannot be aborted before a result")
             e = self._append(ents, step=step, key=key, status=ABORTED, run=open_["run"], reason=reason.strip())
         return dict(e)

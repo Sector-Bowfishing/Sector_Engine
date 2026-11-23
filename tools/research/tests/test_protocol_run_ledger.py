@@ -18,11 +18,32 @@ from protocol_run_ledger import ChainBroken, Ledger, LedgerRefusal  # noqa: E402
 PID = "wind-strong-wind-v1"
 PSHA = hashlib.sha256(b"protocol v1").hexdigest()
 OTHER = hashlib.sha256(b"protocol v2").hexdigest()
+REAL_GH = PRL._gh_api
 
 
 @pytest.fixture(autouse=True)
 def no_env(monkeypatch):
     monkeypatch.delenv(PRL.ENV_ROOT, raising=False)
+
+    def no_network(path):
+        raise AssertionError(f"a test reached the real gh: {path}")
+    monkeypatch.setattr(PRL, "_gh_api", no_network)
+
+
+def genesis_sha(root, pid=PID):
+    return hashlib.sha256((root / "_ledgers" / f"{pid}.jsonl").read_bytes().splitlines()[0]).hexdigest()
+
+
+def comment(cid, created, body):
+    return {"id": cid, "created_at": created, "body": body, "html_url": f"https://example.invalid/c/{cid}"}
+
+
+def auto_gh(root, created="2000-01-01T00:00:00Z"):
+    """A fake `gh api` whose #51 holds one early anchor comment for whatever ledger is in ``root`` now."""
+    def gh(path):
+        assert path == "repos/Sector-Bowfishing/Sector_Ops/issues/51/comments?per_page=100", path
+        return json.dumps([comment(7, created, f"Run anchor: {PID} {genesis_sha(root)}\n\ndetails")])
+    return gh
 
 
 @pytest.fixture
@@ -33,6 +54,7 @@ def root(tmp_path):
 
 
 def ledger(root, **kw):
+    kw.setdefault("gh", auto_gh(root))
     return Ledger(root, PID, PSHA, **kw)
 
 
@@ -352,7 +374,7 @@ def test_result_must_be_small_json(root):
 
 # ---------- concurrency ----------
 def _race(root, barrier, q):
-    L = Ledger(Path(root), PID, PSHA)
+    L = Ledger(Path(root), PID, PSHA, gh=auto_gh(Path(root)))
     barrier.wait()
     try:
         q.put(("ok", L.begin("fit", "all", {"pid": os.getpid()}, {})))
@@ -398,7 +420,7 @@ def fake_cortex(tmp_path, printed, rc=0):
 
 def test_for_brain_resolves_root_with_research_path_and_records_it(root, tmp_path):
     home = fake_cortex(tmp_path, root)
-    L = Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home)
+    L = Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home, gh=auto_gh(root))
     assert L.root == root.resolve()
     first = json.loads(lines(root)[0])
     assert first["status"] == "LEDGER_OPENED" and first["result"]["resolvedBy"] == "cortex-research-path"
@@ -406,7 +428,7 @@ def test_for_brain_resolves_root_with_research_path_and_records_it(root, tmp_pat
     assert L.anchor() == hashlib.sha256(lines(root)[0]).hexdigest()
     run_step(L)
     with pytest.raises(LedgerRefusal, match="already ran"):
-        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home).begin("fit", "all", {}, {})
+        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home, gh=auto_gh(root)).begin("fit", "all", {}, {})
 
 
 def test_for_brain_refuses_env_root_that_differs_and_accepts_equal(root, tmp_path, monkeypatch):
@@ -449,9 +471,8 @@ def test_anchor_detects_a_recreated_ledger(root):
     for f in (root / "_ledgers").iterdir():  # delete ledger and head together, then start again
         f.unlink()
     L2 = ledger(root)
-    L2.begin("fit", "all", {}, {})  # locally the fresh ledger looks fine ...
     with pytest.raises(ChainBroken, match="invalid"):
-        L2.verify_anchor(posted)  # ... but it does not match the #51-posted anchor
+        L2.verify_anchor(posted)  # it does not match the posted anchor
 
 
 def test_ledger_opened_only_first(root):
@@ -479,3 +500,128 @@ def test_retry_after_abort_gets_next_attempt_and_abort_refused_after_result(root
     assert L.counts("fit", "all", 3) and not L.counts("fit", "all", 1)
     with pytest.raises(LedgerRefusal, match="no open attempt"):
         L.abort_before_result("fit", "all", "after the result")
+
+
+# ---------- external anchor on Sector_Ops #51 (mocked gh) ----------
+class GH:
+    """Fake `gh api --paginate`: comments may span pages (concatenated arrays), as gh prints them."""
+
+    def __init__(self, *pages, fail=None):
+        self.pages, self.fail, self.calls = list(pages), fail, 0
+
+    def __call__(self, path):
+        self.calls += 1
+        if self.fail:
+            raise LedgerRefusal(self.fail)
+        return "".join(json.dumps(p) for p in self.pages)
+
+
+def test_post_anchor_text_shape(root):
+    L = ledger(root)
+    text = L.post_anchor_text()
+    assert text.splitlines()[0] == f"Run anchor: {PID} {L.anchor()}"
+    assert "owner approval" not in text.lower() and PSHA in text and str(root.resolve()) in text
+    g = json.loads(lines(root)[0])["result"]
+    assert len(g["nonce"]) == 32 and g["protocol_id"] == PID and g["protocol_sha256"] == PSHA and g["root"] and g["host"]
+
+
+def test_nonce_makes_every_genesis_unique(tmp_path):
+    a, b = tmp_path / "a", tmp_path / "b"
+    a.mkdir(), b.mkdir()
+    assert ledger(a).anchor() != ledger(b).anchor()
+
+
+def test_earliest_anchor_match_allows_result_step(root):
+    gh = GH()
+    L = ledger(root, gh=gh)
+    gh.pages = [[comment(1, "2026-11-20T10:00:00Z", "unrelated"),
+                 comment(2, "2026-11-20T11:00:00Z", f"Run anchor: other-protocol {'c' * 64}")],
+                [comment(3, "2026-11-20T12:00:00Z", L.post_anchor_text())]]
+    m = L.require_external_anchor()
+    assert m["comment_id"] == 3 and m["anchor"] == L.anchor()
+    assert L.begin("fit", "all", {}, {}) == 1 and gh.calls == 2
+    assert json.loads(lines(root)[-1])["result_producing"] is True
+
+
+def test_later_duplicate_anchor_refused(root):
+    gh = GH()
+    L = ledger(root, gh=gh)
+    gh.pages = [[comment(1, "2026-11-20T10:00:00Z", f"Run anchor: {PID} {'d' * 64}"),  # an earlier ledger's anchor
+                 comment(2, "2026-11-21T10:00:00Z", L.post_anchor_text())]]  # this ledger posted later: never counts
+    with pytest.raises(LedgerRefusal, match="earliest anchor"):
+        L.begin("fit", "all", {}, {})
+    assert len(lines(root)) == 1  # nothing started
+
+
+def test_anchor_posted_after_start_refused(root):
+    gh = GH()
+    L = ledger(root, gh=gh)
+    gh.pages = [[comment(1, "2000-01-01T00:00:00Z", L.post_anchor_text())]]
+    L.begin("fit", "a", {}, {})
+    later = json.loads(lines(root)[-1])["utc"]
+    gh.pages = [[comment(1, "2099-01-01T00:00:00Z", L.post_anchor_text())]]  # same anchor, but created after the first start
+    with pytest.raises(LedgerRefusal, match="not before the first result-producing start"):
+        L.begin("fit", "b", {}, {})
+    with pytest.raises(LedgerRefusal, match="not before"):
+        L.require_external_anchor()
+    assert later
+
+
+def test_no_anchor_posted_refused_but_fetch_may_run(root):
+    gh = GH([])
+    L = ledger(root, gh=gh)
+    assert L.begin("fetch", "all", {}, {}, result_producing=False) == 1
+    L.complete("fetch", "all", {"raw": "e" * 64}, {})
+    assert gh.calls == 0
+    with pytest.raises(LedgerRefusal, match="no `Run anchor:"):
+        L.begin("fit", "all", {}, {})
+
+
+def test_gh_failure_refused(root):
+    L = ledger(root, gh=GH(fail="gh: HTTP 502"))
+    with pytest.raises(LedgerRefusal, match="502"):
+        L.begin("fit", "all", {}, {})
+    L2 = ledger(root, gh=lambda path: "<html>not json</html>")
+    with pytest.raises(LedgerRefusal, match="not JSON"):
+        L2.begin("fit", "all", {}, {})
+    assert len(lines(root)) == 1
+
+
+def test_real_gh_missing_or_failing_refused(monkeypatch):
+    def missing(*a, **k):
+        raise FileNotFoundError("gh")
+    monkeypatch.setattr(PRL.subprocess, "run", missing)
+    with pytest.raises(LedgerRefusal, match="gh api unavailable"):
+        REAL_GH("repos/x/y/issues/1/comments")
+
+    class Done:
+        returncode, stdout, stderr = 1, "", "HTTP 401"
+    monkeypatch.setattr(PRL.subprocess, "run", lambda *a, **k: Done())
+    with pytest.raises(LedgerRefusal, match="401"):
+        REAL_GH("repos/x/y/issues/1/comments")
+
+
+def test_new_folder_refused(tmp_path):
+    first, second = tmp_path / "r1" / "wind-brain", tmp_path / "r2" / "wind-brain"
+    first.mkdir(parents=True), second.mkdir(parents=True)
+    posted = []
+    gh = lambda path: json.dumps(posted)  # noqa: E731
+    L1 = Ledger(first, PID, PSHA, gh=gh)
+    posted.append(comment(1, "2000-01-01T00:00:00Z", L1.post_anchor_text()))
+    L1.begin("fit", "all", {}, {})
+    L1.complete("fit", "all", {}, {"metric": 0.4})
+    L2 = Ledger(second, PID, PSHA, gh=gh)  # a fresh folder gives a fresh, valid-looking ledger ...
+    posted.append(comment(2, "2000-01-02T00:00:00Z", L2.post_anchor_text()))  # ... even with its own (later) anchor posted
+    with pytest.raises(LedgerRefusal, match="earliest anchor"):
+        L2.begin("fit", "all", {}, {})
+
+
+def test_dangling_start_is_terminal_even_for_abort(root):
+    ledger(root).begin("fit", "all", {}, {})  # the process is killed here: no end
+    L = ledger(root)
+    with pytest.raises(LedgerRefusal, match="terminal"):
+        L.abort_before_result("fit", "all", "rebooted")
+    with pytest.raises(LedgerRefusal, match="terminal"):
+        L.complete("fit", "all", {}, {})
+    with pytest.raises(LedgerRefusal, match="new protocol id"):
+        L.begin("fit", "all", {}, {})
