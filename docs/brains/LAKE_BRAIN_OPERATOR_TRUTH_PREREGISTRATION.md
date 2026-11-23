@@ -1,5 +1,10 @@
 # Lake Brain: operator-truth validation v1 (`lake-operator-truth-v1`): pre-registration
 
+> **SUPERSEDED (2026-11-23, never run).** Replaced by `lake-operator-truth-v2` (`jobs/lake-brain/validation/operator_truth/PREREGISTRATION_v2.md`)
+> after the independent review of PR #243 found that v1 would mostly measure its own selection (same-series and same-sensor truths across offices,
+> fallback truths pre-filtered by dry-run check (b), offset-fitted truths). The text below is unchanged except for this banner; as registered in
+> 469a15f its sha256 was `7bc8d1df9f2bb319164a42791b5128ce3777953a0b4f6e59e40f1d9fbc5b07c0`. Its runner is in commit 38272fc.
+
 Committed **before any water-level value is fetched** for this test, and before the runner exists. Anything not written here may not be used to decide
 pass or fail later. Thresholds are fixed: they are not to be lowered, widened or reinterpreted after results are seen. A failed criterion is reported as
 failed. A harness bug found after the run is fixed and the run is repeated once on the same frozen sample and window, with the bug and both results

@@ -6,6 +6,7 @@ Task: Lake Brain validation gate ("Run a validation against operator truth (lift
 ```
 
 ## Preserved results
+Superseded by v2 after review: `jobs/lake-brain/validation/operator_truth/PREREGISTRATION_v2.md` (sha256 in `PREREGISTRATION_v2.sha256`), frozen set `sample_v2.json`. The v1 record follows.
 None yet. This session produced the pre-registration and the runner, which live in the Engine repository (not research data): `docs/brains/LAKE_BRAIN_OPERATOR_TRUTH_PREREGISTRATION.md` (sha256 7bc8d1df9f2bb319164a42791b5128ce3777953a0b4f6e59e40f1d9fbc5b07c0), `jobs/lake-brain/validation/operator_truth/sample_v1.json` (sha256 b6fe824b9f5aa9d0959014ed757c32110e53339db1e10d5806df22c39038684d), committed 469a15f before any fetch. The run's outputs are to go to `lake-brain/validation/operator-truth-v1-<run date>/` in the research home, retention ARCHIVAL (validation evidence).
 
 ## Manifests updated
