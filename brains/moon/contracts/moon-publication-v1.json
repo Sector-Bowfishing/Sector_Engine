@@ -132,7 +132,7 @@
     }
   ],
   "snapshot": "the snapshot field and its brainVersion are Brain-authored (no Publisher COPY projection)",
-  "status": "SHADOW (Publisher Gate P); Brain lifecycle CALIBRATION; not wired into any job; there is no live writer; not a production contract",
+  "status": "SHADOW (Publisher Gate P); Brain lifecycle CALIBRATION; not wired into any job; the live writer is gated (run.py --write refuses without an APPROVED knowledge release and MOON_WRITE_APPROVED=1); not a production contract",
   "version": "1.0.0",
   "volatileContract": {
     "id": "moon-volatile-v1",

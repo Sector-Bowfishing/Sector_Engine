@@ -17,7 +17,7 @@ SPEC = ContractSpec(
     contract_dir=HERE, out_file="moon-publication-v1.json", bundle_id="moon-publication-v1",
     builder="brains/moon/runtime/moon_brain/publish_artifact.py",
     derived_from="jobs/brain_platform/sector_brain_platform/publisher/registry.py (moon_specs, moon_bundles)",
-    status="SHADOW (Publisher Gate P); Brain lifecycle CALIBRATION; not wired into any job; there is no live writer; not a production contract",
+    status="SHADOW (Publisher Gate P); Brain lifecycle CALIBRATION; not wired into any job; the live writer is gated (run.py --write refuses without an APPROVED knowledge release and MOON_WRITE_APPROVED=1); not a production contract",
     section_fields=("families", "deleteFamilies", "deleteReasons", "volatileContract", "requiresRelease", "requiresFreshness", "allowedLifecycles"),
     extras={"registryChildren": ("registry", "MOON_REGISTRY_CHILDREN", "children"), "healthDomainChildren": ("registry", "MOON_HEALTH_DOMAIN_CHILDREN", "list"),
             "reservedChildren": ("registry", "BRAIN_NODE_OWNERS", "sortedkeys"), "volatileContract": ("volatile",),

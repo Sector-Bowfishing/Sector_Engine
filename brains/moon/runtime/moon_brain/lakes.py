@@ -32,6 +32,21 @@ class LakeRegistryError(KnowledgeReleaseError):
     pass
 
 
+BLOCKED = "BLOCKED_AWAITING_APPROVED_RELEASE"
+
+
+class KnowledgeNotApproved(LakeRegistryError):
+    """The release verifies but carries no approval: it must not be published from (the Generation and Depth rule)."""
+
+
+def require_approved(doc: dict) -> dict:
+    """The live write gate (run.py --write): `doc` is load(); refuse unless its verified release is APPROVED."""
+    rel = doc.get("release") or {}
+    if rel.get("approvalStatus") != "APPROVED":
+        raise KnowledgeNotApproved(f"{BLOCKED}: release {rel.get('releaseId')} approval is {rel.get('approvalStatus')}")
+    return doc
+
+
 def _digest(lakes: list) -> str:
     return hashlib.sha256(json.dumps(lakes, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 

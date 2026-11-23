@@ -1,4 +1,4 @@
-"""Moon and Night Light Brain (CALIBRATION, not scheduled, no live writer): tonight's moon, sun, twilight and on-water darkness for every directory lake.
+"""Moon and Night Light Brain (CALIBRATION, not scheduled; gated live writer): tonight's moon, sun, twilight and on-water darkness for every directory lake.
 
 The shared platform package is vendored next to the runtime at deploy time; in the repo it is resolved from jobs/brain_platform (this package lives at
 brains/moon/runtime/moon_brain)."""
