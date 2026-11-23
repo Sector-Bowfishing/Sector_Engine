@@ -123,6 +123,7 @@ for l in r.lakes {
           + (l.dryRunCandidate ? " · dryRunCandidate" : ""))
 }
 for e in r.archiveErrors { print("  ! \(e)") }
+for w in r.warnings { print("  ~ \(w)") }
 if let e = r.presenceError { print("  ! presence: \(e)") }
 print("\(r.ok ? "✓" : "✗") \(r.lakes.count) lakes in \(r.durationMs) ms · health \(r.health)")
 if let e = r.writeError { print("✗ \(e)") }
