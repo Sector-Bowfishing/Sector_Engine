@@ -101,3 +101,11 @@ The Sector-Pulse change for `wind-central` (`--read-rtdb` + the read credential)
 > 2. Run the check once for each local Wind archive Pulse holds: wind-central's job-data `archive` folder (it may not exist yet; report "absent"), and the older Wind history in Pulse's job data (about 100 MB, collected 2026-10-19..11-06): `python3 tools/ops/wind_archive_continuity.py --local <archive> --remote-listing remote.json --remote-last-publish remote_last.json`. Keep each JSON output in the research folder.
 > 3. Post per archive: the verdict (CONTINUOUS / SEED_NEEDED / DIVERGED); required objects (in the bucket, missing locally, different, local-only); profile digests (checked, mismatched, missing; name any mismatched lake); watchdog scope (D3 lake count, any not on the pinned list); bookkeeping (local and bucket `at`, same bytes); and each series' oldest and newest in the bucket and locally (nbm, rtma, nbm-points, metar, runs).
 > 4. Don't seed or copy anything. If a verdict is SEED_NEEDED or DIVERGED, say which archive wind-central should use and stop; the one-time seed (D5) is a separate step.
+
+## Review follow-up (independent review of e0ca67f)
+- Merged `origin/main` (no force-push); main's engineering-status files taken and re-recorded; this PR's gap renumbered CG-3.1-22 → **CG-3.1-24** (main has 22/23 from #242).
+- `wind.json`: new blocker "owner acceptance of the whole-directory watchdog list (deviation from D3) before the flip"; the cutover plan and the shadow protocol now state that the watchdog no longer bounds `lakes/{k}/states/wind` (and profiles, snapshots) to the 4 live + national lakes, only to the directory. C4 reports `stateLakes` for review.
+- Shadow protocol: no other live Wind writer during the window (cloud `wind-hourly` stays paused). C2 now requires each record's `artifactId` to be a stored shadow artifact of the window and recomputes `originalWritesetSha256` from it.
+- Continuity: a required bucket object with no MD5 (composite) is counted UNVERIFIED (verdict `UNVERIFIED`, exit 4), never matched.
+- IAM W-H1 and Mini power blocker lines: "done per Sector_Ops #51 comment 7093316526". Wind blockers now 8 (the acceptance line added; the two done lines kept for the flip's `--blockers-cleared`).
+- Wind suite: 315 passed, 6 skipped.

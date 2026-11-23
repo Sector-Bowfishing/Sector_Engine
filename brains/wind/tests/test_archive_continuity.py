@@ -99,6 +99,15 @@ def test_a_table_whose_digest_disagrees_with_the_manifest_is_flagged(tmp_path):
     assert out["verdict"] == "DIVERGED" and out["profileDigests"]["mismatched"] == ["Lake Barkley|KY"]
 
 
+def test_a_required_object_without_an_md5_is_unverified_not_matched(seeded):
+    local, remote = seeded
+    remote["grids/rtma/guntersville.json"]["md5"] = None                                # a composite upload: crc32c only
+    out = C.compare(str(local), remote)
+    assert out["verdict"] == "UNVERIFIED" and out["required"]["unverifiedSample"] == ["grids/rtma/guntersville.json"]
+    os.remove(local / "fetch/dev/guntersville.windfetch.json.gz")
+    assert C.compare(str(local), remote)["verdict"] == "SEED_NEEDED"                     # a missing object still outranks it
+
+
 def test_bookkeeping_differences_are_information_only(seeded):
     local, remote = seeded
     (local / "brain/wind/last_publish.json").write_text(json.dumps({"at": "2026-11-24T01:00:00Z", "profileShas": {}}))

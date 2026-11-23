@@ -131,15 +131,32 @@ def test_c1_a_seal_later_than_20_minutes_is_a_miss():
     assert r["missed"] == [S._iso(START + dt.timedelta(hours=24 * 7 - 1))] and r["status"] == "FAIL"
 
 
-def _rec(day: int, equal=True):
-    return {"schema": S.RESEAL_SCHEMA, "generatedAt": S._iso(START + dt.timedelta(days=day, hours=3)), "equal": equal, "artifactId": f"a{day}"}
+def _window_art(day: int):
+    return _stub(S._iso(START + dt.timedelta(days=day, hours=3, minutes=5)), [{"op": "SET", "path": f"/brains/wind/d{day}", "value": day}])
 
 
-def test_c2_needs_one_equal_reseal_per_day():
-    assert S.c2_determinism([_rec(d) for d in range(7)], START, 7)["status"] == "PASS"
-    r = S.c2_determinism([_rec(d) for d in range(6)], START, 7)
+def _rec(art, equal=True, original=None):
+    return {"schema": S.RESEAL_SCHEMA, "generatedAt": art["lineage"]["generatedAt"], "equal": equal, "artifactId": art["lineage"]["artifactId"],
+            "originalWritesetSha256": original or S.writeset_sha256(art)}
+
+
+def test_c2_needs_one_equal_reseal_per_day_of_a_stored_artifact():
+    arts = [_window_art(d) for d in range(7)]
+    assert S.c2_determinism([_rec(a) for a in arts], START, 7, arts)["status"] == "PASS"
+    r = S.c2_determinism([_rec(a) for a in arts[:6]], START, 7, arts)
     assert r["status"] == "FAIL" and r["daysMissing"] == ["2026-11-30"]
-    assert S.c2_determinism([_rec(d, equal=(d != 3)) for d in range(7)], START, 7)["unequal"] == ["a3"]
+    r = S.c2_determinism([_rec(a, equal=(i != 3)) for i, a in enumerate(arts)], START, 7, arts)
+    assert r["unequal"] == [arts[3]["lineage"]["artifactId"]] and r["status"] == "FAIL"
+
+
+def test_c2_rejects_records_for_unknown_artifacts_or_a_wrong_original_hash():
+    arts = [_window_art(d) for d in range(7)]
+    r = S.c2_determinism([_rec(a) for a in arts], START, 7, arts[1:])                   # day 0's artifact is not in the report's set
+    assert r["status"] == "FAIL" and r["unknownArtifact"] == [arts[0]["lineage"]["artifactId"]]
+    recs = [_rec(a) for a in arts]
+    recs[2] = _rec(arts[2], original="0" * 64)                                          # a record that claims a different original
+    r = S.c2_determinism(recs, START, 7, arts)
+    assert r["status"] == "FAIL" and r["originalHashMismatch"] == [arts[2]["lineage"]["artifactId"]]
 
 
 # ── C3 skill ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -194,7 +211,8 @@ def test_c3_ignores_forecast_states_and_off_hour_analyses():
 def test_c4_a_real_sealed_artifact_is_in_bounds_for_the_pinned_list(tmp_path):
     _, art = _sealed(tmp_path)
     lakes = json.load(open(S.STAGE))["watchdog"]["lakes"]
-    assert S.c4_bounds([art], lakes)["status"] == "PASS"
+    ok = S.c4_bounds([art], lakes)
+    assert ok["status"] == "PASS" and ok["stateLakes"] == sorted(["Guntersville_AL", "Pickwick_Lake_TN", "Wheeler_AL", "Wilson_AL"])
     r = S.c4_bounds([art], [k for k in lakes if k != "Guntersville_AL"])
     assert r["status"] == "FAIL" and r["lakesOutsideList"] == ["Guntersville_AL"]
     bad = _stub("2026-11-24T00:05:00Z", [{"op": "SET", "path": "/brains/water-clarity/x", "value": 1}])
@@ -217,7 +235,8 @@ def test_c5_sleep_and_retention():
 def test_the_protocol_doc_states_the_runner_thresholds():
     doc = open(S.PROTOCOL_DOC, encoding="utf-8").read()
     assert S.PROTOCOL_ID in doc and S.protocol_sha256()
-    for needle in ("95%", "20 min", "1.10", "200 pairs", "30 days", "durationMs", "7 consecutive days"):
+    for needle in ("95%", "20 min", "1.10", "200 pairs", "30 days", "durationMs", "7 consecutive days", "No other live Wind writer",
+                   "recomputes the original write-set hash", "stateLakes"):
         assert needle in doc, needle
 
 

@@ -4,7 +4,8 @@ docs/architecture/production/WIND_PULSE_SHADOW_PROTOCOL_V1.md (protocol id wind-
 
 On Pulse there is no legacy Wind write to compare with, so the shadow checks what CAN be checked, exactly as pre-registered in the cutover plan (#176):
   C1 completeness   >= 95% of the window's hours have a Wind artifact sealed within 20 min of the hour; every miss has a written explanation
-  C2 determinism    at least one re-seal per UTC day of the window, and every re-seal's write set equals the original's (normalized hash)
+  C2 determinism    at least one re-seal per UTC day of the window, each naming a stored shadow artifact whose recomputed write-set hash matches the
+                    record, and every re-seal's write set equals the original's (normalized hash)
   C3 skill          pooled MAE of the sealed analysis wind at the 4 live lakes vs METAR <= 1.10 x the recorded validation MAE (>= 200 pairs)
   C4 bounds         every write is a path Wind owns (the Publisher's ownership table) and every lake key is on the staged W-H3 list
   C5 Mac mini       no sleep in the window (`pmset -g log`), and the archive holds no raw cutout the retention rule should have pruned
@@ -215,17 +216,30 @@ def c1_completeness(arts: list[dict], start: dt.datetime, days: int, explanation
             "missed": missed, "unexplained": unexplained}
 
 
-def c2_determinism(records: list[dict], start: dt.datetime, days: int) -> dict:
+def c2_determinism(records: list[dict], start: dt.datetime, days: int, arts: list[dict] | None = None) -> dict:
+    """Each record must name a shadow artifact of the window that the report holds, its originalWritesetSha256 must equal the hash recomputed from
+    that stored artifact, and it must be `equal`. At least one valid record per UTC date the window touches."""
     window = {(start + dt.timedelta(hours=h)).date().isoformat() for h in range(24 * days)}     # every UTC date the window touches
+    stored = {a["lineage"].get("artifactId"): a for a in (arts or []) if start <= _parse(a["lineage"]["generatedAt"]) < start + dt.timedelta(days=days)}
     mine = [r for r in records if r.get("schema") == RESEAL_SCHEMA and r.get("generatedAt") and
             start <= _parse(r["generatedAt"]) < start + dt.timedelta(days=days)]
-    by_day = {}
+    unknown, mismatch, unequal, by_day = [], [], [], {}
     for r in mine:
+        a = stored.get(r.get("artifactId"))
+        if a is None:
+            unknown.append(r.get("artifactId") or r["generatedAt"])
+            continue
+        if writeset_sha256(a) != r.get("originalWritesetSha256"):
+            mismatch.append(r["artifactId"])
+            continue
+        if r.get("equal") is not True:
+            unequal.append(r["artifactId"])
+            continue
         by_day.setdefault(r["generatedAt"][:10], []).append(r)
     missing = sorted(window - set(by_day))
-    unequal = [r.get("artifactId") or r["generatedAt"] for r in mine if r.get("equal") is not True]
-    return {"status": _status(not missing and not unequal), "records": len(mine), "daysCovered": len(set(by_day) & window),
-            "daysMissing": missing, "unequal": unequal}
+    return {"status": _status(not missing and not unequal and not unknown and not mismatch), "records": len(mine),
+            "daysCovered": len(set(by_day) & window), "daysMissing": missing, "unequal": unequal, "unknownArtifact": unknown,
+            "originalHashMismatch": mismatch}
 
 
 def c3_skill(arts: list[dict], store, cfg: dict, evidence: dict) -> dict:
@@ -267,16 +281,19 @@ def c3_skill(arts: list[dict], store, cfg: dict, evidence: dict) -> dict:
 def c4_bounds(arts: list[dict], lakes: list[str]) -> dict:
     from sector_brain_platform.cycle_watchdog import LAKE_PATH
     from sector_brain_platform.ownership import path_allowed
-    allowed, not_owned, outside = set(lakes), set(), set()
+    allowed, not_owned, outside, state_lakes = set(lakes), set(), set(), set()
     for a in arts:
         for m in mutations(a):
+            if m["path"].endswith("/states/wind") and m["path"].startswith("/lakes/"):
+                state_lakes.add(m["path"].split("/")[2])                     # reported for review: the whole-directory list does not bound these
             if not path_allowed("wind", m["path"].lstrip("/")):
                 not_owned.add(m["path"])
             k = LAKE_PATH.match(m["path"])
             if k and k.group(1) not in allowed:
                 outside.add(k.group(1))
     return {"status": _status(bool(arts) and not not_owned and not outside) if arts else "NOT_EVALUATED", "artifacts": len(arts),
-            "notOwned": sorted(not_owned)[:20], "lakesOutsideList": sorted(outside)[:20], "listSize": len(allowed)}
+            "notOwned": sorted(not_owned)[:20], "lakesOutsideList": sorted(outside)[:20], "listSize": len(allowed),
+            "stateLakes": sorted(state_lakes)}
 
 
 def c5_mac_mini(pmset_log: str | None, store_keys: list[str], start: dt.datetime, days: int) -> dict:
@@ -301,7 +318,7 @@ def c5_mac_mini(pmset_log: str | None, store_keys: list[str], start: dt.datetime
 
 
 def report(arts, records, store, cfg, evidence, lakes, start, days, explanations, pmset_log, store_keys) -> dict:
-    crit = {"C1": c1_completeness(arts, start, days, explanations), "C2": c2_determinism(records, start, days),
+    crit = {"C1": c1_completeness(arts, start, days, explanations), "C2": c2_determinism(records, start, days, arts),
             "C3": c3_skill([a for a in arts if start <= _parse(a["lineage"]["generatedAt"]) < start + dt.timedelta(days=days)], store, cfg, evidence),
             "C4": c4_bounds(arts, lakes), "C5": c5_mac_mini(pmset_log, store_keys, start, days)}
     st = [c["status"] for c in crit.values()]

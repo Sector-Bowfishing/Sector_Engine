@@ -18,7 +18,8 @@ What it checks
     range of each raw series (nbm/, rtma/, nbm-points/, metar/, runs/) in the bucket and locally.
 
 Verdict: CONTINUOUS (exit 0), DIVERGED (a required object differs, or a profile digest mismatches; exit 1), SEED_NEEDED (a required object is
-missing locally; exit 3). Exit 2: refused (bad input).
+missing locally; exit 3), UNVERIFIED (otherwise fine, but a required bucket object has no MD5, e.g. a composite upload, so equality is not proven;
+exit 4). Exit 2: refused (bad input).
 """
 from __future__ import annotations
 
@@ -140,6 +141,7 @@ def compare(local_root: str, remote: dict[str, dict], remote_last_publish: dict 
     lset = set(lkeys)
     required = sorted(k for k in remote if k.startswith(REQUIRED_PREFIXES))
     missing = [k for k in required if k not in lset]
+    unverified = [k for k in required if k in lset and not remote[k]["md5"]]      # composite objects carry no MD5: present, but not proven equal
     differ = [k for k in required if k in lset and remote[k]["md5"] and md5_b64(os.path.join(local_root, k)) != remote[k]["md5"]]
     local_only_required = sorted(k for k in lkeys if k.startswith(REQUIRED_PREFIXES) and k not in remote)
     manifest = _read_json(os.path.join(local_root, MANIFEST)) if MANIFEST in lset else None
@@ -151,9 +153,11 @@ def compare(local_root: str, remote: dict[str, dict], remote_last_publish: dict 
             "note": "a cache only: under W-H2 (D2) a hand-off reads its previous state from the live database"}
     digests = profile_digests(local_root, manifest)
     scope = watchdog_scope(manifest)
-    verdict = "SEED_NEEDED" if missing else ("DIVERGED" if differ or digests["status"] == "FAIL" or scope["status"] == "FAIL" else "CONTINUOUS")
+    verdict = ("SEED_NEEDED" if missing else "DIVERGED" if differ or digests["status"] == "FAIL" or scope["status"] == "FAIL"
+               else "UNVERIFIED" if unverified else "CONTINUOUS")
     return {"verdict": verdict, "remote": REMOTE,
-            "required": {"remoteObjects": len(required), "missingLocally": len(missing), "differ": len(differ), "localOnly": len(local_only_required),
+            "required": {"remoteObjects": len(required), "missingLocally": len(missing), "differ": len(differ), "unverifiedNoMd5": len(unverified),
+                         "unverifiedSample": unverified[:10], "localOnly": len(local_only_required),
                          "missingSample": missing[:10], "differSample": differ[:10], "localOnlySample": local_only_required[:10]},
             "profileDigests": digests, "watchdogScope": scope, "bookkeeping": book,
             "profileCache": {"remote": sum(k.startswith("brain/wind/profile_cache/") for k in remote),
@@ -180,7 +184,7 @@ def main(argv=None) -> int:
         print(f"REFUSED: {e}", file=sys.stderr)
         return 2
     print(json.dumps(out, indent=1, sort_keys=True))
-    return {"CONTINUOUS": 0, "DIVERGED": 1, "SEED_NEEDED": 3}[out["verdict"]]
+    return {"CONTINUOUS": 0, "DIVERGED": 1, "SEED_NEEDED": 3, "UNVERIFIED": 4}[out["verdict"]]
 
 
 if __name__ == "__main__":
