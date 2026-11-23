@@ -1,0 +1,97 @@
+{
+  "schema": "sector-water-temp-protected-truth-protocol-v1",
+  "protocolId": "PT-L4-2026-11-23",
+  "brainId": "water-temp",
+  "gap": "WATER-VAL-001",
+  "scoreGate": "level4ProtectedTruth (docs/brains/scoring/frozen-scores.json, water-temp)",
+  "status": "PRE-REGISTERED",
+  "preRegisteredAt": "2026-11-23",
+  "preRegisteredBy": "Claude (Engine research session, branch research/water-temp-protected-truth-2026-11-23)",
+  "dataExaminedBeforeRegistration": "None. No water-temperature value from any candidate source was fetched or read before this file was hashed. Only public program descriptions (agency web pages and search-result titles) were read to list candidate sources.",
+  "purpose": "Define, before any truth value is opened, the protected truth set and the comparison that unblock the Water Temp Level-4 gate: which casts count, on which lakes, how they are paired with the production model, the metric and the pass mark.",
+  "governingRule": {
+    "frozenRule": "Stage 3C.3 decision of 2026-10-11 (private iOS document WATER_TEMP_STAGE_3C3_PROTECTED_VALIDATION.md, rule v3, main-body casts). It is not in this repository and was not read by this session.",
+    "knownFromRepository": {
+      "protectedLakes": "brains/water-temperature/runtime/WaterTemperatureBrain/WaterTemperatureBrain.swift protectedLakes",
+      "perLakeMinimum": 25,
+      "totalMinimum": 150,
+      "holdoutWindowRecorded": "2021-01 to 2026-06",
+      "recordedHoldoutCasts": {"Guntersville|AL": 90, "Wheeler|AL": 18, "Wilson|AL": 2, "Pickwick Lake|TN": 57}
+    },
+    "reconciliation": "Where this protocol differs from the private rule v3 (station rule, surface rule or pass mark), the owner decides which one governs BEFORE step B opens any truth value. That choice is recorded in the run report. Changing the protocol after step B has opened values is not allowed; a new protocol id is pre-registered instead."
+  },
+  "lakes": [
+    {"lakeId": "Guntersville|AL", "point": [34.42, -86.26], "bbox": [-86.45, 34.25, -85.58, 35.02], "tennesseeRiverMile": {"dam": 349.0, "upstreamDam": 424.7}},
+    {"lakeId": "Wheeler|AL", "point": [34.63, -87.03], "bbox": [-87.38377, 34.39002, -86.39122, 34.91242], "tennesseeRiverMile": {"dam": 274.9, "upstreamDam": 349.0}},
+    {"lakeId": "Wilson|AL", "point": [34.77, -87.45], "bbox": [-87.62849, 34.7636, -87.38139, 34.92033], "tennesseeRiverMile": {"dam": 259.4, "upstreamDam": 274.9}},
+    {"lakeId": "Pickwick Lake|TN", "point": [35.05, -88.2], "bbox": [-88.32, 34.72, -87.62, 35.12], "tennesseeRiverMile": {"dam": 206.7, "upstreamDam": 259.4}}
+  ],
+  "lakeNotes": "Points are the Engine directory points (Sources/SectorEngine/Support/LakeDirectory.swift). Wheeler and Wilson boxes are the ones already declared in tools/research/discovery.json; Guntersville and Pickwick boxes were drawn from dam to upstream dam for this protocol. A station inside two boxes is assigned by river mile, or excluded as AMBIGUOUS.",
+  "truthUnit": {
+    "name": "qualifying cast",
+    "definition": "One temperature measurement occasion (a vertical profile or a single surface grab) at one MAIN_BODY station on one local calendar date (America/Chicago), with at least one reading at depth <= 1.5 m.",
+    "key": "(lakeId, MonitoringLocationIdentifier, ActivityStartDate)",
+    "crossOrganizationDuplicates": "Two casts on the same date whose station coordinates are within 0.002 degrees of each other are one cast; the one with more depth readings is kept.",
+    "surfaceValue": "Mean of the readings at depth 0 to 1.0 m. If there is none, the shallowest reading at depth <= 1.5 m. A cast whose readings are all deeper than 1.5 m, or whose depth is missing, does not qualify.",
+    "unitsAndQc": "deg F converted to deg C. Readings outside -0.5 to 40 deg C, results with status Rejected, and non-water temperature characteristics are dropped before the surface value is formed."
+  },
+  "stationRule": {
+    "classes": {
+      "MAIN_BODY": "On the Tennessee River main stem of the lake: river mile in [dam, upstreamDam - 2.0], or, without a river mile, the name names the Tennessee River, the reservoir main channel or the dam forebay and has no embayment or tailwater keyword. Forebay stations count.",
+      "EMBAYMENT": "A tributary arm, creek, branch, bay, slough or spring (keywords: creek, branch, embayment, bay, slough, spring, run, or a river other than the Tennessee).",
+      "TAILWATER": "Below a dam, or within 2.0 river miles downstream of the upstream dam (keywords: tailwater, below dam, TW, release, outflow, tailrace, spillway, powerhouse).",
+      "OUTSIDE": "Outside every lake box.",
+      "AMBIGUOUS": "Inside two boxes with no river mile.",
+      "UNCLASSIFIED": "None of the above."
+    },
+    "counts": "Only MAIN_BODY stations count.",
+    "review": "The runner writes a draft station file from station METADATA only. A reviewer may move an UNCLASSIFIED station to another class, with a one-line reason per change. The reviewed station file is hashed and the hash is posted on Sector_Ops #51 before step B. Reclassifying after values are opened is not allowed."
+  },
+  "independence": {
+    "window": {"from": "2021-01-01", "to": "the census cutoff date recorded in the census output (the day before step A runs)"},
+    "excluded": [
+      "Any series the Water Temp Brain reads: DirectoryLake.tempSensor bindings (docs/data/temp_sensors.csv; none at these four lakes on 2026-11-23) and any USGS 00010 site of type LK within 10 mi of the lake point (WaterLevelService.nearestWaterTemp). Continuous series are not casts and are never counted.",
+      "Any cast in the Stage 3C.3 calibration set. Stage 3C.3 calibrated before its 2021-01 holdout window, so no cast dated on or after 2021-01-01 is a calibration cast. If the private calibration list is supplied, the runner also excludes its keys.",
+      "Satellite products (VIIRS, GOES, GLSEA, Landsat): not in situ, never protected truth.",
+      "Anything used to fit, tune or select a Water Temp model or candidate after 2026-10-11."
+    ],
+    "protection": "Truth values are opened only in step B, and only when step A shows sufficiency on all four lakes. No truth value may be used for calibration, tuning or candidate selection afterwards; the set stays protected for later Level-4 re-runs."
+  },
+  "model": {
+    "id": "surface-energy-balance-v2 (production M0, k = 0.09)",
+    "implementation": "tools/research/discovery.py m0_daily and m0_for_date (window D-45..D, 7-day seed, daily relaxation 0.09), checked against stored production values (implMaxAbsDiffC 0.01).",
+    "forcing": "Open-Meteo archive daily (temperature_2m_mean, shortwave_radiation_sum, wind_speed_10m_mean, relative_humidity_2m_mean) at the lake point, timezone auto, from 46 days before the first cast to the last cast.",
+    "pairing": "Each qualifying cast is paired with M0 for the same lake-local date at the lake point (the value production publishes for the lake). A cast with no M0 value is dropped and counted as unpaired.",
+    "notCompared": "The V2 Kalman research candidate (frozen, not promoted). Its comparison would need its private implementation and a separate protocol."
+  },
+  "steps": {
+    "A_census": "Metadata only (station and activity metadata: identifiers, coordinates, dates, depths; no result values). Classify stations, count qualifying casts per lake. Outcome INSUFFICIENT_TRUTH if any lake has fewer than 25 or the total is below 150; then step B is not run.",
+    "B_compare": "Only after step A shows sufficiency, the reviewed station-file hash is posted, the owner has decided the reconciliation, and the owner has posted an Owner request (Michael, ...) for step B. Opens result values for the counted casts only and computes the metrics."
+  },
+  "metrics": {
+    "primary": {
+      "perLakeRmseC": "sqrt(mean((M0 - truth)^2)) over the lake's paired casts, deg C",
+      "pooledEqualLakeRmseC": "sqrt(mean over the four lakes of each lake's mean squared error), deg C"
+    },
+    "reported": ["perLakeBiasC (M0 - truth)", "perLakeMaeC", "shareAbsErrorOver2.78C (5 deg F)", "per-season RMSE (DJF, MAM, JJA, SON) when a season has >= 5 casts", "unpaired casts"]
+  },
+  "passMark": {
+    "sufficiency": "every lake >= 25 paired casts and >= 150 paired casts in total; otherwise INSUFFICIENT_PAIRED (not FAIL)",
+    "pooledEqualLakeRmseC": {"op": "<=", "value": 2.5},
+    "perLakeRmseC": {"op": "<=", "value": 2.5, "appliesTo": "each of the four lakes"},
+    "source": "tools/research/discovery.json water-temp pooledRmseC 2.5, pre-declared 2026-10-23 against the fleet grab-sample reference of 2.27 deg C. The same bar is applied per lake here so that one good lake cannot carry a bad one.",
+    "outcomes": ["INSUFFICIENT_TRUTH", "INSUFFICIENT_PAIRED", "PASS", "FAIL"]
+  },
+  "publication": {
+    "runOutput": "Local files in the water-temperature research folder only (census, reviewed station file, comparison result with this protocol's sha256). Labelled INTERNAL_EXPERIMENTAL and NOT_FOR_CUSTOMERS.",
+    "report": "A short summary on Sector_Ops #51: counts per lake, outcome, metrics if step B ran, hashes.",
+    "scorer": "The scorer publishes the water-temp block of docs/brains/scoring/frozen-scores.json verbatim (basis FROZEN). A PASS does not change it. Changing that block, the protectedLakes constants in WaterTemperatureBrain.swift, or /validation/water-temp and /lakes/{k}/validation/water-temp is an owner decision under the frozen ladder, made in a separate change.",
+    "authoritativeScoresUnchanged": true
+  },
+  "limitations": [
+    "The Level-4 pass mark of the private Stage 3C.3 rule is not known to this session; the pass mark above is this protocol's own, taken from the repository's pre-declared grab-sample bar.",
+    "Casts are mostly daytime grabs and M0 is a daily value; the comparison measures the published daily lake value, not a night reading.",
+    "Main-body and forebay stations can be up to ~37 km from the lake point (Wheeler forebay); the comparison tests the single published lake value, as production does.",
+    "Public metadata found on 2026-10-23 showed no new Wheeler or Wilson casts in the Water Quality Portal after 2026-07-01 and none at Wilson after May 2026. A census on public portals alone may stay INSUFFICIENT_TRUTH; the likely unlock is TVA forebay and mid-reservoir profiles obtained on request."
+  ]
+}
