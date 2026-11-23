@@ -2,7 +2,7 @@
 
 ```text
 Standards: Rehtac Cortex 3.1.6 @ a785035, pack sector/engine
-Task: WX-001 / WX-002 retrospective validation (pre-registration + runner) · Folder: weather-brain (research home absent in this cloud session, CG-3.1-22; `research-path` does not know `weather`, CG-3.1-24) · Date: 2026-11-23 · Manifest task status: OPEN (blocked: the run happens on the Mac mini)
+Task: WX-001 / WX-002 retrospective validation (pre-registration + runner) · Folder: weather-brain (research home absent in this cloud session, CG-3.1-22; `research-path` does not know `weather`, CG-3.1-26) · Date: 2026-11-23 · Manifest task status: OPEN (blocked: the run happens on the Mac mini)
 ```
 
 ## Preserved results
@@ -21,7 +21,7 @@ none required (nothing retained locally)
 none. The Cortex tree extracted read-only into the session scratchpad and a throwaway performance fixture (synthetic, removed right after timing) are DISPOSABLE and are discarded with the session.
 
 ## Worktrees
-`/home/claude/sector_engine_wxretro` (this task): kept until the PR is reviewed; worktree-check class before the final commit was KEEP_DIRTY (this task's uncommitted work), after push it is KEEP_ACTIVE (unmerged branch). `se_wt_validation` and `sector_engine_wt_wtpt` are REMOVABLE_MERGED but unregistered and created by other sessions: listed for the owner's batch, not removed (DEV-04). Other KEEP_* worktrees belong to other sessions: not touched.
+`/home/claude/sector_engine_wxretro` (this task): kept until the PR is reviewed; worktree-check class before the final commit was KEEP_DIRTY (this task's uncommitted work), after push it is KEEP_ACTIVE (unmerged branch). `se_wt_validation` and `sector_engine_wt_wtpt` (REMOVABLE_MERGED, other sessions) were removed by the coordinator (merged and clean); not removed by this session. Other KEEP_* worktrees belong to other sessions: not touched.
 
 ## Blockers
 The data fetch and grading run on the Mac mini (draft request in `docs/brains/weather-retro-validation/MINI_REQUEST_DRAFT.md`, not posted). This session fetched nothing by design (pre-registration first; the run is the Mini's).

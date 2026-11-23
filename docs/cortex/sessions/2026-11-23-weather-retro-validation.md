@@ -21,7 +21,7 @@ Branch `research/weather-retro-validation-2026-11-23` from `origin/main` `5db067
 | Commit | What |
 |---|---|
 | `c8d2e526` | Protocol `WX-RETRO-2026-11-23` and its sha256 sidecar, committed **before** the runner and before any data was fetched (`6e08d42ed7e808a7a9775e885f865233e7ba2bb2279e4fbb8e0171634ed37ab8`) |
-| next | Runner `tools/research/weather_retro_validation.py` (imports the Brain's own `assemble`, `evaluate`, `tendency`, `decode_*`; no second copy of the logic), 17 offline tests, plan amendment §5.4, Weather research README and GAPS evidence lines, draft Mini request, this record, closeout, Cortex gap CG-3.1-24 |
+| next | Runner `tools/research/weather_retro_validation.py` (imports the Brain's own `assemble`, `evaluate`, `tendency`, `decode_*`; no second copy of the logic), 17 offline tests, plan amendment §5.4, Weather research README and GAPS evidence lines, draft Mini request, this record, closeout, Cortex gap CG-3.1-26 |
 
 Choices made (reversible, standing approval 6), all fixed in the protocol before data:
 - Past window ending 2026-11-19 (4 days before registration, archives settled): 5.1 14 days, 5.2 30 days, 5.3 60 days, evaluation every hour at HH:10Z.
@@ -48,8 +48,8 @@ None, by design: the protocol was hashed first and the run belongs to the Mac mi
 ## Decisions for Michael (batched)
 1. Post the draft Mini request on Sector_Ops #51: `docs/brains/weather-retro-validation/MINI_REQUEST_DRAFT.md`.
 2. After results: may retrospective R-5.2 / R-5.3 PASS (with R-SUB PASS) stand in for the prospective 5.2 / 5.3 windows (protocol `resultStates.rubricMapping`)? Recommendation: yes for 5.3 and 5.2 as PARTIAL evidence, keep prospective 5.1 (published values) and a prospective WX-001 window as the confirmation before VALIDATED.
-3. Research folder for Weather: Cortex has none (CG-3.1-24); the draft uses `weather-brain` (the name the Weather research README already gives).
-4. Worktrees `se_wt_validation` and `sector_engine_wt_wtpt` are REMOVABLE_MERGED but unregistered (other sessions): confirm removal.
+3. Research folder for Weather: Cortex has none (CG-3.1-26); the draft uses `weather-brain` (the name the Weather research README already gives).
+4. (Resolved) Worktrees `se_wt_validation` and `sector_engine_wt_wtpt` (REMOVABLE_MERGED, other sessions) were removed by the coordinator: merged and clean.
 
 ## Not done (gated or out of scope)
 No data fetched, no Firebase read or write, no Brain runtime, knowledge release, manifest, execution-control, rubric or score change, nothing published, no merge.
@@ -59,3 +59,6 @@ No data fetched, no Firebase read or write, no Brain runtime, knowledge release,
 
 ## Operating contract
 Gaps WX-001, WX-002; bowfisher decision: whether the Pressure and Air Temperature tiles describe the lake and whether Lake/Water Temp refresh when the weather turns; score before/after UNSCORED / UNSCORED (draft rubric, Brain never published); field validation needed: none; not changed: live systems, schedulers, customer `/conditions`, Brain logic, thresholds.
+
+## Review round 1 (coordinator)
+- Cortex gap id renumbered CG-3.1-24 → CG-3.1-26 (PR #244 holds CG-3.1-24, PR #245 CG-3.1-25); every citation updated. Protocol bytes and sha256 unchanged. Engineering-status digest regenerated.
