@@ -217,6 +217,28 @@ final class LakeLevelPlausibilityTests: XCTestCase {
         let s2 = run(iso("2026-11-23T05:00:00Z"), anchor: LakeBrainRunner.anchor(s1))
         XCTAssertEqual(s2.currentElevationFt, 26.0)
         XCTAssertTrue((s2.provenance.qualityFlags ?? []).contains("levelUnverified:\(p.sourceId)"))
+        // Round 4: a consistent wrong-datum (26 ft) or wrong-unit (metres, ~182.6) feed for 30 h at full pool 600 ft re-centres
+        // the band, but with no history range behind it the source stays unverified, run after run, and never anchors.
+        for wrong in [26.0, 182.6] {
+            func longRun(_ end: Date, anchor: LevelObservation?) -> LakeLevelStateRecord {
+                let xs = (0..<30).map { LevelObservation(at: end.addingTimeInterval(-Double(29 - $0) * 3600), ft: wrong) }
+                var x = LakeLevelInputs(lakeId: "T|ST", binding: binding([p]), capabilityIfUnbound: .noSource, fullPoolFt: 600,
+                                        poolBasisIsFullPool: true, poolConfidenceLow: false, live: [(p, xs, nil)], archivedHourly: [], guide: nil,
+                                        baseline: nil, now: end.addingTimeInterval(1800), processingVersion: "test")
+                x.levelAnchor = anchor
+                return LakeLevelClassifier.evaluate(x)
+            }
+            let r1 = longRun(iso("2026-11-23T04:00:00Z"), anchor: nil)
+            XCTAssertEqual(r1.currentElevationFt, wrong)
+            XCTAssertTrue((r1.provenance.qualityFlags ?? []).contains("levelUnverified:\(p.sourceId)"), "\(wrong)")
+            XCTAssertNil(LakeBrainRunner.anchor(r1), "\(wrong)")
+            let r2 = longRun(iso("2026-11-23T05:00:00Z"), anchor: LakeBrainRunner.anchor(r1))
+            XCTAssertTrue((r2.provenance.qualityFlags ?? []).contains("levelUnverified:\(p.sourceId)"), "\(wrong)")
+            XCTAssertNil(LakeBrainRunner.anchor(r2), "\(wrong)")
+        }
+        // An implausibleReading flag about an older rejected reading does not refuse the anchor.
+        var older = s1; older.provenance.qualityFlags = ["implausibleReading:\(p.sourceId)@2026-11-22T04:00:00Z"]
+        XCTAssertNotNil(LakeBrainRunner.anchor(older))
         // A clean published state does anchor.
         let clean = LakeLevelClassifier.evaluate(LakeLevelInputs(
             lakeId: "T|ST", binding: binding([p]), capabilityIfUnbound: .noSource, fullPoolFt: 600, poolBasisIsFullPool: true,

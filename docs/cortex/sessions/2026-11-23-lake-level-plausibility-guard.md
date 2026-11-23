@@ -24,7 +24,9 @@ Repository: Sector-Bowfishing/sector_engine · Branch: fix/lake-level-plausibili
 | Tests | Safe | `brains/lake/tests/swift/LakeLevelPlausibilityTests.swift` | 46af638e |
 | Certification + engineering-status digests | Record | `docs/cortex/engineering-status/**` | this branch |
 
-**Rule chosen (reversible choices, stated):** band = p01–p99 of the lake's own daily history (+ directory full pool when it agrees) ± max(that range, 50 ft); full pool ± 50 ft without history; re-centred on the series median when fewer than half of the series is inside (another datum, the `historyLiveMismatch` lakes); step > 10 ft (= `spikeToleranceFt`) + 2 ft/h × gap; absolute −300…14,505 ft backstop. The shown value falls back by the existing selection (last valid reading within the source's stale rule, else the next bound source). Flags: `implausibleReading:<src>@<t>=<raw>` (≤ 5 + count), `implausibleLatestRejected:<src>`, `allReadingsImplausible`.
+> **Superseded (2026-11-23):** the rule below is the first version (commit 46af638e). The shipped behaviour is the one in §7–§10 and in `docs/brains/LAKE_BRAIN_INTEGRATION.md` §7 (rules 0, D, 1, 2; anchor; `levelUnverified`; flags without raw values; rejections as run warnings).
+
+**Rule chosen in the first version (reversible choices, stated):** band = p01–p99 of the lake's own daily history (+ directory full pool when it agrees) ± max(that range, 50 ft); full pool ± 50 ft without history; re-centred on the series median when fewer than half of the series is inside (another datum, the `historyLiveMismatch` lakes); step > 10 ft (= `spikeToleranceFt`) + 2 ft/h × gap; absolute −300…14,505 ft backstop. The shown value falls back by the existing selection (last valid reading within the source's stale rule, else the next bound source). Flags: `implausibleReading:<src>@<t>=<raw>` (≤ 5 + count), `implausibleLatestRejected:<src>`, `allReadingsImplausible`.
 
 **Known limits:** a ÷10 slip of a lake below ~60 ft elevation can sit inside the 50 ft band (the step rule still catches it on hourly series); a series whose readings are all wrong but plausible-looking reads as another datum; a real record-low excursion shorter than 1 % of the record and more than (range + 50 ft) beyond p01 would be left out of the baseline (never out of the live value, which is judged by the series).
 
@@ -77,3 +79,12 @@ Re-sweep (Python mirror, revised rules): 288 bound lakes, 102 batch-2 checks, 47
 | LOW rule D vs a full pool alone could reject a gauge ~10× off | Flag only (kept, `levelUnverified`) unless an anchor confirms the slip; history-backed D still rejects |
 
 Sweep: the revisions add no rejection path without an anchor (the committed probe data carries none), so the round-2 result stands: 0 real readings rejected.
+
+## 10. Round-4 review fixes (PR #249 review at 4301508)
+| Finding | Fix |
+|---|---|
+| MEDIUM at a no-history lake a re-centred band made a consistent wrong-datum / wrong-unit feed look verified, published unflagged and anchoring | `bandDecision` reports re-centring; re-centred without a history range (full pool only) → `levelUnverified`. Test: 30 h of 26 ft and of a metres feed (~182.6) at full pool 600: both published flagged in run 1 and run 2, neither anchors |
+| LOW anchor refused for an `implausibleReading` about an older slip | Refused only when the published CURRENT value was flagged: `levelUnverified`, `implausibleLatestRejected`, `allReadingsImplausible` (test) |
+| LOW §3 out of date | Marked superseded, pointing here |
+
+**Run golden (`brains/lake/tests/golden/lake_run_updates.json`) changes, deliberately:** its FakeFeeds lakes have no history and a flat 593.8 ft; three of them have a directory full pool more than 50 ft away (Pickwick 414, Wilson 507.7, Hartwell 660), so their band is re-centred on a full-pool-only reference and they are now honestly `levelUnverified:<src>` with a `level-unverified` profile issue (`issueCount` 1). No Swift toolchain here: the golden was edited surgically (flag first in `qualityFlags`, issue object in sorted-key order) and is verified by `LakePublicationFixtureTests` in CI. Python consumers of the golden: `jobs/brain_platform` 1011 passed, `brains/lake` 81 passed.

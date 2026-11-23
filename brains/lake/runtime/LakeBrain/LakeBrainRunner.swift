@@ -242,8 +242,9 @@ public enum LakeBrainRunner {
                                    warnings: warnings, dryRunCandidate: dryRunCandidate)
     }
 
-    /// Quality flags that make a published value unfit to anchor the next run: an unverified value must never verify itself.
-    static let anchorRefusingFlagPrefixes = ["levelUnverified", "implausible", "allReadingsImplausible"]
+    /// Quality flags about the published CURRENT value that make it unfit to anchor the next run: an unverified value must never
+    /// verify itself. `implausibleReading:` is not one: it names an older rejected reading, not the value that was published.
+    static let anchorRefusingFlagPrefixes = ["levelUnverified", "implausibleLatestRejected", "allReadingsImplausible"]
 
     /// The last published accepted level as a plausibility anchor: an OBSERVED state's value (binding datum) and its time, only
     /// when the state carries none of `anchorRefusingFlagPrefixes`. So "unverified" carries forward: a value accepted on its

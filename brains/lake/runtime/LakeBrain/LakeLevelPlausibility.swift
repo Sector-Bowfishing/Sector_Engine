@@ -42,15 +42,17 @@
 //     Continuity: a reading outside the band is still ACCEPTED when it continues the accepted series smoothly (within
 //     1 ft + 2 ft/h of its accepted neighbour, no jump allowance). A real drawdown or flood that walks past the band edge is
 //     water; a slip is a jump. (Owner rule: never an older or "unknown" value when a real newer one exists.)
-//     Anchor: the lake's last published VERIFIED value (`anchor`; the runner refuses any published state flagged
-//     levelUnverified / implausible* / allReadingsImplausible, so an unverified value never verifies itself and stays flagged
+//     Anchor: the lake's last published VERIFIED value (`anchor`; the runner refuses a published state whose CURRENT value was
+//     flagged: levelUnverified / implausibleLatestRejected / allReadingsImplausible, so an unverified value never verifies itself and stays flagged
 //     run after run until the band, history or a verified anchor confirms it), ≤ 7 days old, passing rules 0 and D, and
 //     inside the band when the band comes from history. A reading outside the band within the STEP limit of the anchor over
 //     the gap is accepted (Ross Lake after a 2-day outage, 70 ft below full pool).
 //     Unverified, never blanked: (a) no in-band reading and no usable anchor: the series is accepted as far as it is
 //     internally consistent (the step walk from its own median); (b) the anchor rejected every reading but ≥ 2 of them agree
 //     within the step rule (a datum change or a new level after an outage); a lone reading stays rejected; (c) no lake
-//     reference at all and < 3 readings; (d) a kept decade-suspect reading (full pool only). In each case the source is
+//     reference at all and < 3 readings; (d) a kept decade-suspect reading (full pool only); (e) a band re-centred on the
+//     series at a lake with no history range (full pool only): a consistent wrong-datum or wrong-unit feed (feet vs metres)
+//     re-centres just as well as a real datum change. In each case the source is
 //     marked `unverified` (classifier flag `levelUnverified:<sourceId>`). Only when some readings ARE in the band are the
 //     out-of-band ones that do not continue them rejected (one slip among good readings; or the first hours of a datum
 //     change, which shows the last old-datum reading until the new series has 6 readings over 24 h).
@@ -157,20 +159,25 @@ public enum LakeLevelPlausibility {
     /// consistently elsewhere (see the header: newest outside, ≥ 6 readings outside spanning ≥ 24 h, within one band width);
     /// then the same width re-centred on those readings. No reference: the series' own median ± 50 ft with ≥ 3 readings.
     static func band(for series: [(at: Date, ft: Double)], reference: Reference?) -> Reference? {
-        guard let newest = series.last else { return nil }
+        bandDecision(for: series, reference: reference).band
+    }
+
+    /// `band(for:)` and whether it was re-centred on the series (i.e. the series, not the lake's reference, set it).
+    static func bandDecision(for series: [(at: Date, ft: Double)], reference: Reference?) -> (band: Reference?, recentred: Bool) {
+        guard let newest = series.last else { return (nil, false) }
         if let r = reference {
-            if r.contains(newest.ft) { return r }
+            if r.contains(newest.ft) { return (r, false) }
             let outside = series.filter { !r.contains($0.ft) }
             let width = (r.hi - r.lo) + 2 * r.marginFt
             guard outside.count >= minRecentreReadings, let first = outside.first,
                   newest.at.timeIntervalSince(first.at) >= minRecentreHours * 3600,
                   let mx = outside.map(\.ft).max(), let mn = outside.map(\.ft).min(), mx - mn <= width,
-                  let med = median(outside.map(\.ft)) else { return r }
+                  let med = median(outside.map(\.ft)) else { return (r, false) }
             let half = (r.hi - r.lo) / 2
-            return Reference(lo: med - half, hi: med + half, marginFt: r.marginFt, basis: "series median (reference \(r.basis) is on another datum)")
+            return (Reference(lo: med - half, hi: med + half, marginFt: r.marginFt, basis: "series median (reference \(r.basis) is on another datum)"), true)
         }
-        guard series.count >= minSeriesForSelfBand, let med = median(series.map(\.ft)) else { return nil }
-        return Reference(lo: med, hi: med, marginFt: minMarginFt, basis: "series median")
+        guard series.count >= minSeriesForSelfBand, let med = median(series.map(\.ft)) else { return (nil, false) }
+        return (Reference(lo: med, hi: med, marginFt: minMarginFt, basis: "series median"), false)
     }
 
     static func stepLimit(hours: Double) -> Double { stepToleranceFt + maxRateFtPerHour * abs(hours) }
@@ -219,13 +226,15 @@ public enum LakeLevelPlausibility {
         guard !candidates.isEmpty else { return ([], rejected.sorted { $0.at < $1.at }, false) }
 
         // 1. Band (nil: the series cannot be judged by level, every candidate counts as inside).
-        let b = band(for: candidates.map { (at: $0.at, ft: ft($0)) }, reference: reference)
+        let (b, recentred) = bandDecision(for: candidates.map { (at: $0.at, ft: ft($0)) }, reference: reference)
         var inside = candidates.map { b?.contains(ft($0)) ?? true }
         let usableAnchor: LevelObservation? = anchorCandidate.flatMap { a in (historyBand && !(b?.contains(a.ft) ?? true)) ? nil : a }
 
         // Unverified: no lake reference and too few readings for a self band; or no in-band reading and no anchor. The lake is
         // never blanked for it: the series is judged by its own consistency and published with `levelUnverified`.
-        var unverified = reference == nil && b == nil
+        // A band re-centred on the series is only as good as the series: without a history range behind the lake (full pool
+        // only), a consistent wrong-datum or wrong-unit feed would look verified. It stays unverified.
+        var unverified = (reference == nil && b == nil) || (recentred && !historyBand)
         if !inside.contains(true), usableAnchor == nil {
             unverified = true
             inside = Array(repeating: true, count: candidates.count)
