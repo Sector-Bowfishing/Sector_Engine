@@ -6,7 +6,7 @@ Task: WATER-VAL-001 protocol v2 + runner · Folder: water-temperature (research 
 ```
 
 ## Preserved results
-No local data was created. Committed on branch `research/water-temp-protected-truth-v2-2026-11-23`: protocol PT-L4-2026-11-23-v2 (sha256 e02e2e08740767dec4720a610c112010eb78ad73ad1b223b14365489a499867d), the runner, its tests and the draft Mini request.
+No local data was created. Committed on branch `research/water-temp-protected-truth-v2-2026-11-23`: protocol PT-L4-2026-11-23-v3 (sha256 ebc1a77b1977924c2bb586340887f2fad7a3196b20bf4f2ef2305853716f170d; v2 superseded, kept byte-identical), the runner, its tests and the draft Mini request.
 
 ## Manifests updated
 none (the Mac mini registers its v2 outputs in the water-temperature manifest)
@@ -24,4 +24,4 @@ none
 `/home/claude/se_wt_wtpt_v2` (this task): kept until the PR is reviewed and merged. `/home/claude/sector_engine_wt_wtpt` (v1, PR #242 merged): see the session report's worktree-check result.
 
 ## Blockers
-Step A v2 needs the Mac mini (this session's proxy refuses WQP, USGS and the registry bucket). Step B needs an Owner request after a SELECTED selection is posted.
+Step A v3 needs the Mac mini (this session's proxy refuses WQP, USGS and the registry bucket). Step B needs an Owner request after a SELECTED selection is posted.
