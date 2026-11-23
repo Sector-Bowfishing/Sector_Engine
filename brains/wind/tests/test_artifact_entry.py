@@ -37,10 +37,18 @@ def test_build_seals_one_bundle_with_the_release_lineage(tmp_path):
     assert lin["artifactSchema"] == "wind-publication-v1"
 
 
-def test_main_stores_create_only_and_emits_the_hand_off(tmp_path, no_directory_fetch):
+def test_main_stores_create_only_and_emits_the_hand_off(tmp_path, no_directory_fetch, monkeypatch):
+    import sector_brain_platform as BP
+
+    class NothingLive:                                        # a hand-off reads its previous state from what is live (W-H2); here: nothing yet
+        def get(self, path, shallow=False):
+            return None
+    monkeypatch.setattr(BP, "BrainRtdb", lambda url, tokens: NothingLive())
+    monkeypatch.setattr(BP, "TokenProvider", lambda: None)
     make_store(tmp_path / "archive")
     out, emit = tmp_path / "store", tmp_path / "artifact.json"
-    args = ["--store", f"local:{tmp_path / 'archive'}", "--artifact-dir", str(out), "--emit", str(emit), "--skip-ingest", "--now", NOW_ISO]
+    args = ["--store", f"local:{tmp_path / 'archive'}", "--artifact-dir", str(out), "--emit", str(emit), "--skip-ingest", "--now", NOW_ISO,
+            "--read-rtdb"]
     assert E.main(args) == 0
     art = json.loads(emit.read_text())
     assert art["lineage"]["brainId"] == "wind"

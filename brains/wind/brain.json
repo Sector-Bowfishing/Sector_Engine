@@ -57,7 +57,7 @@
         "loader": "brains/wind/runtime/sector_wind/ingest.py verified_release",
         "verification": "sector_brain_platform.knowledge_release: per-file sha256 and bytes plus release digest",
         "lineage": "knowledgeRelease, manifestRef and manifestSha256 in the shadow artifact lineage",
-        "approval": "NOT_RECORDED",
+        "approval": "APPROVED",
         "onUnavailable": "REFUSE"
       }
     ],
@@ -73,8 +73,8 @@
       "INTERNAL"
     ],
     "knowledgeLoading": {
-      "approved": "NONE",
-      "experimental": "wind-knowledge (PACKAGED_IN_IMAGE, brains/wind/runtime/knowledge-release.json, approval NOT_RECORDED)",
+      "approved": "wind-knowledge (PACKAGED_IN_IMAGE, brains/wind/runtime/knowledge-release.json `wind-knowledge-2026-10-20.1`; APPROVED for INTERNAL and CALIBRATION use only, not customer-eligible: docs/cortex/approvals/wind-knowledge-2026-10-20.1.md)",
+      "experimental": "NONE",
       "refuseWithoutApproved": [
         "CUSTOMER_SERVING"
       ]
@@ -97,6 +97,6 @@
       "status": "NOT_ELIGIBLE",
       "approvalRef": null
     },
-    "notes": "No APPROVED knowledge release exists (approval NOT_RECORDED): production runs are INTERNAL mode on the packaged candidate/reviewed knowledge. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
+    "notes": "The packaged knowledge release wind-knowledge-2026-10-20.1 is APPROVED for INTERNAL and CALIBRATION use only (Owner approval, Sector_Ops #51 comment 7093921466, 2026-11-23; first given in chat 06:21Z and recorded in comment 7093271287, step M3 of the Wind move onto Pulse); it is not customer-eligible. Production runs are INTERNAL mode. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
   }
 }
