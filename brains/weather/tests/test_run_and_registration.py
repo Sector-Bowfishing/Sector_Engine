@@ -104,12 +104,16 @@ def test_planner_skips_lakes_that_are_not_due_and_fetches_shared_sources_once():
 
 
 def test_out_of_coverage_lakes_are_blocked_with_no_state():
+    """A /points 404 means out of coverage only outside the US NWS area; inside it, it is an outage (test_point_cache.py)."""
     class Outside(FixtureSource):
         def point(self, lat, lon):
             raise OutOfCoverage("404")
-    out = _run(src=Outside())
-    assert set(out["readiness"].values()) == {"BLOCKED"} and out["states"] == {}
-    assert out["updates"]["lakeFleet/Guntersville_AL/readiness/weather"] == "BLOCKED"
+    abroad = {"id": "Abroad|XX", "lat": 46.2, "lon": 6.15}
+    out = run([abroad], Outside(), PointCache(None), {}, RECORDED_NOW)
+    assert out["readiness"] == {"Abroad|XX": "BLOCKED"} and out["states"] == {}
+    assert out["updates"]["lakeFleet/Abroad_XX/readiness/weather"] == "BLOCKED"
+    us = _run(src=Outside())
+    assert "BLOCKED" not in set(us["readiness"].values()) and us["states"] == {}
 
 
 def test_a_failed_station_fetch_degrades_that_lake_and_never_invents_values():
