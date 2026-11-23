@@ -45,6 +45,23 @@ def test_dry_run_needs_explicit_intent_and_runs_offline_on_fixtures(tmp_path):
     assert r.returncode == 0 and out["published"] is False and out["evaluated"] == 1 and out["knowledgeRelease"]["approvalStatus"] == "NOT_RECORDED"
 
 
+def _approve(d):
+    """A copy of the release marked APPROVED (approval is not part of the file digest): exercises the write gate, never published."""
+    p = d / "knowledge" / "knowledge-release.json"
+    m = json.loads(p.read_text())
+    m["approval"] = {"status": "APPROVED", "record": "test-only approval record (never a real approval)"}
+    p.write_text(json.dumps(m))
+
+
+def test_write_from_an_approved_release_still_needs_operator_intent(tmp_path):
+    d = _copy(tmp_path)
+    _approve(d)
+    r = run("--write", runtime=str(d), cwd=str(tmp_path))
+    assert r.returncode == 3 and "GENERATION_WRITE_APPROVED=1" in r.stderr and r.stdout == ""
+    r = run("--write", "--fixtures", FIXTURES, env={"GENERATION_WRITE_APPROVED": "1"}, runtime=str(d), cwd=str(tmp_path))
+    assert r.returncode == 3 and "dry-run options" in r.stderr                          # fixtures can never feed a real write
+
+
 def test_a_missing_release_refuses_the_run(tmp_path):
     d = _copy(tmp_path)
     os.remove(d / "knowledge" / "knowledge-release.json")

@@ -2,7 +2,7 @@
 
 A binding names the exact time-series ids (never discovered at run time; discovery is research/tools probe_cwms_release):
   {"office": "SWL", "discharge": "<total outflow tsid>", "turbine"?: tsid, "spill"?: tsid, "generation"?: tsid (MW), "tailwater"?: tsid}
-Each series is asked in English units (`unit=EN`) for the last 48 h. A response that still answers in SI is converted (cms -> cfs, m -> ft);
+Each series is asked in English units; values whose CWMS quality code says missing, questionable or rejected are dropped (`unit=EN`) for the last 48 h. A response that still answers in SI is converted (cms -> cfs, m -> ft);
 any other unit is refused for that series. Null values are dropped (CWMS marks missing values with a null value), never zero-filled.
 Forecast or modeled versions are refused by the binding review, and a series id that looks like one is refused here too."""
 from __future__ import annotations
@@ -19,6 +19,10 @@ AGENCY = "U.S. Army Corps of Engineers (CWMS)"
 BASE = "https://cwms-data.usace.army.mil/cwms-data"
 FIELDS = {"discharge": "dischargeCfs", "turbine": "turbineCfs", "spill": "spillCfs", "generation": "generationMw", "tailwater": "tailwaterFt"}
 _MODELED = re.compile(r"(?i)(forecast|fcst|-F[FX]$|-P[FX]$|modeled|for comparison|smoothed)")
+# CWMS data-quality code (bit flags of the 3rd value of each row): 1 screened, 2 okay, 4 missing, 8 questionable, 16 rejected. 0 = not screened
+# (kept: unscreened real-time data is the norm). A value flagged missing, questionable or rejected is dropped.
+QUALITY_MISSING, QUALITY_QUESTIONABLE, QUALITY_REJECTED = 4, 8, 16
+BAD_QUALITY = QUALITY_MISSING | QUALITY_QUESTIONABLE | QUALITY_REJECTED
 UNITS = {"dischargeCfs": {"cfs": 1.0, "cms": FT3_PER_M3}, "turbineCfs": {"cfs": 1.0, "cms": FT3_PER_M3}, "spillCfs": {"cfs": 1.0, "cms": FT3_PER_M3},
          "generationMw": {"mw": 1.0}, "tailwaterFt": {"ft": 1.0, "m": FT_PER_M}}
 
@@ -53,6 +57,9 @@ def parse(body: bytes, field: str) -> tuple[list[dict] | None, str | None]:
     for row in raw.get("values") or []:
         if not isinstance(row, list) or len(row) < 2 or not isinstance(row[0], (int, float)) or not isinstance(row[1], (int, float)):
             continue
+        q = row[2] if len(row) > 2 else None
+        if isinstance(q, int) and not isinstance(q, bool) and q & BAD_QUALITY:
+            continue                                   # CWMS quality: missing, questionable or rejected values are never read
         at = datetime.fromtimestamp(row[0] / 1000, tz=timezone.utc)
         out.append({"at": iso(at), field: round(float(row[1]) * k, 3)})
     return out, None
@@ -61,7 +68,7 @@ def parse(body: bytes, field: str) -> tuple[list[dict] | None, str | None]:
 def read(binding: dict, fetcher, now: datetime) -> Reading:
     office = binding["office"]
     begin, end = now - timedelta(hours=48), now + timedelta(hours=1)
-    obs, errors, series, cadence = [], [], [], []
+    obs, errors, series, timing = [], [], [], {}
     for role, field in FIELDS.items():
         tsid = binding.get(role)
         if not tsid:
@@ -79,8 +86,10 @@ def read(binding: dict, fetcher, now: datetime) -> Reading:
             errors.append(f"{tsid}: {why}")
             continue
         obs += rows
-        cadence.append(interval_minutes(tsid))
+        iv = max(60, interval_minutes(tsid))
+        timing[field] = (iv, max(120, iv))             # each series is judged on its own cadence (a daily outflow never ages an hourly turbine)
     if not obs:
         return failed("cwms", AGENCY, "; ".join(errors) or f"CWMS {office}: no release series in the binding", series)
-    c = max(60, min(cadence) if cadence else 60)
-    return Reading("cwms", AGENCY, True, "; ".join(errors) or None, merge_observations(obs), [], series, cadence_min=c, lag_min=max(120, c))
+    c = min(t[0] for t in timing.values())
+    return Reading("cwms", AGENCY, True, "; ".join(errors) or None, merge_observations(obs), [], series, cadence_min=c, lag_min=max(120, c),
+                   series_timing=timing)

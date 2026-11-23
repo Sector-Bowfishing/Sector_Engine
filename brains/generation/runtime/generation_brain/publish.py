@@ -110,7 +110,9 @@ def publish(catalog: dict, access: dict, fetcher, writer, now: datetime | None =
         health = _health(rep["errors"], evaluated, unavailable)
         reg = {
             "brainId": C.BRAIN_ID, "displayName": C.DISPLAY_NAME, "domain": C.DOMAIN, "question": C.QUESTION, "platform": PLATFORM,
-            "version": C.BRAIN_VERSION, "schemaVersion": C.SCHEMA_VERSION, "contractVersion": C.STATE_SCHEMA, "enabled": True, "health": health,
+            "version": C.BRAIN_VERSION, "schemaVersion": C.SCHEMA_VERSION, "contractVersion": C.STATE_SCHEMA,
+            "enabled": False,                       # registered DISABLED: orchestration.status DISABLED (ops_summary)
+            "health": health,
             "status": "CALIBRATION", "lifecycle": C.LIFECYCLE,
             "supportedLakeCount": sum(1 for m in rep["lakes"].values() if m.get("kind") in (C.OBSERVED, C.SCHEDULE_ONLY)),
             "readinessCounts": counts, "staleLakeCount": stale, "staleAfterHours": None, "stalenessModel": C.STALENESS_MODEL,

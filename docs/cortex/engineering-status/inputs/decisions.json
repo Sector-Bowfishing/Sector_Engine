@@ -196,6 +196,16 @@
         "generation",
         "lake-brain"
       ]
+    },
+    {
+      "id": "D-I",
+      "class": "DECISION_REQUIRED",
+      "title": "One read per series per hour across Brains: Lake Brain already reads the TVA observed-data URLs that Generation would read",
+      "recommendation": "Choose a shared TVA observed-data reader, Generation consuming Lake's release readout, or accepting two reads an hour; Generation is not enabled for TVA lakes until decided",
+      "brains": [
+        "generation",
+        "lake-brain"
+      ]
     }
   ]
 }

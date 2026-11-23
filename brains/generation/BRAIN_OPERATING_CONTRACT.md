@@ -33,7 +33,7 @@ A research task starts from a gap in `research/GAPS.json`: binding a pending sou
 Stop a binding probe when the series is bound with evidence, when the operator publishes nothing usable, or when access needs the operator's permission (then list it, do not build it). Stop validation after the pre-registered week.
 
 ## 11. EVIDENCE HIERARCHY
-1. The operator's own release and schedule (TVA, USACE CWMS, SWPA, Reclamation). 2. A USGS discharge gauge below the dam, labelled `downstreamGauge` (the river, not the dam). Nothing else; never a model or an estimate.
+1. The operator's own release and schedule (TVA, USACE CWMS, SWPA, Reclamation). 2. A USGS discharge gauge below the dam, read only where no operator release series is bound and published separately as `tailwaterGauge` {site, distanceMiles}: it measures the river, never sets the dam's release status (kind DOWNSTREAM_ONLY, status UNKNOWN). Nothing else; never a model or an estimate.
 
 ## 12. CANONICALIZATION
 Times are UTC ISO-8601 (`...Z`) from each source's stated zone or offset. Flow in cfs, elevation in ft, power in MW; SI responses are converted, other units refused. One state per lake key (`lake_key(lakeId)`).

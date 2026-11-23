@@ -135,3 +135,57 @@ def test_usgs_reads_one_series_and_refuses_several():
     assert obs is None and "never merged" in why
     obs, why = usgs.parse(fx("usgs-00060.json"), "00000000")
     assert obs is None and "another site" in why
+
+
+# ---- pre-enable review fixes (2026-11-22) ---------------------------------------------------------------------------------------------------
+def test_tva_rows_that_cannot_be_parsed_are_reported_not_silently_dropped():
+    bad = json.dumps([{"Day": "11/22/2026", "Time": "5PM to 6PM", "Generators": "two"}, {"Day": "11/22/2026", "Time": "x", "Generators": "1"}]).encode()
+    good_obs = fx("tva-GVDA1-observed-data-48-hours.json")
+    f = fetcher(transport=lambda u, h, t: Response(200, bad if "generation-releases" in u else good_obs))
+    r = tva.read({"locationId": "GVDA1"}, f, NOW)
+    assert r.ok and r.schedule == [] and "none of 2 rows could be parsed" in r.error
+    partial = json.dumps(json.loads(fx("tva-GVDA1-generation-releases.json")) + [{"Day": "11/22/2026", "Time": "?", "Generators": "1"}]).encode()
+    f2 = fetcher(transport=lambda u, h, t: Response(200, partial if "generation-releases" in u else good_obs))
+    r2 = tva.read({"locationId": "GVDA1"}, f2, NOW)
+    assert len(r2.schedule) == 6 and "1 of 7 rows could not be parsed" in r2.error
+
+
+def test_cwms_drops_missing_questionable_and_rejected_values():
+    body = json.dumps({"units": "cfs", "values": [[1795000000000, 100.0, 0], [1795003600000, 200.0, 3], [1795007200000, 300.0, 9],
+                                                  [1795010800000, 400.0, 17], [1795014400000, 500.0, 5]]}).encode()
+    rows, why = cwms.parse(body, "dischargeCfs")
+    assert why is None and [r["dischargeCfs"] for r in rows] == [100.0, 200.0]   # 0 unscreened and 3 screened-okay kept; 9/17/5 dropped
+
+
+def test_cwms_reports_per_series_timing():
+    f = fetcher(transport=_cwms_transport({"Flow-Out": "cwms-outflow.json", "Flow-Turb": "cwms-turbine-cms.json"}))
+    r = cwms.read({"office": "SWL", "discharge": "Example_Dam.Flow-Out.Ave.~1Day.1Day.Rev", "turbine": "Example_Dam.Flow-Turb.Ave.1Hour.1Hour.Rev"}, f, NOW)
+    assert r.series_timing == {"dischargeCfs": (1440, 1440), "turbineCfs": (60, 120)} and r.ceiling_min("turbineCfs") == 300
+
+
+def _swpa_page(day_text, rows):
+    lines = ["<pre>", f"PROJECTED HOURLY GENERATION (MW)   {day_text}", "HR   BSD"] + [f"{h:>2} {mw:>5}" for h, mw in enumerate(rows, 1)] + ["TOT 0", "</pre>"]
+    return "\n".join(lines).encode()
+
+
+def _swpa_read(body, now):
+    allow = {**fetcher().access, "swpa": {**fetcher().access["swpa"], "status": "ALLOWED"}}
+    return swpa.read({"project": "BSD"}, fetcher(access=allow, transport=lambda u, h, t: Response(200, body)), now)
+
+
+def test_swpa_uses_only_the_pages_own_date_field():
+    body = _swpa_page("SUNDAY 11/15/2026", [0] * 24).replace(b"</pre>", b"</pre><p>Updated 11/22/2026</p>")
+    r = _swpa_read(body, NOW)
+    assert not r.ok and "2026-11-15" in r.error and "an old page is never used" in r.error
+
+
+def test_swpa_dst_change_days_carry_their_own_hour_count_and_offsets():
+    spring_now = dt.datetime(2026, 3, 8, 18, tzinfo=dt.timezone.utc)
+    r = _swpa_read(_swpa_page("SUNDAY 03/08/2026", [0, 0, 100] + [0] * 20), spring_now)       # 23 rows
+    assert r.ok and r.schedule[1] == {"start": "2026-03-08T08:00:00Z", "end": "2026-03-08T09:00:00Z", "generationMw": 100.0,
+                                      "statedBy": "operator", "unitsStated": False}           # 3rd elapsed hour: 02:00 CST = 08:00Z
+    assert r.schedule[-1]["end"] == "2026-03-09T05:00:00Z"                                  # next midnight is CDT
+    assert not _swpa_read(_swpa_page("SUNDAY 03/08/2026", [0] * 24), spring_now).ok          # 24 rows on a 23-hour day: refused
+    fall_now = dt.datetime(2026, 11, 1, 18, tzinfo=dt.timezone.utc)
+    r = _swpa_read(_swpa_page("SUNDAY 11/01/2026", [0] * 25), fall_now)                      # 25 rows
+    assert r.ok and r.schedule[0]["start"] == "2026-11-01T05:00:00Z" and r.schedule[-1]["end"] == "2026-11-02T06:00:00Z"

@@ -20,14 +20,17 @@ The published value then stays current for:
   refreshLatency  one hourly grant + one publish cycle + run time (150 min), counted from the run, so a correct value is never withdrawn
                   before its replacement can arrive (the Lake Brain rule, LakeLevelValidity).
   tierWindow      TRANSITION 60, ACTIVE 120, STEADY 240, UNKNOWN 0 (min).
-A SCHEDULE_ONLY state is current until the end of the scheduled window that covers now, and never beyond now + 6 h.
+  ceiling is per series: the earliest stale limit among the release series actually used (assess.measuredCurrentUntil).
+A SCHEDULE_ONLY state is current until the end of the scheduled window that covers now, and never beyond now + 6 h; any status or
+`generating` flag that rests on the schedule hour (statusBasis SCHEDULE / MEASURED_AND_SCHEDULE, or generatingBasis SCHEDULE) is capped at
+the end of that window. A DOWNSTREAM_ONLY state (USGS gauge,
+dam status UNKNOWN) follows the gauge's own stale limit.
 Thresholds are pre-set, not fitted; the pre-registered week-long schedule comparison (docs/brains/GENERATION_BRAIN_PLAN.md) tunes them."""
 from __future__ import annotations
 
 from datetime import datetime, timedelta
 
 from . import contract as C
-from .assess import ceiling_min
 from .contract import iso, parse_iso
 
 FLOOR_MIN = 60
@@ -98,16 +101,24 @@ def decide(a: dict, prev: dict | None, now: datetime) -> dict:
         why += "; the posted schedule ends within 12 h (watching for the next posting)"
     recheck = max(FLOOR_MIN, recheck)
     floor = now + timedelta(minutes=REFRESH_LATENCY_MIN)
-    r = a.get("measuredReading")
-    if a["kind"] == C.OBSERVED and r is not None:
-        obs = parse_iso(a["release"]["observedAt"])
-        ceiling = obs + timedelta(minutes=ceiling_min(r))
+    rel = a["release"]
+    if a["kind"] == C.OBSERVED and a.get("measuredCurrentUntil"):
+        obs = parse_iso(rel["observedAt"])
+        ceiling = parse_iso(a["measuredCurrentUntil"])               # the earliest stale limit among the series actually used
         fresh_until = min(ceiling, max(obs + timedelta(minutes=WINDOW_MIN[t]), floor))
     elif a["kind"] == C.SCHEDULE_ONLY:
         end = parse_iso((sched.get("now") or {}).get("end")) or now
         fresh_until = min(end, now + timedelta(hours=SCHEDULE_ONLY_MAX_H))
+    elif a["kind"] == C.DOWNSTREAM_ONLY and a.get("gaugeCurrentUntil"):
+        obs = parse_iso(a["tailwaterGauge"]["observedAt"])
+        fresh_until = min(parse_iso(a["gaugeCurrentUntil"]), max(obs + timedelta(minutes=WINDOW_MIN[t]), floor))
     else:
         fresh_until = now
+    if rel.get("statusBasis") in ("SCHEDULE", "MEASURED_AND_SCHEDULE") or rel.get("generatingBasis") == "SCHEDULE":
+        # the status rests on the schedule hour: it cannot be presented past the end of that scheduled window
+        end = parse_iso((sched.get("now") or {}).get("end"))
+        if end is not None:
+            fresh_until = min(fresh_until, end)
     next_check = now + timedelta(minutes=recheck)
     return {"tier": t, "reason": why, "freshUntil": iso(fresh_until), "nextCheckAt": iso(next_check), "recheckMinutes": recheck,
             "stale": fresh_until <= now, "model": C.STALENESS_MODEL}

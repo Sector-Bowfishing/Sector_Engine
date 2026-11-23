@@ -1,7 +1,9 @@
 """USGS Water Data API (api.waterdata.usgs.gov/ogcapi/v1, collection `continuous`): measured discharge (00060, cfs) at a gauge below a dam.
 
-A downstream gauge measures the river, not the dam's own release: the state labels it `tailwaterGauge` with the site and its distance, and
-it is used for discharge only when no operator release series is bound. The binding names the site: {"site": "07049690", "parameter": "00060"}.
+A downstream gauge measures the river, not the dam's own release: the state publishes it as `tailwaterGauge` {site, distanceMiles, dischargeCfs,
+trend12hCfs, observedAt, agency} and it NEVER sets the dam's release status. It is read only when no operator release series is bound
+(state.sources_to_read). The binding names the site and its distance below the dam (from the NLDI probe):
+{"site": "07049690", "parameter": "00060", "distanceMiles": 2.4}.
 Rules (as the Lake Brain's v1 reader): several series for one site and parameter are refused rather than merged; a null value and the legacy
 -999999 sentinel are dropped; a non-JSON body (an outage notice) is a failure, never data. WaterServices (shuts down 2027-02-22) is not used."""
 from __future__ import annotations
@@ -66,4 +68,5 @@ def read(binding: dict, fetcher, now: datetime) -> Reading:
         return failed("usgs", AGENCY, f"USGS {site}: {why}", series)
     if not obs:
         return failed("usgs", AGENCY, f"USGS {site}: no readings in 48 h", series)
-    return Reading("usgs", AGENCY, True, None, obs, [], series, cadence_min=60, lag_min=60)
+    return Reading("usgs", AGENCY, True, None, obs, [], series, cadence_min=60, lag_min=60,
+                   meta={"site": site, "distanceMiles": binding.get("distanceMiles")})

@@ -23,6 +23,16 @@ class Reading:
     series: list = field(default_factory=list)         # identifiers read ("tva:GVDA1:observed-data-48-hours", "cwms:SWL:Bull_Shoals...")
     cadence_min: int = 60                               # how often the source publishes a new value
     lag_min: int = 60                                   # how late a value usually appears
+    series_timing: dict = field(default_factory=dict)  # per field: {"turbineCfs": (cadence_min, lag_min)} when series differ (CWMS)
+    meta: dict = field(default_factory=dict)           # source facts the state names (USGS: site, distanceMiles)
+
+    def timing(self, key: str) -> tuple[int, int]:
+        return self.series_timing.get(key, (self.cadence_min, self.lag_min))
+
+    def ceiling_min(self, key: str) -> int:
+        """A value counts as current until its series is overdue: lag + 3 x cadence (the Lake Brain stale rule), per series."""
+        cadence, lag = self.timing(key)
+        return lag + 3 * cadence
 
     def summary(self, retrieved_at: datetime) -> dict:
         return {"provider": self.provider, "agency": self.agency, "ok": self.ok, "error": self.error, "series": list(self.series),
