@@ -641,7 +641,7 @@
   },
   "blockers": [
     "the 7-day shadow (Sector_Ops #49, D4): redesign done 2026-11-23, pre-registered as wind-pulse-shadow-v1 (docs/architecture/production/WIND_PULSE_SHADOW_PROTOCOL_V1.md, runner tools/ops/wind_pulse_shadow.py). Open, owner steps: a Pulse shadow job (hourly, --read-rtdb, no --emit) scheduled and the window start named; the retention job scheduled (C5); and whether the flip waits for a PASS or the first publish is held until it",
-    "archive continuity: the Mac mini's local Wind archive vs gs://sector-wind-candidate/wind/v1 (the previous-state bookkeeping)",
+    "archive continuity (D5): read-only check written 2026-11-23 (tools/ops/wind_archive_continuity.py: required fetch/grids objects by MD5, national table digests vs the manifest, D3 lakes on the pinned list, bookkeeping and series ranges as information). Open: the Mac mini runs it against gs://sector-wind-candidate/wind/v1 (Claude request drafted, not posted) and, if SEED_NEEDED, the one-time seed under D5, then a re-run showing CONTINUOUS",
     "knowledge release approval for wind not recorded; Engine #90 and a new knowledge release; the lifecycle the artifact declares",
     "the app wind source decisions WS-1..WS-4 (customer-visible, separate)",
     "W-H2 (D2) Engine side done 2026-11-23: artifact_entry.py refuses a hand-off (--emit) without --read-rtdb, a read-live seal never advances the local bookkeeping, and live_previous reads readiness from lakeFleet/{k}/readiness/wind (the field publish() writes). Still open, code in Sector-Pulse: the wind-central catalog entry must pass --read-rtdb and the brain-rtdb-read-token credential (BRAIN_ACCESS_TOKEN), as water-clarity-central does; until then wind-central is refused (exit 2) and hands nothing off",
