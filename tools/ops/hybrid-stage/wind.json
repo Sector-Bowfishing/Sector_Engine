@@ -640,7 +640,7 @@
     "state": "CENTRAL"
   },
   "blockers": [
-    "owner acceptance of the whole-directory watchdog list (deviation from D3) before the flip: the pinned list is all 621 directory lakes because publish() writes lakeFleet/{k}/readiness/wind for every directory lake; with it the watchdog no longer bounds Wind's per-lake writes (lakes/{k}/states/wind, profiles, snapshots) to the 4 live + national lakes, only to the directory",
+    "owner acceptance of the whole-directory watchdog list (deviation from D3) before the flip: done per Sector_Ops #51 comment 7093912140 (Michael accepted all 621 directory lakes in chat 2026-11-23 07:01Z, knowing the watchdog no longer limits Wind's per-lake writes to the 4 live + national lakes, only to the directory)",
     "the 7-day shadow (Sector_Ops #49, D4): redesign done 2026-11-23, pre-registered as wind-pulse-shadow-v1 (docs/architecture/production/WIND_PULSE_SHADOW_PROTOCOL_V1.md, runner tools/ops/wind_pulse_shadow.py). Open, owner steps: a Pulse shadow job (hourly, --read-rtdb, no --emit) scheduled and the window start named; the retention job scheduled (C5); and whether the flip waits for a PASS or the first publish is held until it",
     "archive continuity (D5): read-only check written 2026-11-23 (tools/ops/wind_archive_continuity.py: required fetch/grids objects by MD5, national table digests vs the manifest, D3 lakes on the pinned list, bookkeeping and series ranges as information). Open: the Mac mini runs it against gs://sector-wind-candidate/wind/v1 (Claude request drafted, not posted) and, if SEED_NEEDED, the one-time seed under D5, then a re-run showing CONTINUOUS",
     "the app wind source decisions WS-1..WS-4 (customer-visible, separate)",

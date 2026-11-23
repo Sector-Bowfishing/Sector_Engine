@@ -109,3 +109,7 @@ The Sector-Pulse change for `wind-central` (`--read-rtdb` + the read credential)
 - Continuity: a required bucket object with no MD5 (composite) is counted UNVERIFIED (verdict `UNVERIFIED`, exit 4), never matched.
 - IAM W-H1 and Mini power blocker lines: "done per Sector_Ops #51 comment 7093316526". Wind blockers now 8 (the acceptance line added; the two done lines kept for the flip's `--blockers-cleared`).
 - Wind suite: 315 passed, 6 skipped.
+
+## Second follow-up (2026-11-23 ~07:05Z)
+- The release approval record now cites the Owner approval comment Sector_Ops #51 **7093921466** as primary (the 06:21Z chat answer and comment 7093271287 kept as history). Digest unchanged.
+- Michael accepted the whole-directory watchdog list (Sector_Ops #51 comment 7093912140); the `wind.json` line is kept and marked done, like W-H1.

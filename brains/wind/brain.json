@@ -97,6 +97,6 @@
       "status": "NOT_ELIGIBLE",
       "approvalRef": null
     },
-    "notes": "The packaged knowledge release wind-knowledge-2026-10-20.1 is APPROVED for INTERNAL and CALIBRATION use only (owner, in chat 2026-11-23 06:21Z; recorded on Sector_Ops #51 comment 7093271287, step M3 of the Wind move onto Pulse); it is not customer-eligible. Production runs are INTERNAL mode. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
+    "notes": "The packaged knowledge release wind-knowledge-2026-10-20.1 is APPROVED for INTERNAL and CALIBRATION use only (Owner approval, Sector_Ops #51 comment 7093921466, 2026-11-23; first given in chat 06:21Z and recorded in comment 7093271287, step M3 of the Wind move onto Pulse); it is not customer-eligible. Production runs are INTERNAL mode. Outputs stay in INTERNAL-lane families; customerPublication false (PRE_PRODUCTION)."
   }
 }
