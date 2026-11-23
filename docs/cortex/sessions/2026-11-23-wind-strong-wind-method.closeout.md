@@ -2,14 +2,14 @@
 
 ```text
 Standards: Rehtac Cortex 3.1.6 @ a785035, pack sector/engine
-Task: WIND-CNF-001 strong-wind methods (pre-registration WSW-2026-11-23-R3, superseding R2 and WSW-2026-11-23, + read-only runner) · Folder: wind-brain (research home absent in this cloud session; CG-3.1-22) · Date: 2026-11-23 · Manifest task status: OPEN (blocked: the past-window run is on the Mac mini; H2 opens 2027-01-01)
+Task: WIND-CNF-001 strong-wind methods (pre-registration WSW-2026-11-23-R4, superseding R3, R2 and WSW-2026-11-23, + read-only runner and run ledger) · Folder: wind-brain (research home absent in this cloud session; CG-3.1-22) · Date: 2026-11-23 · Manifest task status: OPEN (blocked: the past-window run is on the Mac mini; H2 opens 2027-01-01)
 ```
 
 ## Preserved results
-No local data was created or fetched. Committed on branch `research/wind-strong-wind-method-2026-11-23`: protocol WSW-2026-11-23-R3 (sha256 82f96596197d6af32e43b9e01ce152e922f3a0c0a42993641993a2da0fda68a2), the superseded never-run R2 (ba05492b…) and WSW-2026-11-23 (b9a55721…), both kept byte-identical with SUPERSEDED.md, MINI_REQUEST_DRAFT.md, the runner and its tests. These are rules and code, not research data.
+No local data was created or fetched. Committed on branch `research/wind-strong-wind-method-2026-11-23`: protocol WSW-2026-11-23-R4 (sha256 c0e86f6afa9de57d33c71d4eb049d4b1c95e403ad4a9c966edd16c7e9aaf77ca), the superseded never-run R3 (82f96596…), R2 (ba05492b…) and WSW-2026-11-23 (b9a55721…), all kept byte-identical with SUPERSEDED.md, the reusable run-ledger module, MINI_REQUEST_DRAFT.md, the runner and its tests. These are rules and code, not research data.
 
 ## Manifests updated
-none (the wind-brain manifest is on the Mac; the Mini registers the fit, rows and result there)
+none (the wind-brain manifest is on the Mac; the Mini registers the fit, rows and result there, and the protocol-runs/WSW-2026-11-23-R4 run-ledger folder as ARCHIVAL)
 
 ## Candidate knowledge
 none (no method has been scored)

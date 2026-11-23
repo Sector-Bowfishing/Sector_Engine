@@ -1,4 +1,6 @@
-"""Protocol WSW-2026-11-23-R3 runner: guards, accounting, budget, M-B fit maths and scoring on SYNTHETIC fixtures (offline)."""
+"""Protocol WSW-2026-11-23-R4 runner (run binding, inputs, accounting, budget, fit, scoring), SYNTHETIC fixtures, offline.
+
+Formerly R3: guards, accounting, budget, M-B fit maths and scoring on SYNTHETIC fixtures (offline)."""
 import datetime as dt
 import io
 import json
@@ -17,7 +19,7 @@ import wind_strong_wind as W  # noqa: E402
 
 UTC = dt.timezone.utc
 FOLDER = os.path.dirname(W.PROTOCOL)
-SUPERSEDED = [os.path.join(FOLDER, "WSW-2026-11-23.protocol.json"), os.path.join(FOLDER, "WSW-2026-11-23-R2.protocol.json")]
+SUPERSEDED = [os.path.join(FOLDER, f"WSW-2026-11-23{x}.protocol.json") for x in ("", "-R2", "-R3")]
 FLAT_FIT = {"knots": [[0.0, 0.0], [10.0, 0.0]]}
 
 
@@ -26,25 +28,63 @@ def _clock(monkeypatch, iso):
 
 
 def _acc(rows, **kw):
-    """Accounting for SYNTHETIC rows: planned = built unless overridden."""
-    a = {"plannedPairs": len(rows) // 4, "plannedRows": len(rows), "plannedCycles": len(rows) // 4, "missingCycles": 0,
+    """Accounting for SYNTHETIC rows (4 stations): planned = built unless overridden."""
+    per = len(rows) // 4
+    by = {}
+    for r in rows:
+        by[r["station"]] = by.get(r["station"], 0) + (r["obs"] is None)
+    a = {"plannedPairs": per, "plannedRows": len(rows), "plannedRowsPerStation": per, "plannedCycles": per, "missingCycles": 0,
          "incompleteCycles": 0, "rowsBuilt": len(rows), "rowsNotBuilt": 0, "obsMissing": sum(r["obs"] is None for r in rows),
+         "obsMissingByStation": by, "missingObsDays": [],
          "b0Missing": sum(r["b0"] is None for r in rows), "p90Missing": sum(r["p90"] is None for r in rows)}
     a.update(kw)
     return a
 
 
-def _put_fit(tmp_path):
+@pytest.fixture
+def home(tmp_path, monkeypatch):
+    """A SYNTHETIC research home: <tmp>/home/wind-brain, with --out inside it."""
+    folder = tmp_path / "home" / "wind-brain"
+    folder.mkdir(parents=True)
+    monkeypatch.setenv("SECTOR_RESEARCH_HOME", str(tmp_path / "home"))
+    out = folder / "run"
+    out.mkdir()
+    return out
+
+
+def _put_fit(out):
+    """A completed fit recorded in the run ledger (as `fit` does) and its file in --out."""
     _, psha = W.load_protocol()
-    (tmp_path / W.FIT_FILE).write_text(json.dumps(dict(FLAT_FIT, protocolSha256=psha)))
-    return W.sha256_file(str(tmp_path / W.FIT_FILE))
+    led = W.ledger()
+    with led.step("fit", "cal_h1", {"synthetic": True}) as run:
+        run.writing()
+        (out / W.FIT_FILE).write_text(json.dumps(dict(FLAT_FIT, protocolSha256=psha)))
+        run.outputs = {"fitSha256": W.sha256_file(str(out / W.FIT_FILE))}
+    return run.outputs["fitSha256"]
+
+
+def _put_rows(out, window, rows):
+    """rows.jsonl + accounting.json + the input manifest, recorded in the run ledger (as `rows` does)."""
+    led = W.ledger()
+    d = out / window
+    d.mkdir(exist_ok=True)
+    man = W.input_manifest(window, str(out))
+    with led.step("rows", window, {"synthetic": True}) as run:
+        msha = W.L.write_once_json(os.path.join(W.binding_folder(), f"input-manifest-{window}.json"), man)
+        run.writing()
+        (d / "rows.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+        (d / "accounting.json").write_text(json.dumps(_acc(rows)))
+        run.outputs = {"rowsSha256": W.sha256_file(str(d / "rows.jsonl")), "accountingSha256": W.sha256_file(str(d / "accounting.json")),
+                       "inputManifestSha256": msha}
 
 
 # ------------------------------------------------------------------------------------------------------------------ protocol
 def test_protocol_is_pinned_and_matches_runner_constants():
     proto, sha = W.load_protocol()
-    assert sha == W.REGISTERED_SHA256 and proto["protocolId"] == "WSW-2026-11-23-R3"
-    assert [s["protocolId"] for s in proto["supersedes"]] == ["WSW-2026-11-23-R2", "WSW-2026-11-23"]
+    assert sha == W.REGISTERED_SHA256 and proto["protocolId"] == W.PROTOCOL_ID == "WSW-2026-11-23-R4"
+    assert [s["protocolId"] for s in proto["supersedes"]] == ["WSW-2026-11-23-R3", "WSW-2026-11-23-R2", "WSW-2026-11-23"]
+    assert tuple(proto["stations"]["ids"]) == W.STATION_IDS and proto["stations"]["lakesJsonSha256"] == W.LAKES_JSON_SHA256
+    assert "protocol-runs/WSW-2026-11-23-R4" in proto["runBinding"]["folder"]
     assert proto["forecastRows"]["leads"] == list(W.LEADS)
     assert proto["methods"]["M-B"]["fit"]["levels"] == list(W.LEVELS)
     assert proto["methods"]["M-B"]["fit"]["minimumRows"] == W.MIN_FIT_ROWS
@@ -54,7 +94,7 @@ def test_protocol_is_pinned_and_matches_runner_constants():
     assert proto["budget"]["downloadBytesPerWindow"] == W.BUDGET_BYTES and proto["budget"]["wallClockHoursPerWindow"] * 3600 == W.BUDGET_SECONDS
     assert set(proto["outputsAndAdmission"]["labels"]) == set(W.LABELS)
     assert {h.split()[0] for h in proto["budget"]["hosts"]} == W.ALLOWED_HOSTS
-    assert "20%" in proto["accounting"]["truthSideGaps"] and W.MAX_OBS_MISSING == 0.20
+    assert "5%" in proto["accounting"]["truthSideGaps"] and W.MAX_OBS_MISSING == 0.05 and W.MAX_OBS_MISSING_STATION == 0.15
 
 
 def test_superseded_and_changed_protocols_are_refused(tmp_path):
@@ -71,7 +111,8 @@ def test_superseded_and_changed_protocols_are_refused(tmp_path):
 
 def test_superseded_protocols_are_byte_identical():
     for old, sha in zip(SUPERSEDED, ("b9a55721f7a6d2853462c1080bbec384c3a30e3429fce70b10c2872c77449346",
-                                     "ba05492be82102fdba170b8dd5181ec557505622246e6a780c52a6ffc129633b")):
+                                     "ba05492be82102fdba170b8dd5181ec557505622246e6a780c52a6ffc129633b",
+                                     "82f96596197d6af32e43b9e01ce152e922f3a0c0a42993641993a2da0fda68a2")):
         assert W.sha256_file(old) == sha
 
 
@@ -125,33 +166,57 @@ def test_h2_is_sealed_by_the_system_clock(monkeypatch):
 
 
 def test_fit_refuses_rows_outside_cal_h1_and_gappy_cal_h1():
-    ok = {"init": "2026-07-01T00:00:00Z", "valid": "2026-07-01T01:00:00Z", "lead": 1, "obs": 3.0, "b0": 2.0}
-    W.fit_pairs([ok], {"missingCycles": 0, "incompleteCycles": 0})
+    ok = {"init": "2026-07-01T00:00:00Z", "valid": "2026-07-01T01:00:00Z", "lead": 1, "obs": 3.0, "b0": 2.0, "station": "HSV", "p90": None}
+    acc = _acc([ok] * 4)
+    assert W.fit_pairs([ok], acc) == [(2.0, 3.0)]
     for bad in ({"init": "2025-03-01T00:00:00Z", "valid": "2025-03-01T01:00:00Z"},
                 {"init": "2026-10-06T18:00:00Z", "valid": "2026-10-07T06:00:00Z"}):
         with pytest.raises(W.Refused):
-            W.fit_pairs([dict(ok, **bad)], {"missingCycles": 0, "incompleteCycles": 0})
-    with pytest.raises(W.Refused):
-        W.fit_pairs([ok], {"missingCycles": 1, "incompleteCycles": 0})
+            W.fit_pairs([dict(ok, **bad)], acc)
+    for kw in ({"missingCycles": 1}, {"missingObsDays": ["2026-07-01"]}, {"obsMissing": 1}):
+        with pytest.raises(W.Refused):
+            W.fit_pairs([ok], dict(acc, **kw))
 
 
 # ---------------------------------------------------------------------------------------------------------- fit sha ordering
-def test_past_window_steps_need_the_posted_fit_sha(tmp_path, monkeypatch):
-    out = str(tmp_path)
-    assert W.main(["fetch", "--window", "pw", "--out", out]) == 3                      # no fit
-    fsha = _put_fit(tmp_path)
+def test_past_window_steps_need_the_ledger_fit_sha(home, monkeypatch):
+    out = str(home)
+    assert W.main(["fetch", "--window", "pw", "--out", out]) == 3                      # no fit in the ledger
+    fsha = _put_fit(home)
     for cmd in ("fetch", "rows", "score"):
         assert W.main([cmd, "--window", "pw", "--out", out]) == 3                      # no --fit-sha
         assert W.main([cmd, "--window", "pw", "--out", out, "--fit-sha", "0" * 64]) == 3
     assert W.main(["fetch", "--window", "pw", "--out", out, "--fit-sha", fsha, "--min-free-gb", "1e9"]) == 3
-    assert not (tmp_path / "pw").exists() and not (tmp_path / "fit-record.json").exists()
-    W.record_fit_use(out, "pw", fsha)
-    rec = json.loads((tmp_path / "fit-record.json").read_text())
-    assert rec["fitSha256"] == fsha and "pw" in rec["firstUse"]
-    with pytest.raises(W.Refused):
-        W.record_fit_use(out, "pw", "1" * 64)
-    _clock(monkeypatch, "2026-11-23T00:00:00")
+    (home / W.FIT_FILE).write_text(json.dumps(dict(FLAT_FIT, protocolSha256=W.REGISTERED_SHA256, other=1)))
+    assert W.main(["fetch", "--window", "pw", "--out", out, "--fit-sha", fsha]) == 3   # file in --out is not the ledger's fit
+    refused = [e for e in W.ledger().entries() if e["kind"] == "REFUSED"]
+    assert len(refused) >= 8                                                             # every refusal is recorded
+    _clock(monkeypatch, "2026-11-23T23:00:00")
     assert W.main(["fetch", "--window", "h2", "--out", out, "--fit-sha", fsha]) == 3
+
+
+def test_out_must_be_inside_the_research_folder_and_lakes_json_is_pinned(home, tmp_path, monkeypatch):
+    elsewhere = tmp_path / "bootdisk"
+    elsewhere.mkdir()
+    assert W.main(["fit", "--out", str(elsewhere)]) == 3
+    monkeypatch.setenv("SECTOR_RESEARCH_HOME", str(tmp_path / "nope"))
+    assert W.main(["fit", "--out", str(home)]) == 3                                     # research folder must exist
+    monkeypatch.delenv("SECTOR_RESEARCH_HOME")
+    assert W.main(["fit", "--out", str(home)]) == 3                                     # no machine-local default
+    monkeypatch.setenv("SECTOR_RESEARCH_HOME", str(tmp_path / "home"))
+    monkeypatch.setattr(W, "LAKES_JSON_SHA256", "0" * 64)
+    with pytest.raises(W.Refused):
+        W.check_lakes()
+    monkeypatch.undo()
+    W.check_lakes()
+
+
+def test_a_second_fit_is_refused_from_any_out(home, tmp_path):
+    _put_fit(home)
+    other = home.parent / "run2"
+    other.mkdir()
+    assert W.main(["fit", "--out", str(other)]) == 3
+    assert W.ledger().completed("fit", "cal_h1")["outputs"]["fitSha256"] == W.sha256_file(str(home / W.FIT_FILE))
 
 
 # -------------------------------------------------------------------------------------------------------------------- budget
@@ -316,10 +381,11 @@ def test_missing_forecast_values_count_as_misses_not_drops():
 
 def test_cycle_gaps_and_truth_gaps_make_the_result_incomplete():
     r = _rows()
-    for kw in ({"missingCycles": 1}, {"incompleteCycles": 2}, {"obsMissing": int(0.21 * len(r))}):
+    for kw in ({"missingCycles": 1}, {"incompleteCycles": 2}, {"obsMissing": int(0.06 * len(r))},
+               {"obsMissingByStation": {"HSV": int(0.16 * len(r) / 4)}}, {"missingObsDays": ["2025-01-03"]}):
         res = W.score(r, FLAT_FIT, _acc(r, **kw), "pw", boot_n=20)
         assert {res["outcome"][m]["outcome"] for m in ("M-A", "M-B")} == {"INCOMPLETE"} and "bootstrap" not in res
-    ok = W.score(r, FLAT_FIT, _acc(r, obsMissing=int(0.19 * len(r))), "pw", boot_n=20)
+    ok = W.score(r, FLAT_FIT, _acc(r, obsMissing=int(0.04 * len(r)), obsMissingByStation={"HSV": int(0.14 * len(r) / 4)}), "pw", boot_n=20)
     assert ok["outcome"]["M-A"]["outcome"] == "SUPPORTED"
 
 
@@ -351,31 +417,50 @@ def test_score_is_insufficient_with_few_events_and_deterministic():
     assert W.score(r, FLAT_FIT, _acc(r), "pw", 100)["bootstrap"] == W.score(_rows(), FLAT_FIT, _acc(_rows()), "pw", 100)["bootstrap"]
 
 
-def test_recorded_outputs_are_never_overwritten_and_use_2000_resamples(tmp_path, monkeypatch):
+def test_score_is_one_shot_across_outs_and_uses_2000_resamples(home, monkeypatch):
     calls = []
     real = W.score
     monkeypatch.setattr(W, "score", lambda rows, fit, acc, window: calls.append(window) or real(rows, fit, acc, window, boot_n=20))
-    out = str(tmp_path)
-    fsha = _put_fit(tmp_path)
-    for w, start in (("pw", dt.datetime(2025, 1, 2, tzinfo=UTC)), ("h2", dt.datetime(2026, 10, 8, tzinfo=UTC))):
-        (tmp_path / w).mkdir()
-        rows = _rows(start=start)
-        (tmp_path / w / "rows.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
-        (tmp_path / w / "accounting.json").write_text(json.dumps(_acc(rows)))
-    _clock(monkeypatch, "2026-12-31T23:00:00")
+    out = str(home)
+    fsha = _put_fit(home)
+    _put_rows(home, "pw", _rows())
     sha = ["--fit-sha", fsha]
-    assert W.main(["score", "--window", "h2", "--out", out] + sha) == 3                 # sealed
     assert W.main(["score", "--window", "pw", "--out", out] + sha) == 0
-    assert W.main(["score", "--window", "pw", "--out", out] + sha) == 3                 # never overwritten
-    assert W.main(["rows", "--window", "pw", "--out", out] + sha) == 3                  # rows recorded
-    _clock(monkeypatch, "2027-01-02T00:00:00")
-    assert W.main(["score", "--window", "h2", "--out", out] + sha) == 0
-    assert W.main(["score", "--window", "h2", "--out", out] + sha) == 3                 # one shot
-    res = json.loads((tmp_path / "h2" / "wsw-result.json").read_text())
-    assert res["fitSha256"] == fsha and res["admission"].startswith("none") and calls == ["pw", "h2"] and "accountingSha256" in res
-    assert W.main(["fit", "--out", out]) == 3
+    res = json.loads((home / "pw" / "wsw-result.json").read_text())
+    assert res["runNumber"] == 1 and res["fitSha256"] == fsha and res["admission"].startswith("none")
+    assert {"gitCommit", "runnerSha256", "windRuntime"} <= set(res["code"]) and res["inputManifestSha256"]
+    (home / "pw" / "wsw-result.json").unlink()                                          # deleting the result does not reopen it
+    assert W.main(["score", "--window", "pw", "--out", out] + sha) == 3
+    assert W.main(["rows", "--window", "pw", "--out", out] + sha) == 3                  # rows are one-shot too
+    assert W.main(["fetch", "--window", "pw", "--out", out] + sha) == 3                 # inputs are fixed after rows
+    assert calls == ["pw"]
     import inspect
     assert inspect.signature(real).parameters["boot_n"].default == 2000
+
+
+def test_score_refuses_when_inputs_changed_after_rows(home, monkeypatch):
+    monkeypatch.setattr(W, "score", lambda rows, fit, acc, window, _r=W.score: _r(rows, fit, acc, window, boot_n=20))
+    fsha = _put_fit(home)
+    metar = home / "pw" / "store" / "metar"
+    metar.mkdir(parents=True)
+    (metar / "20250102.json.gz").write_bytes(b"synthetic")
+    _put_rows(home, "pw", _rows())
+    (metar / "20250102.json.gz").unlink()                                               # a deleted observation day
+    assert W.main(["score", "--window", "pw", "--out", str(home), "--fit-sha", fsha]) == 3
+    assert W.ledger().attempts("score", "pw")[0]["status"] == "ABORTED_NO_RESULT"
+    (metar / "20250102.json.gz").write_bytes(b"synthetic")                              # restored exactly: run #2 counts
+    assert W.main(["score", "--window", "pw", "--out", str(home), "--fit-sha", fsha]) == 0
+    assert json.loads((home / "pw" / "wsw-result.json").read_text())["runNumber"] == 2
+
+
+def test_h2_is_refused_when_the_ledger_shows_an_early_h2_line(home, monkeypatch):
+    fsha = _put_fit(home)
+    led = W.ledger()
+    led.log("rows", "h2", "LOG", {"synthetic": "a run before unseal"})                  # e.g. a machine with a wrong clock
+    _clock(monkeypatch, "2027-01-02T00:00:00")
+    assert W.main(["score", "--window", "h2", "--out", str(home), "--fit-sha", fsha]) == 3
+    _clock(monkeypatch, "2026-11-01T00:00:00")                                          # a clock earlier than the ledger
+    assert W.main(["fetch", "--window", "pw", "--out", str(home), "--fit-sha", fsha]) == 3
 
 
 # ------------------------------------------------------------------------------------------------------------------ runtime
@@ -438,6 +523,7 @@ def test_rows_account_for_every_planned_cycle_and_station(tmp_path, monkeypatch)
     assert acc["plannedCycles"] == 2 * n_lakes
     assert acc["missingCycles"] == 2 * n_lakes - 1                     # only the Wheeler 00Z cycle exists
     assert acc["rowsBuilt"] == 3 * 3 and acc["obsMissingByStation"]["HSV"] == 1
+    assert acc["missingObsDays"] == ["2025-01-01", "2025-01-03", "2025-01-04"] and acc["plannedRowsPerStation"] == 4
     assert acc["obsMissing"] == 3 * 3 - 2
 
 
@@ -464,7 +550,7 @@ def test_cal_h1_rows_never_load_h2_truth(tmp_path):
     assert {r["obs"] for r in rows if r["station"] == "HSV" and r["init"].startswith("2026-10-06T00")} == {2.0, None}
 
 
-def test_fetch_never_requests_h2_days_for_cal_h1_and_counts_bytes(tmp_path, monkeypatch):
+def test_fetch_never_requests_h2_days_for_cal_h1_and_counts_bytes(tmp_path, monkeypatch, home):
     """No network: the runtime ingest functions are stubbed; the budgeted fetch is the one installed by do_fetch."""
     pytest.importorskip("numpy")
     pytest.importorskip("eccodes")
@@ -488,7 +574,7 @@ def test_fetch_never_requests_h2_days_for_cal_h1_and_counts_bytes(tmp_path, monk
     res = W.do_fetch("cal_h1", str(tmp_path), month="2026-10", min_free_gb=0, opener=_Opener([b"abc"] * 200))
     assert max(days) == dt.date(2026, 10, 6) and max(cycles) < W.H2_START
     assert res["budget"]["bytes"] == 3 * (len(days) + len(cycles))
-    assert json.loads((tmp_path / "cal_h1" / "budget.json").read_text())["bytes"] == res["budget"]["bytes"]
+    assert json.loads(open(os.path.join(W.binding_folder(), "budget-cal_h1.json")).read())["bytes"] == res["budget"]["bytes"]
     assert (grib.fetch, ingest.fetch) == real
     with pytest.raises(W.Refused):
         W.do_fetch("cal_h1", str(tmp_path / "again"), month="2026-09", min_free_gb=1e9, opener=_Opener([]))

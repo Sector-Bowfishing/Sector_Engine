@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
-"""Wind strong-wind methods: read-only fetcher and scorer for protocol WSW-2026-11-23-R3 (gap WIND-CNF-001).
+"""Wind strong-wind methods: read-only fetcher and scorer for protocol WSW-2026-11-23-R4 (gap WIND-CNF-001).
 
-The protocol (docs/brains/wind-strong-wind/WSW-2026-11-23-R3.protocol.json) was pre-registered and hashed before any
-data was fetched; its sha256 is pinned below and the runner refuses any other file (the superseded R2 and R1 too).
-It reads public NOAA NBM grib2 and IEM ASOS/AWOS observations and writes local files under --out only. It never writes
-Firebase or a bucket, never changes a score, an evidence file, a binding or a schedule, and admits nothing: every output
-is labelled INTERNAL_EXPERIMENTAL / NOT_FOR_CUSTOMERS. A recorded fit, rows file or result is never overwritten.
+The protocol (docs/brains/wind-strong-wind/WSW-2026-11-23-R4.protocol.json) was pre-registered and hashed before any
+data was fetched; its sha256 is pinned below and the runner refuses any other file (the superseded R3, R2 and R1 too).
+It reads public NOAA NBM grib2 and IEM ASOS/AWOS observations and writes local files only. It never writes Firebase or a
+bucket, never changes a score, an evidence file, a binding or a schedule, and admits nothing: every output is labelled
+INTERNAL_EXPERIMENTAL / NOT_FOR_CUSTOMERS.
 
-    verify                          protocol sha256 == the pinned registration
+Run binding (R4 runBinding): one global run ledger per protocol id in
+<Wind research folder>/protocol-runs/WSW-2026-11-23-R4/. The research folder is $SECTOR_RESEARCH_HOME/wind-brain, the folder
+Cortex research-path returns; SECTOR_RESEARCH_HOME must be set (no machine-local default here). --out must be inside it.
+fit (once), rows and score (once per window) are one-shot across every --out; only run #1 counts.
+
+    verify                          protocol sha256 == the pinned registration; prints the resolved research folder
     plan  --window cal_h1|pw|h2     (init, lead) pairs and the message estimate; no network
-    fetch --window cal_h1|pw|h2     synoptic night (init, lead) pairs + IEM days into --out/<window>/store
-          [--month YYYY-MM]         one init month at a time
-          [--min-free-gb N]         checked before every cycle and day (default 80)
-          [--fit-sha SHA]           pw/h2: required; must equal the posted fit sha256 (recorded in fit-record.json)
-                                    budget (bytes incl. retries + wall clock per window) enforced on every attempt;
-                                    redirects refused; budget saved after each cycle/day and on SIGTERM/SIGINT
-                                    h2: refused before 2027-01-01 (system clock); no truth day >= 2026-10-07 for cal_h1
-    fit   [--corpus-store DIR]      M-B map from CAL+H1 rows only (DIR read in place when given, else --out/cal_h1/store)
-    rows  --window pw|h2 --fit-sha  station rows + accounting -> --out/<window>/rows.jsonl, accounting.json
-    score --window pw|h2 --fit-sha  B0 / M-A / M-B per lead + pooled, WI4 credit, gate, bootstrap, decision, accounting
+    fetch --window cal_h1|pw|h2     synoptic night (init, lead) pairs + IEM days into --out/<window>/store (resumable)
+          [--month YYYY-MM] [--min-free-gb N (default 80)] [--fit-sha SHA (pw/h2: must equal the ledger's fit)]
+    fit   [--corpus-store DIR]      M-B map from CAL+H1 only (DIR read in place when given, else --out/cal_h1/store)
+    rows  --window pw|h2 --fit-sha  write-once input manifest, then rows + accounting
+    score --window pw|h2 --fit-sha  inputs re-verified; B0 / M-A / M-B, WI4 credit, gate, bootstrap, decision, run number
 
 Scoring and fitting maths are standard library only (tested offline on synthetic fixtures). fetch/rows/fit import the
 Wind runtime (numpy, eccodes) lazily, so the same decoder, row-scan fix and self-check as the corpus are used.
@@ -39,10 +39,14 @@ import urllib.error
 import urllib.request
 from urllib.parse import urlparse
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _wsw_run_ledger as L  # noqa: E402
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
-PROTOCOL = os.path.join(REPO, "docs", "brains", "wind-strong-wind", "WSW-2026-11-23-R3.protocol.json")
-REGISTERED_SHA256 = "82f96596197d6af32e43b9e01ce152e922f3a0c0a42993641993a2da0fda68a2"
+PROTOCOL = os.path.join(REPO, "docs", "brains", "wind-strong-wind", "WSW-2026-11-23-R4.protocol.json")
+REGISTERED_SHA256 = "c0e86f6afa9de57d33c71d4eb049d4b1c95e403ad4a9c966edd16c7e9aaf77ca"
+PROTOCOL_ID = "WSW-2026-11-23-R4"
 WIND_RUNTIME = os.path.join(REPO, "brains", "wind", "runtime")
 LABELS = ["INTERNAL_EXPERIMENTAL", "NOT_FOR_CUSTOMERS"]
 UTC = dt.timezone.utc
@@ -51,12 +55,17 @@ MPH = 0.44704
 T15 = 15 * MPH                      # 6.7056 m/s, the WI4 / scoreboard dimension-1 event threshold
 LEADS = (1, 3, 6, 12, 18)
 SYNOPTIC = (0, 6, 12, 18)
-STATIONS_N = 8
+STATION_IDS = ("15M", "4A6", "8A1", "9A4", "DCU", "HSV", "MSL", "SNH")
+STATIONS_N = len(STATION_IDS)
+LAKES_JSON = os.path.join(WIND_RUNTIME, "lakes.json")
+LAKES_JSON_SHA256 = "1ded19e9b838b08d659cb9a7572f4569bacab0ff81bccebccbcc546270dede51"
+RESEARCH_FOLDER = "wind-brain"
 LEVELS = (0.5, 0.9, 0.95, 0.97, 0.98, 0.99, 0.995, 0.998, 0.999)
 MIN_FIT_ROWS = 5000
 MIN_EVENTS = 25
 MIN_P90_COVERAGE = 0.80
-MAX_OBS_MISSING = 0.20
+MAX_OBS_MISSING = 0.05            # share of planned rows without an observation (R4)
+MAX_OBS_MISSING_STATION = 0.15    # at any one station
 BOOT_N, BOOT_SEED = 2000, 20261123
 LOWER_PCT = {"pw": 1.25, "h2": 0.625}   # Bonferroni: two candidates on PW; the four-rule H2 family (pW15, prob_recal, M-A, M-B)
 SUPPORT_POD, SUPPORT_FAR = 0.25, 0.80
@@ -200,26 +209,104 @@ def guard_free_space(path: str, min_free_gb: float) -> float:
     return free
 
 
-def guard_fit_sha(out: str, given: str | None, protocol_sha: str) -> tuple[dict, str]:
-    """The fit must exist, belong to this protocol, and match the sha256 posted on Sector_Ops #51 (--fit-sha)."""
-    fit, fsha = load_fit(os.path.join(out, FIT_FILE), protocol_sha)
+def research_folder() -> str:
+    """$SECTOR_RESEARCH_HOME/wind-brain, the folder Cortex research-path returns (it must exist; it is never created here)."""
+    root = os.environ.get("SECTOR_RESEARCH_HOME")
+    if not root:
+        raise Refused("REFUSED: set SECTOR_RESEARCH_HOME to the research home whose wind-brain folder Cortex research-path returns")
+    folder = os.path.realpath(os.path.join(os.path.expanduser(root), RESEARCH_FOLDER))
+    if not os.path.isdir(folder):
+        raise Refused(f"REFUSED: the Wind research folder {folder} does not exist (set SECTOR_RESEARCH_HOME to the research home "
+                      "that Cortex research-path uses)")
+    return folder
+
+
+def binding_folder() -> str:
+    return os.path.join(research_folder(), "protocol-runs", PROTOCOL_ID)
+
+
+def guard_out(out: str) -> str:
+    """--out must be inside the Wind research folder (on the research SSD), never elsewhere."""
+    folder = research_folder()
+    real = os.path.realpath(out)
+    if os.path.commonpath([folder, real]) != folder:
+        raise Refused(f"REFUSED: --out {out} is not inside the Wind research folder {folder}")
+    return real
+
+
+def check_lakes() -> None:
+    """R4 pins lakes.json and the 8 frozen stations."""
+    got = sha256_file(LAKES_JSON)
+    if got != LAKES_JSON_SHA256:
+        raise Refused(f"REFUSED: brains/wind/runtime/lakes.json sha256 {got} differs from the registered {LAKES_JSON_SHA256}")
+    ids = tuple(sorted(json.load(open(LAKES_JSON))["stations"]))
+    if ids != STATION_IDS:
+        raise Refused(f"REFUSED: lakes.json stations {ids} differ from the registered {STATION_IDS}")
+
+
+def ledger(clock=None) -> L.RunLedger:
+    return L.RunLedger(binding_folder(), PROTOCOL_ID, REGISTERED_SHA256, clock=clock or _utcnow)
+
+
+def guard_fit_sha(led: L.RunLedger, out: str, given: str | None, protocol_sha: str) -> tuple[dict, str]:
+    """--fit-sha must equal the fit sha recorded in the run ledger at fit time, and the fit file in --out must match it."""
+    end = led.completed("fit", "cal_h1")
+    if not end:
+        raise Refused("REFUSED: the run ledger has no completed fit for this protocol; run `fit` first")
+    recorded = end["outputs"]["fitSha256"]
     if not given:
-        raise Refused("REFUSED: --fit-sha is required (post the fit sha256 on Sector_Ops #51 first, then pass it)")
-    if given.strip().lower() != fsha:
-        raise Refused(f"REFUSED: --fit-sha {given} does not match the fit file ({fsha})")
+        raise Refused("REFUSED: --fit-sha is required (the fit sha256 posted on Sector_Ops #51)")
+    if given.strip().lower() != recorded:
+        raise Refused(f"REFUSED: --fit-sha {given} is not the fit recorded in the run ledger ({recorded})")
+    fit, fsha = load_fit(os.path.join(out, FIT_FILE), protocol_sha)
+    if fsha != recorded:
+        raise Refused(f"REFUSED: the fit file in --out ({fsha}) is not the fit recorded in the run ledger ({recorded})")
     return fit, fsha
 
 
-def record_fit_use(out: str, window: str, fsha: str) -> None:
-    """fit-record.json: the first time each window used the fit (written before the first request of that window)."""
-    p = os.path.join(out, "fit-record.json")
+def note_fit_use(window: str, step: str, fsha: str) -> None:
+    """fit-record.json in the binding folder: the ledger's fit and the first use of it per window and step (atomic)."""
+    p = os.path.join(binding_folder(), "fit-record.json")
     rec = json.load(open(p)) if os.path.exists(p) else {"fitSha256": fsha, "firstUse": {}}
     if rec["fitSha256"] != fsha:
         raise Refused("REFUSED: fit-record.json names a different fit")
-    if window not in rec["firstUse"]:
-        rec["firstUse"][window] = f"{_utcnow():%Y-%m-%dT%H:%M:%SZ}"
-        with open(p, "w") as fh:
-            json.dump(rec, fh, indent=1)
+    key = f"{window}:{step}"
+    if key not in rec["firstUse"]:
+        rec["firstUse"][key] = f"{_utcnow():%Y-%m-%dT%H:%M:%SZ}"
+        L.atomic_write_json(p, rec)
+
+
+def guard_h2_ledger(led: L.RunLedger, step: str) -> None:
+    """R4: refuse H2 when an earlier H2 rows/score attempt exists (fetch only before rows), or an H2 line predates unseal."""
+    es = led.entries()
+    for e in es:
+        if e.get("window") == "h2" and e["kind"] != "REFUSED" and e["at"] < f"{H2_OPEN:%Y-%m-%dT%H:%M:%SZ}":
+            led.refuse(step, "h2", f"the ledger has an H2 {e['step']} line at {e['at']}, before the unseal date")
+    if step == "fetch" and any(a for st in ("rows", "score") for a in led.attempts(st, "h2")):
+        led.refuse(step, "h2", "H2 rows or score were already attempted; no further H2 fetch")
+
+
+def code_identity() -> dict:
+    """Runner, ledger module and Wind runtime hashes, and the repository git commit with a dirty flag."""
+    import subprocess
+    out = {"runnerSha256": sha256_file(os.path.abspath(__file__)), "ledgerModuleSha256": sha256_file(L.__file__),
+           "windRuntime": L.tree_hash(os.path.join(WIND_RUNTIME, "sector_wind"))["collectionSha256"]}
+    try:
+        out["gitCommit"] = subprocess.run(["git", "-C", REPO, "rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
+        out["gitDirty"] = bool(subprocess.run(["git", "-C", REPO, "status", "--porcelain", "--", "tools/research", "brains/wind/runtime",
+                                               "docs/brains/wind-strong-wind"], capture_output=True, text=True, check=True).stdout.strip())
+    except Exception:
+        out["gitCommit"], out["gitDirty"] = "UNKNOWN (not a git checkout)", None
+    return out
+
+
+def input_manifest(window: str, out: str) -> dict:
+    """What rows read: the window store's nbm/ and metar/ trees, lakes.json, and the code that reads them."""
+    store_root = os.path.join(out, window, "store")
+    return {"schema": "sector-wind-wsw-input-manifest-v1", "protocolId": PROTOCOL_ID, "window": window, "store": store_root,
+            "nbm": L.tree_hash(os.path.join(store_root, "nbm")), "metar": L.tree_hash(os.path.join(store_root, "metar")),
+            "grids": L.tree_hash(os.path.join(store_root, "grids")), "lakesJsonSha256": sha256_file(LAKES_JSON),
+            "code": code_identity()}
 
 
 # ------------------------------------------------------------------------------------------------------------------- budget
@@ -324,11 +411,31 @@ def fit_qm(pairs: list[tuple[float, float]]) -> dict:
             "knots": [[round(k[0], 6), round(sum(k[1]) / len(k[1]), 6)] for k in knots], "n": len(pairs)}
 
 
+def truth_gap(accounting: dict) -> str | None:
+    """R4 accounting.truthSideGaps: a missing observation day, or rows without an observation above 5% overall or 15% at
+    any station. Returns the reason, or None."""
+    if accounting.get("missingObsDays"):
+        return f"{len(accounting['missingObsDays'])} planned observation days have no stored METAR file"
+    planned, per = accounting.get("plannedRows") or 0, accounting.get("plannedRowsPerStation") or 0
+    if not planned:
+        return "no planned rows"
+    share = accounting.get("obsMissing", 0) / planned
+    if share > MAX_OBS_MISSING:
+        return f"{share:.1%} of planned rows have no observation (> {MAX_OBS_MISSING:.0%})"
+    for sid, n in sorted((accounting.get("obsMissingByStation") or {}).items()):
+        if per and n / per > MAX_OBS_MISSING_STATION:
+            return f"{n / per:.1%} of planned rows at {sid} have no observation (> {MAX_OBS_MISSING_STATION:.0%})"
+    return None
+
+
 def fit_pairs(rows: list[dict], accounting: dict) -> list[tuple[float, float]]:
-    """CAL+H1 rows -> (deterministic speed, observed speed); refused on any cycle gap or any row outside CAL+H1."""
+    """CAL+H1 rows -> (deterministic speed, observed speed); refused on any cycle or truth gap or any row outside CAL+H1."""
     gaps = accounting["missingCycles"] + accounting["incompleteCycles"]
     if gaps:
         raise Refused(f"REFUSED: {gaps} planned CAL+H1 cycles missing or incomplete; M-B is not fitted on a gappy CAL+H1")
+    why = truth_gap(accounting)
+    if why:
+        raise Refused(f"REFUSED: CAL+H1 truth gap: {why}; M-B is not fitted")
     use = [r for r in rows if r["lead"] in LEADS and is_night(dt.datetime.strptime(r["valid"], "%Y-%m-%dT%H:%M:%SZ"))]
     guard_fit_rows(use)
     return [(r["b0"], r["obs"]) for r in use if r.get("obs") is not None and r.get("b0") is not None]
@@ -454,6 +561,7 @@ def score(rows: list[dict], fit: dict, accounting: dict, window: str = "pw", boo
     planned = acc.get("plannedRows") or 0
     p90_cov = 1 - acc["p90MissingScored"] / len(scored) if scored else 0.0
     obs_missing_share = acc.get("obsMissing", 0) / planned if planned else 1.0
+    gap = truth_gap(acc)
     res = {"labels": LABELS, "accounting": acc, "p90Coverage": round(p90_cov, 4), "obsMissingShare": round(obs_missing_share, 4), "methods": {}}
     for m in METHODS:
         by_lead = {str(l): table((fc[m][i], r["obsEvent"]) for i, r in enumerate(scored) if r["lead"] == l) for l in LEADS}
@@ -465,9 +573,9 @@ def score(rows: list[dict], fit: dict, accounting: dict, window: str = "pw", boo
     if acc.get("missingCycles", 0) or acc.get("incompleteCycles", 0):
         verdict = {m: "INCOMPLETE" for m in ("M-A", "M-B")}
         why.append(f"{acc.get('missingCycles', 0)} missing and {acc.get('incompleteCycles', 0)} incomplete planned cycles")
-    elif obs_missing_share > MAX_OBS_MISSING:
+    elif gap:
         verdict = {m: "INCOMPLETE" for m in ("M-A", "M-B")}
-        why.append(f"{obs_missing_share:.1%} of planned rows have no observation (> {MAX_OBS_MISSING:.0%})")
+        why.append(gap)
     elif events < MIN_EVENTS:
         verdict = {m: "INSUFFICIENT_EVENTS" for m in ("M-A", "M-B")}
         why.append(f"{events} observed events in the scored rows (< {MIN_EVENTS})")
@@ -508,7 +616,7 @@ def do_fetch(window: str, out: str, max_pairs: int | None = None, month: str | N
     grib, ingest, _, store, _ = _runtime()
     for u in (ingest.NBM_CORE, ingest.NBM_QMD, ingest.IEM):
         check_host(u)
-    budget = budget or Budget(os.path.join(out, window, "budget.json"))
+    budget = budget or Budget(os.path.join(binding_folder(), f"budget-{window}.json"))
     real = (grib.fetch, ingest.fetch)
     guarded = budgeted_fetch(budget, grib.FetchError, opener)
     grib.fetch = guarded        # read_idx -> grib.fetch
@@ -566,7 +674,10 @@ def build_rows(window: str, store_root: str) -> tuple[list[dict], dict]:
     for sid, s in cfg["stations"].items():
         by_lake.setdefault(s["lake"], []).append(sid)
     pairs = night_pairs(window)
+    days = obs_days(window, pairs)
+    missing_days = [f"{d:%Y-%m-%d}" for d in days if not st.exists(f"metar/{d:%Y%m%d}.json.gz")]
     acc = {"plannedPairs": len(pairs), "plannedRows": len(pairs) * sum(len(v) for v in by_lake.values()),
+           "plannedRowsPerStation": len(pairs), "plannedObsDays": len(days), "missingObsDays": missing_days,
            "plannedCycles": 0, "missingCycles": 0, "incompleteCycles": 0, "rowsBuilt": 0,
            "rowsNotBuilt": 0, "obsMissing": 0, "obsMissingByStation": {s: 0 for s in cfg["stations"]},
            "b0Missing": 0, "p90Missing": 0, "missingCycleKeys": [], "incompleteCycleKeys": []}
@@ -622,21 +733,135 @@ def _write_once(path: str, obj) -> str:
     return sha256_bytes(body)
 
 
+def _cmd_fit(a, proto, psha, led) -> int:
+    fit_path = os.path.join(a.out, FIT_FILE)
+    src = os.path.realpath(a.corpus_store) if a.corpus_store else os.path.join(a.out, "cal_h1", "store")
+    inputs = {"source": "corpus-store" if a.corpus_store else "fetched", "storePath": src,
+              "nbm": L.tree_hash(os.path.join(src, "nbm")), "metar": L.tree_hash(os.path.join(src, "metar")),
+              "lakesJsonSha256": LAKES_JSON_SHA256, "code": code_identity()}
+    with led.step("fit", "cal_h1", inputs) as run:
+        if os.path.exists(fit_path):
+            raise Refused("REFUSED: a fit file already exists in --out")
+        rows, acc = build_rows("cal_h1", src)
+        fit = fit_qm(fit_pairs(rows, acc))
+        fit.update({"schema": "sector-wind-wsw-mb-fit-v1", "protocolId": proto["protocolId"], "protocolSha256": psha,
+                    "window": "CAL+H1 inits 2026-05-06T00Z..2026-10-06T23Z, synoptic night pairs valid before 2026-10-07, 8 stations",
+                    "source": inputs["source"], "accounting": acc, "runNumber": run.run_number, "ledgerStartLine": run.start_hash,
+                    "frozenAt": f"{_utcnow():%Y-%m-%dT%H:%M:%SZ}", "labels": LABELS})
+        run.writing()
+        fsha = _write_once(fit_path, fit)
+        run.outputs = {"fitSha256": fsha, "fitPath": fit_path}
+        L.atomic_write_json(os.path.join(binding_folder(), "fit-record.json"), {"fitSha256": fsha, "firstUse": {}})
+    print(f"fit written, sha256 {fsha} (run #{run.run_number}, recorded in the run ledger). "
+          "Post it on Sector_Ops #51 before any past-window fetch.")
+    return 0
+
+
+def _cmd_fetch(a, psha, led) -> int:
+    if a.window != "cal_h1":
+        _, fsha = guard_fit_sha(led, a.out, a.fit_sha, psha)
+    if a.window == "h2":
+        guard_h2_ledger(led, "fetch")
+    if any(x["status"] != "ABORTED_NO_RESULT" for x in led.attempts("rows", a.window)):
+        led.refuse("fetch", a.window, "rows were already built for this window; the inputs are fixed")
+    if a.month:
+        month_pairs(a.window, a.month)
+    free = guard_free_space(a.out, a.min_free_gb)
+    if a.window != "cal_h1":
+        note_fit_use(a.window, "fetch", fsha)
+    led.log("fetch", a.window, "STARTED", {"month": a.month, "maxPairs": a.max_pairs, "out": a.out})
+    try:
+        res = do_fetch(a.window, a.out, a.max_pairs, a.month, min_free_gb=a.min_free_gb)
+    except BaseException as e:
+        led.log("fetch", a.window, "STOPPED", {"month": a.month, "error": f"{type(e).__name__}: {e}"[:300]})
+        raise
+    res["freeGbBefore"] = round(free, 1)
+    led.log("fetch", a.window, "COMPLETED", {"month": a.month, "budget": res["budget"], "cyclesNotComplete": res["cyclesNotComplete"]})
+    print(json.dumps(res, indent=1))
+    return 0
+
+
+def _cmd_rows(a, psha, led) -> int:
+    _, fsha = guard_fit_sha(led, a.out, a.fit_sha, psha)
+    if a.window == "h2":
+        guard_h2_ledger(led, "rows")
+    rows_path = os.path.join(a.out, a.window, "rows.jsonl")
+    acc_path = os.path.join(a.out, a.window, "accounting.json")
+    man = input_manifest(a.window, a.out)
+    with led.step("rows", a.window, {"fitSha256": fsha, "inputManifest": L.sha256_bytes(L.canonical(man))}) as run:
+        if os.path.exists(rows_path) or os.path.exists(acc_path):
+            raise Refused("REFUSED: rows are already recorded in --out; they are never overwritten")
+        msha = L.write_once_json(os.path.join(binding_folder(), f"input-manifest-{a.window}.json"), man)
+        rows, acc = build_rows(a.window, os.path.join(a.out, a.window, "store"))
+        run.writing()
+        os.makedirs(os.path.dirname(rows_path), exist_ok=True)
+        with open(rows_path, "x") as fh:
+            fh.writelines(json.dumps(r, sort_keys=True) + "\n" for r in rows)
+        asha = _write_once(acc_path, acc)
+        run.outputs = {"rowsSha256": sha256_file(rows_path), "accountingSha256": asha, "inputManifestSha256": msha}
+        note_fit_use(a.window, "rows", fsha)
+    print(json.dumps({**run.outputs, "runNumber": run.run_number, **{k: v for k, v in acc.items() if not k.endswith("Keys")}}, indent=1))
+    return 0
+
+
+def _cmd_score(a, proto, psha, led) -> int:
+    fit, fsha = guard_fit_sha(led, a.out, a.fit_sha, psha)
+    if a.window == "h2":
+        guard_h2_ledger(led, "score")
+    rows_end = led.completed("rows", a.window)
+    if not rows_end:
+        led.refuse("score", a.window, "the run ledger has no completed rows for this window")
+    rows_path = os.path.join(a.out, a.window, "rows.jsonl")
+    acc_path = os.path.join(a.out, a.window, "accounting.json")
+    man_path = os.path.join(binding_folder(), f"input-manifest-{a.window}.json")
+    with led.step("score", a.window, {"fitSha256": fsha, "rowsLedgerSeq": rows_end["startSeq"]}) as run:
+        recorded = json.load(open(man_path))
+        if L.canonical(input_manifest(a.window, a.out)) != L.canonical(recorded):
+            raise Refused("REFUSED: the inputs differ from the write-once input manifest recorded before rows")
+        for path, key in ((rows_path, "rowsSha256"), (acc_path, "accountingSha256")):
+            if not os.path.exists(path) or sha256_file(path) != rows_end["outputs"][key]:
+                raise Refused(f"REFUSED: {os.path.basename(path)} differs from the run ledger's rows record")
+        rows = [json.loads(l) for l in open(rows_path) if l.strip()]
+        res = score(rows, fit, json.load(open(acc_path)), a.window)
+        res.update({"schema": "sector-wind-wsw-result-v1", "protocolId": proto["protocolId"], "protocolSha256": psha,
+                    "fitSha256": fsha, "rowsSha256": rows_end["outputs"]["rowsSha256"], "accountingSha256": rows_end["outputs"]["accountingSha256"],
+                    "inputManifestSha256": sha256_file(man_path), "code": code_identity(), "runNumber": run.run_number,
+                    "ledgerStartLine": run.start_hash, "window": a.window, "windowLabel": WINDOW_LABEL[a.window],
+                    "scoredAt": f"{_utcnow():%Y-%m-%dT%H:%M:%SZ}",
+                    "clockReliance": "the H2 seal reads the system clock; the run ledger and the Sector_Ops #51 record make an early run visible",
+                    "admission": "none: evidence only; any WI4/evidence change goes through refresh_wind_score.py (HELD) and Michael"})
+        res_path = os.path.join(a.out, a.window, "wsw-result.json")
+        run.writing()
+        rsha = _write_once(res_path, res)
+        run.outputs = {"resultSha256": rsha}
+        run.result = res["outcome"]
+        note_fit_use(a.window, "score", fsha)
+    print(f"result sha256 {rsha} (run #{run.run_number})")
+    print(json.dumps({"outcome": res["outcome"], "observedEvents": res["observedEvents"], "why": res["why"]}, indent=1))
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter, allow_abbrev=False)
     ap.add_argument("cmd", choices=("verify", "plan", "fit", "fetch", "rows", "score"))
     ap.add_argument("--window", choices=("cal_h1", "pw", "h2"))
-    ap.add_argument("--out", help="output folder (under the Wind research folder on the research SSD)")
+    ap.add_argument("--out", help="output folder, inside the Wind research folder on the research SSD")
     ap.add_argument("--corpus-store", help="fit: an existing CAL+H1 corpus store on this machine (read in place)")
-    ap.add_argument("--fit-sha", help="pw/h2: the fit sha256 posted on Sector_Ops #51")
+    ap.add_argument("--fit-sha", help="pw/h2: the fit sha256 recorded in the run ledger and posted on Sector_Ops #51")
     ap.add_argument("--max-pairs", type=int, help="fetch: smoke-test limit")
     ap.add_argument("--month", help="fetch: one init month YYYY-MM")
     ap.add_argument("--min-free-gb", type=float, default=DEFAULT_MIN_FREE_GB, help="fetch: refuse below this free space")
     a = ap.parse_args(argv)
+    led = None
     try:
         proto, psha = load_protocol()
         if a.cmd == "verify":
+            check_lakes()
             print(f"OK {proto['protocolId']} sha256 {psha}")
+            try:
+                print(f"run ledger: {binding_folder()}")
+            except Refused as e:
+                print(e.msg)
             return 0
         if a.cmd == "plan":
             w = a.window or "pw"
@@ -644,66 +869,34 @@ def main(argv=None) -> int:
             print(json.dumps({"window": w, "initLeadPairs": len(p), "plannedRows": len(p) * STATIONS_N, "nbmMessages": len(p) * 7,
                               "byLead": {l: sum(1 for _, x in p if x == l) for l in LEADS}}, indent=1))
             return 0
+        check_lakes()
         if not a.out:
             raise Refused("REFUSED: --out is required")
+        a.out = guard_out(a.out)
+        led = ledger()
         if a.cmd == "fit":
-            fit_path = os.path.join(a.out, FIT_FILE)
-            if os.path.exists(fit_path):
-                raise Refused("REFUSED: a fit file already exists; the fit is frozen once")
-            src = a.corpus_store or os.path.join(a.out, "cal_h1", "store")
-            rows, acc = build_rows("cal_h1", src)
-            fit = fit_qm(fit_pairs(rows, acc))
-            fit.update({"schema": "sector-wind-wsw-mb-fit-v1", "protocolId": proto["protocolId"], "protocolSha256": psha,
-                        "window": "CAL+H1 inits 2026-05-06T00Z..2026-10-06T23Z, synoptic night pairs valid before 2026-10-07, 8 stations",
-                        "source": "existing corpus store (read in place)" if a.corpus_store else "fetched on this machine",
-                        "accounting": acc, "frozenAt": f"{_utcnow():%Y-%m-%dT%H:%M:%SZ}", "labels": LABELS})
-            print(f"fit written, sha256 {_write_once(fit_path, fit)}. Post it on Sector_Ops #51 before any past-window fetch.")
-            return 0
+            return _cmd_fit(a, proto, psha, led)
         if not a.window:
             raise Refused(f"REFUSED: {a.cmd} needs --window")
-        guard_h2(a.window, a.cmd)
+        if a.window == "h2" and _utcnow() < H2_OPEN:
+            led.log(a.cmd, "h2", "REFUSED", {"reason": "sealed until 2027-01-01"})
+            guard_h2("h2", a.cmd)
         if a.cmd == "fetch":
-            if a.window != "cal_h1":
-                _, fsha = guard_fit_sha(a.out, a.fit_sha, psha)
-            if a.month:
-                month_pairs(a.window, a.month)
-            free = guard_free_space(a.out, a.min_free_gb)
-            if a.window != "cal_h1":
-                record_fit_use(a.out, a.window, fsha)
-            res = do_fetch(a.window, a.out, a.max_pairs, a.month, min_free_gb=a.min_free_gb)
-            res["freeGbBefore"] = round(free, 1)
-            print(json.dumps(res, indent=1))
-            return 0
+            return _cmd_fetch(a, psha, led)
         if a.window == "cal_h1":
             raise Refused("REFUSED: CAL+H1 is used only by fit")
-        fit, fsha = guard_fit_sha(a.out, a.fit_sha, psha)
-        rows_path = os.path.join(a.out, a.window, "rows.jsonl")
-        acc_path = os.path.join(a.out, a.window, "accounting.json")
         if a.cmd == "rows":
-            if os.path.exists(rows_path) or os.path.exists(acc_path):
-                raise Refused("REFUSED: rows are already recorded; they are never overwritten")
-            rows, acc = build_rows(a.window, os.path.join(a.out, a.window, "store"))
-            os.makedirs(os.path.dirname(rows_path), exist_ok=True)
-            with open(rows_path, "x") as fh:
-                fh.writelines(json.dumps(r, sort_keys=True) + "\n" for r in rows)
-            _write_once(acc_path, acc)
-            print(json.dumps({"rowsSha256": sha256_file(rows_path), "accountingSha256": sha256_file(acc_path),
-                              **{k: v for k, v in acc.items() if not k.endswith("Keys")}}, indent=1))
-            return 0
-        res_path = os.path.join(a.out, a.window, "wsw-result.json")
-        if os.path.exists(res_path):
-            raise Refused("REFUSED: this window has already been scored once in this folder")
-        rows = [json.loads(l) for l in open(rows_path) if l.strip()]
-        acc = json.load(open(acc_path))
-        res = score(rows, fit, acc, a.window)
-        res.update({"schema": "sector-wind-wsw-result-v1", "protocolId": proto["protocolId"], "protocolSha256": psha,
-                    "fitSha256": fsha, "rowsSha256": sha256_file(rows_path), "accountingSha256": sha256_file(acc_path),
-                    "window": a.window, "windowLabel": WINDOW_LABEL[a.window], "scoredAt": f"{_utcnow():%Y-%m-%dT%H:%M:%SZ}",
-                    "admission": "none: evidence only; any WI4/evidence change goes through refresh_wind_score.py (HELD) and Michael"})
-        print(f"result sha256 {_write_once(res_path, res)}")
-        print(json.dumps({"outcome": res["outcome"], "observedEvents": res["observedEvents"], "why": res["why"]}, indent=1))
-        return 0
+            return _cmd_rows(a, psha, led)
+        return _cmd_score(a, proto, psha, led)
+    except L.LedgerRefused as e:
+        print(f"REFUSED: {e}", file=sys.stderr)
+        return 3
     except Refused as e:
+        if led is not None and a.cmd in ("fit", "fetch", "rows", "score"):
+            try:                                   # every invocation is recorded, refusals included (best effort)
+                led.log(a.cmd, a.window or "cal_h1", "REFUSED", {"reason": e.msg[:300]})
+            except Exception:
+                pass
         print(e.msg, file=sys.stderr)
         return 3
 

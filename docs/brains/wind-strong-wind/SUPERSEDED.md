@@ -1,4 +1,4 @@
-# WSW-2026-11-23 and WSW-2026-11-23-R2 are superseded (never run)
+# WSW-2026-11-23, R2 and R3 are superseded (never run)
 
 `WSW-2026-11-23.protocol.json` (sha256 `b9a55721f7a6d2853462c1080bbec384c3a30e3429fce70b10c2872c77449346`) is kept unchanged as a record. It was never run: nothing was fetched, fitted or scored under it, and the runner refuses it.
 
@@ -6,4 +6,6 @@ Its past window (NBM inits 2025-11..2026-04) had already been read: W1 and W1b g
 
 `WSW-2026-11-23-R2.protocol.json` (sha256 `ba05492be82102fdba170b8dd5181ec557505622246e6a780c52a6ffc129633b`) is also kept byte-identical and was never run. Independent review found that its CAL+H1 observation range reached H2 days (2026-10-08), that rows it could not build or forecast were dropped silently instead of counted against the method, and that the fit's sha256 was not required to be posted before the past-window fetch.
 
-The governing protocol is `WSW-2026-11-23-R3.protocol.json` (sidecar `.sha256`, sha256 `82f96596197d6af32e43b9e01ce152e922f3a0c0a42993641993a2da0fda68a2`), registered alone before any runner change and before any data was fetched. The runner pins it and refuses both superseded files.
+`WSW-2026-11-23-R3.protocol.json` (sha256 `82f96596197d6af32e43b9e01ce152e922f3a0c0a42993641993a2da0fda68a2`) is also kept byte-identical and was never run. Independent review found that every one-shot guard in it was bound to the --out folder, so a second folder could re-run a step and keep the better result.
+
+The governing protocol is `WSW-2026-11-23-R4.protocol.json` (sidecar `.sha256`, sha256 `c0e86f6afa9de57d33c71d4eb049d4b1c95e403ad4a9c966edd16c7e9aaf77ca`), registered alone before any code change and before any data was fetched. It binds the protocol to one global run ledger in the Wind research folder. The runner pins it and refuses all three superseded files.
