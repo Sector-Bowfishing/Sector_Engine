@@ -109,3 +109,36 @@ Only the rubric definitions changed. No Brain runtime code was touched.
   - `asOf` updated to origin/main f5460aa.
 - **LOW, Moon currentNight and cloudIntegration:** both now read the written `/lakes/{k}/states/moon` whose `date` is tonight at scoring time, not the registry `breakdowns`. `publish.py` counts a lake's basis before writing its state, so a failed write would still be counted. The draft notes that ordering and explains why reading the written state makes a runtime fix unnecessary for this definition.
 - The not-loaded test also requires `freshnessAtScoringTime` in each draft.
+
+Round-3 verification, run at 60b6070, all passing:
+- `jobs/brain-scores`: 43 passed
+- `jobs/brain_platform`: 1011 passed, 2 skipped
+- `jobs/brain-orchestrator`: 339 passed
+- verification gates, `tools/architecture` and `tools/cortex_status`: 204 passed
+- `score_baseline.py --check`: OK, and the fixture is byte-identical to main
+- Certification re-collected (all 11 Brains' Cert Kit suites, none failing)
+- Engineering-status `--check`: OK
+- No diff against main under `brains/` or `jobs/brain_platform/`
+- CI green (7/7)
+
+## Fourth review follow-up (after review of 60b6070, NOT CLEAN)
+Only the rubric definitions changed. No Brain runtime code was touched.
+- **MEDIUM, Moon "tonight".** "Tonight" is now `moon_brain.night.evening_date(lat, lon, scoring time)`, with its sunrise rollover. That is the noon-to-noon span containing scoring time, moved to the next evening once that night's sunrise has passed. It replaces the bare noon-to-noon wording in `cloudIntegration`, `currentNight`, the scope and the freshness block.
+- **MEDIUM, Generation schedule.** `scheduleCoverage` now also requires `schedule.scheduleCoversUntil` (published by `assess.py`) to be later than scoring time, so an ended schedule earns 0.
+- **LOW items:**
+  - The explainer names the OBSERVED / SCHEDULE_ONLY kind restriction for `damCoverage`.
+  - The Generation example now reads "0.42 x 30 = 12.7".
+  - The Moon scope says polar-day lakes are removed from the cloud denominator only, matching the explainer.
+  - This record now holds the round-3 and round-4 verification runs.
+
+Round-4 verification, run before the push, all passing:
+- `jobs/brain-scores`: 43 passed
+- `jobs/brain_platform`: 1011 passed, 2 skipped
+- `jobs/brain-orchestrator`: 339 passed
+- verification gates, `tools/architecture` and `tools/cortex_status`: 204 passed
+- `score_baseline.py --check`: OK, and the fixture is byte-identical to main
+- Certification re-collected (all 11 Brains' Cert Kit suites, none failing)
+- Engineering-status `--check`: OK
+- No diff against main under `brains/` or `jobs/brain_platform/`
+
+The current digest is sha256:fb0eea6260ddfcfa3f4002b3981649b1f9808be358dfbeefe1be6345532de0b8. The certification `sourceDigest`, the status report's `source.sourceDigest`, its `certificationDigest` and the live `source_digest()` all equal it. This session record is outside the digest roots.

@@ -47,9 +47,9 @@
       "weight": 25,
       "class": "CAP",
       "movableByPackagingOnly": false,
-      "fact": "count of dam lakes in groups TVA, TVA_CUMBERLAND or SWPA_USACE whose state is fresh (/lakes/{k}/states/generation.freshness.freshUntil > scoring time) and has a non-empty schedule.windows / (fleet.byGroup.TVA + fleet.byGroup.TVA_CUMBERLAND + fleet.byGroup.SWPA_USACE)",
+      "fact": "count of dam lakes in groups TVA, TVA_CUMBERLAND or SWPA_USACE whose state is fresh (/lakes/{k}/states/generation.freshness.freshUntil > scoring time), has a non-empty schedule.windows AND schedule.scheduleCoversUntil later than scoring time / (fleet.byGroup.TVA + fleet.byGroup.TVA_CUMBERLAND + fleet.byGroup.SWPA_USACE)",
       "scale": "share x 10",
-      "note": "Numerator and denominator are the same population: the schedule-posting groups (plan section 3, 39 lakes). A lake outside those groups never counts, so binding more measured-only CWMS or RISE lakes neither raises nor lowers this share. Access today: the TVA_CUMBERLAND projects are also read through the TVA API, and TVA's robots.txt disallows all automated access (reported by the #241 review, 2026-11-23; the D-G check in source_access.json is not yet recorded), so TVA and Cumberland schedules are currently unobtainable and those 24 lakes earn 0 here until a permitted source exists (TVA permission under D-G). SWPA (15 lakes) waits on its own access check. No proxy schedule is used.",
+      "note": "A posted schedule whose last window has already ended (scheduleCoversUntil at or before scoring time) says nothing about when the dam changes next, so it earns 0. Numerator and denominator are the same population: the schedule-posting groups (plan section 3, 39 lakes). A lake outside those groups never counts, so binding more measured-only CWMS or RISE lakes neither raises nor lowers this share. Access today: the TVA_CUMBERLAND projects are also read through the TVA API, and TVA's robots.txt disallows all automated access (reported by the #241 review, 2026-11-23; the D-G check in source_access.json is not yet recorded), so TVA and Cumberland schedules are currently unobtainable and those 24 lakes earn 0 here until a permitted source exists (TVA permission under D-G). SWPA (15 lakes) waits on its own access check. No proxy schedule is used.",
       "why": "The next start or stop lets a bowfisher plan the night instead of guessing."
     },
     {
@@ -144,12 +144,12 @@
     },
     "liftPath": [
       {
-        "step": "Illustration ONLY IF TVA access were permitted: the 17 TVA-API lakes published and fresh at scoring time, each with a known status and schedule windows (an assumption, not a measurement); validation not started",
-        "arithmetic": "releasingNow 17/401 = 0.042 -> 0.4 x 30 = 12.7; scheduleCoverage 17/39 = 0.436 -> 4.4 x 25 = 109; damCoverage ladder(4.2 %) = 1 x 15 = 15; validation 0 x 30 = 0; uncapped (12.7 + 109 + 15) / 100 = 1.4; caps (release 2.0 if unapproved, sourceAccess 3.0, realResponseFixtures 3.0, coverage 3.0, validation 5.0) are all above 1.4",
+        "step": "Illustration ONLY IF TVA access were permitted: the 17 TVA-API lakes published and fresh at scoring time, each with a known status and a posted schedule still covering scoring time (an assumption, not a measurement); validation not started",
+        "arithmetic": "releasingNow 17/401 = 0.042 -> 0.42 x 30 = 12.7; scheduleCoverage 17/39 = 0.436 -> 4.4 x 25 = 109; damCoverage ladder(4.2 %) = 1 x 15 = 15; validation 0 x 30 = 0; uncapped (12.7 + 109 + 15) / 100 = 1.4; caps (release 2.0 if unapproved, sourceAccess 3.0, realResponseFixtures 3.0, coverage 3.0, validation 5.0) are all above 1.4",
         "effect": "1.4 / 10. With TVA access refused, as reported, these lakes publish nothing and the Brain stays at 0 or UNSCORED."
       },
       {
-        "step": "Illustration: D-G resolved with TVA permission and SWPA allowed, real fixtures recorded, the discovery pass reaching 150 dam lakes (the low end of the plan's estimate), each with a known, current status, all 39 schedule lakes posting windows, validation week PASSED",
+        "step": "Illustration: D-G resolved with TVA permission and SWPA allowed, real fixtures recorded, the discovery pass reaching 150 dam lakes (the low end of the plan's estimate), each with a known, current status, all 39 schedule lakes with a posted schedule still covering scoring time, validation week PASSED",
         "arithmetic": "releasingNow 150/401 = 0.374 -> 3.7 x 30 = 112.2; scheduleCoverage 39/39 = 10 x 25 = 250; damCoverage ladder(37 %) = 5 x 15 = 75; validation 10 x 30 = 300; uncapped (112.2 + 250 + 75 + 300) / 100 = 7.4; no cap",
         "effect": "7.4 / 10 under these assumptions: the 251 dam lakes without a fresh known status still count against. Without TVA permission the schedule share could reach at most 15/39 (SWPA only). The shares are assumptions; only the probe and the validation week replace them with measurements."
       }

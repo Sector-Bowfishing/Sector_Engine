@@ -66,7 +66,7 @@ The rubrics are built for those decisions, not for research volume. Every check 
 - **Validation nodes the Brains overwrite.** Moon and Generation write a constant `NOT_VALIDATED` to `/validation/{id}` on every run (`publish.py`), and Weather does not write the node yet. Each therefore needs a Brain change before its validation dimension can ever move. These changes are listed in each adoption checklist.
 - **Common gates.** Health FAILED/UNKNOWN caps at 2.0. For Weather and Generation, coverage below 10 % caps at 3.0, as Lake does.
 - **One population per ratio, clamped to [0, 10].** Each share's numerator is a subset of its fixed denominator.
-- **Freshness is judged when the scorer runs, not when the Brain published.** Every per-lake fact counts only if the lake's own state is current at scoring time, read from a timestamp in the published state (`freshness.freshUntil` for Weather and Generation; tonight's `date` for Moon). A state that expired, because the Brain stopped updating it or the lake errored or became BLOCKED after an earlier publish, earns 0. Registry counts that describe only the last run (`readinessCounts`, `breakdowns`, `supportedLakeCount`, `staleLakeCount`) are not used for per-lake shares. All the needed timestamps are already published, so no runtime change is needed for this.
+- **Freshness is judged when the scorer runs, not when the Brain published.** Every per-lake fact counts only if the lake's own state is current at scoring time, read from a timestamp in the published state (`freshness.freshUntil` for Weather and Generation; the state's `date` equal to the Brain's `evening_date` for Moon). A state that expired, because the Brain stopped updating it or the lake errored or became BLOCKED after an earlier publish, earns 0. Registry counts that describe only the last run (`readinessCounts`, `breakdowns`, `supportedLakeCount`, `staleLakeCount`) are not used for per-lake shares. All the needed timestamps are already published, so no runtime change is needed for this.
 - **No permanently empty dimensions.** There are none for the pressure forecast (WX-003) or per-lake skyglow (MOON-INP-002). They would be 0 forever (SC-09) until the Brain publishes a fact for them.
 - **Worked examples are hand arithmetic** (`TYPED_NOT_COMPUTED`, SC-11), labelled non-authoritative. Assumed shares are marked as assumptions.
 
@@ -110,7 +110,7 @@ PARTIAL means at least one of §5.1–§5.3 passed, the others are still within 
 |---|---|---|
 | validation (MOON-VAL-001) | 35 | A simple light reading shows the darkness class matches how dark the water is |
 | cloudIntegration | 35 | lakes whose written state is for tonight with basis MOON_AND_CLOUD, over (directory − tonight's NO_NIGHT lakes). Cloud cancels the moon except near cities. MOON_ONLY, errored and not-written lakes count against |
-| currentNight | 30 | lakes whose written state is for tonight (the state's `date` at scoring time) over the directory. The registry `breakdowns` are not used: `publish.py` counts a lake before its state is written, so a failed write would still be counted |
+| currentNight | 30 | lakes whose written state is for tonight (the state's `date` equals `evening_date(lat, lon, scoring time)`, the Brain's own rule including the sunrise rollover) over the directory. The registry `breakdowns` are not used: `publish.py` counts a lake before its state is written, so a failed write would still be counted |
 
 There is no coverage dimension. Moon's `supportedLakeCount` is every lake in the run, errored ones included, so coverage would always read 621/621 and measure nothing.
 
@@ -148,8 +148,8 @@ Coverage uses the **401 dam lakes** as its denominator, not the 621-lake directo
 |---|---|---|
 | validation | 30 | VALIDATED = all five plan §5 metrics pass over the pre-registered week. PARTIAL = some pass, the rest not yet scored, none failed. Any failed metric = NOT_VALIDATED. |
 | releasingNow | 30 | **Is the dam releasing or generating right now?** Catalog dam lakes whose status is GENERATING, SPILLING, RELEASING or OFF, over all 401 dam lakes. UNKNOWN, unbound and errored dams count against |
-| scheduleCoverage | 25 | **When does it change?** TVA, TVA_CUMBERLAND and SWPA_USACE lakes with posted schedule windows, over those same 39 lakes. Today these earn 0: TVA's robots.txt disallows automated access (reported by the #241 review; D-G not yet recorded), the Cumberland projects are read through the TVA API, and SWPA waits on its access check. No proxy schedule is used |
-| damCoverage | 15 | dam lakes with a release picture that is fresh at scoring time; a dam lake with none counts against. This absorbs the former currency dimension: with freshness judged at scoring time everywhere, a separate 'not stale' share would count the same thing twice |
+| scheduleCoverage | 25 | **When does it change?** TVA, TVA_CUMBERLAND and SWPA_USACE lakes with a fresh state whose posted schedule still covers scoring time (`schedule.scheduleCoversUntil`), over those same 39 lakes. An ended schedule earns 0. Today these earn 0: TVA's robots.txt disallows automated access (reported by the #241 review; D-G not yet recorded), the Cumberland projects are read through the TVA API, and SWPA waits on its access check. No proxy schedule is used |
+| damCoverage | 15 | dam lakes whose state has kind OBSERVED or SCHEDULE_ONLY and is fresh at scoring time (UNAVAILABLE and DOWNSTREAM_ONLY states do not count); a dam lake with none counts against. This absorbs the former currency dimension: with freshness judged at scoring time everywhere, a separate 'not stale' share would count the same thing twice |
 
 Discharge, turbine and spill numbers are secondary detail. They are published but not scored on their own.
 
