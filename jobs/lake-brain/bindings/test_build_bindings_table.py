@@ -174,3 +174,48 @@ class TableTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@unittest.skipUnless(os.path.exists(os.path.join(DATA, "bindings.batch2.v1.json")), "batch 2 table not built")
+class Batch2Tests(unittest.TestCase):
+    """Batch 2 (2026-11-22, Sector_Ops #51 comment 7075462499): excluded lakes that passed the re-check."""
+
+    def test_batch2_is_consistent(self):
+        import csv
+        b2 = json.load(open(os.path.join(DATA, "bindings.batch2.v1.json")))
+        acc = json.load(open(os.path.join(DATA, "accepted_batch2.json")))
+        ex = {x["lakeId"] for x in json.load(open(os.path.join(DATA, "bindings.proposed.v1.excluded.json")))["excluded"]}
+        proposed = {b["lakeId"] for b in json.load(open(os.path.join(DATA, "bindings.proposed.v1.json")))["bindings"]}
+        checks = {r["lakeId"]: r for r in csv.DictReader(open(os.path.join(DATA, "batch2", "checks_2026-11-22.csv")))}
+        ids = [r["lakeId"] for r in b2["bindings"]]
+        self.assertEqual(len(ids), 102)
+        self.assertEqual(set(ids), set(acc["lakeIds"]))
+        self.assertEqual(set(ids), {l for l, c in checks.items() if c["result"] == "PASS"})
+        held = {l for l, c in checks.items() if c["result"] == "HOLD"}
+        self.assertEqual(held, {"Lake Mattamuskeet|NC", "Blue Marsh Lake|PA", "Lake Darling|ND", "Rend Lake|IL"})     # #222 review + 2026-11-22 live checks
+        self.assertFalse(held & set(acc["lakeIds"]))
+        self.assertTrue(set(ids) <= ex and not (set(ids) & proposed))
+        self.assertEqual(acc["approvalRef"], "owner-direction-2026-11-22/sector-ops-51-7075462499")
+        for r in b2["bindings"]:
+            self.assertEqual(checks[r["lakeId"]]["result"], "PASS")
+            self.assertEqual(r["verification"]["batch2Check"]["result"], "PASS")
+            for l in r["live"]:
+                self.assertNotIn(l["provider"], B.UNDOCUMENTED)
+                self.assertFalse((l.get("series") or "").endswith(("GC-APCO", "Guide Curve")), r["lakeId"])
+            for h in r["history"]:
+                self.assertFalse(str(h.get("series", "")).endswith((".RUL", "GC-APCO")), r["lakeId"])
+                self.assertNotIn("(", str(h.get("series", "")), r["lakeId"])     # no comparator annotation leaked into a series id
+            bc = r["verification"]["batch2Check"]
+            self.assertNotIn("15 ft history/live series rule +", bc["criteria"])
+            if bc["secondSource"] and not bc["secondSource"].startswith("independent: "):
+                self.assertTrue(bc["secondSource"].startswith("same gauge, other endpoint"), r["lakeId"])
+        offsets = {r["lakeId"]: r["history"][0]["offsetFt"] for r in b2["bindings"]
+                   if r["lakeId"] in ("Lake Washington|WA", "Devils Lake|ND", "Toledo Bend Reservoir|TX")}
+        self.assertEqual(offsets, {"Lake Washington|WA": 0.36, "Devils Lake|ND": 1400.0, "Toledo Bend Reservoir|TX": -0.18})
+        for r in b2["bindings"]:
+            if r["lakeId"] in offsets:
+                self.assertIn("7085401013" if r["lakeId"] == "Devils Lake|ND" else "history/live offset", r["history"][0]["note"], r["lakeId"])     # each measured offset carries its basis
+        indep = {l for l, c in checks.items() if c["secondSource"].startswith("independent: ")}
+        self.assertEqual(indep, {"Logan Martin|AL", "Red Lake|MN"})
+        for gone in ("Clinton Lake|IL", "Upper Klamath Lake|OR"):     # no engine adapter yet: new-provider work
+            self.assertNotIn(gone, ids)

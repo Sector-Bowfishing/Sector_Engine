@@ -7,6 +7,9 @@ Inputs
   jobs/lake-brain/data/bindings.proposed.v1.json   MACHINE_VERIFIED records (jobs/lake-brain/bindings/build_bindings_table.py)
   jobs/lake-brain/data/accepted_batch.json         lakeIds Michael accepted AFTER review. Does not exist until then: treated as an
                                                    EMPTY list. This script never creates it.
+  jobs/lake-brain/data/bindings.batch2.v1.json     batch 2: MACHINE_VERIFIED records of excluded lakes that passed the 2026-11-22
+                                                   re-check (jobs/lake-brain/bindings/build_batch2_table.py); appended to the table
+  jobs/lake-brain/data/accepted_batch2.json        batch 2 lakeIds Michael accepted (same format as accepted_batch.json); optional
 
 THE GATE: every generated binding is CANDIDATE (never publishes a state) unless its lakeId is in accepted_batch.json, in which case
 the Swift side marks it REVIEWED. The accepted ids are embedded below as `acceptedLakeIds`; a stale accepted id (not in the table, or in
@@ -30,6 +33,8 @@ DATA = os.path.join(ROOT, "jobs", "lake-brain", "data")
 PROPOSED = os.path.join(DATA, "bindings.proposed.v1.json")
 EXCLUDED = os.path.join(DATA, "bindings.proposed.v1.excluded.json")
 ACCEPTED = os.path.join(DATA, "accepted_batch.json")
+BATCH2 = os.path.join(DATA, "bindings.batch2.v1.json")
+ACCEPTED2 = os.path.join(DATA, "accepted_batch2.json")
 OUT = os.path.join(ROOT, "brains", "lake", "runtime", "LakeBrain", "LakeSourceBindingsGenerated.swift")
 
 ADAPTER_PROVIDERS = {"tva", "cwms", "usgs", "a2w", "rise", "nwps"}
@@ -37,10 +42,11 @@ FORBIDDEN_PROVIDERS = {"nipsco", "njwsa", "duke", "wps-hydro", "alliant", "srp",
                        "sjrwmd", "nhdes"}
 
 
-def load_accepted() -> tuple[list[str], str | None]:
-    if not os.path.exists(ACCEPTED):
+def load_accepted(path: str | None = None) -> tuple[list[str], str | None]:
+    path = path or ACCEPTED
+    if not os.path.exists(path):
         return [], None
-    raw = json.load(open(ACCEPTED))
+    raw = json.load(open(path))
     reviewed_at = None
     if isinstance(raw, dict):
         reviewed_at = raw.get("reviewedAt")
@@ -49,7 +55,7 @@ def load_accepted() -> tuple[list[str], str | None]:
     for x in raw:
         ids.append(x["lakeId"] if isinstance(x, dict) else x)
     if len(set(ids)) != len(ids):
-        raise SystemExit("accepted_batch.json lists a lakeId twice")
+        raise SystemExit(f"{os.path.basename(path)} lists a lakeId twice")
     return sorted(ids), reviewed_at
 
 
@@ -121,6 +127,20 @@ def render() -> str:
     unknown = [a for a in accepted if a not in set(ids)]
     if unknown:
         raise SystemExit(f"accepted_batch.json names lakes that are not in the proposed table (or were excluded): {unknown}")
+    n_proposed = len(recs)
+    if os.path.exists(BATCH2):
+        b2 = json.load(open(BATCH2))
+        assert b2["schema"] == "lake-brain-bindings-proposed/v1" and b2["bindingStatus"] == "MACHINE_VERIFIED" and b2.get("batch") == 2
+        b2_ids = [r["lakeId"] for r in b2["bindings"]]
+        assert len(b2_ids) == len(set(b2_ids)), "duplicate lakeId in the batch 2 table"
+        assert not (set(b2_ids) & set(ids)), f"lakes in both the proposed and the batch 2 table: {sorted(set(b2_ids) & set(ids))}"
+        assert set(b2_ids) <= excluded, "batch 2 holds only lakes from bindings.proposed.v1.excluded.json"
+        accepted2, _ = load_accepted(ACCEPTED2)
+        unknown2 = [a for a in accepted2 if a not in set(b2_ids)]
+        if unknown2:
+            raise SystemExit(f"accepted_batch2.json names lakes that are not in the batch 2 table: {unknown2}")
+        recs = recs + b2["bindings"]
+        accepted = sorted(accepted + accepted2)
     lines = [json.dumps(compact(r), separators=(",", ":"), ensure_ascii=False, sort_keys=False) for r in recs]
     blob = "[\n" + ",\n".join(lines) + "\n]"
     assert '"""#' not in blob and "\\#" not in blob, "table contains a raw-string terminator"
@@ -131,8 +151,9 @@ def render() -> str:
 //  LakeSourceBindingsGenerated.swift
 //  Sector — Lake Brain: the generated level-source bindings table (GENERATED — do not hand-edit)
 //
-//  Source: jobs/lake-brain/data/bindings.proposed.v1.json  ({len(recs)} MACHINE_VERIFIED rows, binding-review-v1, research 2026-10-13)
-//          jobs/lake-brain/data/accepted_batch.json         ({len(accepted)} accepted lake(s))
+//  Source: jobs/lake-brain/data/bindings.proposed.v1.json  ({n_proposed} MACHINE_VERIFIED rows, binding-review-v1, research 2026-10-13)
+//          jobs/lake-brain/data/bindings.batch2.v1.json     ({len(recs) - n_proposed} MACHINE_VERIFIED rows, batch 2 re-check 2026-11-22)
+//          jobs/lake-brain/data/accepted_batch.json + accepted_batch2.json  ({len(accepted)} accepted lake(s))
 //  Regenerate with: python3 scripts/generate-lake-bindings.py
 //
 //  EVERY row is a CANDIDATE (never publishes a state) unless its lakeId is in `acceptedLakeIds`. That list is

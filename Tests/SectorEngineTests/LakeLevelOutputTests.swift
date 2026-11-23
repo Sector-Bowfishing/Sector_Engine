@@ -43,22 +43,27 @@ final class LakeLevelOutputTests: XCTestCase {
 
     func testValidatedListMatchesTheLakeBetaResult() async {
         let ids = LakeLevelEligibility.validatedLakeIds
-        // Every REVIEWED lake (5 pilots + accepted batch; owner approval 2026-11-20 20:01Z, Sector_Ops #51), and no other.
-        XCTAssertEqual(ids.count, 192)
+        // Every REVIEWED lake (5 pilots + accepted batches 1 and 2; owner approval 2026-11-20 20:01Z, Sector_Ops #51), and no other.
+        XCTAssertEqual(ids.count, 294)
         // (Equality with LakeSourceBindings.reviewed is asserted in LakeBrainTests, which can see both modules.)
         for lake in ["Lake Hartwell|SC", "Bluestone Lake|WV", "Tappan Lake|OH",
                      // returned after the 2026-11-21 research (binding/history fixes or confirmed real drawdown)
-                     "Sutton Lake|WV", "Sardis Lake|MS", "Deep Creek Lake|MD", "El Vado Lake|NM"] { XCTAssertTrue(ids.contains(lake), lake) }
+                     "Sutton Lake|WV", "Sardis Lake|MS", "Deep Creek Lake|MD", "El Vado Lake|NM",
+                     // batch 2: excluded lakes that passed the 2026-11-22 re-check (Sector_Ops #51 comment 7075462499)
+                     "Cagles Mill Lake|IN", "Navajo Reservoir|NM", "Kentucky Lake|KY", "Canyon Lake|TX"] { XCTAssertTrue(ids.contains(lake), lake) }
         // Failed the two-gauge check, held or excluded: no reviewed binding, never listed.
-        for lake in ["Brookville Lake|IN", "Sumner Lake|NM", "Cagles Mill Lake|IN", "Navajo Reservoir|NM", "Kentucky Lake|KY",
-                     "Tygart Lake|WV", "Canyon Lake|TX",
+        for lake in ["Brookville Lake|IN", "Sumner Lake|NM", "Tygart Lake|WV", "Clinton Lake|IL", "Lake Shafer|IN",
+                     // held out of batch 2 after the #222 review (live checks pending on the Mac mini)
+                     "Lake Mattamuskeet|NC", "Blue Marsh Lake|PA",
+                     // held after the 2026-11-22 live checks: check (b) FAIL (Sector_Ops #51 comment 7085401013)
+                     "Lake Darling|ND", "Rend Lake|IL",
                      // still held after the 2026-11-21 dry-run gauge check and research (held_lakes.json dryrunCheck: no live source)
                      "Badin Lake|NC", "High Rock Lake|NC"] {
             XCTAssertFalse(ids.contains(lake), lake)
         }
-        // The 4 TVA mainstem lakes are listed as operator-only (owner decision 2026-11-20), and only they are.
-        XCTAssertEqual(LakeLevelEligibility.operatorOnlyLakeIds, ["Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN"])
-        XCTAssertTrue(LakeLevelEligibility.operatorOnlyLakeIds.isSubset(of: ids))
+        // Every reviewed TVA lake is listed like any other lake: no operator-only class (owner decision 2026-11-22 19:34Z, Sector_Ops #51 comment 7084511040).
+        for lake in ["Guntersville|AL", "Wheeler|AL", "Wilson|AL", "Pickwick Lake|TN",
+                     "Kentucky Lake|KY", "Kentucky Lake|TN", "Cherokee Lake|TN", "Chickamauga Lake|TN"] { XCTAssertTrue(ids.contains(lake), lake) }
         // Every listed id is a directory lake.
         let directory = Set(LakeDirectory.all.map(\.id))
         XCTAssertTrue(ids.isSubset(of: directory), "\(ids.subtracting(directory))")
