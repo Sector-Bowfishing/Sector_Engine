@@ -142,3 +142,15 @@ def test_the_live_planner_reads_the_published_states(monkeypatch, capsys):
     capsys.readouterr()
     written = _flat(w)
     assert rc == 0 and f"lakes/{C.lake_key('Champlain|VT')}/states/weather" not in written     # STEADY and not due: read back, not refetched
+
+
+def test_a_run_with_no_due_lake_still_advances_last_successful_run():
+    """Chosen behaviour (follow-up to #239): lastSuccessfulRun keeps its registry meaning and advances on a run that computed no lake, so
+    Moon's DEPENDENCY_CHANGED fires after it too (the control-manifest fingerprint note says so; Moon then skips unchanged lakes)."""
+    from sector_weather.publish import write_set
+    u = write_set(list(LAKES.values()), {}, {lid: "CALIBRATION" for lid in LAKES}, [], RECORDED_NOW, computed=set())
+    assert u["brains/weather/lastSuccessfulRun"] == C.iso(RECORDED_NOW)
+    assert u["brains/weather/lastRunOutcome"]["computedLakeCount"] == 0 and u["brains/weather/lastRunOutcome"]["status"] == "SUCCESS"
+    from sector_brain_platform import orchestration as O
+    note = O.load_manifest()["brains"]["weather"]["fingerprint"]["note"]
+    assert "lastSuccessfulRun" in O.load_manifest()["brains"]["weather"]["fingerprint"]["materialFields"] and "computedLakeCount 0" in note

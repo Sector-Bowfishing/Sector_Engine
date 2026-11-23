@@ -34,6 +34,7 @@ from sector_brain_platform import lake_key  # noqa: E402
 
 RTDB_URL = os.environ.get("BRAIN_RTDB_URL", "https://sector-brain.firebaseio.com")
 WRITE_INTENT_ENV = "MOON_WRITE_APPROVED"
+FUTURE_SKEW_SECONDS = 300       # a Weather state stamped more than 5 min in the future is refused (clock skew allowance)
 WEATHER_MAX_AGE_HOURS = 3        # == control manifest moon -> weather dependency maxAgeHours (Weather's staleAfterHours); tested
 DRY_RUN_ONLY = ("date", "weather", "lakes")
 
@@ -50,9 +51,9 @@ def _directory(only: str | None) -> dict:
 
 
 def read_weather(writer, directory: dict, now: dt.datetime) -> tuple[dict, dict]:
-    """{lakeId: Weather state} from the Brain RTDB (GET /lakes/{k}/states/weather), keeping only states generated within WEATHER_MAX_AGE_HOURS.
-    An absent, unreadable-time or older state is NOT used: that lake gets the moon-only answer, labelled as such. Counts are reported."""
-    used, counts = {}, {"used": 0, "absent": 0, "tooOld": 0, "noGeneratedAt": 0}
+    """{lakeId: Weather state} from the Brain RTDB (GET /lakes/{k}/states/weather), keeping only states generated within WEATHER_MAX_AGE_HOURS
+    and not more than FUTURE_SKEW_SECONDS in the future. An absent, zone-less or unreadable-time, older or future state is NOT used: that lake gets the moon-only answer, labelled as such. Counts are reported."""
+    used, counts = {}, {"used": 0, "absent": 0, "tooOld": 0, "future": 0, "noGeneratedAt": 0}
     for r in directory["lakes"]:
         st = writer.get(f"lakes/{lake_key(r['lakeId'])}/states/weather")
         if not isinstance(st, dict):
@@ -60,10 +61,17 @@ def read_weather(writer, directory: dict, now: dt.datetime) -> tuple[dict, dict]
             continue
         try:
             gen = dt.datetime.fromisoformat(str(st["generatedAt"]).replace("Z", "+00:00"))
-        except (KeyError, ValueError):
+        except (KeyError, ValueError, TypeError):
             counts["noGeneratedAt"] += 1
             continue
-        if gen.tzinfo is None or (now - gen).total_seconds() > WEATHER_MAX_AGE_HOURS * 3600:
+        if gen.tzinfo is None:                                          # a time without a zone is not a usable time
+            counts["noGeneratedAt"] += 1
+            continue
+        age = (now - gen).total_seconds()
+        if age < -FUTURE_SKEW_SECONDS:                                  # generated "in the future" beyond clock skew: not trusted
+            counts["future"] += 1
+            continue
+        if age > WEATHER_MAX_AGE_HOURS * 3600:
             counts["tooOld"] += 1
             continue
         used[r["lakeId"]] = st

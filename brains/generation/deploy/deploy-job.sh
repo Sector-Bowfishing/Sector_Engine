@@ -12,6 +12,8 @@
 #   job      $JOB: one task, the bound dams of the catalog, `run.py --write` (refused inside the job unless the knowledge release is APPROVED
 #            and GENERATION_WRITE_APPROVED=1; the latter is set here only when the operator passes GENERATION_WRITE_APPROVED=1).
 #
+#   invoker  MICHAEL_APPROVED_GENERATION_DEPLOY=yes is also the owner's approval of the one IAM change this script makes: the JOB-LEVEL
+#            roles/run.invoker binding for brain-orchestrator on generation-brain (nothing project-wide, no other role, no other member).
 #   ./deploy-job.sh --stage-only DIR   assemble the build context into DIR and exit (no gcloud; used by the staged-layout test)
 # ALSO BLOCKED on D-G (TVA/SWPA access) and D-I (one read per series per hour across Brains): do not deploy before both are decided.
 set -euo pipefail

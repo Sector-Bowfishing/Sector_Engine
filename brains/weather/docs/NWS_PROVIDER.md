@@ -20,12 +20,17 @@ Provider ids: `nws-station-observations`, `nws-forecast-grid` (`providers/PROVID
 
 | Request | When | Count |
 |---|---|---|
-| `/points` + station list | first run, then every 30 days per lake (`PointCache`) | ≤ 2 × 621 once a month |
+| `/points` + station list | every run in the Cloud Run job today: `deploy-job.sh` points `--point-cache` at `/tmp`, which does not survive the run, so each lake due in a run is re-resolved. With a persistent cache it would be once per 30 days per lake (`PointCache`) | ≤ 2 × due lakes per run (≤ 2 × 621) |
 | `/gridpoints/...` | per run, once per distinct grid cell among the due lakes | ≤ number of due lakes |
 | `/stations/{id}/observations?start=now−13h&limit=200` | per run, once per distinct station among the due lakes' 3 nearest | ≤ 3 × due lakes, usually far fewer (shared stations) |
 
 With the adaptive cadence (CHANGE/WATCH every hourly grant, STEADY every second grant) a full-directory hour is at most about 2,500
-requests, about 10 minutes at the 0.25 s pace. That must be measured on the first dry run before activation (plan §6 step 2).
+requests with a warm point cache, about 10 minutes at the 0.25 s pace; with today's ephemeral cache add up to 2 × 621 point and station
+requests per run (about 5 more minutes). That must be measured on the first dry run before activation (plan §6 step 1).
+
+**Open owner decision before turn-on step 7 (plan §6.1):** persist the point cache, for example as a Weather-owned node in the Brain DB or a
+small GCS object owned by `weather` (either is a new write path and needs its own registration and approval), or accept the extra requests
+and their cost against the 2 USD/month cap. Nothing persists the cache today.
 
 ## Coverage
 
