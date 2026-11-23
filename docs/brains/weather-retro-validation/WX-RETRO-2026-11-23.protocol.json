@@ -1,0 +1,162 @@
+{
+  "schema": "sector-weather-retro-validation-protocol-v1",
+  "protocolId": "WX-RETRO-2026-11-23",
+  "brainId": "weather",
+  "gaps": ["WX-001", "WX-002"],
+  "amends": "docs/brains/WEATHER_BRAIN_PLAN.md section 5 (pre-registered 2026-11-22). This is an AMENDMENT that grades the same criteria on PAST archived data. It does not replace section 5: the prospective windows from activation day remain the confirmation.",
+  "status": "PRE-REGISTERED",
+  "preRegisteredAt": "2026-11-23",
+  "preRegisteredBy": "Claude (Engine research session, branch research/weather-retro-validation-2026-11-23), under the owner's direction to strengthen Brains (Sector_Ops #51 comment 7093610553)",
+  "dataExaminedBeforeRegistration": "None. No observation, archive row, front bulletin or NWS response for the window below was fetched or read before this file was hashed. Only the Weather Brain's own code (brains/weather/runtime), its tests' recorded fixtures of 2026-11-06 (outside the window) and the plan were read.",
+  "labels": ["INTERNAL_EXPERIMENTAL", "NOT_FOR_CUSTOMERS", "RETROSPECTIVE"],
+
+  "why": "Plan section 5 can only start on activation day because the NWS observation API keeps about 7 days. Station observations of the same ASOS/AWOS stations are archived by the Iowa Environmental Mesonet (IEM) from the same METAR reports, and WPC coded surface bulletins are archived as NWS text products. The Brain's reading and signal logic is pure (brains/weather/runtime/sector_weather/reading.py assemble, signal.py evaluate), so it can be replayed on archived reports at past instants and graded now.",
+
+  "windows": {
+    "timezone": "UTC",
+    "changeSignal_5_3": {"from": "2026-09-20T00:00:00Z", "to": "2026-11-19T00:00:00Z", "days": 60},
+    "representativeness_5_2": {"from": "2026-10-20T00:00:00Z", "to": "2026-11-19T00:00:00Z", "days": 30},
+    "fidelity_5_1": {"from": "2026-11-05T00:00:00Z", "to": "2026-11-19T00:00:00Z", "days": 14},
+    "evaluationInstants": "Every hour at HH:10:00Z, from 'from' inclusive to 'to' exclusive. One instant = one simulated Brain run (the Orchestrator grants hourly; the minute is fixed here, not chosen after seeing data).",
+    "archiveFetch": {"from": "2026-09-19T11:00:00Z", "to": "2026-11-19T03:00:00Z", "why": "13 h lookback before the first instant (the Brain's OBS_LOOKBACK_HOURS) and 3 h after the last instant (the truth tolerances)"},
+    "frontFetch": {"from": "2026-09-19T21:00:00Z", "to": "2026-11-19T03:00:00Z"},
+    "choice": "The window ends 4 days before registration so the archives are settled. It is autumn only; results are not claimed for other seasons."
+  },
+
+  "lakes": {
+    "population": "Every lake in the Engine lake directory (GET https://sector-engine-e43utajroa-uc.a.run.app/lakes, the Brain's own directory source) at run time. The runner records the directory count and its sha256. Lakes where NWS /points returns 404 are BLOCKED (WX-004) and are counted, not graded.",
+    "subsetRuns": "A run on a subset (--lakes or --limit) is a smoke test: its report is labelled SUBSET and no criterion in it may be reported as PASS or FAIL."
+  },
+
+  "stationSelection": {
+    "brainStations": "Exactly as the Brain selects them (publish.py resolve_point): NWS /points/{lat:.4f},{lon:.4f} -> observationStations, decode_stations order, the first MAX_STATIONS = 3. The NWS list is read once at run time and assumed unchanged over the window; the runner records it.",
+    "perInstantPick": "At each instant the Brain's assemble() picks, per tile, the newest fresh report among its 3 stations. The 'Brain's station' for a pair is the station assemble() put on that value, not a fixed station.",
+    "independentStation": "From the same NWS station list, the stations NOT among the Brain's 3, ordered by great-circle distance from the lake point; the first one within 25.0 mi that has at least one archive report in the window. Lakes with none are excluded from 5.2 and 5.3 and counted (reason NO_INDEPENDENT_STATION).",
+    "independenceNote": "The independent station is never one the Brain reads for that lake. It may be a Brain station for ANOTHER lake; that is allowed (the plan's rule is per lake)."
+  },
+
+  "archiveAdapter": {
+    "source": "IEM ASOS/AWOS archive, https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py, one request per station, report_type 3 (routine) and 4 (specials), tz Etc/UTC, format onlycomma, missing null, trace 0.0001. Fields: tmpf, dwpf, relh, drct, sknt, alti, mslp, p01i, skyc1-4, wxcodes. HFMETAR (1-5 min) reports are NOT used: the NWS observation API serves routine and special METARs.",
+    "stationId": "NWS id with a leading 'K' removed when the id has 4 characters and starts with K (KBFZ -> BFZ, K4A6 -> 4A6); otherwise the id unchanged. A station with no rows in the window is recorded as NOT_IN_ARCHIVE and treated as reporting nothing (the Brain would have had nothing from it either).",
+    "mapping": {
+      "temp_f": "tmpf (deg F)",
+      "dew_f": "dwpf (deg F)",
+      "rh": "relh (%)",
+      "wind_mph": "sknt x 1.150779 (the Brain's knot conversion)",
+      "wind_dir": "drct (deg); null when absent",
+      "alt_hpa": "alti (inHg) / 0.0295299830714 (the Brain's HPA_TO_INHG)",
+      "slp_hpa": "mslp (hPa)",
+      "precip_1h_in": "p01i (in); the trace value 0.0001 stays below the 0.01 in measurable threshold",
+      "layer_pct": "max over skyc1-4 of the Brain's LAYER_PCT table (nws.py)",
+      "text": "wxcodes mapped to NWS textDescription wording (table below); null when wxcodes is empty",
+      "icon": "null (IEM carries no NWS icon; the Brain's weather_code() falls back to the text, its existing rule)"
+    },
+    "wxcodesToText": {
+      "rule": "Tokens are space-separated. Intensity prefix '-' -> 'Light ', '+' -> 'Heavy ', none -> ''. The FIRST token that matches a row below (in row order) gives the text; tokens matching nothing are ignored; if no token matches, text is null.",
+      "rows": [
+        ["contains TS", "Thunderstorm"],
+        ["contains FZRA or FZDZ", "Freezing Rain"],
+        ["contains PL", "Ice Pellets"],
+        ["contains SN or SG", "{intensity}Snow"],
+        ["contains SH and RA", "{intensity}Rain Showers"],
+        ["contains RA", "{intensity}Rain"],
+        ["contains DZ", "{intensity}Drizzle"],
+        ["contains UP", "Unknown Precipitation"],
+        ["contains FG", "Fog"],
+        ["contains BR or HZ", "Mist"]
+      ]
+    },
+    "knownDifferences": "The NWS API drops values with QC flag X or B; IEM carries no QC flag. The NWS API converts from the same METAR groups but quantizes differently (Pa, deg C). These differences are MEASURED by the substitution check below, not assumed away.",
+    "grid": "The NWS forecast grid is NOT replayed: no archive of the api.weather.gov gridpoint response exists for the window. assemble() runs with grid = None. Consequences, fixed now: cloud cover comes from observed layers or is null, RAIN_EXPECTED cannot fire and 'rainExpected' is always in 'unknown', so WATCH shares from this replay are NOT reported as the Brain's. CHANGE depends only on OBSERVED events and is unaffected."
+  },
+
+  "substitutionCheck": {
+    "id": "R-SUB",
+    "question": "Does the IEM archive give the Brain the same reports the NWS observation API gives it?",
+    "data": "For every Brain station (all lakes, deduplicated): the NWS observation API (GET /stations/{id}/observations?start=<run time - 7 d>&limit=500, read-only, the Brain's own client and User-Agent) and the IEM archive for the same 7 days.",
+    "pairing": "An NWS report and an IEM report of the same station whose times differ by <= 2 min.",
+    "metrics": {
+      "coverage": "share of NWS reports with an IEM match; pass >= 0.95",
+      "temperature": "share of matched pairs (both non-null) with |diff| <= 0.2 deg F (one 0.1 deg C quantum); pass >= 0.99",
+      "pressure": "share of matched pairs (both non-null) with |alt diff| <= 0.35 hPa (one 0.01 inHg quantum); pass >= 0.99",
+      "precipitation": "share of matched pairs agreeing on 'p01i >= 0.01 in'; pass >= 0.99"
+    },
+    "effect": "If R-SUB is not PASS (or not run), every retrospective criterion is reported with the qualifier SUBSTITUTION_UNCERTAIN: a FAIL is still reported as FAIL, but no criterion is reported as PASS."
+  },
+
+  "criteria": {
+    "R-5.1": {
+      "plan": "5.1 Fidelity",
+      "window": "fidelity_5_1, all graded lakes",
+      "unit": "each distinct published value: (lake, tile, station, observation time) for pressure and for air temperature, from assemble() at every instant",
+      "checks": [
+        "provenance: 100 % of values carry a station and an observation time",
+        "pressure: (published hPa - recorded seaLevelOffsetHPa, or 0 when kind is altimeter) equals that station's archive altimeter at that time within 0.05 hPa; a slp-only value equals that station's archive mslp within 0.05 hPa",
+        "air temperature: equals that station's archive tmpf at that time within 0.1 deg F"
+      ],
+      "pass": ">= 99.5 % of values match AND 100 % provenance (the plan's marks)",
+      "minimumSample": "500 values and 20 lakes; below that INSUFFICIENT",
+      "limit": "This replays the reading logic on the archive; it shows the logic never invents, mixes stations or mis-times a value. It cannot show the LIVE publication path is faithful: plan 5.1 on published values stays the prospective confirmation."
+    },
+    "R-5.2": {
+      "plan": "5.2 Representativeness (WX-001)",
+      "window": "representativeness_5_2",
+      "pairs": "The Brain's value at an instant and the independent station's archive report nearest in time within +/- 30 min of the Brain value's observation time. Duplicate pairs (same lake, Brain station, Brain observation time, metric) count once.",
+      "metrics": {
+        "pressureMAE": "altimeter to altimeter: the Brain's raw altimeter (published hPa - offset) vs the independent station's alti; slp-only Brain values are excluded and counted. Pass <= 1.0 hPa",
+        "trend3hAgreement": "the Brain's trend3h class vs the independent station's 3 h class at its paired report time, both computed by reading.tendency() with the +/-0.02 inHg band on each station's own altimeter series; pairs where either is null are excluded and counted. Pass >= 0.80",
+        "airTempMAE": "the Brain's observed air temperature vs the independent station's tmpf. Pass <= 3.0 deg F"
+      },
+      "minimumSample": "per metric: 500 pairs and 20 lakes; below that INSUFFICIENT, never PASS",
+      "breakdowns": "overall, by the Brain's pressure kind (seaLevel vs altimeter), and by the independent station's distance from the lake (< 10 mi, 10-25 mi)",
+      "pass": "all three metrics PASS"
+    },
+    "R-5.3": {
+      "plan": "5.3 Change signal (WX-002)",
+      "window": "changeSignal_5_3, lakes graded in 5.2's station rule",
+      "brainEvents": "signal.evaluate(assemble(...)) at every instant with the v1 thresholds (brains/weather/runtime/knowledge, release weather-knowledge-candidate-2026-11-22.1). Events of one kind at one lake are merged when within 2 h of the previous kept event (the earliest is kept). Event time = the event's 'at'.",
+      "RAIN_ONSET": {
+        "truthEvent": "At the independent station: a report with p01i >= 0.01 in, preceded within the previous 3 h by at least one report with non-null p01i and by NO report with p01i >= 0.01 (the rule's own 3 h dry lookback). Stations whose p01i is null in every report of the window are excluded and counted (NO_PRECIP_SENSOR).",
+        "hit": "a Brain RAIN_ONSET is a hit if the independent station reports p01i >= 0.01 at any time within +/- 2 h of the event (the plan's truth); otherwise a false alarm",
+        "detected": "a truth onset is detected if a Brain RAIN_ONSET falls within +/- 2 h of it",
+        "PODpopulation": "PRIMARY: truth onsets with at least one instant within +/- 2 h at which the Brain's rainOnset rule was evaluable (not in 'unknown'). SECONDARY (reported, no pass mark): all truth onsets.",
+        "pass": "POD >= 0.8 and FAR <= 0.3"
+      },
+      "FRONT_PASSAGE": {
+        "truthSource": "WPC coded surface bulletins (AWIPS PIL CODSUS), read from the IEM NWS text-product archive (https://mesonet.agron.iastate.edu/cgi-bin/afos/retrieve.py?pil=CODSUS). For each VALID time the last issued bulletin is used.",
+        "resolution": "Only high-resolution bulletins (7-digit coordinates: 3-digit latitude and 4-digit longitude in tenths of a degree, west longitude) are used. 4-5 digit (whole-degree) bulletins are ineligible: a 1 degree position cannot resolve 50 mi. If no eligible bulletin exists in the window, FRONT_PASSAGE is NOT_GRADED with that reason; no other front source is substituted.",
+        "frontTypes": "COLD, WARM, OCFNT. STNRY (does not pass) and TROF (not a front) are excluded. Intensity words (WK, MDT, STG) are ignored.",
+        "truthEpisode": "For each lake: the analysis times at which the shortest distance from the lake point to any eligible front polyline is <= 50 mi. Consecutive analyses (3 h apart) form one episode, spanning [first, last].",
+        "hit": "a Brain FRONT_PASSAGE is a hit if it falls in [first - 3 h, last + 3 h] of an episode at that lake; otherwise a false alarm",
+        "detected": "an episode is detected if a Brain FRONT_PASSAGE falls in [first - 3 h, last + 3 h]",
+        "PODpopulation": "PRIMARY: episodes with at least one instant in [first - 3 h, last + 3 h] at which the Brain's front rule was evaluable (no 'front:' entry in 'unknown'). SECONDARY: all episodes.",
+        "distance": "great-circle point-to-segment distance computed in a local equirectangular projection centred on the lake; 1 deg latitude = 69.05 mi",
+        "pass": "POD >= 0.6 and FAR <= 0.4"
+      },
+      "minimumSample": "NEW in this amendment (the plan states none): per kind, >= 30 truth events in the primary POD population, >= 30 Brain events, from >= 10 lakes; below that INSUFFICIENT",
+      "notScored": "PRESSURE_*_FAST and AIR_TEMP_SWING (arithmetic on measured data, covered by R-5.1), RAIN_EXPECTED (no grid archive)",
+      "alsoReported": "CHANGE-hours per lake per week (instants at level CHANGE), no pass mark",
+      "pass": "RAIN_ONSET PASS and FRONT_PASSAGE PASS",
+      "onFailure": "As the plan: a weather-change-thresholds-v2 proposal with its reason, evaluated on a NEW pre-registered window it was not chosen on; v1 results kept."
+    }
+  },
+
+  "resultStates": {
+    "perCriterion": ["PASS", "FAIL", "INSUFFICIENT", "NOT_GRADED"],
+    "qualifiers": ["SUBSET", "SUBSTITUTION_UNCERTAIN"],
+    "rubricMapping": {
+      "rubric": "docs/brains/scoring/drafts/weather-score-v1.json validationStatusMeaning (DRAFT, PR #241, not adopted)",
+      "proposal": "Retrospective results are evidence for /validation/weather; they do not set it. PROPOSED (owner decides): R-5.2 and R-5.3 PASS with R-SUB PASS may stand in for the prospective 5.2 and 5.3 windows, making the status PARTIAL once the prospective 5.1 (14 days of published values) passes and VALIDATED after a prospective WX-001 confirmation window passes. Any retrospective FAIL or INSUFFICIENT is reported and makes the status NOT_VALIDATED until a new pre-registered version passes.",
+      "never": "No retrospective result writes /validation/weather, changes a score, adopts the rubric or approves a knowledge release."
+    }
+  },
+
+  "methodChanges": "Any change after data is examined is recorded in the report (what, why, madeAfterInspectingResults: true) and the affected criterion is re-run on the corrected method with both results kept (Cortex research.md RS-30). Thresholds above are never changed in this protocol id.",
+
+  "execution": {
+    "runner": "tools/research/weather_retro_validation.py",
+    "where": "The owner's Mac mini (read-only), outputs in the research folder for Weather; nothing in Git, nothing in any database.",
+    "hosts": ["api.weather.gov", "mesonet.agron.iastate.edu", "sector-engine-e43utajroa-uc.a.run.app"],
+    "writes": "Local files under --out only."
+  }
+}

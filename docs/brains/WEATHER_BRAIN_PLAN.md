@@ -92,6 +92,50 @@ Window: 60 days from activation, all lakes with a STEADY/CHANGE history.
 - Also reported (no pass mark): CHANGE-hours per lake per week, the refresh load it would put on Lake and Water Temp.
 A failure produces a `weather-change-thresholds-v2` proposal with its reason and a new knowledge release; v1 results are kept.
 
+### 5.4 Amendment 2026-11-23: retrospective grading on past data (WX-RETRO-2026-11-23.5)
+§5 waits for activation because the NWS observation API keeps about 7 days. The same METAR reports are archived by the Iowa
+Environmental Mesonet, and WPC coded surface bulletins are archived as NWS text products, so §5.2 and §5.3 can also be graded **now** on
+a past window by replaying the Brain's own pure logic (`reading.assemble`, `signal.evaluate`) at hourly instants. The protocol was
+pre-registered and hashed before any data was fetched:
+[`weather-retro-validation/WX-RETRO-2026-11-23.5.protocol.json`](weather-retro-validation/WX-RETRO-2026-11-23.5.protocol.json)
+(sha256 `2133b04e9c65d3a10a9a878a92ea206fa1c0745b0023613cf0a74f2ed6f66386`, committed alone in `faafe95c`). It supersedes `.4`
+(`55f850ef…`, superseded to adopt the shared run ledger), `.3` (`492c1bef…`), `.2` (`01eac7bc…`) and v1 (`6e08d42e…`). All four were
+superseded before any data. They are kept byte-identical, and the runner refuses them. Runner: `tools/research/weather_retro_validation.py`.
+
+- **Design rule:** the graded population and every input are **bound before any comparison**, and **every exclusion counts against the Brain**.
+  - **Binding.** Each fetch step writes its own write-once folder in one run folder and takes the station list only from the recorded `stations.json`. A separate `bind` step then writes a write-once `run-manifest.json` from provenance, hashes, timestamps and row presence only. It fixes:
+    - every input file with its sha256;
+    - every fetch failure;
+    - each lake's exclusion, or its independent station (with the fallback rule);
+    - the population of every criterion.
+  - **`grade`** refuses unless the files on disk match the manifest exactly. It cannot add or remove a lake.
+  - **Exclusions count against the Brain.** Each criterion needs ≥ 0.75 of the directory's lakes bound to it, or it is FAIL (COVERAGE_BELOW_MINIMUM).
+  - **Run ledger.** The shared protocol run ledger (`tools/research/protocol_run_ledger.py`, #251) records every step:
+    - **Setup:** it is opened with `Ledger.for_brain('weather', …)`, and every step uses the fixed key `directory`.
+    - **Result step:** `grade` is the only result step. `bind` never compares values.
+    - **Public records on #51:** a `Run anchor:` comment is posted before any step, and `grade` posts `Run start:` and `Run result:` records.
+    - **Input binding:** `bind` binds the manifest and stage trees with `bind_inputs`, and `grade` checks them with `check_inputs`.
+    - **Counting:** only the ledger's counted first `grade` counts.
+- **Same marks** as §5.2–§5.3; windows 2026-11-05→11-19 (R-5.1R), 2026-10-20→11-19 (5.2), 2026-09-20→11-19 (5.3), all UTC.
+  POD is graded on **all** truth events (a miss while the Brain had no data counts); evaluable-only POD is a labelled secondary.
+- **Unknowns count against the Brain (owner rule).** A null Brain 3 h trend is a disagreement. Truth-side gaps are excluded and counted, for the trend and for both MAEs.
+  Brain availability is reported with every instant in the denominator.
+- **Station rule as the Brain selects it.** The Brain uses the first 3 NWS-listed stations. The independent station is the nearest other NWS-listed station within 25 mi and at least 3 mi from every Brain station.
+- **Added by the amendment (not in §5), each labelled in the protocol's `amendmentAdditions`:**
+  - **R-SUB.** The archive must reproduce the NWS API's reports for the last 7 days, for every input a criterion uses.
+    - It checks values, null-versus-value and wet-conditioned agreement.
+    - Failed or contemporaneity-breaking fetches are bound in the manifest.
+    - A metric that does not pass blocks PASS for the criteria that use it.
+  - **R-5.1R**, a replay self-consistency check. It is **not** §5.1.
+  - **RAIN_ONSET truth and merging:** the truth-onset definition and the 2 h event merge.
+  - **5.3 minimum sample:** 30 truth and 30 Brain events per kind, from 10 lakes.
+  - **Front truth:** WPC bulletins at 0.1° only, chosen by latest issuance. Brain fronts with no eligible analysis within ±3 h are left out of FAR.
+  - **Disclosed fixtures:** the Brain's recorded test fixtures (2026-11-06, Guntersville and Champlain) fall inside the windows. Their span is excluded, including overlapping front episodes and any wet report inside it.
+- **Not replayed:** RAIN_EXPECTED, cloud cover and WATCH shares. No archive of the NWS forecast grid exists.
+- **What it cannot do:** it does not test the live publication path. §5.1 on published values, and a prospective WX-001 window, remain
+  required. How retrospective results map to `/validation/weather` is an owner decision (protocol `resultStates.rubricMapping`); nothing
+  here writes that node or changes a score.
+
 ## 6. Rollout (each owner step is separate; none is done by this PR)
 
 0. **This PR.** Package, contract, tests, Publisher registration and control-manifest entry with `activityState PARKED`,
