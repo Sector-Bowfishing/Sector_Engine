@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
-"""Weather Brain retrospective validation: read-only runner for protocol WX-RETRO-2026-11-23.4 (gaps WX-001, WX-002).
+"""Weather Brain retrospective validation: read-only runner for protocol WX-RETRO-2026-11-23.5 (gaps WX-001, WX-002).
 
-The protocol (docs/brains/weather-retro-validation/WX-RETRO-2026-11-23.4.protocol.json; .3, .2 and v1 are SUPERSEDED, refused and never run) amends WEATHER_BRAIN_PLAN.md section 5 to grade
+The protocol (docs/brains/weather-retro-validation/WX-RETRO-2026-11-23.5.protocol.json; .4, .3, .2 and v1 are SUPERSEDED, refused and never run) amends WEATHER_BRAIN_PLAN.md section 5 to grade
 the same criteria on a PAST window. It was pre-registered and hashed before any data was fetched. This runner replays the Brain's own
 pure logic (sector_weather.reading.assemble, sector_weather.signal.evaluate) on archived station reports. It only reads public sources and
-writes local files only inside the run folder (--run) and the run log (--run-log). It never writes Firebase or any database, never changes a score, rubric, knowledge release or schedule.
+writes local files only inside the run folder (--run) and, through the shared protocol run ledger (protocol_run_ledger.py, #251), the
+ledger under the Weather research root. It never writes Firebase or any database, never changes a score, rubric, knowledge release or schedule.
 
     verify            check the protocol's sha256 against the committed sidecar
+    ledger-anchor     --run R: open the run ledger and print the anchor text; post it on Sector_Ops #51 BEFORE any other step
     fetch-stations    --run R: lake directory + NWS /points and station lists (the Brain's own station selection) -> R/stations/
     fetch-asos        --run R: IEM ASOS/AWOS archive per station for the protocol window -> R/asos/
     fetch-recent      --run R: per station, back to back, IEM archive and NWS observation API for the last 7 days -> R/recent/
     fetch-fronts      --run R: WPC coded surface bulletins (CODSUS) from the IEM text-product archive -> R/fronts/
-    bind              --run R: write-once R/run-manifest.json; fixes inputs, failures, exclusions and populations; NO comparison
-    grade             --run R --run-log L: refuses unless disk == manifest; logs START, grades, writes R/report.json, logs RESULT
-Every output is write-once; the station list comes only from R/stations/stations.json (protocol designRule, binding, runLog).
+    bind              --run R: write-once R/run-manifest.json and ledger bind_inputs for grade; NO comparison
+    grade             --run R: check_inputs + exact disk match; begin, wait for the posted `Run start:`, grade, complete, wait for the
+                      posted `Run result:`; writes R/report.json and R/ledger-audit.json
+Every step is a ledger step with the fixed key 'directory' and runs once (protocol runLedger). Every run-folder output is write-once; the
+station list comes only from R/stations/stations.json.
 """
 from __future__ import annotations
 
@@ -35,7 +39,7 @@ from datetime import datetime, timedelta, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
-for _p in (os.path.join(REPO, "brains", "weather", "runtime"), os.path.join(REPO, "jobs", "brain_platform")):
+for _p in (HERE, os.path.join(REPO, "brains", "weather", "runtime"), os.path.join(REPO, "jobs", "brain_platform")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
@@ -44,19 +48,21 @@ from sector_weather.nws import LAYER_PCT, Obs, decode_observations, decode_point
 from sector_weather.publish import _miles  # noqa: E402
 from sector_weather.reading import assemble, tendency  # noqa: E402
 from sector_weather.signal import evaluate  # noqa: E402
+import protocol_run_ledger as PRL  # noqa: E402  (shared run ledger, #251)
 
-PROTOCOL = os.path.join(REPO, "docs", "brains", "weather-retro-validation", "WX-RETRO-2026-11-23.4.protocol.json")
-EXPECTED_PROTOCOL_ID = "WX-RETRO-2026-11-23.4"
+PROTOCOL = os.path.join(REPO, "docs", "brains", "weather-retro-validation", "WX-RETRO-2026-11-23.5.protocol.json")
+EXPECTED_PROTOCOL_ID = "WX-RETRO-2026-11-23.5"
 SUPERSEDED_SHA256 = {"6e08d42ed7e808a7a9775e885f865233e7ba2bb2279e4fbb8e0171634ed37ab8",   # WX-RETRO-2026-11-23
                      "01eac7bc56033154dcf64ee365826a0da1c4d33cd921cec7ec76e79df48eb58c",   # WX-RETRO-2026-11-23.2
-                     "492c1befe2707ce559c5999da7931548e69728c9fffadf16524813efdb5ec7c7"}   # WX-RETRO-2026-11-23.3
+                     "492c1befe2707ce559c5999da7931548e69728c9fffadf16524813efdb5ec7c7",   # WX-RETRO-2026-11-23.3
+                     "55f850efe9ebd6dc972df59152667b99a5c49dc26cd87263b049c4ea3e9f314d"}   # WX-RETRO-2026-11-23.4
 LABELS = ["INTERNAL_EXPERIMENTAL", "NOT_FOR_CUSTOMERS", "RETROSPECTIVE"]
 ALLOWED_HOSTS = {"api.weather.gov", "mesonet.agron.iastate.edu", "sector-engine-e43utajroa-uc.a.run.app"}
 ENGINE = "https://sector-engine-e43utajroa-uc.a.run.app"
 IEM_ASOS = "https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py"
 IEM_AFOS = "https://mesonet.agron.iastate.edu/cgi-bin/afos/retrieve.py"
 NWS = "https://api.weather.gov"
-USER_AGENT = os.environ.get("SECTOR_WEATHER_USER_AGENT") or "Sector-WeatherRetroValidation/0.4 (io.sector.co; read-only public data)"
+USER_AGENT = os.environ.get("SECTOR_WEATHER_USER_AGENT") or "Sector-WeatherRetroValidation/0.5 (io.sector.co; read-only public data)"
 KT_TO_MPH = 1.150779
 INDEPENDENT_MAX_MI = 25.0
 FRONT_MAX_MI = 50.0
@@ -66,6 +72,12 @@ MI_PER_DEG_LAT = 69.05
 MIN_SEPARATION_MI = 3.0
 COVERAGE_MIN = 0.75                                                    # protocol exclusionsCountAgainst.minimum
 CRITERIA = ("R-5.1R", "R-5.2", "RAIN_ONSET", "FRONT_PASSAGE")
+# protocol runLedger: the declared result step, the ledger's Brain folder and the one key every step uses (fixed, never derived)
+RESULT_STEPS = frozenset({"grade"})                                     # bind is not result-defining: it never compares values
+LEDGER_BRAIN = "weather"
+KEY = "directory"
+FETCH_STEPS = {"stations": "fetch-stations", "asos": "fetch-asos", "recent": "fetch-recent", "fronts": "fetch-fronts"}
+POLL_S = 30                                                             # wait between confirm retries ("not listed yet": never repost)
 
 
 # ----------------------------------------------------------------------------------------------------------------- protocol
@@ -245,22 +257,65 @@ def load_stations(run: str) -> tuple[dict, str]:
     return json.load(open(f)), digest
 
 
+def open_ledger(run: str) -> "PRL.Ledger":
+    """The protocol's run ledger (protocol runLedger.open). Tests replace this function; runners never pass another root."""
+    _, digest = load_protocol()
+    return PRL.Ledger.for_brain(LEDGER_BRAIN, EXPECTED_PROTOCOL_ID, digest, repo=REPO, forbid_under=[run], result_steps=RESULT_STEPS,
+                                cortex_home=os.environ.get(PRL.ENV_CORTEX))
+
+
+def _completed_outputs(L, step: str) -> dict:
+    """Outputs of the COMPLETED non-result ledger step (step, KEY); refused when the step has not completed."""
+    done = [e for e in L.entries() if e["step"] == step and e["key"] == KEY and e["status"] == PRL.COMPLETED]
+    if not done:
+        raise SystemExit(f"REFUSED: ledger step {step}/{KEY} has not completed; run it first")
+    return done[0]["outputs"]
+
+
+def _require_stage(L, run: str, stage: str) -> str:
+    """The stage folder's sha256-tree, refused unless it equals the output its fetch step completed with in the ledger."""
+    want = _completed_outputs(L, FETCH_STEPS[stage]).get(stage)
+    have = PRL.sha256_tree(os.path.join(run, stage))
+    if have != want:
+        raise SystemExit(f"REFUSED: {stage}/ is {have}, but {FETCH_STEPS[stage]} completed with {want}")
+    return have
+
+
+def _ledger_step(run: str, step: str, inputs: dict, work) -> int:
+    """A non-result ledger step: begin (anchor checked by the ledger), work, complete with the stage tree hash. An exception before
+    complete aborts the attempt (nothing compared) and is re-raised; the stage folder stays, so the step cannot be redone in this run."""
+    L = open_ledger(run)
+    L.begin(step, KEY, args={}, inputs=inputs)
+    try:
+        outputs = work()
+    except BaseException as e:
+        L.abort_before_result(step, KEY, f"{type(e).__name__}: {e}"[:500] or "aborted")
+        raise
+    L.complete(step, KEY, outputs=outputs)
+    return 0
+
+
+def cmd_ledger_anchor(a) -> int:
+    L = open_ledger(a.run)
+    print(L.post_anchor_text())
+    return 0
+
+
 def cmd_fetch_stations(a) -> int:
     load_protocol()
-    d = _new_stage(a.run, "stations")
+    if os.path.exists(os.path.join(a.run, "stations")):
+        raise SystemExit(f"REFUSED: {a.run}/stations exists; every run output is write-once")
+    return _ledger_step(a.run, "fetch-stations", {}, lambda: _fetch_stations(a.run))
+
+
+def _fetch_stations(run: str) -> dict:
+    d = _new_stage(run, "stations")
     http = Http(pace_s=0.25)
-    if a.directory:
-        raw = open(a.directory, "rb").read()
-        src = f"file:{os.path.basename(a.directory)}"
-    else:
-        raw = http.get(f"{ENGINE}/lakes", "application/json")
-        src = f"{ENGINE}/lakes"
+    raw = http.get(f"{ENGINE}/lakes", "application/json")
+    src = f"{ENGINE}/lakes"
     body = json.loads(raw)
     directory = body["lakes"]
-    ids = [x for x in (a.lakes or "").split(",") if x]
-    lakes = [l for l in directory if not ids or l["id"] in ids]
-    if a.limit:
-        lakes = lakes[: a.limit]
+    lakes = list(directory)
     out = []
     for lake in lakes:
         e = {"id": lake["id"], "lat": lake["lat"], "lon": lake["lon"]}
@@ -279,13 +334,13 @@ def cmd_fetch_stations(a) -> int:
     count = body.get("count", len(directory))
     doc = {"labels": LABELS, "createdAt": _now_iso(), "directory": {"count": count, "listed": len(directory), "sha256": sha256_bytes(raw),
                                                                   "source": src},
-           "subset": bool(ids or a.limit) or len(out) != count, "lakes": out}
+           "subset": len(out) != count, "lakes": out}
     prov = []
     _save(d, "stations.json", json.dumps(doc, indent=1).encode(), prov, src)
     _write_prov(d, prov)
     print(json.dumps({"lakes": len(out), "status": {s: sum(1 for x in out if x["status"] == s) for s in ("OK", "BLOCKED", "ERROR")},
                       "requests": http.requests, "subset": doc["subset"]}))
-    return 0
+    return {"stations": PRL.Path(d)}
 
 
 def station_sets(stations_doc: dict) -> tuple[list[str], list[str]]:
@@ -313,9 +368,20 @@ def iem_params(station: str, frm: datetime, to: datetime) -> list[tuple[str, str
 
 
 def cmd_fetch_asos(a) -> int:
-    p, _ = load_protocol()
+    load_protocol()
     doc, _ = load_stations(a.run)
-    d = _new_stage(a.run, "asos")
+    if os.path.exists(os.path.join(a.run, "asos")):
+        raise SystemExit(f"REFUSED: {a.run}/asos exists; every run output is write-once")
+    L = open_ledger(a.run)
+    _require_stage(L, a.run, "stations")
+    return _ledger_step(a.run, "fetch-asos", {"stations": PRL.Path(a.run, "stations")} | {"stations.json": PRL.Path(a.run, "stations", "stations.json")},
+                        lambda: _fetch_asos(a.run))
+
+
+def _fetch_asos(run: str) -> dict:
+    p, _ = load_protocol()
+    doc, _ = load_stations(run)
+    d = _new_stage(run, "asos")
     brain, cand = station_sets(doc)
     frm, to = ts(p["windows"]["archiveFetch"]["from"]), ts(p["windows"]["archiveFetch"]["to"])
     http, prov = Http(pace_s=1.0), []
@@ -327,15 +393,26 @@ def cmd_fetch_asos(a) -> int:
             prov.append({"file": f"window/{s}.csv", "station": s, "kind": "window", "source": url, "error": str(e)[:200], "fetchedAt": _now_iso()})
     _write_prov(d, prov)
     print(json.dumps({"stations": len(brain) + len(cand), "errors": sum(1 for x in prov if "error" in x), "requests": http.requests}))
-    return 0
+    return {"asos": PRL.Path(d)}
 
 
 def cmd_fetch_recent(a) -> int:
+    load_protocol()
+    doc, _ = load_stations(a.run)
+    if os.path.exists(os.path.join(a.run, "recent")):
+        raise SystemExit(f"REFUSED: {a.run}/recent exists; every run output is write-once")
+    L = open_ledger(a.run)
+    _require_stage(L, a.run, "stations")
+    return _ledger_step(a.run, "fetch-recent", {"stations": PRL.Path(a.run, "stations")} | {"stations.json": PRL.Path(a.run, "stations", "stations.json")},
+                        lambda: _fetch_recent(a.run))
+
+
+def _fetch_recent(run: str) -> dict:
     """R-SUB inputs, per station back to back: the IEM archive and the NWS observation API for the same last 7 days (protocol
     substitutionCheck.data). Stations come only from the run's stations.json. Every fetch time and every error is recorded."""
     load_protocol()
-    doc, _ = load_stations(a.run)
-    d = _new_stage(a.run, "recent")
+    doc, _ = load_stations(run)
+    d = _new_stage(run, "recent")
     brain, cand = station_sets(doc)
     iem_http, nws_http, prov = Http(pace_s=1.0), Http(pace_s=0.25), []
     for s in brain + cand:
@@ -354,13 +431,24 @@ def cmd_fetch_recent(a) -> int:
     _write_prov(d, prov)
     print(json.dumps({"stations": len(brain) + len(cand), "errors": sum(1 for x in prov if "error" in x),
                       "requests": iem_http.requests + nws_http.requests}))
-    return 0
+    return {"recent": PRL.Path(d)}
 
 
 def cmd_fetch_fronts(a) -> int:
+    load_protocol()
+    doc, _ = load_stations(a.run)
+    if os.path.exists(os.path.join(a.run, "fronts")):
+        raise SystemExit(f"REFUSED: {a.run}/fronts exists; every run output is write-once")
+    L = open_ledger(a.run)
+    _require_stage(L, a.run, "stations")
+    return _ledger_step(a.run, "fetch-fronts", {"stations": PRL.Path(a.run, "stations")} | {"stations.json": PRL.Path(a.run, "stations", "stations.json")},
+                        lambda: _fetch_fronts(a.run))
+
+
+def _fetch_fronts(run: str) -> dict:
     p, _ = load_protocol()
-    load_stations(a.run)
-    d = _new_stage(a.run, "fronts")
+    load_stations(run)
+    d = _new_stage(run, "fronts")
     frm, to = ts(p["windows"]["frontFetch"]["from"]), ts(p["windows"]["frontFetch"]["to"])
     http, prov = Http(pace_s=1.0), []
     url = IEM_AFOS + "?" + urllib.parse.urlencode({"pil": "CODSUS", "sdate": frm.strftime("%Y-%m-%d"),
@@ -371,7 +459,7 @@ def cmd_fetch_fronts(a) -> int:
         prov.append({"file": "codsus.txt", "kind": "fronts", "source": url, "error": str(e)[:200], "fetchedAt": _now_iso()})
     _write_prov(d, prov)
     print(json.dumps({"requests": http.requests, "errors": sum(1 for x in prov if "error" in x)}))
-    return 0
+    return {"fronts": PRL.Path(d)}
 
 
 def _f(v):
@@ -904,7 +992,7 @@ def _spans(p: dict) -> list[tuple[set, datetime, datetime]]:
     return [(set(x["lakes"]), ts(x["from"]), ts(x["to"])) for x in p.get("excludedSpans") or []]
 
 
-def grade(p: dict, manifest: dict, run: str, run_number: int = 1) -> dict:
+def grade(p: dict, manifest: dict, run: str) -> dict:
     """Grade a BOUND run (protocol designRule): the population, independent stations, exclusions and every input come from the manifest;
     nothing here adds or removes a lake. Every exclusion counts against the Brain through the per-criterion coverage minimum."""
     T = C.THRESHOLDS
@@ -1170,7 +1258,7 @@ def grade(p: dict, manifest: dict, run: str, run_number: int = 1) -> dict:
     else:
         fp = {"result": "NOT_GRADED", "reason": f"fronts {(manifest.get('fronts') or {}).get('status')} (bound in run-manifest.json)"}
 
-    qualifiers = (["SUBSET"] if subset else []) + (["REPEAT_RUN"] if run_number != 1 else [])
+    qualifiers = ["SUBSET"] if subset else []
     directory = max(int(manifest.get("directoryCount") or 0), 1)
 
     def finalise(r, crit, pop_key):
@@ -1187,7 +1275,7 @@ def grade(p: dict, manifest: dict, run: str, run_number: int = 1) -> dict:
         q = []
         if not gate[crit]["ok"]:
             q.append("SUBSTITUTION_UNCERTAIN")
-        if (subset or run_number != 1) and r["result"] in ("PASS", "FAIL"):
+        if subset and r["result"] in ("PASS", "FAIL"):
             r["result"] = "NOT_GRADED"
         elif q and r["result"] == "PASS":
             r["result"] = "NOT_GRADED"
@@ -1206,7 +1294,6 @@ def grade(p: dict, manifest: dict, run: str, run_number: int = 1) -> dict:
     if any("SUBSTITUTION_UNCERTAIN" in x.get("qualifiers", []) for x in (r51, r52, ro, fp)):
         qualifiers = qualifiers + ["SUBSTITUTION_UNCERTAIN"]
     return {"labels": LABELS, "protocolId": protocol_id, "qualifiers": qualifiers, "runId": manifest.get("runId"),
-            "runNumber": run_number, "priorRuns": run_number - 1, "counts": run_number == 1 and not subset,
             "lakes": {"directory": manifest.get("directoryCount"), "inStationsFile": manifest.get("lakesInStations"),
                       "population": manifest.get("population"), "exclusions": manifest.get("exclusions"),
                       "excludedSpans": span_excluded, "independentStations": independents},
@@ -1222,54 +1309,90 @@ def _median(xs):
     return xs[m] if len(xs) % 2 else round((xs[m - 1] + xs[m]) / 2, 2)
 
 
+def grade_inputs(run: str) -> dict:
+    """The files grade is bound to (protocol runLedger.chainOfInputs)."""
+    return {"run-manifest.json": PRL.Path(run, MANIFEST), **{st: PRL.Path(run, st) for st in STAGES}}
+
+
 def cmd_bind(a) -> int:
     p, digest = load_protocol()
     out = os.path.join(a.run, MANIFEST)
     if os.path.exists(out):
         raise SystemExit(f"REFUSED: {out} exists; the binding is write-once")
-    m = bind(p, digest, a.run)
-    with open(out, "x") as fh:
-        json.dump(m, fh, indent=1, sort_keys=True)
-    print(json.dumps({"runId": m["runId"], "subset": m["subset"], "population": m["population"], "directory": m["directoryCount"],
-                      "substitution": m["substitution"]["status"], "fronts": m["fronts"]["status"], "manifestSha256": sha256_file(out)}))
-    return 0
+    L = open_ledger(a.run)
+    trees = {st: _require_stage(L, a.run, st) for st in STAGES}
+
+    def work():
+        m = bind(p, digest, a.run)
+        with open(out, "x") as fh:
+            json.dump(m, fh, indent=1, sort_keys=True)
+        L2 = open_ledger(a.run)
+        L2.bind_inputs("grade", KEY, grade_inputs(a.run))
+        print(json.dumps({"runId": m["runId"], "subset": m["subset"], "population": m["population"], "directory": m["directoryCount"],
+                          "substitution": m["substitution"]["status"], "fronts": m["fronts"]["status"], "manifestSha256": sha256_file(out)}))
+        return {"run-manifest.json": PRL.Path(out)}
+
+    return _ledger_step(a.run, "bind", trees, work)
 
 
-def _log(path: str, entry: dict) -> None:
-    with open(path, "a", encoding="utf-8") as fh:
-        fh.write(json.dumps(entry, sort_keys=True) + "\n")
-        fh.flush()
-        os.fsync(fh.fileno())
+def _post_hook(kind: str, text: str, run: str) -> None:
+    """Write the comment to post (write-once) and tell the operator. The ledger never posts; the session running the protocol posts it on
+    Sector_Ops #51 as a research record (never an Owner header), once, and never edits it. Tests replace this hook."""
+    path = os.path.join(run, f"ledger-{kind}.txt")
+    with open(path, "x") as fh:
+        fh.write(text)
+    print(f"POST THIS ON Sector_Ops #51 NOW (once; never edit it): {path}", file=sys.stderr, flush=True)
+
+
+def _await_confirm(confirm, step: str, max_wait_s: float) -> dict:
+    """Retry the ledger confirm while #51 does not list the comment yet ('not listed yet': wait and retry, never repost)."""
+    waited = 0.0
+    while True:
+        try:
+            return confirm(step, KEY)
+        except PRL.RepeatDetected:
+            raise
+        except PRL.LedgerRefusal as e:
+            if "not listed yet" not in str(e) or (max_wait_s and waited >= max_wait_s):
+                raise
+        time.sleep(POLL_S)
+        waited += POLL_S
 
 
 def cmd_grade(a) -> int:
     p, digest = load_protocol()
-    out = os.path.join(a.run, REPORT)
-    if os.path.exists(out):
-        raise SystemExit(f"REFUSED: {out} exists; reports are write-once")
+    for name in (REPORT, "ledger-audit.json", "ledger-start.txt", "ledger-result.txt"):
+        if os.path.exists(os.path.join(a.run, name)):
+            raise SystemExit(f"REFUSED: {a.run}/{name} exists; grade outputs are write-once")
     mpath = os.path.join(a.run, MANIFEST)
     if not os.path.exists(mpath):
         raise SystemExit("REFUSED: no run-manifest.json (run bind first)")
+    L = open_ledger(a.run)
+    files = grade_inputs(a.run)
+    L.check_inputs("grade", KEY, files)                                  # the manifest and stages bound by bind
     manifest = json.load(open(mpath))
-    verify_run(manifest, digest, a.run)
+    verify_run(manifest, digest, a.run)                                  # and the disk equals the manifest exactly
+    L.begin("grade", KEY, args={}, inputs=files)
+    _post_hook("start", L.start_text("grade", KEY), a.run)
+    _await_confirm(L.confirm_started, "grade", a.max_wait_min * 60)      # before ANY comparison
+    rep = grade(p, manifest, a.run)
     msha = sha256_file(mpath)
-    prior = 0
-    if os.path.exists(a.run_log):
-        prior = sum(1 for ln in open(a.run_log, encoding="utf-8") if ln.strip() and json.loads(ln).get("event") == "START")
-    run_number = prior + 1
-    _log(a.run_log, {"event": "START", "at": _now_iso(), "runNumber": run_number, "runId": manifest["runId"], "manifestSha256": msha,
-                     "protocolSha256": digest})                                    # before any comparison: a crashed run still counts
-    rep = grade(p, manifest, a.run, run_number)
     rep.update({"protocolSha256": digest, "manifestSha256": msha, "release": C.RELEASE.get("releaseId"),
                 "thresholdsVersion": C.THRESHOLDS_VERSION, "gradedAt": _now_iso(),
-                "onlyRunOneCounts": "protocol runLog: only runNumber 1 counts; later runs are NOT_GRADED (REPEAT_RUN)"})
+                "counting": "protocol runLedger.counting: only the ledger's counted COMPLETED grade counts (see ledger-audit.json)"})
+    out = os.path.join(a.run, REPORT)
     with open(out, "x") as fh:
         json.dump(rep, fh, indent=1, sort_keys=True, default=str)
+    L.record_outputs("grade", KEY, {"report.json": PRL.Path(out)})
     results = {k: rep[k]["result"] for k in ("R-SUB", "R-5.1R", "R-5.2")}
     results.update({"RAIN_ONSET": rep["R-5.3"]["RAIN_ONSET"]["result"], "FRONT_PASSAGE": rep["R-5.3"]["FRONT_PASSAGE"]["result"]})
-    _log(a.run_log, {"event": "RESULT", "at": _now_iso(), "runNumber": run_number, "runId": manifest["runId"], "manifestSha256": msha,
-                     "reportSha256": sha256_file(out), "results": results, "qualifiers": rep["qualifiers"]})
-    print(json.dumps(results | {"runNumber": run_number, "qualifiers": rep["qualifiers"], "report": out}))
+    entry = L.complete("grade", KEY, outputs={"report.json": PRL.Path(out)},
+                       result={"results": results, "qualifiers": rep["qualifiers"], "reportSha256": sha256_file(out), "manifestSha256": msha})
+    _post_hook("result", L.result_text("grade", KEY), a.run)
+    _await_confirm(L.confirm_result, "grade", a.max_wait_min * 60)
+    with open(os.path.join(a.run, "ledger-audit.json"), "x") as fh:
+        json.dump(L.audit(check_external=True), fh, indent=1, sort_keys=True, default=str)
+    print(json.dumps(results | {"counted": entry["counted"], "qualifiers": rep["qualifiers"], "report": out}))
     return 0
 
 
@@ -1277,23 +1400,18 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sp = ap.add_subparsers(dest="cmd", required=True)
     sp.add_parser("verify")
-    s = sp.add_parser("fetch-stations")
-    s.add_argument("--run", required=True)
-    s.add_argument("--directory")
-    s.add_argument("--lakes", default="")
-    s.add_argument("--limit", type=int, default=0)
-    for name in ("fetch-asos", "fetch-recent", "fetch-fronts", "bind"):
+    for name in ("ledger-anchor", "fetch-stations", "fetch-asos", "fetch-recent", "fetch-fronts", "bind"):
         s = sp.add_parser(name)
         s.add_argument("--run", required=True)
     s = sp.add_parser("grade")
     s.add_argument("--run", required=True)
-    s.add_argument("--run-log", required=True, help="append-only JSON-lines run log in the research folder (protocol runLog)")
+    s.add_argument("--max-wait-min", type=float, default=0, help="stop waiting for a posted #51 record after this many minutes (0 = wait)")
     a = ap.parse_args(argv)
     if a.cmd == "verify":
         _, d = load_protocol()
         print(f"OK protocol sha256 {d}")
         return 0
-    return {"fetch-stations": cmd_fetch_stations, "fetch-asos": cmd_fetch_asos, "fetch-recent": cmd_fetch_recent,
+    return {"ledger-anchor": cmd_ledger_anchor, "fetch-stations": cmd_fetch_stations, "fetch-asos": cmd_fetch_asos, "fetch-recent": cmd_fetch_recent,
             "fetch-fronts": cmd_fetch_fronts, "bind": cmd_bind, "grade": cmd_grade}[a.cmd](a)
 
 

@@ -5,5 +5,5 @@
 workspace `weather-brain`, never to Git.
 
 Retrospective grading of the same criteria on a past window (plan §5.4) is pre-registered in
-[`docs/brains/weather-retro-validation/`](../../../docs/brains/weather-retro-validation/) (protocol `WX-RETRO-2026-11-23.4`, hashed before any
-data was fetched; .3, .2 and v1 superseded and refused) with a draft Mac mini request. Its runner is `tools/research/weather_retro_validation.py`; the runtime never reads either.
+[`docs/brains/weather-retro-validation/`](../../../docs/brains/weather-retro-validation/) (protocol `WX-RETRO-2026-11-23.5`, hashed before any
+data was fetched; .4, .3, .2 and v1 superseded and refused; run ledger `tools/research/protocol_run_ledger.py`) with a draft Mac mini request. Its runner is `tools/research/weather_retro_validation.py`; the runtime never reads either.

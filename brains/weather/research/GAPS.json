@@ -10,7 +10,7 @@
    "bowfisherDecision": "Whether the Barometric Pressure and Air Temperature tiles, and the change signal built on them, describe the water the bowfisher is on.",
    "currentEvidence": [
     "Engine adapter recordings 2026-11-06 (3 lakes, one moment)",
-    "retrospective protocol WX-RETRO-2026-11-23.4 pre-registered 2026-11-23 (plan section 5.4; .3, .2 and v1 superseded before any data); not yet run"
+    "retrospective protocol WX-RETRO-2026-11-23.5 pre-registered 2026-11-23 (plan section 5.4; .4, .3, .2 and v1 superseded before any data); not yet run (blocked until Cortex resolves research-path weather, CG-3.1-26)"
    ],
    "stopCondition": "Stop when the pre-registered comparison in docs/brains/WEATHER_BRAIN_PLAN.md section 5 is scored on its 30-day window.",
    "expectedOutput": "Scored comparison report with pass/fail per pre-registered criterion.",
@@ -30,7 +30,7 @@
    "bowfisherDecision": "Whether the water-level and water-temperature readings a bowfisher sees were refreshed when the weather turned.",
    "currentEvidence": [
     "none (hand-built test cases only)",
-    "retrospective protocol WX-RETRO-2026-11-23.4 pre-registered 2026-11-23 (plan section 5.4; .3, .2 and v1 superseded before any data); not yet run"
+    "retrospective protocol WX-RETRO-2026-11-23.5 pre-registered 2026-11-23 (plan section 5.4; .4, .3, .2 and v1 superseded before any data); not yet run (blocked until Cortex resolves research-path weather, CG-3.1-26)"
    ],
    "stopCondition": "Stop after 60 days of CHANGE events are compared with NWS surface-analysis front positions and observed rain (plan section 5.3).",
    "expectedOutput": "Hit rate and false-alarm rate per event kind; a thresholds-v2 proposal only if a pre-registered criterion fails.",

@@ -1,4 +1,4 @@
-"""Offline tests for the Weather retrospective validation runner (protocol WX-RETRO-2026-11-23.4; .3, .2 and v1 superseded). No network: every input is a fixture.
+"""Offline tests for the Weather retrospective validation runner (protocol WX-RETRO-2026-11-23.5; .4, .3, .2 and v1 superseded). No network: every input is a fixture.
 Synthetic archive rows are labelled SYNTHETIC; the NWS responses are the Weather Brain's RECORDED fixtures of 2026-11-06."""
 import copy
 import json
@@ -6,6 +6,7 @@ import os
 import shutil
 import sys
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import pytest
 
@@ -26,7 +27,7 @@ def rec(name):
 # ------------------------------------------------------------------------------------------------ protocol
 def test_protocol_hash_verifies_and_matches_the_registered_value():
     p, d = W.load_protocol()
-    assert p["protocolId"] == "WX-RETRO-2026-11-23.4"
+    assert p["protocolId"] == "WX-RETRO-2026-11-23.5"
     assert "BOUND before any comparison" in p["designRule"] and "every exclusion counts against the Brain" in p["designRule"]
     assert d == open(W.PROTOCOL + ".sha256").read().split()[0]
     assert p["status"] == "PRE-REGISTERED" and "RETROSPECTIVE" in p["labels"]
@@ -36,7 +37,8 @@ def test_superseded_protocols_are_kept_unchanged_and_refused():
     d = os.path.dirname(W.PROTOCOL)
     for name, digest in (("WX-RETRO-2026-11-23.protocol.json", "6e08d42ed7e808a7a9775e885f865233e7ba2bb2279e4fbb8e0171634ed37ab8"),
                          ("WX-RETRO-2026-11-23.2.protocol.json", "01eac7bc56033154dcf64ee365826a0da1c4d33cd921cec7ec76e79df48eb58c"),
-                         ("WX-RETRO-2026-11-23.3.protocol.json", "492c1befe2707ce559c5999da7931548e69728c9fffadf16524813efdb5ec7c7")):
+                         ("WX-RETRO-2026-11-23.3.protocol.json", "492c1befe2707ce559c5999da7931548e69728c9fffadf16524813efdb5ec7c7"),
+                         ("WX-RETRO-2026-11-23.4.protocol.json", "55f850efe9ebd6dc972df59152667b99a5c49dc26cd87263b049c4ea3e9f314d")):
         path = os.path.join(d, name)
         assert W.sha256_file(path) == digest == open(path + ".sha256").read().split()[0]   # byte-identical
         with pytest.raises(SystemExit, match="SUPERSEDED"):
@@ -47,7 +49,7 @@ def test_superseded_protocols_are_kept_unchanged_and_refused():
 
 def test_a_protocol_with_another_id_or_superseded_status_is_refused(tmp_path):
     p = json.load(open(W.PROTOCOL))
-    for change, msg in (({"protocolId": "WX-RETRO-2026-11-23.5"}, "is not"), ({"status": "SUPERSEDED"}, "SUPERSEDED")):
+    for change, msg in (({"protocolId": "WX-RETRO-2026-11-23.6"}, "is not"), ({"status": "SUPERSEDED"}, "SUPERSEDED")):
         f = tmp_path / f"p{len(msg)}.json"
         f.write_text(json.dumps(p | change))
         (tmp_path / (f.name + ".sha256")).write_text(W.sha256_file(str(f)) + "  x\n")
@@ -331,8 +333,8 @@ class Run:
     def bind(self):
         return W.bind(self.p, self.sha, self.run)
 
-    def grade(self, run_number=1):
-        return W.grade(self.p, self.bind(), self.run, run_number)
+    def grade(self):
+        return W.grade(self.p, self.bind(), self.run)
 
 
 START = datetime(2026, 11, 9, 10, 53, tzinfo=UTC)
@@ -468,42 +470,174 @@ def test_fetch_steps_take_stations_only_from_the_recorded_stations_json(tmp_path
         W._new_stage(R.run, "asos")                                                          # write-once stage folders
 
 
-# ------------------------------------------------------------------------------------------------ grade: exact disk match, run log, write-once
-def _cli_run(tmp_path, name="run"):
-    """A real-protocol run folder with one BLOCKED lake (nothing to grade), for the CLI gates."""
-    R = Run(tmp_path / name, real_protocol=True)
+# ------------------------------------------------------------------------------------------------ the shared run ledger (#251), #51 mocked
+class Issue:
+    """A fake Sector_Ops #51 behind `gh api --paginate` (no network)."""
+
+    def __init__(self):
+        self.comments, self.next_id = [], 1000
+        self.clock = datetime(2000, 1, 1, tzinfo=UTC)
+        self.lag = 0                                                         # the next `lag` listings hide the newest comment
+
+    def post(self, body):
+        self.clock += timedelta(minutes=1)
+        t = self.clock.strftime("%Y-%m-%dT%H:%M:%SZ")
+        self.comments.append({"id": self.next_id, "created_at": t, "updated_at": t, "body": body,
+                              "html_url": f"https://example.invalid/51#c{self.next_id}"})
+        self.next_id += 1
+
+    def __call__(self, path):
+        assert path.endswith("/issues/51/comments?per_page=100"), path
+        listed = self.comments
+        if self.lag:
+            self.lag -= 1
+            listed = self.comments[:-1]
+        return json.dumps(listed)
+
+
+@pytest.fixture
+def ledgered(tmp_path, monkeypatch):
+    """open_ledger -> a Ledger under a scratch research root with a fake #51; the runner's post hook posts on the fake issue."""
+    monkeypatch.delenv(W.PRL.ENV_ROOT, raising=False)
+    monkeypatch.setattr(W.PRL, "_gh_api", lambda path: (_ for _ in ()).throw(AssertionError("real gh reached")))
+    root = tmp_path / "Sector Research" / "weather-brain"
+    root.mkdir(parents=True)
+    issue = Issue()
+    _, sha = W.load_protocol()
+
+    def open_ledger(run):
+        return W.PRL.Ledger(root, W.EXPECTED_PROTOCOL_ID, sha, forbid_under=[run], result_steps=W.RESULT_STEPS, gh=issue)
+
+    posted = []
+
+    def hook(kind, text, run):
+        posted.append(kind)
+        issue.post(text)
+    monkeypatch.setattr(W, "open_ledger", open_ledger)
+    monkeypatch.setattr(W, "_post_hook", hook)
+    monkeypatch.setattr(W, "POLL_S", 0)
+    return {"issue": issue, "open": open_ledger, "posted": posted, "root": root}
+
+
+def _anchor(ledgered, run):
+    L = ledgered["open"](run)
+    ledgered["issue"].post(L.post_anchor_text())
+    return L
+
+
+def _fetched(ledgered, R):
+    """Record the four fetch steps in the ledger for a run folder the Run builder wrote (what the fetch commands do around their work)."""
+    L = ledgered["open"](R.run)
+    for stage, step in W.FETCH_STEPS.items():
+        L.begin(step, W.KEY, args={}, inputs={} if stage == "stations" else {"stations": Path(R.run, "stations")})
+        L.complete(step, W.KEY, outputs={stage: Path(R.run, stage)})
+
+
+def _real_run(tmp_path):
+    R = Run(tmp_path, real_protocol=True)
     R.lakes = [{"id": "Nowhere|XX", "lat": 0, "lon": 0, "status": "BLOCKED"}]
     R.brain = []
-    R.build()
+    return R.build()
+
+
+def test_the_ledger_declares_grade_as_the_only_result_step():
+    p, _ = W.load_protocol()
+    assert W.RESULT_STEPS == frozenset({"grade"}) and W.KEY == "directory" and W.LEDGER_BRAIN == "weather"
+    assert "bind is NOT result-defining" in p["runLedger"]["resultSteps"] and "'directory'" in p["runLedger"]["stepsAndKeys"]
+
+
+def test_every_step_refuses_before_the_anchor(tmp_path, ledgered):
+    run = str(tmp_path / "run")
+    with pytest.raises(W.PRL.LedgerRefusal, match="anchor"):
+        W.main(["fetch-stations", "--run", run])                             # refused at begin(), before any network
+    assert not os.path.exists(os.path.join(run, "stations"))
+
+
+def test_bind_and_grade_follow_the_ledger_and_post_start_and_result_once(tmp_path, ledgered):
+    R = _real_run(tmp_path)
+    _anchor(ledgered, R.run)
+    _fetched(ledgered, R)
     assert W.main(["bind", "--run", R.run]) == 0
-    return R
-
-
-def test_grade_refuses_when_disk_differs_from_the_manifest(tmp_path):
-    R = _cli_run(tmp_path)
-    open(os.path.join(R.run, "fronts", "codsus.txt"), "a").write("VALID 111015Z\n")
-    with pytest.raises(SystemExit, match="differ from run-manifest"):
-        W.main(["grade", "--run", R.run, "--run-log", str(tmp_path / "RUNS.jsonl")])
+    assert W.main(["grade", "--run", R.run]) == 0
+    assert ledgered["posted"] == ["start", "result"]
+    rep = json.load(open(os.path.join(R.run, "report.json")))
+    assert rep["protocolId"] == "WX-RETRO-2026-11-23.5" and "counting" in rep
+    audit = json.load(open(os.path.join(R.run, "ledger-audit.json")))
+    assert audit["result_steps"] == ["grade"] and audit["findings"] == []
+    g = [s_ for s_ in audit["steps"] if s_["step"] == "grade"]
+    assert len(g) == 1 and g[0]["counted"] is True
+    L = ledgered["open"](R.run)
+    assert L.first("grade", W.KEY)["counted"] is True
     with pytest.raises(SystemExit, match="write-once"):
+        W.main(["grade", "--run", R.run])
+    os.remove(os.path.join(R.run, "report.json"))                          # even with the report gone, the ledger refuses a re-run
+    for f in ("ledger-audit.json", "ledger-start.txt", "ledger-result.txt"):
+        if os.path.exists(os.path.join(R.run, f)):
+            os.remove(os.path.join(R.run, f))
+    with pytest.raises(W.PRL.LedgerRefusal, match="already ran"):
+        W.main(["grade", "--run", R.run])
+
+
+def test_grade_refuses_inputs_that_changed_after_bind(tmp_path, ledgered):
+    R = _real_run(tmp_path)
+    _anchor(ledgered, R.run)
+    _fetched(ledgered, R)
+    W.main(["bind", "--run", R.run])
+    open(os.path.join(R.run, "fronts", "codsus.txt"), "a").write("VALID 111015Z\n")
+    with pytest.raises(W.PRL.LedgerRefusal, match="changed since it was bound"):
+        W.main(["grade", "--run", R.run])
+    assert ledgered["posted"] == []                                          # nothing started
+
+
+def test_bind_refuses_a_stage_that_differs_from_its_completed_fetch(tmp_path, ledgered):
+    R = _real_run(tmp_path)
+    _anchor(ledgered, R.run)
+    _fetched(ledgered, R)
+    open(os.path.join(R.run, "asos", "provenance.json"), "a").write(" ")
+    with pytest.raises(SystemExit, match="completed with"):
         W.main(["bind", "--run", R.run])
 
 
-def test_run_log_only_run_one_counts_and_reports_are_write_once(tmp_path):
-    log = str(tmp_path / "RUNS.jsonl")
-    R1 = _cli_run(tmp_path, "r1")
-    assert W.main(["grade", "--run", R1.run, "--run-log", log]) == 0
-    rep1 = json.load(open(os.path.join(R1.run, "report.json")))
-    assert rep1["runNumber"] == 1 and rep1["priorRuns"] == 0 and "REPEAT_RUN" not in rep1["qualifiers"]
-    with pytest.raises(SystemExit, match="write-once"):
-        W.main(["grade", "--run", R1.run, "--run-log", log])
-    R2 = _cli_run(tmp_path, "r2")
-    assert W.main(["grade", "--run", R2.run, "--run-log", log]) == 0
-    rep2 = json.load(open(os.path.join(R2.run, "report.json")))
-    assert rep2["runNumber"] == 2 and "REPEAT_RUN" in rep2["qualifiers"] and rep2["counts"] is False
-    assert all(rep2[k]["result"] in ("NOT_GRADED", "INSUFFICIENT") for k in ("R-5.1R", "R-5.2"))
-    events = [json.loads(x)["event"] for x in open(log)]
-    assert events == ["START", "RESULT", "START", "RESULT"]
-    assert rep1["protocolSha256"] == open(W.PROTOCOL + ".sha256").read().split()[0]
+def test_a_fetch_step_runs_once(tmp_path, ledgered):
+    R = _real_run(tmp_path)
+    _anchor(ledgered, R.run)
+    _fetched(ledgered, R)
+    os.rename(os.path.join(R.run, "fronts"), os.path.join(R.run, "fronts-old"))
+    with pytest.raises(W.PRL.LedgerRefusal, match="already ran"):
+        W.main(["fetch-fronts", "--run", R.run])                            # refused at begin(), before any network
+
+
+def test_not_listed_yet_waits_and_never_reposts(tmp_path, ledgered):
+    R = _real_run(tmp_path)
+    _anchor(ledgered, R.run)
+    _fetched(ledgered, R)
+    W.main(["bind", "--run", R.run])
+    issue = ledgered["issue"]
+    real_post = issue.post
+
+    def lagging_post(body):
+        real_post(body)
+        issue.lag = 2                                                        # the first two listings miss it
+    issue.post = lagging_post
+    assert W.main(["grade", "--run", R.run]) == 0
+    starts = [c for c in issue.comments if c["body"].startswith("Run start:")]
+    assert len(starts) == 1 and ledgered["posted"] == ["start", "result"]
+
+
+def test_a_second_start_record_is_a_repeat(tmp_path, ledgered, monkeypatch):
+    R = _real_run(tmp_path)
+    _anchor(ledgered, R.run)
+    _fetched(ledgered, R)
+    W.main(["bind", "--run", R.run])
+    issue = ledgered["issue"]
+
+    def hook(kind, text, run):
+        issue.post(f"Run start: {W.EXPECTED_PROTOCOL_ID} grade {W.KEY} {'0' * 64}")  # someone else's start, first
+        issue.post(text)
+    monkeypatch.setattr(W, "_post_hook", hook)
+    with pytest.raises(W.PRL.RepeatDetected):
+        W.main(["grade", "--run", R.run])
+    assert not os.path.exists(os.path.join(R.run, "report.json"))           # nothing compared
 
 
 def test_excluded_lakes_count_against_the_brain_through_coverage(tmp_path):
