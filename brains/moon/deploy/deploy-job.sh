@@ -12,6 +12,8 @@
 #   job      $JOB: one task, every directory lake, `run.py --write` (refused inside the job unless the knowledge release is APPROVED
 #            and MOON_WRITE_APPROVED=1; the latter is set here only when the operator passes MOON_WRITE_APPROVED=1).
 #
+#   invoker  MICHAEL_APPROVED_MOON_DEPLOY=yes is also the owner's approval of the one IAM change this script makes: the JOB-LEVEL
+#            roles/run.invoker binding for brain-orchestrator on moon-brain (nothing project-wide, no other role, no other member).
 #   ./deploy-job.sh --stage-only DIR   assemble the build context into DIR and exit (no gcloud; used by the staged-layout test)
 set -euo pipefail
 DEPLOY_DIR="$(cd "$(dirname "$0")" && pwd)"

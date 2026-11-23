@@ -115,7 +115,7 @@ def _iso(h):
 def test_live_write_set_is_fully_declared_and_uses_only_recent_weather(monkeypatch, capsys):
     rc = live(monkeypatch, {"Guntersville|AL": _iso(1), "Lake Champlain|VT": _iso(6)})     # one fresh, one older than 3 h
     out = json.loads(capsys.readouterr().out)
-    assert rc == 0 and out["published"] is True and out["weatherInput"] == {"used": 1, "absent": 0, "tooOld": 1, "noGeneratedAt": 0}
+    assert rc == 0 and out["published"] is True and out["weatherInput"] == {"used": 1, "absent": 0, "tooOld": 1, "future": 0, "noGeneratedAt": 0}
     written = {}
     for p in Recorder.last.patches:
         written.update(p)
@@ -125,3 +125,23 @@ def test_live_write_set_is_fully_declared_and_uses_only_recent_weather(monkeypat
     assert not any(k.endswith("/states/weather") for k in written)                     # Moon reads Weather, never writes it
     basis = {lid: written[f"lakes/{lake_key(lid)}/states/moon"]["darkness"]["basis"] for lid in TWO}
     assert basis["Lake Champlain|VT"] in ("MOON_ONLY", "NO_NIGHT")                           # the stale state was not used
+
+
+def test_read_weather_refuses_future_and_zone_less_times():
+    """A state stamped beyond the 5-min skew in the future is `future`; one without a time zone is `noGeneratedAt` (not `tooOld`)."""
+    import run as R
+    now = dt.datetime(2026, 11, 23, 3, 0, tzinfo=dt.timezone.utc)
+    lakes = ["A|AL", "B|AL", "C|AL", "D|AL", "E|AL", "F|AL"]
+    stamps = {"A|AL": "2026-11-23T02:00:00Z",                 # 1 h old: used
+              "B|AL": "2026-11-23T03:04:00Z",                 # 4 min ahead: within skew, used
+              "C|AL": "2026-11-23T03:06:00Z",                 # 6 min ahead: future
+              "D|AL": "2026-11-23T02:00:00",                  # no zone: noGeneratedAt
+              "E|AL": "2026-11-22T23:00:00Z",                 # 4 h old: tooOld
+              "F|AL": None}                                   # absent
+    tree = {}
+    for lid, at in stamps.items():
+        if at is not None:
+            tree.setdefault("lakes", {}).setdefault(lake_key(lid), {})["states"] = {"weather": {"generatedAt": at}}
+    used, counts = R.read_weather(WR.DryRunWriter(tree), {"lakes": [{"lakeId": l} for l in lakes]}, now)
+    assert set(used) == {"A|AL", "B|AL"}
+    assert counts == {"used": 2, "absent": 1, "tooOld": 1, "future": 1, "noGeneratedAt": 1}

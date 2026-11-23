@@ -31,3 +31,10 @@ All affected suites pass (counts in the PR); Kit V1 certification suites pass; `
 
 ## Closeout (DEV-08)
 One worktree created for this task: `/home/claude/se_wt` (branch above). Kept until the PR merges (its commits are pushed). Scratch only: the extracted Cortex pin and staged build contexts under the session scratchpad (DISPOSABLE). No research data created or downloaded.
+
+## Follow-ups after the #239 review (branch `fix/brain-writers-followups-2026-11-23`, off main 0870651)
+- NWS_PROVIDER.md and WEATHER plan §6.1: the job's point cache is ephemeral today (re-resolved every run); persisting it (Brain DB node or a small GCS object owned by `weather`) is an open owner decision before turn-on step 7. Not implemented.
+- Weather fingerprint: chose to correct the note, not the registry contract. `lastSuccessfulRun` still advances on a run that computed no lake (the Brain-level freshness rule reads it), so Moon re-runs after such a run and skips its unchanged lakes. Pinned by a test.
+- Moon live Weather read: a `generatedAt` more than 5 min in the future is counted `future` and not used; a zone-less time counts as `noGeneratedAt` (was `tooOld`). Tested.
+- Each `deploy-job.sh` header: the owner's deploy approval also covers the job-level `roles/run.invoker` binding for brain-orchestrator.
+- MOON plan §7.1 step 6: check `maxStartsPerCycle` covers every enabled Brain.
