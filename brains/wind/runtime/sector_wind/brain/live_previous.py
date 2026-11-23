@@ -6,7 +6,9 @@ committed later, and the local file stays a cache only.
 
 It reads, through a GET-only view (the Pulse read token; never a writer):
   * brains/wind                                  -> version, lastSuccessfulRun, lastError (as the one-item `errors` list)
-  * lakes/{k}/states/wind/readiness              -> readiness, for each live Wind lake
+  * lakeFleet/{k}/readiness/wind                 -> readiness, for each live Wind lake (the exact field publish() writes; the state object at
+                                                    lakes/{k}/states/wind has no top-level readiness, so reading it found nothing and readiness
+                                                    events were never emitted in read-live mode; fixed 2026-11-23)
   * lakes/{k}/profiles/wind/geometry/tableSha256 -> profileShas, for each nationally profiled lake
 A missing node is "never published" (the field is left out). Any read error raises: the run then seals nothing rather than guess.
 """
@@ -36,7 +38,7 @@ def live_previous(reader):
             raise ValueError(f"brains/{C.BRAIN_ID} is not an object")
         readiness = {}
         for lid in WIND_LAKE_IDS.values():
-            r = view.get(f"lakes/{keys[lid]}/states/{C.SLOT}/readiness")
+            r = view.get(f"lakeFleet/{keys[lid]}/readiness/{C.SLOT}")
             if r is not None:
                 readiness[lid] = r
         shas = {}

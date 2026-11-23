@@ -7,15 +7,27 @@
   "leaseObject": "exports/runners/leases/wind.json",
   "artifactPrefix": "artifacts/wind/",
   "cloudJob": "wind-hourly",
-  "runnerPolicy": {"primary": "pulse"},
-  "watchdog": {"holder": "pulse", "lakes": ["Guntersville_AL", "Wheeler_AL", "Wilson_AL", "Pickwick_Lake_TN"]},
-  "cutover": {"state": "CENTRAL"},
+  "runnerPolicy": {
+    "primary": "pulse"
+  },
+  "watchdog": {
+    "holder": "pulse",
+    "lakes": [
+      "Guntersville_AL",
+      "Wheeler_AL",
+      "Wilson_AL",
+      "Pickwick_Lake_TN"
+    ]
+  },
+  "cutover": {
+    "state": "CENTRAL"
+  },
   "blockers": [
     "the 7-day shadow equivalence (Sector_Ops #49): where it runs (the cloud plan restarts the legacy writer, against 'no cloud runs until Pulse works'; on Pulse it needs a redesign: there is no legacy write to compare with)",
     "archive continuity: the Mac mini's local Wind archive vs gs://sector-wind-candidate/wind/v1 (the previous-state bookkeeping)",
     "knowledge release approval for wind not recorded; Engine #90 and a new knowledge release; the lifecycle the artifact declares",
     "the app wind source decisions WS-1..WS-4 (customer-visible, separate)",
-    "W-H2 code: Wind's own change detection (brain/wind/last_publish.json) advances when the artifact is sealed; a hand-off the central path later refuses must not advance it (a commit-after-acceptance step). A run that hands nothing off already restores it",
+    "W-H2 (D2) Engine side done 2026-11-23: artifact_entry.py refuses a hand-off (--emit) without --read-rtdb, a read-live seal never advances the local bookkeeping, and live_previous reads readiness from lakeFleet/{k}/readiness/wind (the field publish() writes). Still open, code in Sector-Pulse: the wind-central catalog entry must pass --read-rtdb and the brain-rtdb-read-token credential (BRAIN_ACCESS_TOKEN), as water-clarity-central does; until then wind-central is refused (exit 2) and hands nothing off",
     "W-H3 code/decision: Wind writes lakes/{k}/profiles/wind for every nationally profiled lake (about 50), not only the 4 live lakes: the watchdog lake list must cover them (or the watchdog bounds only the live states), else the first publish halts with PUBLISH_OUTSIDE_LAKES",
     "IAM step W-H1: written on Sector_Ops #51 (private), not applied",
     "Mac mini: power settings so the hourly cycle never sleeps (no sleep/caffeinate guidance in the O1 runbook)",
