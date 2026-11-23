@@ -1,5 +1,5 @@
 """Moon and Night Light publish-artifact builder for Publisher V2 (envelope v2, bundle `moon-publication-v1`). CONTRACT ONLY.
-NOT wired into any write path: the Brain has NO live writer (`run.py --dry-run` builds the write set into an in-memory store only).
+NOT wired into any write path: the Brain's gated live writer is the platform client (`run.py --write`); this bundle is the later CENTRAL path (a Publisher cutover is a separate owner approval).
 
 The unchanged `publish()` computes everything; this module re-expresses its flat update dictionary as ONE sealed bundle through the shared builder
 (`sector_brain_platform.publisher.flat_artifact`). It adds no science and changes no value. Declared here:

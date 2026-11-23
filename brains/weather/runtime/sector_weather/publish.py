@@ -1,7 +1,7 @@
 """Weather Brain run: plan -> fetch -> compute -> write set. The write set is ONE flat multi-path update over Weather-owned paths only
-(the families registered for `weather` in sector_brain_platform.publisher.registry). This version has NO live writer: the write set goes into
-the platform's in-memory DryRunStore (ownership and key checks included) and is dumped to a file. Live publication is a separate owner step
-(WEATHER_BRAIN_PLAN.md §6)."""
+(the families registered for `weather` in sector_brain_platform.publisher.registry). `--dry-run` puts it into the platform's in-memory store
+(ownership and key checks included) and dumps it to a file. `run.py --write` applies the SAME write set through writer.RtdbWriter, and only with
+an APPROVED knowledge release AND WEATHER_WRITE_APPROVED=1; the Brain is registered DISABLED, so nothing starts it (WEATHER_BRAIN_PLAN.md §6)."""
 from __future__ import annotations
 
 import hashlib
@@ -52,7 +52,12 @@ def resolve_point(lake: dict, source, cache, now: datetime) -> dict:
     return e
 
 
-def run(directory: list[dict], source, cache, published: dict, now: datetime, lake_ids: list[str] | None = None) -> dict:
+DRY_RUN_MODE = "DRY_RUN (no live writer in this version)"
+LIVE_MODE = "LIVE: direct platform write (internal CALIBRATION only; Publisher cutover NOT_STARTED)"
+
+
+def run(directory: list[dict], source, cache, published: dict, now: datetime, lake_ids: list[str] | None = None,
+        publish_mode: str = DRY_RUN_MODE) -> dict:
     """-> {updates, states, report}. `published` is lakeId -> the last published state (for the planner); never raises for one lake."""
     now = now.replace(microsecond=0)
     lakes = [l for l in directory if not lake_ids or l["id"] in lake_ids]
@@ -95,7 +100,8 @@ def run(directory: list[dict], source, cache, published: dict, now: datetime, la
     for l in directory:
         ready.setdefault(l["id"], "DISCOVERED")
     return {"states": states, "readiness": ready, "reasons": reasons, "errors": errors,
-            "updates": write_set(directory, states, ready, errors, now, computed={k for k, v in reasons.items() if v != ["not due"]})}
+            "updates": write_set(directory, states, ready, errors, now, computed={k for k, v in reasons.items() if v != ["not due"]},
+                                 publish_mode=publish_mode)}
 
 
 def change_summary(states: dict) -> dict:
@@ -107,7 +113,7 @@ def change_summary(states: dict) -> dict:
             "signature": hashlib.sha256("\n".join(changing).encode()).hexdigest()[:16]}
 
 
-def write_set(directory, states, ready, errors, now, computed) -> dict:
+def write_set(directory, states, ready, errors, now, computed, publish_mode: str = DRY_RUN_MODE) -> dict:
     now_iso = C.iso(now)
     u = {}
     for lid, st in states.items():
@@ -151,7 +157,7 @@ def write_set(directory, states, ready, errors, now, computed) -> dict:
         **({"lastSuccessfulRun": now_iso} if outcome != "FAILED" else {}),
         "lastRunOutcome": {"status": outcome, "at": now_iso, "computedLakeCount": computed_n, "errorCount": len(errors)},
         "lastError": {"at": now_iso, "message": errors[0][:300]} if errors else None,
-        "weatherChange": change_summary(states), "publishMode": "DRY_RUN (no live writer in this version)", "updatedAt": now_iso,
+        "weatherChange": change_summary(states), "publishMode": publish_mode, "updatedAt": now_iso,
     }
     for child, v in reg.items():
         u[f"brains/{C.BRAIN_ID}/{child}"] = v

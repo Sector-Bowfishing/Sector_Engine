@@ -1,8 +1,9 @@
-"""Moon and Night Light DRY-RUN publisher: lake directory (+ optional Weather Brain cloud input) -> Brain RTDB shape, in memory only.
+"""Moon and Night Light publisher: lake directory (+ optional Weather Brain cloud input) -> Brain RTDB shape, through the writer it is given
+(writer.DryRunWriter for --dry-run and tests; writer.RtdbWriter only from `run.py --write`, behind an APPROVED release and MOON_WRITE_APPROVED=1).
 
 Write order mirrors the platform contract: per lake `states/moon` + snapshot -> `lakeFleet` rows -> registry/validation -> health.
-The Brain writes ONLY moon-owned paths (ownership enforced by the writer). `publish()` never raises. There is no live writer: adopting one is a
-Michael decision (customer publication off; execution control disabled)."""
+The Brain writes ONLY moon-owned paths (ownership enforced by the writer). `publish()` never raises. The Brain is registered DISABLED (control
+manifest PARKED, no executor, absent from the execution control); turning it on is the owner checklist in MOON_BRAIN_PLAN.md section 7.1."""
 from __future__ import annotations
 
 import datetime as dt
@@ -34,7 +35,12 @@ def _health(errors: list, evaluated: int) -> str:
     return "HEALTHY" if evaluated else "UNKNOWN"
 
 
-def publish(directory: dict, writer, date: dt.date | None, weather: dict | None = None, now: dt.datetime | None = None) -> dict:
+DRY_RUN_MODE = "dry run only: no live writer"
+LIVE_MODE = "live: direct platform write (internal CALIBRATION only; Publisher cutover not started)"
+
+
+def publish(directory: dict, writer, date: dt.date | None, weather: dict | None = None, now: dt.datetime | None = None,
+            publish_mode: str = DRY_RUN_MODE) -> dict:
     """directory: lakes.load(). date: the evening date for every lake, or None for each lake's own current night
     (night.evening_date(lon, now)). weather: {lakeId: Weather Brain state document} (optional, per lake; sector-brain-weather-state-v1)."""
     now = (now or dt.datetime.now(dt.timezone.utc)).replace(microsecond=0)
@@ -98,7 +104,7 @@ def publish(directory: dict, writer, date: dt.date | None, weather: dict | None 
             "versions": [{"version": C.BRAIN_VERSION, "date": now_iso[:10], "note": "Moon, sun, twilight and on-water darkness; internal only",
                           "status": "CALIBRATION"}],
             "validation": {"ref": f"/validation/{C.BRAIN_ID}", "status": "NOT_VALIDATED"}, "sourceIds": [],
-            "readinessDefinitions": C.READINESS_DEFINITIONS, "updatedAt": now_iso, "publishMode": "dry run only: no live writer",
+            "readinessDefinitions": C.READINESS_DEFINITIONS, "updatedAt": now_iso, "publishMode": publish_mode,
             "scoreNote": C.SCORE_NOTE, "knowledgeRelease": directory.get("release"), "breakdowns": {"darknessClass": dict(classes), "basis": dict(bases), "night": date.isoformat() if date else "per lake: the night containing the run (local solar noon to noon)"},
         }
         writer.patch({f"brains/{C.BRAIN_ID}": reg, f"validation/{C.BRAIN_ID}": {**NOT_VALIDATED, "publishedAt": now_iso}})

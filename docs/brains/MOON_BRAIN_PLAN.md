@@ -96,8 +96,34 @@ The deliberate differences from the app's Moon tile and Darkness label are liste
    - read each lake's Weather state from RTDB with the dependency's freshness rule, instead of the `--weather` file;
    - decide whether moon presence P should use the same remaining span as the cloud (today P covers the whole window, while the cloud covers only the span still ahead at the Weather run). Check the Weather state's age against the dependency's maxAgeHours (`run.py --weather` does not check it today). Report a missing `generatedAt` with its own reason (today it is MALFORMED_HOURLY_ROW);
    - remove the `moon` carve-out in `jobs/brain-orchestrator/tests/test_central_scheduling.py` (`registered_disabled`) so the test again requires an execution path for every manifest Brain.
+   **Prepared 2026-11-23** (branch `feat/brain-writers-weather-moon-generation-2026-11-23`): the gated writer, the live Weather read with the
+   maxAgeHours check, `deploy/`, the inert executor and the after-Weather trigger. What remains is §7.1.
 2. **Weather Brain consumes entry** (MOON-INP-001): done once Weather (#234) reached main. `brain.json` `consumes` lists `{kind: brain, brainId: weather, contractId: weather-publication-v1, requirement: OPTIONAL}`, the control manifest lists an OPTIONAL `weather` dependency (maxAgeHours 3, Weather's own staleAfterHours), and Weather's `authorizedConsumers` include `moon`. What remains is a live read of `/lakes/{k}/states/weather`, which belongs to enablement (§7.1).
 3. **Validate DARKNESS_RULE_V1** against measured on-water illuminance (MOON-VAL-001).
 4. **Per-lake skyglow** (MOON-INP-002).
 5. **Engine event definitions**: whether the Engine and the apps should adopt the USNO altitudes and the noon-to-noon span for the moonrise/sunset they display. That would be a `moon-v2` spec change across iOS, Android and Web.
 6. **Cortex**: Moon is not one of the Cortex target Brains, and its families are not in the Cortex data registry (CG-3.1-19). Cortex is read-only here.
+
+### 7.1 How to turn it on (prepared, all inert today)
+
+**Run after each Weather run.** Expressed as the platform's dependency trigger: Moon accepts `DEPENDENCY_CHANGED` on its OPTIONAL `weather` edge,
+and Weather's output fingerprint includes `lastSuccessfulRun`, so every completed Weather run is a material change for Moon. Because Weather is due
+on every hourly grant, the edge sets `deferIfUpstreamStarted: false` (new, default true for every other edge): Moon runs at the next grant on
+Weather's last completed states while Weather's new run is in flight, instead of being deferred every cycle (tested both ways in
+`jobs/brain-orchestrator/tests/test_prepared_brain_executors.py`). A live run uses a lake's Weather state only if it was generated within 3 h.
+Inert today: Moon is PARKED, so `DEPENDENCY_CHANGED` is `SKIP_PARKED`.
+
+Cost: a full live run is about 5 s of compute plus up to 3 x 621 small RTDB requests (Weather read, own-state read, changed-lake writes);
+estimate 1-3.5 USD/month at list price for hourly runs. Proposed cap 4 USD/month; the execution control's `maxCostPerDay` bounds each day.
+
+| # | Who | Action | What it flips |
+|---|---|---|---|
+| 0 | | Weather is on first (WEATHER_BRAIN_PLAN.md §6.1): without Weather states Moon publishes MOON_ONLY | |
+| 1 | Michael, then an Engine PR | Approve the lake-directory release `moon-knowledge-candidate-2026-11-22.1`: `knowledge-release.json` `approval` APPROVED with its record; `brain.json` knowledge approval | write gate (a) |
+| 2 | Cortex maintenance session, then an Engine PR | Register Moon's families and Moon as a target Brain (CG-3.1-19); re-sync `data_ownership.json` (dispatch refuses `moon` until then) | dispatch |
+| 3 | Michael (IAM) | Service account `brain-job-moon`, write access to `sector-brain` only | identity |
+| 4 | Michael (creates a cloud job: cost) | `MICHAEL_APPROVED_MOON_DEPLOY=yes MOON_WRITE_APPROVED=1 brains/moon/deploy/deploy-job.sh` (1 vCPU, 512 MiB, 30 min, no retries, args `--write`; no scheduler) | write gate (b) |
+| 5 | Engine PR (config) | `control_manifest.json` `moon`: `activityState` `ACTIVE`; `executionTarget` `{"kind": "cloud-run-job", "job": "moon-brain", "startedByOrchestrator": true, "scoped": false}`; `costClass` `LOW`, `resources` `{"cpu": 1, "memoryGiB": 0.5, "tasks": 1}`, `timeoutSeconds` 1800; a `jobs.moon-brain` entry (`estMonthlyUsdWhenEnabled` 3.5). The same PR removes `moon` from the `registered_disabled` guards (`test_central_scheduling.py`, `test_prepared_brain_executors.py`, Moon's own registration tests); then redeploy the orchestrator | executor joins |
+| 6 | Michael (resumes recurring spend) | `python3 tools/ops/execution_control.py brain --changed-by michael --brain moon --enable-brain --max-runs-per-day 24 --reason "<approvalRef>"` | execution control |
+
+Off again: `execution_control.py brain --brain moon --disable`, then `activityState PARKED`; delete the job to stop all cost.

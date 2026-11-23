@@ -20,3 +20,17 @@ def load(release_dir: str = RELEASE_DIR, brain_id: str = "weather") -> tuple[dic
         raise KnowledgeReleaseError(f"Weather knowledge release lacks {THRESHOLDS_FILE}")
     with open(os.path.join(release_dir, THRESHOLDS_FILE), encoding="utf-8") as fh:
         return rel, json.load(fh)
+
+
+BLOCKED = "BLOCKED_AWAITING_APPROVED_RELEASE"
+
+
+class KnowledgeNotApproved(KnowledgeReleaseError):
+    """The release verifies but carries no approval: it must not be published from (the Generation and Depth rule)."""
+
+
+def require_approved(release: dict) -> dict:
+    """The live write gate (run.py --write): refuse unless the verified release is APPROVED with a named record."""
+    if release.get("approvalStatus") != "APPROVED":
+        raise KnowledgeNotApproved(f"{BLOCKED}: release {release.get('releaseId')} approval is {release.get('approvalStatus')}")
+    return release

@@ -18,7 +18,7 @@ SPEC = ContractSpec(
     contract_dir=HERE, out_file="weather-publication-v1.json", bundle_id="weather-publication-v1",
     builder="brains/weather/runtime/sector_weather/publish.py",
     derived_from="jobs/brain_platform/sector_brain_platform/publisher/registry.py (weather_specs, weather_bundles)",
-    status="SHADOW (contract only, not cut over): Weather is CALIBRATION and registered DISABLED; there is no live writer (run.py --write refuses); not a production contract",
+    status="SHADOW (contract only, not cut over): Weather is CALIBRATION and registered DISABLED; the live writer is gated (run.py --write refuses without an APPROVED knowledge release and WEATHER_WRITE_APPROVED=1); not a production contract",
     section_fields=("families", "deleteFamilies", "deleteReasons", "volatileContract", "requiresRelease", "requiresFreshness", "allowedLifecycles"),
     extras={"registryChildren": ("registry", "WEATHER_REGISTRY_CHILDREN", "children"), "healthDomainChildren": ("registry", "WEATHER_HEALTH_DOMAIN_CHILDREN", "list"),
             "reservedChildren": ("registry", "BRAIN_NODE_OWNERS", "sortedkeys"), "volatileContract": ("volatile",),

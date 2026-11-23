@@ -14,7 +14,7 @@ When it is dark enough to start shooting tonight, and which nights have the leas
 ## 4. OWNERSHIP
 - The Brain's computation: the sector-moon-v1 ephemeris port (`runtime/moon_brain/ephemeris.py`), the event finder (`events.py`), the night and window definition (`night.py`) and **DARKNESS_RULE_V1** (`darkness.py`).
 - The state contract `contracts/moon-night-light-v1.json` and the Publisher declaration `contracts/moon-publication-v1.json`.
-- The path families in `brain.json` `publishes` (slot `moon`, snapshot field `moonNightLight`), declared so the Brain can be certified. There is no live writer.
+- The path families in `brain.json` `publishes` (slot `moon`, snapshot field `moonNightLight`), declared so the Brain can be certified. The live writer is gated (below).
 - The packaged knowledge release `runtime/knowledge/` (the lake-directory projection).
 
 ## 5. NON-OWNERSHIP
@@ -54,7 +54,7 @@ The knowledge release (lake-directory projection) is regenerated with `python -m
 - Architecture certification (Brain Cert Kit V1) is separate from science validation.
 
 ## 14. PUBLISHING
-There is no live writer. `runtime/run.py --tonight` writes a local JSON file; `--dry-run` builds the RTDB write set in memory; `--write` refuses. When cloud cover is missing the answer is **MOON_ONLY**, labelled as such, and no cloud value is assumed. Cadence when enabled: once per night per lake, hourly once cloud cover is wired. `customerIntegrationMode` `none`; customer publication NOT_ELIGIBLE.
+The live writer is gated. `runtime/run.py --tonight` writes a local JSON file; `--dry-run` builds the RTDB write set in memory; `--write` publishes through `moon_brain.writer.RtdbWriter` (the platform client) and refuses unless the knowledge release is APPROVED (exit 2) and `MOON_WRITE_APPROVED=1` is set (exit 3). A live run reads each lake's Weather state from the Brain RTDB and uses it only when it was generated within 3 h (the dependency's maxAgeHours). When cloud cover is missing the answer is **MOON_ONLY**, labelled as such, and no cloud value is assumed. Cadence when enabled: once per night per lake, hourly once cloud cover is wired. `customerIntegrationMode` `none`; customer publication NOT_ELIGIBLE.
 
 ## 15. PATH OWNERSHIP
 `moon` → `moon-lake-state-v1` → `/lakes/{k}/states/moon`, `/lakeFleet/{k}/{slots,readiness,modelVersions}/moon`, `/snapshots/{k}/latest/{moonNightLight, brainVersions/moon}`; `moon` → `moon-registry-v1` → `/brains/moon/{child}`, `/validation/moon`, `/health/brains/moon/{status,staleLakeCount}`. Lake identity fields are platform-owned. Any other path is rejected by the Publisher.

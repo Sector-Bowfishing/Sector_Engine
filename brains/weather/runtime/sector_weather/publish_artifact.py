@@ -1,5 +1,6 @@
 """Weather publish-artifact builder for Publisher V2 (envelope v2, bundle `weather-publication-v1`). CONTRACT ONLY.
-NOT wired into any write path: the Weather Brain has NO live writer in this version (`run.py --write` refuses; `--dry-run` builds the write set
+NOT wired into any write path: the Weather Brain's gated live writer is the platform client (`run.py --write`, refused without an APPROVED release
+and WEATHER_WRITE_APPROVED=1); this Publisher bundle is the later CENTRAL path (a Publisher cutover is a separate owner approval). `--dry-run` builds the write set
 into the platform's in-memory store).
 
 This module re-expresses the flat update dictionary that `publish.run` builds as ONE sealed bundle through the shared builder

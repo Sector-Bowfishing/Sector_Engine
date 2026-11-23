@@ -111,12 +111,31 @@ A failure produces a `weather-change-thresholds-v2` proposal with its reason and
    UNAVAILABLE.
 4. **Live writer PR:** a Publisher artifact (or the platform client, as Water Temp) behind the registration above, plus `deploy/`
    (`deploy-job.sh` refusing without approval). Independent review.
+   **Prepared 2026-11-23** (branch `feat/brain-writers-weather-moon-generation-2026-11-23`): the platform client (`run.py --write`, as Depth
+   and Generation), `deploy/` and an inert orchestrator executor. Nothing is enabled; the steps that remain are in §6.1.
 5. **Owner: create the `weather-brain` Cloud Run job** (cost: the manifest cap, 2 USD/month), set the NWS contact User-Agent
    (`SECTOR_WEATHER_USER_AGENT`), then a manifest PR: `executionTarget` `cloud-run-job` started by the orchestrator, an `EXECUTORS` entry,
    `activityState ACTIVE`.
 6. **Owner: enable** with the execution-control CLI (`tools/ops/execution_control.py`, `--brains … weather`, an approvalRef). Validation
    capture (§5) starts that day.
 7. **Consumers:** the Lake and Water Temp PRs of §4, after at least 7 days of Weather states with no FAILED run.
+
+### 6.1 How to turn it on (prepared, all inert today)
+
+Nothing below has been done. Each step is the owner's or a reviewed PR; the order matters. Cost: the manifest cap is **2 USD/month**
+(`schedule.exception.maxMonthlyUsd`); the execution control also bounds each day (`maxCostPerDay`, default 1 USD).
+
+| # | Who | Action | What it flips |
+|---|---|---|---|
+| 1 | Session (pre-approved read-only) | Step 1 dry run on all 621 lakes; record requests and run time. **Cost check:** the job's point cache (`--point-cache /tmp/...`) is ephemeral, so every run re-resolves `/points` and `/stations` (about 2 x 621 extra NWS requests at 0.25 s pacing). If one run exceeds about 2 min, persist the cache (a decision) before step 7, or the 2 USD cap is exceeded | nothing |
+| 2 | Michael, then an Engine PR | Record the thresholds approval (given in chat: Sector_Ops #51 comment 7085207021): `runtime/knowledge/knowledge-release.json` `approval` -> `{"status": "APPROVED", "record": "<repo path of the approval record>"}`, `brain.json` `knowledge.stores[0].approval` and `operations.knowledgeLoading.approved`. The file digests do not change | write gate (a) |
+| 3 | Cortex maintenance session, then an Engine PR | §6 step 3: register the Weather families and Weather as a target Brain; re-sync `jobs/brain_platform/sector_brain_platform/data_ownership.json`. Until then the orchestrator's M08 dispatch refuses `weather` (`UNREGISTERED_BRAIN`) | dispatch |
+| 4 | Michael (IAM) | Create the service account `brain-job-weather` with write access to the Brain RTDB `sector-brain` only (identity split, Sector_Ops #19). The deploy script never creates or grants an identity | identity |
+| 5 | Michael (creates a cloud job: cost) | `MICHAEL_APPROVED_WEATHER_DEPLOY=yes WEATHER_WRITE_APPROVED=1 SECTOR_WEATHER_USER_AGENT="Sector-WeatherBrain/1.0 (<contact>)" brains/weather/deploy/deploy-job.sh`. Creates `weather-brain` (1 vCPU, 512 MiB, 30 min, no retries, args `--write`), grants `brain-orchestrator` `run.invoker` on it, creates **no** scheduler | write gate (b) |
+| 6 | Engine PR (config) | `control_manifest.json` `weather`: `activityState` `ACTIVE`; `executionTarget` `{"kind": "cloud-run-job", "job": "weather-brain", "startedByOrchestrator": true, "scoped": true}`; add a `jobs.weather-brain` entry (`brainId` weather, `kind` cloud-run-job, `scheduler` null, `classification` ORCHESTRATOR_OWNED, `estMonthlyUsdWhenEnabled` 2). The same PR moves `weather` out of the `registered_disabled` guards (`jobs/brain-orchestrator/tests/test_central_scheduling.py`, `test_prepared_brain_executors.py`, `brains/weather/tests/test_run_and_registration.py`): those tests are meant to fail on this flip. Then redeploy the orchestrator image (the manifest is packaged in it) | executor joins (`orchestrate.planned_executors`) |
+| 7 | Michael (resumes recurring spend) | `python3 tools/ops/execution_control.py brain --changed-by michael --brain weather --enable-brain --max-runs-per-day 24 --reason "<approvalRef>"`. Check `maxStartsPerCycle` (default 2) still covers every enabled Brain | execution control |
+
+Off again: `execution_control.py brain --brain weather --disable` (immediate), then `activityState PARKED`; delete the job to stop all cost.
 
 ## 7. Open questions for the owner
 
