@@ -109,6 +109,29 @@ def intelligence_executor(env=None) -> dict:
 
 
 EXECUTORS["sector-intelligence"] = intelligence_executor()
+
+# Executors PREPARED for the Brains registered DISABLED on 2026-11-22 (Weather, Moon and Night Light, Generation). Inert by construction: an entry
+# joins EXECUTORS only when the control manifest gives that Brain exactly this target (kind, job) with startedByOrchestrator true, which is a
+# reviewed manifest change made after the owner creates the job. Today all three are executionTarget kind none, so none is added and the
+# orchestrator never plans, starts or leases them. Turning one on is configuration only: docs/brains/<BRAIN>_PLAN.md "how to turn it on".
+PLANNED_EXECUTORS = {
+    "weather": {"kind": "cloud-run-job", "job": "weather-brain"},                    # brains/weather/deploy/deploy-job.sh
+    "moon": {"kind": "cloud-run-job", "job": "moon-brain"},                          # brains/moon/deploy/deploy-job.sh
+    "generation": {"kind": "cloud-run-job", "job": "generation-brain"},              # brains/generation/deploy/deploy-job.sh
+}
+
+
+def planned_executors(manifest: dict) -> dict:
+    """The PLANNED_EXECUTORS whose Brain the manifest has switched on to exactly that target; {} for a Brain still kind none (fail closed)."""
+    out = {}
+    for b, ex in PLANNED_EXECUTORS.items():
+        t = ((manifest.get("brains") or {}).get(b) or {}).get("executionTarget") or {}
+        if t.get("kind") == ex["kind"] and t.get("job") == ex["job"] and t.get("startedByOrchestrator") is True:
+            out[b] = dict(ex)
+    return out
+
+
+EXECUTORS.update(planned_executors(O.load_manifest()))
 NOT_STARTED_HERE: dict = {}                     # every Brain with an executor is started only by the orchestrator (PL-15)
 
 
@@ -748,7 +771,9 @@ def main(argv=None) -> int:
                 cmd = f"gcloud run jobs execute {tgt.get('job')} --region us-central1 --wait" if tgt.get("job") else "run locally from the Brain's branch"
                 deferred.append({"brainId": b, "why": f"RUN allowed but not startable by the orchestrator ({NOT_STARTED_HERE.get(b, tgt.get('note') or 'legacy/manual target')}); manual: {cmd}"})
                 continue
-            if any(d["id"] in started_async for d in manifest["brains"][b].get("dependencies", [])):
+            # an edge may opt out with deferIfUpstreamStarted false: the consumer then runs on the upstream's LAST COMPLETED output while the
+            # upstream's new run is in flight (Moon after an hourly Weather, which is due on every grant and would otherwise defer Moon forever)
+            if any(d["id"] in started_async and d.get("deferIfUpstreamStarted", True) for d in manifest["brains"][b].get("dependencies", [])):
                 deferred.append({"brainId": b, "why": "an upstream was started this cycle; evaluated again next cycle"})
                 continue
             # the execution control gate (PL-16, PL-17): global + per-Brain enablement, starts-per-cycle, runs-per-day, cost-per-day

@@ -77,18 +77,18 @@
     },
     "weather": {
       "displayName": "Weather", "group": "CURRENT_CONDITIONS", "lifecycle": "CALIBRATION", "activityState": "PARKED",
-      "executionTarget": {"kind": "none", "plannedJob": "weather-brain", "startedByOrchestrator": false, "scoped": true, "note": "Registered 2026-11-22 (owner decision, Sector_Ops #51), DISABLED: no cloud job exists, no live writer exists (brains/weather/runtime/run.py --write refuses), PARKED here and absent from /control/executionControlV1 (absent = disabled). Enabling is a separate owner step: docs/brains/WEATHER_BRAIN_PLAN.md section 6."},
+      "executionTarget": {"kind": "none", "plannedJob": "weather-brain", "startedByOrchestrator": false, "scoped": true, "note": "Registered 2026-11-22 (owner decision, Sector_Ops #51), DISABLED: no cloud job exists, PARKED here and absent from /control/executionControlV1 (absent = disabled). The live writer is gated (brains/weather/runtime/run.py --write refuses without an APPROVED release and WEATHER_WRITE_APPROVED=1); the executor is prepared but inert (orchestrate.PLANNED_EXECUTORS joins only when this target is kind cloud-run-job, job weather-brain, startedByOrchestrator true). Turning it on: docs/brains/WEATHER_BRAIN_PLAN.md section 6.1."},
       "allowedTriggers": ["SCHEDULE", "MANUAL", "ADMIN"],
       "dependencies": [],
       "schedule": {"class": "ORCHESTRATOR_OWNED", "owner": "ORCHESTRATOR", "scheduler": "brain-orchestrator",
                    "exception": {"gate": "INTERNAL_OPERATION: per-lake Weather state and the weather-change signal Lake and Water Temp refresh on; prospective pressure/air-temperature validation against station observations (WEATHER_BRAIN_PLAN.md section 5); not customer-facing", "notReconstructable": "the NWS observation API keeps about 7 days and the forecast issued at run time is replaced every hour: neither can be recreated later", "maxMonthlyUsd": 2, "stop": "disable at any time: control override PAUSE (activityState PARKED) or set activityState PARKED here; owner decision ends internal operation", "approvedAt": "2026-11-22 (owner decision, Sector_Ops #51: build the Weather Brain; activation is a separate owner step and has NOT happened)"}},
       "freshness": {"staleAfterHours": 3, "dueAfterHours": 0.75, "note": "Weather is due on every hourly Orchestrator grant; the Brain's per-lake planner then fetches only the lakes whose adaptive nextCheckAt is reached (CHANGE/WATCH every grant, STEADY at most every second grant; contracts/weather-state-v1.md section 5). staleAfterHours is the Brain-level registry rule (contract.STALE_AFTER_HOURS)."},
-      "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "readinessCounts", "staleLakeCount", "supportedLakeCount", "weatherChange"]},
+      "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "readinessCounts", "staleLakeCount", "supportedLakeCount", "weatherChange", "lastSuccessfulRun"], "note": "lastSuccessfulRun (2026-11-23): every successful Weather run carries a newer forecast, which is material to Moon's cloud input (Moon runs after each Weather run on DEPENDENCY_CHANGED). Weather's other future consumers (Lake, Water Temp) are SCHEDULE-driven and do not accept DEPENDENCY_CHANGED."},
       "costClass": "LOW", "resources": {"cpu": 1, "memoryGiB": 0.5, "tasks": 1}, "timeoutSeconds": 1800, "scopes": ["directory"], "allowFleetRunNow": false, "customerPublication": false
     },
     "generation": {
       "displayName": "Generation", "group": "CURRENT_CONDITIONS", "lifecycle": "CALIBRATION", "activityState": "PARKED",
-      "executionTarget": {"kind": "none", "note": "registered DISABLED (owner direction 2026-11-22, Sector_Ops #51): no job, no image, no schedule; brains/generation/runtime run.py --write refuses until an APPROVED knowledge release AND GENERATION_WRITE_APPROVED=1; enabling it needs an execution target, an execution-control entry and the owner's approval", "startedByOrchestrator": false, "scoped": false},
+      "executionTarget": {"kind": "none", "plannedJob": "generation-brain", "note": "registered DISABLED (owner direction 2026-11-22, Sector_Ops #51): no job, no image, no schedule; brains/generation/runtime run.py --write refuses until an APPROVED knowledge release AND GENERATION_WRITE_APPROVED=1; the executor is prepared but inert (orchestrate.PLANNED_EXECUTORS joins only when this target is kind cloud-run-job, job generation-brain, startedByOrchestrator true). Also blocked on D-G (TVA/SWPA access) and D-I (one read per series per hour across Brains). Turning it on: docs/brains/GENERATION_BRAIN_PLAN.md section 6.1.", "startedByOrchestrator": false, "scoped": false},
       "allowedTriggers": ["MANUAL", "ADMIN"],
       "dependencies": [],
       "schedule": {"class": "MANUAL", "owner": "NONE"},
@@ -113,9 +113,9 @@
     },
     "moon": {
       "displayName": "Moon and Night Light", "group": "CURRENT_CONDITIONS", "lifecycle": "CALIBRATION", "activityState": "PARKED",
-      "executionTarget": {"kind": "none", "note": "registered 2026-11-22 (owner decision, Sector_Ops #51) but DISABLED: no executor, absent from the execution control (absent = disabled), no live writer. runtime/run.py writes a local file or an in-memory dry run; --write refuses. Enabling it is a separate owner decision.", "startedByOrchestrator": false, "scoped": false},
-      "allowedTriggers": ["MANUAL", "ADMIN"],
-      "dependencies": [{"id": "weather", "requirement": "OPTIONAL", "maxAgeHours": 3, "onStale": "DEPENDENCY_STALE", "provisional": true}],
+      "executionTarget": {"kind": "none", "plannedJob": "moon-brain", "note": "registered 2026-11-22 (owner decision, Sector_Ops #51) but DISABLED: absent from the execution control (absent = disabled), PARKED (so DEPENDENCY_CHANGED is SKIP_PARKED). The live writer is gated (runtime/run.py --write refuses without an APPROVED release and MOON_WRITE_APPROVED=1); the executor is prepared but inert (orchestrate.PLANNED_EXECUTORS joins only when this target is kind cloud-run-job, job moon-brain, startedByOrchestrator true). Turning it on: docs/brains/MOON_BRAIN_PLAN.md section 7.1.", "startedByOrchestrator": false, "scoped": false},
+      "allowedTriggers": ["MANUAL", "DEPENDENCY_CHANGED", "ADMIN"],
+      "dependencies": [{"id": "weather", "requirement": "OPTIONAL", "maxAgeHours": 3, "onStale": "DEPENDENCY_STALE", "provisional": true, "deferIfUpstreamStarted": false}],
       "schedule": {"class": "MANUAL", "owner": "NONE"},
       "freshness": {"stalenessModel": "FINGERPRINT"}, "fingerprint": {"outputSource": "registryProjection", "materialFields": ["version", "readinessCounts", "supportedLakeCount"]},
       "costClass": "NONE", "timeoutSeconds": 900, "scopes": [], "customerPublication": false
