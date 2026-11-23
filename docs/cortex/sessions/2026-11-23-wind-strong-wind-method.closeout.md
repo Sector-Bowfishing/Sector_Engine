@@ -2,11 +2,11 @@
 
 ```text
 Standards: Rehtac Cortex 3.1.6 @ a785035, pack sector/engine
-Task: WIND-CNF-001 strong-wind methods (pre-registration WSW-2026-11-23 + read-only runner) · Folder: wind-brain (research home absent in this cloud session; CG-3.1-22) · Date: 2026-11-23 · Manifest task status: OPEN (blocked: the past-window run is on the Mac mini; H2 opens 2027-01-01)
+Task: WIND-CNF-001 strong-wind methods (pre-registration WSW-2026-11-23-R2, superseding WSW-2026-11-23, + read-only runner) · Folder: wind-brain (research home absent in this cloud session; CG-3.1-22) · Date: 2026-11-23 · Manifest task status: OPEN (blocked: the past-window run is on the Mac mini; H2 opens 2027-01-01)
 ```
 
 ## Preserved results
-No local data was created or fetched. Committed on branch `research/wind-strong-wind-method-2026-11-23`: protocol WSW-2026-11-23 (sha256 b9a55721f7a6d2853462c1080bbec384c3a30e3429fce70b10c2872c77449346), MINI_REQUEST_DRAFT.md, the runner and its tests. These are rules and code, not research data.
+No local data was created or fetched. Committed on branch `research/wind-strong-wind-method-2026-11-23`: protocol WSW-2026-11-23-R2 (sha256 ba05492be82102fdba170b8dd5181ec557505622246e6a780c52a6ffc129633b), the superseded never-run WSW-2026-11-23 (b9a55721…, kept unchanged with SUPERSEDED.md), MINI_REQUEST_DRAFT.md, the runner and its tests. These are rules and code, not research data.
 
 ## Manifests updated
 none (the wind-brain manifest is on the Mac; the Mini registers the fit, rows and result there)
