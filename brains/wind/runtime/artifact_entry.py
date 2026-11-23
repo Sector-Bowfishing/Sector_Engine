@@ -19,7 +19,11 @@ Exit 0 = artifact stored (its reference is printed as JSON); 2 = refused (nothin
 1 = an unexpected error (nothing handed off). Ingest errors do not stop the seal (as in the cloud job, which publishes and then exits 1); they are printed.
 On every path that hands nothing off, Wind's own bookkeeping (brain/wind/last_publish.json) is put back as it was. W-H2 (Sector_Ops #51 decision D2):
 with --read-rtdb the previous state is read from the LIVE Brain database (GET only, sector_wind.brain.live_previous), so a hand-off the central path
-later refuses can never advance it; the local file is then only a cache. A read error seals nothing (exit 3). Off unless the runner passes the flag.
+later refuses can never advance it. A read error seals nothing (exit 3).
+  * A hand-off (--emit) REQUIRES --read-rtdb: without it the previous state would come from the local file, which a sealed-then-refused hand-off
+    would have advanced. Refused with exit 2 (nothing stored). A local seal without --emit (a shadow run, a re-seal) may still use the local file.
+  * With --read-rtdb a seal NEVER advances the local file (it is put back as it was on every path), so the file cannot drift from what is live
+    and mislead a later local run.
 """
 from __future__ import annotations
 
@@ -93,6 +97,10 @@ def main(argv=None) -> int:
     if (a.emit or "").strip() and (a.emit.startswith("gs://") or os.path.exists(a.emit)):
         print("REFUSED (nothing stored): --emit is a new local file (an earlier hand-off is never overwritten)", file=sys.stderr)
         return 2
+    if (a.emit or "").strip() and not a.read_rtdb:
+        print("REFUSED (nothing stored): a hand-off (--emit) needs --read-rtdb (W-H2, Sector_Ops #51 D2): the previous state must come from what is "
+              "live, never from the local bookkeeping a refused hand-off could have advanced", file=sys.stderr)
+        return 2
     try:
         execution_id = str(uuid.UUID(a.execution_id, version=4)) if a.execution_id else str(uuid.uuid4())
     except ValueError:
@@ -151,7 +159,7 @@ def main(argv=None) -> int:
                 json.dump(built.artifact, fh, sort_keys=True)
         stored = True
     finally:
-        if not stored:                                       # nothing handed off: the next run must see the same "previous" as this one did
+        if not stored or a.read_rtdb:                        # nothing handed off, or "previous" is what is live (W-H2): the local file never advances
             if before is None:
                 try:
                     os.remove(os.path.join(a.store.removeprefix("local:"), BOOKKEEPING))
