@@ -56,3 +56,13 @@ Repository: Sector-Bowfishing/sector_engine · Branch: fix/lake-level-plausibili
 | LOW raw value in the published flag | Flag is `implausibleReading:<src>@<time>`; raw value only in the run warning. New `qualityFlags` / `activeIssues` string values extend the published state contract; schema unchanged |
 
 Re-sweep with the revised rules (Python mirror): 288 bound lakes, 102 batch-2 checks, 47 provider fixture series: 0 real readings rejected; only the fixtures' trap rows (CDEC −9999, CO-OPS flagged 590.0, USGS −999999). No bound lake's live value is a decade of its full pool. El Vado and Navajo (> 50 ft below full pool) have 51 / 63 years of history, which sets their band.
+
+## 8. Round-2 review fixes (PR #249 review at afbaf709)
+| Finding | Fix |
+|---|---|
+| MEDIUM rule D ran on proxies and no-reference series (self-median fallback) and would reject real 10× river rises | D only against a real lake reference (history range or full pool); no self-median fallback; proxies get no reference |
+| MEDIUM no-history lakes (21 with `historyClass` NONE in the committed binding tables read here; the reviewer counted 26) could go UNAVAILABLE up to 24 h after an outage with a real level > 50 ft from full pool | Anchor = last published OBSERVED value (≤ 7 days, passes 0 and D, inside a history band if any); out-of-band readings within the step limit of it are accepted. No in-band reading and no anchor: the internally consistent series is published with `levelUnverified:<src>` (profile issue `level-unverified`), never blanked |
+| LOW datum-change window | Same: with no old-datum reading left, the new series is published flagged; rejected only when it is a decade slip |
+| LOW digit transposition | Documented as a known limit (header and integration doc) |
+
+Re-sweep (Python mirror, revised rules): 288 bound lakes, 102 batch-2 checks, 47 fixture series: 0 real readings rejected (only the trap rows). El Vado and Navajo would be `levelUnverified` only in a hypothetical run without their history and without an anchor; their 51 / 63 years of history set the band.
