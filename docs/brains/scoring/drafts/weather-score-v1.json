@@ -5,8 +5,10 @@
   "status": "DRAFT",
   "adopted": false,
   "statusNote": "DRAFT, NOT ADOPTED. Drafted 2026-11-23 at the owner's request, for Michael's review. No scorer loads this file: it is not in jobs/brain-scores/score_brains.py UPSTREAM, sector_brain_platform/scoring.py has no Weather rubric, and jobs/brain-scores/test_draft_rubrics_not_loaded.py fails if either changes while this status is DRAFT. Adopting it (a new rubric) is an owner decision (Cortex sector/engine PROJECT.md section 7). Rationale: docs/brains/scoring/drafts/NEW_BRAIN_RUBRICS_DRAFT_2026-11-23.md. Kept under drafts/ so the score baseline (verification/integration/score_baseline.py, top-level files only) does not treat it as a rubric.",
+  "whyForBowfishing": "Bowfishers care about the weather because it changes the water and the night: rain muddies the water and moves the lake level, cloud decides whether a bright moon lights the water, and a sharp air-temperature swing or a passing front means conditions are changing and Lake and Water Temp should re-check. Barometric pressure is shown in the app, but there is no evidence it changes where target species are, so it earns very little here. The score asks: does every lake get real, current rain, cloud and temperature readings, and a 'weather is changing' signal that works?",
   "measurement": "Domain capability score (Cortex scoring.md SC-02, SC-03): how far Sector can trust the Weather Brain's published per-lake weather truth. Not operational health, not production readiness, not a forecast-skill metric, not comparable with any other Brain's score.",
-  "question": "Per lake, does the Weather Brain publish real measured or official-forecast Sky, Barometric Pressure (with its 3 h trend), Air Temperature and Humidity, and a weather-change signal whose every rule could be evaluated, and has that output passed the validation pre-registered in docs/brains/WEATHER_BRAIN_PLAN.md section 5?",
+  "question": "Per lake, does the Weather Brain publish real measured or official-forecast rain (now and expected), cloud, air temperature and a weather-change signal whose every rule could be evaluated, and has that output passed the validation pre-registered in docs/brains/WEATHER_BRAIN_PLAN.md section 5?",
+  "unknownPolicy": "Unknown counts against the Brain everywhere (owner rule 2026-11-23: nothing should show unknown). A lake, tile or field that is unknown, unavailable, blocked or abstained earns 0 and stays in every denominator; a fact the Brain does not publish scores 0 and lowers completeness. Unknown is never rewarded or excluded to make a share look better. Filling an unknown with an estimate is worse still: it is an invented value, which the validation checks fail, so the only way to remove an unknown is real data.",
   "scope": "Coverage over the directory (/brains/weather.directoryLakeCount). Quality shares over the lakes the Brain supports (/brains/weather.supportedLakeCount: readiness CALIBRATION or DEGRADED) and over their published states (/lakes/{k}/states/weather). Validation fleet-wide.",
   "sourceContract": "brains/weather/contracts/weather-publication-v1.json (families /lakes/{k}/states/weather, /lakeFleet/{k}/..., /brains/weather/{child}, /validation/weather); state schema brains/weather/contracts/weather-state-v1.schema.json",
   "dimensionClasses": "Cortex scoring.md SC-09: CAP bowfishing capability, COV coverage, PRED prediction quality, VAL validation against independent data, ENG engineering completion, VOL research volume. This draft has no ENG or VOL dimension.",
@@ -19,28 +21,47 @@
       "class": "VAL",
       "movableByPackagingOnly": false,
       "fact": "/validation/weather.status",
-      "scale": {"NOT_VALIDATED": 0, "PARTIAL": 5, "VALIDATED": 10, "absent": "UNKNOWN (scores 0, excluded from completeness; the validation gate still fires)"},
-      "note": "The Weather publication contract declares /validation/weather; the runtime does not write it yet (only Moon and Generation do). Until it does, this dimension is UNKNOWN. See validationStatusMeaning for what each status must mean."
+      "scale": {
+        "NOT_VALIDATED": 0,
+        "PARTIAL": 5,
+        "VALIDATED": 10,
+        "absent": "UNKNOWN (scores 0, excluded from completeness; the validation gate still fires)"
+      },
+      "note": "The Weather publication contract declares /validation/weather; the runtime does not write it yet (only Moon and Generation do). Until it does, this dimension is UNKNOWN. See validationStatusMeaning for what each status must mean.",
+      "why": "Only a check against independent stations shows the rain, temperature and change signal describe the water the bowfisher is on."
+    },
+    {
+      "id": "rainReadout",
+      "label": "Rain now and rain expected",
+      "weight": 20,
+      "class": "CAP",
+      "movableByPackagingOnly": false,
+      "fact": "/lakes/{k}/states/weather.sky.rain: lastHourIn non-null AND forecastNext6hIn non-null, share over published states",
+      "scale": "share x 10",
+      "why": "Rain is the weather that most changes a bowfishing night: it muddies the water and moves the lake level, and rain expected soon is the cue to re-check clarity and stage.",
+      "note": "A null in either field is an unknown and earns nothing. Whether a rain-onset call was right is validation (plan 5.3), not this dimension."
     },
     {
       "id": "coverage",
       "label": "Directory lakes with a Weather state",
-      "weight": 20,
+      "weight": 15,
       "class": "COV",
       "movableByPackagingOnly": false,
       "fact": "/brains/weather.supportedLakeCount / /brains/weather.directoryLakeCount",
       "scale": "coverage ladder (sector_brain_platform.scoring.ladder): 0 -> 0; > 0 -> 1; >= 5 % -> 2; >= 10 % -> 3; >= 25 % -> 5; >= 50 % -> 7; >= 75 % -> 9; >= 90 % -> 10",
-      "note": "Lakes outside NWS coverage are BLOCKED (gap WX-004) and stay in the denominator: abstaining is honest but it is not coverage."
+      "note": "Lakes outside NWS coverage are BLOCKED (gap WX-004) and stay in the denominator: abstaining is honest, but an unknown lake counts against the Brain.",
+      "why": "A lake with no Weather state gets no rain or cloud reading at all."
     },
     {
       "id": "fullStates",
       "label": "Supported lakes at readiness CALIBRATION (kind observation, not stale, nothing missing)",
-      "weight": 20,
+      "weight": 15,
       "class": "CAP",
       "movableByPackagingOnly": false,
       "fact": "/brains/weather.readinessCounts.CALIBRATION / /brains/weather.supportedLakeCount",
       "scale": "share x 10, clamped to [0, 10] (both counts come from the same run's readiness map)",
-      "note": "Readiness CALIBRATION = state kind 'observation', not stale, and an empty 'missing' list (sector_weather.state.readiness). DEGRADED (stale observation or a missing tile, no estimate put in its place) earns nothing here."
+      "note": "Readiness CALIBRATION = state kind 'observation', not stale, and an empty 'missing' list (sector_weather.state.readiness). DEGRADED (stale observation or a missing tile, no estimate put in its place) earns nothing here.",
+      "why": "A stale or partly missing state can hide the rain or cloud that decides the night."
     },
     {
       "id": "changeSignalEvaluable",
@@ -50,17 +71,19 @@
       "movableByPackagingOnly": false,
       "fact": "/lakes/{k}/states/weather.weatherChange.unknown is absent or an empty list, share over published states",
       "scale": "share x 10",
-      "note": "A rule that cannot be evaluated makes the lake WATCH (owner decision 2026-11-22), so a high WATCH share measures data gaps, not weather. This dimension credits states whose signal rests on complete inputs. It says nothing about whether the signal is right (that is validation, plan 5.3)."
+      "note": "A rule that cannot be evaluated makes the lake WATCH (owner decision 2026-11-22), so a high WATCH share measures data gaps, not weather. This dimension credits states whose signal rests on complete inputs. It says nothing about whether the signal is right (that is validation, plan 5.3).",
+      "why": "The 'weather is changing' signal (rain onset, front passage, air-temperature swing) is what makes Lake and Water Temp re-check; a rule that cannot be evaluated is an unknown and counts against."
     },
     {
       "id": "pressureTrend",
       "label": "Barometric 3 h trend published",
-      "weight": 15,
+      "weight": 5,
       "class": "CAP",
       "movableByPackagingOnly": false,
       "fact": "/lakes/{k}/states/weather.pressure.trend3h is non-null, share over published states",
       "scale": "share x 10",
-      "note": "The trend is the tile's bowfishing meaning (rising / falling / steady) and an input to the change signal. A pressure FORECAST is not credited anywhere: none exists (gap WX-003), and a permanently empty dimension is not added (scoring.md SC-09)."
+      "note": "The trend is still an input to the change signal. A pressure FORECAST is not credited anywhere: none exists (gap WX-003).",
+      "why": "Shown in the app, but no evidence ties pressure to where target species are, so it carries a token weight."
     }
   ],
   "gates": [
@@ -99,8 +122,9 @@
   },
   "movesUp": [
     "an owner-approved enablement (WEATHER_BRAIN_PLAN.md section 6.1) and a first successful live run: the Brain becomes scoreable at all",
+    "rain now and rain expected on every published lake (rainReadout)",
     "more directory lakes with a state (coverage), within NWS coverage",
-    "fresh observations with all four tiles on more lakes (fullStates)",
+    "fresh observations with nothing missing (fullStates)",
     "fewer unevaluable change rules (changeSignalEvaluable)",
     "the pre-registered validation scored and PASSED (lifts the 5.0 and 7.0 caps)"
   ],
@@ -138,7 +162,8 @@
     "gate:validation@5": "Score the pre-registered fidelity (5.1) and representativeness (5.2) checks on the windows the plan fixes; passes with nothing failed make /validation/weather PARTIAL. A failure keeps it NOT_VALIDATED.",
     "gate:validationPartial@7": "Score the 60-day change-signal check (5.3). A FAIL produces a thresholds-v2 proposal with its reason; the v1 result is kept and reported.",
     "gate:coverage@3": "Enable the Brain for the whole directory; lakes outside NWS coverage stay BLOCKED and are counted (WX-004).",
-    "dimension:changeSignalEvaluable": "Close the input gaps behind each unevaluable rule (the 'unknown' reasons the plan's step 1 dry run records)."
+    "dimension:changeSignalEvaluable": "Close the input gaps behind each unevaluable rule (the 'unknown' reasons the plan's step 1 dry run records).",
+    "dimension:rainReadout": "Close the gaps behind a null last-hour or next-6-hour rain value (station without a precipitation sensor, grid without QPF) using another official station or the grid, never an estimate."
   },
   "adoption": {
     "approvedBy": null,

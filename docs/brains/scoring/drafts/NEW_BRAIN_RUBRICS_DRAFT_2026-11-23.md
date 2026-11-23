@@ -1,5 +1,12 @@
 # Draft score rubrics: Weather, Moon and Night Light, Generation (2026-11-23)
 
+**Why this matters for bowfishing.** These scores are meant to answer one plain question for each Brain: can a bowfisher trust what it says tonight?
+- **Weather:** that means rain (which muddies the water and moves the lake level), cloud, temperature swings and a working "weather is changing" signal. Barometric pressure is shown in the app but earns almost nothing, because there is no evidence it moves target species.
+- **Moon:** it means a darkness call that counts the cloud. Dark water makes the lights work, and cloud cancels a bright moon except near cities.
+- **Generation:** it means knowing whether the dam is releasing right now and when that changes.
+
+The rubrics are built for those decisions, not for research volume. Every check is something a bowfisher would notice on the water.
+
 **Status: DRAFT, not adopted.** Michael asked for these on 2026-11-23. They live in `docs/brains/scoring/drafts/`; adoption moves a file up into `docs/brains/scoring/`. Adopting a rubric, or publishing or changing a score, is his approval (Cortex `sector/engine` PROJECT.md §7). This change publishes nothing and changes no live score.
 
 | Brain | Draft rubric | Score today |
@@ -22,6 +29,12 @@
 
 ## Choices common to all three
 
+- **Unknown counts against the Brain, everywhere.** This follows Michael's rule that nothing should show unknown. Each draft has an `unknownPolicy` that applies it in four places:
+  - A lake, tile or field that is unknown, unavailable, blocked or abstained earns 0 and stays in every denominator.
+  - A fact the Brain does not publish scores 0.
+  - No dimension excludes unknowns to make a share look better.
+  - Filling an unknown with an estimate is worse: it is an invented value, which validation fails. The only way to remove an unknown is real data.
+- **Each dimension says, in one sentence (`why`), what it means for a bowfisher.**
 - **Same shape as the computed rubrics** (`lake-brain-score-v1.json`), so adoption can follow the existing scoring pattern: a 0–10 linear weighted sum with weights totalling 100, `UNKNOWN` dimensions contributing 0 and excluded from completeness, and gates that cap and never add. Each draft also has the following fields:
   - a `class` on every dimension (Cortex scoring.md SC-09). There is no ENG or VOL dimension.
   - `movableByPackagingOnly`
@@ -64,11 +77,12 @@ PARTIAL means at least one of §5.1–§5.3 passed, the others are still within 
 
 | Dimension | Weight | What earns points |
 |---|---|---|
-| validation | 30 | |
-| coverage | 20 | directory ladder |
-| fullStates | 20 | share of supported lakes at readiness CALIBRATION (kind observation, not stale, nothing missing) |
-| changeSignalEvaluable | 15 | share of states whose `weatherChange.unknown` is absent or empty |
-| pressureTrend | 15 | share of states with a 3 h trend |
+| validation | 30 | Independent stations confirm rain, temperature and the change signal (plan §5) |
+| rainReadout | 20 | share of states with both rain in the last hour and rain expected in the next 6 h (a null in either counts against) |
+| coverage | 15 | directory ladder; BLOCKED lakes count against |
+| fullStates | 15 | share of supported lakes at readiness CALIBRATION (kind observation, not stale, nothing missing, cloud included) |
+| changeSignalEvaluable | 15 | share of states whose rain-onset, front and air-temperature-swing rules could all be evaluated (`weatherChange.unknown` absent or empty) |
+| pressureTrend | 5 | share of states with a 3 h trend. A token weight: no evidence ties pressure to where target species are |
 
 **Today:** UNSCORED. No dry-run shares have been recorded yet, so the draft gives no illustrative number.
 
@@ -87,22 +101,26 @@ PARTIAL means at least one of §5.1–§5.3 passed, the others are still within 
 
 | Dimension | Weight | What earns points |
 |---|---|---|
-| validation (MOON-VAL-001) | 40 | |
-| cloudIntegration | 30 | MOON_AND_CLOUD share of night lakes (`breakdowns.basis`) |
-| currentNight | 30 | share of lakes computed this run without error (`readinessCounts.DEGRADED` over `supportedLakeCount`) |
+| validation (MOON-VAL-001) | 35 | A simple light reading shows the darkness class matches how dark the water is |
+| cloudIntegration | 35 | MOON_AND_CLOUD share of night lakes (`breakdowns.basis`). Cloud cancels the moon except near cities. MOON_ONLY (cloud unknown) counts against |
+| currentNight | 30 | share of lakes computed tonight without error (`readinessCounts.DEGRADED` over `supportedLakeCount`) |
 
 There is no coverage dimension. Moon's `supportedLakeCount` is every lake in the run, errored ones included, so coverage would always read 621/621 and measure nothing.
 
 The USNO cross-check is real accuracy evidence. It earns nothing here because the Brain does not publish it as a measurement.
 
-**MOON-VAL-001 has no pre-registration yet.** The draft does three things about that:
-- It states the proxy: public sky-quality-meter zenith sky-brightness records near fleet lakes stand in for measured on-water lux. Boat readings are optional.
-- It requires a pre-registration committed before any data is read.
-- It proposes, for Michael to accept, change or reject, a Spearman ρ ≥ 0.6 over at least 60 site-nights at 3 or more sites, plus monotone class medians. This is a proposal only.
+**MOON-VAL-001 has no pre-registration yet. The draft keeps validation proportionate:**
+- **Proxy:** a simple light reading on real nights. Use a sky-quality meter or a phone light-meter app pointed straight up, at one fleet lake (a bowfisher's own readings count) or at a public sky-quality station near one. No multi-site statistical campaign.
+- **Proposed check:** about 12 nights at one site, covering dark and bright moon and clear and cloudy skies. It passes if both hold:
+  - readings get brighter with each class step;
+  - cloudy bright-moon nights read darker than clear ones.
+
+  This is a proposal for Michael to accept, change or reject.
+- **Write it down first:** the check is committed before any reading is looked at.
 
 **Today:** UNSCORED.
 
-**Illustration:** the recorded 2026-11-22 dry run (621 lakes, all MOON_ONLY) would give 3.0, earned only by currentNight. With Weather live it would reach 5.0 (uncapped 5.7), and 9.7 once validated, under an assumed 90 % cloud share.
+**Illustration:** the recorded 2026-11-22 dry run (621 lakes, all MOON_ONLY) would give 3.0, earned only by currentNight. With Weather live it would reach 5.0 (uncapped 6.2), and 9.7 once validated, under an assumed 90 % cloud share.
 
 ## Generation (`generation-score-v1`)
 
@@ -122,14 +140,16 @@ Coverage uses the **401 dam lakes** as its denominator, not the 621-lake directo
 | Dimension | Weight | What earns points |
 |---|---|---|
 | validation | 30 | VALIDATED = all five plan §5 metrics pass over the pre-registered week. PARTIAL = some pass, the rest not yet scored, none failed. Any failed metric = NOT_VALIDATED. |
-| damCoverage | 25 | |
-| measuredRelease | 20 | OBSERVED share |
-| scheduleCoverage | 15 | Denominator is the TVA, TVA_CUMBERLAND and SWPA_USACE lakes (where operators post schedules), so binding measured-only lakes never lowers it |
-| currency | 10 | share of supported lakes whose fleet slot is not stale, computed over one population. The registry `staleLakeCount` also counts errored lakes, so it is not used. |
+| releasingNow | 30 | **Is the dam releasing or generating right now?** Share of all published slots (UNAVAILABLE and DOWNSTREAM_ONLY included) whose status is GENERATING, SPILLING, RELEASING or OFF. UNKNOWN counts against |
+| scheduleCoverage | 25 | **When does it change?** Operator schedule published, over the TVA, TVA_CUMBERLAND and SWPA_USACE lakes (where operators post schedules), so binding measured-only lakes never lowers it |
+| damCoverage | 10 | dam lakes with a release picture; a dam lake with none counts against |
+| currency | 5 | share of supported lakes whose fleet slot is not stale, computed over one population |
+
+Discharge, turbine and spill numbers are secondary detail. They are published but not scored on their own.
 
 **Today:** UNSCORED.
 
-**Illustration:** the 17 readable lakes, if published and fully current, would give uncapped 3.9. That is capped to 2.0 while the release is unapproved and to 3.0 afterwards.
+**Illustration:** the 17 readable lakes, if published and fully current, would give uncapped 4.7. That is capped to 2.0 while the release is unapproved and to 3.0 afterwards.
 
 D-I (the cross-Brain TVA read budget) blocks enablement, not the score.
 

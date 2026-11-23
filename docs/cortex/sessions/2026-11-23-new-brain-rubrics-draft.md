@@ -67,3 +67,12 @@ Verification after the fixes, all passing:
 - verification gates, `tools/architecture` and `tools/cortex_status`: 204 passed
 - `score_baseline.py --check`: OK, with the fixture identical to main
 - engineering-status digest `--check`: OK
+
+## Bowfishing alignment pass (owner condition for merging as drafts)
+Michael approved merging the drafts as drafts, not adopted, on condition they serve bowfishing decisions rather than research volume.
+- Each draft and the explainer doc open with a plain "why this matters for bowfishing" paragraph, and every dimension has a one-sentence `why`.
+- Every draft has an `unknownPolicy`, following the owner rule that nothing should show unknown. Unknown outputs earn 0 and stay in every denominator. Estimates are never a way out, because validation fails invented values.
+- **Weather:** the 3 h pressure trend drops 15 → 5, since there is no evidence pressure moves target species. A new `rainReadout` (20) credits rain in the last hour plus rain expected in the next 6 h; a null in either counts against. Coverage and fullStates each go from 20 to 15. The change signal stays at 15.
+- **Moon:** validation is proportionate. The proxy is one site, about 12 nights, read with a sky-quality meter or a phone light meter pointed up. The proposed check is class order plus cloudy-versus-clear. This replaces the multi-site statistical proposal. Weights are now validation 35, cloud 35 and current night 30.
+- **Generation:** a new `releasingNow` (30) asks whether the dam is releasing or generating now, with UNKNOWN counting against and every published slot in the denominator. Schedule ("when it changes") rises to 25. The `measuredRelease` dimension is removed, since flow detail is secondary. Dam coverage drops to 10 and currency to 5.
+- The not-loaded test also requires `whyForBowfishing`, `unknownPolicy` and a `why` on every dimension.
