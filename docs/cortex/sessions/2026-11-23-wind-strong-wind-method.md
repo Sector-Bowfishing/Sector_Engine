@@ -1,0 +1,59 @@
+# Session record: Wind strong-wind methods, pre-registration and read-only runner (2026-11-23)
+
+Standards: Rehtac Cortex 3.1.6 @ a785035 (extracted read-only with `git archive`; the loader reports "uncommitted (no-git)" for an extracted tree), pack sector/engine
+
+## Request
+Research task (caller request in this session, under the owner's standing direction on Sector_Ops #51 comment 7093610553): lift Wind's largest missing block, strong-wind under-forecast (gap WIND-CNF-001). Read the Wind scoring and sealing rules, pre-register one or two strong-wind methods and their scoring on a never-read past window **before fetching any data**, hash and commit the protocol, build a read-only fetcher and scorer with tests, and draft (not post) a Mac mini request. Admit nothing to any score.
+
+Branch `research/wind-strong-wind-method-2026-11-23` from `origin/main` `5db0679`, worktree `/home/claude/se_wt_wind_strong` (cloud container).
+
+## What the scoring requires (observed)
+| Item | Value | Evidence |
+|---|---|---|
+| WI4 (10 pts) | min over leads 1/3/6/12/18 of POD credit (0 -> 0, 0.5 -> 1) x min over leads of FAR credit (0.8 -> 0, 0.5 -> 1; none forecast -> 1); 0 observed events -> 0 | `docs/brains/scoring/wind-specialist-capability-v2.json` WI4 |
+| Current fact | deterministic NBM v5.0, CAL+H1: 49 observed night >= 15 mph events, POD 0 at every lead, FAR undefined (no forecast events) -> WI4 0 | `docs/brains/scoring/evidence/wind-measurements-evidence.json` `strongWind` |
+| Event | observed sustained >= 15 mph at a night valid hour (UTC 01-08), METAR report within 10 min of the hour | `sector_wind/validate.py` `_metrics`, `_night`, `load_obs` |
+| Scoreboard gate | dimension 1: POD >= 0.5 and FAR <= 0.5 at every lead, pass/fail; unmeasured = 0 | `research/tools/sector_wind_research/scoreboard.py` `dims_1_to_4` |
+| Sealing | H2 = NBM inits 2026-10-07 -> 12-31, not opened before 2027-01-01 | `brains/wind/BRAIN_OPERATING_CONTRACT.md` §9; `prob_recal.py` `H2_OPEN` |
+| Already read | every Wind research tool in Git uses inits 2026-05-06 -> 2026-10-06 (CAL+H1); the live shadow starts 2026-10-07 | `historical_corpus.py`, `historical_eval.py`, `forcing_eval.py`, `rtma_fetch.py`, `hrrr_gust.py`, `glmp_eval.py`, `ndfd_fetch.py`, `openmeteo_runs.py`, `vc_retro.py` |
+| NBM generations | v4.3 from 2025-05-27 12Z; v5.0 from 2026-05-05 13Z (wind speed and gust re-calibrated) | `sector_wind/ingest.py` `nbm_version` |
+| Admission | evidence blocks enter `frozen-scores.json` only via `refresh_wind_score.py`; anything but live reliability is HELD | `BRAIN_OPERATING_CONTRACT.md` §16; `jobs/brain-scores/refresh_wind_score.py` |
+| Existing method | NBM probability recalibration (`prob_recal.py`), frozen on CAL, waiting for H2 | `WIND-CNF-001` stop condition |
+
+## Changes
+| Commit | What |
+|---|---|
+| `367eb083` | Protocol `WSW-2026-11-23` and sha256 sidecar (`b9a55721f7a6d2853462c1080bbec384c3a30e3429fce70b10c2872c77449346`), committed and **pushed before any data was fetched** |
+| next | Runner `tools/research/wind_strong_wind.py`, 20 tests, draft Mini request, `WIND-CNF-001` evidence pointer, this record, closeout, Cortex gap CG-3.1-24, engineering-status digest |
+
+Pre-registered design: B0 deterministic NBM (reference), M-A NBM qmd 90% level >= 15 mph (no fitted parameter), M-B night upper-tail quantile mapping fitted on CAL+H1 only (pooled, nine levels 0.5-0.999). All methods are scored on the same synoptic night rows (qmd exists only at 00/06/12/18Z), past window inits 2025-11-01 -> 2026-04-30 (NBM v4.3) with IEM ASOS/AWOS truth at the 8 frozen stations, then once on H2 at unseal. Decision: SUPPORTED iff the Bonferroni lower bound (1.25th percentile, date-block bootstrap, 2000 resamples) of CSI(method) - CSI(B0) > 0, pooled POD >= 0.25 and FAR <= 0.80, with at least 25 observed events and 80% P90 coverage. WI4 credit and the scoreboard gate are reported as written.
+
+Version-transfer caveat (named in the protocol): the past window is NBM v4.3 and cool season; CAL+H1 and H2 are v5.0. A past-window result is not a measurement of today's forecast; M-B's v5.0 fit may not transfer; only H2 can close WIND-CNF-001.
+
+Choices made (reversible, standing approval 6): synoptic-only rows (so all methods share rows; costs sample size vs all hourly inits); the 8 frozen stations (four are AWOS, the IEM archive serves both); April 2026 kept in the window (no repository tool read it); the fetch reuses `ingest_nbm_cycle`/`ingest_metar_day` so the decoder, row-scan fix and self-check match the corpus; the runner refuses a PW fetch until the M-B fit exists, refuses H2 before 2027-01-01 and a second H2 score in the same folder, and refuses a fit row outside CAL+H1.
+
+## Verification
+- `python3 -m pytest -q tools/research/tests/test_wind_strong_wind.py`: 20 passed (synthetic fixtures; the runtime-glue and definition tests ran because numpy and eccodes are installed here; they skip in the stdlib-only foundation job).
+- `python3 -m pytest -q tools/research`: 111 passed, 2 failed; the same 2 failures (`test_cleanup_removes_read_only_campaign_files_but_nothing_else`, `test_read_only_sources_folder_is_never_modified`) fail on `origin/main` in this container (root defeats read-only permissions): pre-existing.
+- `research-check --repo .`: 85 findings, same as `origin/main`; none in the new files. `research-check --gaps brains/wind/research/GAPS.json`: 0. `research-check` (home): `MISSING_RESEARCH_HOME` (cloud container, CG-3.1-22).
+- `data-check --repo .`: unchanged pre-existing findings; the runner reads and writes no Firebase path. `ops-check --repo .`: 0.
+- `worktree-check`: this worktree KEEP_DIRTY before the final commit; see the closeout.
+- `wind_strong_wind.py verify`: OK; `plan --window pw`: 1,086 (init, lead) pairs, about 7,600 grib2 messages.
+- Security: no secrets or machine paths; fixtures are synthetic and labelled (SEC-02); hosts are allowlisted (NOAA Open Data NBM bucket, IEM); writes only under `--out`.
+
+## Data fetched
+None. A metadata-only probe of one past-window `.idx` listing (made after the protocol was pushed) was refused by this session's network proxy, so NBM v4.3 qmd availability at 10 m is NOT_VERIFIED; the Mini request starts with a 6-pair smoke test and stops if `p90` is missing.
+
+## Decisions for Michael (batched)
+1. Post the draft Mini request on Sector_Ops #51: `docs/brains/wind-strong-wind/MINI_REQUEST_DRAFT.md` (download about 30-60 GB of public data on the Mini; no cloud job).
+2. Rubric governance: WI4 reads "deterministic"; whether a post-processed strong-wind signal (M-A, M-B) may earn WI4 credit, or only lower exposure confidence as WIND-CNF-001 expects, is his call. Nothing is admitted until then (HELD path).
+3. Cortex gap CG-3.1-24 (RS-19 forbids registering the public NOAA cloud bucket) for a Cortex maintenance session.
+
+## Not done (gated or out of scope)
+No data fetched, no H2 access, no score, rubric or evidence-file change, no Firebase or bucket access, no schedule, no merge.
+
+## Closeout
+[`2026-11-23-wind-strong-wind-method.closeout.md`](2026-11-23-wind-strong-wind-method.closeout.md) (stored here because the cloud container has no research home; CG-3.1-22).
+
+## Operating contract §19
+Gap WIND-CNF-001; bowfisher decision: whether a calm or moderate wind forecast can be trusted to keep an exposed shoreline undisturbed tonight; evidence: protocol sha256 above; files as above; tests as above; score before/after: unchanged (no score, rubric or evidence file touched); open gaps WIND-CNF-001 (BLOCKED on the Mini run and H2), WIND-CNF-002, WIND-CNF-003, WIND-EVI-001; field validation: none required (RS-39); not changed: live systems, the wind-hourly job, the bake-off collector, the research workspace, sealed data.
