@@ -1,4 +1,4 @@
-"""Offline tests for the Weather retrospective validation runner (protocol WX-RETRO-2026-11-23). No network: every input is a fixture.
+"""Offline tests for the Weather retrospective validation runner (protocol WX-RETRO-2026-11-23.2; v1 superseded). No network: every input is a fixture.
 Synthetic archive rows are labelled SYNTHETIC; the NWS responses are the Weather Brain's RECORDED fixtures of 2026-11-06."""
 import copy
 import json
@@ -26,9 +26,25 @@ def rec(name):
 # ------------------------------------------------------------------------------------------------ protocol
 def test_protocol_hash_verifies_and_matches_the_registered_value():
     p, d = W.load_protocol()
-    assert p["protocolId"] == "WX-RETRO-2026-11-23"
+    assert p["protocolId"] == "WX-RETRO-2026-11-23.2"
     assert d == open(W.PROTOCOL + ".sha256").read().split()[0]
     assert p["status"] == "PRE-REGISTERED" and "RETROSPECTIVE" in p["labels"]
+
+
+def test_v1_is_kept_unchanged_and_superseded():
+    v1 = os.path.join(os.path.dirname(W.PROTOCOL), "WX-RETRO-2026-11-23.protocol.json")
+    p1, d1 = W.load_protocol(v1)                                                             # its hash still verifies
+    assert d1 == "6e08d42ed7e808a7a9775e885f865233e7ba2bb2279e4fbb8e0171634ed37ab8"
+    p, _ = W.load_protocol()
+    assert p["supersedes"]["sha256"] == d1 and W.PROTOCOL != v1
+
+
+def test_disclosed_fixtures_are_excluded_spans():
+    p, _ = W.load_protocol()
+    assert "2026-11-06" in p["dataExaminedBeforeRegistration"]
+    sp = W._spans(p)
+    assert sp and {"Guntersville|AL", "Champlain|VT"} <= sp[0][0]
+    assert sp[0][1] <= datetime(2026, 11, 6, 7, 51, tzinfo=UTC) and sp[0][2] >= datetime(2026, 11, 6, 20, 51, tzinfo=UTC)
 
 
 def test_a_tampered_protocol_is_refused(tmp_path):
@@ -43,7 +59,9 @@ def test_a_tampered_protocol_is_refused(tmp_path):
 def test_protocol_marks_are_the_plans():
     p, _ = W.load_protocol()
     c = p["criteria"]
-    assert "0.05 hPa" in " ".join(c["R-5.1"]["checks"]) and "99.5 %" in c["R-5.1"]["pass"]
+    assert "0.05 hPa" in " ".join(c["R-5.1R"]["checks"]) and "99.5 %" in c["R-5.1R"]["pass"]
+    assert "NOT the plan's 5.1" in c["R-5.1R"]["plan"]
+    assert "ALL truth" in c["R-5.3"]["RAIN_ONSET"]["PODpopulation"] and "ALL episodes" in c["R-5.3"]["FRONT_PASSAGE"]["PODpopulation"]
     assert "<= 1.0 hPa" in c["R-5.2"]["metrics"]["pressureMAE"] and ">= 0.80" in c["R-5.2"]["metrics"]["trend3hAgreement"]
     assert "<= 3.0 deg F" in c["R-5.2"]["metrics"]["airTempMAE"]
     assert c["R-5.3"]["RAIN_ONSET"]["pass"] == "POD >= 0.8 and FAR <= 0.3"
@@ -67,6 +85,13 @@ def test_http_refuses_hosts_outside_the_protocol():
         W.Http(opener=boom).get("http://mesonet.agron.iastate.edu/x")
 
 
+def test_redirects_are_refused():
+    import urllib.request
+    with pytest.raises(RuntimeError, match="REFUSED redirect"):
+        W._NoRedirect().redirect_request(urllib.request.Request("https://api.weather.gov/x"), None, 301, "Moved", {}, "https://elsewhere.example/")
+    assert W.USER_AGENT.startswith("Sector-WeatherRetroValidation/0.2") or os.environ.get("SECTOR_WEATHER_USER_AGENT")
+
+
 # ------------------------------------------------------------------------------------------------ station selection (recorded NWS list)
 def test_station_selection_is_the_brains_and_the_independent_is_not_one_of_them():
     st = W.decode_stations(rec("guntersville-stations.json"))
@@ -79,6 +104,10 @@ def test_station_selection_is_the_brains_and_the_independent_is_not_one_of_them(
     sel2 = W.select_stations(LAKE, st2)
     assert [c["id"] for c in sel2["candidates"]] == ["KSYN1", "KSYN2"]                       # nearest first
     assert [s["id"] for s in sel2["brainStations"]] == ["K8A1", "KBFZ", "K4A6"]
+    assert all(c["distanceToBrainStationMi"] >= 3.0 for c in sel2["candidates"])
+    k8a1 = next(x for x in st if x["id"] == "K8A1")                                           # SYNTHETIC: a sensor next to K8A1
+    sel3 = W.select_stations(LAKE, st + [{"id": "KNEAR", "name": "SYNTHETIC", "lat": k8a1["lat"] + 0.01, "lon": k8a1["lon"]}])
+    assert "KNEAR" not in [c["id"] for c in sel3["candidates"]]
 
 
 def test_iem_station_ids():
@@ -96,6 +125,10 @@ def test_wxcodes_map_to_text_the_brain_reads_as_precipitation():
     assert W.wx_text("SHRA") == "Rain Showers"
     assert W.wx_text("BR") == "Mist"
     assert W.wx_text("") is None and W.wx_text(None) is None
+    assert W.wx_text("BR -RA") == "Light Rain"                                              # the earliest row wins, not the first token
+    assert W.wx_text("HZ +TSRA") == "Thunderstorm"
+    assert W.wx_text("VCSH") == "Showers in Vicinity" and W.wx_text("VCTS") == "Thunderstorm in Vicinity"
+    assert W.wx_text("VCFG") == "Fog in Vicinity" and W.wx_text("-RA VCTS") == "Light Rain"
     for wx in ("-RA", "+TSRA", "SHRA", "-DZ", "SN", "FZRA"):
         assert W.weather_code(None, W.wx_text(wx), None) in W.PRECIP_CODES, wx
     for wx in ("BR", "FG", "UP"):
@@ -157,6 +190,35 @@ def test_codsus_parse_high_resolution_types_and_ineligible_low_resolution():
     assert cold[0] == (35.5, -87.0) and cold[-1] == (32.0, -86.0) and len(cold) == 4           # continuation line joined
 
 
+TWO_PRODUCTS = """\x01
+000
+ASUS01 KWBC 151900
+CODSUS
+CODED SURFACE FRONTAL POSITIONS...NWS WEATHER PREDICTION CENTER
+VALID 101518Z
+COLD 3600850 3500840
+ 3400830
+\x03
+\x01
+000
+ASUS01 KWBC 151800
+CODSUS
+CODED SURFACE FRONTAL POSITIONS...NWS WEATHER PREDICTION CENTER
+VALID 101518Z
+WARM 3000800 3100810
+\x03
+"""
+
+
+def test_codsus_separator_does_not_poison_the_previous_bulletin_and_latest_issuance_wins():
+    a = W.parse_codsus(TWO_PRODUCTS, datetime(2026, 10, 20, tzinfo=UTC))
+    t = datetime(2026, 10, 15, 18, tzinfo=UTC)
+    assert a[t]["eligible"]                                                                    # the '000' separator is not a coordinate
+    assert a[t]["bulletins"] == 2 and a[t]["issued"] == datetime(2026, 10, 15, 19, tzinfo=UTC)
+    assert [k for k, _ in a[t]["fronts"]] == ["COLD"]                                          # 1900Z beats 1800Z although it came first
+    assert a[t]["fronts"][0][1][-1] == (34.0, -83.0)
+
+
 def test_front_distance_and_episodes():
     assert W.dist_to_polyline_mi(34.42, -86.26, [(34.0, -86.26), (35.0, -86.26)]) == pytest.approx(0.0, abs=1e-6)
     assert W.dist_to_polyline_mi(34.42, -86.26, [(34.42, -87.26)]) == pytest.approx(69.05 * 0.8246, rel=0.01)
@@ -180,18 +242,54 @@ def test_substitution_check_agrees_when_the_archive_carries_the_same_reports(tmp
     (tmp_path / "nws").mkdir()
     shutil.copy(os.path.join(REC, "guntersville-obs-KBFZ.json"), tmp_path / "nws" / "KBFZ.json")
     r = W.substitution_check(["KBFZ"], W.Archive(str(tmp_path / "recent")), str(tmp_path / "nws"))
-    assert r["coverage"] == 1.0 and r["agreement"]["temperature"] == 1.0
-    assert r["pairs"]["pressure"] == 0 or r["agreement"]["pressure"] == 1.0
+    m = r["metrics"]
+    assert r["coverage"]["share"] == 1.0 and m["temperature"]["value"]["agreement"] == 1.0
+    assert m["pressure"]["value"]["pairs"] == 0 or m["pressure"]["value"]["agreement"] == 1.0
+    assert set(m) >= {"temperature", "dewPoint", "pressure", "windSpeed", "windDirection", "precipitation", "presentWeatherPresence"}
+    assert m["windSpeed"]["null"]["agreement"] < 1.0                                         # wind left null in the archive copy: measured
+    assert m["temperature"]["value"]["result"] == "INSUFFICIENT"                             # < 1000 pairs
+    g = W.gates(r)
+    assert not g["R-5.2"]["ok"] and "temperature" in g["R-5.2"]["notPassing"]
+    assert r["flaggedStations"] == []
     assert W.substitution_check(["K8A1"], W.Archive(None), None)["result"] == "NOT_GRADED"
 
 
+def test_gates_need_value_and_null_agreement_and_coverage():
+    ok = {"value": {"result": "PASS"}, "null": {"result": "PASS"}}
+    sub = {"coverage": {"result": "PASS"}, "metrics": {k: dict(ok) for k in W.SUB_FIELDS} | {"presentWeatherPresence": {"value": {"result": "PASS"}}}}
+    assert all(v["ok"] for v in W.gates(sub).values())
+    sub["metrics"]["windDirection"] = {"value": {"result": "PASS"}, "null": {"result": "FAIL"}}
+    g = W.gates(sub)
+    assert not g["R-5.3.FRONT_PASSAGE"]["ok"] and g["R-5.3.RAIN_ONSET"]["ok"] and g["R-5.2"]["ok"]
+    sub["coverage"]["result"] = "FAIL"
+    assert not any(v["ok"] for v in W.gates(sub).values())
+
+
+def test_a_station_below_the_coverage_floor_is_flagged(tmp_path):
+    base = datetime(2026, 11, 20, 0, 53, tzinfo=UTC)
+    feats = [{"properties": {"station": "https://api.weather.gov/stations/KLOW", "timestamp": (base + timedelta(hours=h)).isoformat(),
+                             "temperature": {"unitCode": "wmoUnit:degC", "value": 10.0}}} for h in range(30)]
+    (tmp_path / "nws").mkdir()
+    (tmp_path / "nws" / "KLOW.json").write_text(json.dumps({"features": feats}))
+    (tmp_path / "recent").mkdir()
+    rows = [HEADER] + [f"KLOW,{(base + timedelta(hours=h)).strftime('%Y-%m-%d %H:%M')},50.00" + ",null" * 12 for h in range(10)]
+    (tmp_path / "recent" / "KLOW.csv").write_text("\n".join(rows))
+    r = W.substitution_check(["KLOW"], W.Archive(str(tmp_path / "recent")), str(tmp_path / "nws"))
+    assert r["flaggedStations"] == ["KLOW"] and r["perStation"]["KLOW"]["coverage"] == pytest.approx(10 / 30, abs=1e-3)
+
+
 # ------------------------------------------------------------------------------------------------ end to end (SYNTHETIC archive)
-def _write_station(path, sid, start, hours, rain_from=None, temp=60.0, alti=30.00, step=0.0):
+def _write_station(path, sid, start, hours, rain_from=None, temp=60.0, alti=30.00, step=0.0, gap=None, shift_at=None):
+    """SYNTHETIC hourly archive rows. gap=(a, b): no report in [a, b). shift_at: from then on wind 300 deg and 8 F colder (a front)."""
     rows = [HEADER]
     for h in range(hours):
         t = start + timedelta(hours=h)
+        if gap and gap[0] <= t < gap[1]:
+            continue
         wet = rain_from is not None and t >= rain_from
-        rows.append(",".join([W.iem_id(sid), t.strftime("%Y-%m-%d %H:%M"), f"{temp:.2f}", "50.00", "70.0", "180.00", "8.00",
+        shifted = shift_at is not None and t >= shift_at
+        rows.append(",".join([W.iem_id(sid), t.strftime("%Y-%m-%d %H:%M"), f"{temp - (8 if shifted else 0):.2f}", "50.00", "70.0",
+                              "300.00" if shifted else "180.00", "8.00",
                               f"{alti - step * h:.2f}", "1016.00", "0.0500" if wet else "0.0000", "OVC", "null", "null", "null",
                               "-RA" if wet else "null"]))
     with open(os.path.join(path, f"{sid}.csv"), "w") as fh:
@@ -217,8 +315,10 @@ def test_grade_end_to_end_on_synthetic_archive(tmp_path):
     r = W.grade(p, doc, str(tmp_path / "asos"), None, None)
 
     assert r["lakes"]["excluded"]["BLOCKED"] == 1 and r["lakes"]["gradedFor5_2and5_3"] == 1
-    assert r["R-5.1"]["matchShare"] == 1.0 and r["R-5.1"]["provenanceShare"] == 1.0 and r["R-5.1"]["values"] > 0
-    assert r["R-5.1"]["computedResult"] == "INSUFFICIENT"                                       # 1 lake < 20
+    assert r["R-5.1R"]["matchShare"] == 1.0 and r["R-5.1R"]["provenanceShare"] == 1.0 and r["R-5.1R"]["values"] > 0
+    assert r["R-5.1R"]["computedResult"] == "INSUFFICIENT"                                      # 1 lake < 20
+    assert "NOT the plan's 5.1" in r["R-5.1R"]["label"]
+    assert r["lakes"]["independentStations"][0]["distanceToBrainStationMi"] >= 3.0
     pm = r["R-5.2"]["pressureMAE_hPa"]
     assert pm["value"] == pytest.approx(0.02 / 0.0295299830714, abs=0.01) and pm["pairs"] > 0
     assert r["R-5.2"]["airTempMAE_F"]["value"] == pytest.approx(2.0)
@@ -228,7 +328,7 @@ def test_grade_end_to_end_on_synthetic_archive(tmp_path):
     assert ro["result"] == "INSUFFICIENT"
     assert r["R-5.3"]["FRONT_PASSAGE"]["result"] == "NOT_GRADED"
     assert "SUBSET" in r["qualifiers"] and "SUBSTITUTION_UNCERTAIN" in r["qualifiers"]
-    assert all(r[k]["result"] != "PASS" for k in ("R-5.1", "R-5.2", "R-5.3"))
+    assert all(r[k]["result"] != "PASS" for k in ("R-5.1R", "R-5.2", "R-5.3"))
     assert set(r["labels"]) >= {"INTERNAL_EXPERIMENTAL", "NOT_FOR_CUSTOMERS"}
 
 
@@ -260,3 +360,63 @@ def test_grade_cli_writes_only_the_report(tmp_path):
     rep = json.loads(out.read_text())
     assert rep["protocolSha256"] == open(W.PROTOCOL + ".sha256").read().split()[0]
     assert rep["thresholdsVersion"] == "weather-change-thresholds-v1"
+
+
+def _setup(tmp_path, frm, to, lake=LAKE):
+    p, _ = W.load_protocol()
+    p = copy.deepcopy(p)
+    for k in ("changeSignal_5_3", "representativeness_5_2", "fidelity_5_1"):
+        p["windows"][k].update({"from": frm, "to": to})
+    st = W.decode_stations(rec("guntersville-stations.json")) + [{"id": "KSYN1", "name": "SYNTHETIC", "lat": 34.50, "lon": -86.26}]
+    sel = W.select_stations(lake, st)
+    win = tmp_path / "asos" / "window"
+    win.mkdir(parents=True)
+    return p, {"subset": True, "lakes": [dict(lake, status="OK", **sel)]}, win, sel["candidates"][0]["id"]
+
+
+def test_pod_is_graded_on_all_truth_and_a_miss_without_brain_data_counts(tmp_path):
+    p, doc, win, ind = _setup(tmp_path, "2026-11-10T00:00:00Z", "2026-11-11T00:00:00Z")
+    start = datetime(2026, 11, 9, 10, 53, tzinfo=UTC)
+    r1 = datetime(2026, 11, 10, 6, 53, tzinfo=UTC)
+    gap = (datetime(2026, 11, 10, 3, 0, tzinfo=UTC), datetime(2026, 11, 10, 10, 0, tzinfo=UTC))  # the Brain's stations are silent
+    rows = [HEADER]
+    for h in range(42):
+        t = start + timedelta(hours=h)
+        wet = r1 <= t < r1 + timedelta(hours=2) or t >= datetime(2026, 11, 10, 15, 53, tzinfo=UTC)
+        rows.append(",".join([W.iem_id(ind), t.strftime("%Y-%m-%d %H:%M"), "60.00", "50.00", "70.0", "180.00", "8.00", "30.00",
+                              "1016.00", "0.0500" if wet else "0.0000", "OVC", "null", "null", "null", "-RA" if wet else "null"]))
+    (win / f"{ind}.csv").write_text("\n".join(rows))
+    for s_ in ("K8A1", "KBFZ", "K4A6"):
+        _write_station(win, s_, start, 42, rain_from=datetime(2026, 11, 10, 15, 53, tzinfo=UTC) if s_ == "K8A1" else None, gap=gap)
+    ro = W.grade(p, doc, str(tmp_path / "asos"))["R-5.3"]["RAIN_ONSET"]
+    assert ro["truthEvents"] == 2 and ro["detected"] == 1 and ro["POD"] == 0.5               # the silent-data onset is a MISS
+    sec = ro["secondaryEvaluableOnly"]
+    assert sec["truthEvents"] == 1 and sec["POD"] == 1.0 and sec["label"].startswith("SECONDARY")
+    assert any("3 h dry lookback" in a for a in ro["amendmentAdditions"])
+
+
+def test_disclosed_fixture_span_is_not_graded(tmp_path):
+    p, doc, win, ind = _setup(tmp_path, "2026-11-06T00:00:00Z", "2026-11-07T02:00:00Z")
+    start = datetime(2026, 11, 5, 10, 53, tzinfo=UTC)
+    for s_ in ("K8A1", "KBFZ", "K4A6", ind):
+        _write_station(win, s_, start, 42)
+    r = W.grade(p, doc, str(tmp_path / "asos"))
+    ex = r["lakes"]["excludedSpans"]
+    assert ex["instants"] == 17                                   # 07:10Z .. 23:10Z for Guntersville
+    assert ex["values"] > 0                                       # 00:10Z on 11-07 would publish the 23:53Z report: excluded
+    other = W.grade(p, {"subset": True, "lakes": [dict(doc["lakes"][0], id="Elsewhere|AL")]}, str(tmp_path / "asos"))
+    assert other["lakes"]["excludedSpans"]["instants"] == 0
+
+
+def test_front_hits_and_unjudgeable_brain_fronts_are_kept_out_of_far(tmp_path):
+    p, doc, win, ind = _setup(tmp_path, "2026-11-10T00:00:00Z", "2026-11-11T00:00:00Z")
+    start = datetime(2026, 11, 9, 10, 53, tzinfo=UTC)
+    shift = datetime(2026, 11, 10, 14, 53, tzinfo=UTC)
+    for s_ in ("K8A1", "KBFZ", "K4A6", ind):
+        _write_station(win, s_, start, 42, shift_at=shift)
+    near = "\n".join(["000", "ASUS01 KWBC 101600", "CODSUS", "VALID 111015Z", "COLD 3500863 3400863", ""])     # through the lake at 15Z
+    far = "\n".join(["000", "ASUS01 KWBC 102200", "CODSUS", "VALID 111021Z", "COLD 4500900 4400900", ""])      # 45N, 6 h later
+    a = W.grade(p, doc, str(tmp_path / "asos"), None, near)["R-5.3"]["FRONT_PASSAGE"]
+    assert a["brainEvents"] == 1 and a["hits"] == 1 and a["truthEvents"] == 1 and a["detected"] == 1
+    b = W.grade(p, doc, str(tmp_path / "asos"), None, far)["R-5.3"]["FRONT_PASSAGE"]
+    assert b["unjudgeableBrainEventsExcludedFromFAR"] == 1 and b["brainEvents"] == 0 and b["truthEvents"] == 0

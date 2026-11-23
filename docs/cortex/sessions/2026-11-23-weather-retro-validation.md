@@ -62,3 +62,21 @@ Gaps WX-001, WX-002; bowfisher decision: whether the Pressure and Air Temperatur
 
 ## Review round 1 (coordinator)
 - Cortex gap id renumbered CG-3.1-24 → CG-3.1-26 (PR #244 holds CG-3.1-24, PR #245 CG-3.1-25); every citation updated. Protocol bytes and sha256 unchanged. Engineering-status digest regenerated.
+
+## Review round 2 (independent review of 93f7aeb0: NOT CLEAN), re-registered as v2 before any data
+Merged `origin/main` (no force-push). Still nothing fetched, so the protocol was re-registered rather than amended after data:
+**`WX-RETRO-2026-11-23.2`**, sha256 `01eac7bc56033154dcf64ee365826a0da1c4d33cd921cec7ec76e79df48eb58c`, committed alone in `b8e284f3`. v1 (`6e08d42e…`) is kept byte-for-byte, marked SUPERSEDED in `docs/brains/weather-retro-validation/README.md`, and the runner no longer loads it.
+
+| Finding | Fix (protocol v2 + runner + test) |
+|---|---|
+| HIGH CODSUS: a `000` separator after a front block made the previous bulletin ineligible | Separators (`000`, WMO heading, PIL, title, SOH/ETX) end the bulletin in progress; per VALID time the latest WMO issuance wins whatever the order (IEM also asked `order=asc`). Two-product test |
+| HIGH R-SUB too narrow | Every 5.3 input: temperature, dew point, pressure, wind speed, wind direction (both ≥ 5 mph), precipitation, present-weather presence (code agreement reported only); null-versus-value agreement per field; ≥ 1000 pairs per metric; per-station coverage floor (≥ 20 reports and < 0.90 matched → FLAGGED, lake excluded as SUBSTITUTION_STATION); truth (candidate) stations included; per-criterion gates (`gates()`): any gating metric not PASS → no PASS for that criterion |
+| HIGH POD population | Graded POD = all truth events (misses with no Brain data count); evaluable-only POD is a labelled secondary. Truth-onset definition and 2 h merge labelled `amendmentAdditions` |
+| MEDIUM fixtures inside windows | Disclosed in `dataExaminedBeforeRegistration`; `excludedSpans` drops Guntersville and Champlain 2026-11-06 07:00Z→11-07 00:00Z (instants, values, pairs, events); counts reported |
+| MEDIUM 5.1 label | Now R-5.1R "replay self-consistency check", not the plan's 5.1, never a stand-in |
+| MEDIUM wx mapping | Earliest row across all tokens wins (`BR -RA` → Light Rain); VCTS, VCSH, VCFG rows |
+| MEDIUM unjudgeable fronts | Brain fronts with no eligible analysis within ±3 h left out of FAR and counted |
+| LOW separation | Independent station ≥ 3 mi from every Brain station; distance to lake and to nearest Brain station recorded |
+| LOW UA / redirects / bytecode | One User-Agent (`SECTOR_WEATHER_USER_AGENT` or `Sector-WeatherRetroValidation/0.2 …`) for all hosts, stated in the protocol; redirects refused; Mini runs with `PYTHONDONTWRITEBYTECODE=1`, `python3 -I` |
+
+Gap renumbered CG-3.1-24 → CG-3.1-26 (collision with #244 / #245). Verification: 26 runner tests pass; `tools/research` 118 passed, 2 pre-existing failures (root permission); `verify` OK for v2 and v1; engineering-status digest regenerated and `--check` OK; Mini draft updated to v2.

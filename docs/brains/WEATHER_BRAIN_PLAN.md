@@ -92,23 +92,33 @@ Window: 60 days from activation, all lakes with a STEADY/CHANGE history.
 - Also reported (no pass mark): CHANGE-hours per lake per week, the refresh load it would put on Lake and Water Temp.
 A failure produces a `weather-change-thresholds-v2` proposal with its reason and a new knowledge release; v1 results are kept.
 
-### 5.4 Amendment 2026-11-23: retrospective grading on past data (WX-RETRO-2026-11-23)
+### 5.4 Amendment 2026-11-23: retrospective grading on past data (WX-RETRO-2026-11-23.2)
 §5 waits for activation because the NWS observation API keeps about 7 days. The same METAR reports are archived by the Iowa
-Environmental Mesonet, and WPC coded surface bulletins are archived as NWS text products, so §5.1–§5.3 can also be graded **now** on a
-past window by replaying the Brain's own pure logic (`reading.assemble`, `signal.evaluate`) at hourly instants. The protocol was
+Environmental Mesonet, and WPC coded surface bulletins are archived as NWS text products, so §5.2 and §5.3 can also be graded **now** on
+a past window by replaying the Brain's own pure logic (`reading.assemble`, `signal.evaluate`) at hourly instants. The protocol was
 pre-registered and hashed before any data was fetched:
-[`weather-retro-validation/WX-RETRO-2026-11-23.protocol.json`](weather-retro-validation/WX-RETRO-2026-11-23.protocol.json)
-(sha256 `6e08d42ed7e808a7a9775e885f865233e7ba2bb2279e4fbb8e0171634ed37ab8`, commit `c8d2e526`). Runner: `tools/research/weather_retro_validation.py`.
+[`weather-retro-validation/WX-RETRO-2026-11-23.2.protocol.json`](weather-retro-validation/WX-RETRO-2026-11-23.2.protocol.json)
+(sha256 `01eac7bc56033154dcf64ee365826a0da1c4d33cd921cec7ec76e79df48eb58c`, commit `b8e284f3`). It supersedes v1
+(`WX-RETRO-2026-11-23`, sha256 `6e08d42e…`, kept unchanged, never run) after an independent review, still before any data.
+Runner: `tools/research/weather_retro_validation.py`.
 
-- **Same criteria, same marks** as §5.1–§5.3; windows 2026-11-05→11-19 (5.1), 2026-10-20→11-19 (5.2), 2026-09-20→11-19 (5.3), all UTC.
+- **Same marks** as §5.2–§5.3; windows 2026-11-05→11-19 (R-5.1R), 2026-10-20→11-19 (5.2), 2026-09-20→11-19 (5.3), all UTC.
+  POD is graded on **all** truth events, as §5.3 says (a miss while the Brain had no data counts); evaluable-only POD is a labelled secondary.
 - **Station rule as the Brain selects it:** the first 3 NWS-listed stations; the independent station is the nearest other NWS-listed
-  station within 25 mi with archive data.
-- **Added by the amendment (not in §5):** a substitution check (R-SUB: the archive must reproduce the NWS API's reports for the last 7
-  days, otherwise no criterion may be reported PASS); a 5.3 minimum sample (30 truth and 30 Brain events per kind, 10 lakes); WPC bulletins
-  at 0.1° resolution only; RAIN_EXPECTED, cloud cover and WATCH shares are not replayed (no archive of the NWS forecast grid).
-- **What it cannot do:** retrospective 5.1 replays the reading logic; it does not test the live publication path. Prospective §5.1 on
-  published values, and a prospective WX-001 window, remain the confirmation. How retrospective results map to `/validation/weather`
-  is an owner decision (protocol `resultStates.rubricMapping`); nothing here writes that node or changes a score.
+  station within 25 mi, at least 3 mi from every Brain station, with archive data.
+- **Added by the amendment (not in §5), each labelled in the protocol's `amendmentAdditions`:**
+  - a substitution check R-SUB: the archive must reproduce the NWS API's reports for the last 7 days, for every input a criterion uses
+    (temperature, dew point, pressure, wind speed and direction, precipitation, present weather), on values and on null-versus-value,
+    with per-metric minimum pairs and a per-station coverage floor. A metric that does not pass blocks PASS for the criteria that use it.
+  - R-5.1R, a replay self-consistency check. It is **not** §5.1 and never stands in for it.
+  - the RAIN_ONSET truth-onset definition (3 h measured dry lookback) and the 2 h merge of Brain events.
+  - a 5.3 minimum sample (30 truth and 30 Brain events per kind, 10 lakes).
+  - WPC bulletins at 0.1° resolution only, chosen by latest issuance. Brain fronts with no eligible analysis within ±3 h are left out of FAR and counted.
+  - the Brain's recorded test fixtures (2026-11-06, Guntersville and Champlain) fall inside the windows. They are disclosed and their span is excluded.
+- **Not replayed:** RAIN_EXPECTED, cloud cover and WATCH shares. No archive of the NWS forecast grid exists.
+- **What it cannot do:** it does not test the live publication path. §5.1 on published values, and a prospective WX-001 window, remain
+  required. How retrospective results map to `/validation/weather` is an owner decision (protocol `resultStates.rubricMapping`). Nothing
+  here writes that node or changes a score.
 
 ## 6. Rollout (each owner step is separate; none is done by this PR)
 
