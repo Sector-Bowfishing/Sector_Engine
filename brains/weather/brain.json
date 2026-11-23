@@ -69,9 +69,9 @@
       "refuseWithoutApproved": ["CUSTOMER_SERVING"]
     },
     "internalPublication": ["fam.brains", "fam.lake-states", "fam.lakefleet", "fam.validation"],
-    "internalExecution": "NOT RUNNING: registered DISABLED (control manifest activityState PARKED, executionTarget none, absent from the execution control; no cloud job; run.py --write refuses). Planned: a weather-brain Cloud Run job started by brain-orchestrator (WEATHER_BRAIN_PLAN.md section 6).",
+    "internalExecution": "NOT RUNNING: registered DISABLED (control manifest activityState PARKED, executionTarget none, absent from the execution control; no cloud job). Prepared, inert: the gated live writer (run.py --write refuses without an APPROVED release and WEATHER_WRITE_APPROVED=1), brains/weather/deploy/ (refuses without the owner's deploy approval; creates no scheduler) and the orchestrator's planned weather-brain executor (joins only when the manifest target is switched on). Turning it on: WEATHER_BRAIN_PLAN.md section 6.1.",
     "execution": {"authority": "brain-orchestrator", "trigger": "TIME", "minIntervalHours": 0.75, "refresh": "due on every hourly Orchestrator grant (dueAfterHours 0.75); a per-lake planner fetches only lakes whose adaptive nextCheckAt is reached (CHANGE/WATCH each grant, STEADY at most every second grant)", "dependsOn": [], "independentSchedule": false, "controlledBy": "fam.control-execution-control (global + per-Brain; fail closed; read by the orchestrator only)"},
     "customerPublication": {"status": "NOT_ELIGIBLE", "approvalRef": null},
-    "notes": "CALIBRATION, internal only. customerPublication false. No live writer in this version: the write set is built into the platform's in-memory store. The Weather path families are not yet rows in the Cortex Firebase registry (proposal CG-W-1 in docs/cortex/CORTEX_GAPS.md); nothing is written before that review (Brain Factory onboarding rule)."
+    "notes": "CALIBRATION, internal only. customerPublication false. The live writer (run.py --write, platform client) refuses until an APPROVED release and WEATHER_WRITE_APPROVED=1; --dry-run builds the same write set in memory. The Weather path families are not yet rows in the Cortex Firebase registry (proposal CG-W-1 in docs/cortex/CORTEX_GAPS.md); nothing is written before that review (Brain Factory onboarding rule)."
   }
 }

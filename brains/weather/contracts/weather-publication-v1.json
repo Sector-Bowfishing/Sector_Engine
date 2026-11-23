@@ -119,7 +119,7 @@
   ],
   "snapshot": "none: Weather writes no /snapshots path (no legacy reader exists)",
   "stateSchema": "brains/weather/contracts/weather-state-v1.schema.json (sector-brain-weather-state-v1); meaning: weather-state-v1.md",
-  "status": "SHADOW (contract only, not cut over): Weather is CALIBRATION and registered DISABLED; there is no live writer (run.py --write refuses); not a production contract",
+  "status": "SHADOW (contract only, not cut over): Weather is CALIBRATION and registered DISABLED; the live writer is gated (run.py --write refuses without an APPROVED knowledge release and WEATHER_WRITE_APPROVED=1); not a production contract",
   "version": "1.0.0",
   "volatileContract": {
     "id": "weather-volatile-v1",

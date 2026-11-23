@@ -56,8 +56,10 @@ change signal against NWS surface analyses and observed rain. Thresholds are not
 thresholds version with its reason.
 
 ## 14. PUBLISHING
-CALIBRATION, internal only, `customerPublication` false. This version has **no live writer**: `run.py --write` refuses; the write set goes to
-the platform's in-memory store. Live writing needs the plan §6 owner steps.
+CALIBRATION, internal only, `customerPublication` false. The Brain has a **gated live writer**: `run.py --write` applies the dry
+run's write set through `sector_weather.writer.RtdbWriter` (the platform client, as Depth and Generation) and refuses unless the knowledge
+release is APPROVED (exit 2) and `WEATHER_WRITE_APPROVED=1` is set (exit 3). Today the release is NOT_RECORDED, so it refuses. The Brain is
+registered DISABLED: nothing starts it. Turning it on is the owner checklist in plan §6.1.
 
 ## 15. PATH OWNERSHIP
 As §4, enforced by `sector_brain_platform.ownership` and the Publisher registry (`weather_specs`). Never `/scores`, `/snapshots`, `/health`,
