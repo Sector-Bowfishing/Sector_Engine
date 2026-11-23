@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Lake gauge census: GET-only, metadata-only discovery of gauge-grade level series for every directory lake (rules LGC-2026-11-23.5).
+"""Lake gauge census: GET-only, metadata-only discovery of gauge-grade level series for every directory lake (rules LGC-2026-11-23.6).
 
-Two purposes, one pass (docs/brains/lake-gauge-census/LGC-2026-11-23.5.rules.json, pre-registered and hashed before any request;
-it supersedes LGC-2026-11-23.4, .3, .2 and the first registration, none of which was ever used). Every networked run is bound
-to one hash-chained run ledger per rules id in the research folder: only census run #1 counts, outputs are write-once, the
-arguments are fixed by the rules, and origin evidence must be registered by sha256 before the run.:
+Two purposes, one pass (docs/brains/lake-gauge-census/LGC-2026-11-23.6.rules.json, pre-registered and hashed before any request;
+it supersedes LGC-2026-11-23.5, .4, .3, .2 and the first registration, none of which was ever used). Every networked step is
+bound to the shared run ledger (tools/research/protocol_run_ledger.py) at the Cortex research-path root for lake-brain, with a
+public Run anchor / Run start / Run result trail on Sector_Ops #51: only census run #1 counts, outputs are write-once, the
+arguments are fixed by the rules, and origin evidence is bound with bind_inputs before the census begins.:
   BINDING            unprofiled lakes (not in Lake's reviewed set): candidate pool series for the next binding batch (stage A
                      shortlist; the stage B review with level values follows the same rules as batches 1-2 and runs later).
   INDEPENDENT_TRUTH  every lake with a binding: series that are NOT the lake's bound live/fallback/history series, with
@@ -46,10 +47,10 @@ import urllib.robotparser
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from lake_census_run_ledger import LedgerRefused, RunLedger, tree_hash  # noqa: E402
+from protocol_run_ledger import Ledger, LedgerRefusal, sha256_tree  # noqa: E402
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
-RULES = os.path.join(REPO, "docs", "brains", "lake-gauge-census", "LGC-2026-11-23.5.rules.json")
-RULES_ID = "LGC-2026-11-23.5"
+RULES = os.path.join(REPO, "docs", "brains", "lake-gauge-census", "LGC-2026-11-23.6.rules.json")
+RULES_ID = "LGC-2026-11-23.6"
 DIRECTORY = os.path.join(REPO, "brains", "moon", "runtime", "knowledge", "lakes-directory.json")
 REVIEWED = os.path.join(REPO, "jobs", "brain_platform", "sector_brain_platform", "publisher_live", "customer_lake_level_eligible.json")
 GENERATED = os.path.join(REPO, "brains", "lake", "runtime", "LakeBrain", "LakeSourceBindingsGenerated.swift")
@@ -1512,7 +1513,7 @@ def structural_cap(targets: list[dict]) -> dict:
 
 def run_census(rules: dict, digest: str, fetcher: Fetcher, now: dt.datetime, registry: str | None, only: list[str] | None = None,
                usgs_api: str = "auto", skip_controls: bool = False, targets_table: dict | None = None,
-               evidence: dict | None = None, controls_hook=None) -> dict:
+               evidence: dict | None = None) -> dict:
     if now < not_before(rules):
         raise SystemExit(f"REFUSED: the census may not run before {rules['notBefore']} ({rules['notBeforeReason']})")
     tt = targets_table or load_targets()
@@ -1535,8 +1536,6 @@ def run_census(rules: dict, digest: str, fetcher: Fetcher, now: dt.datetime, reg
         geometry(extra)
         ctl.update({t["lakeId"]: t for t in extra})
         controls = run_controls(census, ctl)
-        if controls_hook:
-            controls_hook(controls)
     found, done = {}, 0
     for i, t in enumerate(targets):
         if fetcher.exhausted:
@@ -1611,139 +1610,181 @@ def summary_text(s: dict) -> str:
 
 
 # ------------------------------------------------------------------------------------------------------------------ run binding
-def binding_folder(rules: dict, research_folder: str) -> str:
-    return os.path.join(research_folder, "gauge-census", "binding", rules["rulesId"])
+BRAIN = "lake-brain"
+RESULT_STEPS = frozenset({"census"})          # declared result step(s); recorded in the ledger genesis and the Run anchor
+CONTROLS_STEP, CENSUS_STEP, KEY = "controls", "census", "all"   # (step, key) pairs fixed by the rules
+CONFIRM_POLL_SECONDS, CONFIRM_WAIT_SECONDS = 30, 6 * 3600
+
+
+def open_ledger(rules: dict, digest: str) -> Ledger:
+    """The shared run ledger, rooted at `cortex.py research-path sector/engine lake-brain` (tests replace this function)."""
+    return Ledger.for_brain(BRAIN, rules["rulesId"], digest, repo=REPO, result_steps=RESULT_STEPS)
+
+
+def run_folder(ledger: Ledger, rules: dict) -> str:
+    return os.path.join(str(ledger.root), "gauge-census", rules["rulesId"])
 
 
 def tool_sha256() -> str:
     return sha256_file(os.path.abspath(__file__))
 
 
+def tree(path: str) -> str | None:
+    return sha256_tree(path) if os.path.isdir(path) else None
+
+
 def check_fixed_arguments(rules: dict, args) -> None:
     fixed = rules["runBinding"]["fixedArguments"]
     if getattr(args, "lakes", None):
-        raise LedgerRefused("--lakes is not allowed: the rules fix the lake set to 'all'")
+        raise LedgerRefusal("--lakes is not allowed: the rules fix the lake set to 'all'")
     if args.registry != fixed["registry"]:
-        raise LedgerRefused(f"--registry must be {fixed['registry']} (fixed by the rules)")
+        raise LedgerRefusal(f"--registry must be {fixed['registry']} (fixed by the rules)")
     if args.usgs_api != fixed["usgsApi"]:
-        raise LedgerRefused(f"--usgs-api must be {fixed['usgsApi']} (fixed by the rules)")
+        raise LedgerRefusal(f"--usgs-api must be {fixed['usgsApi']} (fixed by the rules)")
 
 
-def registered_evidence(rules: dict, ledger) -> set[str]:
-    """Evidence sha256s registered in the rules or by a register-evidence LOG line written before census run #1 started."""
-    ok = set(rules["originEvidenceRegistration"]["registeredFiles"])
-    for e in ledger.entries():
-        if e["kind"] == "START" and e["step"] == "census":
-            break
-        if e["kind"] == "LOG" and e["step"] == "register-evidence" and e.get("status") == "REGISTERED":
-            ok.add(e["detail"]["sha256"])
-    return ok
+def bound_evidence(ledger: Ledger) -> dict:
+    return {k: v for e in ledger.entries() if e["status"] == "INPUTS_BOUND" and e["step"] == CENSUS_STEP and e["key"] == KEY
+            for k, v in (e["inputs"] or {}).items()}
 
 
-def controls_passed(ledger) -> bool:
-    for e in ledger.entries():
-        if e["kind"] == "END" and e["step"] == "controls" and e["status"] == "COMPLETED" and not (e.get("result") or {}).get("disabledProviders"):
-            return True
-        if e["kind"] == "LOG" and e["step"] == "census-controls" and e.get("status") == "PASS":
-            return True
-    return False
+def _wait_for(confirm, sleep, what: str):
+    """Call confirm() until the comment is listed. 'Not listed yet' means wait and retry; the comment is never reposted."""
+    waited = 0
+    while True:
+        try:
+            return confirm()
+        except LedgerRefusal as ex:
+            if "not listed yet" not in str(ex) or waited >= CONFIRM_WAIT_SECONDS:
+                raise
+        print(f"  {what} not listed on #51 yet; waiting {CONFIRM_POLL_SECONDS} s (do NOT repost)", file=sys.stderr)
+        sleep(CONFIRM_POLL_SECONDS)
+        waited += CONFIRM_POLL_SECONDS
 
 
-def run_bound(args, rules: dict, digest: str, now: dt.datetime, transport=None, sleep=time.sleep) -> int:
-    """controls / census under the run binding: one ledger per rules id, only run #1 counts, write-once outputs."""
-    folder = binding_folder(rules, args.research_folder)
-    ledger = RunLedger(folder, rules["rulesId"], digest, clock=lambda: now)
-    step = args.cmd
-    try:
-        check_fixed_arguments(rules, args)
-    except LedgerRefused as ex:
-        ledger.refuse(step, "all", str(ex))
-    evidence, ev_record = ({}, None)
-    if step == "census":
-        evidence, ev_record = load_origin_evidence(rules, args.origin_evidence)
-        if ev_record and ev_record["sha256"] not in registered_evidence(rules, ledger):
-            ledger.refuse(step, "all", f"origin-evidence file sha256 {ev_record['sha256']} is not registered (rules or a "
-                                       "register-evidence line before census run #1)")
-        if args.skip_controls:
-            aborted = [a for a in ledger.attempts("census", "all") if a["status"] == "ABORTED_NO_RESULT"]
-            if not aborted or not controls_passed(ledger):
-                ledger.refuse(step, "all", "--skip-controls needs an earlier ABORTED_NO_RESULT census attempt and passing controls in the ledger")
+def _emit(folder: str, name: str, text: str, poster=None):
+    """Write a #51 comment body to a file and print it; the Mac mini session posts it as a research record (poster: tests only)."""
+    os.makedirs(folder, exist_ok=True)
+    path = os.path.join(folder, name)
+    with open(path, "w", encoding="utf-8") as fh:
+        fh.write(text)
+    print(f"--- post on Sector_Ops #51 as a research record (no Owner header, never edit): {path}\n{text}---")
+    if poster:
+        poster(text)
+    return path
+
+
+def _end_attempt(ledger: Ledger, step: str, fetcher: Fetcher, ex: BaseException):
+    """Abort only when the attempt sent no request; otherwise leave it STARTED with no end (terminal: a failure, no retry)."""
+    if fetcher.count == 0 and not fetcher.log and not isinstance(ex, LedgerRefusal):
+        ledger.abort_before_result(step, KEY, f"ended before any request: {type(ex).__name__}: {str(ex)[:200]}")
+    else:
+        print(f"FAILED: {step} ended after {fetcher.count} request(s); the attempt stays STARTED with no end, which is terminal "
+              f"for {ledger.protocol_id} (recovery: a new rules id and revised rules recording the #51 human review)", file=sys.stderr)
+
+
+def run_controls_step(args, rules: dict, digest: str, now: dt.datetime, transport=None, sleep=time.sleep) -> int:
+    ledger = open_ledger(rules, digest)
+    check_fixed_arguments(rules, args)
     tt = load_targets()
-    fetcher = Fetcher(rules, out=folder, transport=transport, now=lambda: now, sleep=sleep)
-    inputs = {"argv": {k: v for k, v in vars(args).items()}, "rulesSha256": digest, "toolSha256": tool_sha256(),
-              "inputFiles": tt["inputs"], "registrySource": args.registry, "researchFolder": os.path.abspath(args.research_folder),
-              "cacheBefore": tree_hash(os.path.join(folder, "cache")),
-              "originEvidence": {"sha256": ev_record["sha256"]} if ev_record else None}
-    with ledger.step(step, "all", inputs=inputs) as run:
-        out = os.path.join(folder, f"{step}-run-{run.run_number}")
-        if step == "controls":
-            census = Census(rules, fetcher, now, args.usgs_api)
-            targets = {t["lakeId"]: dict(t) for t in tt["lakes"] if t["lakeId"] in {c["lakeId"] for c in CONTROLS}}
-            census.load_geometry(list(targets.values()), args.registry)
-            res = run_controls(census, targets)
-            res.update({"errors": census.errors, "incomplete": census.incomplete, "geometry": census.geometry_hashes})
-            run.writing()
-            os.makedirs(out)
-            shas = {"controls.json": _write_once(os.path.join(out, "controls.json"), json.dumps(res, indent=1, default=str).encode()),
-                    "requests.jsonl": _write_once(os.path.join(out, "requests.jsonl"),
-                                                  "".join(json.dumps(r) + "\n" for r in fetcher.log).encode())}
-            run.outputs = shas
-            run.result = {"disabledProviders": res["disabledProviders"], "requests": fetcher.count, "cacheHits": fetcher.cache_hits,
-                          "cacheAfter": tree_hash(os.path.join(folder, "cache")), "geometry": census.geometry_hashes}
-            print(json.dumps(res, indent=1, default=str))
-            rc = 0 if not res["disabledProviders"] else 3
-        else:
-            def log_controls(res):
-                ledger.log("census-controls", "all", "PASS" if not res["disabledProviders"] else "FAIL",
-                           {"disabledProviders": res["disabledProviders"], "startSeq": run.seq})
-            result = run_census(rules, digest, fetcher, now, args.registry, None, args.usgs_api, args.skip_controls,
-                                evidence=evidence, controls_hook=log_controls)
-            result["runBinding"] = {"runNumber": run.run_number, "ledger": os.path.join(folder, "ledger.jsonl"), "startSeq": run.seq,
-                                    "counts": run.run_number == 1}
-            result["originEvidenceFile"] = ev_record
-            run.writing()
-            os.makedirs(out)
-            shas = write_outputs(out, result, fetcher)
-            run.outputs = shas
-            run.result = {"requests": fetcher.count, "retries": sum(1 for r in fetcher.log if r.get("attempt", 1) > 1),
-                          "cacheHits": fetcher.cache_hits, "cacheAfter": tree_hash(os.path.join(folder, "cache")),
-                          "geometry": result["geometry"], "budgetExhausted": result["summary"]["budgetExhausted"],
-                          "originEvidence": ev_record}
-            print(summary_text(result))
-            print("sha256: " + ", ".join(f"{k} {v}" for k, v in shas.items()))
-            rc = 0
-    return rc
+    base = run_folder(ledger, rules)
+    fetcher = Fetcher(rules, out=base, transport=transport, now=lambda: now, sleep=sleep)
+    run = ledger.begin(CONTROLS_STEP, KEY, args={"argv": vars(args), "toolSha256": tool_sha256(), "rulesSha256": digest,
+                                                  "inputFiles": tt["inputs"], "cacheBefore": tree(os.path.join(base, "cache"))})
+    try:
+        census = Census(rules, fetcher, now, args.usgs_api)
+        targets = {t["lakeId"]: dict(t) for t in tt["lakes"] if t["lakeId"] in {c["lakeId"] for c in CONTROLS}}
+        census.load_geometry(list(targets.values()), args.registry)
+        res = run_controls(census, targets)
+        res.update({"errors": census.errors, "incomplete": census.incomplete, "geometry": census.geometry_hashes,
+                    "requests": fetcher.count, "cacheHits": fetcher.cache_hits})
+        out = os.path.join(base, f"controls-run-{run}")
+        os.makedirs(out)
+        shas = {"controls.json": _write_once(os.path.join(out, "controls.json"), json.dumps(res, indent=1, default=str).encode()),
+                "requests.jsonl": _write_once(os.path.join(out, "requests.jsonl"), "".join(json.dumps(r) + "\n" for r in fetcher.log).encode())}
+        ledger.complete(CONTROLS_STEP, KEY, outputs=shas)
+    except BaseException as ex:
+        _end_attempt(ledger, CONTROLS_STEP, fetcher, ex)
+        raise
+    print(json.dumps(res, indent=1, default=str))
+    return 0 if not res["disabledProviders"] else 3
 
 
-def register_evidence(args, rules: dict, digest: str, now: dt.datetime) -> int:
-    ledger = RunLedger(binding_folder(rules, args.research_folder), rules["rulesId"], digest, clock=lambda: now)
-    if ledger.attempts("census", "all"):
-        ledger.refuse("register-evidence", "all", "census run #1 has started; evidence can no longer be registered")
-    _, rec = load_origin_evidence(rules, args.file)
-    ledger.log("register-evidence", "all", "REGISTERED", rec)
-    print(f"REGISTERED origin evidence sha256 {rec['sha256']}")
+def run_census_step(args, rules: dict, digest: str, now: dt.datetime, transport=None, sleep=time.sleep, poster=None) -> int:
+    ledger = open_ledger(rules, digest)
+    check_fixed_arguments(rules, args)
+    evidence, ev_record = load_origin_evidence(rules, args.origin_evidence)
+    bound = bound_evidence(ledger)
+    if ev_record:
+        if ev_record["sha256"] not in set(rules["originEvidenceRegistration"]["registeredFiles"]) | set(bound.values()):
+            raise LedgerRefusal(f"origin-evidence file sha256 {ev_record['sha256']} is not registered (rules or register-evidence)")
+    elif bound:
+        raise LedgerRefusal(f"origin evidence {bound} is bound for the census; pass the same file with --origin-evidence")
+    tt = load_targets()
+    base = run_folder(ledger, rules)
+    fetcher = Fetcher(rules, out=base, transport=transport, now=lambda: now, sleep=sleep)
+    inputs = {"originEvidence": ev_record["sha256"]} if ev_record else None
+    run = ledger.begin(CENSUS_STEP, KEY, args={"argv": vars(args), "toolSha256": tool_sha256(), "rulesSha256": digest,
+                                                "inputFiles": tt["inputs"], "registrySource": args.registry,
+                                                "cacheBefore": tree(os.path.join(base, "cache"))}, inputs=inputs)
+    try:
+        _emit(os.path.join(base, f"census-run-{run}-records"), "run-start.txt", ledger.start_text(CENSUS_STEP, KEY), poster)
+        _wait_for(lambda: ledger.confirm_started(CENSUS_STEP, KEY), sleep, "Run start")
+        result = run_census(rules, digest, fetcher, now, args.registry, None, args.usgs_api, False, evidence=evidence)
+        result["runBinding"] = {"ledger": str(ledger.path), "anchor": ledger.anchor(), "attempt": run}
+        result["originEvidenceFile"] = ev_record
+        out = os.path.join(base, f"census-run-{run}")
+        os.makedirs(out)
+        shas = write_outputs(out, result, fetcher)
+        ledger.record_outputs(CENSUS_STEP, KEY, shas)
+        summ = result["summary"]
+        entry = ledger.complete(CENSUS_STEP, KEY, outputs=shas, result={
+            "requests": fetcher.count, "retries": sum(1 for r in fetcher.log if r.get("attempt", 1) > 1), "cacheHits": fetcher.cache_hits,
+            "cacheAfter": tree(os.path.join(base, "cache")), "registryIndexSha256": result["geometry"].get("index"),
+            "outlinesSha256": sha256_bytes(json.dumps(result["geometry"].get("outlines") or {}, sort_keys=True).encode()),
+            "budgetExhausted": summ["budgetExhausted"], "disabledProviders": result["disabledProviders"],
+            "binding": {k: summ["binding"][k] for k in ("lakes", "withShortlist", "handReviewOnly", "noCandidate", "incomplete",
+                                                          "notDiscovered", "ceilingIfAllShortlistPassStageB")},
+            "v3EligibleLakes": summ["independentTruth"]["lakesWithV3Eligible"], "originEvidence": ev_record["sha256"] if ev_record else None})
+    except BaseException as ex:
+        _end_attempt(ledger, CENSUS_STEP, fetcher, ex)
+        raise
+    print(summary_text(result))
+    print("sha256: " + ", ".join(f"{k} {v}" for k, v in shas.items()))
+    print(f"counted: {entry['counted']}")
+    _emit(os.path.join(base, f"census-run-{run}-records"), "run-result.txt", ledger.result_text(CENSUS_STEP, KEY), poster)
+    print("Then run: lake_gauge_census.py confirm-result")
     return 0
 
 
-def main(argv=None, now: dt.datetime | None = None, transport=None, sleep=time.sleep) -> int:
+def register_evidence(args, rules: dict, digest: str) -> int:
+    ledger = open_ledger(rules, digest)
+    if any(e["step"] == CENSUS_STEP and e["status"] == "STARTED" for e in ledger.entries()):
+        raise LedgerRefusal("census run #1 has begun; evidence can no longer be registered")
+    _, rec = load_origin_evidence(rules, args.file)
+    ledger.bind_inputs(CENSUS_STEP, KEY, {"originEvidence": rec["sha256"]})
+    print(f"BOUND origin evidence sha256 {rec['sha256']} for census/all")
+    return 0
+
+
+def main(argv=None, now: dt.datetime | None = None, transport=None, sleep=time.sleep, poster=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     a = sub.add_parser("lakes")
     a.add_argument("--out", required=True)
     sub.add_parser("verify")
+    sub.add_parser("anchor", help="open the run ledger and print the Run anchor text to post on #51 before any step")
     for name in ("controls", "census"):
         c = sub.add_parser(name)
-        c.add_argument("--research-folder", default=os.environ.get("SECTOR_RESEARCH_ROOT"),
-                       help="the Lake research folder (Cortex research-path, or env SECTOR_RESEARCH_ROOT); holds the run binding")
         c.add_argument("--registry", default=REGISTRY_BASE, help="fixed by the rules; any other value is refused")
         c.add_argument("--usgs-api", choices=["auto", "waterservices", "ogc"], default="auto", help="fixed by the rules to auto")
         c.add_argument("--lakes", nargs="*", help="refused: the rules fix the lake set to all")
         if name == "census":
-            c.add_argument("--skip-controls", action="store_true", help="only after an aborted census attempt with passing controls")
-            c.add_argument("--origin-evidence", help="a registered origin-evidence JSON file (none exists at registration)")
+            c.add_argument("--origin-evidence", help="the origin-evidence file bound with register-evidence (none exists at registration)")
     r = sub.add_parser("register-evidence")
-    r.add_argument("--research-folder", default=os.environ.get("SECTOR_RESEARCH_ROOT"))
     r.add_argument("--file", required=True)
+    sub.add_parser("confirm-result", help="after posting the Run result text on #51: confirm it (waits; never repost)")
+    sub.add_parser("audit", help="print the ledger audit, checking the #51 trail")
     s = sub.add_parser("summarize")
     s.add_argument("--summary", required=True)
     args = ap.parse_args(argv)
@@ -1763,21 +1804,27 @@ def main(argv=None, now: dt.datetime | None = None, transport=None, sleep=time.s
         print(f"{t['directoryCount']} lakes, reviewed {t['reviewedCount']}, purposes {n}, structural cap {structural_cap(t['lakes'])}")
         return 0
     now = now or dt.datetime.now(dt.timezone.utc)
-    if not args.research_folder:
-        print("REFUSED: --research-folder (or SECTOR_RESEARCH_ROOT) is required: the run binding lives in the research folder", file=sys.stderr)
-        return 2
-    if args.cmd == "register-evidence":
-        try:
-            return register_evidence(args, rules, digest, now)
-        except LedgerRefused as ex:
-            print(f"REFUSED: {ex}", file=sys.stderr)
-            return 2
-    if now < not_before(rules):  # every networked subcommand; the fetcher enforces it again on each request
-        print(f"REFUSED: no networked subcommand may run before {rules['notBefore']} ({rules['notBeforeReason']})", file=sys.stderr)
-        return 2
     try:
-        return run_bound(args, rules, digest, now, transport, sleep)
-    except LedgerRefused as ex:
+        if args.cmd == "anchor":
+            led = open_ledger(rules, digest)
+            _emit(os.path.join(run_folder(led, rules), "records"), "run-anchor.txt", led.post_anchor_text(), poster)
+            return 0
+        if args.cmd == "register-evidence":
+            return register_evidence(args, rules, digest)
+        if args.cmd == "confirm-result":
+            led = open_ledger(rules, digest)
+            print(json.dumps(_wait_for(lambda: led.confirm_result(CENSUS_STEP, KEY), sleep, "Run result"), indent=1, default=str))
+            return 0
+        if args.cmd == "audit":
+            print(json.dumps(open_ledger(rules, digest).audit(check_external=True), indent=1, default=str))
+            return 0
+        if now < not_before(rules):  # every networked step; the fetcher enforces it again on each request
+            print(f"REFUSED: no networked step may run before {rules['notBefore']} ({rules['notBeforeReason']})", file=sys.stderr)
+            return 2
+        if args.cmd == "controls":
+            return run_controls_step(args, rules, digest, now, transport, sleep)
+        return run_census_step(args, rules, digest, now, transport, sleep, poster)
+    except LedgerRefusal as ex:
         print(f"REFUSED: {ex}", file=sys.stderr)
         return 2
 

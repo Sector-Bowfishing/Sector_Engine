@@ -206,11 +206,13 @@ def cand(l, provider, series):
 # ------------------------------------------------------------------------------------------------------------- rules
 def test_rules_hash_is_the_committed_preregistration():
     assert DIGEST == open(G.RULES + ".sha256").read().split()[0]
-    assert RULES["rulesId"] == "LGC-2026-11-23.5" and RULES["notBefore"] == "2026-12-01T12:00:00Z"
+    assert RULES["rulesId"] == "LGC-2026-11-23.6" and RULES["notBefore"] == "2026-12-01T12:00:00Z"
     side = lambda n: open(os.path.join(os.path.dirname(G.RULES), n + ".sha256")).read().split()[0]
-    assert RULES["supersedes"]["sha256"] == side("LGC-2026-11-23.4.rules.json")
-    assert [e["sha256"] for e in RULES["supersedes"]["earlier"]] == [side("LGC-2026-11-23.3.rules.json"),
-                                                                     side("LGC-2026-11-23.2.rules.json"), side("LGC-2026-11-23.rules.json")]
+    assert RULES["supersedes"]["sha256"] == side("LGC-2026-11-23.5.rules.json")
+    assert [e["sha256"] for e in RULES["supersedes"]["earlier"]] == [side(f"LGC-2026-11-23{x}.rules.json") for x in (".4", ".3", ".2", "")]
+    assert RULES["runBinding"]["resultSteps"] == sorted(G.RESULT_STEPS) == ["census"]
+    assert set(RULES["runBinding"]["steps"]) == {G.CONTROLS_STEP, G.CENSUS_STEP} and G.KEY == "all"
+    assert "--out" not in json.dumps(RULES["publication"]["output"]).replace("no --out", "")
     assert RULES["originEvidenceRegistration"]["registeredFiles"] == []
     assert RULES["runBinding"]["fixedArguments"]["registry"] == G.REGISTRY_BASE
     assert RULES["publication"] == {**RULES["publication"], "changesBindings": False, "changesAcceptedLists": False,
@@ -421,21 +423,7 @@ def test_summary_text(tmp_path):
 
 
 # ------------------------------------------------------------------------------------------------------------- review fixes (LGC-2026-11-23.2)
-def test_every_networked_subcommand_refuses_before_not_before(tmp_path):
-    w = World()
-    early = dt.datetime(2026, 12, 1, 11, 59, tzinfo=dt.timezone.utc)
-    for cmd in (["controls", "--research-folder", str(tmp_path / "r")], ["census", "--research-folder", str(tmp_path / "r")]):
-        assert G.main(cmd, now=early, transport=w) == 2
-    assert w.calls == [] and not (tmp_path / "r").exists()
-    f = fetcher(tmp_path, w, now=early)
-    with pytest.raises(G.Refused, match="before 2026-12-01T12:00:00Z"):
-        f.get("https://waterservices.usgs.gov/nwis/site/")
-    c = G.Census(RULES, f, NOW)
-    lk = dict(targets()["lakes"][0])
-    c.load_geometry([lk], G.REGISTRY_BASE)
-    assert c.incomplete[lk["lakeId"]] == ["GEOMETRY_UNAVAILABLE"]
-    assert w.calls == []
-    assert G.not_before(RULES) == dt.datetime(2026, 12, 1, 12, 0, tzinfo=dt.timezone.utc)
+
 
 
 def cli(argv, world=None, now=NOW):
@@ -447,21 +435,10 @@ SYN_CONTROLS = [{"lakeId": "Testb Lake|ZZ", "provider": "usgs", "key": ("usgs", 
                 {"lakeId": "Testa Reservoir|ZZ", "provider": "rise", "key": ("rise", "9001")}]
 
 
-@pytest.fixture
-def bound_env(tmp_path, monkeypatch):
-    monkeypatch.setattr(G, "load_targets", targets)
-    monkeypatch.setattr(G, "CONTROLS", SYN_CONTROLS)
-    rf = tmp_path / "research"
-    folder = G.binding_folder(RULES, str(rf))
-    led = lambda: G.RunLedger(folder, RULES["rulesId"], DIGEST, clock=lambda: NOW)
-    return {"rf": str(rf), "folder": folder, "ledger": led}
 
 
-def test_controls_subcommand_runs_after_not_before(bound_env):
-    assert cli(["controls", "--research-folder", bound_env["rf"]]) == 0
-    end = [e for e in bound_env["ledger"]().entries() if e["kind"] == "END"][0]
-    assert end["status"] == "COMPLETED" and end["result"]["disabledProviders"] == {}
-    assert os.path.exists(os.path.join(bound_env["folder"], "controls-run-1", "controls.json"))
+
+
 
 
 @pytest.mark.parametrize("status,allowed", [(404, True), (410, True), (403, False), (401, False), (429, False), (500, False),
@@ -530,7 +507,8 @@ def test_rise_bound_coordinates_come_from_the_fetched_locations(tmp_path):
     ("LGC-2026-11-23.rules.json", "254752ea31823ace94768a7daa658cf70bfa42b8ad0d276ebb1cae1cf86e9e3f"),
     ("LGC-2026-11-23.2.rules.json", "c17feef35f03c072cb79f4d318b465d807fc72afe5ca351f0b787cc3df382ba7"),
     ("LGC-2026-11-23.3.rules.json", "2a46ac96df8021c5fca08d19406f5e60eedd19e266289f9130515ecb76b5b8b1"),
-    ("LGC-2026-11-23.4.rules.json", "64ca297f43331893dd70a15edcc5a84fd76721c434c042cc67c381b616f41494")])
+    ("LGC-2026-11-23.4.rules.json", "64ca297f43331893dd70a15edcc5a84fd76721c434c042cc67c381b616f41494"),
+    ("LGC-2026-11-23.5.rules.json", "befcc41dece500688e4c6062372c54e4907aa288d4cad44c38a2ce0b131e23de")])
 def test_superseded_rules_files_are_kept_and_refused(name, sha):
     old = os.path.join(os.path.dirname(G.RULES), name)
     assert G.sha256_file(old) == sha
@@ -744,27 +722,10 @@ def test_disabled_provider_marks_every_lake(tmp_path, monkeypatch):
 
 
 # ------------------------------------------------------------------------------------------------------------- round 4 (LGC-2026-11-23.5)
-def _ledger_kinds(env):
-    return [(e["kind"], e["step"], e.get("status")) for e in env["ledger"]().entries()]
 
 
-def test_census_run_one_counts_and_a_second_run_is_refused(bound_env):
-    rf = bound_env["rf"]
-    assert cli(["census", "--research-folder", rf]) == 0
-    out = os.path.join(bound_env["folder"], "census-run-1")
-    res = json.load(open(os.path.join(out, "census.json")))
-    assert res["runBinding"]["runNumber"] == 1 and res["runBinding"]["counts"] is True
-    assert cli(["census", "--research-folder", rf]) == 2
-    kinds = _ledger_kinds(bound_env)
-    assert ("END", "census", "COMPLETED") in kinds and kinds[-1] == ("REFUSED", "census", "REFUSED")
-    assert not os.path.exists(os.path.join(bound_env["folder"], "census-run-2"))
-    start = next(e for e in bound_env["ledger"]().entries() if e["kind"] == "START" and e["step"] == "census")
-    assert start["inputs"]["toolSha256"] == G.tool_sha256() and start["inputs"]["argv"]["research_folder"] == rf
-    assert start["inputs"]["cacheBefore"]["hashMethod"] == "sha256-tree-v1" and start["inputs"]["registrySource"] == G.REGISTRY_BASE
-    end = next(e for e in bound_env["ledger"]().entries() if e["kind"] == "END" and e["step"] == "census")
-    assert set(end["outputs"]) == {"census.json", "census.summary.json", "robots.json", "requests.jsonl"}
-    assert end["result"]["geometry"]["index"] and set(end["result"]["geometry"]["outlines"]) == {"Testa Reservoir|ZZ", "Testb Lake|ZZ"}
-    assert end["result"]["cacheAfter"]["files"] > 0
+
+
 
 
 def test_outputs_are_write_once(tmp_path):
@@ -773,49 +734,16 @@ def test_outputs_are_write_once(tmp_path):
         G._write_once(str(tmp_path / "a.json"), b"2")
 
 
-def test_ledger_chain_is_checked(bound_env):
-    assert cli(["controls", "--research-folder", bound_env["rf"]]) == 0
-    path = os.path.join(bound_env["folder"], "ledger.jsonl")
-    open(path, "a").write(open(path).read().splitlines()[0] + "\n")  # a replayed line breaks the chain
-    assert cli(["census", "--research-folder", bound_env["rf"]]) == 2
 
 
-@pytest.mark.parametrize("extra", [["--lakes", "Testa Reservoir|ZZ"], ["--registry", "https://storage.googleapis.com/other"],
-                                   ["--usgs-api", "ogc"], ["--usgs-api", "waterservices"]])
-def test_fixed_arguments(bound_env, extra):
-    assert cli(["census", "--research-folder", bound_env["rf"]] + extra) == 2
-    assert _ledger_kinds(bound_env)[-1][0] == "REFUSED" and not os.path.exists(os.path.join(bound_env["folder"], "census-run-1"))
 
 
-def test_skip_controls_needs_an_aborted_run_with_passing_controls(bound_env, monkeypatch):
-    rf = bound_env["rf"]
-    assert cli(["census", "--research-folder", rf, "--skip-controls"]) == 2
-    real = G.run_census
-
-    def crash(*a, controls_hook=None, **k):
-        controls_hook({"disabledProviders": {}})
-        raise RuntimeError("interrupted before any output")
-    monkeypatch.setattr(G, "run_census", crash)
-    with pytest.raises(RuntimeError):
-        cli(["census", "--research-folder", rf])
-    monkeypatch.setattr(G, "run_census", real)
-    assert ("END", "census", "ABORTED_NO_RESULT") in _ledger_kinds(bound_env)
-    assert cli(["census", "--research-folder", rf, "--skip-controls"]) == 0
-    res = json.load(open(os.path.join(bound_env["folder"], "census-run-2", "census.json")))
-    assert res["controls"] == {"skipped": True} and res["runBinding"]["runNumber"] == 2
 
 
-def test_skip_controls_refused_when_the_aborted_run_had_failing_controls(bound_env, monkeypatch):
-    def crash(*a, controls_hook=None, **k):
-        controls_hook({"disabledProviders": {"rise": "positive control not rediscovered"}})
-        raise RuntimeError("x")
-    monkeypatch.setattr(G, "run_census", crash)
-    with pytest.raises(RuntimeError):
-        cli(["census", "--research-folder", bound_env["rf"]])
-    monkeypatch.undo()
-    monkeypatch.setattr(G, "load_targets", targets)
-    monkeypatch.setattr(G, "CONTROLS", SYN_CONTROLS)
-    assert cli(["census", "--research-folder", bound_env["rf"], "--skip-controls"]) == 2
+
+
+
+
 
 
 def _evidence_file(tmp_path, series="Other.Elev.Inst.1Hour.0.Raw", provider="cwms", origin="USACE"):
@@ -824,14 +752,7 @@ def _evidence_file(tmp_path, series="Other.Elev.Inst.1Hour.0.Raw", provider="cwm
     return str(p)
 
 
-def test_origin_evidence_must_be_registered_before_run_one(bound_env, tmp_path):
-    rf, ev = bound_env["rf"], _evidence_file(tmp_path)
-    assert cli(["census", "--research-folder", rf, "--origin-evidence", ev]) == 2  # not registered
-    assert cli(["register-evidence", "--research-folder", rf, "--file", ev]) == 0
-    assert cli(["census", "--research-folder", rf, "--origin-evidence", ev]) == 0
-    res = json.load(open(os.path.join(bound_env["folder"], "census-run-1", "census.json")))
-    assert res["originEvidenceFile"]["sha256"] == G.sha256_file(ev) and "SYNTHETIC sensor id" in res["originEvidenceFile"]["text"]
-    assert cli(["register-evidence", "--research-folder", rf, "--file", _evidence_file(tmp_path, "Another.Elev.Inst.1Hour.0.Raw")]) == 2
+
 
 
 @pytest.mark.parametrize("series", ["X.Elev.Inst.1Hour.0.Raw-USGS", "X.Elev.Inst.1Hour.0.Raw-USBR", "X.Elev.Inst.1Hour.0.CDEC",
@@ -841,12 +762,7 @@ def test_evidence_for_a_labelled_series_is_refused(tmp_path, series):
         G.load_origin_evidence(RULES, _evidence_file(tmp_path, series))
 
 
-def test_cache_hits_are_logged(bound_env):
-    assert cli(["controls", "--research-folder", bound_env["rf"]]) == 0
-    assert cli(["census", "--research-folder", bound_env["rf"]]) == 0
-    lines = [json.loads(l) for l in open(os.path.join(bound_env["folder"], "census-run-1", "requests.jsonl"))]
-    hits = [l for l in lines if l.get("cacheHit")]
-    assert hits and all(len(h["sha256"]) == 64 and h["cacheFile"] for h in hits)
+
 
 
 @pytest.mark.parametrize("other", ["RISE_UNCONFIRMED", "CDEC_COPY", "USACE", "USBR", "USGS"])
@@ -922,6 +838,190 @@ def test_locations_without_coordinates_mark_the_lake(tmp_path, monkeypatch):
     assert res["summary"]["locationsWithoutCoordinatesOrState"]["cwms:LRP"] >= 1
 
 
-def test_research_folder_is_required(monkeypatch):
-    monkeypatch.delenv("SECTOR_RESEARCH_ROOT", raising=False)
-    assert cli(["census"]) == 2 and cli(["controls"]) == 2
+# ------------------------------------------------------------------------------------------------------------- round 5: shared run ledger (LGC-2026-11-23.6)
+import protocol_run_ledger as PRL  # noqa: E402
+
+
+class FakeIssue:
+    """A synthetic Sector_Ops #51 behind `gh api --paginate` (comments printed as one JSON array)."""
+
+    def __init__(self):
+        self.comments, self.next_id, self.clock, self.lag = [], 5000, dt.datetime(2000, 1, 1, tzinfo=dt.timezone.utc), 0
+
+    def post(self, body):
+        self.clock += dt.timedelta(minutes=1)
+        t = self.clock.strftime("%Y-%m-%dT%H:%M:%SZ")
+        self.comments.append({"id": self.next_id, "created_at": t, "updated_at": t, "body": body,
+                              "html_url": f"https://example.invalid/51#c{self.next_id}", "_lag": self.lag})
+        self.next_id += 1
+
+    def __call__(self, path):
+        out = []
+        for c in self.comments:
+            if c["_lag"] > 0:
+                c["_lag"] -= 1
+                continue
+            out.append({k: v for k, v in c.items() if k != "_lag"})
+        return json.dumps(out)
+
+
+@pytest.fixture
+def env(tmp_path, monkeypatch):
+    monkeypatch.delenv(PRL.ENV_ROOT, raising=False)
+    monkeypatch.setattr(PRL, "_gh_api", lambda path: (_ for _ in ()).throw(AssertionError("real gh reached")))
+    monkeypatch.setattr(G, "load_targets", targets)
+    monkeypatch.setattr(G, "CONTROLS", SYN_CONTROLS)
+    root = tmp_path / "Sector Research" / "lake-brain"
+    root.mkdir(parents=True)
+    issue = FakeIssue()
+    monkeypatch.setattr(G, "open_ledger", lambda rules, digest: PRL.Ledger(root, rules["rulesId"], digest,
+                                                                         result_steps=G.RESULT_STEPS, gh=issue))
+    led = lambda: PRL.Ledger(root, RULES["rulesId"], DIGEST, result_steps=G.RESULT_STEPS, gh=issue)
+    base = os.path.join(str(root.resolve()), "gauge-census", RULES["rulesId"])
+    return {"root": root, "issue": issue, "ledger": led, "base": base}
+
+
+def run_cli(env, argv, world=None, now=NOW, post=True):
+    return G.main(argv, now=now, transport=world or World(), sleep=lambda s: None, poster=env["issue"].post if post else None)
+
+
+def anchored(env):
+    assert run_cli(env, ["anchor"]) == 0
+    assert env["issue"].comments[-1]["body"].startswith(f"Run anchor: {RULES['rulesId']} ")
+    return env
+
+
+def statuses(env, step=None):
+    return [e["status"] for e in env["ledger"]().entries() if step is None or e["step"] == step]
+
+
+def test_every_networked_step_refuses_before_not_before(env, tmp_path):
+    anchored(env)
+    w = World()
+    early = dt.datetime(2026, 12, 1, 11, 59, tzinfo=dt.timezone.utc)
+    for cmd in (["controls"], ["census"]):
+        assert run_cli(env, cmd, world=w, now=early) == 2
+    assert w.calls == [] and statuses(env) == ["LEDGER_OPENED"]
+    f = fetcher(tmp_path, w, now=early)
+    with pytest.raises(G.Refused, match="before 2026-12-01T12:00:00Z"):
+        f.get("https://waterservices.usgs.gov/nwis/site/")
+    c = G.Census(RULES, f, NOW)
+    lk = dict(targets()["lakes"][0])
+    c.load_geometry([lk], G.REGISTRY_BASE)
+    assert c.incomplete[lk["lakeId"]] == ["GEOMETRY_UNAVAILABLE"] and w.calls == []
+    assert G.not_before(RULES) == dt.datetime(2026, 12, 1, 12, 0, tzinfo=dt.timezone.utc)
+
+
+def test_no_step_before_the_run_anchor(env):
+    w = World()
+    assert run_cli(env, ["controls"], world=w) == 2 and run_cli(env, ["census"], world=w) == 2
+    assert w.calls == [] and "STARTED" not in statuses(env)
+
+
+def test_controls_then_census_full_trail(env):
+    anchored(env)
+    assert run_cli(env, ["controls"]) == 0
+    assert statuses(env, "controls") == ["STARTED", "COMPLETED"]
+    assert run_cli(env, ["census"]) == 0
+    assert statuses(env, "census") == ["STARTED", "START_CONFIRMED", "OUTPUTS_RECORDED", "COMPLETED"]
+    bodies = [c["body"].split("\n", 1)[0] for c in env["issue"].comments]
+    assert [b.split()[1] for b in bodies] == ["anchor:", "start:", "result:"]
+    assert not any("Owner" in c["body"] for c in env["issue"].comments)
+    assert run_cli(env, ["confirm-result"]) == 0
+    assert statuses(env, "census")[-1] == "RESULT_CONFIRMED"
+    led = env["ledger"]()
+    done = led.require("census", "all")
+    assert done["counted"] is True and done["run"] == 1
+    assert set(done["outputs"]) == {"census.json", "census.summary.json", "robots.json", "requests.jsonl"}
+    assert done["result"]["registryIndexSha256"] and done["result"]["cacheAfter"]
+    start = next(e for e in led.entries() if e["status"] == "STARTED" and e["step"] == "census")
+    assert start["args"]["toolSha256"] == G.tool_sha256() and start["args"]["registrySource"] == G.REGISTRY_BASE
+    res = json.load(open(os.path.join(env["base"], "census-run-1", "census.json")))
+    assert res["runBinding"]["anchor"] == led.anchor()
+    hits = [json.loads(l) for l in open(os.path.join(env["base"], "census-run-1", "requests.jsonl")) if '"cacheHit": true' in l]
+    assert hits and all(len(h["sha256"]) == 64 for h in hits)  # the census reran the controls' metadata requests from the cache
+    assert led.audit(check_external=True)["findings"] == []
+
+
+def test_second_census_is_refused(env):
+    anchored(env)
+    assert run_cli(env, ["census"]) == 0
+    assert run_cli(env, ["census"]) == 2
+    assert not os.path.exists(os.path.join(env["base"], "census-run-2"))
+    assert run_cli(env, ["controls"]) == 0  # controls is its own step, and also runs once only
+    assert run_cli(env, ["controls"]) == 2
+
+
+def test_not_listed_yet_waits_and_never_reposts(env):
+    anchored(env)
+    env["issue"].lag = 3  # the Run start comment shows up only on the 4th listing
+    assert run_cli(env, ["census"]) == 0
+    assert sum(1 for c in env["issue"].comments if c["body"].startswith("Run start:")) == 1
+
+
+@pytest.mark.parametrize("extra", [["--lakes", "Testa Reservoir|ZZ"], ["--registry", "https://storage.googleapis.com/other"],
+                                   ["--usgs-api", "ogc"], ["--usgs-api", "waterservices"]])
+def test_fixed_arguments(env, extra):
+    anchored(env)
+    assert run_cli(env, ["census"] + extra) == 2
+    assert "STARTED" not in statuses(env) and not os.path.exists(os.path.join(env["base"], "census-run-1"))
+
+
+def test_interrupt_after_requests_is_terminal_not_an_abort(env, monkeypatch):
+    anchored(env)
+    real = G.run_census
+
+    def interrupted(rules, digest, fetcher, *a, **k):
+        fetcher.get("https://waterservices.usgs.gov/nwis/site/", {"sites": "07000001"})
+        raise KeyboardInterrupt()
+    monkeypatch.setattr(G, "run_census", interrupted)
+    with pytest.raises(KeyboardInterrupt):
+        run_cli(env, ["census"])
+    monkeypatch.setattr(G, "run_census", real)
+    assert statuses(env, "census") == ["STARTED", "START_CONFIRMED"]  # no ABORTED_BEFORE_RESULT: terminal
+    assert run_cli(env, ["census"]) == 2  # no retry under this rules id
+
+
+def test_abort_only_when_no_request_was_sent(env, monkeypatch):
+    anchored(env)
+    monkeypatch.setattr(G.Census, "load_geometry", lambda self, lakes, registry: (_ for _ in ()).throw(KeyboardInterrupt()))
+    with pytest.raises(KeyboardInterrupt):
+        run_cli(env, ["controls"])
+    assert statuses(env, "controls") == ["STARTED", "ABORTED_BEFORE_RESULT"]
+    monkeypatch.undo()
+    monkeypatch.setattr(G, "load_targets", targets)
+    monkeypatch.setattr(G, "CONTROLS", SYN_CONTROLS)
+    monkeypatch.setattr(PRL, "_gh_api", lambda path: (_ for _ in ()).throw(AssertionError("real gh reached")))
+    issue = env["issue"]
+    monkeypatch.setattr(G, "open_ledger", lambda rules, digest: PRL.Ledger(env["root"], rules["rulesId"], digest,
+                                                                         result_steps=G.RESULT_STEPS, gh=issue))
+    assert run_cli(env, ["controls"]) == 0  # attempt 2 is allowed after a clean abort
+    assert os.path.exists(os.path.join(env["base"], "controls-run-2", "controls.json"))
+
+
+def test_origin_evidence_is_bound_before_the_census(env, tmp_path):
+    anchored(env)
+    ev = _evidence_file(tmp_path)
+    assert run_cli(env, ["census", "--origin-evidence", ev]) == 2  # not bound
+    assert run_cli(env, ["register-evidence", "--file", ev]) == 0
+    assert statuses(env, "census") == ["INPUTS_BOUND"]
+    assert run_cli(env, ["census"]) == 2  # bound evidence must be passed
+    assert run_cli(env, ["census", "--origin-evidence", ev]) == 0
+    res = json.load(open(os.path.join(env["base"], "census-run-1", "census.json")))
+    assert res["originEvidenceFile"]["sha256"] == G.sha256_file(ev) and "SYNTHETIC sensor id" in res["originEvidenceFile"]["text"]
+    assert run_cli(env, ["register-evidence", "--file", _evidence_file(tmp_path, "Another.Elev.Inst.1Hour.0.Raw")]) == 2
+
+
+def test_root_comes_from_cortex_research_path(monkeypatch):
+    seen = {}
+
+    def fake_for_brain(brain, pid, sha, **kw):
+        seen.update(brain=brain, pid=pid, sha=sha, **kw)
+        return "L"
+    monkeypatch.setattr(G.Ledger, "for_brain", staticmethod(fake_for_brain))
+    assert G.open_ledger(RULES, DIGEST) == "L"
+    assert seen["brain"] == "lake-brain" and seen["pid"] == "LGC-2026-11-23.6" and seen["result_steps"] == frozenset({"census"})
+
+
+def test_old_local_ledger_module_is_gone():
+    assert not os.path.exists(os.path.join(os.path.dirname(G.__file__), "lake_census_run_ledger.py"))

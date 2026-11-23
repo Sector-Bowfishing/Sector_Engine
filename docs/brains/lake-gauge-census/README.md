@@ -1,4 +1,4 @@
-# Lake gauge census (LGC-2026-11-23.5)
+# Lake gauge census (LGC-2026-11-23.6)
 
 Status: tool and pre-registered rules only. **Nothing has been fetched.** No binding, accepted list, `LakeSourceBindingsGenerated.swift`,
 knowledge release, score or rubric changes here.
@@ -16,15 +16,15 @@ for every bound lake it lists series that are **not** the lake's bound primary, 
 
 | File | What |
 |---|---|
-| [`LGC-2026-11-23.5.rules.json`](LGC-2026-11-23.5.rules.json) + `.sha256` (`befcc41d…`) | **Current** pre-registered rules (committed alone, before the code that follows them), including the run binding and origin-evidence registration; hosts and terms, classification cues, stage A selection (S1–S9), independence tiers and the unlabelled-CWMS border rule, stage B binding review (R1–R9, checks (b)–(d), the 15 ft history/live rule), the no-relaxation clause, and `notBefore` 2026-12-01T12:00Z |
+| [`LGC-2026-11-23.6.rules.json`](LGC-2026-11-23.6.rules.json) + `.sha256` (`5c04e319…`) | **Current** pre-registered rules (committed alone, before the code that follows them), including the shared run ledger, the #51 trail and origin-evidence binding; hosts and terms, classification cues, stage A selection (S1–S9), independence tiers and the unlabelled-CWMS border rule, stage B binding review (R1–R9, checks (b)–(d), the 15 ft history/live rule), the no-relaxation clause, and `notBefore` 2026-12-01T12:00Z |
+| [`LGC-2026-11-23.5.rules.json`](LGC-2026-11-23.5.rules.json) + `.sha256` | Fifth registration, kept byte for byte, **superseded and never used** ([why](LGC-2026-11-23.5.SUPERSEDED.md)); the tool refuses it |
 | [`LGC-2026-11-23.4.rules.json`](LGC-2026-11-23.4.rules.json) + `.sha256` | Fourth registration, kept byte for byte, **superseded and never used** ([why](LGC-2026-11-23.4.SUPERSEDED.md)); the tool refuses it |
 | [`LGC-2026-11-23.3.rules.json`](LGC-2026-11-23.3.rules.json) + `.sha256` | Third registration, kept byte for byte, **superseded and never used** ([why](LGC-2026-11-23.3.SUPERSEDED.md)); the tool refuses it |
 | [`LGC-2026-11-23.2.rules.json`](LGC-2026-11-23.2.rules.json) + `.sha256` | Second registration, kept byte for byte, **superseded and never used** ([why](LGC-2026-11-23.2.SUPERSEDED.md)); the tool refuses it |
 | [`LGC-2026-11-23.rules.json`](LGC-2026-11-23.rules.json) + `.sha256` | First registration, kept byte for byte, **superseded and never used** ([why](LGC-2026-11-23.SUPERSEDED.md)); the tool refuses it |
 | [`MINI_REQUEST_DRAFT.md`](MINI_REQUEST_DRAFT.md) | Draft Sector_Ops #51 request for the Mac mini (not posted) |
 | `tools/research/lake_gauge_census.py` | The census (GET only, metadata only) |
-| `tools/research/lake_census_run_ledger.py` | The run ledger (hash-chained, append-only). A local copy with the same shape as the Wind run ledger; it will be replaced by the shared `tools/research/protocol_run_ledger.py` once that PR merges |
-| `tools/research/tests/test_lake_gauge_census.py` + `fixtures/lake_gauge_census/world.json` | 107 offline tests on a synthetic world (plus `tva_robots.txt`, TVA's `Disallow: /` file) |
+| `tools/research/tests/test_lake_gauge_census.py` + `fixtures/lake_gauge_census/world.json` | 109 offline tests on a synthetic world (with a synthetic #51 for the ledger trail) (plus `tva_robots.txt`, TVA's `Disallow: /` file) |
 
 ## How the census works
 
@@ -61,16 +61,25 @@ otherwise). A RISE item is USBR only when its own metadata names Reclamation; ot
 other agencies' data), which, like an unlabelled CWMS series, is origin-unknown against every family: `UNCERTAIN` in either direction.
 Derived versions match by substring (Rev2, Revised, Computed, Calc1), and base locations compare case-insensitively. Only an entry in a reviewed origin-evidence file
 (`--origin-evidence`: USACE for a CWMS series, e.g. a USACE sensor id or a documented non-USGS DCP; USBR for a RISE item) changes
-that, and only when the file's sha256 is listed in the rules or registered with `register-evidence` before census run #1. Evidence
+that, and only when the file's sha256 is listed in the rules or bound with `register-evidence` (the ledger's `bind_inputs`) before the census begins; the census must then pass the same file. Evidence
 for a series whose version already names an agency is refused. None exists yet.
 
-**Run binding.** `controls` and `census` take `--research-folder` (the Lake research folder; or `SECTOR_RESEARCH_ROOT`), never `--out`.
-The binding for a rules id is `<research folder>/gauge-census/binding/<rulesId>/`: a hash-chained, append-only `ledger.jsonl`, the
-shared metadata cache, and write-once run folders (`controls-run-<n>/`, `census-run-<n>/`). Only census run #1 counts: a run that
-ends before writing anything is ABORTED_NO_RESULT and may be retried (with `--skip-controls` only if its controls passed); a
-COMPLETED or FAILED run blocks every later one. The START line records every argument, the tool and rules hashes, the input hashes,
-the registry source and the cache tree hash; the END line records the output hashes, the registry index and outline hashes, the
-cache tree hash after the run and the request, retry and cache-hit counts. Cache hits are lines in `requests.jsonl`.
+**Run binding.** The run is bound to the shared run ledger `tools/research/protocol_run_ledger.py` (#251), opened with
+`Ledger.for_brain("lake-brain", "LGC-2026-11-23.6", <rules sha256>, result_steps={"census"})`. The root is the folder Cortex
+`research-path sector/engine lake-brain` returns (a differing `SECTOR_RESEARCH_ROOT` is refused); the ledger is
+`<root>/_ledgers/LGC-2026-11-23.6.jsonl`, and the outputs and cache are under `<root>/gauge-census/LGC-2026-11-23.6/`
+(`controls-run-<N>/`, `census-run-<N>/`, `cache/`, write-once). There is no `--out` or `--research-folder`. The (step, key) pairs are
+fixed: `controls`/`all` (not a result step) and `census`/`all` (the only result step).
+
+The public trail on Sector_Ops #51 is posted by the Mac mini session as research records under standing item 7, never with an
+"Owner approval" or "Owner request" header, and nobody edits or deletes them: `Run anchor:` (from `anchor`) before ANY step;
+`Run start:` (written by `census` right after it begins; the census waits until it is listed, and "not listed yet" means wait,
+never repost); `Run result:` (written after the census completes, then `confirm-result`). Only census run #1 counts. An attempt is
+aborted only if it ends before sending any request; an interrupt or error after that leaves it STARTED with no end, which is
+terminal: there is no peek-and-retry, and recovery is a new rules id with revised rules that record the #51 human review. The
+STARTED entry records every argument, the tool and rules hashes, the input hashes, the registry source and the cache tree hash; the
+COMPLETED entry records the output hashes and a result summary (registry index and outline hashes, cache tree hash, request, retry
+and cache-hit counts, summary counts). Cache hits are lines in `requests.jsonl`.
 
 **Structural cap for v3.** A bound lake whose binding includes a TVA, NWPS or HADS gauge has no coordinates for that gauge, so every
 candidate there is `UNCERTAIN`. From the committed bindings, only **130 of 298** bound lakes (129 of 294 reviewed) can get an
