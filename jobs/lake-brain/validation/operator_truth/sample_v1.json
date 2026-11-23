@@ -1,0 +1,6988 @@
+{
+ "allocation": {
+  "a2w": 29,
+  "cwms": 11,
+  "nwps": 7,
+  "rise": 9,
+  "usgs": 4
+ },
+ "excluded": [
+  {
+   "lakeId": "Assawompset Pond|MA",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Bartlett|AZ",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Bay Springs Lake|MS",
+   "primaryProvider": "cwms",
+   "status": "EXCLUDED_NO_SECOND_SERIES"
+  },
+  {
+   "lakeId": "Bear Lake|UT",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Blackshear|GA",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Broken Bow Lake|OK",
+   "primaryProvider": "cwms",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Buffalo Bill Reservoir|WY",
+   "primaryProvider": "rise",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Burton|GA",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Canandaigua Lake|NY",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Canton Lake|OK",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Chautauqua Lake|NY",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Cherokee Lake|TN",
+   "primaryProvider": "tva",
+   "status": "EXCLUDED_BRAIN_VALUE_NOT_RECONSTRUCTIBLE"
+  },
+  {
+   "lakeId": "Chickamauga Lake|TN",
+   "primaryProvider": "tva",
+   "status": "EXCLUDED_BRAIN_VALUE_NOT_RECONSTRUCTIBLE"
+  },
+  {
+   "lakeId": "Clarks Hill / J.S. Thurmond|GA",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Clear Lake|CA",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Columbus Lake|MS",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_NO_SECOND_SERIES"
+  },
+  {
+   "lakeId": "Crab Orchard Lake|IL",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Crater Lake|OR",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Devil's Kitchen Lake|IL",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Devils Lake|ND",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Diamond Lake|OR",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Don Pedro|CA",
+   "primaryProvider": "cwms",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Douglas Lake|TN",
+   "primaryProvider": "tva",
+   "status": "EXCLUDED_BRAIN_VALUE_NOT_RECONSTRUCTIBLE"
+  },
+  {
+   "lakeId": "El Vado Lake|NM",
+   "primaryProvider": "rise",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Eufaula / W.F. George|AL",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Fontenelle Reservoir|WY",
+   "primaryProvider": "rise",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Fort Loudoun Lake|TN",
+   "primaryProvider": "tva",
+   "status": "EXCLUDED_BRAIN_VALUE_NOT_RECONSTRUCTIBLE"
+  },
+  {
+   "lakeId": "Fort Peck Lake|MT",
+   "primaryProvider": "cwms",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Garrisons Lake|DE",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Geist Reservoir|IN",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Grand Lake St. Marys|OH",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Grand Lake|CO",
+   "primaryProvider": "rise",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Greenwood Lake|NJ",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Hebgen Lake|MT",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Higgins Lake|MI",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Horsetooth Reservoir|CO",
+   "primaryProvider": "rise",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Houghton Lake|MI",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Indian Lake|OH",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Istokpoga|FL",
+   "primaryProvider": "a2w",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "John Redmond Reservoir|KS",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Kaw Lake|OK",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Kentucky Lake|KY",
+   "primaryProvider": "tva",
+   "status": "EXCLUDED_BRAIN_VALUE_NOT_RECONSTRUCTIBLE"
+  },
+  {
+   "lakeId": "Kentucky Lake|TN",
+   "primaryProvider": "tva",
+   "status": "EXCLUDED_BRAIN_VALUE_NOT_RECONSTRUCTIBLE"
+  },
+  {
+   "lakeId": "Kerr Lake (John H. Kerr)|NC",
+   "primaryProvider": "cwms",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Kerr Reservoir (Buggs Island)|VA",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Keuka Lake|NY",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Champlain|VT",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Francis Case|SD",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Gaston|VA",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_NO_SECOND_SERIES"
+  },
+  {
+   "lakeId": "Lake Geneva|WI",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake George|NY",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Gogebic|MI",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Memphremagog|VT",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Mendota|WI",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Minnetonka|MN",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_NO_SECOND_SERIES"
+  },
+  {
+   "lakeId": "Lake Monona|WI",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Monticello|SC",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Moomaw|VA",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Oahe|ND",
+   "primaryProvider": "cwms",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Pepin|MN",
+   "primaryProvider": "a2w",
+   "status": "EXCLUDED_NO_SECOND_SERIES"
+  },
+  {
+   "lakeId": "Lake Petenwell|WI",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Quinault|WA",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_NO_SECOND_SERIES"
+  },
+  {
+   "lakeId": "Lake Red Rock|IA",
+   "primaryProvider": "cwms",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Sakakawea|ND",
+   "primaryProvider": "cwms",
+   "status": "EXCLUDED_NO_SECOND_SERIES"
+  },
+  {
+   "lakeId": "Lake Sammamish|WA",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Sharpe|SD",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Strom Thurmond (Clarks Hill)|SC",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Tenkiller|OK",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake Winnebago|WI",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lake of the Ozarks|MO",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Lewis and Clark Lake|SD",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Liberty Reservoir|MD",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Logan Martin|AL",
+   "primaryProvider": "cwms",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Long Pond (Lakeville)|MA",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Longview Lake|MO",
+   "primaryProvider": "a2w",
+   "status": "EXCLUDED_NO_SECOND_SERIES"
+  },
+  {
+   "lakeId": "Mullett Lake|MI",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Navajo Reservoir|NM",
+   "primaryProvider": "rise",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Neely Henry|AL",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Nickajack Lake|TN",
+   "primaryProvider": "tva",
+   "status": "EXCLUDED_BRAIN_VALUE_NOT_RECONSTRUCTIBLE"
+  },
+  {
+   "lakeId": "Norris Lake|TN",
+   "primaryProvider": "tva",
+   "status": "EXCLUDED_BRAIN_VALUE_NOT_RECONSTRUCTIBLE"
+  },
+  {
+   "lakeId": "Oconee|GA",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Okatibbee Lake|MS",
+   "primaryProvider": "a2w",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Oneida Lake|NY",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Owasco Lake|NY",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Patterson Lake|ND",
+   "primaryProvider": "rise",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Rainy Lake|MN",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_NO_SECOND_SERIES"
+  },
+  {
+   "lakeId": "Ross Barnett Reservoir|MS",
+   "primaryProvider": "cwms",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Ross Lake|WA",
+   "primaryProvider": "a2w",
+   "status": "EXCLUDED_NO_SECOND_SERIES"
+  },
+  {
+   "lakeId": "Scituate Reservoir|RI",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Sebago Lake|ME",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Seneca Lake|NY",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Sinclair|GA",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Skiatook Lake|OK",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "South Holston Lake|VA",
+   "primaryProvider": "tva",
+   "status": "EXCLUDED_BRAIN_VALUE_NOT_RECONSTRUCTIBLE"
+  },
+  {
+   "lakeId": "Starvation Reservoir|UT",
+   "primaryProvider": "rise",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Strawberry Reservoir|UT",
+   "primaryProvider": "rise",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Stump Lake|ND",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Tims Ford Lake|TN",
+   "primaryProvider": "tva",
+   "status": "EXCLUDED_BRAIN_VALUE_NOT_RECONSTRUCTIBLE"
+  },
+  {
+   "lakeId": "Tohopekaliga (Toho)|FL",
+   "primaryProvider": "cwms",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Tuttle Creek Lake|KS",
+   "primaryProvider": "cwms",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Walker Lake|NV",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Walter F. George / Eufaula|GA",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Watts Bar Lake|TN",
+   "primaryProvider": "tva",
+   "status": "EXCLUDED_BRAIN_VALUE_NOT_RECONSTRUCTIBLE"
+  },
+  {
+   "lakeId": "Wild Horse Reservoir|NV",
+   "primaryProvider": "usgs",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Willard Bay Reservoir|UT",
+   "primaryProvider": "rise",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  },
+  {
+   "lakeId": "Youghiogheny River Lake|MD",
+   "primaryProvider": "nwps",
+   "status": "EXCLUDED_SAME_SERIES_ONLY"
+  }
+ ],
+ "frameByPrimaryProvider": {
+  "a2w": {
+   "EXCLUDED_NO_SECOND_SERIES": 3,
+   "EXCLUDED_SAME_SERIES_ONLY": 2,
+   "REPORT_ONLY_ELIGIBLE": 11,
+   "VERDICT_ELIGIBLE": 81
+  },
+  "cwms": {
+   "EXCLUDED_NO_SECOND_SERIES": 2,
+   "EXCLUDED_SAME_SERIES_ONLY": 10,
+   "REPORT_ONLY_ELIGIBLE": 17,
+   "VERDICT_ELIGIBLE": 29
+  },
+  "nwps": {
+   "EXCLUDED_NO_SECOND_SERIES": 3,
+   "EXCLUDED_SAME_SERIES_ONLY": 25,
+   "VERDICT_ELIGIBLE": 7
+  },
+  "rise": {
+   "EXCLUDED_SAME_SERIES_ONLY": 10,
+   "REPORT_ONLY_ELIGIBLE": 9,
+   "VERDICT_ELIGIBLE": 9
+  },
+  "tva": {
+   "EXCLUDED_BRAIN_VALUE_NOT_RECONSTRUCTIBLE": 11
+  },
+  "usgs": {
+   "EXCLUDED_NO_SECOND_SERIES": 2,
+   "EXCLUDED_SAME_SERIES_ONLY": 38,
+   "REPORT_ONLY_ELIGIBLE": 16,
+   "VERDICT_ELIGIBLE": 4
+  }
+ },
+ "frameCount": 289,
+ "inputs": {
+  "accepted": [
+   "jobs/lake-brain/data/accepted_batch.json",
+   "jobs/lake-brain/data/accepted_batch2.json"
+  ],
+  "acceptedSha256": [
+   "ec0126651058d9a42729a1e5253a52d3ca76f2821fb06faf714ae2fdf3cfb3ef",
+   "37821da0b2e10d30567a52f296469a8e4fbccdf12f41197fe89ff16898680ed4"
+  ],
+  "generatedBindings": "brains/lake/runtime/LakeBrain/LakeSourceBindingsGenerated.swift",
+  "generatedSha256": "15957ca81d92f4947afb65438028f61e9ff6b7c9c8854b7ca8855964736349da"
+ },
+ "protocol": "lake-operator-truth-v1",
+ "reportOnlySample": [
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "ALCW4"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "ALCW4"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USBR",
+     "independence": "SAME_SERIES",
+     "item": "114",
+     "key": [
+      "114"
+     ],
+     "kind": "riseDaily",
+     "offsetFt": 0.0,
+     "order": 1
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Alcova Reservoir|WY",
+   "operatorFamily": "USBR",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "USBR",
+    "key": [
+     "114"
+    ],
+    "kind": "rise",
+    "lagMin": 2880,
+    "offsetFt": 0.0,
+    "series": "114",
+    "station": "114"
+   },
+   "primaryProvider": "rise",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/Denver",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "ALCW4"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRG",
+    "station": "ALCW4"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "BFLW2"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "BFLW2"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "LRH",
+      "BeechFk-Lake.Elev.Inst.15Minutes.0.OBS"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRH",
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "BeechFk-Lake.Elev.Inst.15Minutes.0.OBS"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Beech Fork Lake|WV",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRH",
+     "BeechFk-Lake.Elev.Inst.15Minutes.0.OBS"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "BeechFk-Lake.Elev.Inst.15Minutes.0.OBS",
+    "station": "LRH:BeechFk"
+   },
+   "primaryProvider": "a2w",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "BFLW2"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRG",
+    "station": "BFLW2"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "BOXN1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "BOXN1"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USBR",
+     "independence": "SAME_SERIES",
+     "item": "142",
+     "key": [
+      "142"
+     ],
+     "kind": "riseDaily",
+     "offsetFt": 0.0,
+     "order": 1
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Box Butte Reservoir|NE",
+   "operatorFamily": "USBR",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "USBR",
+    "key": [
+     "142"
+    ],
+    "kind": "rise",
+    "lagMin": 2880,
+    "offsetFt": 0.0,
+    "series": "142",
+    "station": "142"
+   },
+   "primaryProvider": "rise",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/Denver",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "BOXN1"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRG",
+    "station": "BOXN1"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "RAYN1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "RAYN1"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "NWDM",
+      "SC18.Elev.Inst.1Hour.0.Best-NWO"
+     ],
+     "kind": "cwmsDaily",
+     "office": "NWDM",
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "SC18.Elev.Inst.1Hour.0.Best-NWO"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Branched Oak Lake|NE",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "NWDM",
+     "SC18.Elev.Inst.1Hour.0.Best-NWO"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "SC18.Elev.Inst.1Hour.0.Best-NWO",
+    "station": "NWDM"
+   },
+   "primaryProvider": "cwms",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "RAYN1"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRG",
+    "station": "RAYN1"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "CALN1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "CALN1"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USBR",
+     "independence": "SAME_SERIES",
+     "item": "215",
+     "key": [
+      "215"
+     ],
+     "kind": "riseDaily",
+     "offsetFt": 0.0,
+     "order": 1
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Calamus Reservoir|NE",
+   "operatorFamily": "USBR",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "USBR",
+    "key": [
+     "215"
+    ],
+    "kind": "rise",
+    "lagMin": 2880,
+    "offsetFt": 0.0,
+    "series": "215",
+    "station": "215"
+   },
+   "primaryProvider": "rise",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "CALN1"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRG",
+    "station": "CALN1"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "CHNK1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "CHNK1"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USBR",
+     "independence": "SAME_SERIES",
+     "item": "133978",
+     "key": [
+      "133978"
+     ],
+     "kind": "riseDaily",
+     "offsetFt": 0.0,
+     "order": 1
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Cheney Reservoir|KS",
+   "operatorFamily": "USBR",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "USBR",
+    "key": [
+     "133978"
+    ],
+    "kind": "rise",
+    "lagMin": 2880,
+    "offsetFt": 0.0,
+    "series": "133978",
+    "station": "133978"
+   },
+   "primaryProvider": "rise",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "CHNK1"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRG",
+    "station": "CHNK1"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "MVR",
+      "CRVI4.Elev-Pool.Inst.30Minutes.0.rev"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "CRVI4.Elev-Pool.Inst.30Minutes.0.rev",
+     "station": "MVR"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "CRVI4"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "CRVI4"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "MVR",
+      "CRVI4.Elev-Pool.Inst.30Minutes.0.rev"
+     ],
+     "kind": "cwmsDaily",
+     "office": "MVR",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "CRVI4.Elev-Pool.Inst.30Minutes.0.rev"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Coralville Lake|IA",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "MVR",
+     "CRVI4.Elev-Pool.Inst.30Minutes.0.rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "CRVI4.Elev-Pool.Inst.30Minutes.0.rev",
+    "station": "MVR:CRVI4"
+   },
+   "primaryProvider": "a2w",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "CRVI4"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "HPIRG",
+    "station": "CRVI4"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "ELYW2"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "ELYW2"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "LRH",
+      "EastLynn-Lake.Elev.Inst.15Minutes.0.OBS"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRH",
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "EastLynn-Lake.Elev.Inst.15Minutes.0.OBS"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "East Lynn Lake|WV",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRH",
+     "EastLynn-Lake.Elev.Inst.15Minutes.0.OBS"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "EastLynn-Lake.Elev.Inst.15Minutes.0.OBS",
+    "station": "LRH"
+   },
+   "primaryProvider": "cwms",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "ELYW2"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRG",
+    "station": "ELYW2"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "SACN6"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "SACN6"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "01323500",
+      "62614"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "order": 1,
+     "param": "62614",
+     "site": "01323500",
+     "stat": "dv"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Great Sacandaga Lake|NY",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "key": [
+     "01323500",
+     "62614"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "series": "62614",
+    "station": "01323500"
+   },
+   "primaryProvider": "usgs",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "SACN6"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRG",
+    "station": "SACN6"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "HOOO1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "HOOO1"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "HOOO1"
+     ],
+     "kind": "hadsDaily",
+     "lid": "HOOO1",
+     "offsetFt": 0.0,
+     "order": 1,
+     "pe": "HP"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Hoover Reservoir|OH",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "key": [
+     "03228400",
+     "62614"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "series": "62614",
+    "station": "03228400"
+   },
+   "primaryProvider": "usgs",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "HOOO1"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRG",
+    "station": "HOOO1"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "LCTT2"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "LCTT2"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "08067600",
+      "62614"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "order": 1,
+     "param": "62614",
+     "site": "08067600",
+     "stat": "dv"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Lake Conroe|TX",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "key": [
+     "08067600",
+     "62614"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "series": "62614",
+    "station": "08067600"
+   },
+   "primaryProvider": "usgs",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "LCTT2"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRG",
+    "station": "LCTT2"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "LFKT2"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "LFKT2"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "08018800",
+      "62614"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "order": 1,
+     "param": "62614",
+     "site": "08018800",
+     "stat": "dv"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Lake Fork Reservoir|TX",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "key": [
+     "08018800",
+     "62614"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "series": "62614",
+    "station": "08018800"
+   },
+   "primaryProvider": "usgs",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "LFKT2"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRG",
+    "station": "LFKT2"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "PIES2"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "PIES2"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "NWDM",
+      "OAHE.Elev.Inst.1Hour.0.Best-MRBWM"
+     ],
+     "kind": "cwmsDaily",
+     "office": "NWDM",
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "OAHE.Elev.Inst.1Hour.0.Best-MRBWM"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Lake Oahe|SD",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "NWDM",
+     "OAHE.Elev.Inst.1Hour.0.Best-MRBWM"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "OAHE.Elev.Inst.1Hour.0.Best-MRBWM",
+    "station": "NWDM"
+   },
+   "primaryProvider": "cwms",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "PIES2"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRG",
+    "station": "PIES2"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "SWT",
+      "DENI.Elev.Inst.1Hour.0.Ccp-Rev"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "DENI.Elev.Inst.1Hour.0.Ccp-Rev",
+     "station": "SWT"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "DSNT2"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "DSNT2"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "SWT",
+      "DENI.Elev.Inst.1Hour.0.Ccp-Rev"
+     ],
+     "kind": "cwmsDaily",
+     "office": "SWT",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "DENI.Elev.Inst.1Hour.0.Ccp-Rev"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Lake Texoma|TX",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "SWT",
+     "DENI.Elev.Inst.1Hour.0.Ccp-Rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "DENI.Elev.Inst.1Hour.0.Ccp-Rev",
+    "station": "SWT:DENI"
+   },
+   "primaryProvider": "a2w",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "DSNT2"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "HPIRG",
+    "station": "DSNT2"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "CLTA1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRZ",
+     "station": "CLTA1"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "SAM",
+      "Lay.Elev.Inst.1Hour.0.Raw-APCO"
+     ],
+     "kind": "cwmsDaily",
+     "office": "SAM",
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "Lay.Elev.Inst.1Hour.0.Raw-APCO"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Lay|AL",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "SAM",
+     "Lay.Elev.Inst.1Hour.0.Raw-APCO"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Lay.Elev.Inst.1Hour.0.Raw-APCO",
+    "station": "SAM"
+   },
+   "primaryProvider": "cwms",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "CLTA1"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRZ",
+    "station": "CLTA1"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "SWT",
+      "SARD.Elev.Inst.1Hour.0.Ccp-Rev"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "SARD.Elev.Inst.1Hour.0.Ccp-Rev",
+     "station": "SWT"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "CYDO2"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "CYDO2"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "SWT",
+      "SARD.Elev.Inst.1Hour.0.Ccp-Rev"
+     ],
+     "kind": "cwmsDaily",
+     "office": "SWT",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "SARD.Elev.Inst.1Hour.0.Ccp-Rev"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Sardis Lake|OK",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "SWT",
+     "SARD.Elev.Inst.1Hour.0.Ccp-Rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "SARD.Elev.Inst.1Hour.0.Ccp-Rev",
+    "station": "SWT:SARD"
+   },
+   "primaryProvider": "a2w",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "CYDO2"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "HPIRG",
+    "station": "CYDO2"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "SMRC2"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "SMRC2"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USBR",
+     "independence": "SAME_SERIES",
+     "item": "738",
+     "key": [
+      "738"
+     ],
+     "kind": "riseDaily",
+     "offsetFt": 0.0,
+     "order": 1
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Shadow Mountain Reservoir|CO",
+   "operatorFamily": "USBR",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "USBR",
+    "key": [
+     "738"
+    ],
+    "kind": "rise",
+    "lagMin": 2880,
+    "offsetFt": 0.0,
+    "series": "738",
+    "station": "738"
+   },
+   "primaryProvider": "rise",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/Denver",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "SMRC2"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRG",
+    "station": "SMRC2"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "ARKA1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRZ",
+     "station": "ARKA1"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "SAM",
+      "Smith.Elev.Inst.1Hour.0.Raw-APCO"
+     ],
+     "kind": "cwmsDaily",
+     "office": "SAM",
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "Smith.Elev.Inst.1Hour.0.Raw-APCO"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Smith (Lewis Smith)|AL",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "SAM",
+     "Smith.Elev.Inst.1Hour.0.Raw-APCO"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Smith.Elev.Inst.1Hour.0.Raw-APCO",
+    "station": "SAM"
+   },
+   "primaryProvider": "cwms",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "ARKA1"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRZ",
+    "station": "ARKA1"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "LRH",
+      "Summersville-Lake.Elev.Inst.15Minutes.0.OBS"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Summersville-Lake.Elev.Inst.15Minutes.0.OBS",
+     "station": "LRH"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "SULW2"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "SULW2"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "LRH",
+      "Summersville-Lake.Elev.Inst.15Minutes.0.OBS"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRH",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "Summersville-Lake.Elev.Inst.15Minutes.0.OBS"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Summersville Lake|WV",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRH",
+     "Summersville-Lake.Elev.Inst.15Minutes.0.OBS"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Summersville-Lake.Elev.Inst.15Minutes.0.OBS",
+    "station": "LRH:Summersville"
+   },
+   "primaryProvider": "a2w",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "SULW2"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "HPIRG",
+    "station": "SULW2"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "WRDN4"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "WRDN4"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "01386990",
+      "62614"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "order": 1,
+     "param": "62614",
+     "site": "01386990",
+     "stat": "dv"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Wanaque Reservoir|NJ",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "key": [
+     "01386990",
+     "62614"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "series": "62614",
+    "station": "01386990"
+   },
+   "primaryProvider": "usgs",
+   "status": "REPORT_ONLY_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "independence": "NWS_REDISTRIBUTION",
+    "key": [
+     "WRDN4"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HPIRG",
+    "station": "WRDN4"
+   }
+  }
+ ],
+ "rule": "build_sample.py (pre-registration sections 3-4)",
+ "seed": "sector-lake-operator-truth-v1",
+ "verdictSample": [
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRP",
+      "Kinzua-Lake.Elev.Inst.1Hour.0.RESOPS"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Kinzua-Lake.Elev.Inst.1Hour.0.RESOPS",
+     "station": "LRP"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "03012520",
+      "62615"
+     ],
+     "kind": "usgs",
+     "lagMin": 60,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "62615",
+     "station": "03012520"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "LRP",
+      "Kinzua-Lake.Elev.Inst.1Hour.0.OBS"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRP",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "Kinzua-Lake.Elev.Inst.1Hour.0.OBS"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Allegheny Reservoir|PA",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRP",
+     "Kinzua-Lake.Elev.Inst.1Hour.0.OBS"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Kinzua-Lake.Elev.Inst.1Hour.0.OBS",
+    "station": "LRP:Kinzua"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "LRP",
+     "Kinzua-Lake.Elev.Inst.1Hour.0.RESOPS"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "Kinzua-Lake.Elev.Inst.1Hour.0.RESOPS",
+    "station": "LRP"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "MVK",
+      "Arkabutla Lake.Elev.Inst.1Day.0.Manual"
+     ],
+     "kind": "cwmsDaily",
+     "office": "MVK",
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Arkabutla Lake.Elev.Inst.1Day.0.Manual"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Arkabutla Lake|MS",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "MVK",
+     "Arkabutla Lake.Elev.Inst.1Hour.0.DCP-rev"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Arkabutla Lake.Elev.Inst.1Hour.0.DCP-rev",
+    "station": "MVK"
+   },
+   "primaryProvider": "cwms",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "MVK",
+     "Arkabutla Lake.Elev.Inst.1Day.0.Manual"
+    ],
+    "kind": "cwmsDaily",
+    "office": "MVK",
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "Arkabutla Lake.Elev.Inst.1Day.0.Manual"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "SAM",
+      "Bankhead.Elev.Inst.15Minutes.0.Raw-USGS"
+     ],
+     "kind": "a2w",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Bankhead.Elev.Inst.15Minutes.0.Raw-USGS",
+     "station": "SAM:Bankhead"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "SAM",
+      "Bankhead.Elev.Inst.~1Day.0.Raw-APCO"
+     ],
+     "kind": "cwmsDaily",
+     "office": "SAM",
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "Bankhead.Elev.Inst.~1Day.0.Raw-APCO"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Bankhead|AL",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "SAM",
+     "Bankhead.Elev.Inst.15Minutes.0.Raw-USGS"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Bankhead.Elev.Inst.15Minutes.0.Raw-USGS",
+    "station": "SAM"
+   },
+   "primaryProvider": "cwms",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "SAM",
+     "Bankhead.Elev.Inst.~1Day.0.Raw-APCO"
+    ],
+    "kind": "cwmsDaily",
+    "office": "SAM",
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "Bankhead.Elev.Inst.~1Day.0.Raw-APCO"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRL",
+      "Barren.Elev.Inst.0.0.lrldlb-raw"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Barren.Elev.Inst.0.0.lrldlb-raw",
+     "station": "LRL"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRL",
+      "Barren-Lake.Elev.Inst.15Minutes.0.USGS-rev"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "Barren-Lake.Elev.Inst.15Minutes.0.USGS-rev",
+     "station": "LRL"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRL",
+      "Barren.Elev.Inst.0.0.lrldlb-raw"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRL",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "Barren.Elev.Inst.0.0.lrldlb-raw"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Barren River Lake|KY",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRL",
+     "Barren.Elev.Inst.0.0.lrldlb-rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Barren.Elev.Inst.0.0.lrldlb-rev",
+    "station": "LRL:Barren"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "LRL",
+     "Barren.Elev.Inst.0.0.lrldlb-raw"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "Barren.Elev.Inst.0.0.lrldlb-raw",
+    "station": "LRL"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "NWDM",
+      "YETL.Elev.Inst.1Hour.0.Best-NWO"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "YETL.Elev.Inst.1Hour.0.Best-NWO",
+     "station": "NWDM"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "BHRM8"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "BHRM8"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USBR",
+     "independence": "SAME_SERIES",
+     "item": "164",
+     "key": [
+      "164"
+     ],
+     "kind": "riseDaily",
+     "offsetFt": 0.0,
+     "order": 2
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Bighorn Lake|WY",
+   "operatorFamily": "USBR",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "USBR",
+    "key": [
+     "164"
+    ],
+    "kind": "rise",
+    "lagMin": 2880,
+    "offsetFt": 0.0,
+    "series": "164",
+    "station": "164"
+   },
+   "primaryProvider": "rise",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Denver",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "NWDM",
+     "YETL.Elev.Inst.1Hour.0.Best-NWO"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "YETL.Elev.Inst.1Hour.0.Best-NWO",
+    "station": "NWDM"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "NWO",
+      "BOYN.Elev.Inst.1Hour.0.Best-NWO"
+     ],
+     "kind": "a2w",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "BOYN.Elev.Inst.1Hour.0.Best-NWO",
+     "station": "NWO:BOYN"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "NWDM",
+      "BOYN.Elev.Inst.1Hour.0.Raw-USBR"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "BOYN.Elev.Inst.1Hour.0.Raw-USBR",
+     "station": "NWDM"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USBR",
+     "independence": "SAME_SERIES",
+     "item": "196",
+     "key": [
+      "196"
+     ],
+     "kind": "riseDaily",
+     "offsetFt": 0.0,
+     "order": 2
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Boysen Reservoir|WY",
+   "operatorFamily": "USBR",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "USBR",
+    "key": [
+     "196"
+    ],
+    "kind": "rise",
+    "lagMin": 2880,
+    "offsetFt": 0.0,
+    "series": "196",
+    "station": "196"
+   },
+   "primaryProvider": "rise",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Denver",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "NWO",
+     "BOYN.Elev.Inst.1Hour.0.Best-NWO"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "BOYN.Elev.Inst.1Hour.0.Best-NWO",
+    "station": "NWO:BOYN"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "SWL",
+      "Bull_Shoals_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-raw"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Bull_Shoals_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-raw",
+     "station": "SWL"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "BSGA4"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "BSGA4"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "SWL",
+      "Bull_Shoals_Dam-Headwater.Elev.Inst.~1Day.0.MN-Elev"
+     ],
+     "kind": "cwmsDaily",
+     "office": "SWL",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "Bull_Shoals_Dam-Headwater.Elev.Inst.~1Day.0.MN-Elev"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Bull Shoals Lake|AR",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "SWL",
+     "Bull_Shoals_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Bull_Shoals_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
+    "station": "SWL:Bull_Shoals_Dam"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "SWL",
+     "Bull_Shoals_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-raw"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "Bull_Shoals_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-raw",
+    "station": "SWL"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "MVK",
+      "Caddo Lake.Elev.Inst.1Hour.0.DCP-rev"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Caddo Lake.Elev.Inst.1Hour.0.DCP-rev",
+     "station": "MVK"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "AGENCY_OTHER_SERIES",
+     "key": [
+      "SWF",
+      "CLDL1.Elev.Inst.1Hour.0.Decodes-Rev"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "CLDL1.Elev.Inst.1Hour.0.Decodes-Rev",
+     "station": "SWF"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "AGENCY_OTHER_SERIES",
+     "key": [
+      "MVK",
+      "Caddo Lake.Elev.Inst.1Day.0.DCP-rev"
+     ],
+     "kind": "cwmsDaily",
+     "office": "MVK",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "Caddo Lake.Elev.Inst.1Day.0.DCP-rev"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Caddo Lake|TX",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "MVK",
+     "Caddo Lake.Elev.Inst.1Hour.0.DCP-rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Caddo Lake.Elev.Inst.1Hour.0.DCP-rev",
+    "station": "MVK:Caddo Lake"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "AGENCY_OTHER_SERIES",
+    "key": [
+     "SWF",
+     "CLDL1.Elev.Inst.1Hour.0.Decodes-Rev"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "CLDL1.Elev.Inst.1Hour.0.Decodes-Rev",
+    "station": "SWF"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "SWF",
+      "SMCT2.Elev.Inst.1Hour.0.Decodes-Rev"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "SMCT2.Elev.Inst.1Hour.0.Decodes-Rev",
+     "station": "SWF"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "SMCT2"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "SMCT2"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "SWF",
+      "SMCT2.Elev.Inst.~1Day.0.Decodes-Rev"
+     ],
+     "kind": "cwmsDaily",
+     "office": "SWF",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "SMCT2.Elev.Inst.~1Day.0.Decodes-Rev"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Canyon Lake|TX",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "SWF",
+     "SMCT2.Elev.Inst.1Hour.0.Decodes-Rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "SMCT2.Elev.Inst.1Hour.0.Decodes-Rev",
+    "station": "SWF:SMCT2"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "SWF",
+     "SMCT2.Elev.Inst.~1Day.0.Decodes-Rev"
+    ],
+    "kind": "cwmsDaily",
+    "office": "SWF",
+    "offsetFt": 0.0,
+    "order": 2,
+    "series": "SMCT2.Elev.Inst.~1Day.0.Decodes-Rev"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "CAYI2"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "CAYI2"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "MVS",
+      "Carlyle Lk-Kaskaskia.Elev.Inst.~1Day.0.MVDhist-rev"
+     ],
+     "kind": "cwmsDaily",
+     "office": "MVS",
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "Carlyle Lk-Kaskaskia.Elev.Inst.~1Day.0.MVDhist-rev"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Carlyle Lake|IL",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "MVS",
+     "Carlyle Lk-Kaskaskia.Elev.Inst.30Minutes.0.lrgsShef-raw"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Carlyle Lk-Kaskaskia.Elev.Inst.30Minutes.0.lrgsShef-raw",
+    "station": "MVS"
+   },
+   "primaryProvider": "cwms",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "MVS",
+     "Carlyle Lk-Kaskaskia.Elev.Inst.~1Day.0.MVDhist-rev"
+    ],
+    "kind": "cwmsDaily",
+    "office": "MVS",
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "Carlyle Lk-Kaskaskia.Elev.Inst.~1Day.0.MVDhist-rev"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "LRL",
+      "CMHarden.Elev.Inst.0.0.lrldlb-rev"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "CMHarden.Elev.Inst.0.0.lrldlb-rev",
+     "station": "LRL"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "03340870",
+      "62614"
+     ],
+     "kind": "usgs",
+     "lagMin": 60,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "62614",
+     "station": "03340870"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRL",
+      "CMHarden.Elev.Inst.0.0.lrldlb-raw"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRL",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "CMHarden.Elev.Inst.0.0.lrldlb-raw"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Cecil M. Harden Lake|IN",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRL",
+     "CMHarden.Elev.Inst.0.0.lrldlb-rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "CMHarden.Elev.Inst.0.0.lrldlb-rev",
+    "station": "LRL:CMHarden"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "SUB_DAILY",
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "LRL",
+     "CMHarden.Elev.Inst.0.0.lrldlb-raw"
+    ],
+    "kind": "cwmsDaily",
+    "office": "LRL",
+    "offsetFt": 0.0,
+    "order": 2,
+    "series": "CMHarden.Elev.Inst.0.0.lrldlb-raw"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "NWDM",
+      "CHCR.Elev.Inst.1Hour.0.Best-NWO"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "CHCR.Elev.Inst.1Hour.0.Best-NWO",
+     "station": "NWDM"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "EGDC2"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "EGDC2"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "NWDM",
+      "CHCR.Elev.Inst.1Hour.0.Best-NWO"
+     ],
+     "kind": "cwmsDaily",
+     "office": "NWDM",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "CHCR.Elev.Inst.1Hour.0.Best-NWO"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Cherry Creek Reservoir|CO",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "NWO",
+     "CHCR.Elev.Inst.1Hour.0.Best-NWO"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "CHCR.Elev.Inst.1Hour.0.Best-NWO",
+    "station": "NWO:CHCR"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Denver",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "NWDM",
+     "CHCR.Elev.Inst.1Hour.0.Best-NWO"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "CHCR.Elev.Inst.1Hour.0.Best-NWO",
+    "station": "NWDM"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "SWL",
+      "Clearwater_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-raw"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Clearwater_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-raw",
+     "station": "SWL"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "07062000",
+      "62615"
+     ],
+     "kind": "usgs",
+     "lagMin": 60,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "62615",
+     "station": "07062000"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "SWL",
+      "Clearwater_Dam-Headwater.Elev.Inst.~1Day.0.MN-Elev"
+     ],
+     "kind": "cwmsDaily",
+     "office": "SWL",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "Clearwater_Dam-Headwater.Elev.Inst.~1Day.0.MN-Elev"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Clearwater Lake|MO",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "SWL",
+     "Clearwater_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Clearwater_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
+    "station": "SWL:Clearwater_Dam"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "SWL",
+     "Clearwater_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-raw"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "Clearwater_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-raw",
+    "station": "SWL"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "NWDP",
+      "FRN.Elev-Forebay.Inst.0.0.MIXED-REV"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "FRN.Elev-Forebay.Inst.0.0.MIXED-REV",
+     "station": "NWDP"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "14168000",
+      "62614"
+     ],
+     "kind": "usgs",
+     "lagMin": 60,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "62614",
+     "station": "14168000"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "14168000",
+      "62614"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "order": 2,
+     "param": "62614",
+     "site": "14168000",
+     "stat": "dv"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Fern Ridge Reservoir|OR",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "NWP",
+     "FRN.Elev-Forebay.Inst.0.0.MIXED-REV"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "FRN.Elev-Forebay.Inst.0.0.MIXED-REV",
+    "station": "NWP:FRN"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Los_Angeles",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "NWDP",
+     "FRN.Elev-Forebay.Inst.0.0.MIXED-REV"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "FRN.Elev-Forebay.Inst.0.0.MIXED-REV",
+    "station": "NWDP"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRH",
+      "JWFlannagan-Lake.Elev.Inst.1Day.0.RUL"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRH",
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "JWFlannagan-Lake.Elev.Inst.1Day.0.RUL"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Flannagan Reservoir|VA",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "key": [
+     "FLAV2"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "HPIRZ",
+    "station": "FLAV2"
+   },
+   "primaryProvider": "nwps",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "LRH",
+     "JWFlannagan-Lake.Elev.Inst.1Day.0.RUL"
+    ],
+    "kind": "cwmsDaily",
+    "office": "LRH",
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "JWFlannagan-Lake.Elev.Inst.1Day.0.RUL"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "DAILY",
+     "cadenceMin": 1440,
+     "family": "CWMS",
+     "independence": "AGENCY_OTHER_SERIES",
+     "key": [
+      "NWDP",
+      "KER.Elev-Forebay.Inst.~1Day.0.CBT-REV"
+     ],
+     "kind": "cwms",
+     "lagMin": 1440,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "KER.Elev-Forebay.Inst.~1Day.0.CBT-REV",
+     "station": "NWDP"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "KERM8"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "KERM8"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "12371550",
+      "00062"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "order": 2,
+     "param": "00062",
+     "site": "12371550",
+     "stat": "dv"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Flathead Lake|MT",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "CWMS",
+    "key": [
+     "NWS",
+     "KER.Elev-Forebay.Inst.~1Day.0.CBT-REV"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "KER.Elev-Forebay.Inst.~1Day.0.CBT-REV",
+    "station": "NWS:KER"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Denver",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "CWMS",
+    "independence": "AGENCY_OTHER_SERIES",
+    "key": [
+     "NWDP",
+     "KER.Elev-Forebay.Inst.~1Day.0.CBT-REV"
+    ],
+    "kind": "cwms",
+    "lagMin": 1440,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "KER.Elev-Forebay.Inst.~1Day.0.CBT-REV",
+    "station": "NWDP"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "GIBO2"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "GIBO2"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "SWT",
+      "FGIB.Elev.Inst.1Hour.0.Ccp-Rev"
+     ],
+     "kind": "cwmsDaily",
+     "office": "SWT",
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "FGIB.Elev.Inst.1Hour.0.Ccp-Rev"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Fort Gibson Lake|OK",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "SWT",
+     "FGIB.Elev.Inst.30Minutes.0.Ccp-Rev"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "FGIB.Elev.Inst.30Minutes.0.Ccp-Rev",
+    "station": "SWT"
+   },
+   "primaryProvider": "cwms",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "SUB_DAILY",
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "SWT",
+     "FGIB.Elev.Inst.1Hour.0.Ccp-Rev"
+    ],
+    "kind": "cwmsDaily",
+    "office": "SWT",
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "FGIB.Elev.Inst.1Hour.0.Ccp-Rev"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "NWDM",
+      "FDMT.Elev.Inst.1Hour.0.Best-NWO"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "FDMT.Elev.Inst.1Hour.0.Best-NWO",
+     "station": "NWDM"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "HAVM8"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "HAVM8"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USBR",
+     "independence": "SAME_SERIES",
+     "item": "355",
+     "key": [
+      "355"
+     ],
+     "kind": "riseDaily",
+     "offsetFt": 0.0,
+     "order": 2
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Fresno Reservoir|MT",
+   "operatorFamily": "USBR",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "USBR",
+    "key": [
+     "355"
+    ],
+    "kind": "rise",
+    "lagMin": 2880,
+    "offsetFt": 0.0,
+    "series": "355",
+    "station": "355"
+   },
+   "primaryProvider": "rise",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Denver",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "NWDM",
+     "FDMT.Elev.Inst.1Hour.0.Best-NWO"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "FDMT.Elev.Inst.1Hour.0.Best-NWO",
+    "station": "NWDM"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "LRL",
+      "Green.Elev.Inst.0.0.lrldlb-rev"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Green.Elev.Inst.0.0.lrldlb-rev",
+     "station": "LRL"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRL",
+      "Green-Lake.Elev.Inst.15Minutes.0.Decodes-raw"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "Green-Lake.Elev.Inst.15Minutes.0.Decodes-raw",
+     "station": "LRL"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRL",
+      "Green.Elev.Inst.0.0.lrldlb-raw"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRL",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "Green.Elev.Inst.0.0.lrldlb-raw"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Green River Lake|KY",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRL",
+     "Green.Elev.Inst.0.0.lrldlb-rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Green.Elev.Inst.0.0.lrldlb-rev",
+    "station": "LRL:Green"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "LRL",
+     "Green-Lake.Elev.Inst.15Minutes.0.Decodes-raw"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "Green-Lake.Elev.Inst.15Minutes.0.Decodes-raw",
+    "station": "LRL"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "SWL",
+      "GreersFerry_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "GreersFerry_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
+     "station": "SWL"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "GRRA4"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "GRRA4"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "SWL",
+      "GreersFerry_Dam-Headwater.Elev.Inst.~1Day.0.MN-Elev"
+     ],
+     "kind": "cwmsDaily",
+     "office": "SWL",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "GreersFerry_Dam-Headwater.Elev.Inst.~1Day.0.MN-Elev"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Greers Ferry|AR",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "SWL",
+     "GreersFerry_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "GreersFerry_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
+    "station": "SWL:GreersFerry_Dam"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "SWL",
+     "GreersFerry_Dam-Headwater.Elev.Inst.~1Day.0.MN-Elev"
+    ],
+    "kind": "cwmsDaily",
+    "office": "SWL",
+    "offsetFt": 0.0,
+    "order": 2,
+    "series": "GreersFerry_Dam-Headwater.Elev.Inst.~1Day.0.MN-Elev"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "REPN1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "REPN1"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "NWDM",
+      "HACO.Elev.Inst.1Day.0.Raw-USBR"
+     ],
+     "kind": "cwmsDaily",
+     "office": "NWDM",
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HACO.Elev.Inst.1Day.0.Raw-USBR"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Harlan County Lake|NE",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "NWK",
+     "HACO.Elev.Inst.1Hour.0.Best-NWK"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "HACO.Elev.Inst.1Hour.0.Best-NWK",
+    "station": "NWK:HACO"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "NWDM",
+     "HACO.Elev.Inst.1Day.0.Raw-USBR"
+    ],
+    "kind": "cwmsDaily",
+    "office": "NWDM",
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "HACO.Elev.Inst.1Day.0.Raw-USBR"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "03286000",
+      "62614"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "order": 0,
+     "param": "62614",
+     "site": "03286000",
+     "stat": "00003"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "NWS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "DIXK2"
+     ],
+     "kind": "hadsDaily",
+     "lid": "DIXK2",
+     "offsetFt": 0.0,
+     "order": 1,
+     "pe": "HP"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Herrington Lake|KY",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "key": [
+     "DIXK2"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "HPIRG",
+    "station": "DIXK2"
+   },
+   "primaryProvider": "nwps",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "USGS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "03286000",
+     "62614"
+    ],
+    "kind": "usgsDaily",
+    "offsetFt": 0.0,
+    "order": 0,
+    "param": "62614",
+    "site": "03286000",
+    "stat": "00003"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "01314500",
+      "62614"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": -0.01,
+     "order": 0,
+     "param": "62614",
+     "site": "01314500",
+     "stat": "30800"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "01314500",
+      "62614"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "order": 1,
+     "param": "62614",
+     "site": "01314500",
+     "stat": "00003"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "NWS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "INDN6"
+     ],
+     "kind": "hadsDaily",
+     "lid": "INDN6",
+     "offsetFt": 0.0,
+     "order": 2,
+     "pe": "HP"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Indian Lake|NY",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "key": [
+     "INDN6"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "HPIRZ",
+    "station": "INDN6"
+   },
+   "primaryProvider": "nwps",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "USGS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "01314500",
+     "62614"
+    ],
+    "kind": "usgsDaily",
+    "offsetFt": 0.0,
+    "order": 1,
+    "param": "62614",
+    "site": "01314500",
+    "stat": "00003"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "NWO",
+      "JATO.Elev.Inst.1Hour.0.Best-NWO"
+     ],
+     "kind": "a2w",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "JATO.Elev.Inst.1Hour.0.Best-NWO",
+     "station": "NWO:JATO"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "NWDM",
+      "JATO.Elev.Inst.1Hour.0.Best-NWO"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "JATO.Elev.Inst.1Hour.0.Best-NWO",
+     "station": "NWDM"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USBR",
+     "independence": "SAME_SERIES",
+     "item": "451",
+     "key": [
+      "451"
+     ],
+     "kind": "riseDaily",
+     "offsetFt": 0.0,
+     "order": 2
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Jamestown Reservoir|ND",
+   "operatorFamily": "USBR",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "USBR",
+    "key": [
+     "451"
+    ],
+    "kind": "rise",
+    "lagMin": 2880,
+    "offsetFt": 0.0,
+    "series": "451",
+    "station": "451"
+   },
+   "primaryProvider": "rise",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "NWO",
+     "JATO.Elev.Inst.1Hour.0.Best-NWO"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "JATO.Elev.Inst.1Hour.0.Best-NWO",
+    "station": "NWO:JATO"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "NAB",
+      "Randolph.Elev.Inst.15Minutes.0.Best-NAB"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Randolph.Elev.Inst.15Minutes.0.Best-NAB",
+     "station": "NAB"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "01595790",
+      "00062"
+     ],
+     "kind": "usgs",
+     "lagMin": 60,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "00062",
+     "station": "01595790"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "NAB",
+      "Randolph.Elev.Inst.15Minutes.0.Best-NAB"
+     ],
+     "kind": "cwmsDaily",
+     "office": "NAB",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "Randolph.Elev.Inst.15Minutes.0.Best-NAB"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Jennings Randolph Lake|MD",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "NAB",
+     "Randolph.Elev.Inst.15Minutes.0.Best-NAB"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Randolph.Elev.Inst.15Minutes.0.Best-NAB",
+    "station": "NAB:Randolph"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "01595790",
+     "00062"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "00062",
+    "station": "01595790"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "SPA",
+      "John Martin.Elev.Inst.~1Day.0.MRS"
+     ],
+     "kind": "cwmsDaily",
+     "office": "SPA",
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "John Martin.Elev.Inst.~1Day.0.MRS"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "John Martin Reservoir|CO",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "SPA",
+     "John Martin.Elev.Inst.15Minutes.0.DCP-rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "John Martin.Elev.Inst.15Minutes.0.DCP-rev",
+    "station": "SPA:John Martin"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Denver",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "SPA",
+     "John Martin.Elev.Inst.~1Day.0.MRS"
+    ],
+    "kind": "cwmsDaily",
+    "office": "SPA",
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "John Martin.Elev.Inst.~1Day.0.MRS"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "NHPN7"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "NHPN7"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "02098197",
+      "00062"
+     ],
+     "kind": "usgs",
+     "lagMin": 60,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "00062",
+     "station": "02098197"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "02098197",
+      "00062"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "order": 2,
+     "param": "00062",
+     "site": "02098197",
+     "stat": "dv"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Jordan Lake|NC",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "SAW",
+     "CFR BEJ.Elev.Inst.15Minutes.0.USGS-raw"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "CFR BEJ.Elev.Inst.15Minutes.0.USGS-raw",
+    "station": "SAW"
+   },
+   "primaryProvider": "cwms",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "02098197",
+     "00062"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "00062",
+    "station": "02098197"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "NWDM",
+      "KANS.Elev.Inst.1Hour.0.Best-NWK"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "KANS.Elev.Inst.1Hour.0.Best-NWK",
+     "station": "NWDM"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "KANK1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "KANK1"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "NWDM",
+      "KANS.Elev.Inst.1Hour.0.Best-NWK"
+     ],
+     "kind": "cwmsDaily",
+     "office": "NWDM",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "KANS.Elev.Inst.1Hour.0.Best-NWK"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Kanopolis Lake|KS",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "NWK",
+     "KANS.Elev.Inst.1Hour.0.Best-NWK"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "KANS.Elev.Inst.1Hour.0.Best-NWK",
+    "station": "NWK:KANS"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "NWDM",
+     "KANS.Elev.Inst.1Hour.0.Best-NWK"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "KANS.Elev.Inst.1Hour.0.Best-NWK",
+    "station": "NWDM"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "NWO",
+      "KEYO.Elev.Inst.1Hour.0.Best-NWO"
+     ],
+     "kind": "a2w",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "KEYO.Elev.Inst.1Hour.0.Best-NWO",
+     "station": "NWO:KEYO"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "NWDM",
+      "KEYO.Elev.Inst.1Hour.0.Best-NWO"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "KEYO.Elev.Inst.1Hour.0.Best-NWO",
+     "station": "NWDM"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USBR",
+     "independence": "SAME_SERIES",
+     "item": "478",
+     "key": [
+      "478"
+     ],
+     "kind": "riseDaily",
+     "offsetFt": 0.0,
+     "order": 2
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Keyhole Reservoir|WY",
+   "operatorFamily": "USBR",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "USBR",
+    "key": [
+     "478"
+    ],
+    "kind": "rise",
+    "lagMin": 2880,
+    "offsetFt": 0.0,
+    "series": "478",
+    "station": "478"
+   },
+   "primaryProvider": "rise",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Denver",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "NWO",
+     "KEYO.Elev.Inst.1Hour.0.Best-NWO"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "KEYO.Elev.Inst.1Hour.0.Best-NWO",
+    "station": "NWO:KEYO"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "USGS",
+     "independence": "AGENCY_OTHER_SERIES",
+     "key": [
+      "14092050",
+      "62614"
+     ],
+     "kind": "usgs",
+     "lagMin": 60,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "62614",
+     "station": "14092050"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "14087520",
+      "62614"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "order": 1,
+     "param": "62614",
+     "site": "14087520",
+     "stat": "dv"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Lake Billy Chinook|OR",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "key": [
+     "14087520",
+     "62614"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "series": "62614",
+    "station": "14087520"
+   },
+   "primaryProvider": "usgs",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Los_Angeles",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "independence": "AGENCY_OTHER_SERIES",
+    "key": [
+     "14092050",
+     "62614"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "62614",
+    "station": "14092050"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "PNVS1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "PNVS1"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "USGS",
+     "independence": "AGENCY_OTHER_SERIES",
+     "key": [
+      "02169921",
+      "00062"
+     ],
+     "kind": "usgs",
+     "lagMin": 60,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "00062",
+     "station": "02169921"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "02171000",
+      "00062"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "order": 2,
+     "param": "00062",
+     "site": "02171000",
+     "stat": "dv"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Lake Marion|SC",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "key": [
+     "02171000",
+     "00062"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "series": "00062",
+    "station": "02171000"
+   },
+   "primaryProvider": "usgs",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "independence": "AGENCY_OTHER_SERIES",
+    "key": [
+     "02169921",
+     "00062"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "00062",
+    "station": "02169921"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "NWTO1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "NWTO1"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "03091000",
+      "62615"
+     ],
+     "kind": "usgs",
+     "lagMin": 60,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "62615",
+     "station": "03091000"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "03091000",
+      "62615"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "order": 2,
+     "param": "62615",
+     "site": "03091000",
+     "stat": "dv"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Lake Milton|OH",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRP",
+     "Milton-Lake.Elev.Inst.1Hour.0.RESOPS"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Milton-Lake.Elev.Inst.1Hour.0.RESOPS",
+    "station": "LRP"
+   },
+   "primaryProvider": "cwms",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "03091000",
+     "62615"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "62615",
+    "station": "03091000"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "SAS",
+      "Russell.Elev-Pool.Inst.1Day.0.Raw-SHEF_SAS"
+     ],
+     "kind": "cwmsDaily",
+     "office": "SAS",
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Russell.Elev-Pool.Inst.1Day.0.Raw-SHEF_SAS"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Lake Russell (R.B. Russell)|GA",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "key": [
+     "RBDS1"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "HPIRG",
+    "station": "RBDS1"
+   },
+   "primaryProvider": "nwps",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "SAS",
+     "Russell.Elev-Pool.Inst.1Day.0.Raw-SHEF_SAS"
+    ],
+    "kind": "cwmsDaily",
+    "office": "SAS",
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "Russell.Elev-Pool.Inst.1Day.0.Raw-SHEF_SAS"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "USGS",
+     "independence": "AGENCY_OTHER_SERIES",
+     "key": [
+      "07053820",
+      "62615"
+     ],
+     "kind": "usgs",
+     "lagMin": 60,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "62615",
+     "station": "07053820"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "07053600",
+      "62615"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "order": 1,
+     "param": "62615",
+     "site": "07053600",
+     "stat": "30800"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Lake Taneycomo|MO",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "key": [
+     "07053600",
+     "62615"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "series": "62615",
+    "station": "07053600"
+   },
+   "primaryProvider": "usgs",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "independence": "AGENCY_OTHER_SERIES",
+    "key": [
+     "07053820",
+     "62615"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "62615",
+    "station": "07053820"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "NWDM",
+      "HEBU.Elev.Inst.1Hour.0.Best-NWO"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HEBU.Elev.Inst.1Hour.0.Best-NWO",
+     "station": "NWDM"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "GLUN8"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRZ",
+     "station": "GLUN8"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USBR",
+     "independence": "SAME_SERIES",
+     "item": "550",
+     "key": [
+      "550"
+     ],
+     "kind": "riseDaily",
+     "offsetFt": 0.0,
+     "order": 2
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Lake Tschida|ND",
+   "operatorFamily": "USBR",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "USBR",
+    "key": [
+     "550"
+    ],
+    "kind": "rise",
+    "lagMin": 2880,
+    "offsetFt": 0.0,
+    "series": "550",
+    "station": "550"
+   },
+   "primaryProvider": "rise",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Denver",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "NWDM",
+     "HEBU.Elev.Inst.1Hour.0.Best-NWO"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "HEBU.Elev.Inst.1Hour.0.Best-NWO",
+    "station": "NWDM"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "AGENCY_OTHER_SERIES",
+     "key": [
+      "NWDP",
+      "LWSC.Elev-Lake.Inst.1Hour.0.NWSRADIO-RAW"
+     ],
+     "kind": "cwmsDaily",
+     "office": "NWDP",
+     "offsetFt": 0.36,
+     "order": 0,
+     "series": "LWSC.Elev-Lake.Inst.1Hour.0.NWSRADIO-RAW"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "AGENCY_OTHER_SERIES",
+     "key": [
+      "NWDP",
+      "LWKW.Elev-Lake.Ave.1Hour.1Hour.IRIDIUM-REV"
+     ],
+     "kind": "cwmsDaily",
+     "office": "NWDP",
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "LWKW.Elev-Lake.Ave.1Hour.1Hour.IRIDIUM-REV"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Lake Washington|WA",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "NWDP",
+     "LWKW.Elev-Lake.Inst.1Hour.0.IRIDIUM-REV"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "LWKW.Elev-Lake.Inst.1Hour.0.IRIDIUM-REV",
+    "station": "NWDP"
+   },
+   "primaryProvider": "cwms",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Los_Angeles",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "SUB_DAILY",
+    "family": "CWMS",
+    "independence": "AGENCY_OTHER_SERIES",
+    "key": [
+     "NWDP",
+     "LWKW.Elev-Lake.Ave.1Hour.1Hour.IRIDIUM-REV"
+    ],
+    "kind": "cwmsDaily",
+    "office": "NWDP",
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "LWKW.Elev-Lake.Ave.1Hour.1Hour.IRIDIUM-REV"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRN",
+      "LAPK2-LAUREL.Elev-Pool.Inst.15Minutes.0.dcp-rev"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "LAPK2-LAUREL.Elev-Pool.Inst.15Minutes.0.dcp-rev",
+     "station": "LRN"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRN",
+      "CBNK2-LaurelR-CorbinKY.Elev.Inst.15Minutes.0.dcp-rev"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "CBNK2-LaurelR-CorbinKY.Elev.Inst.15Minutes.0.dcp-rev",
+     "station": "LRN"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "LRN",
+      "LAPK2-LAUREL.Elev-Pool.Inst.1Hour.0.man-rev"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRN",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "LAPK2-LAUREL.Elev-Pool.Inst.1Hour.0.man-rev"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Laurel River Lake|KY",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRN",
+     "LAPK2-LAUREL.Elev-Pool.Inst.1Hour.0.man-rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "LAPK2-LAUREL.Elev-Pool.Inst.1Hour.0.man-rev",
+    "station": "LRN:LAPK2"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "LRN",
+     "LAPK2-LAUREL.Elev-Pool.Inst.15Minutes.0.dcp-rev"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "LAPK2-LAUREL.Elev-Pool.Inst.15Minutes.0.dcp-rev",
+    "station": "LRN"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "NWDM",
+      "MILD.Elev.Inst.1Hour.0.Best-NWK"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "MILD.Elev.Inst.1Hour.0.Best-NWK",
+     "station": "NWDM"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "MLFK1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "MLFK1"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "NWDM",
+      "MILD.Elev.Inst.1Hour.0.Best-NWK"
+     ],
+     "kind": "cwmsDaily",
+     "office": "NWDM",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "MILD.Elev.Inst.1Hour.0.Best-NWK"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Milford Lake|KS",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "NWK",
+     "MILD.Elev.Inst.1Hour.0.Best-NWK"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "MILD.Elev.Inst.1Hour.0.Best-NWK",
+    "station": "NWK:MILD"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "NWDM",
+     "MILD.Elev.Inst.1Hour.0.Best-NWK"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "MILD.Elev.Inst.1Hour.0.Best-NWK",
+    "station": "NWDM"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "MSSI3"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "MSSI3"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRL",
+      "Mississinewa-Lake.Elev.Inst.15Minutes.0.USGS-raw"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRL",
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "Mississinewa-Lake.Elev.Inst.15Minutes.0.USGS-raw"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Mississinewa Lake|IN",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRL",
+     "Mississinewa-Lake.Elev.Inst.15Minutes.0.Decodes-raw"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Mississinewa-Lake.Elev.Inst.15Minutes.0.Decodes-raw",
+    "station": "LRL"
+   },
+   "primaryProvider": "cwms",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "SUB_DAILY",
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "LRL",
+     "Mississinewa-Lake.Elev.Inst.15Minutes.0.USGS-raw"
+    ],
+    "kind": "cwmsDaily",
+    "office": "LRL",
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "Mississinewa-Lake.Elev.Inst.15Minutes.0.USGS-raw"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRL",
+      "Monroe.Elev.Inst.0.0.lrldlb-raw"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Monroe.Elev.Inst.0.0.lrldlb-raw",
+     "station": "LRL"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "03372400",
+      "62614"
+     ],
+     "kind": "usgs",
+     "lagMin": 60,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "62614",
+     "station": "03372400"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRL",
+      "Monroe.Elev.Inst.0.0.lrldlb-raw"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRL",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "Monroe.Elev.Inst.0.0.lrldlb-raw"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Monroe Lake|IN",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRL",
+     "Monroe.Elev.Inst.0.0.lrldlb-rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Monroe.Elev.Inst.0.0.lrldlb-rev",
+    "station": "LRL:Monroe"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "LRL",
+     "Monroe.Elev.Inst.0.0.lrldlb-raw"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "Monroe.Elev.Inst.0.0.lrldlb-raw",
+    "station": "LRL"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRP",
+      "Mosquito-Lake.Elev.Inst.1Hour.0.RESOPS"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Mosquito-Lake.Elev.Inst.1Hour.0.RESOPS",
+     "station": "LRP"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "MISO1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "MISO1"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRP",
+      "Mosquito-Lake.Elev.Inst.15Minutes.0.OBS"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRP",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "Mosquito-Lake.Elev.Inst.15Minutes.0.OBS"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Mosquito Creek Lake|OH",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRP",
+     "Mosquito-Lake.Elev.Inst.1Hour.0.OBS"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Mosquito-Lake.Elev.Inst.1Hour.0.OBS",
+    "station": "LRP:Mosquito"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "LRP",
+     "Mosquito-Lake.Elev.Inst.1Hour.0.RESOPS"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "Mosquito-Lake.Elev.Inst.1Hour.0.RESOPS",
+    "station": "LRP"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "SWL",
+      "Norfork_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-raw"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Norfork_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-raw",
+     "station": "SWL"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "NFDA4"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "NFDA4"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "SWL",
+      "Norfork_Dam-Headwater.Elev.Inst.~1Day.0.MN-Elev"
+     ],
+     "kind": "cwmsDaily",
+     "office": "SWL",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "Norfork_Dam-Headwater.Elev.Inst.~1Day.0.MN-Elev"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Norfork|AR",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "SWL",
+     "Norfork_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Norfork_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-rev",
+    "station": "SWL:Norfork_Dam"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "SWL",
+     "Norfork_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-raw"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "Norfork_Dam-Headwater.Elev.Inst.1Hour.0.Decodes-raw",
+    "station": "SWL"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "AGENCY_OTHER_SERIES",
+     "key": [
+      "SAJ",
+      "Okeechobee.Elev.Ave.~1Day.1Day.Best-SAJ-POR"
+     ],
+     "kind": "cwmsDaily",
+     "office": "SAJ",
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Okeechobee.Elev.Ave.~1Day.1Day.Best-SAJ-POR"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Okeechobee|FL",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "SAJ",
+     "Okeechobee-8Station.Elev.Ave.~1Hour.1Hour.DCP-Computed"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Okeechobee-8Station.Elev.Ave.~1Hour.1Hour.DCP-Computed",
+    "station": "SAJ:Okeechobee"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "CWMS",
+    "independence": "AGENCY_OTHER_SERIES",
+    "key": [
+     "SAJ",
+     "Okeechobee.Elev.Ave.~1Day.1Day.Best-SAJ-POR"
+    ],
+    "kind": "cwmsDaily",
+    "office": "SAJ",
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "Okeechobee.Elev.Ave.~1Day.1Day.Best-SAJ-POR"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "BMDA4"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "BMDA4"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "MVK",
+      "Blakely.Elev.Inst.1Day.0.Manual"
+     ],
+     "kind": "cwmsDaily",
+     "office": "MVK",
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "Blakely.Elev.Inst.1Day.0.Manual"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Ouachita (L. Ouachita)|AR",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "MVK",
+     "Blakely.Elev.Inst.1Hour.0.DCP-raw"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Blakely.Elev.Inst.1Hour.0.DCP-raw",
+    "station": "MVK"
+   },
+   "primaryProvider": "cwms",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "MVK",
+     "Blakely.Elev.Inst.1Day.0.Manual"
+    ],
+    "kind": "cwmsDaily",
+    "office": "MVK",
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "Blakely.Elev.Inst.1Day.0.Manual"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "NWO",
+      "PACA.Elev.Inst.1Hour.0.Best-NWO"
+     ],
+     "kind": "a2w",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "PACA.Elev.Inst.1Hour.0.Best-NWO",
+     "station": "NWO:PACA"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "NWDM",
+      "PACA.Elev.Inst.1Hour.0.Best-NWO"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "PACA.Elev.Inst.1Hour.0.Best-NWO",
+     "station": "NWDM"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USBR",
+     "independence": "SAME_SERIES",
+     "item": "675",
+     "key": [
+      "675"
+     ],
+     "kind": "riseDaily",
+     "offsetFt": 0.0,
+     "order": 2
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Pactola Reservoir|SD",
+   "operatorFamily": "USBR",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "USBR",
+    "key": [
+     "675"
+    ],
+    "kind": "rise",
+    "lagMin": 2880,
+    "offsetFt": 0.0,
+    "series": "675",
+    "station": "675"
+   },
+   "primaryProvider": "rise",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Denver",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "NWO",
+     "PACA.Elev.Inst.1Hour.0.Best-NWO"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "PACA.Elev.Inst.1Hour.0.Best-NWO",
+    "station": "NWO:PACA"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRN",
+      "JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.15Minutes.0.dcp-rev"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.15Minutes.0.dcp-rev",
+     "station": "LRN"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "TVA",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "JPHT1"
+     ],
+     "kind": "tva",
+     "lagMin": 60,
+     "offsetFt": 0.0,
+     "order": 1,
+     "station": "JPHT1"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "LRN",
+      "JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.1Hour.0.man-rev"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRN",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.1Hour.0.man-rev"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Percy Priest Lake|TN",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRN",
+     "JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.1Hour.0.man-rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.1Hour.0.man-rev",
+    "station": "LRN:JPHT1"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "LRN",
+     "JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.15Minutes.0.dcp-rev"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.15Minutes.0.dcp-rev",
+    "station": "LRN"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "SAW",
+      "ROA PLP.Elev.Inst.5Minutes.0.USGS-raw"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "ROA PLP.Elev.Inst.5Minutes.0.USGS-raw",
+     "station": "SAW"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "02071900",
+      "62614"
+     ],
+     "kind": "usgs",
+     "lagMin": 60,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "62614",
+     "station": "02071900"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "02071900",
+      "62614"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "order": 2,
+     "param": "62614",
+     "site": "02071900",
+     "stat": "dv"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Philpott Lake|VA",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "SAW",
+     "ROA PLP.Elev.Inst.5Minutes.0.USGS-raw"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "ROA PLP.Elev.Inst.5Minutes.0.USGS-raw",
+    "station": "SAW:ROA PLP"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "02071900",
+     "62614"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "62614",
+    "station": "02071900"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "NWDM",
+      "POMA.Elev.Inst.1Hour.0.Best-NWK"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "POMA.Elev.Inst.1Hour.0.Best-NWK",
+     "station": "NWDM"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "PLKK1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "PLKK1"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "NWDM",
+      "POMA.Elev.Inst.1Hour.0.Best-NWK"
+     ],
+     "kind": "cwmsDaily",
+     "office": "NWDM",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "POMA.Elev.Inst.1Hour.0.Best-NWK"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Pomona Lake|KS",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "NWK",
+     "POMA.Elev.Inst.1Hour.0.Best-NWK"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "POMA.Elev.Inst.1Hour.0.Best-NWK",
+    "station": "NWK:POMA"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "NWDM",
+     "POMA.Elev.Inst.1Hour.0.Best-NWK"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "POMA.Elev.Inst.1Hour.0.Best-NWK",
+    "station": "NWDM"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "12393000",
+      "00065"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 2434.4,
+     "order": 0,
+     "param": "00065",
+     "site": "12393000",
+     "stat": "32400"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "NWS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "PSLI1"
+     ],
+     "kind": "hadsDaily",
+     "lid": "PSLI1",
+     "offsetFt": 0.0,
+     "order": 1,
+     "pe": "HP"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Priest Lake|ID",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "key": [
+     "PSLI1"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "HPIRA",
+    "station": "PSLI1"
+   },
+   "primaryProvider": "nwps",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Los_Angeles",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "USGS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "12393000",
+     "00065"
+    ],
+    "kind": "usgsDaily",
+    "offsetFt": 2434.4,
+    "order": 0,
+    "param": "00065",
+    "site": "12393000",
+    "stat": "32400"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "05074000",
+      "00065"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 1100.25,
+     "order": 0,
+     "param": "00065",
+     "site": "05074000",
+     "stat": "dv"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Red Lake|MN",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "MVP",
+     "RedLake_Dam.Elev.Inst.~15Minutes.0.best-MSL1912"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "RedLake_Dam.Elev.Inst.~15Minutes.0.best-MSL1912",
+    "station": "MVP:RedLake_Dam"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "USGS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "05074000",
+     "00065"
+    ],
+    "kind": "usgsDaily",
+    "offsetFt": 1100.25,
+    "order": 0,
+    "param": "00065",
+    "site": "05074000",
+    "stat": "dv"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "SRDM6"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRG",
+     "station": "SRDM6"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "MVK",
+      "Sardis Lake.Elev.Inst.1Day.0.Manual"
+     ],
+     "kind": "cwmsDaily",
+     "office": "MVK",
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "Sardis Lake.Elev.Inst.1Day.0.Manual"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Sardis Lake|MS",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "MVK",
+     "Sardis Lake.Elev.Inst.1Hour.0.DCP-rev"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Sardis Lake.Elev.Inst.1Hour.0.DCP-rev",
+    "station": "MVK"
+   },
+   "primaryProvider": "cwms",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "MVK",
+     "Sardis Lake.Elev.Inst.1Day.0.Manual"
+    ],
+    "kind": "cwmsDaily",
+    "office": "MVK",
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "Sardis Lake.Elev.Inst.1Day.0.Manual"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "03141000",
+      "62614"
+     ],
+     "kind": "usgs",
+     "lagMin": 60,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "62614",
+     "station": "03141000"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "SNLO1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "SNLO1"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "LRH",
+      "Senecaville-Lake.Elev.Inst.15Minutes.0.OBS"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRH",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "Senecaville-Lake.Elev.Inst.15Minutes.0.OBS"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Senecaville Lake|OH",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRH",
+     "Senecaville-Lake.Elev.Inst.15Minutes.0.OBS"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Senecaville-Lake.Elev.Inst.15Minutes.0.OBS",
+    "station": "LRH"
+   },
+   "primaryProvider": "cwms",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "03141000",
+     "62614"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "62614",
+    "station": "03141000"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRP",
+      "Shenango-Lake.Elev.Inst.1Hour.0.RESOPS"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Shenango-Lake.Elev.Inst.1Hour.0.RESOPS",
+     "station": "LRP"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "SHPP1"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "SHPP1"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRP",
+      "Shenango-Lake.Elev.Inst.15Minutes.0.OBS"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRP",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "Shenango-Lake.Elev.Inst.15Minutes.0.OBS"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Shenango River Lake|PA",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRP",
+     "Shenango-Lake.Elev.Inst.1Hour.0.OBS"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Shenango-Lake.Elev.Inst.1Hour.0.OBS",
+    "station": "LRP:Shenango"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "LRP",
+     "Shenango-Lake.Elev.Inst.1Hour.0.RESOPS"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "Shenango-Lake.Elev.Inst.1Hour.0.RESOPS",
+    "station": "LRP"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "NWDM",
+      "SMIE.Elev.Inst.1Hour.0.Best-NWK"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "SMIE.Elev.Inst.1Hour.0.Best-NWK",
+     "station": "NWDM"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "SLKM7"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "HPIRG",
+     "station": "SLKM7"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "NWDM",
+      "SMIE.Elev.Inst.1Hour.0.Best-NWK"
+     ],
+     "kind": "cwmsDaily",
+     "office": "NWDM",
+     "offsetFt": 0.0,
+     "order": 2,
+     "series": "SMIE.Elev.Inst.1Hour.0.Best-NWK"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Smithville Lake|MO",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "NWK",
+     "SMIE.Elev.Inst.1Hour.0.Best-NWK"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "SMIE.Elev.Inst.1Hour.0.Best-NWK",
+    "station": "NWK:SMIE"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "NWDM",
+     "SMIE.Elev.Inst.1Hour.0.Best-NWK"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "SMIE.Elev.Inst.1Hour.0.Best-NWK",
+    "station": "NWDM"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "DAILY",
+     "cadenceMin": 1440,
+     "family": "CWMS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "NWK",
+      "TREN.Elev.Inst.1Day.0.Best-NWK"
+     ],
+     "kind": "a2w",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "TREN.Elev.Inst.1Day.0.Best-NWK",
+     "station": "NWK:TREN"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "DAILY",
+     "cadenceMin": 1440,
+     "family": "CWMS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "NWDM",
+      "TREN.Elev.Inst.1Day.0.Best-NWK"
+     ],
+     "kind": "cwms",
+     "lagMin": 1440,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "TREN.Elev.Inst.1Day.0.Best-NWK",
+     "station": "NWDM"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USBR",
+     "independence": "SAME_SERIES",
+     "item": "134012",
+     "key": [
+      "134012"
+     ],
+     "kind": "riseDaily",
+     "offsetFt": 0.0,
+     "order": 2
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Swanson Reservoir|NE",
+   "operatorFamily": "USBR",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "USBR",
+    "key": [
+     "134012"
+    ],
+    "kind": "rise",
+    "lagMin": 2880,
+    "offsetFt": 0.0,
+    "series": "134012",
+    "station": "134012"
+   },
+   "primaryProvider": "rise",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "CWMS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "NWK",
+     "TREN.Elev.Inst.1Day.0.Best-NWK"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "TREN.Elev.Inst.1Day.0.Best-NWK",
+    "station": "NWK:TREN"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRL",
+      "Taylorsville-Lake.Elev.Inst.15Minutes.0.Decodes-raw"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "Taylorsville-Lake.Elev.Inst.15Minutes.0.Decodes-raw",
+     "station": "LRL"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "CWMS",
+     "independence": "OPERATOR_OTHER_SERIES",
+     "key": [
+      "LRL",
+      "Taylorsville.Elev.Inst.0.0.lrldlb-raw"
+     ],
+     "kind": "cwmsDaily",
+     "office": "LRL",
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "Taylorsville.Elev.Inst.0.0.lrldlb-raw"
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Taylorsville Lake|KY",
+   "operatorFamily": "CWMS",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "key": [
+     "LRL",
+     "Taylorsville.Elev.Inst.0.0.lrldlb-rev"
+    ],
+    "kind": "a2w",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "Taylorsville.Elev.Inst.0.0.lrldlb-rev",
+    "station": "LRL:Taylorsville"
+   },
+   "primaryProvider": "a2w",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/New_York",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "OPERATOR_OTHER_SERIES",
+    "key": [
+     "LRL",
+     "Taylorsville-Lake.Elev.Inst.15Minutes.0.Decodes-raw"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 0,
+    "series": "Taylorsville-Lake.Elev.Inst.15Minutes.0.Decodes-raw",
+    "station": "LRL"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "NWS",
+     "independence": "NWS_REDISTRIBUTION",
+     "key": [
+      "BKLT2"
+     ],
+     "kind": "nwps",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "HPIRA",
+     "station": "BKLT2"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "USGS",
+     "independence": "AGENCY_OTHER_SERIES",
+     "key": [
+      "08025350",
+      "62614"
+     ],
+     "kind": "usgs",
+     "lagMin": 60,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "62614",
+     "station": "08025350"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "AGENCY_OTHER_SERIES",
+     "key": [
+      "08025350",
+      "62614"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": -0.18,
+     "order": 2,
+     "param": "62614",
+     "site": "08025350",
+     "stat": "dv"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Toledo Bend Reservoir|TX",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "key": [
+     "312914093422701",
+     "62615"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "series": "62615",
+    "station": "312914093422701"
+   },
+   "primaryProvider": "usgs",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "USGS",
+    "independence": "AGENCY_OTHER_SERIES",
+    "key": [
+     "08025350",
+     "62614"
+    ],
+    "kind": "usgs",
+    "lagMin": 60,
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "62614",
+    "station": "08025350"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "10297000",
+      "00062"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 4899.97,
+     "order": 0,
+     "param": "00062",
+     "site": "10297000",
+     "stat": "32400"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "NWS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "TOPN2"
+     ],
+     "kind": "hadsDaily",
+     "lid": "TOPN2",
+     "offsetFt": 0.0,
+     "order": 1,
+     "pe": "HP"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Topaz Lake|NV",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "key": [
+     "TOPN2"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "HPIRG",
+    "station": "TOPN2"
+   },
+   "primaryProvider": "nwps",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Los_Angeles",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "DAILY",
+    "family": "USGS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "10297000",
+     "00062"
+    ],
+    "kind": "usgsDaily",
+    "offsetFt": 4899.97,
+    "order": 0,
+    "param": "00062",
+    "site": "10297000",
+    "stat": "32400"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "USGS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "07226800",
+      "62615"
+     ],
+     "kind": "usgsDaily",
+     "offsetFt": 0.0,
+     "order": 0,
+     "param": "62615",
+     "site": "07226800",
+     "stat": "iv"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "SUB_DAILY",
+     "family": "NWS",
+     "independence": "SAME_SERIES",
+     "key": [
+      "UTEN5"
+     ],
+     "kind": "hadsDaily",
+     "lid": "UTEN5",
+     "offsetFt": 0.0,
+     "order": 1,
+     "pe": "HP"
+    }
+   ],
+   "capability": "DIRECT_LAKE_GAUGE",
+   "lakeId": "Ute Lake|NM",
+   "operatorFamily": null,
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "NWS",
+    "key": [
+     "UTEN5"
+    ],
+    "kind": "nwps",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "series": "HPIRG",
+    "station": "UTEN5"
+   },
+   "primaryProvider": "nwps",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Denver",
+   "truth": {
+    "boundRole": "HISTORY",
+    "cadence": "SUB_DAILY",
+    "family": "USGS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "07226800",
+     "62615"
+    ],
+    "kind": "usgsDaily",
+    "offsetFt": 0.0,
+    "order": 0,
+    "param": "62615",
+    "site": "07226800",
+    "stat": "iv"
+   }
+  },
+  {
+   "candidates": [
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "DAILY",
+     "cadenceMin": 1440,
+     "family": "CWMS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "NWK",
+      "GLEL.Elev.Inst.1Day.0.Best-NWK"
+     ],
+     "kind": "a2w",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 0,
+     "series": "GLEL.Elev.Inst.1Day.0.Best-NWK",
+     "station": "NWK:GLEL"
+    },
+    {
+     "boundRole": "FALLBACK_LIVE",
+     "cadence": "SUB_DAILY",
+     "cadenceMin": 60,
+     "family": "CWMS",
+     "independence": "CROSS_AGENCY",
+     "key": [
+      "NWDM",
+      "GLEL.Elev.Inst.1Hour.0.Best-NWK"
+     ],
+     "kind": "cwms",
+     "lagMin": 120,
+     "offsetFt": 0.0,
+     "order": 1,
+     "series": "GLEL.Elev.Inst.1Hour.0.Best-NWK",
+     "station": "NWDM"
+    },
+    {
+     "boundRole": "HISTORY",
+     "cadence": "DAILY",
+     "family": "USBR",
+     "independence": "SAME_SERIES",
+     "item": "841",
+     "key": [
+      "841"
+     ],
+     "kind": "riseDaily",
+     "offsetFt": 0.0,
+     "order": 2
+    }
+   ],
+   "capability": "DIRECT_OPERATOR_POOL",
+   "lakeId": "Waconda Lake|KS",
+   "operatorFamily": "USBR",
+   "primary": {
+    "boundRole": "BRAIN_VALUE",
+    "cadence": "DAILY",
+    "cadenceMin": 1440,
+    "family": "USBR",
+    "key": [
+     "841"
+    ],
+    "kind": "rise",
+    "lagMin": 2880,
+    "offsetFt": 0.0,
+    "series": "841",
+    "station": "841"
+   },
+   "primaryProvider": "rise",
+   "status": "VERDICT_ELIGIBLE",
+   "timeZone": "America/Chicago",
+   "truth": {
+    "boundRole": "FALLBACK_LIVE",
+    "cadence": "SUB_DAILY",
+    "cadenceMin": 60,
+    "family": "CWMS",
+    "independence": "CROSS_AGENCY",
+    "key": [
+     "NWDM",
+     "GLEL.Elev.Inst.1Hour.0.Best-NWK"
+    ],
+    "kind": "cwms",
+    "lagMin": 120,
+    "offsetFt": 0.0,
+    "order": 1,
+    "series": "GLEL.Elev.Inst.1Hour.0.Best-NWK",
+    "station": "NWDM"
+   }
+  }
+ ]
+}
