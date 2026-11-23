@@ -1,28 +1,33 @@
 #!/usr/bin/env python3
-"""Water Temp Level-4 protected truth, protocol v5 (PT-L4-2026-11-23-v5, gap WATER-VAL-001): read-only runner.
+"""Water Temp Level-4 protected truth, protocol v6 (PT-L4-2026-11-23-v6, gap WATER-VAL-001): read-only runner.
 
-Protocol: docs/brains/water-temp-protected-truth-v5/PT-L4-2026-11-23-v5.protocol.json. The runner refuses any other protocol,
-including the superseded v2, v3 and v4. It reads public sources and writes local files in --out only, plus one append-only run
-ledger per protocol id under the research root (<root>/_ledgers/, never inside an --out folder). It never writes Firebase, never
-changes a score, binding or schedule, and never indexes a temperature value in step A.
+Protocol: docs/brains/water-temp-protected-truth-v6/PT-L4-2026-11-23-v6.protocol.json. The runner refuses any other protocol,
+including the superseded v2 to v5. It reads public sources and writes local files in --out only. Every step is recorded in the
+shared run ledger (tools/research/protocol_run_ledger.py, Ledger.for_brain('water-temp', ...)) in the folder Cortex research-path
+returns, anchored by a public 'Run anchor:' comment on Sector_Ops #51 that must exist before ANY step. It never writes Firebase,
+never changes a score, binding or schedule, and never indexes a temperature value in step A.
 
-Run binding: exclusions, census and select run once per protocol id, and fetch-forcing, fetch-results and compare once per
-selection, whatever output folder is chosen; the run ledger refuses a second run (only run #1 counts).
+Result steps (RESULT_STEPS): select and compare. Each posts a 'Run start:' record on #51 and confirms it before computing, and a
+'Run result:' record after completing. Keys are fixed by the protocol (STEP_KEYS). Comments are posted as research records by the
+session that runs the step (with --post through gh, or by hand while the runner waits); "not listed yet" means wait and retry,
+never repost; nobody edits them.
 
-Step A v5 (counts only; census cutoff fixed by the protocol):
     verify          protocol id and sha256 == committed sidecar
+    anchor          open the ledger and write (or, with --post, post) its Run anchor text; then check-anchor
+    check-anchor    require_external_anchor(): the earliest Run anchor for this protocol id is this ledger's
+Step A v6 (counts only; census cutoff fixed by the protocol):
     fetch-registry  Lake Registry v1 index + analysis polygons for the universe (public bucket)
     fetch-usgs      USGS OGC metadata, stored as whitelisted properties (ids, site type, parameter, geometry)
     fetch-wqp       WQP Station / Activity metadata and Result-depth rows (with the unit code), as whitelisted columns only
-    exclusions      once per protocol (ledger); M0_TUNING / RESOLVER_SENSOR / WT_SAT_1 / NO_GEOMETRY per candidate water
+    exclusions      ledger step (key all); M0_TUNING / RESOLVER_SENSOR / WT_SAT_1 / NO_GEOMETRY per candidate water
     stations        draft station classes; a reviewer may reclassify the draft's UNCLASSIFIED rows only, with a reviewNote
-    census          once per protocol (ledger); bound to the posted draft and reviewed hashes and the recorded exclusions
-    select          once per protocol (ledger: the selection registry); retain/replace by counts only
-Step B (opens values; every command needs the ledger's selection, the reviewed station file and --owner-request, which is a
-string check and not proof of approval: the request posted on Sector_Ops #51 is the control):
-    fetch-forcing   once per selection; exactly the window the selection implies; file hashes bound in the ledger
-    fetch-results   once per selection; one WQP Result query per counted cast; file hashes bound in the ledger
-    compare         once per selection; files checked against the ledger and the provenance; unknowns count against
+    census          ledger step (key all); bound to the posted draft and reviewed hashes and the recorded exclusions
+    select          RESULT step (key all); retain/replace by counts only
+Step B (opens values; every command needs the ledger's counted selection, the reviewed station file and --owner-request, which
+is a string check and not proof of approval: the request posted on Sector_Ops #51 is the control):
+    fetch-forcing   ledger step (key selection); the window the selection implies; files bound in the ledger
+    fetch-results   ledger step (key selection); one WQP Result query per counted cast; files bound in the ledger
+    compare         RESULT step (key selection); files checked against the ledger and the provenance; unknowns count against
 """
 from __future__ import annotations
 
@@ -39,22 +44,24 @@ import re
 import sys
 import urllib.parse
 import urllib.request
+from pathlib import Path
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import water_temp_protected_truth as V1  # noqa: E402  (shared helpers: hashing, classes, units, metrics, the M0 implementation)
-try:                                                    # the shared Engine module, once it is on main
-    import protocol_run_ledger as RL  # noqa: E402
-except ImportError:                                     # until then, the vendored shim with the same API
-    import _wt_protocol_run_ledger_shim as RL  # noqa: E402
+import protocol_run_ledger as RL  # noqa: E402  (the shared Engine run ledger, PR #251)
 
 REPO = V1.REPO
-PROTOCOL_ID = "PT-L4-2026-11-23-v5"
-PROTOCOL = os.path.join(REPO, "docs", "brains", "water-temp-protected-truth-v5", f"{PROTOCOL_ID}.protocol.json")
+PROTOCOL_ID = "PT-L4-2026-11-23-v6"
+PROTOCOL = os.path.join(REPO, "docs", "brains", "water-temp-protected-truth-v6", f"{PROTOCOL_ID}.protocol.json")
 TEMP_SENSORS = os.path.join(REPO, "docs", "data", "temp_sensors.csv")
 LABELS = V1.LABELS
 PER_LAKE, TOTAL, SLOTS = 25, 150, 4
 HOLDOUT_END = "2026-06-30"
+BRAIN = "water-temp"
+RESULT_STEPS = frozenset({"select", "compare"})            # protocol runLedger.resultSteps; recorded in the genesis and the anchor
+STEP_KEYS = {"exclusions": "all", "census": "all", "select": "all",
+             "fetch-forcing": "selection", "fetch-results": "selection", "compare": "selection"}   # protocol runLedger.keys
 CUTOFF = "2026-11-22"
 WINDOW_START = "2021-01-01"
 SPIN_UP_DAYS = 46
@@ -637,31 +644,119 @@ def select(p: dict, census_rec: dict, excl: dict) -> dict:
 
 
 # ----------------------------------------------------------------------------------------------------------- run ledger
-def research_root(arg: str | None, outs: list[str]) -> str:
-    """The research root that holds the run ledger: --research-root, else SECTOR_RESEARCH_ROOT. Refused when missing or when it
-    lies inside an --out folder (a ledger next to the outputs could be recreated with them)."""
-    root = arg or os.environ.get("SECTOR_RESEARCH_ROOT")
-    if not root:
-        raise SystemExit("REFUSED: no research root: pass --research-root (the folder research-path returns) or set SECTOR_RESEARCH_ROOT")
-    r = os.path.realpath(root)
-    for o in outs:
-        if not o:
-            continue
-        oo = os.path.realpath(o)
-        if r == oo or r.startswith(oo.rstrip(os.sep) + os.sep):
-            raise SystemExit("REFUSED: the research root lies inside an --out folder")
-    return r
+ISSUE = f"{RL.ANCHOR_REPO}#{RL.ANCHOR_ISSUE}"
+WAIT_SECONDS = 30
 
 
-def ledger(digest: str, root: str):
-    return RL.Ledger(root, PROTOCOL_ID, digest)
+def check_ledger_constants(p: dict) -> None:
+    rl = p.get("runLedger") or {}
+    if sorted(rl.get("resultSteps") or []) != sorted(RESULT_STEPS) or (rl.get("keys") or {}) != STEP_KEYS:
+        raise SystemExit("REFUSED: the runner's result steps or keys differ from the protocol's runLedger")
 
 
-def _require_output(L, step: str, key: str, name: str, path: str) -> dict:
-    rec = L.require(step, key)
+def open_ledger(digest: str, outs: list, cortex_home: str | None = None):
+    """The protocol's run ledger: Ledger.for_brain('water-temp', ...), root from Cortex research-path, never inside an --out."""
+    return RL.Ledger.for_brain(BRAIN, PROTOCOL_ID, digest, repo=REPO, forbid_under=[o for o in outs if o],
+                               result_steps=RESULT_STEPS, cortex_home=cortex_home)
+
+
+def gh_post(body: str) -> None:
+    """Post a research record on Sector_Ops #51 with the caller's gh identity (never an Owner header)."""
+    import subprocess
+    import tempfile
+    if body.lstrip().startswith("Owner"):
+        raise SystemExit("REFUSED: research records never carry an Owner header")
+    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as fh:
+        fh.write(body)
+        path = fh.name
+    try:
+        r = subprocess.run(["gh", "api", f"repos/{RL.ANCHOR_REPO}/issues/{RL.ANCHOR_ISSUE}/comments", "-F", f"body=@{path}"],
+                           capture_output=True, text=True, timeout=120)
+    finally:
+        os.unlink(path)
+    if r.returncode != 0:
+        raise SystemExit(f"posting on {ISSUE} failed: {r.stderr.strip()[:300]}")
+
+
+def _sleep(seconds: float) -> None:
+    import time
+    time.sleep(seconds)
+
+
+def publish_and_confirm(text: str, confirm, poster=None, text_path: str | None = None, wait_seconds: int = 3600, sleep=_sleep):
+    """Post `text` once (poster), or write it to `text_path` for the operator to post, then call confirm() until #51 lists it.
+    'not listed yet' means wait and retry; it never reposts. Any other refusal propagates."""
+    if text_path:
+        with open(text_path, "w", encoding="utf-8") as fh:
+            fh.write(text)
+    if poster is not None:
+        poster(text)
+    elif not text_path:
+        raise SystemExit("REFUSED: no way to publish the record (pass --post, or a path for the operator to post by hand)")
+    waited = 0
+    while True:
+        try:
+            return confirm()
+        except RL.LedgerRefusal as e:
+            if "not listed yet" not in str(e) or waited >= wait_seconds:
+                raise
+        sleep(WAIT_SECONDS)
+        waited += WAIT_SECONDS
+
+
+def _completed(L, step: str) -> dict:
+    """The counted COMPLETED entry of a step (result or not) for its protocol key; refuses otherwise."""
+    key = STEP_KEYS[step]
+    ents = L.entries()
+    if step in RESULT_STEPS:
+        done = L.require(step, key)
+    else:
+        found = [e for e in ents if e["step"] == step and e["key"] == key and e["status"] == RL.COMPLETED and e.get("counted") is True]
+        if not found:
+            raise RL.LedgerRefusal(f"{PROTOCOL_ID}: step {step!r} key {key!r} has no COMPLETED run; it must run first")
+        done = found[0]
+    started = next(e for e in ents if e["step"] == step and e["key"] == key and e["status"] == RL.STARTED and e["run"] == done["run"])
+    return {**done, "inputs": started["inputs"]}         # inputs are recorded on the STARTED entry of the same run
+
+
+def _require_output(L, step: str, name: str, path: str) -> dict:
+    rec = _completed(L, step)
     if rec["outputs"].get(name) != V1.sha256_file(path):
         raise SystemExit(f"REFUSED: {os.path.basename(path)} is not the {step} output recorded in the run ledger")
     return rec
+
+
+def _run_plain(L, step: str, args: dict, inputs: dict, work):
+    """A non-result ledger step: begin (anchor checked), work() -> (value, outputs {name: sha256}), complete. A failure before any
+    output is aborted before result, so the step may be retried."""
+    key = STEP_KEYS[step]
+    L.begin(step, key, args, inputs)
+    try:
+        value, outputs = work()
+    except BaseException as e:
+        L.abort_before_result(step, key, f"{type(e).__name__}: {str(e)[:200]}")
+        raise
+    L.complete(step, key, outputs)
+    return value
+
+
+def _run_result(L, step: str, args: dict, inputs: dict, compute, publish):
+    """A result step: require_external_anchor, begin, publish Run start and confirm it, compute (never aborted once computing),
+    complete with outputs and a small result, publish Run result and confirm it."""
+    key = STEP_KEYS[step]
+    L.require_external_anchor()
+    L.begin(step, key, args, inputs)
+    try:
+        publish(L.start_text(step, key), lambda: L.confirm_started(step, key), "start")
+    except RL.RepeatDetected:
+        raise
+    except BaseException as e:
+        L.abort_before_result(step, key, f"start record not confirmed: {type(e).__name__}: {str(e)[:200]}")
+        raise
+    value, outputs, result = compute()                      # values may be seen from here on: no abort
+    L.complete(step, key, outputs, result)
+    publish(L.result_text(step, key), lambda: L.confirm_result(step, key), "result")
+    return value
 
 
 def cmd_exclusions(p: dict, digest: str, L, reg_dir: str, sites_path: str, calibration: str, calibration_lakes: str,
@@ -677,28 +772,25 @@ def cmd_exclusions(p: dict, digest: str, L, reg_dir: str, sites_path: str, calib
     if os.path.exists(out):
         raise SystemExit(f"REFUSED: {os.path.basename(out)} already exists (write-once)")
     inputs = {"sites.csv": V1.sha256_file(sites_path), "calibration": V1.sha256_file(calibration),
-              "calibrationLakes": V1.sha256_file(calibration_lakes), "wtSat1": V1.sha256_file(wt_sat_1) if wt_sat_1 else "unfrozen",
-              "registryTree": RL.sha256_tree(reg_dir)}
-    L.begin("exclusions", PROTOCOL_ID, {"out": os.path.basename(out)}, inputs)
-    try:
+              "calibrationLakes": V1.sha256_file(calibration_lakes), "registryTree": RL.sha256_tree(reg_dir)}
+    if wt_sat_1:
+        inputs["wtSat1"] = V1.sha256_file(wt_sat_1)
+
+    def work():
         ex = exclusions(p, load_registry(reg_dir), sites, set(cal_lakes), bound_lakes(), sat)
         rec = {"labels": LABELS, "protocolId": p["protocolId"], "protocolSha256": digest,
                "wtSat1List": sorted(sat) if sat else "unfrozen: LK-in-polygon rule", "sitesSha256": inputs["sites.csv"],
                "calibrationSha256": inputs["calibration"], "calibrationLakes": sorted(cal_lakes),
                "calibrationLakesSha256": inputs["calibrationLakes"], "exclusions": ex}
         _write_once(out, rec)
-    except BaseException as e:
-        L.abort_before_result("exclusions", PROTOCOL_ID, f"{type(e).__name__}: {e}")
-        raise
-    L.complete("exclusions", PROTOCOL_ID, {"exclusions.json": V1.sha256_file(out)},
-               {"excluded": sum(1 for v in ex.values() if v), "eligible": sum(1 for v in ex.values() if not v)})
-    return rec
+        return rec, {"exclusions.json": V1.sha256_file(out)}
+    return _run_plain(L, "exclusions", {"wtSat1": "committed" if sat else "unfrozen"}, inputs, work)
 
 
 def cmd_census(p: dict, digest: str, L, wqp: str, draft: str, draft_sha: str, reviewed: str, reviewed_sha: str, excl_path: str, out: str) -> dict:
     if os.path.exists(out):
         raise SystemExit(f"REFUSED: {os.path.basename(out)} already exists (write-once)")
-    _require_output(L, "exclusions", PROTOCOL_ID, "exclusions.json", excl_path)
+    _require_output(L, "exclusions", "exclusions.json", excl_path)
     stations = load_reviewed(draft, draft_sha, reviewed, reviewed_sha)
     depth = []
     for w in waters(p):
@@ -713,72 +805,80 @@ def cmd_census(p: dict, digest: str, L, wqp: str, draft: str, draft_sha: str, re
         raise SystemExit("REFUSED: exclusions made under a different protocol")
     inputs = {"stationDraft": draft_sha, "stationReviewed": reviewed_sha, "exclusions.json": V1.sha256_file(excl_path),
               "wqpTree": RL.sha256_tree(wqp)}
-    L.begin("census", PROTOCOL_ID, {"out": os.path.basename(out)}, inputs)
-    try:
-        rec = {"labels": LABELS, "protocolId": p["protocolId"], "protocolSha256": digest, "step": "A_census_v5", "valuesOpened": False,
+
+    def work():
+        rec = {"labels": LABELS, "protocolId": p["protocolId"], "protocolSha256": digest, "step": "A_census_v6", "valuesOpened": False,
                "cutoff": CUTOFF, "stationDraftSha256": draft_sha, "stationFileSha256": reviewed_sha,
                "exclusionsSha256": inputs["exclusions.json"], "wqpTreeSha256": inputs["wqpTree"], "authoritativeScoresUnchanged": True,
                **census(p, depth, stations)}
         _write_once(out, rec)
-    except BaseException as e:
-        L.abort_before_result("census", PROTOCOL_ID, f"{type(e).__name__}: {e}")
-        raise
-    L.complete("census", PROTOCOL_ID, {"census.json": V1.sha256_file(out)}, {})
-    return rec
+        return rec, {"census.json": V1.sha256_file(out)}
+    return _run_plain(L, "census", {}, inputs, work)
 
 
-def cmd_select(p: dict, digest: str, L, census_path: str, excl_path: str, out: str) -> dict:
-    _require_output(L, "census", PROTOCOL_ID, "census.json", census_path)
-    _require_output(L, "exclusions", PROTOCOL_ID, "exclusions.json", excl_path)
+def cmd_select(p: dict, digest: str, L, census_path: str, excl_path: str, out: str, publish) -> dict:
+    census_rec = _require_output(L, "census", "census.json", census_path)
+    _require_output(L, "exclusions", "exclusions.json", excl_path)
     c = json.load(open(census_path, encoding="utf-8"))
     if c.get("protocolSha256") != digest:
         raise SystemExit("REFUSED: census made under a different protocol")
     if os.path.exists(out):
         raise SystemExit(f"REFUSED: {os.path.basename(out)} already exists (write-once)")
     excl = json.load(open(excl_path, encoding="utf-8"))["exclusions"]
-    L.begin("select", PROTOCOL_ID, {"out": os.path.basename(out)}, {"census.json": V1.sha256_file(census_path), "exclusions.json": V1.sha256_file(excl_path)})
-    try:
-        rec = {"labels": LABELS, "protocolId": p["protocolId"], "protocolSha256": digest, "step": "A_selection_v5", "valuesOpened": False,
-               "censusSha256": V1.sha256_file(census_path), "stationDraftSha256": c["stationDraftSha256"], "stationFileSha256": c["stationFileSha256"],
+    inputs = {"census.json": V1.sha256_file(census_path), "exclusions.json": V1.sha256_file(excl_path),
+              "stationReviewed": census_rec["inputs"]["stationReviewed"]}
+
+    def compute():
+        rec = {"labels": LABELS, "protocolId": p["protocolId"], "protocolSha256": digest, "step": "A_selection_v6", "valuesOpened": False,
+               "censusSha256": inputs["census.json"], "stationDraftSha256": c["stationDraftSha256"], "stationFileSha256": c["stationFileSha256"],
                "exclusionsSha256": c["exclusionsSha256"], "authoritativeScoresUnchanged": True, **select(p, c, excl)}
         _write_once(out, rec)
-    except BaseException as e:
-        L.abort_before_result("select", PROTOCOL_ID, f"{type(e).__name__}: {e}")
-        raise
-    L.complete("select", PROTOCOL_ID, {"selection.json": V1.sha256_file(out)}, {"outcome": rec["outcome"]})
-    return rec
+        sha = V1.sha256_file(out)
+        return rec, {"selection.json": sha}, {"outcome": rec["outcome"], "selectionSha256": sha, "total": rec["total"],
+                                             "lakes": [l["lakeId"] for l in rec["lakes"]]}
+    return _run_result(L, "select", {}, inputs, compute, publish)
 
 
 # ----------------------------------------------------------------------------------------------------------- step B
 def load_selection_for_step_b(L, sel_path: str, stations_path: str, digest: str, owner_request: str | None) -> tuple[dict, str]:
-    """The ledger's selection (the only valid one), checked against the files given. Returns (selection, its sha256)."""
+    """The ledger's counted selection (the only valid one), checked against the files given. Returns (selection, its sha256)."""
     if not owner_request or not owner_request.startswith("Owner request (Michael, "):
         raise SystemExit("REFUSED: step B opens protected values and needs --owner-request 'Owner request (Michael, ...)' "
                          "(a string check; the request posted on Sector_Ops #51 is the control)")
-    rec = _require_output(L, "select", PROTOCOL_ID, "selection.json", sel_path)
+    rec = _require_output(L, "select", "selection.json", sel_path)
     if rec["result"].get("outcome") != "SELECTED":
         raise SystemExit("REFUSED: the recorded selection is not SELECTED; protected values stay closed")
+    if not any(e["step"] == "select" and e["status"] == RL.RESULT_CONFIRMED for e in L.entries()):
+        raise SystemExit(f"REFUSED: the selection's Run result is not confirmed on {ISSUE}")
     sel = json.load(open(sel_path, encoding="utf-8"))
     if sel.get("protocolSha256") != digest or sel.get("outcome") != "SELECTED":
         raise SystemExit("REFUSED: selection does not match this protocol or is not SELECTED")
-    census = L.require("census", PROTOCOL_ID)
+    census = _completed(L, "census")
     if V1.sha256_file(stations_path) != sel.get("stationFileSha256") or sel.get("stationFileSha256") != census["inputs"].get("stationReviewed"):
         raise SystemExit("REFUSED: the station file differs from the one the census recorded")
     return sel, V1.sha256_file(sel_path)
 
 
-def _bind_and_complete(L, step: str, key: str, out: str, prov_name: str, files: list[str]) -> None:
-    names = files + [prov_name]
-    L.bind_inputs(step, key, {n: os.path.join(out, n) for n in names})
-    L.complete(step, key, {prov_name: V1.sha256_file(os.path.join(out, prov_name))}, {"files": len(files)})
+def _fetch_step(L, step: str, sel_sha: str, out: str, prov_name: str, names: list[str], fetch) -> dict:
+    """A non-result fetch: begin, fetch(), bind every file and the provenance, complete."""
+    key = STEP_KEYS[step]
+    L.begin(step, key, {}, {"selection.json": sel_sha})
+    try:
+        fetch()
+        L.bind_inputs(step, key, {n: Path(out, n) for n in names + [prov_name]})
+    except BaseException as e:
+        L.abort_before_result(step, key, f"{type(e).__name__}: {str(e)[:200]}")
+        raise
+    L.complete(step, key, {prov_name: V1.sha256_file(os.path.join(out, prov_name))})
+    return {"files": len(names)}
 
 
 def cmd_fetch_forcing(p: dict, digest: str, L, sel_path: str, stations: str, owner_request: str, out: str) -> dict:
     sel, sel_sha = load_selection_for_step_b(L, sel_path, stations, digest, owner_request)
     names = [forcing_file(l["lakeId"]) for l in sel["lakes"]]
     _refuse_existing(out, ["forcing.provenance.json"] + names)
-    L.begin("fetch-forcing", sel_sha, {"out": "forcing"}, {"selection.json": sel_sha})
-    try:
+
+    def fetch():
         prov = []
         for l in sel["lakes"]:
             params = forcing_params(p, sel, l["lakeId"])
@@ -786,28 +886,20 @@ def cmd_fetch_forcing(p: dict, digest: str, L, sel_path: str, stations: str, own
             check_forcing(json.loads(body), [d for lid, _, d in counted_casts(sel) if lid == l["lakeId"]])
             _save(out, forcing_file(l["lakeId"]), body, V1.OPEN_METEO, params, prov)
         V1.write_provenance(out, "forcing.provenance.json", prov)
-    except BaseException as e:
-        L.abort_before_result("fetch-forcing", sel_sha, f"{type(e).__name__}: {e}")
-        raise
-    _bind_and_complete(L, "fetch-forcing", sel_sha, out, "forcing.provenance.json", names)
-    return {"files": len(names)}
+    return _fetch_step(L, "fetch-forcing", sel_sha, out, "forcing.provenance.json", names, fetch)
 
 
 def cmd_fetch_results(p: dict, digest: str, L, sel_path: str, stations: str, owner_request: str, out: str) -> dict:
     sel, sel_sha = load_selection_for_step_b(L, sel_path, stations, digest, owner_request)
     _refuse_existing(out, ["results.provenance.json", "results"])
     qs = result_queries(sel)
-    L.begin("fetch-results", sel_sha, {"out": "results"}, {"selection.json": sel_sha})
-    try:
+
+    def fetch():
         prov, url = [], V1.WQP.format(kind="Result")
         for q in qs:
             _save(out, q["file"], _get_bytes(url, q["params"]), url, q["params"], prov)
         V1.write_provenance(out, "results.provenance.json", prov)
-    except BaseException as e:
-        L.abort_before_result("fetch-results", sel_sha, f"{type(e).__name__}: {e}")
-        raise
-    _bind_and_complete(L, "fetch-results", sel_sha, out, "results.provenance.json", [q["file"] for q in qs])
-    return {"queries": len(qs)}
+    return _fetch_step(L, "fetch-results", sel_sha, out, "results.provenance.json", [q["file"] for q in qs], fetch)
 
 
 def verify_against_provenance(folder: str, prov_name: str, expected: dict, listing: list[str], url: str) -> dict:
@@ -964,7 +1056,7 @@ def compare(p: dict, sel: dict, results: list[dict], forcing: dict) -> dict:
     outcome = "PASS" if pooled is not None and pooled <= RMSE_MARK and all(lake_pass.values()) else "FAIL"
     for v in per.values():
         v.pop("mseC2", None)
-    return {"labels": LABELS, "protocolId": p["protocolId"], "step": "B_compare_v5", "valuesOpened": True,
+    return {"labels": LABELS, "protocolId": p["protocolId"], "step": "B_compare_v6", "valuesOpened": True,
             "model": "surface-energy-balance-v2 (M0, k = 0.09)", "m0ImplementationSha256": m0_sha, "perLake": per,
             "perLakePass": lake_pass, "pooledEqualLakeRmseC": None if pooled is None else round(pooled, 4), "outcome": outcome,
             "authoritativeScoresUnchanged": True,
@@ -979,43 +1071,56 @@ def _listing(folder: str, sub: str | None = None, suffix: str = "") -> list[str]
 
 
 def cmd_compare(p: dict, digest: str, L, sel_path: str, stations: str, results_dir: str, forcing_dir: str,
-                owner_request: str, out: str) -> dict:
-    """Every check runs before the run is begun. Once begun, values are read and the run is never aborted: a crash leaves the
-    run open, and a second compare for the selection stays refused."""
+                owner_request: str, out: str, publish) -> dict:
+    """A result step. Every check (ledger inputs, provenance) runs before begin; once it computes it is never aborted."""
     if os.path.exists(out):
         raise SystemExit("REFUSED: a comparison result already exists; compare is write-once")
     sel, sel_sha = load_selection_for_step_b(L, sel_path, stations, digest, owner_request)
+    _completed(L, "fetch-results")
+    _completed(L, "fetch-forcing")
     exp_results = {q["file"]: q["params"] for q in result_queries(sel)}
     exp_forcing = {forcing_file(l["lakeId"]): forcing_params(p, sel, l["lakeId"]) for l in sel["lakes"]}
-    L.check_inputs("fetch-results", sel_sha, {n: os.path.join(results_dir, n) for n in list(exp_results) + ["results.provenance.json"]})
-    L.check_inputs("fetch-forcing", sel_sha, {n: os.path.join(forcing_dir, n) for n in list(exp_forcing) + ["forcing.provenance.json"]})
+    L.check_inputs("fetch-results", STEP_KEYS["fetch-results"], {n: Path(results_dir, n) for n in list(exp_results) + ["results.provenance.json"]})
+    L.check_inputs("fetch-forcing", STEP_KEYS["fetch-forcing"], {n: Path(forcing_dir, n) for n in list(exp_forcing) + ["forcing.provenance.json"]})
     rhash = verify_against_provenance(results_dir, "results.provenance.json", exp_results, _listing(results_dir, "results"), V1.WQP.format(kind="Result"))
     fhash = verify_against_provenance(forcing_dir, "forcing.provenance.json", exp_forcing, _listing(forcing_dir, None, ".forcing.json"), V1.OPEN_METEO)
-    inputs = {**{f"results:{k}": v for k, v in rhash.items()}, **{f"forcing:{k}": v for k, v in fhash.items()}}
-    L.begin("compare", sel_sha, {"out": os.path.basename(out)}, {"selection.json": sel_sha, "inputs": RL_digest(inputs)})
-    results = []
-    for f in sorted(exp_results):
-        results += V1.read_csv(os.path.join(results_dir, f))
-    forcing = {l["lakeId"]: json.load(open(os.path.join(forcing_dir, forcing_file(l["lakeId"])), encoding="utf-8")) for l in sel["lakes"]}
-    rec = compare(p, sel, results, forcing)
-    rec.update({"protocolSha256": digest, "selectionSha256": sel_sha, "stationFileSha256": sel["stationFileSha256"],
-                "inputSha256": inputs, "ownerRequest": owner_request})
-    _write_once(out, rec)
-    L.complete("compare", sel_sha, {"compare.json": V1.sha256_file(out)}, {"outcome": rec["outcome"], "pooledEqualLakeRmseC": rec["pooledEqualLakeRmseC"]})
-    return rec
+    inputs = {"selection.json": sel_sha, **{f"results/{k}": v for k, v in rhash.items()}, **{f"forcing/{k}": v for k, v in fhash.items()}}
 
-
-def RL_digest(d: dict) -> str:
-    return hashlib.sha256(json.dumps(d, sort_keys=True).encode("utf-8")).hexdigest()
+    def compute():
+        results = []
+        for f in sorted(exp_results):
+            results += V1.read_csv(os.path.join(results_dir, f))
+        forcing = {l["lakeId"]: json.load(open(os.path.join(forcing_dir, forcing_file(l["lakeId"])), encoding="utf-8")) for l in sel["lakes"]}
+        rec = compare(p, sel, results, forcing)
+        rec.update({"protocolSha256": digest, "selectionSha256": sel_sha, "stationFileSha256": sel["stationFileSha256"],
+                    "inputSha256": {k: v for k, v in inputs.items() if k != "selection.json"}, "ownerRequest": owner_request})
+        _write_once(out, rec)
+        summary = {"outcome": rec["outcome"], "pooledEqualLakeRmseC": rec["pooledEqualLakeRmseC"], "perLakePass": rec["perLakePass"],
+                   "failed": {k: v["failed"] for k, v in rec["perLake"].items() if v["failed"]}}
+        return rec, {"compare.json": V1.sha256_file(out)}, summary
+    return _run_result(L, "compare", {}, inputs, compute, publish)
 
 
 # ----------------------------------------------------------------------------------------------------------- CLI
+def _publisher(args, out_path: str | None):
+    """publish(text, confirm, what): post with gh (--post) or write the text beside the output for the operator to post by hand,
+    then wait for #51 to list it (never reposting)."""
+    def publish(text, confirm, what):
+        path = f"{out_path}.{what}.txt" if out_path else None
+        return publish_and_confirm(text, confirm, gh_post if args.post else None, path, args.wait_seconds)
+    return publish
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--protocol", default=PROTOCOL)
-    ap.add_argument("--research-root", default=None, help="folder research-path returns (default: SECTOR_RESEARCH_ROOT); holds the run ledger")
+    ap.add_argument("--cortex-home", default=None, help="Cortex location (default: CORTEX_HOME); the ledger root comes from its research-path")
+    ap.add_argument("--post", action="store_true", help="post anchor/start/result records on Sector_Ops #51 with gh (research records)")
+    ap.add_argument("--wait-seconds", type=int, default=3600, help="how long to wait for #51 to list a record (never reposting)")
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("verify")
+    s = sub.add_parser("anchor"); s.add_argument("--out", required=True, help="file to write the Run anchor text to")
+    sub.add_parser("check-anchor")
     s = sub.add_parser("fetch-registry"); s.add_argument("--out", required=True)
     s = sub.add_parser("fetch-usgs"); s.add_argument("--registry", required=True); s.add_argument("--calibration", required=True); s.add_argument("--out", required=True)
     s = sub.add_parser("fetch-wqp"); s.add_argument("--registry", required=True); s.add_argument("--out", required=True)
@@ -1036,39 +1141,56 @@ def main(argv=None) -> int:
             s.add_argument("--results", required=True); s.add_argument("--forcing", required=True)
     a = ap.parse_args(argv)
     p, digest = load_protocol(a.protocol)
+    check_ledger_constants(p)
     outs = [getattr(a, "out", None), getattr(a, "results", None), getattr(a, "forcing", None)]
-    if a.cmd in ("compare",):
-        outs = [os.path.dirname(os.path.abspath(a.out)), a.results, a.forcing]
-    needs_ledger = a.cmd in ("exclusions", "census", "select", "fetch-forcing", "fetch-results", "compare")
-    L = ledger(digest, research_root(a.research_root, outs)) if needs_ledger else None
-    if a.cmd == "verify":
-        res = {"protocolId": p["protocolId"], "sha256": digest, "censusCutoff": CUTOFF, "ledgerModule": RL.__name__, "status": "OK"}
-    elif a.cmd == "fetch-registry":
-        res = cmd_fetch_registry(p, a.out)
-    elif a.cmd == "fetch-usgs":
-        res = cmd_fetch_usgs(p, load_registry(a.registry), a.calibration, a.out)
-    elif a.cmd == "fetch-wqp":
-        res = cmd_fetch_wqp(p, load_registry(a.registry), a.out)
-    elif a.cmd == "exclusions":
-        rec = cmd_exclusions(p, digest, L, a.registry, a.sites, a.calibration, a.calibration_lakes, a.wt_sat_1, a.out)
-        res = {"excluded": sum(1 for v in rec["exclusions"].values() if v), "eligible": sum(1 for v in rec["exclusions"].values() if not v)}
-    elif a.cmd == "stations":
-        res = cmd_stations(p, load_registry(a.registry), a.wqp, a.out)
-    elif a.cmd == "census":
-        r = cmd_census(p, digest, L, a.wqp, a.stations_draft, a.stations_draft_sha256, a.stations, a.stations_sha256, a.exclusions, a.out)
-        res = {"waters": {k: {kk: vv for kk, vv in v.items() if kk != "casts"} for k, v in r["waters"].items()}}
-    elif a.cmd == "select":
-        r = cmd_select(p, digest, L, a.census, a.exclusions, a.out)
-        res = {"outcome": r["outcome"], "lakes": [(l["lakeId"], l["qualifyingCasts"]) for l in r["lakes"]], "total": r["total"],
-               "selectionSha256": V1.sha256_file(a.out)}
-    elif a.cmd == "fetch-forcing":
-        res = cmd_fetch_forcing(p, digest, L, a.selection, a.stations, a.owner_request, a.out)
-    elif a.cmd == "fetch-results":
-        res = cmd_fetch_results(p, digest, L, a.selection, a.stations, a.owner_request, a.out)
-    else:
-        r = cmd_compare(p, digest, L, a.selection, a.stations, a.results, a.forcing, a.owner_request, a.out)
-        res = {k: r[k] for k in ("outcome", "pooledEqualLakeRmseC", "perLakePass")}
-    print(json.dumps(res, indent=1))
+    if a.cmd in ("anchor", "select", "compare", "exclusions", "census") and getattr(a, "out", None):
+        outs[0] = os.path.dirname(os.path.abspath(a.out))
+    ledger_cmds = ("anchor", "check-anchor", "exclusions", "census", "select", "fetch-forcing", "fetch-results", "compare")
+    try:
+        L = open_ledger(digest, outs, a.cortex_home) if a.cmd in ledger_cmds else None
+        if a.cmd == "verify":
+            res = {"protocolId": p["protocolId"], "sha256": digest, "censusCutoff": CUTOFF, "resultSteps": sorted(RESULT_STEPS), "status": "OK"}
+        elif a.cmd == "anchor":
+            text = L.post_anchor_text()
+            if os.path.exists(a.out):
+                raise SystemExit(f"REFUSED: {os.path.basename(a.out)} already exists")
+            with open(a.out, "x", encoding="utf-8") as fh:
+                fh.write(text)
+            if a.post:
+                gh_post(text)
+            res = {"anchor": L.anchor(), "text": a.out, "posted": bool(a.post), "next": "check-anchor (wait and retry if not listed yet; never repost)"}
+        elif a.cmd == "check-anchor":
+            res = L.require_external_anchor()
+        elif a.cmd == "fetch-registry":
+            res = cmd_fetch_registry(p, a.out)
+        elif a.cmd == "fetch-usgs":
+            res = cmd_fetch_usgs(p, load_registry(a.registry), a.calibration, a.out)
+        elif a.cmd == "fetch-wqp":
+            res = cmd_fetch_wqp(p, load_registry(a.registry), a.out)
+        elif a.cmd == "exclusions":
+            rec = cmd_exclusions(p, digest, L, a.registry, a.sites, a.calibration, a.calibration_lakes, a.wt_sat_1, a.out)
+            res = {"excluded": sum(1 for v in rec["exclusions"].values() if v), "eligible": sum(1 for v in rec["exclusions"].values() if not v)}
+        elif a.cmd == "stations":
+            res = cmd_stations(p, load_registry(a.registry), a.wqp, a.out)
+        elif a.cmd == "census":
+            r = cmd_census(p, digest, L, a.wqp, a.stations_draft, a.stations_draft_sha256, a.stations, a.stations_sha256, a.exclusions, a.out)
+            res = {"waters": {k: {kk: vv for kk, vv in v.items() if kk != "casts"} for k, v in r["waters"].items()}}
+        elif a.cmd == "select":
+            r = cmd_select(p, digest, L, a.census, a.exclusions, a.out, _publisher(a, a.out))
+            res = {"outcome": r["outcome"], "lakes": [(l["lakeId"], l["qualifyingCasts"]) for l in r["lakes"]], "total": r["total"],
+                   "selectionSha256": V1.sha256_file(a.out)}
+        elif a.cmd == "fetch-forcing":
+            res = cmd_fetch_forcing(p, digest, L, a.selection, a.stations, a.owner_request, a.out)
+        elif a.cmd == "fetch-results":
+            res = cmd_fetch_results(p, digest, L, a.selection, a.stations, a.owner_request, a.out)
+        else:
+            r = cmd_compare(p, digest, L, a.selection, a.stations, a.results, a.forcing, a.owner_request, a.out, _publisher(a, a.out))
+            res = {k: r[k] for k in ("outcome", "pooledEqualLakeRmseC", "perLakePass")}
+        if L is not None:
+            res = {"result": res, "ledger": L.audit()}
+    except RL.LedgerRefusal as e:
+        raise SystemExit(f"REFUSED (run ledger): {e}")
+    print(json.dumps(res, indent=1, default=str))
     return 0
 
 

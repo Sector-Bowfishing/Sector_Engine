@@ -1,0 +1,3 @@
+# PT-L4-2026-11-23-v5: superseded
+
+`PT-L4-2026-11-23-v5.protocol.json` (sha256 `c2367bf246e62f2214e4b0110c2f2e920ad3184e299d05a40ea6486a7c1b7509`) is kept byte-identical as the record of what was pre-registered. It was superseded on 2026-11-23, before any v5 data was fetched, by [`PT-L4-2026-11-23-v6`](../water-temp-protected-truth-v6/). v6 binds the runs through the shared Engine run ledger (PR #251), pins the root to Cortex research-path, and posts a public Run anchor on Sector_Ops #51. Do not run v5: the runner (`tools/research/water_temp_protected_truth_v6.py`) refuses every protocol id other than v6.
