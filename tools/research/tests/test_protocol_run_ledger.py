@@ -23,6 +23,7 @@ PID = "wind-strong-wind-v1"
 PSHA = hashlib.sha256(b"protocol v1").hexdigest()
 OTHER = hashlib.sha256(b"protocol v2").hexdigest()
 REAL_GH = PRL._gh_api
+RS = frozenset({"fit", "score", "select"})  # the runner's declared result steps
 ISSUE_PATH = "repos/Sector-Bowfishing/Sector_Ops/issues/51/comments?per_page=100"
 
 
@@ -39,15 +40,15 @@ class Issue:
     """A fake Sector_Ops #51 behind `gh api --paginate`: comments in pages of 3, printed as concatenated arrays like gh does."""
 
     def __init__(self):
-        self.comments, self.fail, self.calls = [], None, 0
+        self.comments, self.fail, self.calls, self.next_id = [], None, 0, 1000
         self.clock = dt.datetime(2000, 1, 1, tzinfo=dt.timezone.utc)
 
-    def post(self, body, created=None, updated=None):
+    def post(self, body, created=None, updated=None, user="runner-bot"):
         if created is None:
             self.clock += dt.timedelta(minutes=1)
             created = self.clock.strftime("%Y-%m-%dT%H:%M:%SZ")
-        cid = 1000 + len(self.comments)
-        c = {"id": cid, "created_at": created, "updated_at": updated or created, "body": body,
+        cid, self.next_id = self.next_id, self.next_id + 1
+        c = {"id": cid, "created_at": created, "updated_at": updated or created, "body": body, "user": {"login": user},
              "html_url": f"https://example.invalid/issues/51#issuecomment-{cid}"}
         self.comments.append(c)
         return c
@@ -70,6 +71,7 @@ def root(tmp_path):
 
 def ledger(root, issue=None, anchored=True, **kw):
     issue = issue if issue is not None else Issue()
+    kw.setdefault("result_steps", RS)
     L = Ledger(root, PID, PSHA, gh=issue, **kw)
     L.issue = issue
     if anchored and not any(c["body"].startswith(f"Run anchor: {PID} {L.anchor()}") for c in issue.comments):
@@ -85,9 +87,11 @@ def go(L, step="fit", key="all", args=None, inputs=None):
     return run
 
 
-def run_step(L, step="fit", key="all", result=None):
+def run_step(L, step="fit", key="all", result=None, post_result=True):
     run = go(L, step, key)
     L.complete(step, key, {}, result or {"metric": 0.5})
+    if post_result:
+        L.issue.post(L.result_text(step, key))
     return run
 
 
@@ -177,9 +181,9 @@ def test_anchor_posted_after_start_refused(root):
 
 def test_no_anchor_refused_but_fetch_may_run(root):
     L = ledger(root, anchored=False)
-    assert L.begin("fetch", "all", {}, {}, result_producing=False) == 1
-    L.complete("fetch", "all", {"raw": "e" * 64}, None)
-    assert L.issue.calls == 0 and L.counts("fetch", "all")
+    assert L.begin("fetch", "all", {}, {}) == 1  # not a declared result step
+    e = L.complete("fetch", "all", {"raw": "e" * 64}, None)
+    assert e["counted"] is True and not L.counts("fetch", "all") and L.first("fetch", "all") is None  # only result steps count
     with pytest.raises(LedgerRefusal, match="no `Run anchor:"):
         L.begin("fit", "all", {}, {})
 
@@ -189,7 +193,7 @@ def test_gh_failure_refused(root):
     L.issue.fail = "gh: HTTP 502"
     with pytest.raises(LedgerRefusal, match="502"):
         L.begin("fit", "all", {}, {})
-    L2 = Ledger(root, PID, PSHA, gh=lambda path: "<html>not json</html>")
+    L2 = Ledger(root, PID, PSHA, result_steps=RS, gh=lambda path: "<html>not json</html>")
     with pytest.raises(LedgerRefusal, match="not JSON"):
         L2.begin("fit", "all", {}, {})
     assert len(lines(root)) == 1
@@ -330,6 +334,7 @@ def test_audit_reports_comment_ids_and_detects_deletion(root):
     run_step(L)
     a = L.audit()
     assert a["anchor"] == L.anchor() and a["steps"][0]["external"]["start"]["id"] == 1001 and "findings" not in a
+    assert a["result_steps"] == sorted(RS)
     assert L.audit(check_external=True)["findings"] == []
     L.issue.comments = [c for c in L.issue.comments if c["id"] != 1001]  # someone deletes the Run start comment
     f = L.audit(check_external=True)["findings"]
@@ -417,7 +422,7 @@ def test_complete_refuses_an_output_that_changed_since_recorded(root, tmp_path):
 # ---------- non-result attempts ----------
 def test_non_result_complete_with_result_refused(root):
     L = ledger(root)
-    L.begin("fetch", "all", {}, {}, result_producing=False)
+    L.begin("fetch", "all", {}, {})
     with pytest.raises(LedgerRefusal, match="not result-producing"):
         L.complete("fetch", "all", {}, {"metric": 0.3})
     with pytest.raises(LedgerRefusal, match="not result-producing"):
@@ -562,15 +567,15 @@ def test_chain_fields_and_entry_contents(root, tmp_path):
 def test_protocol_hash_mismatch_refused(root):
     run_step(ledger(root))
     with pytest.raises(LedgerRefusal, match="new protocol id"):
-        Ledger(root, PID, OTHER, gh=Issue())
-    Ledger(root, PID + "-v2", OTHER, gh=Issue())
+        Ledger(root, PID, OTHER, result_steps=RS, gh=Issue())
+    Ledger(root, PID + "-v2", OTHER, result_steps=RS, gh=Issue())
 
 
 def test_invalid_protocol_id_and_hash_refused(root):
     with pytest.raises(LedgerRefusal, match="protocol_id"):
-        Ledger(root, "../escape", PSHA)
+        Ledger(root, "../escape", PSHA, result_steps=RS)
     with pytest.raises(LedgerRefusal, match="protocol_sha256"):
-        Ledger(root, PID, "ABC")
+        Ledger(root, PID, "ABC", result_steps=RS)
 
 
 # ---------- root ----------
@@ -601,15 +606,15 @@ def test_root_inside_out_via_symlink_refused(root, tmp_path):
 
 def test_root_from_env_and_missing_root(root, tmp_path, monkeypatch):
     with pytest.raises(LedgerRefusal, match="no research root"):
-        Ledger(None, PID, PSHA)
+        Ledger(None, PID, PSHA, result_steps=RS)
     with pytest.raises(LedgerRefusal, match="does not exist"):
-        Ledger(tmp_path / "nope", PID, PSHA)
+        Ledger(tmp_path / "nope", PID, PSHA, result_steps=RS)
     monkeypatch.setenv(PRL.ENV_ROOT, str(root))
-    assert Ledger(None, PID, PSHA, gh=Issue()).path == root.resolve() / "_ledgers" / f"{PID}.jsonl"
+    assert Ledger(None, PID, PSHA, result_steps=RS, gh=Issue()).path == root.resolve() / "_ledgers" / f"{PID}.jsonl"
     other = tmp_path / "other"
     other.mkdir()
     with pytest.raises(LedgerRefusal, match="differs from"):
-        Ledger(other, PID, PSHA)
+        Ledger(other, PID, PSHA, result_steps=RS)
 
 
 # ---------- for_brain ----------
@@ -627,7 +632,7 @@ def fake_cortex(tmp_path, printed, rc=0):
 
 def test_for_brain_resolves_root_with_research_path_and_records_it(root, tmp_path):
     issue = Issue()
-    L = Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=fake_cortex(tmp_path, root), gh=issue)
+    L = Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=fake_cortex(tmp_path, root), gh=issue, result_steps=RS)
     assert L.root == root.resolve()
     g = json.loads(lines(root)[0])["result"]
     assert g["resolvedBy"] == "cortex-research-path" and g["brain"] == "wind" and g["root"] == str(root.resolve()) and g["host"]
@@ -640,29 +645,29 @@ def test_for_brain_refuses_env_root_that_differs_and_accepts_equal(root, tmp_pat
     other.mkdir()
     monkeypatch.setenv(PRL.ENV_ROOT, str(other))
     with pytest.raises(LedgerRefusal, match="not the research-path folder"):
-        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home)
+        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home, result_steps=RS)
     assert not (other / "_ledgers").exists()
     monkeypatch.setenv(PRL.ENV_ROOT, str(root))
-    assert Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home, gh=Issue()).root == root.resolve()
+    assert Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home, gh=Issue(), result_steps=RS).root == root.resolve()
 
 
 def test_for_brain_refuses_without_cortex_or_on_failure(root, tmp_path, monkeypatch):
     monkeypatch.delenv(PRL.ENV_CORTEX, raising=False)
     with pytest.raises(LedgerRefusal, match="Cortex location unknown"):
-        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path)
+        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, result_steps=RS)
     with pytest.raises(LedgerRefusal, match="failed"):
-        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=fake_cortex(tmp_path, root, rc=2))
+        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=fake_cortex(tmp_path, root, rc=2), result_steps=RS)
     home2 = tmp_path / "c2"
     home2.mkdir()
     with pytest.raises(LedgerRefusal, match="no Cortex tool"):
-        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home2)
+        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=home2, result_steps=RS)
     with pytest.raises(LedgerRefusal, match="invalid brain"):
-        Ledger.for_brain("../x", PID, PSHA, repo=tmp_path, cortex_home=home2)
+        Ledger.for_brain("../x", PID, PSHA, repo=tmp_path, cortex_home=home2, result_steps=RS)
 
 
 def test_for_brain_refuses_a_research_path_that_does_not_exist(tmp_path):
     with pytest.raises(LedgerRefusal, match="does not exist"):
-        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=fake_cortex(tmp_path, tmp_path / "absent"))
+        Ledger.for_brain("wind", PID, PSHA, repo=tmp_path, cortex_home=fake_cortex(tmp_path, tmp_path / "absent"), result_steps=RS)
 
 
 # ---------- inputs ----------
@@ -728,7 +733,7 @@ def test_result_must_be_small_json(root):
 
 # ---------- concurrency ----------
 def _race(root, issue, barrier, q):
-    L = Ledger(Path(root), PID, PSHA, gh=issue)
+    L = Ledger(Path(root), PID, PSHA, result_steps=RS, gh=issue)
     barrier.wait()
     try:
         q.put(("ok", L.begin("fit", "all", {"pid": os.getpid()}, {})))
@@ -758,3 +763,126 @@ def test_sha256_helpers(tmp_path):
     assert PRL.sha256_file(f) == hashlib.sha256(b"abc").hexdigest()
     with pytest.raises(LedgerRefusal):
         PRL.sha256_tree(f)
+
+
+# ---------- round 2: declared result steps, sha binding, Run result, edit screening ----------
+def test_result_steps_recorded_and_fixed(root):
+    L = ledger(root)
+    assert json.loads(lines(root)[0])["result"]["resultSteps"] == sorted(RS)
+    with pytest.raises(LedgerRefusal, match="result steps are fixed"):
+        ledger(root, issue=L.issue, result_steps=frozenset({"score", "select"}))  # e.g. to make "fit" a non-result step
+    with pytest.raises(LedgerRefusal, match="frozenset"):
+        Ledger(root, PID, PSHA, result_steps="fit")
+    with pytest.raises(TypeError):
+        Ledger(root, PID, PSHA)  # result_steps is required
+    with pytest.raises(TypeError):
+        L.begin("fit", "all", {}, {}, result_producing=False)  # no per-call flag
+
+
+def test_poc_rollback_that_posts_nothing_is_refused(root, tmp_path):
+    """Round-1 PoC: restore a snapshot, then run the result step as a non-result step to skip #51. Now the step's kind is declared."""
+    L = ledger(root)
+    snap = tmp_path / "snapshot"
+    shutil.copytree(root / "_ledgers", snap)
+    run_step(L)
+    shutil.rmtree(root / "_ledgers")
+    shutil.copytree(snap, root / "_ledgers")
+    with pytest.raises(LedgerRefusal, match="result steps are fixed"):
+        ledger(root, issue=L.issue, result_steps=frozenset())
+    R = ledger(root, issue=L.issue)
+    R.begin("fit", "all", {}, {})  # it is a result step whatever the caller wants
+    with pytest.raises(LedgerRefusal, match="no confirmed"):
+        R.complete("fit", "all", {}, {"metric": 0.9})
+    with pytest.raises(RepeatDetected):
+        R.confirm_started("fit", "all")
+
+
+def test_poc_abort_then_nonresult_is_refused(root):
+    L = ledger(root)
+    go(L)
+    L.abort_before_result("fit", "all", "pretend nothing was seen")
+    L.begin("fit", "all", {}, {})  # the retry is still a result step ...
+    with pytest.raises(LedgerRefusal, match="no confirmed"):
+        L.complete("fit", "all", {}, {})  # ... and cannot complete without a (second, hence REPEAT) Run start
+    M = ledger(root, issue=L.issue)
+    L.issue.post(f"Run start: {PID} fetch all {'a' * 64}")
+    with pytest.raises(LedgerRefusal, match="not a result step"):
+        M.begin("fetch", "all", {}, {})
+
+
+def test_single_run_start_with_another_sha_does_not_count(root):
+    L = ledger(root)
+    go(L)
+    mine = [c for c in L.issue.comments if c["body"].startswith("Run start:")][0]
+    L.issue.comments.remove(mine)  # the same identity deletes its start comment ...
+    L.issue.post(f"Run start: {PID} fit all {'9' * 64}")  # ... and one with another hash is the only one left
+    e = L.complete("fit", "all", {}, {"metric": 0.5})
+    assert e["counted"] is False and e["external"]["startCommentsAtComplete"] == 1
+    L.issue.post(L.result_text("fit", "all"))
+    f = L.audit(check_external=True)["findings"]
+    assert any(x.startswith("START_MISMATCH") for x in f) and any(x.startswith("MISSING_COMMENT") for x in f)
+
+
+def test_run_result_audit_detects_a_forged_tail(root):
+    L = ledger(root)
+    run_step(L, post_result=False)
+    assert any(x.startswith("RESULT_MISSING") for x in L.audit(check_external=True)["findings"])
+    text = L.result_text("fit", "all")
+    assert text.splitlines()[0].startswith(f"Run result: {PID} fit all ") and "owner approval" not in text.lower()
+    L.issue.post(text)
+    assert L.audit(check_external=True)["findings"] == []
+    # a forger with filesystem access rewrites the COMPLETED line and recomputes the head: the chain still verifies ...
+    p = root / "_ledgers" / f"{PID}.jsonl"
+    ls = p.read_bytes().splitlines()
+    e = json.loads(ls[-1])
+    e["result"] = {"metric": 0.99}
+    ls[-1] = PRL._canon(e).encode()
+    p.write_bytes(b"\n".join(ls) + b"\n")
+    (root / "_ledgers" / f"{PID}.head.json").write_text(
+        PRL._canon({"protocol_id": PID, "seq": len(ls), "entry_sha256": hashlib.sha256(ls[-1]).hexdigest()}))
+    assert L.verify_chain() == len(ls)
+    # ... but the posted Run result no longer matches
+    assert any(x.startswith("RESULT_MISMATCH") for x in L.audit(check_external=True)["findings"])
+    L.issue.post(L.result_text("fit", "all"))
+    assert any(x.startswith("RESULT_COUNT") for x in L.audit(check_external=True)["findings"])
+
+
+def test_result_text_only_for_completed_result_steps(root):
+    L = ledger(root)
+    with pytest.raises(LedgerRefusal, match="no COMPLETED"):
+        L.result_text("fit", "all")
+    L.begin("fetch", "all", {}, {})
+    L.complete("fetch", "all", {"raw": "e" * 64})
+    with pytest.raises(LedgerRefusal, match="no COMPLETED"):
+        L.result_text("fetch", "all")
+
+
+def test_edited_check_uses_exact_tokens(root):
+    L = ledger(root)
+    L.issue.post(f"see {PID}0 and x{PID}", created="2000-03-01T00:00:00Z", updated="2000-03-02T00:00:00Z", user="someone-else")
+    assert go(L) == 1  # a superstring is not the protocol id
+    (root.parent / "b").mkdir()
+    L2 = ledger(root.parent / "b")
+    L2.issue.post(f"pinned: `{PID}`,", created="2000-03-01T00:00:00Z", updated="2000-03-02T00:00:00Z", user="someone-else")
+    with pytest.raises(LedgerRefusal, match="names"):
+        L2.begin("fit", "all", {}, {})
+
+
+def test_edited_away_recorded_comment_refused_and_audited(root):
+    L = ledger(root)
+    go(L)
+    start = [c for c in L.issue.comments if c["body"].startswith("Run start:")][0]
+    start["body"], start["updated_at"] = "never mind", "2001-01-01T00:00:00Z"  # edited away: no longer a Run comment
+    with pytest.raises(LedgerRefusal, match="recorded in this ledger"):
+        L.complete("fit", "all", {}, {"metric": 0.5})
+    f = L.audit(check_external=True)["findings"]
+    assert any(x.startswith("EDITED:") for x in f) and any(x.startswith("EDITED_AWAY") for x in f)
+
+
+def test_edited_run_comment_by_the_anchor_author_refused(root):
+    L = ledger(root)
+    L.issue.post("Run anchor: some-other-protocol " + "1" * 64, updated="2030-01-01T00:00:00Z")  # same author, after the anchor
+    with pytest.raises(LedgerRefusal, match="anchor's author"):
+        L.begin("fit", "all", {}, {})
+    L.issue.comments[-1]["user"] = {"login": "someone-else"}
+    assert go(L) == 1
