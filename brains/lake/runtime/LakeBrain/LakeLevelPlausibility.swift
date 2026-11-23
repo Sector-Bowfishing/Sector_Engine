@@ -40,7 +40,7 @@
 //     `historyLiveMismatch` lakes, a gauge re-datumed); one slip, or a day of them, never qualifies. A live series with no
 //     reference is judged against its own median ± 50 ft, and only with ≥ 3 readings (rules 0 and 2 still apply).
 //     Continuity: a reading outside the band is still ACCEPTED when it continues the accepted series smoothly (within
-//     1 ft + 2 ft/h of its accepted neighbour, no jump allowance). A real drawdown or flood that walks past the band edge is
+//     1 ft + the rule-2 allowance of its accepted neighbour, no 10 ft jump allowance). A real drawdown or flood that walks past the band edge is
 //     water; a slip is a jump. (Owner rule: never an older or "unknown" value when a real newer one exists.)
 //     Anchor: the lake's last published VERIFIED value (`anchor`; the runner refuses a published state whose CURRENT value was
 //     flagged: levelUnverified / implausibleLatestRejected / allReadingsImplausible, so an unverified value never verifies itself and stays flagged
@@ -51,7 +51,7 @@
 //     internally consistent (the step walk from its own median); (b) the anchor rejected every reading but ≥ 2 of them agree
 //     within the step rule (a datum change or a new level after an outage); a lone reading stays rejected; (c) no lake
 //     reference at all and < 3 readings; (d) a kept decade-suspect reading (full pool only); (e) a band re-centred on the
-//     series at a lake with no history range (full pool only), UNLESS every accepted reading since a verified anchor follows
+//     series (with or without history; with history the runner also flags historyLiveMismatch), UNLESS every accepted reading since a verified anchor follows
 //     the previous one within the continuity rule: a consistent wrong-datum or wrong-unit feed (feet vs metres) re-centres
 //     just as well as a real drawdown, but only the drawdown links back to a verified value without a jump. Verification
 //     therefore carries forward by continuity; it never depends on the history source being available (TVA's operating
@@ -61,12 +61,20 @@
 //     change, which shows the last old-datum reading until the new series has 6 readings over 24 h).
 //
 //  2. Step. Between consecutive accepted readings of one series, a change of more than
-//       stepToleranceFt + maxRateFtPerHour × hours apart     (10 ft + 2 ft/h)
-//     is impossible. 2 ft/h (48 ft/day) is eight times the Brain's own FAST tier (1 ft in 6 h, LakeLevelValidity) and above any
-//     reservoir change in the committed fixtures and goldens (checked when this rule was set: see the PR). 10 ft is the
-//     baseline's existing spike tolerance (LakeLevelBaseline.spikeToleranceFt): it absorbs a single noisy reading at any gap.
+//       min(stepToleranceFt + allowance(h), maxStepFt)        allowance(h) = 2 ft/h × min(h, 24) + 3 ft/day × max(h − 24, 0)
+//     is impossible (continuity uses 1 ft instead of 10 ft, same allowance and ceiling). 2 ft/h (48 ft in a day) is eight
+//     times the Brain's own FAST tier (1 ft in 6 h, LakeLevelValidity) and above any reservoir change in the committed
+//     fixtures (max 1.0 ft/h). It is a burst rate: no reservoir sustains it, so past the first 24 h of a gap the allowance
+//     grows by 3 ft/day, about 3× the steepest sustained change in the bound lakes' committed 30-day probes (27.3 ft in 30
+//     days ≈ 0.9 ft/day). No single step, at any gap, may exceed 60 ft (the 24 h limit, 58 ft, rounded up): after a long
+//     outage a wrong-unit or wrong-datum feed (a metres feed at ~91 ft against a 299 ft anchor after 108 h) is a jump, not
+//     water. 10 ft is the baseline's existing spike tolerance (LakeLevelBaseline.spikeToleranceFt).
 //     The walk starts from the in-band reading closest to the in-band median (the older on a tie), so one bad reading cannot make the
 //     good ones look like steps.
+//
+//  Re-centring never verifies by itself, with or without history: a re-centred series (the history- or full-pool band no
+//  longer describes it; with history that is also the runner's `historyLiveMismatch`) is verified only when it links back to
+//  a verified anchor by continuity; otherwise it stays `levelUnverified` (a steady wrong-unit or wrong-datum feed).
 //
 //  Known limit (no rule): a digit transposition (6,226.05 ↔ 6,262.05) or a single wrong digit moves a reading by less than
 //  the band margin and is not a decade, so it is caught only by the step rule (when it is a jump from its neighbours).
@@ -107,6 +115,11 @@ public enum LakeLevelPlausibility {
     /// Step rule: tolerance at any gap (== LakeLevelBaseline.spikeToleranceFt) plus a maximum sustained rate.
     public static let stepToleranceFt = LakeLevelBaseline.spikeToleranceFt
     public static let maxRateFtPerHour = 2.0
+    /// The burst rate applies to the first `burstHours` of a gap; after that the allowance grows by `sustainedRateFtPerDay`.
+    public static let burstHours = 24.0
+    public static let sustainedRateFtPerDay = 3.0
+    /// No single step, at any gap, may exceed this.
+    public static let maxStepFt = 60.0
 
     /// The lake's reference: the recorded range [lo, hi] and the margin on each side.
     public struct Reference: Equatable, Sendable {
@@ -196,8 +209,13 @@ public enum LakeLevelPlausibility {
         return true
     }
 
-    static func stepLimit(hours: Double) -> Double { stepToleranceFt + maxRateFtPerHour * abs(hours) }
-    static func continuityLimit(hours: Double) -> Double { continuityToleranceFt + maxRateFtPerHour * abs(hours) }
+    /// Movement a lake can make in `hours`: the burst rate for the first day of a gap, the sustained daily rate after it.
+    static func allowance(hours: Double) -> Double {
+        let h = abs(hours)
+        return maxRateFtPerHour * min(h, burstHours) + sustainedRateFtPerDay / 24 * max(h - burstHours, 0)
+    }
+    static func stepLimit(hours: Double) -> Double { min(stepToleranceFt + allowance(hours: hours), maxStepFt) }
+    static func continuityLimit(hours: Double) -> Double { min(continuityToleranceFt + allowance(hours: hours), maxStepFt) }
 
     /// Splits one live series into accepted and rejected readings. `datumOffsetFt` puts a reading on the binding's datum,
     /// which is the datum of `reference` and `anchor`. `reference` nil = no lake reference (a proxy, or a lake with neither
@@ -312,17 +330,18 @@ public enum LakeLevelPlausibility {
             if !inside[i], let b {
                 why = "outside \(fmt(b.lowFt))–\(fmt(b.highFt)) ft (\(b.basis) ± \(fmt(b.marginFt)) ft) and not a smooth continuation"
             } else {
-                why = "impossible step from the accepted series (limit \(fmt(stepToleranceFt)) ft + \(fmt(maxRateFtPerHour)) ft/h)"
+                why = "impossible step from the accepted series (limit \(fmt(stepToleranceFt)) ft + \(fmt(maxRateFtPerHour)) ft/h for a day, then \(fmt(sustainedRateFtPerDay)) ft/day, at most \(fmt(maxStepFt)) ft)"
             }
             rejected.append(Rejection(sourceId: sourceId, at: o.at, rawFt: o.ft, reason: why))
         }
         if kept.contains(where: { suspect.contains($0.at) }) { unverified = true }
-        // A band re-centred on the series is only as good as the series: without a history range behind the lake (full pool
-        // only), a consistent wrong-datum or wrong-unit feed would look verified. Verification then carries forward by
-        // continuity alone: the source is verified only when every accepted reading since a VERIFIED anchor follows the one
-        // before it within the continuity rule (≤ 1 ft + 2 ft/h). A real drawdown walked out of the band from a verified value
-        // stays verified run after run (Ross Lake in winter); a jump (wrong datum, metres) or no anchor leaves it unverified.
-        if recentred, !historyBand, !continuouslyLinked(kept.map { (at: $0.at, ft: ft($0)) }, to: usableAnchor) { unverified = true }
+        // A band re-centred on the series is only as good as the series: a consistent wrong-datum or wrong-unit feed re-centres
+        // as well as a real drawdown, with or without history (with history it is also the runner's historyLiveMismatch).
+        // Verification then carries forward by continuity alone: the source is verified only when every accepted reading since
+        // a VERIFIED anchor follows the one before it within the continuity rule. A real drawdown walked out of the band from a
+        // verified value stays verified run after run (Ross Lake in winter); a jump (wrong datum, metres) or no anchor leaves it
+        // unverified.
+        if recentred, !continuouslyLinked(kept.map { (at: $0.at, ft: ft($0)) }, to: usableAnchor) { unverified = true }
         return (kept, rejected.sorted { $0.at < $1.at }, unverified && !kept.isEmpty)
     }
 

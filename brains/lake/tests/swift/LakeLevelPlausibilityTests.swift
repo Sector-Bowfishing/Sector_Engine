@@ -216,6 +216,53 @@ final class LakeLevelPlausibilityTests: XCTestCase {
         }
     }
 
+    // MARK: round 6: the step allowance has a ceiling
+
+    /// One no-history lake run: `n` hourly readings starting `gapHours` after a verified anchor.
+    func outageRun(fullPool: Double, anchorFt: Double, gapHours: Double, n: Int, first: Double, perHour: Double) -> LakeLevelStateRecord {
+        let p = hourlyRef("GAP")
+        let t0 = iso("2026-11-10T00:00:00Z")
+        let start = t0.addingTimeInterval(gapHours * 3600)
+        let xs = (0..<n).map { LevelObservation(at: start.addingTimeInterval(Double($0) * 3600), ft: first + perHour * Double($0)) }
+        var x = LakeLevelInputs(lakeId: "T|ST", binding: binding([p]), capabilityIfUnbound: .noSource, fullPoolFt: fullPool,
+                                poolBasisIsFullPool: true, poolConfidenceLow: false, live: [(p, xs, nil)], archivedHourly: [], guide: nil,
+                                baseline: nil, now: xs.last!.at.addingTimeInterval(1800), processingVersion: "test")
+        x.levelAnchor = LevelObservation(at: t0, ft: anchorFt)
+        return LakeLevelClassifier.evaluate(x)
+    }
+
+    func unverifiedFlag(_ s: LakeLevelStateRecord) -> Bool { (s.provenance.qualityFlags ?? []).contains { $0.hasPrefix("levelUnverified") } }
+
+    func testAfterALongOutageAWrongUnitFeedIsAJumpNotWater() {
+        // Reviewer's case: a verified 299 ft anchor, a 4.5-day (108 h) outage, then a metres feed (~91.1). Before the ceiling
+        // the continuity allowance (1 + 2 × 108 = 217 ft) let it link; now no step may exceed 60 ft.
+        for n in [30, 3] {                                                  // re-centred (≥ 6 over ≥ 24 h) and short
+            let s = outageRun(fullPool: 300, anchorFt: 299, gapHours: 108, n: n, first: 91.1, perHour: 0)
+            XCTAssertEqual(s.currentElevationFt, 91.1, "n \(n)")
+            XCTAssertTrue(unverifiedFlag(s), "n \(n): \(s.provenance.qualityFlags ?? [])")
+            XCTAssertNil(LakeBrainRunner.anchor(s), "n \(n)")
+        }
+        // A 26 ft wrong-datum feed after a 48 h gap from a verified 598 ft anchor: flagged, never anchoring.
+        let d = outageRun(fullPool: 600, anchorFt: 598, gapHours: 48, n: 30, first: 26, perHour: 0)
+        XCTAssertTrue(unverifiedFlag(d))
+        XCTAssertNil(LakeBrainRunner.anchor(d))
+        XCTAssertEqual(LakeLevelPlausibility.stepLimit(hours: 108), LakeLevelPlausibility.maxStepFt)
+        XCTAssertEqual(LakeLevelPlausibility.continuityLimit(hours: 1), 3)
+        XCTAssertEqual(LakeLevelPlausibility.allowance(hours: 96), 48 + 9, accuracy: 1e-9)
+    }
+
+    func testARealDrawdownThroughAFourDayOutageStaysVerified() {
+        // Falling 1.5 ft/day below the full-pool band; the feed is out for 4 days and comes back 6 ft lower: within
+        // 1 + 48 + 3 × 3 = 58 ft, so it still links to the verified anchor.
+        for n in [30, 3] {
+            let s = outageRun(fullPool: 600, anchorFt: 545, gapHours: 96, n: n, first: 539, perHour: -1.5 / 24)
+            XCTAssertEqual(s.kind, .observed)
+            XCTAssertFalse(unverifiedFlag(s), "n \(n): \(s.provenance.qualityFlags ?? [])")
+            XCTAssertFalse((s.provenance.qualityFlags ?? []).contains { $0.hasPrefix("implausible") }, "n \(n)")
+            XCTAssertNotNil(LakeBrainRunner.anchor(s), "n \(n)")
+        }
+    }
+
     func testAProxyFloodTenfoldIsPublished() {
         // A river gauge used as a proxy: 2 ft → 20 ft over 36 h. No lake reference, no decade rule.
         let p = LevelSeriesRef(provider: .usgs, capability: .nearbyGaugeProxy, station: "RIV", series: "00065", cadenceMin: 60, lagMin: 60)
@@ -348,6 +395,7 @@ final class LakeLevelPlausibilityTests: XCTestCase {
         let f = LakeLevelPlausibility.filter(xs, sourceId: "s", reference: ref)
         XCTAssertEqual(f.kept.count, 30)
         XCTAssertEqual(f.kept.last?.ft, 26.0)
+        XCTAssertTrue(f.unverified, "re-centred away from a history range with no verified link: published, but unverified")
         // …but the same switch seen for only a few hours is not enough to move the band.
         let short = Array(xs.prefix(28))
         XCTAssertEqual(LakeLevelPlausibility.filter(short, sourceId: "s", reference: ref).kept.last?.ft, 6226.0)
