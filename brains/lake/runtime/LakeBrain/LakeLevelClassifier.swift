@@ -44,6 +44,8 @@ public struct LakeLevelInputs: Sendable {
     public var releaseBySource: [String: [ReleaseObservation]] = [:]
     /// Forecast rain at the lake in the next 12 h, inches (LakeRainSignal). nil = unknown; LakeLevelValidity treats that conservatively.
     public var rainNext12hIn: Double? = nil
+    /// The lake's plausible level reference from its daily history (LakeLevelPlausibility). nil → the directory full pool alone.
+    public var levelReference: LakeLevelPlausibility.Reference? = nil
 }
 
 public enum LakeLevelClassifier {
@@ -195,8 +197,28 @@ public enum LakeLevelClassifier {
 
         for l in x.live where l.error != nil { flags.append("sourceError:\(l.ref.sourceId)") }
 
-        guard x.binding?.status == .reviewed, let sel = select(x.live, now: now) else {
-            if x.binding?.status != .reviewed { flags.append("bindingNotReviewed") } else { flags.append("noReading") }
+        // Physically impossible readings (decimal slips, impossible steps) are rejected before anything reads the series
+        // (LakeLevelPlausibility). Selection then falls back as usual: the source's last valid reading within its stale rule,
+        // else the next bound source. Each rejection is flagged with its raw value.
+        let reference = x.levelReference ?? LakeLevelPlausibility.reference(historyFt: [], fullPoolFt: x.fullPoolFt)
+        var rejections: [LakeLevelPlausibility.Rejection] = []
+        let live: [(ref: LevelSeriesRef, readings: [LevelObservation], error: String?)] = x.live.map { l in
+            let f = LakeLevelPlausibility.filter(l.readings, sourceId: l.ref.sourceId, datumOffsetFt: l.ref.datumOffsetFt, reference: reference)
+            rejections += f.rejected
+            return (l.ref, f.kept, l.error)
+        }
+        var archivedHourly = x.archivedHourly
+        if let p = x.live.first, !archivedHourly.isEmpty {
+            let f = LakeLevelPlausibility.filter(archivedHourly, sourceId: "\(p.ref.sourceId)#archive", datumOffsetFt: p.ref.datumOffsetFt, reference: reference)
+            archivedHourly = f.kept; rejections += f.rejected
+        }
+        for r in rejections.prefix(LakeLevelPlausibility.maxFlags) { flags.append(LakeLevelPlausibility.flag(r)) }
+        if rejections.count > LakeLevelPlausibility.maxFlags { flags.append("implausibleReadingsMore:\(rejections.count - LakeLevelPlausibility.maxFlags)") }
+
+        guard x.binding?.status == .reviewed, let sel = select(live, now: now) else {
+            if x.binding?.status != .reviewed { flags.append("bindingNotReviewed") }
+            else if !rejections.isEmpty, x.live.contains(where: { !$0.readings.isEmpty }) { flags.append("noReading"); flags.append("allReadingsImplausible") }
+            else { flags.append("noReading") }
             let readiness = readiness(binding: x.binding, kind: .unavailable, stale: true, hasGuide: false,
                                       baseline: x.baseline?.status ?? .none)
             return LakeLevelStateRecord(
@@ -213,14 +235,18 @@ public enum LakeLevelClassifier {
         let kind: LakeStateKind = sel.ref.capability == .nearbyGaugeProxy ? .proxy : .observed
         let current = r2(sel.latest.ft + sel.ref.datumOffsetFt)
         let ageH = r2(now.timeIntervalSince(sel.latest.at) / 3600)
-        if sel.usedFallback, let p = x.live.first {
+        if let raw = x.live.first(where: { $0.ref == sel.ref })?.readings.last, raw.at > sel.latest.at,
+           rejections.contains(where: { $0.sourceId == sel.ref.sourceId && $0.at == raw.at }) {
+            flags.append("implausibleLatestRejected:\(sel.ref.sourceId)")
+        }
+        if sel.usedFallback, let p = live.first {
             flags.append("primarySourceStale:\(p.ref.sourceId)" + (p.readings.last.map { "@\(BrainPlatform.iso($0.at))" } ?? ""))
             flags.append("fallbackSource:\(sel.ref.sourceId)")
         }
         if sel.stale { flags.append("sourceStale:\(sel.ref.sourceId)") }
 
         // Cross-source datum check where a fallback and the primary overlap.
-        if x.live.count > 1, let p = x.live.first, let f = x.live.dropFirst().first, !p.readings.isEmpty, !f.readings.isEmpty {
+        if live.count > 1, let p = live.first, let f = live.dropFirst().first, !p.readings.isEmpty, !f.readings.isEmpty {
             var diffs: [Double] = []
             for o in p.readings {
                 if let v = LakeLevelSeries.value(at: o.at, in: f.readings, tolerance: 15 * 60) { diffs.append(o.ft - (v + f.ref.datumOffsetFt)) }
@@ -232,7 +258,7 @@ public enum LakeLevelClassifier {
         }
 
         var series = sel.series
-        if !sel.usedFallback { series = LakeLevelSeries.merge(series + x.archivedHourly) }
+        if !sel.usedFallback { series = LakeLevelSeries.merge(series + archivedHourly) }
         let change = changes(series, latest: sel.latest)
         let delta24 = change.h24
         let doy = LakeLevelCalendar.doy365(LakeLevelCalendar.dayString(now, timeZone: tz)) ?? 1
@@ -334,7 +360,7 @@ public enum LakeLevelClassifier {
                                           freshUntil: BrainPlatform.iso(freshUntil), nextCheckAt: BrainPlatform.iso(next),
                                           stale: stale, refreshReason: reason),
             provenance: provenance(readiness, sources: sources, inputAge: ageH),
-            sourceFallback: fallback(sel, live: x.live),
+            sourceFallback: fallback(sel, live: live),
             release: kind == .observed ? releaseState(x.releaseBySource[src.sourceId], src: src, now: now) : nil)
     }
 

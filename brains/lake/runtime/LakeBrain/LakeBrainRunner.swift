@@ -201,7 +201,12 @@ public enum LakeBrainRunner {
                     poolConfidenceLow: lake.poolConfidence == .low || lake.poolConfidence == nil,
                     live: liveResults, archivedHourly: archivedHourly, guide: guide, baseline: b,
                     now: now, processingVersion: options.processingVersion, releaseBySource: releaseBySource,
-                    rainNext12hIn: rain))
+                    rainNext12hIn: rain,
+                    levelReference: LakeLevelPlausibility.reference(historyFt: merged.map(\.ft), fullPoolFt: lake.fullPoolFt)))
+                // Rejected readings are run warnings with their raw value (Sector_Ops #51, Lake Tahoe 2026-11-23).
+                for f in state?.provenance.qualityFlags ?? [] where f.hasPrefix("implausibleReading") {
+                    errors.append("implausible level reading rejected: \(f)")
+                }
             } else {
                 state = published
             }

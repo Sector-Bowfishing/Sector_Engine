@@ -145,6 +145,10 @@ public enum LakeBrainProfiles {
                 issue("source-stale", "warning", "source-stale", "Level source stale: \(f.dropFirst("sourceStale:".count)); last known value kept")
             } else if f.hasPrefix("sourceError:") {
                 issue("source-error-\(BrainPlatform.lakeKey(String(f.dropFirst("sourceError:".count))))", "info", "source-error", "Fetch failed: \(f.dropFirst("sourceError:".count))")
+            } else if f.hasPrefix("implausibleLatestRejected:") {
+                issue("implausible-reading", "warning", "data-quality", "Newest level reading rejected as physically implausible (\(f.dropFirst("implausibleLatestRejected:".count))); the last valid reading is shown")
+            } else if f.hasPrefix("allReadingsImplausible") {
+                issue("implausible-reading", "warning", "data-quality", "Every level reading was rejected as physically implausible")
             } else if f.hasPrefix("fallbackDatumDisagreement") {
                 issue("fallback-datum", "warning", "datum", "Fallback gauge disagrees with the operator pool (\(f))")
             }

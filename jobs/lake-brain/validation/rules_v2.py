@@ -4,7 +4,7 @@ Mirrors brains/lake/runtime/LakeBrain/{LakeLevelBaseline,LakeLevelClassifier}.sw
 fixture contracts/conformance/lake_rules_v2.json (test_rules_v2.py here; LakeRulesV2Tests.swift there) BEFORE it is used for the hold-out
 protocol (holdout_v2.py). Specification: docs/brains/LAKE_BRAIN_RULES_V2_PREREGISTRATION.md section 1. Nothing here may be tuned to results.
 Known divergences (post-run data handling, not rules): the Swift builder skips nws:rvd day pairs in the rate climatology and leaves out
->10 ft spike days (excludedSpikeDays, 2026-11-22). Neither is mirrored here; the frozen hold-out and the conformance fixture contain neither.
+>10 ft spike days and days outside the lake's plausible band (excludedSpikeDays, 2026-11-22 / 2026-11-23). Neither is mirrored here; the frozen hold-out and the conformance fixture contain neither.
 """
 from __future__ import annotations
 
