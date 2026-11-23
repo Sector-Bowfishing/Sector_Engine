@@ -6,7 +6,7 @@ import sys
 from datetime import timedelta
 
 import pytest
-from sector_weather.client import POINT_CACHE_ENV, POINT_CACHE_SCHEMA, Moved, NwsHttp, OutOfCoverage, PointCache, point_key
+from sector_weather.client import POINT_CACHE_ENV, FetchError, POINT_CACHE_SCHEMA, Moved, NwsHttp, OutOfCoverage, PointCache, point_key
 from sector_weather.publish import run
 from weather_support import HERE, LAKES, RECORDED_NOW, REPO, FixtureSource
 
@@ -46,16 +46,25 @@ def test_a_moved_lake_coordinate_is_a_miss(tmp_path):
     assert c.get(moved, RECORDED_NOW) is None and c.get(G, RECORDED_NOW) is not None
 
 
-def test_entries_expire_after_the_ttl_and_a_future_stamp_is_not_trusted(tmp_path):
+def test_entries_expire_after_their_per_lake_ttl_and_a_future_stamp_is_not_trusted(tmp_path):
     c = PointCache(str(tmp_path / "p.json"))
     _run(c)
-    assert c.get(G, RECORDED_NOW + timedelta(days=29, hours=23)) is not None
-    assert c.get(G, RECORDED_NOW + timedelta(days=30)) is None
+    ttl = c.ttl_for(G)
+    assert timedelta(days=25) <= ttl <= timedelta(days=35) and ttl == PointCache(None).ttl_for(G)      # deterministic per lake
+    assert c.get(G, RECORDED_NOW + ttl - timedelta(minutes=1)) is not None
+    assert c.get(G, RECORDED_NOW + ttl) is None
     assert c.get(G, RECORDED_NOW - timedelta(days=2)) is None
     assert c.stats["expired"] == 2
     src = FixtureSource()
-    _run(c, src, now=RECORDED_NOW + timedelta(days=31))
+    _run(c, src, now=RECORDED_NOW + ttl + timedelta(hours=1))
     assert len(_points(src)) == 2                                          # expired: resolved again
+
+
+def test_expiry_is_spread_across_the_fleet():
+    c = PointCache(None)
+    ttls = {c.ttl_for({"id": f"Lake {i}|AL"}) for i in range(200)}
+    assert len(ttls) > 150 and max(ttls) - min(ttls) > timedelta(days=8)
+    assert all(timedelta(days=25) <= t <= timedelta(days=35) for t in ttls)
 
 
 @pytest.mark.parametrize("content", ["not json{", "[]", json.dumps({"Guntersville|AL": {"cachedAt": "2026-11-06T00:00:00Z"}}),
@@ -182,6 +191,49 @@ def test_a_persistent_404_is_blocked_only_after_three_runs_over_24_h_and_only_fo
     late = RECORDED_NOW + timedelta(hours=25)
     assert _run(c, _Outage(), now=late)["readiness"]["Guntersville|AL"] == "BLOCKED"
     assert c.get(G, late + timedelta(hours=23)) is not None and c.get(G, late + timedelta(hours=24)) is None
+
+
+def test_an_expired_entry_plus_a_points_404_still_produces_a_state(tmp_path):
+    c = PointCache(str(tmp_path / "p.json"))
+    _run(c)
+    later = RECORDED_NOW + timedelta(days=36)                              # past any per-lake TTL (30 +/- 5 days)
+    out = _run(c, _Outage(), now=later)
+    assert "Guntersville|AL" in out["states"] and out["states"]["Guntersville|AL"]["location"]["gridpoint"]
+    assert any("expired" in e for e in out["errors"])
+    assert c.fallback(G) is not None                                       # still stored for the next attempt
+
+
+def test_a_points_5xx_or_transport_failure_is_an_outage_without_a_traceback():
+    class Down(FixtureSource):
+        def point(self, lat, lon):
+            raise FetchError("HTTP 503 after 4 attempts")
+    out = _run(PointCache(None), Down())
+    assert out["states"] == {} and out["readiness"]["Guntersville|AL"] == "DISCOVERED"
+    assert out["errors"] and not any("Traceback" in e or "FetchError(" in e for e in out["errors"])
+
+
+def test_a_moved_coordinate_prunes_its_old_points404_record(tmp_path):
+    c = PointCache(str(tmp_path / "p.json"))
+    _run(c, _Outage())
+    assert list(c.points404) == [point_key(G)]
+    moved = {**G, "lat": 34.4201}
+    c.record_points_404(moved, RECORDED_NOW + timedelta(hours=1))
+    assert list(c.points404) == [point_key(moved)]
+
+
+def test_a_station_that_keeps_answering_404_is_re_resolved_at_most_once_per_24_h(tmp_path):
+    c = PointCache(str(tmp_path / "p.json"))
+    _run(c)
+
+    class StationGone(FixtureSource):
+        def observations(self, station, now):
+            raise OutOfCoverage(station)
+    points = []
+    for h in (1, 2, 3, 4, 26, 27):
+        src = StationGone()
+        _run(c, src, now=RECORDED_NOW + timedelta(hours=h))
+        points.append(sum(1 for x in src.calls if x[0] == "point"))
+    assert points == [0, 1, 0, 0, 0, 1]      # flagged at +1 h, re-resolved at +2 h; flagged again only 24 h later (+26 h), re-resolved at +27 h
 
 
 def test_a_real_out_of_us_point_is_blocked_at_once_and_cached_for_24_h_only(tmp_path):

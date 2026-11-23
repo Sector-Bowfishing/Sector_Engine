@@ -15,8 +15,8 @@
     "evaluatedAt": "2026-10-23",
     "session": "docs/cortex/sessions/2026-10-23-research-automation.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:e99895911b317dc1e3c61b017f22ca7a0486658d9b66a85213f9aef820870987",
-    "certificationDigest": "sha256:e99895911b317dc1e3c61b017f22ca7a0486658d9b66a85213f9aef820870987",
+    "sourceDigest": "sha256:6ac026e70d488d9e501dfb7862755fe527e6c13ac09cbd10e8b1cda12ad119dc",
+    "certificationDigest": "sha256:6ac026e70d488d9e501dfb7862755fe527e6c13ac09cbd10e8b1cda12ad119dc",
     "certificationCurrent": true,
     "verificationCommit": "3e8a3857"
   },

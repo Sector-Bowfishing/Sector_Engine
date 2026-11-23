@@ -11,13 +11,17 @@ $SECTOR_WEATHER_POINT_CACHE (a runner's data folder, e.g. Pulse's {data}). Entri
 POINT_CACHE_DAYS; a cached gridpoint or station URL that answers 404 or a redirect (301/308) is revalidated (publish.run), and a failed
 revalidation keeps the old entry. A redirected grid URL is replaced by its target. An unreadable or foreign file is ignored and rewritten.
 
-A /points 404 for a point inside the US NWS area (in_us_area) is treated as an NWS outage, never as "out of coverage": nothing is cached,
+Entry lifetimes are spread per lake (ttl_for: POINT_CACHE_DAYS +/- POINT_CACHE_JITTER_DAYS from a hash of the lake id). An expired entry stays in
+the file and is the fallback when /points cannot be reached (fallback()).
+
+A /points 404 (or 5xx / transport failure) for a point inside the US NWS area (in_us_area) is treated as an NWS outage, never as "out of coverage": nothing is cached,
 the lake keeps its last state while that is still fresh, and /points is retried next run. Out of coverage (BLOCKED) is recorded only for a
 point outside the US area, or after POINTS_404_BLOCK_RUNS consecutive 404 runs spanning at least POINTS_404_BLOCK_SPAN_HOURS, and is cached for
 OUT_OF_COVERAGE_TTL_HOURS only.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import sys
@@ -34,7 +38,9 @@ DEFAULT_USER_AGENT = "Sector-WeatherBrain/0.1 (io.sector.co; read-only public da
 POINT_CACHE_DAYS = 30
 POINT_CACHE_ENV = "SECTOR_WEATHER_POINT_CACHE"
 POINT_CACHE_SCHEMA = "sector-weather-point-cache-v2"
+POINT_CACHE_JITTER_DAYS = 5
 OUT_OF_COVERAGE_TTL_HOURS = 24
+STATION_REVALIDATE_MIN_HOURS = 24
 POINTS_404_BLOCK_RUNS = 3
 POINTS_404_BLOCK_SPAN_HOURS = 24
 
@@ -174,6 +180,20 @@ class PointCache:
     def data(self) -> dict:                                     # the entries, for callers that only read
         return self.entries
 
+    def ttl_for(self, lake: dict) -> timedelta:
+        """ttl_days +/- up to POINT_CACHE_JITTER_DAYS, fixed per lake (a hash of its id), so the fleet does not re-resolve in one run."""
+        h = int.from_bytes(hashlib.sha256(str(lake["id"]).encode()).digest()[:8], "big") / 2 ** 64     # [0, 1)
+        jitter = min(POINT_CACHE_JITTER_DAYS, self.ttl_days / 6)
+        return timedelta(days=self.ttl_days) + timedelta(days=(2 * h - 1) * jitter)
+
+    def _usable(self, e: dict | None) -> bool:
+        return bool(e) and not e.get("outOfCoverage") and bool(e.get("forecastGridData")) and isinstance(e.get("stations"), list)
+
+    def fallback(self, lake: dict) -> dict | None:
+        """The lake's stored grid entry WHATEVER its age (expired included): what a run uses when /points cannot be reached."""
+        e = self.entries.get(point_key(lake))
+        return e if self._usable(e) else None
+
     def get(self, lake: dict, now: datetime) -> dict | None:
         e = self.entries.get(point_key(lake))
         if not e:
@@ -185,11 +205,11 @@ class PointCache:
         except (KeyError, ValueError, TypeError):
             self.stats["misses"] += 1
             return None
-        ttl = timedelta(hours=OUT_OF_COVERAGE_TTL_HOURS) if e.get("outOfCoverage") else timedelta(days=self.ttl_days)
+        ttl = timedelta(hours=OUT_OF_COVERAGE_TTL_HOURS) if e.get("outOfCoverage") else self.ttl_for(lake)
         if age >= ttl or age < -timedelta(days=1):
-            self.stats["expired"] += 1
+            self.stats["expired"] += 1                           # kept in the file: fallback() serves it if /points is unreachable
             return None
-        if not e.get("outOfCoverage") and not (e.get("forecastGridData") and isinstance(e.get("stations"), list)):
+        if not e.get("outOfCoverage") and not self._usable(e):
             self.stats["misses"] += 1
             return None
         self.stats["hits"] += 1
@@ -198,26 +218,40 @@ class PointCache:
     def put(self, lake: dict, entry: dict) -> None:
         """Store `entry` for the lake's current coordinate; entries of the same lake at another coordinate are pruned."""
         key = point_key(lake)
-        prefix = f"{lake['id']}@"
-        for k in [k for k in self.entries if k.startswith(prefix) and k != key]:
-            del self.entries[k]
+        self._prune_other_coordinates(lake)
         self.entries[key] = entry
         if not entry.get("outOfCoverage"):
             self.points404.pop(key, None)
+
+    def _prune_other_coordinates(self, lake: dict) -> None:
+        key, prefix = point_key(lake), f"{lake['id']}@"
+        for store in (self.entries, self.points404):
+            for k in [k for k in store if k.startswith(prefix) and k != key]:
+                del store[k]
 
     def invalidate(self, lake: dict) -> None:
         if self.entries.pop(point_key(lake), None) is not None:
             self.stats["revalidated"] += 1
 
-    def mark_revalidate(self, lake: dict) -> None:
-        """A cached URL of this entry answered 404/redirect: the next run re-resolves it, keeping this entry if that fails."""
+    def mark_revalidate(self, lake: dict, now: datetime | None = None) -> None:
+        """A cached station of this entry answered 404/redirect: the next run re-resolves it (keeping this entry if that fails), but at most
+        once per STATION_REVALIDATE_MIN_HOURS: a station that keeps answering 404 does not cost a /points lookup every run."""
         e = self.entries.get(point_key(lake))
-        if e is not None:
-            e["revalidate"] = True
+        if e is None:
+            return
+        if now is not None and e.get("revalidatedAt"):
+            try:
+                last = datetime.fromisoformat(str(e["revalidatedAt"]).replace("Z", "+00:00"))
+                if now - last < timedelta(hours=STATION_REVALIDATE_MIN_HOURS):
+                    return
+            except ValueError:
+                pass
+        e["revalidate"] = True
 
     def record_points_404(self, lake: dict, now: datetime) -> bool:
         """One more run whose /points answered 404 for this point. True once it is persistent: POINTS_404_BLOCK_RUNS consecutive runs
         spanning at least POINTS_404_BLOCK_SPAN_HOURS (a success in between resets the streak, through put())."""
+        self._prune_other_coordinates(lake)
         key, at = point_key(lake), now.strftime("%Y-%m-%dT%H:%M:%SZ")
         r = self.points404.get(key) or {"first": at, "last": None, "runs": 0}
         if r.get("last") != at:                                  # one count per run

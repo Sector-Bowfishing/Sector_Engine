@@ -53,6 +53,10 @@ def _resolve(lake: dict, source, cache, now: datetime, refresh: bool = False) ->
         st = decode_stations(source.stations(pt.observation_stations))[: C.MAX_STATIONS]
         e = {"gridpoint": pt.gridpoint, "forecastGridData": pt.forecast_grid_data, "cachedAt": C.iso(now),
              "stations": [{"id": s["id"], "name": s["name"], "distanceMi": _miles(lake["lat"], lake["lon"], s["lat"], s["lon"])} for s in st]}
+    except PointsUnavailable:
+        raise
+    except FetchError as err:                                    # 5xx / transport after the client's retries: an outage like a US 404
+        raise PointsUnavailable(f"/points or stations unavailable for {lake['lat']},{lake['lon']}: {err}"[:200]) from None
     except OutOfCoverage:
         if not in_us_area(lake["lat"], lake["lon"]):
             e = {"outOfCoverage": True, "reason": "outside the US NWS area", "cachedAt": C.iso(now)}
@@ -128,6 +132,9 @@ def run(directory: list[dict], source, cache, published: dict, now: datetime, la
         try:
             fresh, _ = _resolve(lake, source, cache, now, refresh=True)
             cache.stats["revalidated"] += 1
+            if not fresh.get("outOfCoverage"):
+                fresh = {**fresh, "revalidatedAt": C.iso(now)}
+                cache.put(lake, fresh)
             return fresh, False, True
         except PointsUnavailable as err:
             errors.append(f"revalidate {lake['id']}: {err}"[:200])
@@ -142,12 +149,16 @@ def run(directory: list[dict], source, cache, published: dict, now: datetime, la
                 ready[lid] = readiness(published[lid])
                 reasons[lid] = ["not due"]
                 continue
+            grid_known_bad = tried = False
             try:
                 pt, cached = _resolve(lake, source, cache, now)
             except PointsUnavailable as err:
-                outage(lid, err)
-                continue
-            grid_known_bad = tried = False
+                old = cache.fallback(lake) if cache else None
+                if old is None:
+                    outage(lid, err)
+                    continue
+                errors.append(f"lake {lid}: {err}; using the stored (expired) grid entry"[:200])
+                pt, cached, tried = old, True, True               # the expired entry, as a failed revalidation keeps it; no retry this run
             if cached and not pt.get("outOfCoverage") and (pt.get("revalidate") or pt["forecastGridData"] in stale_urls):
                 old_url, tried = pt["forecastGridData"], True
                 pt, cached, ok = revalidate(lake, pt)
@@ -193,12 +204,12 @@ def run(directory: list[dict], source, cache, published: dict, now: datetime, la
                         if e.doc is None:
                             errors.append(f"observations {s}: {e}"[:200])
                         if cached:
-                            cache.mark_revalidate(lake)
+                            cache.mark_revalidate(lake, now)
                     except (FetchError, OutOfCoverage) as e:
                         obs[s] = []
                         errors.append(f"observations {s}: {e}"[:200])
                         if cached and isinstance(e, OutOfCoverage):
-                            cache.mark_revalidate(lake)          # a cached station that answers 404: re-resolve next run (old entry kept)
+                            cache.mark_revalidate(lake, now)     # a cached station that answers 404: re-resolve next run (old entry kept)
             rd = assemble(sids, {s: obs[s] for s in sids}, grids[url], now)
             st = build_state(lake, rd, pt, now)
             states[lid], ready[lid], reasons[lid] = st, readiness(st), why
