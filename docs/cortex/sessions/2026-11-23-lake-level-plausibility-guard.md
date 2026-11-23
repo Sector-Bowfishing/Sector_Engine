@@ -43,3 +43,16 @@ Repository: Sector-Bowfishing/sector_engine · Branch: fix/lake-level-plausibili
 
 ## 6. Decisions / approvals
 - None required for this change. Merge is not done in this session (instruction). Whether Tahoe should be held until this ships is the owner's question on #51.
+
+## 7. Review fixes (PR #249 review at bfc85b78)
+| Finding | Fix |
+|---|---|
+| MEDIUM re-centring by majority vote let n=1 and slipped-majority series through | Re-centre only when the newest reading is outside and ≥ 6 outside readings span ≥ 24 h within one band width; new rule D rejects ×10 / ÷10 decade slips against the recorded range ±15 % regardless of the band |
+| MEDIUM ÷10 slip at low-elevation lakes | Rule D (Okeechobee-like 15 → 1.5 rejected; a real 2 ft drop kept) |
+| MEDIUM full-pool-only band rejected a real drawdown past fp−50 | Continuity: an out-of-band reading within 1 ft + 2 ft/h of its accepted neighbour is accepted (4-day drawdown publishes 546 ft) |
+| LOW baseline without full pool | `LakeBaselineBuilder.build(..., fullPoolFt:)`, passed by the runner |
+| LOW rejections counted as errors | `LakeBrainLakeResult.warnings` / `LakeBrainRunResult.warnings` (job prints `~`); not in `archiveErrors`, so `errorCount`/`latestError` unchanged |
+| LOW unsorted newest | `implausibleLatestRejected` uses the newest raw reading by time |
+| LOW raw value in the published flag | Flag is `implausibleReading:<src>@<time>`; raw value only in the run warning. New `qualityFlags` / `activeIssues` string values extend the published state contract; schema unchanged |
+
+Re-sweep with the revised rules (Python mirror): 288 bound lakes, 102 batch-2 checks, 47 provider fixture series: 0 real readings rejected; only the fixtures' trap rows (CDEC −9999, CO-OPS flagged 590.0, USGS −999999). No bound lake's live value is a decade of its full pool. El Vado and Navajo (> 50 ft below full pool) have 51 / 63 years of history, which sets their band.
