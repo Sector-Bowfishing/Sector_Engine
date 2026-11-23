@@ -1,4 +1,4 @@
-# Lake gauge census (LGC-2026-11-23.4)
+# Lake gauge census (LGC-2026-11-23.5)
 
 Status: tool and pre-registered rules only. **Nothing has been fetched.** No binding, accepted list, `LakeSourceBindingsGenerated.swift`,
 knowledge release, score or rubric changes here.
@@ -16,13 +16,15 @@ for every bound lake it lists series that are **not** the lake's bound primary, 
 
 | File | What |
 |---|---|
-| [`LGC-2026-11-23.4.rules.json`](LGC-2026-11-23.4.rules.json) + `.sha256` (`64ca297f…`) | **Current** pre-registered rules (committed alone, before the code that follows them): hosts and terms, classification cues, stage A selection (S1–S9), independence tiers and the unlabelled-CWMS border rule, stage B binding review (R1–R9, checks (b)–(d), the 15 ft history/live rule), the no-relaxation clause, and `notBefore` 2026-12-01T12:00Z |
+| [`LGC-2026-11-23.5.rules.json`](LGC-2026-11-23.5.rules.json) + `.sha256` (`befcc41d…`) | **Current** pre-registered rules (committed alone, before the code that follows them), including the run binding and origin-evidence registration; hosts and terms, classification cues, stage A selection (S1–S9), independence tiers and the unlabelled-CWMS border rule, stage B binding review (R1–R9, checks (b)–(d), the 15 ft history/live rule), the no-relaxation clause, and `notBefore` 2026-12-01T12:00Z |
+| [`LGC-2026-11-23.4.rules.json`](LGC-2026-11-23.4.rules.json) + `.sha256` | Fourth registration, kept byte for byte, **superseded and never used** ([why](LGC-2026-11-23.4.SUPERSEDED.md)); the tool refuses it |
 | [`LGC-2026-11-23.3.rules.json`](LGC-2026-11-23.3.rules.json) + `.sha256` | Third registration, kept byte for byte, **superseded and never used** ([why](LGC-2026-11-23.3.SUPERSEDED.md)); the tool refuses it |
 | [`LGC-2026-11-23.2.rules.json`](LGC-2026-11-23.2.rules.json) + `.sha256` | Second registration, kept byte for byte, **superseded and never used** ([why](LGC-2026-11-23.2.SUPERSEDED.md)); the tool refuses it |
 | [`LGC-2026-11-23.rules.json`](LGC-2026-11-23.rules.json) + `.sha256` | First registration, kept byte for byte, **superseded and never used** ([why](LGC-2026-11-23.SUPERSEDED.md)); the tool refuses it |
 | [`MINI_REQUEST_DRAFT.md`](MINI_REQUEST_DRAFT.md) | Draft Sector_Ops #51 request for the Mac mini (not posted) |
 | `tools/research/lake_gauge_census.py` | The census (GET only, metadata only) |
-| `tools/research/tests/test_lake_gauge_census.py` + `fixtures/lake_gauge_census/world.json` | 73 offline tests on a synthetic world (plus `tva_robots.txt`, TVA's `Disallow: /` file) |
+| `tools/research/lake_census_run_ledger.py` | The run ledger (hash-chained, append-only). A local copy with the same shape as the Wind run ledger; it will be replaced by the shared `tools/research/protocol_run_ledger.py` once that PR merges |
+| `tools/research/tests/test_lake_gauge_census.py` + `fixtures/lake_gauge_census/world.json` | 107 offline tests on a synthetic world (plus `tva_robots.txt`, TVA's `Disallow: /` file) |
 
 ## How the census works
 
@@ -56,9 +58,19 @@ either side is `UNCERTAIN`**, including two unlabelled series (both can derive f
 are not sensor coordinates). Two CWMS series with the same base location (`Kinzua-Lake`, `Kinzua-Tailwater`, `Kinzua`) are
 `NOT_INDEPENDENT`; a derived version (Best, Rev, Comp, Calc, CCP) is a derivation (NOT_INDEPENDENT at the same base, UNCERTAIN
 otherwise). A RISE item is USBR only when its own metadata names Reclamation; otherwise it is `RISE_UNCONFIRMED` (RISE republishes
-USGS data) and is `UNCERTAIN` against a USGS series in either direction. Only an entry in a reviewed origin-evidence file
+other agencies' data), which, like an unlabelled CWMS series, is origin-unknown against every family: `UNCERTAIN` in either direction.
+Derived versions match by substring (Rev2, Revised, Computed, Calc1), and base locations compare case-insensitively. Only an entry in a reviewed origin-evidence file
 (`--origin-evidence`: USACE for a CWMS series, e.g. a USACE sensor id or a documented non-USGS DCP; USBR for a RISE item) changes
-that; none exists yet.
+that, and only when the file's sha256 is listed in the rules or registered with `register-evidence` before census run #1. Evidence
+for a series whose version already names an agency is refused. None exists yet.
+
+**Run binding.** `controls` and `census` take `--research-folder` (the Lake research folder; or `SECTOR_RESEARCH_ROOT`), never `--out`.
+The binding for a rules id is `<research folder>/gauge-census/binding/<rulesId>/`: a hash-chained, append-only `ledger.jsonl`, the
+shared metadata cache, and write-once run folders (`controls-run-<n>/`, `census-run-<n>/`). Only census run #1 counts: a run that
+ends before writing anything is ABORTED_NO_RESULT and may be retried (with `--skip-controls` only if its controls passed); a
+COMPLETED or FAILED run blocks every later one. The START line records every argument, the tool and rules hashes, the input hashes,
+the registry source and the cache tree hash; the END line records the output hashes, the registry index and outline hashes, the
+cache tree hash after the run and the request, retry and cache-hit counts. Cache hits are lines in `requests.jsonl`.
 
 **Structural cap for v3.** A bound lake whose binding includes a TVA, NWPS or HADS gauge has no coordinates for that gauge, so every
 candidate there is `UNCERTAIN`. From the committed bindings, only **130 of 298** bound lakes (129 of 294 reviewed) can get an
@@ -73,7 +85,9 @@ queried; no request before 2026-12-01T12:00Z (in the fetcher, so every subcomman
 (at most 3 failures per office), and every lake discovered while it was down is marked `CWMS_OFFICE_UNAVAILABLE`. **Every discovery failure marks
 the lake incomplete**, never "no candidate": `PROVIDER_FAILED`, `PROVIDER_DISABLED` (failed positive control), `USGS_BOX_TOO_LARGE`,
 `USGS_TSMETA_UNAVAILABLE`, `CWMS_OFFICE_UNAVAILABLE`, `CWMS_LOCATIONS_TRUNCATED`, `CWMS_TS_UNAVAILABLE`, `CWMS_TS_TRUNCATED`,
-`RISE_CATALOG_UNAVAILABLE` / `_PARTIAL` / `_TRUNCATED`, `RISE_DETAIL_UNAVAILABLE`, `RISE_ITEM_UNAVAILABLE`. A failed or partial RISE
+`RISE_CATALOG_UNAVAILABLE` / `_PARTIAL` / `_TRUNCATED`, `RISE_DETAIL_UNAVAILABLE`, `RISE_ITEM_UNAVAILABLE`, `GEOMETRY_UNAVAILABLE`,
+`USGS_OGC_TRUNCATED`, `USGS_SITE_ERROR` (a WaterServices 404 counts as empty only with its well-formed "No sites found" body),
+`USGS_SITE_NO_COORDINATES`, `CWMS_LOCATION_NO_COORDINATES`, `RISE_LOCATION_NO_COORDINATES`. A failed or partial RISE
 listing is never cached (retried, at most 3 failures). BINDING counts keep `noCandidate` (complete discovery, nothing found) apart
 from `incomplete` and `notDiscovered` (budget). Writes only to `--out`.
 

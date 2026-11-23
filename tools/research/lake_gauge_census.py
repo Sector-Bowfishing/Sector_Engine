@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Lake gauge census: GET-only, metadata-only discovery of gauge-grade level series for every directory lake (rules LGC-2026-11-23.4).
+"""Lake gauge census: GET-only, metadata-only discovery of gauge-grade level series for every directory lake (rules LGC-2026-11-23.5).
 
-Two purposes, one pass (docs/brains/lake-gauge-census/LGC-2026-11-23.4.rules.json, pre-registered and hashed before any request;
-it supersedes LGC-2026-11-23.3, .2 and the first registration, none of which was ever used):
+Two purposes, one pass (docs/brains/lake-gauge-census/LGC-2026-11-23.5.rules.json, pre-registered and hashed before any request;
+it supersedes LGC-2026-11-23.4, .3, .2 and the first registration, none of which was ever used). Every networked run is bound
+to one hash-chained run ledger per rules id in the research folder: only census run #1 counts, outputs are write-once, the
+arguments are fixed by the rules, and origin evidence must be registered by sha256 before the run.:
   BINDING            unprofiled lakes (not in Lake's reviewed set): candidate pool series for the next binding batch (stage A
                      shortlist; the stage B review with level values follows the same rules as batches 1-2 and runs later).
   INDEPENDENT_TRUTH  every lake with a binding: series that are NOT the lake's bound live/fallback/history series, with
@@ -43,9 +45,11 @@ import urllib.request
 import urllib.robotparser
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+from lake_census_run_ledger import LedgerRefused, RunLedger, tree_hash  # noqa: E402
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
-RULES = os.path.join(REPO, "docs", "brains", "lake-gauge-census", "LGC-2026-11-23.4.rules.json")
-RULES_ID = "LGC-2026-11-23.4"
+RULES = os.path.join(REPO, "docs", "brains", "lake-gauge-census", "LGC-2026-11-23.5.rules.json")
+RULES_ID = "LGC-2026-11-23.5"
 DIRECTORY = os.path.join(REPO, "brains", "moon", "runtime", "knowledge", "lakes-directory.json")
 REVIEWED = os.path.join(REPO, "jobs", "brain_platform", "sector_brain_platform", "publisher_live", "customer_lake_level_eligible.json")
 GENERATED = os.path.join(REPO, "brains", "lake", "runtime", "LakeBrain", "LakeSourceBindingsGenerated.swift")
@@ -63,7 +67,8 @@ CWMS_ACCEPT = "application/json;version=2"
 RISE = "https://data.usbr.gov/rise/api/{path}"
 RISE_ACCEPT = "application/vnd.api+json"
 # Pagination caps; reaching one with pages left marks the listing truncated (never complete).
-CWMS_LOCATION_PAGES, CWMS_TS_PAGES, RISE_LOCATION_PAGES = 50, 10, 399
+CWMS_LOCATION_PAGES, CWMS_TS_PAGES, RISE_LOCATION_PAGES, OGC_PAGES = 50, 10, 399, 20
+WATERSERVICES_EMPTY = b"No sites found matching all criteria"
 
 # The five hand-written REVIEWED pilots (brains/lake/runtime/LakeBrain/LakeSourceBindings.swift `handWritten`); a test keeps the ids
 # equal to that file. TVA pilots read the TVA host (never queried here) and its operating-guide history.
@@ -302,6 +307,7 @@ class Fetcher:
         self.last: dict[str, float] = {}
         self.robots: dict[str, dict] = {}
         self.count = 0
+        self.cache_hits = 0
         self.exhausted = False
         self.log: list[dict] = []
         self.out = out
@@ -392,7 +398,11 @@ class Fetcher:
             raise Refused(f"ROBOTS_DISALLOWED {urllib.parse.urlsplit(url).hostname}{urllib.parse.urlsplit(url).path}")
         key = sha256_bytes((url + "|" + (accept or "")).encode())
         if cache and self.cache and os.path.exists(os.path.join(self.cache, key)):
-            return 200, open(os.path.join(self.cache, key), "rb").read()
+            body = open(os.path.join(self.cache, key), "rb").read()
+            self.cache_hits += 1
+            self.log.append({"url": url, "cacheHit": True, "status": 200, "bytes": len(body), "sha256": sha256_bytes(body),
+                             "cacheFile": key, "at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")})
+            return 200, body
         status, body = self._raw(url, {"Accept": accept} if accept else {})
         if 300 <= status < 400:
             raise Refused(f"redirect {status} from {url} (redirects are never followed)")
@@ -460,6 +470,14 @@ def parse_ogc_locations(text: str) -> list[dict]:
                     "name": p.get("monitoring_location_name", ""), "siteType": p.get("site_type_code"), "lat": lat, "lon": lon,
                     "altDatum": p.get("vertical_datum") or p.get("altitude_datum") or None, "agency": p.get("agency_code", "USGS")})
     return out
+
+
+def ogc_next(text: str) -> str | None:
+    """The rel=next link of an OGC API Features response, if any."""
+    for link in json.loads(text).get("links") or []:
+        if isinstance(link, dict) and link.get("rel") == "next" and link.get("href"):
+            return link["href"]
+    return None
 
 
 def parse_ogc_tsmeta(text: str, params: set[str]) -> list[dict]:
@@ -653,6 +671,23 @@ def interval_minutes(s: str | None) -> int | None:
     return n * {"Minute": 1, "Minutes": 1, "Hour": 60, "Hours": 60, "Day": 1440, "Days": 1440, "Week": 10080, "Month": 43200}[u]
 
 
+US_STATES = {"alabama": "AL", "alaska": "AK", "arizona": "AZ", "arkansas": "AR", "california": "CA", "colorado": "CO",
+             "connecticut": "CT", "delaware": "DE", "florida": "FL", "georgia": "GA", "hawaii": "HI", "idaho": "ID", "illinois": "IL",
+             "indiana": "IN", "iowa": "IA", "kansas": "KS", "kentucky": "KY", "louisiana": "LA", "maine": "ME", "maryland": "MD",
+             "massachusetts": "MA", "michigan": "MI", "minnesota": "MN", "mississippi": "MS", "missouri": "MO", "montana": "MT",
+             "nebraska": "NE", "nevada": "NV", "new hampshire": "NH", "new jersey": "NJ", "new mexico": "NM", "new york": "NY",
+             "north carolina": "NC", "north dakota": "ND", "ohio": "OH", "oklahoma": "OK", "oregon": "OR", "pennsylvania": "PA",
+             "rhode island": "RI", "south carolina": "SC", "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT",
+             "vermont": "VT", "virginia": "VA", "washington": "WA", "west virginia": "WV", "wisconsin": "WI", "wyoming": "WY"}
+
+
+def state_code(s) -> str | None:
+    if not s:
+        return None
+    s = str(s).strip()
+    return s.upper() if len(s) == 2 else US_STATES.get(s.lower())
+
+
 def rise_minutes(s: str | None) -> int | None:
     s = (s or "").lower()
     for k, v in (("15", 15), ("hour", 60), ("dai", 1440), ("day", 1440), ("month", 43200)):
@@ -684,6 +719,8 @@ class Census:
         self._rise_failures = 0
         self._rise_truncated = False
         self.rise_collectors: dict[str, str | None] = {}
+        self.geometry_hashes: dict = {}
+        self.no_coordinates: dict[str, int] = {}
         self.incomplete: dict[str, list[str]] = {}
 
     def mark(self, lake: dict, code: str):
@@ -694,27 +731,41 @@ class Census:
 
     # ---- geometry
     def load_geometry(self, lakes: list[dict], registry: str | None):
+        """Outlines from the Lake Registry. A failed index or outline marks the lake GEOMETRY_UNAVAILABLE (never 'no candidate');
+        a registry entry without geometry is POINT_ONLY by design. The sha256 of every file read is recorded."""
         if not registry:
             return
-        idx = self._registry_json("registry/lakes.v1.json", registry)
+        self.geometry_hashes.setdefault("registrySource", registry)
+        try:
+            idx = self._registry_json("registry/lakes.v1.json", registry)
+        except Exception as ex:
+            self.errors.append({"stage": "geometry", "error": f"registry index: {str(ex)[:200]}"})
+            for lake in lakes:
+                self.mark(lake, "GEOMETRY_UNAVAILABLE")
+            return
         entries = {e["lakeId"]: e for e in (idx.get("lakes") if isinstance(idx, dict) else idx) or []}
         for lake in lakes:
             e = entries.get(lake["lakeId"])
             if not e or not e.get("geometry"):
                 continue
             try:
-                g = self._registry_json(f"lakes/{lake_key(lake['lakeId'])}/geometry.v1.analysis.geojson.gz", registry)
+                g = self._registry_json(f"lakes/{lake_key(lake['lakeId'])}/geometry.v1.analysis.geojson.gz", registry, lake["lakeId"])
                 lake["_polys"] = polygons_of(g)
-            except Exception as ex:  # recorded; the lake falls back to POINT_ONLY
+            except Exception as ex:  # recorded; the lake is POINT_ONLY and incomplete
                 self.errors.append({"lakeId": lake["lakeId"], "stage": "geometry", "error": str(ex)[:200]})
+                self.mark(lake, "GEOMETRY_UNAVAILABLE")
 
-    def _registry_json(self, rel: str, registry: str):
+    def _registry_json(self, rel: str, registry: str, lake_id: str | None = None):
         if registry.startswith("http"):
             status, body = self.f.get(f"{registry.rstrip('/')}/{rel}")
             if status != 200:
                 raise RuntimeError(f"registry {rel}: HTTP {status}")
         else:
             body = open(os.path.join(registry, rel), "rb").read()
+        if lake_id:
+            self.geometry_hashes.setdefault("outlines", {})[lake_id] = sha256_bytes(body)
+        else:
+            self.geometry_hashes["index"] = sha256_bytes(body)
         if body[:2] == b"\x1f\x8b":
             body = gzip.decompress(body)
         return json.loads(body)
@@ -738,15 +789,23 @@ class Census:
                                                   "seriesCatalogOutput": "true"})
             if status == 200:
                 rows = parse_usgs_site_catalog(body.decode("utf-8", "replace"), self.params)
-            elif status == 404:
-                rows = []  # WaterServices answers 404 for "no sites found"
-            elif self.usgs_api == "waterservices":
-                raise RuntimeError(f"usgs site service HTTP {status}")
+            elif status == 404 and WATERSERVICES_EMPTY in body:
+                rows = []  # the well-formed "no sites found" answer
+            else:
+                self.errors.append({"lakeId": lake["lakeId"], "stage": "usgs-site", "error": f"HTTP {status}"})
+                if self.usgs_api == "waterservices":
+                    self.mark(lake, "USGS_SITE_ERROR")
+                    raise RuntimeError(f"usgs site service HTTP {status}")
         if rows is None:
-            rows = self._usgs_ogc((w, s, e, n), lake)
+            try:
+                rows = self._usgs_ogc((w, s, e, n), lake)
+            except Exception:
+                self.mark(lake, "USGS_SITE_ERROR")
+                raise
         out = []
         for r in rows:
-            if r["lat"] is None:
+            if r["lat"] is None or r["lon"] is None:
+                self.mark(lake, "USGS_SITE_NO_COORDINATES")
                 continue
             pos = position(lake, r["lat"], r["lon"])
             latest = max((parse_time(x.get("end")) for x in r["dataTypes"].values() if x.get("end")), default=None)
@@ -764,19 +823,40 @@ class Census:
                         "capabilityIfBound": self.r["selection"]["S8_capability"]["usgs"], "origin": "USGS"})
         return out
 
+    def _ogc_pages(self, url: str, params: dict, lake: dict) -> list[str]:
+        """Every page of an OGC API collection query, following rel=next links up to OGC_PAGES; a cap reached with a next link
+        left marks USGS_OGC_TRUNCATED. Raises on a non-200 first page; a later failed page marks the lake incomplete."""
+        pages, nxt = [], None
+        for i in range(OGC_PAGES):
+            st, body = self.f.get(url, params) if i == 0 else self.f.get(nxt)
+            if st != 200:
+                if i == 0:
+                    raise RuntimeError(f"usgs ogc HTTP {st}")
+                self.mark(lake, "USGS_OGC_TRUNCATED")
+                return pages
+            text = body.decode()
+            pages.append(text)
+            nxt = ogc_next(text)
+            if not nxt:
+                return pages
+        self.mark(lake, "USGS_OGC_TRUNCATED")
+        return pages
+
     def _usgs_ogc(self, box, lake: dict) -> list[dict]:
         w, s, e, n = box
-        status, body = self.f.get(USGS_OGC.format(c="monitoring-locations"), {"bbox": f"{w:.6f},{s:.6f},{e:.6f},{n:.6f}", "f": "json", "limit": 500})
-        if status != 200:
-            raise RuntimeError(f"usgs ogc monitoring-locations HTTP {status}")
+        locs = [l for page in self._ogc_pages(USGS_OGC.format(c="monitoring-locations"),
+                                              {"bbox": f"{w:.6f},{s:.6f},{e:.6f},{n:.6f}", "f": "json", "limit": 500}, lake)
+                for l in parse_ogc_locations(page)]
         rows = []
-        for loc in parse_ogc_locations(body.decode()):
-            st, b2 = self.f.get(USGS_OGC.format(c="time-series-metadata"), {"monitoring_location_id": loc["ogcId"], "f": "json", "limit": 200})
-            if st != 200:
-                self.errors.append({"lakeId": lake["lakeId"], "stage": "usgs-tsmeta", "site": loc["site"], "error": f"HTTP {st}"})
+        for loc in locs:
+            try:
+                pages = self._ogc_pages(USGS_OGC.format(c="time-series-metadata"),
+                                        {"monitoring_location_id": loc["ogcId"], "f": "json", "limit": 200}, lake)
+            except RuntimeError as ex:
+                self.errors.append({"lakeId": lake["lakeId"], "stage": "usgs-tsmeta", "site": loc["site"], "error": str(ex)})
                 self.mark(lake, "USGS_TSMETA_UNAVAILABLE")
                 continue
-            for m in parse_ogc_tsmeta(b2.decode(), self.params):
+            for m in [m for page in pages for m in parse_ogc_tsmeta(page, self.params)]:
                 key = "uv" if (m.get("period") or "").lower() in ("points", "instantaneous") else "dv"
                 ex = next((r for r in rows if r["site"] == loc["site"] and r["param"] == m["param"]), None)
                 if not ex:
@@ -887,7 +967,13 @@ class Census:
             if office in self._office_truncated:
                 self.mark(lake, f"CWMS_LOCATIONS_TRUNCATED:{office}")
             for loc in office_locs:
-                if loc["lat"] is None or loc["lon"] is None or not (w <= loc["lon"] <= e and s <= loc["lat"] <= n):
+                if loc["lat"] is None or loc["lon"] is None:
+                    if loc.get("state") and str(loc["state"]).upper() in {lake.get("state", "").upper()} | {x.upper() for x in lake.get("states") or []}:
+                        self.mark(lake, f"CWMS_LOCATION_NO_COORDINATES:{office}")
+                    elif not loc.get("state"):
+                        self.no_coordinates[f"cwms:{office}"] = self.no_coordinates.get(f"cwms:{office}", 0) + 1
+                    continue
+                if not (w <= loc["lon"] <= e and s <= loc["lat"] <= n):
                     continue
                 pos = position(lake, loc["lat"], loc["lon"])
                 like = "^" + re.escape(loc["name"]) + r"\.Elev"
@@ -970,7 +1056,14 @@ class Census:
         if self._rise_truncated:
             self.mark(lake, "RISE_CATALOG_TRUNCATED")
         for loc in listing:
-            if loc["lat"] is None or not (w <= loc["lon"] <= e and s <= loc["lat"] <= n):
+            if loc["lat"] is None or loc["lon"] is None:
+                st_ = state_code(loc.get("state"))
+                if st_ and st_ in {lake.get("state", "").upper()} | {x.upper() for x in lake.get("states") or []}:
+                    self.mark(lake, "RISE_LOCATION_NO_COORDINATES")
+                elif not st_:
+                    self.no_coordinates["rise"] = self.no_coordinates.get("rise", 0) + 1
+                continue
+            if not (w <= loc["lon"] <= e and s <= loc["lat"] <= n):
                 continue
             pos = position(lake, loc["lat"], loc["lon"])
             items = list(loc["items"])
@@ -1046,18 +1139,22 @@ FAMILY = {"USGS": {"USGS"}, "USGS_COPY": {"USGS"}, "USACE": {"USACE"}, "USACE_UN
 COPIES = {"USGS_COPY": "USGS", "USBR_COPY": "USBR", "CDEC_COPY": "CDEC"}
 
 
-def load_origin_evidence(path: str | None) -> dict:
-    """Optional reviewed origin evidence: [{"provider","series","origin","evidence"}]; origin USACE for a cwms series, USBR for a
-    rise item."""
+def load_origin_evidence(rules: dict, path: str | None) -> tuple[dict, dict | None]:
+    """Reviewed origin evidence: [{"provider","series","origin","evidence"}]; origin USACE for a cwms/a2w series, USBR for a rise
+    item. An entry for a CWMS series whose version already names an agency is refused (copies stay copies). Returns the entries
+    and a record {sha256, text} for the output; whether the file is registered is checked by the run binding."""
     if not path:
-        return {}
+        return {}, None
+    raw = open(path, "rb").read()
     out = {}
-    for e in json.load(open(path, encoding="utf-8")):
+    for e in json.loads(raw):
         allowed = {"cwms": "USACE", "a2w": "USACE", "rise": "USBR"}.get(e.get("provider"))
-        if not allowed or e.get("origin") != allowed or not e.get("evidence"):
-            raise SystemExit(f"REFUSED: origin-evidence entry needs origin USACE (cwms) or USBR (rise) and an evidence text: {e}")
+        if not allowed or e.get("origin") != allowed or not e.get("evidence") or not e.get("series"):
+            raise SystemExit(f"REFUSED: origin-evidence entry needs provider, series, origin USACE (cwms) or USBR (rise) and an evidence text: {e}")
+        if e["provider"] in ("cwms", "a2w") and cwms_origin(rules, cwms_parts(e["series"])["version"]) != "USACE_UNLABELLED":
+            raise SystemExit(f"REFUSED: {e['series']} already names an agency in its version; a labelled copy stays a copy")
         out[series_key(e["provider"], e.get("station"), e["series"])] = e
-    return out
+    return out, {"sha256": sha256_bytes(raw), "text": raw.decode("utf-8", "replace")}
 
 
 def series_key(provider: str, station, series) -> tuple:
@@ -1105,7 +1202,9 @@ def within_r1(rules: dict, pos: dict) -> bool | None:
 
 
 def is_derived(rules: dict, series: str | None) -> bool:
-    return bool(_has(cwms_parts(series or "")["version"], rules["classification"]["derivedVersionWords"]))
+    """Substring match on the lower-cased version (Rev2, Revised, Computed, Calc1, Best-NWO all match)."""
+    v = cwms_parts(series or "")["version"].lower()
+    return any(w in v for w in rules["classification"]["derivedVersionWords"])
 
 
 def independence(rules: dict, c: dict, bound: list[dict], coords: dict, evidence: dict | None = None,
@@ -1134,7 +1233,6 @@ def independence(rules: dict, c: dict, bound: list[dict], coords: dict, evidence
     def out(tier, *why):
         return dict(ev, tier=tier, reasons=list(why))
 
-    usgs_family = {"USGS", "USGS_COPY"}
     if origin == "NWS_REDISTRIBUTION":
         return out("NOT_INDEPENDENT", "NWS redistribution")
     if c["provider"] == "usgs" and any(b["provider"] == "usgs" and b.get("station") == c["station"] for b in bound):
@@ -1143,19 +1241,20 @@ def independence(rules: dict, c: dict, bound: list[dict], coords: dict, evidence
     c_derived = c["provider"] == "cwms" and is_derived(rules, c["series"])
     b_derived = any(is_derived(rules, b.get("series")) for b in bound_cwms)
     if c["provider"] == "cwms":
-        base = cwms_parts(c["series"])["baseLocation"]
-        if base in {cwms_parts(b.get("series") or "")["baseLocation"] for b in bound_cwms}:
+        base = cwms_parts(c["series"])["baseLocation"].lower()
+        if base in {cwms_parts(b.get("series") or "")["baseLocation"].lower() for b in bound_cwms}:
             return out("NOT_INDEPENDENT", f"same CWMS base location {base} as a bound series (sub-location, version or interval)")
     if origin in COPIES and COPIES[origin] in b_fam:
         return out("NOT_INDEPENDENT", f"CWMS copy of a {COPIES[origin]} gauge and the lake has a bound {COPIES[origin]} series")
-    unknown = origin == "USACE_UNLABELLED" or "USACE_UNLABELLED" in b_origins
-    if dists and min(dists) < same_m and (fam & b_fam or unknown or origin == "RISE_UNCONFIRMED" or "RISE_UNCONFIRMED" in b_origins):
+    unknown_origins = {"USACE_UNLABELLED", "RISE_UNCONFIRMED"}
+    unknown = origin in unknown_origins or bool(unknown_origins & set(b_origins))
+    if dists and min(dists) < same_m and (fam & b_fam or unknown):
         return out("NOT_INDEPENDENT", f"overlapping or unknown origin within {same_m} m of a bound gauge")
     reasons = []
-    if unknown:
+    if origin == "USACE_UNLABELLED" or "USACE_UNLABELLED" in b_origins:
         reasons.append("origin unknown: an unlabelled CWMS series on one side (no origin evidence); two series can derive from one sensor")
-    if (origin == "RISE_UNCONFIRMED" and b_fam & {"USGS"}) or (origin in usgs_family and "RISE_UNCONFIRMED" in b_origins):
-        reasons.append("RISE item whose metadata does not name Reclamation, against a USGS series (RISE republishes USGS data)")
+    if origin == "RISE_UNCONFIRMED" or "RISE_UNCONFIRMED" in b_origins:
+        reasons.append("origin unknown: a RISE item whose metadata does not name Reclamation on one side (RISE republishes other agencies' data)")
     if c_derived:
         reasons.append("derived CWMS version (Best/Rev/Comp/Calc/CCP): a derivation of another series")
     if b_derived:
@@ -1413,7 +1512,7 @@ def structural_cap(targets: list[dict]) -> dict:
 
 def run_census(rules: dict, digest: str, fetcher: Fetcher, now: dt.datetime, registry: str | None, only: list[str] | None = None,
                usgs_api: str = "auto", skip_controls: bool = False, targets_table: dict | None = None,
-               evidence: dict | None = None) -> dict:
+               evidence: dict | None = None, controls_hook=None) -> dict:
     if now < not_before(rules):
         raise SystemExit(f"REFUSED: the census may not run before {rules['notBefore']} ({rules['notBeforeReason']})")
     tt = targets_table or load_targets()
@@ -1436,6 +1535,8 @@ def run_census(rules: dict, digest: str, fetcher: Fetcher, now: dt.datetime, reg
         geometry(extra)
         ctl.update({t["lakeId"]: t for t in extra})
         controls = run_controls(census, ctl)
+        if controls_hook:
+            controls_hook(controls)
     found, done = {}, 0
     for i, t in enumerate(targets):
         if fetcher.exhausted:
@@ -1460,29 +1561,32 @@ def run_census(rules: dict, digest: str, fetcher: Fetcher, now: dt.datetime, reg
     for e in census.errors:
         errs[e["stage"]] = errs.get(e["stage"], 0) + 1
     summary.update({"errorsByStage": errs, "budgetExhausted": fetcher.exhausted, "lakesDiscovered": done, "lakesTargeted": len(targets),
-                    "robotsDisallowed": fetcher.robots_disallowed(), "structuralCap": structural_cap(targets)})
+                    "robotsDisallowed": fetcher.robots_disallowed(), "structuralCap": structural_cap(targets),
+                    "locationsWithoutCoordinatesOrState": dict(census.no_coordinates)})
     return {"schema": "sector-lake-gauge-census-v1", "labels": LABELS, "rulesId": rules["rulesId"], "rulesSha256": digest,
             "generatedAt": now.isoformat(timespec="seconds"), "inputs": tt["inputs"], "usgsApi": usgs_api,
             "originEvidence": sorted(e.get("series") for e in (evidence or {}).values()),
+            "geometry": census.geometry_hashes, "cacheHits": fetcher.cache_hits,
             "controls": controls, "disabledProviders": dict(census.disabled), "requests": fetcher.count,
             "robots": fetcher.robots_report(), "errors": census.errors, "summary": summary, "lakes": lakes,
             "valuesRead": "none (USGS IV time stamps only; values dropped at parse time)"}
 
 
-def write_outputs(out: str, result: dict, fetcher: Fetcher):
+def _write_once(path: str, body: bytes) -> str:
+    with open(path, "xb") as fh:  # create-exclusive: an output is never overwritten
+        fh.write(body)
+        fh.flush()
+        os.fsync(fh.fileno())
+    return sha256_bytes(body)
+
+
+def write_outputs(out: str, result: dict, fetcher: Fetcher, extra: dict | None = None) -> dict:
     os.makedirs(out, exist_ok=True)
     files = {"census.json": result, "census.summary.json": {k: result[k] for k in
              ("schema", "labels", "rulesId", "rulesSha256", "generatedAt", "inputs", "controls", "disabledProviders", "requests", "summary")},
-             "robots.json": result["robots"]}
-    shas = {}
-    for name, obj in files.items():
-        b = json.dumps(obj, indent=1, sort_keys=False, default=str).encode()
-        open(os.path.join(out, name), "wb").write(b)
-        shas[name] = sha256_bytes(b)
-    with open(os.path.join(out, "requests.jsonl"), "w", encoding="utf-8") as fh:
-        for r in fetcher.log:
-            fh.write(json.dumps(r) + "\n")
-    shas["requests.jsonl"] = sha256_file(os.path.join(out, "requests.jsonl"))
+             "robots.json": result["robots"], **(extra or {})}
+    shas = {name: _write_once(os.path.join(out, name), json.dumps(obj, indent=1, default=str).encode()) for name, obj in files.items()}
+    shas["requests.jsonl"] = _write_once(os.path.join(out, "requests.jsonl"), "".join(json.dumps(r) + "\n" for r in fetcher.log).encode())
     return shas
 
 
@@ -1506,7 +1610,122 @@ def summary_text(s: dict) -> str:
     return "\n".join(lines)
 
 
-def main(argv=None, now: dt.datetime | None = None, transport=None) -> int:
+# ------------------------------------------------------------------------------------------------------------------ run binding
+def binding_folder(rules: dict, research_folder: str) -> str:
+    return os.path.join(research_folder, "gauge-census", "binding", rules["rulesId"])
+
+
+def tool_sha256() -> str:
+    return sha256_file(os.path.abspath(__file__))
+
+
+def check_fixed_arguments(rules: dict, args) -> None:
+    fixed = rules["runBinding"]["fixedArguments"]
+    if getattr(args, "lakes", None):
+        raise LedgerRefused("--lakes is not allowed: the rules fix the lake set to 'all'")
+    if args.registry != fixed["registry"]:
+        raise LedgerRefused(f"--registry must be {fixed['registry']} (fixed by the rules)")
+    if args.usgs_api != fixed["usgsApi"]:
+        raise LedgerRefused(f"--usgs-api must be {fixed['usgsApi']} (fixed by the rules)")
+
+
+def registered_evidence(rules: dict, ledger) -> set[str]:
+    """Evidence sha256s registered in the rules or by a register-evidence LOG line written before census run #1 started."""
+    ok = set(rules["originEvidenceRegistration"]["registeredFiles"])
+    for e in ledger.entries():
+        if e["kind"] == "START" and e["step"] == "census":
+            break
+        if e["kind"] == "LOG" and e["step"] == "register-evidence" and e.get("status") == "REGISTERED":
+            ok.add(e["detail"]["sha256"])
+    return ok
+
+
+def controls_passed(ledger) -> bool:
+    for e in ledger.entries():
+        if e["kind"] == "END" and e["step"] == "controls" and e["status"] == "COMPLETED" and not (e.get("result") or {}).get("disabledProviders"):
+            return True
+        if e["kind"] == "LOG" and e["step"] == "census-controls" and e.get("status") == "PASS":
+            return True
+    return False
+
+
+def run_bound(args, rules: dict, digest: str, now: dt.datetime, transport=None, sleep=time.sleep) -> int:
+    """controls / census under the run binding: one ledger per rules id, only run #1 counts, write-once outputs."""
+    folder = binding_folder(rules, args.research_folder)
+    ledger = RunLedger(folder, rules["rulesId"], digest, clock=lambda: now)
+    step = args.cmd
+    try:
+        check_fixed_arguments(rules, args)
+    except LedgerRefused as ex:
+        ledger.refuse(step, "all", str(ex))
+    evidence, ev_record = ({}, None)
+    if step == "census":
+        evidence, ev_record = load_origin_evidence(rules, args.origin_evidence)
+        if ev_record and ev_record["sha256"] not in registered_evidence(rules, ledger):
+            ledger.refuse(step, "all", f"origin-evidence file sha256 {ev_record['sha256']} is not registered (rules or a "
+                                       "register-evidence line before census run #1)")
+        if args.skip_controls:
+            aborted = [a for a in ledger.attempts("census", "all") if a["status"] == "ABORTED_NO_RESULT"]
+            if not aborted or not controls_passed(ledger):
+                ledger.refuse(step, "all", "--skip-controls needs an earlier ABORTED_NO_RESULT census attempt and passing controls in the ledger")
+    tt = load_targets()
+    fetcher = Fetcher(rules, out=folder, transport=transport, now=lambda: now, sleep=sleep)
+    inputs = {"argv": {k: v for k, v in vars(args).items()}, "rulesSha256": digest, "toolSha256": tool_sha256(),
+              "inputFiles": tt["inputs"], "registrySource": args.registry, "researchFolder": os.path.abspath(args.research_folder),
+              "cacheBefore": tree_hash(os.path.join(folder, "cache")),
+              "originEvidence": {"sha256": ev_record["sha256"]} if ev_record else None}
+    with ledger.step(step, "all", inputs=inputs) as run:
+        out = os.path.join(folder, f"{step}-run-{run.run_number}")
+        if step == "controls":
+            census = Census(rules, fetcher, now, args.usgs_api)
+            targets = {t["lakeId"]: dict(t) for t in tt["lakes"] if t["lakeId"] in {c["lakeId"] for c in CONTROLS}}
+            census.load_geometry(list(targets.values()), args.registry)
+            res = run_controls(census, targets)
+            res.update({"errors": census.errors, "incomplete": census.incomplete, "geometry": census.geometry_hashes})
+            run.writing()
+            os.makedirs(out)
+            shas = {"controls.json": _write_once(os.path.join(out, "controls.json"), json.dumps(res, indent=1, default=str).encode()),
+                    "requests.jsonl": _write_once(os.path.join(out, "requests.jsonl"),
+                                                  "".join(json.dumps(r) + "\n" for r in fetcher.log).encode())}
+            run.outputs = shas
+            run.result = {"disabledProviders": res["disabledProviders"], "requests": fetcher.count, "cacheHits": fetcher.cache_hits,
+                          "cacheAfter": tree_hash(os.path.join(folder, "cache")), "geometry": census.geometry_hashes}
+            print(json.dumps(res, indent=1, default=str))
+            rc = 0 if not res["disabledProviders"] else 3
+        else:
+            def log_controls(res):
+                ledger.log("census-controls", "all", "PASS" if not res["disabledProviders"] else "FAIL",
+                           {"disabledProviders": res["disabledProviders"], "startSeq": run.seq})
+            result = run_census(rules, digest, fetcher, now, args.registry, None, args.usgs_api, args.skip_controls,
+                                evidence=evidence, controls_hook=log_controls)
+            result["runBinding"] = {"runNumber": run.run_number, "ledger": os.path.join(folder, "ledger.jsonl"), "startSeq": run.seq,
+                                    "counts": run.run_number == 1}
+            result["originEvidenceFile"] = ev_record
+            run.writing()
+            os.makedirs(out)
+            shas = write_outputs(out, result, fetcher)
+            run.outputs = shas
+            run.result = {"requests": fetcher.count, "retries": sum(1 for r in fetcher.log if r.get("attempt", 1) > 1),
+                          "cacheHits": fetcher.cache_hits, "cacheAfter": tree_hash(os.path.join(folder, "cache")),
+                          "geometry": result["geometry"], "budgetExhausted": result["summary"]["budgetExhausted"],
+                          "originEvidence": ev_record}
+            print(summary_text(result))
+            print("sha256: " + ", ".join(f"{k} {v}" for k, v in shas.items()))
+            rc = 0
+    return rc
+
+
+def register_evidence(args, rules: dict, digest: str, now: dt.datetime) -> int:
+    ledger = RunLedger(binding_folder(rules, args.research_folder), rules["rulesId"], digest, clock=lambda: now)
+    if ledger.attempts("census", "all"):
+        ledger.refuse("register-evidence", "all", "census run #1 has started; evidence can no longer be registered")
+    _, rec = load_origin_evidence(rules, args.file)
+    ledger.log("register-evidence", "all", "REGISTERED", rec)
+    print(f"REGISTERED origin evidence sha256 {rec['sha256']}")
+    return 0
+
+
+def main(argv=None, now: dt.datetime | None = None, transport=None, sleep=time.sleep) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     a = sub.add_parser("lakes")
@@ -1514,13 +1733,17 @@ def main(argv=None, now: dt.datetime | None = None, transport=None) -> int:
     sub.add_parser("verify")
     for name in ("controls", "census"):
         c = sub.add_parser(name)
-        c.add_argument("--out", required=True)
-        c.add_argument("--registry", default=REGISTRY_BASE, help="Lake Registry base URL or a local copy; 'none' for point-only")
-        c.add_argument("--usgs-api", choices=["auto", "waterservices", "ogc"], default="auto")
-        c.add_argument("--lakes", nargs="*", help="limit to these lake ids")
+        c.add_argument("--research-folder", default=os.environ.get("SECTOR_RESEARCH_ROOT"),
+                       help="the Lake research folder (Cortex research-path, or env SECTOR_RESEARCH_ROOT); holds the run binding")
+        c.add_argument("--registry", default=REGISTRY_BASE, help="fixed by the rules; any other value is refused")
+        c.add_argument("--usgs-api", choices=["auto", "waterservices", "ogc"], default="auto", help="fixed by the rules to auto")
+        c.add_argument("--lakes", nargs="*", help="refused: the rules fix the lake set to all")
         if name == "census":
-            c.add_argument("--skip-controls", action="store_true", help="recorded in the output; for a resumed run only")
-            c.add_argument("--origin-evidence", help="reviewed JSON list making named CWMS series USACE-operated (none at registration)")
+            c.add_argument("--skip-controls", action="store_true", help="only after an aborted census attempt with passing controls")
+            c.add_argument("--origin-evidence", help="a registered origin-evidence JSON file (none exists at registration)")
+    r = sub.add_parser("register-evidence")
+    r.add_argument("--research-folder", default=os.environ.get("SECTOR_RESEARCH_ROOT"))
+    r.add_argument("--file", required=True)
     s = sub.add_parser("summarize")
     s.add_argument("--summary", required=True)
     args = ap.parse_args(argv)
@@ -1540,34 +1763,23 @@ def main(argv=None, now: dt.datetime | None = None, transport=None) -> int:
         print(f"{t['directoryCount']} lakes, reviewed {t['reviewedCount']}, purposes {n}, structural cap {structural_cap(t['lakes'])}")
         return 0
     now = now or dt.datetime.now(dt.timezone.utc)
+    if not args.research_folder:
+        print("REFUSED: --research-folder (or SECTOR_RESEARCH_ROOT) is required: the run binding lives in the research folder", file=sys.stderr)
+        return 2
+    if args.cmd == "register-evidence":
+        try:
+            return register_evidence(args, rules, digest, now)
+        except LedgerRefused as ex:
+            print(f"REFUSED: {ex}", file=sys.stderr)
+            return 2
     if now < not_before(rules):  # every networked subcommand; the fetcher enforces it again on each request
         print(f"REFUSED: no networked subcommand may run before {rules['notBefore']} ({rules['notBeforeReason']})", file=sys.stderr)
         return 2
-    fetcher = Fetcher(rules, out=args.out, transport=transport, now=lambda: now)
-    registry = None if args.registry == "none" else args.registry
-    if args.cmd == "controls":
-        tt = load_targets()
-        census = Census(rules, fetcher, now, args.usgs_api)
-        targets = {t["lakeId"]: dict(t) for t in tt["lakes"] if t["lakeId"] in {c["lakeId"] for c in CONTROLS}}
-        try:
-            census.load_geometry(list(targets.values()), registry)
-        except Exception as ex:
-            census.errors.append({"stage": "geometry", "error": str(ex)[:300]})
-        res = run_controls(census, targets)
-        res["errors"] = census.errors
-        os.makedirs(args.out, exist_ok=True)
-        json.dump(res, open(os.path.join(args.out, "controls.json"), "w"), indent=1, default=str)
-        with open(os.path.join(args.out, "controls.requests.jsonl"), "w", encoding="utf-8") as fh:
-            for r in fetcher.log:
-                fh.write(json.dumps(r) + "\n")
-        print(json.dumps(res, indent=1, default=str))
-        return 0 if not res["disabledProviders"] else 3
-    result = run_census(rules, digest, fetcher, now, registry, args.lakes, args.usgs_api, args.skip_controls,
-                        evidence=load_origin_evidence(args.origin_evidence))
-    shas = write_outputs(args.out, result, fetcher)
-    print(summary_text(result))
-    print("sha256: " + ", ".join(f"{k} {v}" for k, v in shas.items()))
-    return 0
+    try:
+        return run_bound(args, rules, digest, now, transport, sleep)
+    except LedgerRefused as ex:
+        print(f"REFUSED: {ex}", file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":

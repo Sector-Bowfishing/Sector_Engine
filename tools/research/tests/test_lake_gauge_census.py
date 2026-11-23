@@ -59,7 +59,9 @@ class World:
             if "bBox" in q:
                 w, s, e, n = map(float, q["bBox"].split(","))
                 rows = [r for r in WORLD["usgs"] if w <= r["lon"] <= e and s <= r["lat"] <= n and r["param"] in q["parameterCd"].split(",")]
-                return (200, _rdb(rows)) if rows else (404, b"No sites found")
+                if self.faults.get("ws_status"):
+                    return self.faults["ws_status"], b"<html>gateway</html>"
+                return (200, _rdb(rows)) if rows else (404, b"No sites found matching all criteria")
             sites = q["sites"].split(",")
             return 200, _rdb([r for r in WORLD["usgs"] if r["site"] in sites], catalog=False)
         if u.hostname == "waterservices.usgs.gov" and u.path == "/nwis/iv/":
@@ -74,13 +76,36 @@ class World:
                         ts.append({"sourceInfo": {"siteCode": [{"value": site}]}, "variable": {"variableCode": [{"value": r["param"]}]},
                                    "values": [{"value": vals}]})
             return 200, json.dumps({"value": {"timeSeries": ts}}).encode()
+        if u.hostname == "storage.googleapis.com":
+            rel = u.path.split("/sector-lake-registry/", 1)[1]
+            if rel == "registry/lakes.v1.json":
+                if self.faults.get("registry_index_status"):
+                    return self.faults["registry_index_status"], b""
+                return 200, json.dumps({"lakes": [{"lakeId": l["lakeId"], "geometry": {"x": 1} if l["outline"] else None}
+                                                  for l in WORLD["lakes"]]}).encode()
+            for l in WORLD["lakes"]:
+                if l["outline"] and rel == f"lakes/{G.lake_key(l['lakeId'])}/geometry.v1.analysis.geojson.gz":
+                    if (self.faults.get("outline_status") or {}).get(l["lakeId"]):
+                        return self.faults["outline_status"][l["lakeId"]], b""
+                    feat = {"type": "Feature", "properties": {}, "geometry": {"type": "Polygon", "coordinates": [l["outline"]]}}
+                    return 200, gzip.compress(json.dumps(feat).encode())
+            return 404, b""
         if u.hostname == "api.waterdata.usgs.gov":
             if u.path.endswith("/monitoring-locations/items"):
-                w_, s_, e_, n_ = map(float, q["bbox"].split(","))
+                if q.get("page") == "2" or self.faults.get("ogc_endless") and q.get("page"):
+                    rows = [r for r in WORLD["usgs"] if r["site"] == "07000001"] if q.get("page") == "2" else []
+                    links = [{"rel": "next", "href": url.split("&page=")[0] + "&page=3"}] if self.faults.get("ogc_endless") else []
+                else:
+                    w_, s_, e_, n_ = map(float, q["bbox"].split(","))
+                    rows = [r for r in WORLD["usgs"] if w_ <= r["lon"] <= e_ and s_ <= r["lat"] <= n_]
+                    links = []
+                    if self.faults.get("ogc_paged") or self.faults.get("ogc_endless"):
+                        rows = [r for r in rows if r["site"] != "07000001"]
+                        links = [{"rel": "next", "href": url + "&page=2"}]
                 feats = [{"type": "Feature", "id": f"USGS-{r['site']}", "geometry": {"type": "Point", "coordinates": [r["lon"], r["lat"]]},
                           "properties": {"monitoring_location_name": r["name"], "site_type_code": r["tp"], "vertical_datum": r["alt_datum"]}}
-                         for r in WORLD["usgs"] if w_ <= r["lon"] <= e_ and s_ <= r["lat"] <= n_]
-                return 200, json.dumps({"type": "FeatureCollection", "features": feats}).encode()
+                         for r in rows]
+                return 200, json.dumps({"type": "FeatureCollection", "features": feats, "links": links}).encode()
             if u.path.endswith("/time-series-metadata/items"):
                 if self.faults.get("tsmeta_status"):
                     return self.faults["tsmeta_status"], b""
@@ -181,10 +206,13 @@ def cand(l, provider, series):
 # ------------------------------------------------------------------------------------------------------------- rules
 def test_rules_hash_is_the_committed_preregistration():
     assert DIGEST == open(G.RULES + ".sha256").read().split()[0]
-    assert RULES["rulesId"] == "LGC-2026-11-23.4" and RULES["notBefore"] == "2026-12-01T12:00:00Z"
+    assert RULES["rulesId"] == "LGC-2026-11-23.5" and RULES["notBefore"] == "2026-12-01T12:00:00Z"
     side = lambda n: open(os.path.join(os.path.dirname(G.RULES), n + ".sha256")).read().split()[0]
-    assert RULES["supersedes"]["sha256"] == side("LGC-2026-11-23.3.rules.json")
-    assert [e["sha256"] for e in RULES["supersedes"]["earlier"]] == [side("LGC-2026-11-23.2.rules.json"), side("LGC-2026-11-23.rules.json")]
+    assert RULES["supersedes"]["sha256"] == side("LGC-2026-11-23.4.rules.json")
+    assert [e["sha256"] for e in RULES["supersedes"]["earlier"]] == [side("LGC-2026-11-23.3.rules.json"),
+                                                                     side("LGC-2026-11-23.2.rules.json"), side("LGC-2026-11-23.rules.json")]
+    assert RULES["originEvidenceRegistration"]["registeredFiles"] == []
+    assert RULES["runBinding"]["fixedArguments"]["registry"] == G.REGISTRY_BASE
     assert RULES["publication"] == {**RULES["publication"], "changesBindings": False, "changesAcceptedLists": False,
                                     "changesKnowledgeRelease": False, "changesScores": False}
     assert RULES["fetch"]["methods"] == ["GET"]
@@ -331,7 +359,7 @@ def test_origin_evidence_is_the_only_way_across_the_border(tmp_path):
     with pytest.raises(SystemExit, match=r"origin USACE \(cwms\) or USBR \(rise\) and an evidence text"):
         p = tmp_path / "ev.json"
         p.write_text(json.dumps([{"provider": "cwms", "series": "X", "origin": "USACE"}]))
-        G.load_origin_evidence(str(p))
+        G.load_origin_evidence(RULES, str(p))
 
 
 def test_no_level_value_is_written(tmp_path):
@@ -396,23 +424,44 @@ def test_summary_text(tmp_path):
 def test_every_networked_subcommand_refuses_before_not_before(tmp_path):
     w = World()
     early = dt.datetime(2026, 12, 1, 11, 59, tzinfo=dt.timezone.utc)
-    for cmd in (["controls", "--out", str(tmp_path / "c")], ["census", "--out", str(tmp_path / "x")]):
+    for cmd in (["controls", "--research-folder", str(tmp_path / "r")], ["census", "--research-folder", str(tmp_path / "r")]):
         assert G.main(cmd, now=early, transport=w) == 2
-    assert w.calls == [] and not (tmp_path / "c").exists()
+    assert w.calls == [] and not (tmp_path / "r").exists()
     f = fetcher(tmp_path, w, now=early)
     with pytest.raises(G.Refused, match="before 2026-12-01T12:00:00Z"):
         f.get("https://waterservices.usgs.gov/nwis/site/")
     c = G.Census(RULES, f, NOW)
-    with pytest.raises(G.Refused):
-        c.load_geometry([dict(targets()["lakes"][0])], G.REGISTRY_BASE)
+    lk = dict(targets()["lakes"][0])
+    c.load_geometry([lk], G.REGISTRY_BASE)
+    assert c.incomplete[lk["lakeId"]] == ["GEOMETRY_UNAVAILABLE"]
     assert w.calls == []
     assert G.not_before(RULES) == dt.datetime(2026, 12, 1, 12, 0, tzinfo=dt.timezone.utc)
 
 
-def test_controls_subcommand_runs_after_not_before(tmp_path, monkeypatch):
+def cli(argv, world=None, now=NOW):
+    return G.main(argv, now=now, transport=world or World(), sleep=lambda s: None)
+
+
+SYN_CONTROLS = [{"lakeId": "Testb Lake|ZZ", "provider": "usgs", "key": ("usgs", "07000002", "62615")},
+                {"lakeId": "Testb Lake|ZZ", "provider": "cwms", "key": ("cwms", "TestB-Lake.Elev.Inst.1Hour.0.OBS")},
+                {"lakeId": "Testa Reservoir|ZZ", "provider": "rise", "key": ("rise", "9001")}]
+
+
+@pytest.fixture
+def bound_env(tmp_path, monkeypatch):
     monkeypatch.setattr(G, "load_targets", targets)
-    monkeypatch.setattr(G, "CONTROLS", [{"lakeId": "Testb Lake|ZZ", "provider": "usgs", "key": ("usgs", "07000002", "62615")}])
-    assert G.main(["controls", "--out", str(tmp_path / "c"), "--registry", "none"], now=NOW, transport=World()) == 0
+    monkeypatch.setattr(G, "CONTROLS", SYN_CONTROLS)
+    rf = tmp_path / "research"
+    folder = G.binding_folder(RULES, str(rf))
+    led = lambda: G.RunLedger(folder, RULES["rulesId"], DIGEST, clock=lambda: NOW)
+    return {"rf": str(rf), "folder": folder, "ledger": led}
+
+
+def test_controls_subcommand_runs_after_not_before(bound_env):
+    assert cli(["controls", "--research-folder", bound_env["rf"]]) == 0
+    end = [e for e in bound_env["ledger"]().entries() if e["kind"] == "END"][0]
+    assert end["status"] == "COMPLETED" and end["result"]["disabledProviders"] == {}
+    assert os.path.exists(os.path.join(bound_env["folder"], "controls-run-1", "controls.json"))
 
 
 @pytest.mark.parametrize("status,allowed", [(404, True), (410, True), (403, False), (401, False), (429, False), (500, False),
@@ -480,7 +529,8 @@ def test_rise_bound_coordinates_come_from_the_fetched_locations(tmp_path):
 @pytest.mark.parametrize("name,sha", [
     ("LGC-2026-11-23.rules.json", "254752ea31823ace94768a7daa658cf70bfa42b8ad0d276ebb1cae1cf86e9e3f"),
     ("LGC-2026-11-23.2.rules.json", "c17feef35f03c072cb79f4d318b465d807fc72afe5ca351f0b787cc3df382ba7"),
-    ("LGC-2026-11-23.3.rules.json", "2a46ac96df8021c5fca08d19406f5e60eedd19e266289f9130515ecb76b5b8b1")])
+    ("LGC-2026-11-23.3.rules.json", "2a46ac96df8021c5fca08d19406f5e60eedd19e266289f9130515ecb76b5b8b1"),
+    ("LGC-2026-11-23.4.rules.json", "64ca297f43331893dd70a15edcc5a84fd76721c434c042cc67c381b616f41494")])
 def test_superseded_rules_files_are_kept_and_refused(name, sha):
     old = os.path.join(os.path.dirname(G.RULES), name)
     assert G.sha256_file(old) == sha
@@ -520,7 +570,8 @@ def test_unlabelled_cwms_is_origin_unknown_against_every_agency(cand_, bound, ti
 def test_origin_evidence_resolves_an_unlabelled_series_against_usbr():
     c = _c("cwms", "Res.Elev.Inst.1Hour.0.Raw", "USACE_UNLABELLED", location="Res")
     ev = {G.series_key("cwms", "S", c["series"]): {"provider": "cwms", "series": c["series"], "origin": "USACE", "evidence": "SYNTHETIC"}}
-    assert G.independence(RULES, c, RISE_BOUND, FAR, ev)["tier"] == "INDEPENDENT_AGENCY"
+    assert G.independence(RULES, c, RISE_BOUND, FAR, ev, rise_collectors={"77": "Bureau of Reclamation"})["tier"] == "INDEPENDENT_AGENCY"
+    assert G.independence(RULES, c, RISE_BOUND, FAR, ev)["tier"] == "UNCERTAIN"  # bound RISE item unconfirmed
 
 
 def test_failed_office_catalog_is_not_cached_and_marks_the_lake(tmp_path):
@@ -690,3 +741,187 @@ def test_disabled_provider_marks_every_lake(tmp_path, monkeypatch):
     assert res["summary"]["binding"]["noCandidate"] == 0
     assert res["summary"]["binding"]["incompleteCodesAllLakes"] == {"PROVIDER_DISABLED": 3}
     assert "PROVIDER_DISABLED" in G.summary_text(res)
+
+
+# ------------------------------------------------------------------------------------------------------------- round 4 (LGC-2026-11-23.5)
+def _ledger_kinds(env):
+    return [(e["kind"], e["step"], e.get("status")) for e in env["ledger"]().entries()]
+
+
+def test_census_run_one_counts_and_a_second_run_is_refused(bound_env):
+    rf = bound_env["rf"]
+    assert cli(["census", "--research-folder", rf]) == 0
+    out = os.path.join(bound_env["folder"], "census-run-1")
+    res = json.load(open(os.path.join(out, "census.json")))
+    assert res["runBinding"]["runNumber"] == 1 and res["runBinding"]["counts"] is True
+    assert cli(["census", "--research-folder", rf]) == 2
+    kinds = _ledger_kinds(bound_env)
+    assert ("END", "census", "COMPLETED") in kinds and kinds[-1] == ("REFUSED", "census", "REFUSED")
+    assert not os.path.exists(os.path.join(bound_env["folder"], "census-run-2"))
+    start = next(e for e in bound_env["ledger"]().entries() if e["kind"] == "START" and e["step"] == "census")
+    assert start["inputs"]["toolSha256"] == G.tool_sha256() and start["inputs"]["argv"]["research_folder"] == rf
+    assert start["inputs"]["cacheBefore"]["hashMethod"] == "sha256-tree-v1" and start["inputs"]["registrySource"] == G.REGISTRY_BASE
+    end = next(e for e in bound_env["ledger"]().entries() if e["kind"] == "END" and e["step"] == "census")
+    assert set(end["outputs"]) == {"census.json", "census.summary.json", "robots.json", "requests.jsonl"}
+    assert end["result"]["geometry"]["index"] and set(end["result"]["geometry"]["outlines"]) == {"Testa Reservoir|ZZ", "Testb Lake|ZZ"}
+    assert end["result"]["cacheAfter"]["files"] > 0
+
+
+def test_outputs_are_write_once(tmp_path):
+    G._write_once(str(tmp_path / "a.json"), b"1")
+    with pytest.raises(FileExistsError):
+        G._write_once(str(tmp_path / "a.json"), b"2")
+
+
+def test_ledger_chain_is_checked(bound_env):
+    assert cli(["controls", "--research-folder", bound_env["rf"]]) == 0
+    path = os.path.join(bound_env["folder"], "ledger.jsonl")
+    open(path, "a").write(open(path).read().splitlines()[0] + "\n")  # a replayed line breaks the chain
+    assert cli(["census", "--research-folder", bound_env["rf"]]) == 2
+
+
+@pytest.mark.parametrize("extra", [["--lakes", "Testa Reservoir|ZZ"], ["--registry", "https://storage.googleapis.com/other"],
+                                   ["--usgs-api", "ogc"], ["--usgs-api", "waterservices"]])
+def test_fixed_arguments(bound_env, extra):
+    assert cli(["census", "--research-folder", bound_env["rf"]] + extra) == 2
+    assert _ledger_kinds(bound_env)[-1][0] == "REFUSED" and not os.path.exists(os.path.join(bound_env["folder"], "census-run-1"))
+
+
+def test_skip_controls_needs_an_aborted_run_with_passing_controls(bound_env, monkeypatch):
+    rf = bound_env["rf"]
+    assert cli(["census", "--research-folder", rf, "--skip-controls"]) == 2
+    real = G.run_census
+
+    def crash(*a, controls_hook=None, **k):
+        controls_hook({"disabledProviders": {}})
+        raise RuntimeError("interrupted before any output")
+    monkeypatch.setattr(G, "run_census", crash)
+    with pytest.raises(RuntimeError):
+        cli(["census", "--research-folder", rf])
+    monkeypatch.setattr(G, "run_census", real)
+    assert ("END", "census", "ABORTED_NO_RESULT") in _ledger_kinds(bound_env)
+    assert cli(["census", "--research-folder", rf, "--skip-controls"]) == 0
+    res = json.load(open(os.path.join(bound_env["folder"], "census-run-2", "census.json")))
+    assert res["controls"] == {"skipped": True} and res["runBinding"]["runNumber"] == 2
+
+
+def test_skip_controls_refused_when_the_aborted_run_had_failing_controls(bound_env, monkeypatch):
+    def crash(*a, controls_hook=None, **k):
+        controls_hook({"disabledProviders": {"rise": "positive control not rediscovered"}})
+        raise RuntimeError("x")
+    monkeypatch.setattr(G, "run_census", crash)
+    with pytest.raises(RuntimeError):
+        cli(["census", "--research-folder", bound_env["rf"]])
+    monkeypatch.undo()
+    monkeypatch.setattr(G, "load_targets", targets)
+    monkeypatch.setattr(G, "CONTROLS", SYN_CONTROLS)
+    assert cli(["census", "--research-folder", bound_env["rf"], "--skip-controls"]) == 2
+
+
+def _evidence_file(tmp_path, series="Other.Elev.Inst.1Hour.0.Raw", provider="cwms", origin="USACE"):
+    p = tmp_path / f"ev-{abs(hash(series))}.json"
+    p.write_text(json.dumps([{"provider": provider, "series": series, "origin": origin, "evidence": "SYNTHETIC sensor id"}]))
+    return str(p)
+
+
+def test_origin_evidence_must_be_registered_before_run_one(bound_env, tmp_path):
+    rf, ev = bound_env["rf"], _evidence_file(tmp_path)
+    assert cli(["census", "--research-folder", rf, "--origin-evidence", ev]) == 2  # not registered
+    assert cli(["register-evidence", "--research-folder", rf, "--file", ev]) == 0
+    assert cli(["census", "--research-folder", rf, "--origin-evidence", ev]) == 0
+    res = json.load(open(os.path.join(bound_env["folder"], "census-run-1", "census.json")))
+    assert res["originEvidenceFile"]["sha256"] == G.sha256_file(ev) and "SYNTHETIC sensor id" in res["originEvidenceFile"]["text"]
+    assert cli(["register-evidence", "--research-folder", rf, "--file", _evidence_file(tmp_path, "Another.Elev.Inst.1Hour.0.Raw")]) == 2
+
+
+@pytest.mark.parametrize("series", ["X.Elev.Inst.1Hour.0.Raw-USGS", "X.Elev.Inst.1Hour.0.Raw-USBR", "X.Elev.Inst.1Hour.0.CDEC",
+                                    "X.Elev.Inst.1Hour.0.Rev-NWS"])
+def test_evidence_for_a_labelled_series_is_refused(tmp_path, series):
+    with pytest.raises(SystemExit, match="labelled copy stays a copy"):
+        G.load_origin_evidence(RULES, _evidence_file(tmp_path, series))
+
+
+def test_cache_hits_are_logged(bound_env):
+    assert cli(["controls", "--research-folder", bound_env["rf"]]) == 0
+    assert cli(["census", "--research-folder", bound_env["rf"]]) == 0
+    lines = [json.loads(l) for l in open(os.path.join(bound_env["folder"], "census-run-1", "requests.jsonl"))]
+    hits = [l for l in lines if l.get("cacheHit")]
+    assert hits and all(len(h["sha256"]) == 64 and h["cacheFile"] for h in hits)
+
+
+@pytest.mark.parametrize("other", ["RISE_UNCONFIRMED", "CDEC_COPY", "USACE", "USBR", "USGS"])
+def test_rise_unconfirmed_is_origin_unknown_against_every_family(other):
+    bound = {"RISE_UNCONFIRMED": RISE_BOUND, "USBR": RISE_BOUND, "USGS": USGS_BOUND,
+             "CDEC_COPY": [{"provider": "cwms", "station": "SPK", "series": "Far-Lake.Elev.Inst.1Hour.0.Raw-CDEC", "role": "primary"}],
+             "USACE": CWMS_BOUND}[other]
+    coords = {**FAR, ("cwms", "SPK", "Far-Lake.Elev.Inst.1Hour.0.Raw-CDEC"): (36.2, -90.0)}
+    ev = {G.series_key("cwms", "SPK", CWMS_BOUND[0]["series"]): {"origin": "USACE"}} if other == "USACE" else None
+    col = {"77": "Bureau of Reclamation"} if other == "USBR" else None
+    got = G.independence(RULES, _c("rise", "88", "RISE_UNCONFIRMED"), bound, coords, ev, col)
+    assert got["tier"] == "UNCERTAIN", got
+    if other in ("RISE_UNCONFIRMED", "USBR"):  # and the other direction
+        assert G.independence(RULES, _c("usgs", "62615", "USGS"), RISE_BOUND, FAR)["tier"] == "UNCERTAIN"
+
+
+def test_geometry_failures_mark_lakes(tmp_path):
+    c = G.Census(RULES, fetcher(tmp_path, World(registry_index_status=503)), NOW)
+    lakes = [dict(l) for l in targets()["lakes"]]
+    c.load_geometry(lakes, G.REGISTRY_BASE)
+    assert all(c.incomplete[l["lakeId"]] == ["GEOMETRY_UNAVAILABLE"] for l in lakes)
+    c = G.Census(RULES, fetcher(tmp_path / "b", World(outline_status={"Testa Reservoir|ZZ": 404})), NOW)
+    lakes = [dict(l) for l in targets()["lakes"]]
+    c.load_geometry(lakes, G.REGISTRY_BASE)
+    assert c.incomplete == {"Testa Reservoir|ZZ": ["GEOMETRY_UNAVAILABLE"]}  # Testc has no geometry by design: not incomplete
+    assert "_polys" in lakes[1] and "_polys" not in lakes[0]
+
+
+def test_ogc_pagination_follows_next_links(tmp_path, monkeypatch):
+    res, _, _ = run(tmp_path, world=World(ogc_paged=True), usgs_api="ogc")
+    assert cand(lake(res, "Testa Reservoir|ZZ"), "usgs", "62615")["station"] == "07000001"  # found on page 2
+    monkeypatch.setattr(G, "OGC_PAGES", 3)
+    res, _, _ = run(tmp_path / "b", world=World(ogc_endless=True), usgs_api="ogc")
+    assert "USGS_OGC_TRUNCATED" in lake(res, "Testa Reservoir|ZZ")["discoveryIncomplete"]
+
+
+def test_waterservices_404_must_be_a_well_formed_empty_result(tmp_path):
+    res, _, _ = run(tmp_path, world=World(ws_status=404), usgs_api="waterservices")
+    assert "USGS_SITE_ERROR" in lake(res, "Testa Reservoir|ZZ")["discoveryIncomplete"]
+    res, _, _ = run(tmp_path / "b", world=World(ws_status=404))  # auto: OGC fallback still finds the pool
+    assert cand(lake(res, "Testa Reservoir|ZZ"), "usgs", "62615")["host"] == "api.waterdata.usgs.gov"
+    assert res["summary"]["errorsByStage"].get("usgs-site")
+
+
+@pytest.mark.parametrize("version", ["Rev2", "Revised", "Computed", "Calc1", "Best-NWO", "Raw-CCP", "PREVIOUS"])
+def test_derived_versions_match_by_substring(version):
+    assert G.is_derived(RULES, f"X.Elev.Inst.1Hour.0.{version}")
+
+
+def test_base_location_comparison_is_case_insensitive():
+    bound = [{"provider": "a2w", "station": "LRP:Kinzua", "series": "Kinzua-Lake.Elev.Inst.1Hour.0.OBS", "role": "primary"}]
+    c = dict(_c("cwms", "KINZUA-Tailwater.Elev.Inst.1Hour.0.Raw", "USACE_UNLABELLED"), location="KINZUA-Tailwater")
+    assert G.independence(RULES, c, bound, {})["tier"] == "NOT_INDEPENDENT"
+
+
+def test_locations_without_coordinates_mark_the_lake(tmp_path, monkeypatch):
+    world = World()
+    real = world.__call__
+
+    def patched(url, headers):
+        st, body = real(url, headers)
+        if "/catalog/LOCATIONS" in url and st == 200:
+            d = json.loads(body)
+            d["entries"] += [{"office": "LRP", "name": "NoCoord", "state": "ZZ"}, {"office": "LRP", "name": "NoState"}]
+            return st, json.dumps(d).encode()
+        if "/nwis/site/" in url and "bBox" in url and st == 200:
+            return st, body + b"\nUSGS\t07999999\tNO COORD LAKE\tLK\t\t\tNAVD88\tuv\t62615\t1990-01-01\t2026-12-01\t1"
+        return st, body
+    f = G.Fetcher(RULES, out=str(tmp_path / "o"), transport=patched, sleep=lambda s: None, now=lambda: NOW)
+    res = G.run_census(RULES, DIGEST, f, NOW, registry_dir(tmp_path), skip_controls=True, targets_table=targets())
+    inc = lake(res, "Testa Reservoir|ZZ")["discoveryIncomplete"]
+    assert "CWMS_LOCATION_NO_COORDINATES:LRP" in inc and "USGS_SITE_NO_COORDINATES" in inc
+    assert res["summary"]["locationsWithoutCoordinatesOrState"]["cwms:LRP"] >= 1
+
+
+def test_research_folder_is_required(monkeypatch):
+    monkeypatch.delenv("SECTOR_RESEARCH_ROOT", raising=False)
+    assert cli(["census"]) == 2 and cli(["controls"]) == 2
