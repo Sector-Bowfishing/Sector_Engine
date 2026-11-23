@@ -6,11 +6,16 @@ import re
 import sys
 import uuid
 
+import pytest
+
 import artifact_entry as E
 from sector_wind.ingest import verified_release
 from test_brain import CFG, DIRECTORY, NOW, make_store
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "tools", "ops"))
+TOOLS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "tools", "ops")
+if not os.path.isdir(TOOLS):                     # the Wind package gate runs these tests in a clean copy without the repo's tools/ops
+    pytest.skip("repo tools/ops is not in this copy", allow_module_level=True)
+sys.path.insert(0, TOOLS)
 import wind_watchdog_lakes as WL                                                  # noqa: E402
 from sector_brain_platform.cycle_watchdog import LAKE_PATH                         # noqa: E402
 
