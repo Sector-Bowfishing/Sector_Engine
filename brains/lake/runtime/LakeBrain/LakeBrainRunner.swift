@@ -209,7 +209,8 @@ public enum LakeBrainRunner {
                     live: liveResults, archivedHourly: archivedHourly, guide: guide, baseline: b,
                     now: now, processingVersion: options.processingVersion, releaseBySource: releaseBySource,
                     rainNext12hIn: rain,
-                    levelReference: LakeLevelPlausibility.reference(historyFt: merged.map(\.ft), fullPoolFt: lake.fullPoolFt))
+                    levelReference: LakeLevelPlausibility.reference(historyFt: merged.map(\.ft), fullPoolFt: lake.fullPoolFt),
+                    levelAnchor: anchor(published))
                 state = LakeLevelClassifier.evaluate(inputs)
                 // Rejected readings are run warnings with their raw value (Sector_Ops #51, Lake Tahoe 2026-11-23); not errors.
                 warnings = LakeLevelClassifier.screened(inputs).rejections.map(LakeLevelPlausibility.warning)
@@ -239,6 +240,13 @@ public enum LakeBrainRunner {
         return LakeBrainLakeResult(lakeId: lake.id, plan: plan, state: state, profile: profile, presence: presenceRecords,
                                    baseline: baseline, historyRows: historyRows, historyWritten: historyWritten, errors: errors,
                                    warnings: warnings, dryRunCandidate: dryRunCandidate)
+    }
+
+    /// The last published accepted level as a plausibility anchor: an OBSERVED state's value (binding datum) and its time.
+    static func anchor(_ published: LakeLevelStateRecord?) -> LevelObservation? {
+        guard let p = published, p.kind == .observed, let ft = p.currentElevationFt,
+              let at = BrainPlatform.parseTime(p.observationTime) else { return nil }
+        return LevelObservation(at: at, ft: ft)
     }
 
     /// True when the archive already holds a daily value for yesterday (lake-local) or later, so an hourly run can skip the

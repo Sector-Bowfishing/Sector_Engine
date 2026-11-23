@@ -114,11 +114,76 @@ final class LakeLevelPlausibilityTests: XCTestCase {
     func testASingleSlippedReadingNeverMovesTheBand() {
         let ref = LakeLevelPlausibility.reference(historyFt: tahoeHistory().map(\.ft), fullPoolFt: 6229.1)
         let t = iso("2026-11-23T08:00:00Z")
-        for v in [622.6, 7000.0, 62.3] {
-            let f = LakeLevelPlausibility.filter([LevelObservation(at: t, ft: v)], sourceId: "s", reference: ref)
+        let anchor = LevelObservation(at: t.addingTimeInterval(-86_400), ft: 6226.0)     // yesterday's published value
+        // A decade slip is rejected with or without an anchor.
+        XCTAssertEqual(LakeLevelPlausibility.filter([LevelObservation(at: t, ft: 622.6)], sourceId: "s", reference: ref).rejected.map(\.rawFt), [622.6])
+        // Other lone readings far outside the band: the anchor rejects them (774 ft and 6,164 ft in a day are not water)…
+        for v in [7000.0, 62.3] {
+            let f = LakeLevelPlausibility.filter([LevelObservation(at: t, ft: v)], sourceId: "s", reference: ref, anchor: anchor)
             XCTAssertTrue(f.kept.isEmpty, "\(v)")
             XCTAssertEqual(f.rejected.map(\.rawFt), [v])
         }
+        // …and with no anchor at all the lake is not blanked: published, marked unverified.
+        let lone = LakeLevelPlausibility.filter([LevelObservation(at: t, ft: 7000)], sourceId: "s", reference: ref)
+        XCTAssertEqual(lone.kept.map(\.ft), [7000])
+        XCTAssertTrue(lone.unverified)
+    }
+
+    func testRossLikeDrawdownAfterAnOutageIsPublished() {
+        // No history; full pool 1,602.5 ft → band 1,552.5–1,652.5. Published 65 ft below full pool before a 2-day outage; back
+        // with 3 readings over 3 h, 70 ft below full pool.
+        let p = LevelSeriesRef(provider: .usgs, capability: .directOperatorPool, station: "R", series: "00062", cadenceMin: 60, lagMin: 60)
+        let back = iso("2026-11-23T06:00:00Z")
+        let xs = (0..<3).map { LevelObservation(at: back.addingTimeInterval(Double($0) * 3600), ft: 1532.5 - 0.1 * Double($0)) }
+        var x = LakeLevelInputs(lakeId: "Ross Lake|WA", binding: binding([p]), capabilityIfUnbound: .noSource, fullPoolFt: 1602.5,
+                                poolBasisIsFullPool: true, poolConfidenceLow: false, live: [(p, xs, nil)], archivedHourly: [], guide: nil,
+                                baseline: nil, now: iso("2026-11-23T08:30:00Z"), processingVersion: "test")
+        x.levelAnchor = LevelObservation(at: back.addingTimeInterval(-50 * 3600), ft: 1537.5)
+        let s = LakeLevelClassifier.evaluate(x)
+        XCTAssertEqual(s.kind, .observed)
+        XCTAssertEqual(s.currentElevationFt, 1532.3)
+        XCTAssertFalse((s.provenance.qualityFlags ?? []).contains { $0.hasPrefix("implausible") || $0.hasPrefix("levelUnverified") })
+        // No anchor (first run after the outage on a fresh deploy): still published, flagged unverified, never UNAVAILABLE.
+        x.levelAnchor = nil
+        let u = LakeLevelClassifier.evaluate(x)
+        XCTAssertEqual(u.currentElevationFt, 1532.3)
+        XCTAssertTrue((u.provenance.qualityFlags ?? []).contains("levelUnverified:\(p.sourceId)"))
+        XCTAssertFalse((u.provenance.qualityFlags ?? []).contains { $0.hasPrefix("implausible") })
+    }
+
+    func testAProxyFloodTenfoldIsPublished() {
+        // A river gauge used as a proxy: 2 ft → 20 ft over 36 h. No lake reference, no decade rule.
+        let p = LevelSeriesRef(provider: .usgs, capability: .nearbyGaugeProxy, station: "RIV", series: "00065", cadenceMin: 60, lagMin: 60)
+        let t0 = iso("2026-11-21T20:00:00Z")
+        let xs = (0...36).map { LevelObservation(at: t0.addingTimeInterval(Double($0) * 3600), ft: 2 + 0.5 * Double($0)) }
+        var b = binding([p]); b.capability = .nearbyGaugeProxy
+        var x = LakeLevelInputs(lakeId: "T|ST", binding: b, capabilityIfUnbound: .noSource, fullPoolFt: 600, poolBasisIsFullPool: true,
+                                poolConfidenceLow: false, live: [(p, xs, nil)], archivedHourly: [], guide: nil, baseline: nil,
+                                now: iso("2026-11-23T08:30:00Z"), processingVersion: "test")
+        x.levelReference = LakeLevelPlausibility.reference(historyFt: tahoeHistory().map(\.ft), fullPoolFt: 600)
+        let s = LakeLevelClassifier.evaluate(x)
+        XCTAssertEqual(s.kind, .proxy)
+        XCTAssertEqual(s.currentElevationFt, 20)
+        XCTAssertFalse((s.provenance.qualityFlags ?? []).contains { $0.hasPrefix("implausible") })
+    }
+
+    func testANoReferenceSeriesIsNotDecadeChecked() {
+        let end = iso("2026-11-23T08:00:00Z")
+        let rise = (0..<8).map { i in LevelObservation(at: end.addingTimeInterval(-Double(7 - i) * 86_400), ft: [2, 2.1, 2.4, 4, 9, 15, 19, 20][i]) }
+        let f = LakeLevelPlausibility.filter(rise, sourceId: "s", reference: nil)
+        XCTAssertTrue(f.rejected.isEmpty, "\(f.rejected)")
+        XCTAssertFalse(f.unverified)
+    }
+
+    func testADatumChangeWithNoOldReadingLeftIsPublishedFlagged() {
+        // After an outage only new-datum readings remain (4 h, fewer than the re-centring needs) and the anchor is on the old
+        // datum: not a decade slip, internally consistent → published, flagged; the anchor rejects nothing it cannot reach.
+        let ref = LakeLevelPlausibility.reference(historyFt: tahoeHistory().map(\.ft), fullPoolFt: 6229.1)
+        let t0 = iso("2026-11-23T04:00:00Z")
+        let xs = (0..<4).map { LevelObservation(at: t0.addingTimeInterval(Double($0) * 3600), ft: 26.0) }
+        let f = LakeLevelPlausibility.filter(xs, sourceId: "s", reference: ref)
+        XCTAssertEqual(f.kept.count, 4)
+        XCTAssertTrue(f.unverified)
     }
 
     func testASlippedMajorityIsRejectedAndTheGoodMinorityPublished() {
@@ -157,7 +222,7 @@ final class LakeLevelPlausibilityTests: XCTestCase {
         let f = LakeLevelPlausibility.filter(xs, sourceId: "s", reference: ref)
         XCTAssertEqual(f.rejected.map(\.rawFt), [1.5])
         XCTAssertEqual(f.kept.last?.ft, 15.0)
-        XCTAssertEqual(LakeLevelPlausibility.filter(xs, sourceId: "s", reference: nil).rejected.map(\.rawFt), [1.5], "no reference: against the series")
+        XCTAssertTrue(LakeLevelPlausibility.filter(xs, sourceId: "s", reference: nil).rejected.isEmpty, "no reference: no decade rule (the step allows 13.5 ft in a day)")
         // A real 2 ft drop over a day, hourly: kept.
         let drop = (0...24).map { h in LevelObservation(at: end.addingTimeInterval(Double(h) * 3600), ft: 15 - 2 * Double(h) / 24) }
         XCTAssertTrue(LakeLevelPlausibility.filter(drop, sourceId: "s", reference: ref).rejected.isEmpty)

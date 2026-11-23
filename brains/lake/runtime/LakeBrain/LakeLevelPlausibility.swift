@@ -13,12 +13,14 @@
 //  Per-lake rules, data-driven. A reading that fails one is REJECTED: it is never published, never used for a change window,
 //  a trend or a baseline. The raw value is reported as a run warning (never in the published flag). The archive is never edited.
 //
-//  D. Decade slip, whatever the band says. W = the lake's recorded range [lo, hi] (below) widened by 15 % of each end. A
-//     positive reading outside W whose ×10 or ÷10 lands inside W is a misplaced decimal point (Tahoe 622.83 → 6,228.3;
-//     Okeechobee 1.5 → 15). This is what catches slips the band cannot: low-elevation lakes (< ~60 ft, where ÷10 moves a
-//     level by less than the 50 ft margin), single readings, and a series whose MAJORITY is slipped. Only ×10 / ÷10 are
-//     tested (×100 and beyond is outside rule 0 at any real lake above 145 ft, and 0.01 is a common stage/elevation ratio).
-//     Not applied to a nearby-gauge proxy (its datum is never the lake's; the classifier passes it no reference).
+//  D. Decade slip, whatever the band says, and ONLY against a real lake reference (history range or directory full pool).
+//     W = that range [lo, hi] (below) widened by 15 % of each end. A positive reading outside W whose ×10 or ÷10 lands inside
+//     W is a misplaced decimal point (Tahoe 622.83 → 6,228.3; Okeechobee 1.5 → 15). This catches what the band cannot:
+//     low-elevation lakes (< ~60 ft, where ÷10 moves a level by less than the 50 ft margin), single readings, and a series
+//     whose MAJORITY is slipped. Only ×10 / ÷10 are tested (×100 and beyond is outside rule 0 at any real lake above 145 ft,
+//     and 0.01 is a common stage/elevation ratio). Never against a series' own median (a river gauge can rise 10× in a
+//     flood: 2 ft → 20 ft is water), so never on a nearby-gauge proxy (the classifier passes it no reference) or on a series
+//     with no reference.
 //
 //  1. Level band. The lake's own record sets it:
 //       lo, hi  = p01 and p99 of the lake's daily history (≥ 30 days; robust to a minority of slips, which is what the record holds),
@@ -38,6 +40,15 @@
 //     Continuity: a reading outside the band is still ACCEPTED when it continues the accepted series smoothly (within
 //     1 ft + 2 ft/h of its accepted neighbour, no jump allowance). A real drawdown or flood that walks past the band edge is
 //     water; a slip is a jump. (Owner rule: never an older or "unknown" value when a real newer one exists.)
+//     Anchor: the lake's last published accepted value (`anchor`, ≤ 7 days old, itself passing rules 0 and D, and inside
+//     the band when the band comes from history) is an accepted reading too. A reading outside the band that is within the
+//     STEP limit of the anchor over the gap is accepted (Ross Lake after a 2-day outage, 70 ft below full pool).
+//     No in-band reading and no usable anchor: the lake is never blanked for it. The series is accepted as far as it is
+//     internally consistent (the step walk from its own median) and passes rules 0 and D, and the source is marked
+//     `unverified` (the classifier flags `levelUnverified:<sourceId>`). A lone reading with no anchor and no history is
+//     published the same way. Only when some readings ARE in the band are the out-of-band ones that do not continue them
+//     rejected (one slip among good readings; or the first hours of a datum change, which shows the last old-datum reading
+//     until the new series has 6 readings over 24 h).
 //
 //  2. Step. Between consecutive accepted readings of one series, a change of more than
 //       stepToleranceFt + maxRateFtPerHour × hours apart     (10 ft + 2 ft/h)
@@ -46,6 +57,9 @@
 //     baseline's existing spike tolerance (LakeLevelBaseline.spikeToleranceFt): it absorbs a single noisy reading at any gap.
 //     The walk starts from the in-band reading closest to the in-band median (the older on a tie), so one bad reading cannot make the
 //     good ones look like steps.
+//
+//  Known limit (no rule): a digit transposition (6,226.05 ↔ 6,262.05) or a single wrong digit moves a reading by less than
+//  the band margin and is not a decade, so it is caught only by the step rule (when it is a jump from its neighbours).
 //
 //  History (LakeBaselineBuilder): rule 1 with the history's own band leaves slip days out of both climatologies, before the
 //  neighbour spike filter runs; both kinds are listed in the baseline's `excludedSpikeDays` (the #218 field, extended). The
@@ -78,6 +92,8 @@ public enum LakeLevelPlausibility {
     public static let minRecentreHours = 24.0
     /// Continuity rescue for a reading outside the band: no jump allowance, only sustained movement.
     public static let continuityToleranceFt = 1.0
+    /// The last published accepted value counts as an anchor only this long after its observation.
+    public static let maxAnchorAgeHours = 168.0
     /// Step rule: tolerance at any gap (== LakeLevelBaseline.spikeToleranceFt) plus a maximum sustained rate.
     public static let stepToleranceFt = LakeLevelBaseline.spikeToleranceFt
     public static let maxRateFtPerHour = 2.0
@@ -155,11 +171,14 @@ public enum LakeLevelPlausibility {
     static func stepLimit(hours: Double) -> Double { stepToleranceFt + maxRateFtPerHour * abs(hours) }
     static func continuityLimit(hours: Double) -> Double { continuityToleranceFt + maxRateFtPerHour * abs(hours) }
 
-    /// Splits one live series (oldest first) into accepted and rejected readings. `datumOffsetFt` puts a reading on the binding's
-    /// datum, which is the datum of `reference`.
+    /// Splits one live series into accepted and rejected readings. `datumOffsetFt` puts a reading on the binding's datum,
+    /// which is the datum of `reference` and `anchor`. `reference` nil = no lake reference (a proxy, or a lake with neither
+    /// history nor full pool): rule D is then not applied. `unverified`: nothing in the series was in the band or tied to the
+    /// anchor, so what was kept is only internally consistent (see the header).
     public static func filter(_ readings: [LevelObservation], sourceId: String, datumOffsetFt: Double = 0,
-                              reference: Reference?) -> (kept: [LevelObservation], rejected: [Rejection]) {
-        guard !readings.isEmpty else { return ([], []) }
+                              reference: Reference?, anchor: LevelObservation? = nil)
+        -> (kept: [LevelObservation], rejected: [Rejection], unverified: Bool) {
+        guard !readings.isEmpty else { return ([], [], false) }
         let readings = readings.sorted { $0.at < $1.at }
         var rejected: [Rejection] = []
         func ft(_ o: LevelObservation) -> Double { o.ft + datumOffsetFt }
@@ -170,39 +189,70 @@ public enum LakeLevelPlausibility {
         for o in readings where !physicallyPossible(ft(o)) {
             rejected.append(Rejection(sourceId: sourceId, at: o.at, rawFt: o.ft, reason: "not a lake level on any datum"))
         }
-        // D. Decade slips against the recorded range (or, with no reference, the series' own median with ≥ 3 readings).
-        let range: (Double, Double)? = reference.map { ($0.lo, $0.hi) }
-            ?? (possible.count >= minSeriesForSelfBand ? median(possible.map(ft)).map { ($0, $0) } : nil)
+        // D. Decade slips, against a real lake reference only.
         var candidates: [LevelObservation] = []
         for o in possible {
-            if let rg = range, isDecadeSlip(ft(o), lo: rg.0, hi: rg.1) {
-                rejected.append(Rejection(sourceId: sourceId, at: o.at, rawFt: o.ft, reason: "decade slip (×10 or ÷10 of \(fmt(rg.0))–\(fmt(rg.1)) ft)"))
+            if let r = reference, isDecadeSlip(ft(o), lo: r.lo, hi: r.hi) {
+                rejected.append(Rejection(sourceId: sourceId, at: o.at, rawFt: o.ft, reason: "decade slip (×10 or ÷10 of \(fmt(r.lo))–\(fmt(r.hi)) ft)"))
             } else { candidates.append(o) }
         }
+        guard !candidates.isEmpty else { return ([], rejected.sorted { $0.at < $1.at }, false) }
+
         // 1. Band (nil: the series cannot be judged by level, every candidate counts as inside).
         let b = band(for: candidates.map { (at: $0.at, ft: ft($0)) }, reference: reference)
-        let inside = candidates.map { b?.contains(ft($0)) ?? true }
+        var inside = candidates.map { b?.contains(ft($0)) ?? true }
 
-        // 2. Step, walking out from the in-band reading closest to the in-band median. An out-of-band reading is accepted only
-        //    as a smooth continuation (continuityLimit); an in-band one within the step limit.
-        var ok = Array(repeating: false, count: candidates.count)
-        let inBandFt = candidates.indices.filter { inside[$0] }.map { ft(candidates[$0]) }
-        if let med = median(inBandFt),
-           let seed = candidates.indices.filter({ inside[$0] }).min(by: { abs(ft(candidates[$0]) - med) < abs(ft(candidates[$1]) - med) }) {
+        // The anchor (binding datum already): usable when recent, possible, not a decade slip and, against a history band, inside it.
+        let historyBand = reference.map { $0.hi > $0.lo } ?? false
+        let usableAnchor: LevelObservation? = anchor.flatMap { a in
+            guard let newest = candidates.last, physicallyPossible(a.ft), a.at <= newest.at,
+                  newest.at.timeIntervalSince(a.at) <= maxAnchorAgeHours * 3600 else { return nil }
+            if let r = reference, isDecadeSlip(a.ft, lo: r.lo, hi: r.hi) { return nil }
+            if historyBand, let b, !b.contains(a.ft) { return nil }
+            return a
+        }
+        // No in-band reading and no anchor: never blank the lake; judge the series by its own consistency (`unverified`).
+        var unverified = false
+        if !inside.contains(true), usableAnchor == nil {
+            unverified = true
+            inside = Array(repeating: true, count: candidates.count)
+        }
+
+        // 2. Step walk. Nodes are the candidates plus the anchor (never output). Seed: the in-band candidate closest to the
+        //    in-band median; else the anchor. An out-of-band candidate is accepted as a smooth continuation of its accepted
+        //    neighbour (continuityLimit), or within the step limit when that neighbour is the anchor.
+        struct Node { var at: Date; var ft: Double; var inside: Bool; var candidate: Int? }
+        var nodes = candidates.enumerated().map { Node(at: $0.element.at, ft: ft($0.element), inside: inside[$0.offset], candidate: $0.offset) }
+        if let a = usableAnchor {
+            nodes.append(Node(at: a.at, ft: a.ft, inside: true, candidate: nil))
+            nodes.sort { $0.at < $1.at || ($0.at == $1.at && $0.candidate == nil) }
+        }
+        var ok = Array(repeating: false, count: nodes.count)
+        let inBand = nodes.indices.filter { nodes[$0].inside && nodes[$0].candidate != nil }
+        let seed: Int?
+        if let med = median(inBand.map { nodes[$0].ft }) {
+            seed = inBand.min { abs(nodes[$0].ft - med) < abs(nodes[$1].ft - med) }
+        } else {
+            seed = nodes.firstIndex { $0.candidate == nil }
+        }
+        if let seed {
             ok[seed] = true
             for dir in [1, -1] {
                 var last = seed, i = seed + dir
-                while i >= 0, i < candidates.count {
-                    let h = candidates[i].at.timeIntervalSince(candidates[last].at) / 3600
-                    let d = ft(candidates[i]) - ft(candidates[last])
-                    if abs(d) <= (inside[i] ? stepLimit(hours: h) : continuityLimit(hours: h)) { ok[i] = true; last = i }
+                while i >= 0, i < nodes.count {
+                    let h = nodes[i].at.timeIntervalSince(nodes[last].at) / 3600
+                    let d = abs(nodes[i].ft - nodes[last].ft)
+                    let limit = nodes[i].inside || nodes[last].candidate == nil ? stepLimit(hours: h) : continuityLimit(hours: h)
+                    if d <= limit { ok[i] = true; last = i }
                     i += dir
                 }
             }
         }
+        var accepted = Array(repeating: false, count: candidates.count)
+        for (i, n) in nodes.enumerated() { if let c = n.candidate, ok[i] { accepted[c] = true } }
         var kept: [LevelObservation] = []
         for (i, o) in candidates.enumerated() {
-            if ok[i] { kept.append(o); continue }
+            if accepted[i] { kept.append(o); continue }
             let why: String
             if !inside[i], let b {
                 why = "outside \(fmt(b.lowFt))–\(fmt(b.highFt)) ft (\(b.basis) ± \(fmt(b.marginFt)) ft) and not a smooth continuation"
@@ -211,7 +261,7 @@ public enum LakeLevelPlausibility {
             }
             rejected.append(Rejection(sourceId: sourceId, at: o.at, rawFt: o.ft, reason: why))
         }
-        return (kept, rejected.sorted { $0.at < $1.at })
+        return (kept, rejected.sorted { $0.at < $1.at }, unverified && !kept.isEmpty)
     }
 
     /// Daily history dates outside the history's own band (rule 1) or decade slips of it (rule D). History is already on the

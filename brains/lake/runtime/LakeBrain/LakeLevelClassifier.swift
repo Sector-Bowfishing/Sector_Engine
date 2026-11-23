@@ -46,6 +46,8 @@ public struct LakeLevelInputs: Sendable {
     public var rainNext12hIn: Double? = nil
     /// The lake's plausible level reference from its daily history (LakeLevelPlausibility). nil → the directory full pool alone.
     public var levelReference: LakeLevelPlausibility.Reference? = nil
+    /// The lake's last published accepted level (binding datum, observation time), the plausibility anchor. nil = none.
+    public var levelAnchor: LevelObservation? = nil
 }
 
 public enum LakeLevelClassifier {
@@ -68,23 +70,28 @@ public enum LakeLevelClassifier {
     /// The live series and the shared hourly archive with physically impossible readings removed (LakeLevelPlausibility), and
     /// what was removed. A nearby-gauge proxy is never judged against the lake's reference (its datum is not the lake's).
     public static func screened(_ x: LakeLevelInputs) -> (live: [(ref: LevelSeriesRef, readings: [LevelObservation], error: String?)],
-                                                         archivedHourly: [LevelObservation], rejections: [LakeLevelPlausibility.Rejection]) {
+                                                         archivedHourly: [LevelObservation], rejections: [LakeLevelPlausibility.Rejection],
+                                                         unverified: Set<String>) {
         let reference = x.levelReference ?? LakeLevelPlausibility.reference(historyFt: [], fullPoolFt: x.fullPoolFt)
         var rejections: [LakeLevelPlausibility.Rejection] = []
+        var unverified: Set<String> = []
         var live: [(ref: LevelSeriesRef, readings: [LevelObservation], error: String?)] = []
         for l in x.live {
+            let proxy = l.ref.capability == .nearbyGaugeProxy
             let f = LakeLevelPlausibility.filter(l.readings, sourceId: l.ref.sourceId, datumOffsetFt: l.ref.datumOffsetFt,
-                                                 reference: l.ref.capability == .nearbyGaugeProxy ? nil : reference)
+                                                 reference: proxy ? nil : reference, anchor: proxy ? nil : x.levelAnchor)
             rejections += f.rejected
+            if f.unverified { unverified.insert(l.ref.sourceId) }
             live.append((ref: l.ref, readings: f.kept, error: l.error))
         }
         var archived = x.archivedHourly
         if let p = x.live.first, !archived.isEmpty {
+            let proxy = p.ref.capability == .nearbyGaugeProxy
             let f = LakeLevelPlausibility.filter(archived, sourceId: "\(p.ref.sourceId)#archive", datumOffsetFt: p.ref.datumOffsetFt,
-                                                 reference: p.ref.capability == .nearbyGaugeProxy ? nil : reference)
+                                                 reference: proxy ? nil : reference, anchor: proxy ? nil : x.levelAnchor)
             archived = f.kept; rejections += f.rejected
         }
-        return (live, archived, rejections)
+        return (live, archived, rejections, unverified)
     }
 
     /// Past due by more than two cadences.
@@ -222,7 +229,7 @@ public enum LakeLevelClassifier {
         // Physically impossible readings (decimal slips, impossible steps) are rejected before anything reads the series
         // (LakeLevelPlausibility). Selection then falls back as usual: the source's last valid reading within its stale rule,
         // else the next bound source. Each rejection is flagged (no raw value; the runner logs it as a warning).
-        let (live, archivedHourly, rejections) = screened(x)
+        let (live, archivedHourly, rejections, unverified) = screened(x)
         for r in rejections.prefix(LakeLevelPlausibility.maxFlags) { flags.append(LakeLevelPlausibility.flag(r)) }
         if rejections.count > LakeLevelPlausibility.maxFlags { flags.append("implausibleReadingsMore:\(rejections.count - LakeLevelPlausibility.maxFlags)") }
 
@@ -250,6 +257,8 @@ public enum LakeLevelClassifier {
            rejections.contains(where: { $0.sourceId == sel.ref.sourceId && $0.at == raw.at }) {
             flags.append("implausibleLatestRejected:\(sel.ref.sourceId)")
         }
+        // Accepted on its own consistency only (no in-band reading, no anchor): published, never blanked, but labelled.
+        if unverified.contains(sel.ref.sourceId) { flags.append("levelUnverified:\(sel.ref.sourceId)") }
         if sel.usedFallback, let p = live.first {
             flags.append("primarySourceStale:\(p.ref.sourceId)" + (p.readings.last.map { "@\(BrainPlatform.iso($0.at))" } ?? ""))
             flags.append("fallbackSource:\(sel.ref.sourceId)")
