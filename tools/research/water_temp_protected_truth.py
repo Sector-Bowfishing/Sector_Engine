@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Water Temp Level-4 protected truth: read-only runner for protocol PT-L4-2026-11-23 (gap WATER-VAL-001).
 
-The protocol (brains/water-temperature/research/protected-truth/PT-L4-2026-11-23.protocol.json) was pre-registered and
+The protocol (docs/brains/water-temp-protected-truth/PT-L4-2026-11-23.protocol.json) was pre-registered and
 hashed before any truth value was fetched. This runner only reads public sources and writes local files in --out. It never
 writes Firebase, never changes a score, binding or schedule, and never opens a truth value unless step A showed sufficiency
 and an owner request for step B is given.
@@ -33,7 +33,7 @@ import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
-PROTOCOL = os.path.join(REPO, "brains", "water-temperature", "research", "protected-truth", "PT-L4-2026-11-23.protocol.json")
+PROTOCOL = os.path.join(REPO, "docs", "brains", "water-temp-protected-truth", "PT-L4-2026-11-23.protocol.json")
 LABELS = ["INTERNAL_EXPERIMENTAL", "NOT_FOR_CUSTOMERS"]
 ALLOWED_HOSTS = {"www.waterqualitydata.us", "archive-api.open-meteo.com"}
 WQP = "https://www.waterqualitydata.us/data/{kind}/search"

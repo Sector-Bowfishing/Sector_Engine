@@ -40,7 +40,7 @@ Choices made (reversible, standing approval 6): the protocol keeps the four froz
 None. `waterqualitydata.us` and `api.waterdata.usgs.gov` were refused by this session's network proxy (CONNECT 403; not retried). Candidate sources come from public program pages and search results; every row is an EVIDENCE_LEAD with `verified: false`.
 
 ## Decisions for Michael (batched)
-1. Post the draft Mini request (step A, metadata only) on Sector_Ops #51: `brains/water-temperature/research/protected-truth/MINI_REQUEST_DRAFT.txt`.
+1. Post the draft Mini request (step A, metadata only) on Sector_Ops #51: `docs/brains/water-temp-protected-truth/MINI_REQUEST_DRAFT.md`.
 2. Before any step B: choose this protocol's pass mark (pooled and per-lake RMSE ≤ 2.5 °C) or the private Stage 3C.3 rule v3; restate the chosen rule in the Engine (CG-3.1-23).
 3. Likely outcome on public data alone: still INSUFFICIENT for Wheeler and Wilson. The unlock is a data request to TVA for forebay and mid-reservoir profiles (Wheeler TRM 277.0 / 295.9, Wilson TRM 260.8) for 2021–2026, or ADEM's next Tennessee-basin rotation. Logger purchase (D3) costs money and stays an owner decision.
 4. Any change to `frozen-scores.json`, the Swift `protectedLakes` constants or the validation nodes after a PASS is a separate owner-approved change.
@@ -53,3 +53,9 @@ No truth value opened, no score or rubric change, no Firebase read or write, no 
 
 ## Operating contract §19
 Gap WATER-VAL-001; bowfisher decision: whether the temperature estimate was checked on a protected lake before it is trusted; files as above; tests as above; score before/after 3.0 / 3.0 (unchanged); open gaps WATER-VAL-001 (BLOCKED, now with a pre-registered path), WATER-CAL-001, WATER-UNC-001; field validation needed: none required (loggers optional, RS-39); not changed: live systems, schedulers, customer `/conditions`, model, science.
+
+## Review round 1 (independent review CLEAN; CI fixes)
+- Architecture invariant 16 allows only CHARTER/GAPS/MANIFEST/README in `brains/*/research/`. The protocol folder moved unchanged to `docs/brains/water-temp-protected-truth/` (`git mv`; the protocol bytes and sha256 are unchanged and it does not name its own path); the Mini draft became `MINI_REQUEST_DRAFT.md`. The runner's protocol path follows.
+- The Mini draft now runs the census twice (frozen holdout window to 2026-06-30, and the protocol window to the cutoff) and asks Michael whether casts after 2026-06 may count toward 25/150.
+- Engineering-status digest regenerated (`collect_certification.py`, `build_engineering_status.py --write`, `--check` OK).
+- Known limits recorded for step B (not fixed in this protocol): the owner-request gate is a string check, not proof of approval; `fetch-results` pulls all WQP Result rows for each lake box from 2021-01-01, which is more than the counted casts named in the protocol. Fix both before step B, under a new protocol id.
