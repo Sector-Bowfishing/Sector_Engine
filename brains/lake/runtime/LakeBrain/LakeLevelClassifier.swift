@@ -65,6 +65,28 @@ public enum LakeLevelClassifier {
         var usedFallback: Bool
     }
 
+    /// The live series and the shared hourly archive with physically impossible readings removed (LakeLevelPlausibility), and
+    /// what was removed. A nearby-gauge proxy is never judged against the lake's reference (its datum is not the lake's).
+    public static func screened(_ x: LakeLevelInputs) -> (live: [(ref: LevelSeriesRef, readings: [LevelObservation], error: String?)],
+                                                         archivedHourly: [LevelObservation], rejections: [LakeLevelPlausibility.Rejection]) {
+        let reference = x.levelReference ?? LakeLevelPlausibility.reference(historyFt: [], fullPoolFt: x.fullPoolFt)
+        var rejections: [LakeLevelPlausibility.Rejection] = []
+        var live: [(ref: LevelSeriesRef, readings: [LevelObservation], error: String?)] = []
+        for l in x.live {
+            let f = LakeLevelPlausibility.filter(l.readings, sourceId: l.ref.sourceId, datumOffsetFt: l.ref.datumOffsetFt,
+                                                 reference: l.ref.capability == .nearbyGaugeProxy ? nil : reference)
+            rejections += f.rejected
+            live.append((ref: l.ref, readings: f.kept, error: l.error))
+        }
+        var archived = x.archivedHourly
+        if let p = x.live.first, !archived.isEmpty {
+            let f = LakeLevelPlausibility.filter(archived, sourceId: "\(p.ref.sourceId)#archive", datumOffsetFt: p.ref.datumOffsetFt,
+                                                 reference: p.ref.capability == .nearbyGaugeProxy ? nil : reference)
+            archived = f.kept; rejections += f.rejected
+        }
+        return (live, archived, rejections)
+    }
+
     /// Past due by more than two cadences.
     static func isStale(_ obsAt: Date, ref: LevelSeriesRef, now: Date) -> Bool {
         now.timeIntervalSince(obsAt) > Double(ref.lagMin + 3 * ref.cadenceMin) * 60
@@ -199,19 +221,8 @@ public enum LakeLevelClassifier {
 
         // Physically impossible readings (decimal slips, impossible steps) are rejected before anything reads the series
         // (LakeLevelPlausibility). Selection then falls back as usual: the source's last valid reading within its stale rule,
-        // else the next bound source. Each rejection is flagged with its raw value.
-        let reference = x.levelReference ?? LakeLevelPlausibility.reference(historyFt: [], fullPoolFt: x.fullPoolFt)
-        var rejections: [LakeLevelPlausibility.Rejection] = []
-        let live: [(ref: LevelSeriesRef, readings: [LevelObservation], error: String?)] = x.live.map { l in
-            let f = LakeLevelPlausibility.filter(l.readings, sourceId: l.ref.sourceId, datumOffsetFt: l.ref.datumOffsetFt, reference: reference)
-            rejections += f.rejected
-            return (l.ref, f.kept, l.error)
-        }
-        var archivedHourly = x.archivedHourly
-        if let p = x.live.first, !archivedHourly.isEmpty {
-            let f = LakeLevelPlausibility.filter(archivedHourly, sourceId: "\(p.ref.sourceId)#archive", datumOffsetFt: p.ref.datumOffsetFt, reference: reference)
-            archivedHourly = f.kept; rejections += f.rejected
-        }
+        // else the next bound source. Each rejection is flagged (no raw value; the runner logs it as a warning).
+        let (live, archivedHourly, rejections) = screened(x)
         for r in rejections.prefix(LakeLevelPlausibility.maxFlags) { flags.append(LakeLevelPlausibility.flag(r)) }
         if rejections.count > LakeLevelPlausibility.maxFlags { flags.append("implausibleReadingsMore:\(rejections.count - LakeLevelPlausibility.maxFlags)") }
 
@@ -235,7 +246,7 @@ public enum LakeLevelClassifier {
         let kind: LakeStateKind = sel.ref.capability == .nearbyGaugeProxy ? .proxy : .observed
         let current = r2(sel.latest.ft + sel.ref.datumOffsetFt)
         let ageH = r2(now.timeIntervalSince(sel.latest.at) / 3600)
-        if let raw = x.live.first(where: { $0.ref == sel.ref })?.readings.last, raw.at > sel.latest.at,
+        if let raw = x.live.first(where: { $0.ref == sel.ref })?.readings.max(by: { $0.at < $1.at }), raw.at > sel.latest.at,
            rejections.contains(where: { $0.sourceId == sel.ref.sourceId && $0.at == raw.at }) {
             flags.append("implausibleLatestRejected:\(sel.ref.sourceId)")
         }

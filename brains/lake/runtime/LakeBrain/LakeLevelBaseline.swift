@@ -148,12 +148,13 @@ public enum LakeBaselineBuilder {
 
     /// `poolBasisIsFullPool`: regulated lakes use the 30 most recent complete years; anything else
     /// (`naturalSurface`) uses all complete years up to 60. The rate climatology keeps the last-30-years rule.
+    /// `fullPoolFt` (directory) widens the plausibility band only where it agrees with the history, exactly as on the live path.
     public static func build(lakeId: String, daily raw: [DailyLevel], today: String,
-                             poolBasisIsFullPool: Bool = true) -> LakeLevelBaseline {
+                             poolBasisIsFullPool: Bool = true, fullPoolFt: Double? = nil) -> LakeLevelBaseline {
         let dated = LakeDailyHistory.dedupe(raw).filter { $0.date <= today }
         // Days outside the lake's own plausible band (decimal slips; LakeLevelPlausibility rule 1) go first, so they cannot
         // distort the neighbour medians the spike filter uses; then isolated in-band errors (`spikeDays`).
-        let implausible = LakeLevelPlausibility.implausibleDays(dated)
+        let implausible = LakeLevelPlausibility.implausibleDays(dated, fullPoolFt: fullPoolFt)
         let all = implausible.isEmpty ? dated : dated.filter { !implausible.contains($0.date) }
         let spikes = spikeDays(all).union(implausible)
         let daily = spikes.isEmpty ? all : all.filter { !spikes.contains($0.date) }

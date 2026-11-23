@@ -67,7 +67,11 @@ final class LakeLevelPlausibilityTests: XCTestCase {
         XCTAssertEqual(s.differenceFromNormalPoolFt, -3.06)
         XCTAssertNotEqual(s.trendState, .risingRapidly)
         let flags = s.provenance.qualityFlags ?? []
-        XCTAssertTrue(flags.contains("implausibleReading:\(cwms.sourceId)@2026-11-23T08:00:00Z=6226054.00"), "\(flags)")
+        XCTAssertTrue(flags.contains("implausibleReading:\(cwms.sourceId)@2026-11-23T08:00:00Z"), "\(flags)")
+        XCTAssertFalse(flags.joined().contains("6226054"), "the raw value is a run warning, never published")
+        let w = LakeLevelClassifier.screened(inputs(live: [(cwms, cwmsDaily(newest: 6_226_054))], reference: ref)).rejections.map(LakeLevelPlausibility.warning)
+        XCTAssertEqual(w.count, 1)
+        XCTAssertTrue(w[0].contains("raw 6226054.00 ft"), w[0])
         XCTAssertTrue(flags.contains("implausibleLatestRejected:\(cwms.sourceId)"))
         XCTAssertFalse(s.facts?.joined().contains("6226054") ?? true)
     }
@@ -103,6 +107,91 @@ final class LakeLevelPlausibilityTests: XCTestCase {
         XCTAssertEqual(s.kind, .unavailable)
         XCTAssertNil(s.currentElevationFt)
         XCTAssertTrue((s.provenance.qualityFlags ?? []).contains("allReadingsImplausible"))
+    }
+
+    // MARK: review of #249: short series, slipped majorities, low lakes, real drawdowns
+
+    func testASingleSlippedReadingNeverMovesTheBand() {
+        let ref = LakeLevelPlausibility.reference(historyFt: tahoeHistory().map(\.ft), fullPoolFt: 6229.1)
+        let t = iso("2026-11-23T08:00:00Z")
+        for v in [622.6, 7000.0, 62.3] {
+            let f = LakeLevelPlausibility.filter([LevelObservation(at: t, ft: v)], sourceId: "s", reference: ref)
+            XCTAssertTrue(f.kept.isEmpty, "\(v)")
+            XCTAssertEqual(f.rejected.map(\.rawFt), [v])
+        }
+    }
+
+    func testASlippedMajorityIsRejectedAndTheGoodMinorityPublished() {
+        let ref = LakeLevelPlausibility.reference(historyFt: tahoeHistory().map(\.ft), fullPoolFt: 6229.1)
+        let end = iso("2026-11-23T08:00:00Z")
+        let xs = (0..<8).map { i in LevelObservation(at: end.addingTimeInterval(-Double(7 - i) * 86_400), ft: i < 3 ? 6226.0 + Double(i) * 0.01 : 622.60) }
+        let f = LakeLevelPlausibility.filter(xs, sourceId: "s", reference: ref)
+        XCTAssertEqual(f.kept.count, 3)
+        XCTAssertEqual(f.kept.first?.ft, 6226.0)
+        XCTAssertEqual(f.rejected.count, 5)
+        XCTAssertTrue(f.rejected.allSatisfy { $0.reason.hasPrefix("decade slip") })
+        let s = LakeLevelClassifier.evaluate(inputs(live: [(cwms, xs)], reference: ref))
+        XCTAssertEqual(s.currentElevationFt, 6226.02)
+    }
+
+    func testARealDatumChangeIsStillAccepted() {
+        // The gauge moves to a local datum (6,200 ft lower) and stays there for 30 h: that is the series now.
+        let ref = LakeLevelPlausibility.reference(historyFt: tahoeHistory().map(\.ft), fullPoolFt: 6229.1)
+        let t0 = iso("2026-11-21T00:00:00Z")
+        let xs = (0..<54).map { h in LevelObservation(at: t0.addingTimeInterval(Double(h) * 3600), ft: h < 24 ? 6226.0 : 26.0) }
+        let f = LakeLevelPlausibility.filter(xs, sourceId: "s", reference: ref)
+        XCTAssertEqual(f.kept.count, 30)
+        XCTAssertEqual(f.kept.last?.ft, 26.0)
+        // …but the same switch seen for only a few hours is not enough to move the band.
+        let short = Array(xs.prefix(28))
+        XCTAssertEqual(LakeLevelPlausibility.filter(short, sourceId: "s", reference: ref).kept.last?.ft, 6226.0)
+    }
+
+    func testLowElevationLakeDecimalSlipIsRejectedAndARealDropIsKept() {
+        // An Okeechobee-like lake: 10–16 ft. ÷10 moves it by less than the 50 ft margin; the decade rule catches it.
+        let hist = (0..<3000).map { 13 + 3 * sin(Double($0) / 365 * 2 * .pi) }
+        let ref = LakeLevelPlausibility.reference(historyFt: hist, fullPoolFt: nil)
+        let end = iso("2026-11-23T08:00:00Z")
+        var xs = (0..<8).map { i in LevelObservation(at: end.addingTimeInterval(-Double(7 - i) * 86_400), ft: 15.0) }
+        xs[7].ft = 1.5
+        let f = LakeLevelPlausibility.filter(xs, sourceId: "s", reference: ref)
+        XCTAssertEqual(f.rejected.map(\.rawFt), [1.5])
+        XCTAssertEqual(f.kept.last?.ft, 15.0)
+        XCTAssertEqual(LakeLevelPlausibility.filter(xs, sourceId: "s", reference: nil).rejected.map(\.rawFt), [1.5], "no reference: against the series")
+        // A real 2 ft drop over a day, hourly: kept.
+        let drop = (0...24).map { h in LevelObservation(at: end.addingTimeInterval(Double(h) * 3600), ft: 15 - 2 * Double(h) / 24) }
+        XCTAssertTrue(LakeLevelPlausibility.filter(drop, sourceId: "s", reference: ref).rejected.isEmpty)
+    }
+
+    func testARealDrawdownPastTheFullPoolBandIsPublishedAtANoHistoryLake() {
+        // No history; full pool 600 → band 550–650. A 4-day drawdown at 0.25 ft/h from 570 crosses 550 on day 4.
+        let t0 = iso("2026-11-19T08:00:00Z")
+        let p = LevelSeriesRef(provider: .usgs, capability: .directOperatorPool, station: "D", series: "00062", cadenceMin: 60, lagMin: 60)
+        let xs = (0...96).map { h in LevelObservation(at: t0.addingTimeInterval(Double(h) * 3600), ft: 570 - 0.25 * Double(h)) }
+        var x = LakeLevelInputs(lakeId: "T|ST", binding: binding([p]), capabilityIfUnbound: .noSource, fullPoolFt: 600, poolBasisIsFullPool: true,
+                                poolConfidenceLow: false, live: [(p, xs, nil)], archivedHourly: [], guide: nil, baseline: nil,
+                                now: iso("2026-11-23T08:30:00Z"), processingVersion: "test")
+        x.levelReference = nil
+        let s = LakeLevelClassifier.evaluate(x)
+        XCTAssertEqual(s.currentElevationFt, 546.0, "the newest real value, not an older one and not unknown")
+        XCTAssertFalse((s.provenance.qualityFlags ?? []).contains { $0.hasPrefix("implausible") })
+        // A jump to the same place is still a slip.
+        var jumped = Array(xs.prefix(60)); jumped.append(LevelObservation(at: t0.addingTimeInterval(61 * 3600), ft: 530))
+        XCTAssertEqual(LakeLevelPlausibility.filter(jumped, sourceId: "s", reference: .init(lo: 600, hi: 600, marginFt: 50, basis: "full pool")).rejected.map(\.rawFt), [530])
+    }
+
+    func testALowLakeHistoryDecimalSlipIsLeftOutOfTheBaseline() {
+        var xs: [DailyLevel] = []
+        var d = LakeLevelCalendar.date(year: 2015, month: 1, day: 1)
+        while d <= LakeLevelCalendar.date(year: 2025, month: 12, day: 31) {
+            let day = LakeLevelCalendar.dayString(d, timeZone: utc)
+            xs.append(DailyLevel(date: day, ft: 13 + 3 * sin(Double(LakeLevelCalendar.doy365(day)!) / 365 * 2 * .pi), sourceId: "t"))
+            d = d.addingTimeInterval(86_400)
+        }
+        let i = xs.firstIndex { $0.date == "2020-04-10" }!
+        xs[i].ft = xs[i].ft / 10
+        let b = LakeBaselineBuilder.build(lakeId: "T|FL", daily: xs, today: "2026-06-01", fullPoolFt: 15.5)
+        XCTAssertEqual(b.excludedSpikeDays, ["2020-04-10"])
     }
 
     // MARK: the rule itself
@@ -154,7 +243,7 @@ final class LakeLevelPlausibilityTests: XCTestCase {
         let f = LakeLevelPlausibility.filter(xs, sourceId: "s", reference: .init(lo: 560, hi: 640, marginFt: 80, basis: "t"))
         XCTAssertEqual(f.rejected.map(\.rawFt), [615])
         XCTAssertEqual(f.kept.count, 29)
-        XCTAssertTrue(f.rejected[0].reason.hasPrefix("step"), f.rejected[0].reason)
+        XCTAssertTrue(f.rejected[0].reason.hasPrefix("impossible step"), f.rejected[0].reason)
     }
 
     func testABadFirstReadingDoesNotTakeTheGoodOnesWithIt() {

@@ -10,8 +10,15 @@
 //     summit of Mount Whitney). A reading outside that is not a level on any datum. This is a backstop for the case rule 1
 //     cannot judge (a series whose readings are ALL wrong looks like a series on another datum); it is not the per-lake rule.
 //
-//  Two per-lake rules, data-driven. A reading that fails either is REJECTED: it is never published, never used for a
-//  change window, a trend or a baseline. The raw value is reported as a warning. The archive itself is never edited.
+//  Per-lake rules, data-driven. A reading that fails one is REJECTED: it is never published, never used for a change window,
+//  a trend or a baseline. The raw value is reported as a run warning (never in the published flag). The archive is never edited.
+//
+//  D. Decade slip, whatever the band says. W = the lake's recorded range [lo, hi] (below) widened by 15 % of each end. A
+//     positive reading outside W whose ×10 or ÷10 lands inside W is a misplaced decimal point (Tahoe 622.83 → 6,228.3;
+//     Okeechobee 1.5 → 15). This is what catches slips the band cannot: low-elevation lakes (< ~60 ft, where ÷10 moves a
+//     level by less than the 50 ft margin), single readings, and a series whose MAJORITY is slipped. Only ×10 / ÷10 are
+//     tested (×100 and beyond is outside rule 0 at any real lake above 145 ft, and 0.01 is a common stage/elevation ratio).
+//     Not applied to a nearby-gauge proxy (its datum is never the lake's; the classifier passes it no reference).
 //
 //  1. Level band. The lake's own record sets it:
 //       lo, hi  = p01 and p99 of the lake's daily history (≥ 30 days; robust to a minority of slips, which is what the record holds),
@@ -23,17 +30,21 @@
 //     ~60 ft of elevation it lands far outside; a real drawdown or flood that is new to the record moves the level by a fraction of
 //     the lake's range. The 50 ft floor is there for lakes with a narrow record (Tahoe's p01–p99 is ~6 ft): a level 50 ft beyond
 //     anything the lake has recorded is not a level the lake can reach between two runs.
-//     The band must describe the series it judges. When fewer than half of a live series' readings are inside it (the history
-//     is on another datum: the `historyLiveMismatch` lakes), the band is re-centred on that series' own median with the same
-//     width. A live series with no reference at all is judged against its own median ± 50 ft, and only with ≥ 3 readings
-//     (fewer cannot say which reading is the odd one out; rules 0 and 2 still apply).
+//     The band must describe the series it judges, but a short or inconsistent series never moves it. It is re-centred (same
+//     width, on the median of the readings outside it) only when ALL hold: the newest reading is outside it, at least 6
+//     readings are outside it, they span ≥ 24 h, and they fit in one band width. That is a series on another datum (the
+//     `historyLiveMismatch` lakes, a gauge re-datumed); one slip, or a day of them, never qualifies. A live series with no
+//     reference is judged against its own median ± 50 ft, and only with ≥ 3 readings (rules 0, D and 2 still apply).
+//     Continuity: a reading outside the band is still ACCEPTED when it continues the accepted series smoothly (within
+//     1 ft + 2 ft/h of its accepted neighbour, no jump allowance). A real drawdown or flood that walks past the band edge is
+//     water; a slip is a jump. (Owner rule: never an older or "unknown" value when a real newer one exists.)
 //
 //  2. Step. Between consecutive accepted readings of one series, a change of more than
 //       stepToleranceFt + maxRateFtPerHour × hours apart     (10 ft + 2 ft/h)
 //     is impossible. 2 ft/h (48 ft/day) is eight times the Brain's own FAST tier (1 ft in 6 h, LakeLevelValidity) and above any
 //     reservoir change in the committed fixtures and goldens (checked when this rule was set: see the PR). 10 ft is the
 //     baseline's existing spike tolerance (LakeLevelBaseline.spikeToleranceFt): it absorbs a single noisy reading at any gap.
-//     The walk starts from the reading closest to the series median (the older on a tie), so one bad reading cannot make the
+//     The walk starts from the in-band reading closest to the in-band median (the older on a tie), so one bad reading cannot make the
 //     good ones look like steps.
 //
 //  History (LakeBaselineBuilder): rule 1 with the history's own band leaves slip days out of both climatologies, before the
@@ -59,6 +70,14 @@ public enum LakeLevelPlausibility {
     public static let minHistoryDays = 30
     /// A series with no reference is judged against its own median only with at least this many readings.
     public static let minSeriesForSelfBand = 3
+    /// Rule D: decade slips (×10, ÷10) against the recorded range widened by this fraction.
+    public static let decadeFactors: [Double] = [10, 0.1]
+    public static let decadeTolerance = 0.15
+    /// Re-centring needs this many readings outside the reference, spanning at least this long, newest included.
+    public static let minRecentreReadings = 6
+    public static let minRecentreHours = 24.0
+    /// Continuity rescue for a reading outside the band: no jump allowance, only sustained movement.
+    public static let continuityToleranceFt = 1.0
     /// Step rule: tolerance at any gap (== LakeLevelBaseline.spikeToleranceFt) plus a maximum sustained rate.
     public static let stepToleranceFt = LakeLevelBaseline.spikeToleranceFt
     public static let maxRateFtPerHour = 2.0
@@ -105,20 +124,36 @@ public enum LakeLevelPlausibility {
         return nil
     }
 
-    /// The reference this series is judged against: the lake's, if at least half of the series is inside it; otherwise the
-    /// same width re-centred on the series' median (another datum). nil when the series cannot be judged.
-    static func band(for values: [Double], reference: Reference?) -> Reference? {
-        guard let med = median(values) else { return nil }
+    /// Rule D: `ft` is outside the recorded range (±15 %) and its ×10 or ÷10 is inside it. Positive ranges only.
+    static func isDecadeSlip(_ ft: Double, lo: Double, hi: Double) -> Bool {
+        guard ft > 0, lo > 0, hi >= lo else { return false }
+        let wLo = lo * (1 - decadeTolerance), wHi = hi * (1 + decadeTolerance)
+        func inW(_ x: Double) -> Bool { x >= wLo && x <= wHi }
+        return !inW(ft) && decadeFactors.contains { inW(ft * $0) }
+    }
+
+    /// The band a series (oldest first, binding datum) is judged against. The lake's reference unless the series is
+    /// consistently elsewhere (see the header: newest outside, ≥ 6 readings outside spanning ≥ 24 h, within one band width);
+    /// then the same width re-centred on those readings. No reference: the series' own median ± 50 ft with ≥ 3 readings.
+    static func band(for series: [(at: Date, ft: Double)], reference: Reference?) -> Reference? {
+        guard let newest = series.last else { return nil }
         if let r = reference {
-            if values.filter(r.contains).count * 2 >= values.count { return r }
+            if r.contains(newest.ft) { return r }
+            let outside = series.filter { !r.contains($0.ft) }
+            let width = (r.hi - r.lo) + 2 * r.marginFt
+            guard outside.count >= minRecentreReadings, let first = outside.first,
+                  newest.at.timeIntervalSince(first.at) >= minRecentreHours * 3600,
+                  let mx = outside.map(\.ft).max(), let mn = outside.map(\.ft).min(), mx - mn <= width,
+                  let med = median(outside.map(\.ft)) else { return r }
             let half = (r.hi - r.lo) / 2
             return Reference(lo: med - half, hi: med + half, marginFt: r.marginFt, basis: "series median (reference \(r.basis) is on another datum)")
         }
-        guard values.count >= minSeriesForSelfBand else { return nil }
+        guard series.count >= minSeriesForSelfBand, let med = median(series.map(\.ft)) else { return nil }
         return Reference(lo: med, hi: med, marginFt: minMarginFt, basis: "series median")
     }
 
     static func stepLimit(hours: Double) -> Double { stepToleranceFt + maxRateFtPerHour * abs(hours) }
+    static func continuityLimit(hours: Double) -> Double { continuityToleranceFt + maxRateFtPerHour * abs(hours) }
 
     /// Splits one live series (oldest first) into accepted and rejected readings. `datumOffsetFt` puts a reading on the binding's
     /// datum, which is the datum of `reference`.
@@ -130,57 +165,75 @@ public enum LakeLevelPlausibility {
         func ft(_ o: LevelObservation) -> Double { o.ft + datumOffsetFt }
         func fmt(_ x: Double) -> String { String(format: "%.2f", x) }
 
-        // 1. Level band.
-        var inBand: [LevelObservation] = []
-        let finite = readings.filter { physicallyPossible(ft($0)) }
+        // 0. Absolute.
+        let possible = readings.filter { physicallyPossible(ft($0)) }
         for o in readings where !physicallyPossible(ft(o)) {
             rejected.append(Rejection(sourceId: sourceId, at: o.at, rawFt: o.ft, reason: "not a lake level on any datum"))
         }
-        if let b = band(for: finite.map(ft), reference: reference) {
-            for o in finite {
-                if b.contains(ft(o)) { inBand.append(o) } else {
-                    rejected.append(Rejection(sourceId: sourceId, at: o.at, rawFt: o.ft,
-                                              reason: "outside \(fmt(b.lowFt))–\(fmt(b.highFt)) ft (\(b.basis) ± \(fmt(b.marginFt)) ft)"))
-                }
-            }
-        } else {
-            inBand = finite
+        // D. Decade slips against the recorded range (or, with no reference, the series' own median with ≥ 3 readings).
+        let range: (Double, Double)? = reference.map { ($0.lo, $0.hi) }
+            ?? (possible.count >= minSeriesForSelfBand ? median(possible.map(ft)).map { ($0, $0) } : nil)
+        var candidates: [LevelObservation] = []
+        for o in possible {
+            if let rg = range, isDecadeSlip(ft(o), lo: rg.0, hi: rg.1) {
+                rejected.append(Rejection(sourceId: sourceId, at: o.at, rawFt: o.ft, reason: "decade slip (×10 or ÷10 of \(fmt(rg.0))–\(fmt(rg.1)) ft)"))
+            } else { candidates.append(o) }
         }
+        // 1. Band (nil: the series cannot be judged by level, every candidate counts as inside).
+        let b = band(for: candidates.map { (at: $0.at, ft: ft($0)) }, reference: reference)
+        let inside = candidates.map { b?.contains(ft($0)) ?? true }
 
-        // 2. Step, walking out from the reading closest to the median.
-        var kept = inBand
-        if inBand.count >= 2, let med = median(inBand.map(ft)) {
-            let seed = inBand.indices.min { abs(ft(inBand[$0]) - med) < abs(ft(inBand[$1]) - med) }!
-            var ok = Array(repeating: false, count: inBand.count)
+        // 2. Step, walking out from the in-band reading closest to the in-band median. An out-of-band reading is accepted only
+        //    as a smooth continuation (continuityLimit); an in-band one within the step limit.
+        var ok = Array(repeating: false, count: candidates.count)
+        let inBandFt = candidates.indices.filter { inside[$0] }.map { ft(candidates[$0]) }
+        if let med = median(inBandFt),
+           let seed = candidates.indices.filter({ inside[$0] }).min(by: { abs(ft(candidates[$0]) - med) < abs(ft(candidates[$1]) - med) }) {
             ok[seed] = true
             for dir in [1, -1] {
                 var last = seed, i = seed + dir
-                while i >= 0, i < inBand.count {
-                    let h = inBand[i].at.timeIntervalSince(inBand[last].at) / 3600
-                    let d = ft(inBand[i]) - ft(inBand[last])
-                    if abs(d) <= stepLimit(hours: h) { ok[i] = true; last = i } else {
-                        rejected.append(Rejection(sourceId: sourceId, at: inBand[i].at, rawFt: inBand[i].ft,
-                                                  reason: "step \(fmt(d)) ft in \(fmt(abs(h))) h from \(fmt(ft(inBand[last]))) ft (limit \(fmt(stepLimit(hours: h))) ft)"))
-                    }
+                while i >= 0, i < candidates.count {
+                    let h = candidates[i].at.timeIntervalSince(candidates[last].at) / 3600
+                    let d = ft(candidates[i]) - ft(candidates[last])
+                    if abs(d) <= (inside[i] ? stepLimit(hours: h) : continuityLimit(hours: h)) { ok[i] = true; last = i }
                     i += dir
                 }
             }
-            kept = inBand.indices.filter { ok[$0] }.map { inBand[$0] }
+        }
+        var kept: [LevelObservation] = []
+        for (i, o) in candidates.enumerated() {
+            if ok[i] { kept.append(o); continue }
+            let why: String
+            if !inside[i], let b {
+                why = "outside \(fmt(b.lowFt))–\(fmt(b.highFt)) ft (\(b.basis) ± \(fmt(b.marginFt)) ft) and not a smooth continuation"
+            } else {
+                why = "impossible step from the accepted series (limit \(fmt(stepToleranceFt)) ft + \(fmt(maxRateFtPerHour)) ft/h)"
+            }
+            rejected.append(Rejection(sourceId: sourceId, at: o.at, rawFt: o.ft, reason: why))
         }
         return (kept, rejected.sorted { $0.at < $1.at })
     }
 
-    /// Daily history dates outside the history's own band (rule 1). History is already on the binding datum.
+    /// Daily history dates outside the history's own band (rule 1) or decade slips of it (rule D). History is already on the
+    /// binding datum. `fullPoolFt` widens the band only where it agrees with the history (as on the live path).
     public static func implausibleDays(_ daily: [DailyLevel], fullPoolFt: Double? = nil) -> Set<String> {
         let impossible = daily.filter { !physicallyPossible($0.ft) }.map(\.date)
         guard let r = reference(historyFt: daily.map(\.ft), fullPoolFt: fullPoolFt), daily.count >= minHistoryDays else { return Set(impossible) }
-        return Set(daily.filter { !physicallyPossible($0.ft) || !r.contains($0.ft) }.map(\.date))
+        return Set(daily.filter { !physicallyPossible($0.ft) || !r.contains($0.ft) || isDecadeSlip($0.ft, lo: r.lo, hi: r.hi) }.map(\.date))
     }
 
-    /// The quality flag for one rejection: `implausibleReading:<sourceId>@<iso>=<raw ft>`.
-    public static func flag(_ r: Rejection) -> String {
+    static func iso(_ d: Date) -> String {
         let f = ISO8601DateFormatter(); f.formatOptions = [.withInternetDateTime]       // == BrainPlatform.iso
-        return "implausibleReading:\(r.sourceId)@\(f.string(from: r.at))=\(String(format: "%.2f", r.rawFt))"
+        return f.string(from: d)
+    }
+
+    /// The published quality flag for one rejection: `implausibleReading:<sourceId>@<iso>`. No raw value (a slip is not a fact
+    /// about the lake); the raw value is in the run warning (`warning`).
+    public static func flag(_ r: Rejection) -> String { "implausibleReading:\(r.sourceId)@\(iso(r.at))" }
+
+    /// The run warning for one rejection, with the raw value and the reason.
+    public static func warning(_ r: Rejection) -> String {
+        "implausible level reading rejected: \(r.sourceId) @ \(iso(r.at)) raw \(String(format: "%.2f", r.rawFt)) ft (\(r.reason))"
     }
 
     /// Flags are capped so one broken series cannot flood a record; the rest are counted.
