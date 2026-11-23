@@ -24,7 +24,7 @@ Branch `research/wind-strong-wind-method-2026-11-23` from `origin/main` `5db0679
 | Commit | What |
 |---|---|
 | `367eb083` | Protocol `WSW-2026-11-23` and sha256 sidecar (`b9a55721f7a6d2853462c1080bbec384c3a30e3429fce70b10c2872c77449346`), committed and **pushed before any data was fetched** |
-| next | Runner `tools/research/wind_strong_wind.py`, 20 tests, draft Mini request, `WIND-CNF-001` evidence pointer, this record, closeout, Cortex gap CG-3.1-24, engineering-status digest |
+| next | Runner `tools/research/wind_strong_wind.py`, 20 tests, draft Mini request, `WIND-CNF-001` evidence pointer, this record, closeout, Cortex gap CG-3.1-25, engineering-status digest |
 
 Pre-registered design: B0 deterministic NBM (reference), M-A NBM qmd 90% level >= 15 mph (no fitted parameter), M-B night upper-tail quantile mapping fitted on CAL+H1 only (pooled, nine levels 0.5-0.999). All methods are scored on the same synoptic night rows (qmd exists only at 00/06/12/18Z), past window inits 2025-11-01 -> 2026-04-30 (NBM v4.3) with IEM ASOS/AWOS truth at the 8 frozen stations, then once on H2 at unseal. Decision: SUPPORTED iff the Bonferroni lower bound (1.25th percentile, date-block bootstrap, 2000 resamples) of CSI(method) - CSI(B0) > 0, pooled POD >= 0.25 and FAR <= 0.80, with at least 25 observed events and 80% P90 coverage. WI4 credit and the scoreboard gate are reported as written.
 
@@ -47,7 +47,7 @@ None. A metadata-only probe of one past-window `.idx` listing (made after the pr
 ## Decisions for Michael (batched)
 1. Post the draft Mini request on Sector_Ops #51: `docs/brains/wind-strong-wind/MINI_REQUEST_DRAFT.md` (download about 30-60 GB of public data on the Mini; no cloud job).
 2. Rubric governance: WI4 reads "deterministic"; whether a post-processed strong-wind signal (M-A, M-B) may earn WI4 credit, or only lower exposure confidence as WIND-CNF-001 expects, is his call. Nothing is admitted until then (HELD path).
-3. Cortex gap CG-3.1-24 (RS-19 forbids registering the public NOAA cloud bucket) for a Cortex maintenance session.
+3. Cortex gap CG-3.1-25 (RS-19 forbids registering the public NOAA cloud bucket) for a Cortex maintenance session.
 
 ## Not done (gated or out of scope)
 No data fetched, no H2 access, no score, rubric or evidence-file change, no Firebase or bucket access, no schedule, no merge.
