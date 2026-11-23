@@ -36,15 +36,16 @@ The hash chain detects accidental corruption and careless edits, not a forger. T
 | Same command again, new `--out`, new process | refused (a COMPLETED exists, or a dangling STARTED is terminal) |
 | New research folder or deleted ledger (fresh genesis) | refused: the earliest `Run anchor:` for the protocol carries another anchor |
 | Ledger rolled back to a snapshot | the result step must confirm a single `Run start:` carrying this attempt's STARTED hash. The restored run either posts a second one (REPEAT) or cannot confirm, and so cannot complete |
-| Running a result step as a non-result step (the round-1 PoC) | impossible: `result_steps` is declared by the runner, recorded in the genesis entry, fixed on reopen; `begin` has no per-call flag. A non-result `begin` is refused if #51 has a `Run start:` for that step |
+| Running a result step as a non-result step (the round-1 PoC) | impossible: `result_steps` is declared by the runner, recorded in the genesis entry and in the anchor comment, fixed on reopen; `begin` has no per-call flag. A non-result `begin` is refused if #51 has a `Run start:` for that step |
+| A ledger with a wrong `result_steps` produces values in a non-result step, is deleted and replaced by a "corrected" ledger (the round-3 PoC) | refused: every `begin`, result or not, requires this ledger's anchor to be the protocol's earliest, so ledger A had to anchor first and ledger B's later anchor is refused. The anchor's first line carries the result steps (`Run anchor: <protocol> <anchor> <steps,comma-joined or ->`), which must match the genesis |
 | A second or mismatching `Run start:` before `complete()` | the result is recorded with `counted: false`; `first`/`counts`/`require` accept only counted COMPLETED entries of result steps |
 | Copied ledger | refused (the genesis root must equal the root) |
-| Edited records | refused: a comment whose id the ledger recorded; an edited comment naming the protocol id as an exact token; an edited `Run …` comment by the anchor's author created after the anchor |
+| Edited records | refused: a recorded anchor, start or result comment whose body sha256 differs from the one recorded at confirm time; an unrecorded comment naming the protocol id as an exact token whose `updated_at` is more than 2 s after `created_at` (GitHub can bump `updated_at` without an edit). **Blast radius:** such an edit blocks every further step of this protocol only (recovery: a new protocol id after human review); other protocols are unaffected |
 | Ledger tail forged after the result was posted | detectable afterwards: `audit(check_external=True)` compares the `Run result:` comment (`<completed_entry_sha256> <result_sha256>`) with the ledger |
 
 | Stated limit | Note |
 |---|---|
-| Deleting or editing one's own #51 comments | not preventable; edit history is not readable over REST. `audit()` reports recorded comment ids that are missing or no longer start with `Run ` |
+| Deleting or editing one's own #51 comments | not preventable; edit history is not readable over REST. `audit()` reports recorded comment ids that are missing, whose body changed, or that no longer start with `Run `. An unrecorded comment edited so that it no longer names the protocol id is not detected |
 | Forging ledger lines | not preventable locally; detectable only against comments that still exist |
 | Abort after seeing values | not enforceable; a review check every runner must pass |
 | Cortex and GitHub | `for_brain` trusts the `cortex_home` it is given; GitHub timestamps are trusted |
@@ -57,7 +58,9 @@ The hash chain detects accidental corruption and careless edits, not a forger. T
   - `confirm_started` raises `RepeatDetected` and writes `REPEAT_DETECTED`.
   - `complete()` requires `START_CONFIRMED` and re-reads #51. The result counts only when exactly one `Run start:` exists, it carries this attempt's STARTED hash, and no REPEAT was detected.
   - `external` records the anchor and start comment ids, `startSha` and `startCommentsAtComplete`.
-- **`result_text(step, key)`.** It is posted after `complete()`, and `audit(check_external=True)` checks it.
+- **`result_text(step, key)` and `confirm_result(step, key)`.** The text is posted after `complete()`. `confirm_result` checks it and records a `RESULT_CONFIRMED` entry with the comment id and body sha256. `audit(check_external=True)` checks the comment either way.
+- **Anchor before any step.** Every `begin` checks the anchor, and the anchor must predate the ledger's first STARTED entry of any kind. The anchor line carries the result steps.
+- **Recorded comments.** The anchor and start refs (recorded at `confirm_started`) and the result ref (recorded at `confirm_result`) carry `body_sha256`, and edits are judged by that sha. Unrecorded comments use the `updated_at` rule with a 2 s grace.
 - **Retries.** A retry after `abort_before_result` is clean only if no `Run start:` was posted. Once one is public, the retry is a REPEAT.
 - **One object per attempt.** `confirm_started`, `record_outputs`, `complete` and `abort_before_result` are accepted only from the object that began the attempt. A dangling STARTED is terminal, and recovery is a new protocol id.
 - **gh failures.** A gh failure refuses. A failed `complete()` can be retried by the same object.
@@ -77,17 +80,17 @@ The hash chain detects accidental corruption and careless edits, not a forger. T
 ## 4. Verification
 | Check | Command | Result |
 |---|---|---|
-| New tests | `python3 -m pytest -q tools/research/tests/test_protocol_run_ledger.py` | 68 passed |
-| Research tools suite | `python3 -m pytest -q tools/research` | 160 passed, 2 failed; both failures are pre-existing in this environment: the session runs as root, so the read-only-folder tests (`test_campaign.py::test_cleanup_removes_read_only_campaign_files_but_nothing_else`, `test_discovery.py::test_read_only_sources_folder_is_never_modified`) cannot see a permission error. They do not import the new module; CI runs as a normal user |
+| New tests | `python3 -m pytest -q tools/research/tests/test_protocol_run_ledger.py` | 74 passed |
+| Research tools suite | `python3 -m pytest -q tools/research` | 166 passed, 2 failed; both failures are pre-existing in this environment: the session runs as root, so the read-only-folder tests (`test_campaign.py::test_cleanup_removes_read_only_campaign_files_but_nothing_else`, `test_discovery.py::test_read_only_sources_folder_is_never_modified`) cannot see a permission error. They do not import the new module; CI runs as a normal user |
 | Engineering status | `collect_certification.py`; `build_engineering_status.py --write`; `--check` | certification failing: none; status written with no diff; `--check` OK |
 
 ## 5. Open items
 - The four runners adopt the module in their own PRs (#245–#248). Each runner:
   1. Declares `RESULT_STEPS = frozenset({...})` as a module constant.
   2. Opens the ledger with `Ledger.for_brain(brain, protocol_id, sha256(protocol doc), forbid_under=[args.out], result_steps=RESULT_STEPS)`.
-  3. Posts `post_anchor_text()` on #51 once.
+  3. Posts `post_anchor_text()` on #51 once, before any step.
   4. Calls `bind_inputs`.
-  5. For each result step: `begin`, post `start_text`, `confirm_started`, compute, `record_outputs`, `complete`, post `result_text`.
+  5. For each result step: `begin`, post `start_text`, `confirm_started`, compute, `record_outputs`, `complete`, post `result_text`, `confirm_result`.
   6. Calls `require` for earlier result steps.
   7. Prints `audit()` in its reports.
 - Every runner's review must check that it never aborts after computing values. The ledger cannot enforce this.

@@ -92,6 +92,7 @@ def run_step(L, step="fit", key="all", result=None, post_result=True):
     L.complete(step, key, {}, result or {"metric": 0.5})
     if post_result:
         L.issue.post(L.result_text(step, key))
+        L.confirm_result(step, key)
     return run
 
 
@@ -139,7 +140,7 @@ def test_step_and_key_without_whitespace(root):
 def test_post_anchor_text_shape_and_genesis(root):
     L = ledger(root, anchored=False)
     text = L.post_anchor_text()
-    assert text.splitlines()[0] == f"Run anchor: {PID} {L.anchor()}"
+    assert text.splitlines()[0] == f"Run anchor: {PID} {L.anchor()} fit,score,select"
     assert "owner approval" not in text.lower() and PSHA in text and str(root.resolve()) in text
     g = json.loads(lines(root)[0])["result"]
     assert len(g["nonce"]) == 32 and g["protocol_id"] == PID and g["protocol_sha256"] == PSHA and g["root"] and g["host"]
@@ -175,17 +176,22 @@ def test_anchor_posted_after_start_refused(root):
     issue = Issue()
     L = ledger(root, issue=issue, anchored=False)
     issue.post(L.post_anchor_text(), created="2099-01-01T00:00:00Z")
-    with pytest.raises(LedgerRefusal, match="not before the first result-producing start"):
+    with pytest.raises(LedgerRefusal, match="not before the ledger's first start"):
         L.begin("fit", "all", {}, {})
+    with pytest.raises(LedgerRefusal, match="not before the ledger's first start"):
+        L.begin("fetch", "all", {}, {})
 
 
-def test_no_anchor_refused_but_fetch_may_run(root):
+def test_no_step_of_any_kind_before_the_anchor(root):
     L = ledger(root, anchored=False)
-    assert L.begin("fetch", "all", {}, {}) == 1  # not a declared result step
-    e = L.complete("fetch", "all", {"raw": "e" * 64}, None)
-    assert e["counted"] is True and not L.counts("fetch", "all") and L.first("fetch", "all") is None  # only result steps count
+    with pytest.raises(LedgerRefusal, match="no `Run anchor:"):
+        L.begin("fetch", "all", {}, {})  # not a declared result step, still refused
     with pytest.raises(LedgerRefusal, match="no `Run anchor:"):
         L.begin("fit", "all", {}, {})
+    L.issue.post(L.post_anchor_text())
+    assert L.begin("fetch", "all", {}, {}) == 1
+    e = L.complete("fetch", "all", {"raw": "e" * 64}, None)
+    assert e["counted"] is True and not L.counts("fetch", "all") and L.first("fetch", "all") is None  # only result steps count
 
 
 def test_gh_failure_refused(root):
@@ -879,10 +885,84 @@ def test_edited_away_recorded_comment_refused_and_audited(root):
     assert any(x.startswith("EDITED:") for x in f) and any(x.startswith("EDITED_AWAY") for x in f)
 
 
-def test_edited_run_comment_by_the_anchor_author_refused(root):
+def test_edit_blast_radius_is_one_protocol(root):
     L = ledger(root)
-    L.issue.post("Run anchor: some-other-protocol " + "1" * 64, updated="2030-01-01T00:00:00Z")  # same author, after the anchor
-    with pytest.raises(LedgerRefusal, match="anchor's author"):
+    L.issue.post("Run anchor: some-other-protocol " + "1" * 64 + " -", updated="2030-01-01T00:00:00Z")  # same author, other protocol
+    assert go(L) == 1  # an edit elsewhere does not lock this protocol
+    L.issue.post(f"Run note: {PID} typo", updated="2030-01-01T00:00:00Z")
+    with pytest.raises(LedgerRefusal, match=f"refused for {PID}"):
+        L.complete("fit", "all", {}, {"m": 1})
+
+
+# ---------- round 3: anchor before any step, result steps in the anchor, edit grace, recorded body sha ----------
+def test_reviewer_poc_wrong_result_steps_then_replaced_ledger_refused(tmp_path):
+    """Ledger A declares no result steps and runs `score` as a non-result step (values produced); A is deleted; ledger B, now declaring
+    `score` a result step, anchors afterwards. B must be refused: A's anchor is the protocol's earliest."""
+    r = tmp_path / "wind-brain"
+    r.mkdir()
+    issue = Issue()
+    A = ledger(r, issue=issue, result_steps=frozenset())
+    assert issue.comments[0]["body"].splitlines()[0].endswith(" -")
+    A.begin("score", "all", {}, {})
+    A.complete("score", "all", {"values": "c" * 64})
+    shutil.rmtree(r / "_ledgers")
+    B = ledger(r, issue=issue, result_steps=frozenset({"score"}))
+    with pytest.raises(LedgerRefusal, match="earliest anchor"):
+        B.begin("score", "all", {}, {})
+    with pytest.raises(LedgerRefusal, match="earliest anchor"):
+        B.begin("fetch", "all", {}, {})
+
+
+def test_poc_without_any_anchor_cannot_produce_values(tmp_path):
+    r = tmp_path / "wind-brain"
+    r.mkdir()
+    A = ledger(r, anchored=False, result_steps=frozenset())
+    with pytest.raises(LedgerRefusal, match="no `Run anchor:"):
+        A.begin("score", "all", {}, {})
+
+
+def test_anchor_must_carry_the_genesis_result_steps(root):
+    L = ledger(root, anchored=False)
+    L.issue.post(f"Run anchor: {PID} {L.anchor()} fit")  # this ledger's hash, but a different step list
+    with pytest.raises(LedgerRefusal, match="declares result steps 'fit'"):
         L.begin("fit", "all", {}, {})
-    L.issue.comments[-1]["user"] = {"login": "someone-else"}
+    (root.parent / "m").mkdir()
+    M = ledger(root.parent / "m", anchored=False)
+    M.issue.post(f"Run anchor: {PID} {M.anchor()}")  # old one-hash form
+    with pytest.raises(LedgerRefusal, match="declares result steps None"):
+        M.begin("fit", "all", {}, {})
+
+
+def test_updated_at_within_grace_is_not_an_edit(root):
+    L = ledger(root)
+    L.issue.post(f"note {PID}", created="2000-05-01T00:00:00Z", updated="2000-05-01T00:00:02Z")  # exactly 2 s: not an edit
     assert go(L) == 1
+    L.issue.post(f"note {PID}", created="2000-05-01T00:00:00Z", updated="2000-05-01T00:00:03Z")  # > 2 s: an edit
+    with pytest.raises(LedgerRefusal, match="edited"):
+        L.complete("fit", "all", {}, {})
+
+
+def test_recorded_comments_compare_body_sha_not_updated_at(root):
+    L = ledger(root)
+    run_step(L)
+    for c in L.issue.comments:
+        c["updated_at"] = "2040-01-01T00:00:00Z"  # GitHub bumps updated_at (e.g. a reaction); bodies unchanged
+    assert L.audit(check_external=True)["findings"] == []
+    res = next(c for c in L.issue.comments if c["body"].startswith("Run result:"))
+    assert L.entries()[-1]["external"]["result"]["body_sha256"] == hashlib.sha256(res["body"].encode()).hexdigest()
+    res["body"] = res["body"].replace("Do not edit", "Edited")
+    f = L.audit(check_external=True)["findings"]
+    assert any(x.startswith("BODY_CHANGED") for x in f) and any(x.startswith("EDITED:") for x in f)
+    with pytest.raises(LedgerRefusal, match="differs from the body recorded"):
+        L.begin("score", "all", {}, {})
+
+
+def test_confirm_result_checks_the_comment(root):
+    L = ledger(root)
+    go(L)
+    L.complete("fit", "all", {}, {"m": 1})
+    with pytest.raises(LedgerRefusal, match="exactly one"):
+        L.confirm_result("fit", "all")
+    L.issue.post(f"Run result: {PID} fit all {'a' * 64} {'b' * 64}")
+    with pytest.raises(LedgerRefusal, match="exactly one"):
+        L.confirm_result("fit", "all")
