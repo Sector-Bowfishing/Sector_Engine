@@ -131,7 +131,7 @@ def test_a_fresh_resolution_keeps_todays_behaviour_on_a_grid_404():
     assert any(e.startswith("grid ") for e in out["errors"]) and len(_points(src)) == 2
 
 
-def test_a_cached_station_that_answers_404_is_invalidated_for_the_next_run(tmp_path):
+def test_a_cached_station_that_answers_404_is_revalidated_next_run_keeping_the_entry(tmp_path):
     c = PointCache(str(tmp_path / "p.json"))
     _run(c)
 
@@ -139,7 +139,100 @@ def test_a_cached_station_that_answers_404_is_invalidated_for_the_next_run(tmp_p
         def observations(self, station, now):
             raise OutOfCoverage(station)
     _run(c, StationGone())
-    assert c.get(G, RECORDED_NOW) is None and c.stats["revalidated"] == 1
+    assert c.get(G, RECORDED_NOW)["revalidate"] is True                    # kept, flagged
+    src = FixtureSource()
+    _run(c, src, now=RECORDED_NOW + timedelta(hours=2))
+    assert ("point", G["lat"], G["lon"]) in src.calls and "revalidate" not in c.get(G, RECORDED_NOW)
+
+
+class _Outage(FixtureSource):
+    def point(self, lat, lon):
+        self.calls.append(("point", lat, lon))
+        raise OutOfCoverage("404 (outage)")
+
+
+def test_an_outage_404_inside_the_us_is_not_cached_and_is_retried(tmp_path):
+    path = str(tmp_path / "p.json")
+    c = PointCache(path)
+    out = _run(c, _Outage())
+    c.save()
+    assert out["readiness"]["Guntersville|AL"] == "DISCOVERED" and out["states"] == {}
+    assert any("outage" in e for e in out["errors"])
+    assert json.load(open(path))["entries"] == {}                         # nothing cached: no BLOCKED answer
+    src = FixtureSource()
+    out2 = _run(PointCache(path), src, now=RECORDED_NOW + timedelta(hours=1))
+    assert not out2["errors"] and len(_points(src)) == 2                 # retried next run
+
+
+def test_an_outage_keeps_the_last_state_while_it_is_fresh():
+    first = _run(PointCache(None))["states"]["Guntersville|AL"]
+    stale_now = RECORDED_NOW + timedelta(minutes=1)
+    pub = {"Guntersville|AL": {**first, "freshness": {**first["freshness"], "nextCheckAt": first["generatedAt"],
+                                                      "freshUntil": (RECORDED_NOW + timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%SZ")}}}
+    out = run([G], _Outage(), PointCache(None), pub, stale_now)
+    assert out["states"]["Guntersville|AL"] == pub["Guntersville|AL"] and out["readiness"]["Guntersville|AL"] != "BLOCKED"
+    assert "lakes/Guntersville_AL/states/weather" not in out["updates"]   # kept, not rewritten
+
+
+def test_a_persistent_404_is_blocked_only_after_three_runs_over_24_h_and_only_for_24_h(tmp_path):
+    c = PointCache(str(tmp_path / "p.json"))
+    for h in (0, 1):
+        assert _run(c, _Outage(), now=RECORDED_NOW + timedelta(hours=h))["readiness"]["Guntersville|AL"] != "BLOCKED"
+    assert _run(c, _Outage(), now=RECORDED_NOW + timedelta(hours=23))["readiness"]["Guntersville|AL"] != "BLOCKED"   # 3 runs, < 24 h
+    late = RECORDED_NOW + timedelta(hours=25)
+    assert _run(c, _Outage(), now=late)["readiness"]["Guntersville|AL"] == "BLOCKED"
+    assert c.get(G, late + timedelta(hours=23)) is not None and c.get(G, late + timedelta(hours=24)) is None
+
+
+def test_a_real_out_of_us_point_is_blocked_at_once_and_cached_for_24_h_only(tmp_path):
+    abroad = {"id": "Geneva|XX", "lat": 46.2, "lon": 6.15}
+    c = PointCache(str(tmp_path / "p.json"))
+    out = run([abroad], _Outage(), c, {}, RECORDED_NOW)
+    assert out["readiness"] == {"Geneva|XX": "BLOCKED"}
+    assert c.get(abroad, RECORDED_NOW + timedelta(hours=23))["outOfCoverage"] is True
+    assert c.get(abroad, RECORDED_NOW + timedelta(hours=24)) is None
+
+
+def test_a_revalidation_during_an_outage_keeps_the_old_grid_entry(tmp_path):
+    c = PointCache(str(tmp_path / "p.json"))
+    _run(c)
+    before = dict(c.get(G, RECORDED_NOW))
+
+    class GridGoneAndPointsDown(_Outage):
+        def grid(self, url):
+            raise OutOfCoverage(url)
+    out = _run(c, GridGoneAndPointsDown(), now=RECORDED_NOW + timedelta(hours=1))
+    assert any(e.startswith("revalidate ") for e in out["errors"])
+    after = c.get(G, RECORDED_NOW + timedelta(hours=1))
+    assert after["forecastGridData"] == before["forecastGridData"] and after["stations"] == before["stations"]
+
+
+def test_a_lake_whose_coordinate_moves_prunes_its_old_entry(tmp_path):
+    c = PointCache(str(tmp_path / "p.json"))
+    _run(c)
+    moved = {**G, "lat": 34.4201}
+    c.put(moved, {**c.get(G, RECORDED_NOW)})
+    assert list(c.entries) == [point_key(moved)]
+
+
+def test_a_redirecting_grid_url_is_replaced_by_its_target(tmp_path):
+    c = PointCache(str(tmp_path / "p.json"))
+    _run(c)
+    old = c.get(G, RECORDED_NOW)["forecastGridData"]
+
+    class Redirects(FixtureSource):
+        def grid(self, url):
+            if "77,30" in url:
+                return super().grid(url)
+            raise Moved(url, "https://api.weather.gov/gridpoints/HUN/77,30", super().grid(url))
+    src = Redirects()
+    out = _run(c, src, now=RECORDED_NOW + timedelta(hours=1))
+    assert not out["errors"], out["errors"]
+    e = c.get(G, RECORDED_NOW + timedelta(hours=1))
+    assert e["forecastGridData"].endswith("/77,30") and e["gridpoint"] == "HUN/77,30" and e["forecastGridData"] != old
+    src2 = Redirects()
+    _run(c, src2, now=RECORDED_NOW + timedelta(hours=3))
+    assert [x for x in src2.calls if x[0] == "grid"] == [("grid", e["forecastGridData"])] and _points(src2) == []
 
 
 def test_the_client_raises_moved_on_a_followed_redirect_with_the_body():

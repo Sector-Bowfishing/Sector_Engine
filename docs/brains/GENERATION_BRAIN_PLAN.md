@@ -113,7 +113,7 @@ D-G and D-I (§7) still block enablement on this route.
 | 3 | Michael | Order review: the Brain is not in `cutover_order.json` (PL-10); a hybrid-stage fragment `tools/ops/hybrid-stage/generation.json` and `hybrid_stage.py apply` follow the order review (as Wind, Water Temp) |
 | 4 | Michael (IAM) | The per-Brain lease/artifact bindings for Pulse (the W-H1 / WT-H1 pattern, B=generation) |
 | 5 | Engine PR (config) | `control_manifest.json`: `activityState` ACTIVE and an execution target the Orchestrator grants to the runner (as the CENTRAL Brains); remove the Brain from the `registered_disabled` guards; redeploy the Orchestrator and Publisher |
-| 6 | Michael on the Mac mini | Merge the Sector-Pulse PR, update Pulse; set `jobs.dataRoot` to the data SSD folder; Keychain items as the catalog entry declares; enable `generation-central` in Pulse; set `GENERATION_WRITE_APPROVED=1` for the Pulse job environment |
+| 6 | Michael on the Mac mini | Merge the Sector-Pulse PR, update Pulse; set `jobs.dataRoot` to the data SSD folder; Keychain items as the catalog entry declares; enable `generation-central` in Pulse. **Write approval** is the Pulse owner config `publication.generationWriteApproved` = `"1"` in `config.json` (owner-only), which Pulse renders into `GENERATION_WRITE_APPROVED` for the job; unset, the entry refuses (exit 3) |
 | 7 | Michael (resumes execution) | `tools/ops/execution_control.py brain --brain generation --enable-brain ...` with the approvalRef |
 
 ## 7. Blocking enablement (owner decisions, not code)

@@ -35,8 +35,14 @@ and their cost against the 2 USD/month cap. The cloud job still persists nothing
 **Pulse route (decision recorded in chat, Michael 2026-11-23; WEATHER_BRAIN_PLAN.md §6.2):** the point cache is a durable local file in the
 runner's data folder (`--point-cache` or `$SECTOR_WEATHER_POINT_CACHE`; never inside the checkout, never committed). Entries are keyed by lake id +
 the coordinate at the 4 decimals `/points` is called with and kept 30 days. A cached gridpoint URL that answers 404 or a redirect (301/308) is
-re-resolved in the same run; a cached station that answers 404 or redirects drops the entry so the next run re-resolves it. An unreadable or
-foreign cache file is ignored and rewritten. With a warm cache a run makes no `/points` or station-list request.
+re-resolved in the same run (once per lake per run; if the re-resolve fails, the old entry is kept); a redirect target replaces the cached URL;
+a cached station that answers 404 or redirects flags the entry for re-resolution next run. An entry at a lake's old coordinate is pruned.
+An unreadable or foreign cache file is ignored and rewritten. With a warm cache a run makes no `/points` or station-list request.
+
+**A `/points` 404 is not "out of coverage" for a US lake.** Every directory lake is in the US, so a 404 there is almost always an NWS outage:
+nothing is cached, the lake keeps its last state while it is still fresh (else it has no state this run), and `/points` is retried next run.
+BLOCKED is recorded only for a point outside the US NWS area boxes (CONUS, Alaska, Hawaii, Puerto Rico/USVI, Guam/CNMI, American Samoa), or
+after 3 consecutive 404 runs spanning at least 24 h, and that answer is cached for 24 h only (`client.in_us_area`, `PointCache.record_points_404`).
 
 ## Coverage
 

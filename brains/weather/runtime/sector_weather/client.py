@@ -7,8 +7,14 @@ fetched once). Requests are paced; 429/5xx/transport errors are retried with bac
 
 The point cache is a durable file OUTSIDE the repository (NWS asks clients to cache /points): `--point-cache FILE` or
 $SECTOR_WEATHER_POINT_CACHE (a runner's data folder, e.g. Pulse's {data}). Entries are keyed by lake id AND the lake coordinate rounded to the
-4 decimals the /points request uses, so a moved lake point is a miss. An entry is used for POINT_CACHE_DAYS; a cached gridpoint or station URL
-that answers 404 or a redirect (301/308) is revalidated (publish.run). An unreadable or foreign file is ignored and rewritten, never fatal.
+4 decimals the /points request uses, so a moved lake point is a miss (and the lake's old-coordinate entry is pruned). An entry is used for
+POINT_CACHE_DAYS; a cached gridpoint or station URL that answers 404 or a redirect (301/308) is revalidated (publish.run), and a failed
+revalidation keeps the old entry. A redirected grid URL is replaced by its target. An unreadable or foreign file is ignored and rewritten.
+
+A /points 404 for a point inside the US NWS area (in_us_area) is treated as an NWS outage, never as "out of coverage": nothing is cached,
+the lake keeps its last state while that is still fresh, and /points is retried next run. Out of coverage (BLOCKED) is recorded only for a
+point outside the US area, or after POINTS_404_BLOCK_RUNS consecutive 404 runs spanning at least POINTS_404_BLOCK_SPAN_HOURS, and is cached for
+OUT_OF_COVERAGE_TTL_HOURS only.
 """
 from __future__ import annotations
 
@@ -28,6 +34,19 @@ DEFAULT_USER_AGENT = "Sector-WeatherBrain/0.1 (io.sector.co; read-only public da
 POINT_CACHE_DAYS = 30
 POINT_CACHE_ENV = "SECTOR_WEATHER_POINT_CACHE"
 POINT_CACHE_SCHEMA = "sector-weather-point-cache-v2"
+OUT_OF_COVERAGE_TTL_HOURS = 24
+POINTS_404_BLOCK_RUNS = 3
+POINTS_404_BLOCK_SPAN_HOURS = 24
+
+#: (lat_min, lat_max, lon_min, lon_max): generous boxes around the areas api.weather.gov serves (CONUS, Alaska with the Aleutians on both
+#: sides of 180, Hawaii, Puerto Rico and the US Virgin Islands, Guam and the Northern Marianas, American Samoa). A point inside a box is not
+#: declared out of coverage on a single 404.
+US_AREAS = ((24.0, 50.0, -125.5, -66.5), (51.0, 72.0, -180.0, -129.0), (51.0, 56.0, 172.0, 180.0), (18.5, 22.5, -160.8, -154.5),
+            (17.5, 18.8, -68.0, -64.3), (13.0, 21.0, 144.0, 146.5), (-14.8, -10.8, -171.5, -168.0))
+
+
+def in_us_area(lat: float, lon: float) -> bool:
+    return any(a <= float(lat) <= b and c <= float(lon) <= d for a, b, c, d in US_AREAS)
 
 
 class OutOfCoverage(Exception):
@@ -36,6 +55,10 @@ class OutOfCoverage(Exception):
 
 class FetchError(Exception):
     pass
+
+
+class PointsUnavailable(FetchError):
+    """A /points lookup that failed for a point inside the US area: an NWS outage, retried next run (nothing cached)."""
 
 
 class Moved(FetchError):
@@ -131,7 +154,7 @@ class PointCache:
     save() is atomic (temp file + rename) and creates the parent folder; a failed save is reported on stderr and never fails the run."""
 
     def __init__(self, path: str | None, ttl_days: int = POINT_CACHE_DAYS):
-        self.path, self.ttl_days, self.entries = path, ttl_days, {}
+        self.path, self.ttl_days, self.entries, self.points404 = path, ttl_days, {}, {}
         self.load_error: str | None = None
         self.stats = {"hits": 0, "misses": 0, "expired": 0, "revalidated": 0}
         if path and os.path.exists(path):
@@ -140,6 +163,8 @@ class PointCache:
                     doc = json.load(fh)
                 if isinstance(doc, dict) and doc.get("schema") == POINT_CACHE_SCHEMA and isinstance(doc.get("entries"), dict):
                     self.entries = {k: v for k, v in doc["entries"].items() if isinstance(k, str) and isinstance(v, dict)}
+                    p404 = doc.get("points404")
+                    self.points404 = {k: v for k, v in p404.items() if isinstance(v, dict)} if isinstance(p404, dict) else {}
                 else:
                     self.load_error = "unrecognised point-cache file (ignored; rewritten on save)"
             except (OSError, ValueError) as e:
@@ -160,7 +185,8 @@ class PointCache:
         except (KeyError, ValueError, TypeError):
             self.stats["misses"] += 1
             return None
-        if age >= timedelta(days=self.ttl_days) or age < -timedelta(days=1):
+        ttl = timedelta(hours=OUT_OF_COVERAGE_TTL_HOURS) if e.get("outOfCoverage") else timedelta(days=self.ttl_days)
+        if age >= ttl or age < -timedelta(days=1):
             self.stats["expired"] += 1
             return None
         if not e.get("outOfCoverage") and not (e.get("forecastGridData") and isinstance(e.get("stations"), list)):
@@ -170,11 +196,38 @@ class PointCache:
         return e
 
     def put(self, lake: dict, entry: dict) -> None:
-        self.entries[point_key(lake)] = entry
+        """Store `entry` for the lake's current coordinate; entries of the same lake at another coordinate are pruned."""
+        key = point_key(lake)
+        prefix = f"{lake['id']}@"
+        for k in [k for k in self.entries if k.startswith(prefix) and k != key]:
+            del self.entries[k]
+        self.entries[key] = entry
+        if not entry.get("outOfCoverage"):
+            self.points404.pop(key, None)
 
     def invalidate(self, lake: dict) -> None:
         if self.entries.pop(point_key(lake), None) is not None:
             self.stats["revalidated"] += 1
+
+    def mark_revalidate(self, lake: dict) -> None:
+        """A cached URL of this entry answered 404/redirect: the next run re-resolves it, keeping this entry if that fails."""
+        e = self.entries.get(point_key(lake))
+        if e is not None:
+            e["revalidate"] = True
+
+    def record_points_404(self, lake: dict, now: datetime) -> bool:
+        """One more run whose /points answered 404 for this point. True once it is persistent: POINTS_404_BLOCK_RUNS consecutive runs
+        spanning at least POINTS_404_BLOCK_SPAN_HOURS (a success in between resets the streak, through put())."""
+        key, at = point_key(lake), now.strftime("%Y-%m-%dT%H:%M:%SZ")
+        r = self.points404.get(key) or {"first": at, "last": None, "runs": 0}
+        if r.get("last") != at:                                  # one count per run
+            r = {**r, "last": at, "runs": int(r.get("runs") or 0) + 1}
+        self.points404[key] = r
+        try:
+            first = datetime.fromisoformat(str(r["first"]).replace("Z", "+00:00"))
+        except (KeyError, ValueError):
+            return False
+        return r["runs"] >= POINTS_404_BLOCK_RUNS and (now - first) >= timedelta(hours=POINTS_404_BLOCK_SPAN_HOURS)
 
     def save(self) -> None:
         if not self.path:
@@ -184,7 +237,7 @@ class PointCache:
             parent = os.path.dirname(os.path.abspath(self.path))
             os.makedirs(parent, exist_ok=True)
             with open(tmp, "w", encoding="utf-8") as fh:
-                json.dump({"schema": POINT_CACHE_SCHEMA, "entries": self.entries}, fh, indent=1, sort_keys=True)
+                json.dump({"schema": POINT_CACHE_SCHEMA, "entries": self.entries, "points404": self.points404}, fh, indent=1, sort_keys=True)
             os.replace(tmp, self.path)
         except OSError as e:
             print(f"warning: point cache not saved ({type(e).__name__}); the next run resolves /points again", file=sys.stderr)

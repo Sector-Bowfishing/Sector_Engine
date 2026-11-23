@@ -24,8 +24,15 @@ Choices (reversible, standing approval 6): one shared entry module instead of th
 
 ## Decision-required / gated (batched for Michael)
 1. Enable the route (each step gated: knowledge release approvals, Cortex registration, order review + hybrid-stage fragments, IAM lease/artifact bindings for Pulse, manifest execution target + Orchestrator/Publisher deploy, Pulse entries enabled, execution control). See the plans.
-2. Cortex PROJECT.md §7: these Brains would run only on Pulse (CG-3.1-25).
+2. Cortex PROJECT.md §7: these Brains would run only on Pulse (CG-3.1-28).
 3. `worktree-check`: `/home/claude/se_wt_wind` is REMOVABLE_MERGED (another session's worktree; not touched).
 
 ## Not done
 No deploy, no cloud job, nothing enabled or run on the Mini, no manifest/policy/rules/IAM/score change, no merge. `deploy-job.sh` scripts unchanged.
+
+## Review round 1 (independent review NOT CLEAN; fixed on the same branch)
+- Gap ID: CG-3.1-25 collided with open PR #245 (and -26 with #246, -27 with #251); scanned `origin/main` and every open PR branch through `gh api`; renumbered to **CG-3.1-28**.
+- Merged `origin/main` (not a rebase): #241 had regenerated the engineering-status files; the conflict was resolved by taking main's copy and re-running the digest sequence.
+- HIGH: a `/points` 404 is no longer cached as out of coverage. Inside the US NWS area (`client.in_us_area`) it is an outage (`PointsUnavailable`): nothing cached, the last state kept while fresh (not rewritten), retried next run. BLOCKED only outside the US area or after 3 consecutive 404 runs spanning ≥ 24 h (`PointCache.record_points_404`), cached 24 h only. A failed re-resolve keeps the old grid entry; a cached station 404 flags the entry (`revalidate`) instead of deleting it. `test_out_of_coverage_lakes_are_blocked_with_no_state` now uses an out-of-US point (a US lake's 404 is an outage).
+- LOW: entries at a lake's old coordinate are pruned; a redirect target replaces the cached grid URL, so a redirect costs at most one extra request per lake per run; plan step 6 states that write approval is the Pulse owner config `publication.<brain>WriteApproved` = "1".
+- Tests: weather 143 passed (new: outage not cached and retried, last state kept while fresh, persistent 404 → BLOCKED with a 24 h TTL, real out-of-US point, revalidation during an outage keeps the old entry, coordinate pruning, redirect target stored).

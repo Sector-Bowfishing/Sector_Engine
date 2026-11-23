@@ -153,7 +153,7 @@ the lease: Weather is due on every hourly grant, `dueAfterHours` 0.75, `staleAft
 
 The /points cost question in step 1 is answered for this route: `--point-cache` (default `$SECTOR_WEATHER_POINT_CACHE`) keeps the
 `/points` -> gridpoint/stations resolution in a durable file in the job's data folder on the data SSD (`{data}/nws-points-cache.json`), keyed by
-lake id + coordinate (4 decimals), 30 days, revalidated in-run when a cached grid URL answers 404 or a redirect (`client.PointCache`). It is never
+lake id + coordinate (4 decimals; an entry at a lake's old coordinate is pruned), 30 days, revalidated in-run when a cached grid URL answers 404 or a redirect (a failed revalidation keeps the old entry; a redirect target replaces the URL) (`client.PointCache`). A `/points` 404 inside the US NWS area is an outage: nothing is cached, the lake keeps its last state while it is fresh, and the lookup is retried next run. BLOCKED (out of coverage) is recorded only for a point outside the US area, or after 3 consecutive 404 runs spanning 24 h or more, and is cached for 24 h only. It is never
 committed (`run.py` refuses a path inside the checkout). The NWS contact User-Agent comes from the Mac mini's Keychain into
 `SECTOR_WEATHER_USER_AGENT`; it is in neither repository.
 
@@ -164,7 +164,7 @@ committed (`run.py` refuses a path inside the checkout). The NWS contact User-Ag
 | 3 | Michael | Order review: the Brain is not in `cutover_order.json` (PL-10); a hybrid-stage fragment `tools/ops/hybrid-stage/weather.json` and `hybrid_stage.py apply` follow the order review (as Wind, Water Temp) |
 | 4 | Michael (IAM) | The per-Brain lease/artifact bindings for Pulse (the W-H1 / WT-H1 pattern, B=weather) |
 | 5 | Engine PR (config) | `control_manifest.json`: `activityState` ACTIVE and an execution target the Orchestrator grants to the runner (as the CENTRAL Brains); remove the Brain from the `registered_disabled` guards; redeploy the Orchestrator and Publisher |
-| 6 | Michael on the Mac mini | Merge the Sector-Pulse PR, update Pulse; set `jobs.dataRoot` to the data SSD folder; Keychain items as the catalog entry declares; enable `weather-central` in Pulse; set `WEATHER_WRITE_APPROVED=1` for the Pulse job environment |
+| 6 | Michael on the Mac mini | Merge the Sector-Pulse PR, update Pulse; set `jobs.dataRoot` to the data SSD folder; Keychain items as the catalog entry declares; enable `weather-central` in Pulse. **Write approval** is the Pulse owner config `publication.weatherWriteApproved` = `"1"` in `config.json` (owner-only), which Pulse renders into `WEATHER_WRITE_APPROVED` for the job; unset, the entry refuses (exit 3) |
 | 7 | Michael (resumes execution) | `tools/ops/execution_control.py brain --brain weather --enable-brain ...` with the approvalRef |
 
 ## 7. Open questions for the owner
