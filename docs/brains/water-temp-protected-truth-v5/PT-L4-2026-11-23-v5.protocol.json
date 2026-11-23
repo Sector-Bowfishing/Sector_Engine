@@ -1,0 +1,691 @@
+{
+ "schema": "sector-water-temp-protected-truth-protocol-v5",
+ "protocolId": "PT-L4-2026-11-23-v5",
+ "supersedes": "PT-L4-2026-11-23-v4 (sha256 aac78d48276ba692d7f485971e594c01c000ccc966631f4900bf46a817a096e0), superseded after the round-4 independent review of PR #248 before any v4 data was fetched; earlier: v3 ebc1a77b1977924c2bb586340887f2fad7a3196b20bf4f2ef2305853716f170d, v2 e02e2e08740767dec4720a610c112010eb78ad73ad1b223b14365489a499867d, v1 d0de8ceb18cc6857ec6c4478e49b73dcfb2a458823b30ade4a3d8b73479b8566",
+ "brainId": "water-temp",
+ "gap": "WATER-VAL-001",
+ "scoreGate": "level4ProtectedTruth (docs/brains/scoring/frozen-scores.json, water-temp)",
+ "status": "PRE-REGISTERED",
+ "preRegisteredAt": "2026-11-23",
+ "preRegisteredBy": "Claude (Engine research session, branch research/water-temp-protected-truth-v2-2026-11-23)",
+ "direction": "Owner direction recorded on Sector_Ops #51 (comment 7093610553, 2026-11-23 06:42Z chat answer): no agency emails; if Wheeler and Wilson stay short, replace the short lakes with a rule written and hashed before any value is opened, selecting only on how many public held-out casts exist, never on values. Owner rule applied since v3: nothing is excluded to improve a result, and unknowns count against.",
+ "dataExaminedBeforeRegistration": "No water-temperature value from any source, and no v2, v3 or v4 data at all (none ever ran). Known before registration: the v1 step-A census COUNTS posted on Sector_Ops #51 (comment 7094108377). The selection rule uses only counts by design.",
+ "universe": {
+  "definition": "Directory lakes classified region SE and lakeClass R1_run_of_river_pool or R2_flow_through_reservoir in the Lake Registry v1 classification, as committed in brains/vegetation/runtime/knowledge/fleet.json (registryGeneratedAt 2026-10-13T20:20:54Z): the registry's Southeast run-of-river and flow-through reservoirs, used here as the main-stem reservoirs of the Southeast and TVA region. 62 directory ids.",
+  "sameWater": [
+   [
+    "Kentucky Lake|KY",
+    "Kentucky Lake|TN"
+   ],
+   [
+    "Eufaula / W.F. George|AL",
+    "Walter F. George / Eufaula|GA"
+   ]
+  ],
+  "sameWaterRule": "Directory ids that are one water count as one candidate. A station is counted once for the water; the water's lakeId for pairing is the first id in the list.",
+  "points": "Engine directory points (Sources/SectorEngine/Support/LakeDirectory.swift); the model is paired at this point.",
+  "geometry": "Lake Registry v1 analysis polygon (public bucket sector-lake-registry, lakes/{lakeKey}/geometry.v1.analysis.geojson.gz) with the index bbox. A lake with no registry geometry is NO_GEOMETRY and is not ranked.",
+  "lakes": [
+   {
+    "lakeId": "Allatoona|GA",
+    "point": [
+     34.16,
+     -84.725
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Badin Lake|NC",
+    "point": [
+     35.42,
+     -80.1
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Bankhead|AL",
+    "point": [
+     33.45,
+     -87.35
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Blackshear|GA",
+    "point": [
+     31.83,
+     -83.955
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Bluestone Lake|WV",
+    "point": [
+     37.62,
+     -80.9
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Buckhorn Lake|KY",
+    "point": [
+     37.34,
+     -83.4
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Burnsville Lake|WV",
+    "point": [
+     38.85,
+     -80.63
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Burton|GA",
+    "point": [
+     34.77,
+     -83.55
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Catherine|AR",
+    "point": [
+     34.45,
+     -93.0
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Cheat Lake|WV",
+    "point": [
+     39.7,
+     -79.85
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Cherokee Lake|TN",
+    "point": [
+     36.25,
+     -83.45
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Chickamauga Lake|TN",
+    "point": [
+     35.4,
+     -85.05
+    ],
+    "lakeClass": "R1_run_of_river_pool",
+    "tennesseeRiverMile": {
+     "dam": 471.0,
+     "upstreamDam": 529.9
+    }
+   },
+   {
+    "lakeId": "Claytor Lake|VA",
+    "point": [
+     37.06,
+     -80.63
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Columbus Lake|MS",
+    "point": [
+     33.56,
+     -88.49
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Dardanelle|AR",
+    "point": [
+     35.35,
+     -93.2
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Douglas Lake|TN",
+    "point": [
+     36.0,
+     -83.35
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Eufaula / W.F. George|AL",
+    "point": [
+     31.9,
+     -85.1
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Fort Loudoun Lake|TN",
+    "point": [
+     35.85,
+     -84.15
+    ],
+    "lakeClass": "R1_run_of_river_pool",
+    "tennesseeRiverMile": {
+     "dam": 602.3,
+     "upstreamDam": 652.0
+    }
+   },
+   {
+    "lakeId": "Guntersville|AL",
+    "point": [
+     34.42,
+     -86.26
+    ],
+    "lakeClass": "R1_run_of_river_pool",
+    "tennesseeRiverMile": {
+     "dam": 349.0,
+     "upstreamDam": 424.7
+    }
+   },
+   {
+    "lakeId": "Hamilton|AR",
+    "point": [
+     34.45,
+     -93.12
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Herrington Lake|KY",
+    "point": [
+     37.75,
+     -84.7
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "High Rock Lake|NC",
+    "point": [
+     35.63,
+     -80.25
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Hiwassee Lake|NC",
+    "point": [
+     35.2,
+     -84.05
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Jordan|AL",
+    "point": [
+     32.62,
+     -86.26
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Kentucky Lake|KY",
+    "point": [
+     36.9,
+     -88.07
+    ],
+    "lakeClass": "R2_flow_through_reservoir",
+    "tennesseeRiverMile": {
+     "dam": 22.4,
+     "upstreamDam": 206.7
+    }
+   },
+   {
+    "lakeId": "Kentucky Lake|TN",
+    "point": [
+     36.2,
+     -88.05
+    ],
+    "lakeClass": "R2_flow_through_reservoir",
+    "tennesseeRiverMile": {
+     "dam": 22.4,
+     "upstreamDam": 206.7
+    }
+   },
+   {
+    "lakeId": "Lake Barkley|KY",
+    "point": [
+     36.92,
+     -87.94
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Lake Bistineau|LA",
+    "point": [
+     32.4,
+     -93.4
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Lake Chesdin|VA",
+    "point": [
+     37.23,
+     -77.65
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Lake D'Arbonne|LA",
+    "point": [
+     32.71,
+     -92.46
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Lake Gaston|VA",
+    "point": [
+     36.52,
+     -77.9
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Lake Greenwood|SC",
+    "point": [
+     34.19,
+     -81.94
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Lake Hickory|NC",
+    "point": [
+     35.78,
+     -81.25
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Lake Marion|SC",
+    "point": [
+     33.5,
+     -80.35
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Lake Martin|AL",
+    "point": [
+     32.7,
+     -85.92
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Lake Norman|NC",
+    "point": [
+     35.55,
+     -80.95
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Lake Robinson|SC",
+    "point": [
+     34.47,
+     -80.15
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Lake Russell (R.B. Russell)|GA",
+    "point": [
+     34.05,
+     -82.65
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Lake Wateree|SC",
+    "point": [
+     34.42,
+     -80.87
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Lake Wylie|SC",
+    "point": [
+     35.1,
+     -81.05
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Lay|AL",
+    "point": [
+     33.0,
+     -86.52
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Logan Martin|AL",
+    "point": [
+     33.47,
+     -86.32
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Millwood|AR",
+    "point": [
+     33.68,
+     -93.95
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Neely Henry|AL",
+    "point": [
+     33.8,
+     -86.05
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Nickajack Lake|TN",
+    "point": [
+     35.03,
+     -85.53
+    ],
+    "lakeClass": "R1_run_of_river_pool",
+    "tennesseeRiverMile": {
+     "dam": 424.7,
+     "upstreamDam": 471.0
+    }
+   },
+   {
+    "lakeId": "Nimrod|AR",
+    "point": [
+     34.95,
+     -93.17
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Oconee|GA",
+    "point": [
+     33.43,
+     -83.25
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Okatibbee Lake|MS",
+    "point": [
+     32.49,
+     -88.81
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Old Hickory Lake|TN",
+    "point": [
+     36.28,
+     -86.62
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Pickwick Lake|TN",
+    "point": [
+     35.05,
+     -88.2
+    ],
+    "lakeClass": "R1_run_of_river_pool",
+    "tennesseeRiverMile": {
+     "dam": 206.7,
+     "upstreamDam": 259.4
+    }
+   },
+   {
+    "lakeId": "R.D. Bailey Lake|WV",
+    "point": [
+     37.6,
+     -81.83
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Seminole|GA",
+    "point": [
+     30.8,
+     -84.88
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "Sinclair|GA",
+    "point": [
+     33.15,
+     -83.26
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Summersville Lake|WV",
+    "point": [
+     38.23,
+     -80.89
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Sutton Lake|WV",
+    "point": [
+     38.66,
+     -80.66
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Tygart Lake|WV",
+    "point": [
+     39.32,
+     -80.03
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Walter F. George / Eufaula|GA",
+    "point": [
+     31.9,
+     -85.05
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Watts Bar Lake|TN",
+    "point": [
+     35.75,
+     -84.75
+    ],
+    "lakeClass": "R1_run_of_river_pool",
+    "tennesseeRiverMile": {
+     "dam": 529.9,
+     "upstreamDam": 602.3
+    }
+   },
+   {
+    "lakeId": "Weiss|AL",
+    "point": [
+     34.18,
+     -85.65
+    ],
+    "lakeClass": "R1_run_of_river_pool"
+   },
+   {
+    "lakeId": "West Point|GA",
+    "point": [
+     32.92,
+     -85.18
+    ],
+    "lakeClass": "R2_flow_through_reservoir"
+   },
+   {
+    "lakeId": "Wheeler|AL",
+    "point": [
+     34.63,
+     -87.03
+    ],
+    "lakeClass": "R1_run_of_river_pool",
+    "tennesseeRiverMile": {
+     "dam": 274.9,
+     "upstreamDam": 349.0
+    }
+   },
+   {
+    "lakeId": "Wilson|AL",
+    "point": [
+     34.77,
+     -87.45
+    ],
+    "lakeClass": "R1_run_of_river_pool",
+    "tennesseeRiverMile": {
+     "dam": 259.4,
+     "upstreamDam": 274.9
+    }
+   }
+  ],
+  "stationReview": "Off the Tennessee River, a station whose name names a river is MAIN_BODY only when that river is the river impounded by the lake's own dam (the reviewer establishes this from the dam record and the map, metadata only), and EMBAYMENT otherwise; the draft marks such rows UNCLASSIFIED for that review. On a Tennessee main-stem lake any other river is EMBAYMENT. A MAIN_BODY station must have coordinates."
+ },
+ "frozenLakes": [
+  "Guntersville|AL",
+  "Wheeler|AL",
+  "Wilson|AL",
+  "Pickwick Lake|TN"
+ ],
+ "exclusions": {
+  "rule": "A candidate is EXCLUDED (never ranked, never retained) if any of these holds. Exclusion uses metadata only.",
+  "M0_TUNING": "One of its directory ids is in the M0 calibration lake list (a required input file, possibly empty, recorded with its sha256 and content), or an M0 calibration sensor site (the research-home calibration snapshot, rows with inM0CalibrationSet) lies inside its polygon or within 10 mi of its point. The runner refuses without both inputs.",
+  "RESOLVER_SENSOR": "It has a tempSensor binding (docs/data/temp_sensors.csv; in the universe: Lake Russell (R.B. Russell)|GA and Okatibbee Lake|MS), or any USGS 00010 site of type LK lies within 10 mi of its point (the resolver's nearest-lake-gauge fallback, WaterLevelService.nearestWaterTemp), whatever that site's recent activity.",
+  "WT_SAT_1": "It is in the WT-SAT-1 lake list. While that list is unfrozen, every lake with a USGS 00010 site of type LK inside its polygon is excluded (WT-SAT-1 eligibility starts from those sensors). Once the list is committed, its lakes are excluded as well.",
+  "note": "The four frozen lakes are excluded from WT-SAT-1 by that draft; they are tested here like any other candidate under the M0 and resolver rules."
+ },
+ "independence": {
+  "window": {
+   "census": "2021-01-01 to 2026-11-22 inclusive (fixed cutoff, censusCutoff) for replacement candidates.",
+   "frozenHoldout": "For the four frozen lakes the census window is the Stage 3C.3 holdout window, 2021-01-01 to 2026-06-30: their retention test (>= 25) and their counted casts use only that window, so no post-June 2026 cast enters for them. The census also reports their count to the cutoff, for information only; using it would need the owner to adopt a different rule under a new protocol id.",
+   "replacementLakes": "No replacement lake has been used to fit, tune or select any Water Temp model (the exclusions remove every lake with an M0 or resolver sensor), so all its casts in the census window are held out."
+  },
+  "protection": "Truth values are opened only in step B, only for the selected lakes' counted casts. They may never be used afterwards to calibrate, tune or select a model; the selected lakes become protected lakes."
+ },
+ "truthUnit": {
+  "name": "qualifying cast",
+  "definition": "One local calendar date (WQP ActivityStartDate as reported) at one MAIN_BODY station with at least one counted reading. A counted reading is a whitelisted WQP Result-depth row with CharacteristicName exactly 'Temperature, water', ResultStatusIdentifier not 'Rejected', a recognised unit code (ResultMeasure/MeasureUnitCode deg C or deg F), and depth <= 1.5 m, where depth is ResultDepthHeightMeasure when it parses and ActivityDepthHeightMeasure otherwise (m, ft or cm). Activity metadata is not used to count.",
+  "key": "(water lakeId, MonitoringLocationIdentifier, ActivityStartDate)",
+  "crossOrganizationDuplicates": "As v1: same water and date, station coordinates within 0.002 degrees: one cast, the one with more depth records kept.",
+  "surfaceValue": "Step B, from the counted readings only: mean of the readings at 0 to 1.0 m, else the shallowest reading <= 1.5 m, deg F converted. Unknown units are rejected in step A from metadata. The only step-B truth reject is a value missing or outside -0.5 to 40 deg C: it is counted per lake and reported, and a lake whose scored casts fall below 25 because of it FAILS. A counted reading that step B does not return at all is an unknown and fails its lake (CAST_NOT_RETURNED). Whether out-of-range values may be excluded at all is open for the owner; until he rules, this text governs.",
+  "depthOrder": "ResultDepthHeightMeasure first, then ActivityDepthHeightMeasure; the same order in step A (counting) and step B (surface value)."
+ },
+ "stepA": {
+  "metadata": "WQP Station and Activity metadata per candidate bbox, stored only as whitelisted columns (identifiers, names, coordinates, dates, depths, organisation, type; no comment or measure columns). Activity metadata is kept for the record and is not used to count.",
+  "resultDepth": {
+   "rule": "WQP Result rows for the same query are read through a column whitelist. Only these columns are parsed and stored: OrganizationIdentifier, MonitoringLocationIdentifier, ActivityIdentifier, ActivityStartDate, CharacteristicName, ResultStatusIdentifier, ResultMeasure/MeasureUnitCode (the unit, not the value), ActivityDepthHeightMeasure/MeasureValue, ActivityDepthHeightMeasure/MeasureUnitCode, ResultDepthHeightMeasure/MeasureValue, ResultDepthHeightMeasure/MeasureUnitCode. ResultMeasureValue and every other column are never indexed or written. The raw response is not stored; only the whitelisted rows are, and their sha256 is recorded.",
+   "limitation": "The temperature value is present in the downloaded HTTP bytes and Python's csv module splits it into each parsed row in memory. The runner's code indexes only the whitelisted positions, so it never reads, converts, stores or prints the value, and the stored file has no value column. A test proves the value positions are never indexed."
+  },
+  "usgsSites": "USGS Water Data OGC API metadata (monitoring-locations with site type, and time-series-metadata for parameter 00010) per candidate bbox widened by 10 mi; identifiers, types and coordinates only. Stored only as whitelisted properties (monitoring_location_id, site_type_code, parameter_code, geometry).",
+  "stations": "Station classes (v1 classes) from metadata, assigned by the candidate polygon (100 m tolerance); Tennessee river miles (station name or ADEM TENR-nnn id) resolve overlaps and mark the 2.0 river miles below the upstream dam as TAILWATER. The draft file and the reviewed file are both hashed and both hashes are posted on Sector_Ops #51 before the census. A reviewer may change only rows the hashed draft marked UNCLASSIFIED, from names and coordinates, before the census and without counts, with a one-line reviewNote each; a row the draft assigned to a lake keeps that lakeId. The census requires both posted hashes and refuses on any mismatch, added or removed rows, changed names or coordinates, or a MAIN_BODY row without coordinates.",
+  "census": "Count qualifying casts per candidate water from the Result-depth rows only: 2021-01-01 to 2026-11-22 for replacement candidates, 2021-01-01 to 2026-06-30 for the four frozen lakes (their count to the cutoff is reported for information). Readings rejected for characteristic, status, unit or depth are counted and reported per water. census writes once."
+ },
+ "selection": {
+  "retain": "Each frozen lake that is not EXCLUDED and has >= 25 qualifying casts in the holdout window (to 2026-06-30) is retained, with those casts only.",
+  "replace": "The remaining slots (to 4 lakes) are filled from the other non-excluded candidates with >= 25 qualifying casts, ranked by qualifying casts descending, ties broken by sha256(lakeId) ascending.",
+  "sufficiency": "SELECTED when 4 lakes are chosen and their total is >= 150. Otherwise INSUFFICIENT_TRUTH, and the shortfall is reported; no value is opened.",
+  "freeze": "selection.json lists the 4 lakes, each lake's counted cast keys and counted readings (ActivityIdentifier and depth), the exclusion record, the posted draft and reviewed station-file sha256s and the census sha256. select runs once per protocol id (run ledger); its selection.json sha256 is recorded in the ledger and posted on Sector_Ops #51, and the first recorded and posted hash is the only valid selection. Every step-B command refuses any other selection.",
+  "neverUses": "Temperature values, model output, residuals or any other value."
+ },
+ "stepB": {
+  "gate": "Runs only after: selection SELECTED, recorded in the run ledger and its sha256 posted on Sector_Ops #51; an Owner request (Michael, ...) for step B naming that hash. Every step-B command refuses a selection or station file whose sha256 differs from the ledger's. The --owner-request check is a string check, not proof; the posted request is the control.",
+  "fetch": "WQP Result rows for each counted cast only: one query per (MonitoringLocationIdentifier, ActivityStartDate) with startDateLo = startDateHi = that date, one file per query. fetch-results writes once.",
+  "compare": "As v1 (production M0, discovery.py), pairing each counted cast with M0 for its lake-local date. Before reading any value, compare checks the result and forcing files against the run ledger's recorded hashes and one-to-one against the fetch provenance (paths, sha256, request parameters derived from the selection, URL equal to the WQP Result or Open-Meteo archive endpoint); it refuses missing, extra or duplicate files and duplicate reading ids. compare runs once per selection (run ledger) and records every input hash and its output hash.",
+  "forcing": "Open-Meteo archive daily forcing at each selected water's point, for exactly [earliest counted cast date - 46 days, latest counted cast date] of that water, derived from the selection; the window is not a command-line choice. Full request parameters are recorded. Forcing that does not contain every day from 45 days before each counted cast to the cast is refused. fetch-forcing writes once."
+ },
+ "metrics": {
+  "primary": {
+   "perLakeRmseC": "sqrt(mean((M0 - truth)^2)) over the lake's paired casts, deg C",
+   "pooledEqualLakeRmseC": "sqrt(mean over the 4 lakes of each lake's mean squared error), deg C"
+  },
+  "reported": [
+   "perLakeBiasC (M0 - truth)",
+   "perLakeMaeC",
+   "shareAbsErrorOver2.78C",
+   "per-season RMSE when a season has >= 5 casts",
+   "unpairedCasts",
+   "truthRejectsStepB with reasons",
+   "stepARejects (status, depth) per water"
+  ]
+ },
+ "passMark": {
+  "sufficiency": "A selected lake FAILS if any counted reading is not returned in step B (CAST_NOT_RETURNED), if any counted cast is unpaired (UNPAIRED_CAST), if its forcing is missing (FORCING_MISSING), or if fewer than 25 casts remain scored after step-B truth rejects (SCORED_BELOW_25).",
+  "pooledEqualLakeRmseC": {
+   "op": "<=",
+   "value": 2.5
+  },
+  "perLakeRmseC": {
+   "op": "<=",
+   "value": 2.5,
+   "appliesTo": "each of the 4 selected lakes"
+  },
+  "source": "Unchanged from v1 (tools/research/discovery.json pooledRmseC 2.5, pre-declared 2026-10-23). Whether this replaces the private Stage 3C.3 pass mark is the owner's rubric decision; Stage 3C.3's rule was defined on the four frozen lakes and has no recorded form for replacement lakes.",
+  "outcomes": [
+   "INSUFFICIENT_TRUTH (step A only)",
+   "PASS",
+   "FAIL"
+  ],
+  "rule": "PASS only if all 4 lakes are scored (no lake failed the rules above), each lake's RMSE <= 2.5 deg C and the pooled equal-lake RMSE <= 2.5 deg C."
+ },
+ "publication": {
+  "runOutput": "Local files in the water-temperature research folder only, labelled INTERNAL_EXPERIMENTAL and NOT_FOR_CUSTOMERS.",
+  "report": "A short summary on Sector_Ops #51: counts, exclusions, selection and its hash; metrics and outcome only if step B ran.",
+  "scorer": "frozen-scores.json water-temp is published verbatim. A PASS changes nothing by itself. Adopting this protocol (with replacement lakes) as the Level-4 rule is a rubric decision, and changing the score, the protectedLakes constants or the validation nodes is a separate owner-approved change.",
+  "authoritativeScoresUnchanged": true
+ },
+ "limitations": [
+  "The universe is the registry's SE R1/R2 classes; the registry classification is a research feature set, so a main-stem reservoir classed R3 or R4 is not a candidate and a tributary reservoir classed R1 or R2 is.",
+  "Casts are mostly daytime grabs and data-logger profiles; M0 is a daily value at the lake point, which may be tens of km from the station.",
+  "Replacement lakes did not exist in Stage 3C.3; their Level-4 result is comparable to the frozen four only after the owner adopts this protocol.",
+  "Off the Tennessee, the main-stem river decision for a named river rests on the reviewer reading the dam record and the map; it is made before the census and never sees a count.",
+  "Truth-side rejects for out-of-range values are allowed by this protocol and counted against the lake's 25; the owner may rule on whether any truth-side exclusion is allowed (a new protocol id if he changes it)."
+ ],
+ "minimums": {
+  "perLake": 25,
+  "total": 150,
+  "lakes": 4
+ },
+ "censusCutoff": "2026-11-22",
+ "runLedger": {
+  "rule": "Every step that decides or opens anything is recorded in one append-only, hash-chained run ledger per protocol id at <research root>/_ledgers/PT-L4-2026-11-23-v5.jsonl, outside every --out folder (the research root is the folder research-path returns, or SECTOR_RESEARCH_ROOT; a root inside --out is refused). Only run #1 of each (step, key) counts; a second run is refused. A run aborted before it produced a result may be retried, and the abort is recorded.",
+  "steps": {
+   "exclusions": "key = protocol id. Records the hashes of sites.csv, the calibration snapshot, the calibration-lake list and the WT-SAT-1 list (or 'unfrozen') and of exclusions.json.",
+   "census": "key = protocol id. Requires the recorded exclusions output hash. Records the posted draft and reviewed station-file hashes, the result-depth tree hash and the census.json hash.",
+   "select": "key = protocol id. Requires the recorded census output hash. Records the selection.json hash: this is the selection registry; the first selection hash recorded and posted on Sector_Ops #51 is the only valid one.",
+   "fetch-forcing": "key = selection sha256. Requires the recorded selection. Records every forcing file and its provenance by hash (bind_inputs).",
+   "fetch-results": "key = selection sha256. Requires the recorded selection. Records every result file and its provenance by hash (bind_inputs).",
+   "compare": "key = selection sha256. Requires the recorded selection and both fetches; checks every input against the recorded hashes (check_inputs); a second compare for the same selection is refused. Records the comparison output hash."
+  },
+  "implementation": "The shared Engine module tools/research/protocol_run_ledger.py once it is on main; until then a minimal vendored shim with the same API (tools/research/_wt_protocol_run_ledger_shim.py)."
+ },
+ "changesFromV4": [
+  "All write-once and one-selection guards are bound to the protocol's run ledger outside the output folders, so a second selection, census, exclusions, fetch or compare in another folder is refused.",
+  "The selection registry is the ledger's select entry; step B requires it.",
+  "fetch-results and fetch-forcing record their files' hashes in the ledger; compare checks them and runs once per selection.",
+  "compare also checks that every provenance URL is the WQP Result endpoint or the Open-Meteo archive endpoint."
+ ]
+}
