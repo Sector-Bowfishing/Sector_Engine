@@ -487,6 +487,18 @@ def build(m=None, **kw):
     return C.build_control_state(m, "PRE_PRODUCTION", NOW, **args)
 
 
+def test_every_committed_manifest_brain_is_published_to_the_control_state():
+    """The Ops Engine Canvas draws only the Brains the control state publishes, so a Brain added to the manifest but missing here
+    is silently absent from the canvas (Weather, Generation and Moon were, 2026-11-23). Adding a Brain to the manifest must add it here."""
+    m = committed_manifest()
+    st = build(m=m)
+    ids = set(m["brains"])
+    assert set(st["brains"]) == ids, f"missing from control state: {sorted(ids - set(st['brains']))}"
+    assert set(st["graph"]["order"]) == ids, f"missing from graph.order: {sorted(ids - set(st['graph']['order']))}"
+    for new_brain in ("weather", "generation", "moon"):
+        assert new_brain in st["brains"] and st["brains"][new_brain]["activityState"] == "PARKED"
+
+
 def test_control_state_answers_the_product_questions():
     m = manifest()
     jobs = {"wind-hourly": {"schedulerState": "ENABLED", "cron": "5 * * * *", "schedule": "5 * * * * UTC", "nextScheduledAt": "2026-10-14T19:05:00Z", "runtimeStatus": "HEALTHY",

@@ -96,3 +96,12 @@ Deploy-ready, **not deployed** (needs Michael: the orchestrator is a shared prod
 
 ## 15. Health plane (added 2026-10-16, Orchestrator G1/G2 — `brain-health-v1`)
 Beside `control/orchestratorV1`, the orchestrator can publish `control/healthV1/*` (opt-in: `orchestrate.py --publish-health`; review: `--emit-health-state FILE`): five health concepts per Brain (process, dependencies, freshness, domainValidation, publish) plus the declared dependency graph and the Signal Registry definitions. §10's "health is shown beside, not derived from" is now a published contract: `freshness` there is still the age of `lastSuccessfulRun` (process), while `control/healthV1` carries evidence freshness. Execution records gain additive lineage (`codeVersion`, `jobId`, `consumed[]`). Contract and migration table: `../ORCHESTRATOR_HEALTH_V1.md`. Sample (synthetic): `sample_health_state_synthetic_2026-10-16.json`. Publication (2026-10-17): `orchestrate.py --health-only` publishes ONLY `control/healthV1/*` (no `control/orchestratorV1` write, no `/jobs`, no execution, no scores) — `../ORCHESTRATOR_HEALTH_V1.md` §10; consumer contract `../HEALTH_PLANE_OPS_CONSUMER_CONTRACT_V1.md`.
+
+## Adding a Brain: it must reach the Ops Engine Canvas
+
+The Ops Engine Canvas has no Brain list of its own. It draws exactly the Brains in the published `/control/orchestratorV1/brains` and `graph.order`. A Brain that is not in `control_manifest.json`, or that the running orchestrator build predates, is simply absent from the canvas.
+
+When you add a Brain:
+1. Add it to `control_manifest.json` (a PARKED entry is enough; it is then drawn as PARKED).
+2. `test_every_committed_manifest_brain_is_published_to_the_control_state` must pass; it fails if a manifest Brain is missing from the control state or `graph.order`.
+3. After merge, confirm the running `brain-orchestrator` is built from a commit that includes the manifest change and has published since. Re-publishing the orchestrator is a separate, approved step.
