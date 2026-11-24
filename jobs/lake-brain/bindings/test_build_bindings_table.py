@@ -42,6 +42,11 @@ class DropTvaLiveTests(unittest.TestCase):
         live = [{"provider": "tva", "station": "WLSA1"}]
         self.assertEqual(B.drop_tva_live(live), live)
 
+    def test_pilots_keep_their_hand_written_tva_source(self):
+        live = [{"provider": "tva", "station": "GVDA1"}, {"provider": "nwps", "station": "GVHA1"}]
+        self.assertEqual(B.drop_tva_live(live, "Guntersville|AL"), live)
+        self.assertEqual([r["provider"] for r in B.drop_tva_live(live, "Norris Lake|TN")], ["nwps"])
+
 
 class UnitTests(unittest.TestCase):
     def test_time_zones(self):
