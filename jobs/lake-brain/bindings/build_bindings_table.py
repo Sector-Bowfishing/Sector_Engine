@@ -741,6 +741,13 @@ def build_facts(inp: Inputs, lake: str, row: dict) -> dict:
 
 
 # ---------------------------------------------------------------------------------------------------------------- record
+def drop_tva_live(live: list[dict]) -> list[dict]:
+    """TVA's robots.txt disallows automated reads (Sector_Ops #51, 2026-11-23). Remove tva from a lake's LIVE sources whenever the lake has
+    another verified live source; a tva-only lake keeps it until TVA answers the permission request. History is not touched here."""
+    keep = [r for r in live if r["provider"] != "tva"]
+    return keep if keep else live
+
+
 def build_record(inp: Inputs, row: dict) -> tuple[dict | None, list[str]]:
     lake = row["lake_id"]
     warnings = []
@@ -749,7 +756,7 @@ def build_record(inp: Inputs, row: dict) -> tuple[dict | None, list[str]]:
     ref = live_ref_for(inp, row, full)
     if ref is None:
         return None, [f"{lake}: no live ref could be built for {row['provider']} {row['station']} {row['series_or_param']}"]
-    live = [ref] + fallback_refs(inp, lake, ref, row)
+    live = drop_tva_live([ref] + fallback_refs(inp, lake, ref, row))
     hist = build_history(inp, row, full, ref)
     tz, tz_rule = (PILOTS[lake], "pilot (hand-written binding keeps its zone)") if lake in PILOTS else timezone_for(d["state"], d["lat"], d["lon"])
     plan = build_plan(inp, lake, row)
@@ -766,11 +773,11 @@ def build_record(inp: Inputs, row: dict) -> tuple[dict | None, list[str]]:
     rec = {
         "lakeId": lake,
         "status": STATUS,
-        "capability": row["capability_class"],
-        "provider": ref["provider"],
+        "capability": live[0]["capability"] if live[0] is not ref else row["capability_class"],
+        "provider": live[0]["provider"],
         "researchProvider": row["provider"],
-        "station": ref["station"],
-        "series": ref.get("series"),
+        "station": live[0]["station"],
+        "series": live[0].get("series"),
         "live": live,
         "history": hist["sources"],
         "historyCompleteYears": hist["completeYears"],
