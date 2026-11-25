@@ -119,7 +119,7 @@ estimate 1-3.5 USD/month at list price for hourly runs. Proposed cap 4 USD/month
 | # | Who | Action | What it flips |
 |---|---|---|---|
 | 0 | | Weather is on first (WEATHER_BRAIN_PLAN.md §6.1): without Weather states Moon publishes MOON_ONLY | |
-| 1 | Michael, then an Engine PR | Approve the lake-directory release `moon-knowledge-candidate-2026-11-22.1`: `knowledge-release.json` `approval` APPROVED with its record; `brain.json` knowledge approval | write gate (a) |
+| 1 | Michael, then an Engine PR | Approve the lake-directory release `moon-knowledge-candidate-2026-11-25.1`: `knowledge-release.json` `approval` APPROVED with its record; `brain.json` knowledge approval | write gate (a) |
 | 2 | Cortex maintenance session, then an Engine PR | Register Moon's families and Moon as a target Brain (CG-3.1-19); re-sync `data_ownership.json` (dispatch refuses `moon` until then) | dispatch |
 | 3 | Michael (IAM) | Service account `brain-job-moon`, write access to `sector-brain` only | identity |
 | 4 | Michael (creates a cloud job: cost) | `MICHAEL_APPROVED_MOON_DEPLOY=yes MOON_WRITE_APPROVED=1 brains/moon/deploy/deploy-job.sh` (1 vCPU, 512 MiB, 30 min, no retries, args `--write`; no scheduler) | write gate (b) |

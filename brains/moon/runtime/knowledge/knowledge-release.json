@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "brainId": "moon",
-  "releaseId": "moon-knowledge-candidate-2026-11-22.1",
+  "releaseId": "moon-knowledge-candidate-2026-11-25.1",
   "store": "PACKAGED_IN_IMAGE",
   "owner": "moon",
   "approval": {
@@ -11,9 +11,9 @@
   "files": [
     {
       "path": "lakes-directory.json",
-      "sha256": "c7310d9cadb3f63a37bd3894a33d41a922c13494efeaaa4f708577c6e12a1782",
-      "bytes": 65290
+      "sha256": "e1a5bdc07084b53ee10bec6c75a5cc73b5b72c134ee6b4b26466cde7b4d6a7b5",
+      "bytes": 68175
     }
   ],
-  "releaseDigest": "sha256:b0cd3dd750364c5da597e612c8614377a248390c137a181f117319f0156991fc"
+  "releaseDigest": "sha256:4da72b24ea07315abe09a26634479973a28a7633ecd3a3cc6d4b2d5c1b95e0b9"
 }

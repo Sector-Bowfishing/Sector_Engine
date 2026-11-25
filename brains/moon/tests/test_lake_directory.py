@@ -16,11 +16,11 @@ def test_projection_matches_the_engine_lake_directory():
     want = L.project(swift)
     got = L.load()
     assert {k: got[k] for k in want} == want
-    assert got["count"] == 621                      # the directory size the owner decision names (Sector_Ops #51)
+    assert got["count"] == 648                      # the directory size the owner decision names (Sector_Ops #51)
 
 
 def test_every_lake_has_a_legal_unique_key():
-    assert len(lake_keys([r["lakeId"] for r in L.load()["lakes"]])) == 621
+    assert len(lake_keys([r["lakeId"] for r in L.load()["lakes"]])) == 648
 
 
 def test_release_is_verified_and_not_approved():

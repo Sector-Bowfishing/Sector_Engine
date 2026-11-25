@@ -772,7 +772,7 @@
         "approvedMemoryRelease": {
           "status": "BLOCKED",
           "label": "CANDIDATE_RELEASE_NOT_APPROVED",
-          "evidence": "moon-knowledge-candidate-2026-11-22.1 verified; approval NOT_RECORDED"
+          "evidence": "moon-knowledge-candidate-2026-11-25.1 verified; approval NOT_RECORDED"
         },
         "operationalReadiness": {
           "status": "BLOCKED",
@@ -816,7 +816,7 @@
         },
         "knowledgeRelease": {
           "state": "CANDIDATE",
-          "releaseId": "moon-knowledge-candidate-2026-11-22.1",
+          "releaseId": "moon-knowledge-candidate-2026-11-25.1",
           "approval": "NOT_RECORDED"
         },
         "scores": [],
