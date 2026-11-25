@@ -74,7 +74,7 @@ def _miss(reason: str, **extra) -> dict:
 
 def _weather_rows(weather: dict) -> list:
     """Hourly cloud rows from a Weather Brain state document (sector-brain-weather-state-v1, /lakes/{k}/states/weather):
-    `forecast.hourly[]` rows {at, cloudCoverPct?} (the NWS forecast grid, at most 12 hours after the run; origin forecastGrid) and the
+    `forecast.hourly[]` rows {at, cloudCoverPct?} (the NWS forecast grid, at most 18 hours after the run; origin forecastGrid) and the
     current hour `sky.cloudCoverPct` {value, at, origin}. A row without `cloudCoverPct` is a null value (the Weather schema requires only
     `at`). Nothing else in the document is read. Raises KeyError/TypeError on a malformed shape."""
     rows = []
@@ -93,7 +93,7 @@ def _hhmm(t: float) -> str:
 def window_cloud(weather: dict | None, start: float, end: float) -> dict:
     """Mean cloud cover over the part of tonight's fishing window still ahead at the Weather run. Never fills a gap.
 
-    A Weather state holds the current hour and the next 12 forecast hours, so it cannot describe hours before its own run. The cloud span is
+    A Weather state holds the current hour and the next 18 forecast hours, so it cannot describe hours before its own run. The cloud span is
     therefore [max(window start, the Weather run's current hour), window end]: an evening run judges the whole night, a mid-night run judges
     the hours still ahead. The span's hours are the top-of-hour instants within [span start - 30 min, span end + 30 min], and at least 75 %
     of those DISTINCT hours need a value: a row is keyed on the top of its hour, a repeated hour with the same value counts once, and the same

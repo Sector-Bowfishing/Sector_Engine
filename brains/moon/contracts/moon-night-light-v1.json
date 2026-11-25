@@ -28,7 +28,7 @@
     "requirement": "OPTIONAL",
     "status": "Declared in brain.json consumes (weather-publication-v1 >= 1.0.0, OPTIONAL). There is no live read yet (no writer or executor while disabled): run.py --weather passes {lakeId: Weather state document}.",
     "read": [
-      "forecast.hourly[].{at, cloudCoverPct}: the NWS forecast grid, at most the 12 hours after the Weather run (origin forecastGrid). A row without cloudCoverPct is a null value (the Weather schema requires only at)",
+      "forecast.hourly[].{at, cloudCoverPct}: the NWS forecast grid, at most the 18 hours after the Weather run (origin forecastGrid). A row without cloudCoverPct is a null value (the Weather schema requires only at)",
       "sky.cloudCoverPct {value, at, origin}: the current hour at the Weather run (forecast grid, or an NWS station observation when the grid has no hour)",
       "generatedAt: the Weather run time"
     ],

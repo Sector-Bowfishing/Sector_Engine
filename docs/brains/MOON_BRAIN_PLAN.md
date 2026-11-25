@@ -51,7 +51,7 @@ DARK  A < 0.15   |   MOSTLY_DARK  < 0.35   |   SOME_MOONLIGHT  < 0.60   |   BRIG
 ## 4. Weather Brain input
 
 The input is the Weather Brain's per-lake state (`sector-brain-weather-state-v1`, `/lakes/{k}/states/weather`). It is OPTIONAL and declared in `brain.json` `consumes` (§7.2). Only these fields are read:
-- `forecast.hourly[].cloudCoverPct`: the NWS forecast grid, at most 12 hours after the run. A row without the key counts as null.
+- `forecast.hourly[].cloudCoverPct`: the NWS forecast grid, at most 18 hours after the run (12 before the 2026-11-24 owner decision). A row without the key counts as null.
 - `sky.cloudCoverPct {value, at, origin}`: the current hour.
 - `generatedAt`.
 
