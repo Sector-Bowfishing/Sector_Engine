@@ -58,9 +58,9 @@ def real_weather_state(name):
 
 def weather_state(hourly, current=None, generated_at="2026-11-22T23:00:00Z"):
     """A schema-valid Weather state (sector-brain-weather-state-v1): a real Weather Brain state used as the template, with the run time,
-    the current hour's sky.cloudCoverPct and the forecast.hourly cloud values replaced. hourly: [(iso, pct)], at most 12 rows (the Weather
+    the current hour's sky.cloudCoverPct and the forecast.hourly cloud values replaced. hourly: [(iso, pct)], at most 18 rows (the Weather
     schema's maxItems); current: (iso, pct, origin) or None."""
-    assert len(hourly) <= 12, "a Weather state holds at most 12 forecast hours"
+    assert len(hourly) <= 18, "a Weather state holds at most 18 forecast hours"
     doc = copy.deepcopy(real_weather_state(_TEMPLATE))
     tmpl = doc["forecast"]["hourly"][0]
     doc["generatedAt"] = generated_at
@@ -70,7 +70,7 @@ def weather_state(hourly, current=None, generated_at="2026-11-22T23:00:00Z"):
     return doc
 
 
-def night_rows(run_at, pct, hours=12):
+def night_rows(run_at, pct, hours=18):
     """The forecast rows a Weather run at `run_at` carries: the `hours` top-of-hour instants after the run hour (pct: a value or a list)."""
     h0 = dt.datetime.fromisoformat(run_at.replace("Z", "+00:00")).replace(minute=0, second=0)
     vals = pct if isinstance(pct, list) else [pct] * hours
@@ -78,6 +78,6 @@ def night_rows(run_at, pct, hours=12):
 
 
 def run_state(run_at, pct, origin="forecastGrid"):
-    """A Weather run at `run_at` with every hour (current + 12 ahead) at `pct`."""
+    """A Weather run at `run_at` with every hour (current + 18 ahead) at `pct`."""
     h0 = dt.datetime.fromisoformat(run_at.replace("Z", "+00:00")).replace(minute=0, second=0).strftime("%Y-%m-%dT%H:%M:%SZ")
     return weather_state(night_rows(run_at, pct), current=(h0, pct if not isinstance(pct, list) else pct[0], origin), generated_at=run_at)

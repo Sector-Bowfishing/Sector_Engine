@@ -110,6 +110,54 @@
     "dewPointF": 48.0,
     "humidityPct": 83,
     "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 52.0,
+    "at": "2026-11-07T09:00:00Z",
+    "cloudCoverPct": 86,
+    "dewPointF": 47.0,
+    "humidityPct": 83,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 51.0,
+    "at": "2026-11-07T10:00:00Z",
+    "cloudCoverPct": 91,
+    "dewPointF": 47.0,
+    "humidityPct": 86,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 50.0,
+    "at": "2026-11-07T11:00:00Z",
+    "cloudCoverPct": 89,
+    "dewPointF": 47.0,
+    "humidityPct": 89,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 50.0,
+    "at": "2026-11-07T12:00:00Z",
+    "cloudCoverPct": 86,
+    "dewPointF": 47.0,
+    "humidityPct": 89,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 48.0,
+    "at": "2026-11-07T13:00:00Z",
+    "cloudCoverPct": 83,
+    "dewPointF": 48.0,
+    "humidityPct": 100,
+    "precipProbabilityPct": null
+   },
+   {
+    "airTemperatureF": 49.0,
+    "at": "2026-11-07T14:00:00Z",
+    "cloudCoverPct": 84,
+    "dewPointF": 48.0,
+    "humidityPct": 96,
+    "precipProbabilityPct": null
    }
   ],
   "issuedAt": "2026-11-06T20:35:47Z",

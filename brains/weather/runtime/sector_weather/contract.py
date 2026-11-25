@@ -30,7 +30,7 @@ MAX_STATIONS = 3
 SLP_OFFSET_MAX_AGE_MIN = 360
 TREND_SAMPLE_TOLERANCE_MIN = 90                # a trend needs a past sample within 90 min of its target (strict <)
 OBS_LOOKBACK_HOURS = 13                        # 12 h trend + one hour of slack
-FORECAST_HOURS = 12
+FORECAST_HOURS = 18                             # raised from 12 (owner decision 2026-11-24, Sector_Ops #51 comment 7152881555): Moon needs the evening window
 
 # ── pressure trend: the iOS app's definitions (WeatherService.swift) ──────────────────────────────────────────────────────────────
 TREND_3H_STEADY_INHG = 0.02                    # displayPressureTrend: 3 h tendency, steady within ±0.02 inHg (the tile/sheet/score trend)

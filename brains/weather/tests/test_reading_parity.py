@@ -50,9 +50,10 @@ def test_guntersville_while_fresh_uses_the_newest_station_and_labels_the_altimet
     assert s["sky"]["nwsText"] == "Mostly Cloudy"
 
 
-def test_forecast_rows_are_the_next_12_grid_hours():
+def test_forecast_rows_are_the_next_18_grid_hours():
+    # 18 h since the owner decision of 2026-11-24 (Sector_Ops #51 comment 7152881555), so Moon's cloud cover reaches the evening window.
     rows = _state("Champlain|VT")["forecast"]["hourly"]
-    assert len(rows) == 12 and rows[0]["at"] == "2026-11-06T21:00:00Z" and rows[-1]["at"] == "2026-11-07T08:00:00Z"
+    assert len(rows) == 18 and rows[0]["at"] == "2026-11-06T21:00:00Z" and rows[-1]["at"] == "2026-11-07T14:00:00Z"
 
 
 def test_a_station_report_is_never_overridden_by_the_grid_cloud_cover():

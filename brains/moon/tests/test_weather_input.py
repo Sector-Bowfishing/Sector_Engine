@@ -63,7 +63,7 @@ def _sky(lat, lon, date):
 
 def test_the_checker_catches_a_schema_violation():
     bad = S.real_weather_state(REAL[0])
-    bad["forecast"]["hourly"] = bad["forecast"]["hourly"] * 2                # 24 rows: over maxItems 12
+    bad["forecast"]["hourly"] = bad["forecast"]["hourly"] * 2                # 36 rows: over maxItems 18
     assert any("too many items" in e for e in schema_errors(bad, SCHEMA))
 
 
@@ -83,11 +83,11 @@ NIGHT = dt.date(2026, 11, 6)
 
 
 @pytest.mark.parametrize("name,where,status,basis,cls,full", [
-    # an afternoon run (20:51Z) reaches only 08Z: 9 of the night's 13 hours, below 75 %: moon only, said so
-    ("guntersville-2026-11-06T2051Z.json", GUN, "MISSING", "MOON_ONLY", "DARK", None),
+    # an afternoon run (20:51Z) carries 18 hours, to 14Z: the whole 13-hour night is covered (with 12 hours it reached only 08Z, see below)
+    ("guntersville-2026-11-06T2051Z.json", GUN, "AVAILABLE", "MOON_AND_CLOUD", "DARK", True),
     # an evening run (01:00Z, astronomical dusk ~00:15Z) covers the rest of the night: low cloud, cancels nothing, a dark waning crescent
     ("guntersville-2026-11-07T0100Z.json", GUN, "AVAILABLE", "MOON_AND_CLOUD", "DARK", False),
-    ("champlain-2026-11-06T2051Z.json", CHAMP, "MISSING", "MOON_ONLY", "DARK", None),
+    ("champlain-2026-11-06T2051Z.json", CHAMP, "AVAILABLE", "MOON_AND_CLOUD", "DARK", True),
     ("champlain-2026-11-06T2300Z.json", CHAMP, "AVAILABLE", "MOON_AND_CLOUD", "DARK", True),
 ])
 def test_real_weather_states_give_the_expected_class_and_basis(name, where, status, basis, cls, full):
@@ -158,3 +158,12 @@ def test_values_outside_the_cloud_span_are_not_checked():
 def test_evening_date_refuses_a_naive_now():
     with pytest.raises(ValueError):
         night.evening_date(34.42, -86.26, dt.datetime(2026, 11, 22, 20, 0))
+
+
+@pytest.mark.parametrize("name,where", [("guntersville-2026-11-06T2051Z.json", GUN), ("champlain-2026-11-06T2051Z.json", CHAMP)])
+def test_the_old_12_hour_horizon_left_the_afternoon_run_moon_only(name, where):
+    """Why Weather carries 18 hours (owner decision 2026-11-24): the same afternoon state cut to 12 rows covers too little of the night."""
+    doc = S.real_weather_state(name)
+    doc["forecast"]["hourly"] = doc["forecast"]["hourly"][:12]
+    d = D.assess(_sky(*where, NIGHT), doc)
+    assert (d["cloudCover"]["status"], d["cloudCover"]["reason"], d["basis"]) == ("MISSING", "INSUFFICIENT_COVERAGE", "MOON_ONLY")

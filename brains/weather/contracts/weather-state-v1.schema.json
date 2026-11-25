@@ -571,7 +571,7 @@
     },
     "hourly": {
      "type": "array",
-     "maxItems": 12,
+     "maxItems": 18,
      "items": {
       "type": "object",
       "additionalProperties": false,

@@ -10,7 +10,7 @@ official forecast data only, never invented estimates).
 | Data | Source | Label in the state |
 |---|---|---|
 | Pressure, air temperature, humidity, dew point, present weather, last-hour precipitation | NWS station observations (ASOS/AWOS) from the 3 nearest stations NWS lists for the lake's grid cell (`/stations/{id}/observations`) | `origin: "observation"`, `station`, `at` = observation time |
-| Total cloud %, the next 12 h of temperature / humidity / dew point / cloud / precipitation probability, forecast rain | NWS forecast grid (`/gridpoints/{wfo}/{x},{y}`, the NBM-based NDFD) | `origin: "forecastGrid"`, `at` = the start of the grid hour |
+| Total cloud %, the next 18 h (12 h before the owner decision of 2026-11-24) of temperature / humidity / dew point / cloud / precipitation probability, forecast rain | NWS forecast grid (`/gridpoints/{wfo}/{x},{y}`, the NBM-based NDFD) | `origin: "forecastGrid"`, `at` = the start of the grid hour |
 
 A value that no station and no forecast reported is `null`, and the tile is listed in `missing`. Pressure has **no** forecast fallback (the
 NWS grid has no pressure layer), so without a fresh observation `pressure` is `null`. Nothing is modelled, interpolated or carried forward.
