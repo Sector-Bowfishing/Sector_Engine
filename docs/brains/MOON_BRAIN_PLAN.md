@@ -57,7 +57,7 @@ The input is the Weather Brain's per-lake state (`sector-brain-weather-state-v1`
 
 **Limits (stated, #236 review):**
 - **What the cloud span covers.** A Weather state cannot describe hours before its run. The cloud adjustment covers `[max(window start, the Weather run's hour), window end]` and reports that span in `cloudCover.span` and in the statement. An evening run judges the whole window; a mid-night run judges the hours still ahead.
-- **Run timing.** With 12 forecast hours, only Weather runs from about 3 h before astronomical dusk cover a whole November night (Guntersville: from 21Z). An earlier run gives MOON_ONLY with INSUFFICIENT_COVERAGE. When enabled, Moon should therefore run after each evening and night Weather run (§7.1).
+- **Run timing.** With 18 forecast hours (12 before the owner decision of 2026-11-24), only Weather runs from about 9 h before astronomical dusk cover enough of a November night (Guntersville: from 15Z). An earlier run gives MOON_ONLY with INSUFFICIENT_COVERAGE. When enabled, Moon should therefore run after each evening and night Weather run (§7.1).
 - **Coverage.** Coverage counts distinct hours, and at least 75 % of the span's hours need a value. Values are checked only inside the span.
 - **Refusals.** A timestamp without an explicit UTC offset refuses the document. A Weather run after the window has ended gives WEATHER_AFTER_WINDOW.
 - **Labelling.** The statement says the cloud is an NWS forecast, and names an observed current hour when that is the origin.
