@@ -273,8 +273,8 @@ ADDED_LAKES_CSV = ROOT / "docs/data/lakes_added_2026-11.csv"
 
 def read_added_lakes():
     """Lakes added after the sheet (docs/data/lakes_added_2026-11.csv), each field
-    sourced in the row's Source URLs. A blank field stays unknown: no pool is
-    kept below med confidence, and a lake with no water-temp source is "limited"
+    sourced in the row's Source URLs. A blank field stays unknown: a pool below med
+    confidence is kept as `low` (the sheet's own convention), and a lake with no water-temp source is "limited"
     rather than a guess. Rows are per state, merged like the sheet's."""
     import csv
     out = []
@@ -282,7 +282,8 @@ def read_added_lakes():
         for r in csv.DictReader(f):
             pool = None
             if r["Full Pool (ft)"].strip():
-                pool = (float(r["Full Pool (ft)"]), "fullPool", r["Pool Conf"].strip().lower())
+                basis = "naturalSurface" if "natural" in r["Pool Basis"].lower() else "fullPool"
+                pool = (float(r["Full Pool (ft)"]), basis, r["Pool Conf"].strip().lower())
             out.append({
                 "name": r["Lake"].strip(), "state": r["State"].strip(),
                 "lat": float(r["Latitude"]), "lon": float(r["Longitude"]),

@@ -59,7 +59,10 @@ final class LakeDirectoryAPITests: XCTestCase {
         let missing = lakes.filter { $0.fullPoolFt == nil }
         // 13 on 2026-09-26, each documented in full_pool.csv; a jump means the
         // column went missing, not that 50 lakes lost their dams.
-        XCTAssertLessThan(missing.count, 20, "no full pool for \(missing.map(\.id))")
+        // 20 on 2026-11-25: 13 before, plus 7 added lakes with no sourced figure
+        // (Dannelly, Holt, Nottely, Melton Hill, Fort Patrick Henry, Normandy,
+        // Great Falls), each noted in docs/data/lakes_added_2026-11.csv.
+        XCTAssertLessThan(missing.count, 22, "no full pool for \(missing.map(\.id))")
         for l in lakes {
             XCTAssertEqual(l.poolBasis == nil, l.fullPoolFt == nil, l.id)
             XCTAssertEqual(l.poolConfidence == nil, l.fullPoolFt == nil, l.id)
