@@ -9,25 +9,25 @@
    "research/tools/generation_research/records/swpa_projects.json"
   ]
  },
- "directoryLakeCount": 621,
- "noDamLakeCount": 220,
- "damLakeCount": 401,
+ "directoryLakeCount": 648,
+ "noDamLakeCount": 221,
+ "damLakeCount": 427,
  "counts": {
   "byGroup": {
-   "OTHER_OPERATOR": 90,
+   "OTHER_OPERATOR": 94,
    "SWPA_USACE": 15,
-   "TVA": 17,
+   "TVA": 27,
    "TVA_CUMBERLAND": 7,
-   "USACE": 123,
-   "USBR": 65,
-   "UTILITY_OR_POWER_AUTHORITY": 84
+   "USACE": 131,
+   "USBR": 67,
+   "UTILITY_OR_POWER_AUTHORITY": 86
   },
   "byCoverage": {
    "BOUND": 17,
    "BOUND_ACCESS_CHECK": 15,
-   "DISCOVERY_PENDING": 212,
-   "NO_KNOWN_PUBLIC_RELEASE_DATA": 84,
-   "PERMISSION_REQUIRED": 73
+   "DISCOVERY_PENDING": 232,
+   "NO_KNOWN_PUBLIC_RELEASE_DATA": 88,
+   "PERMISSION_REQUIRED": 75
   }
  },
  "dams": [
@@ -820,6 +820,45 @@
    "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
   },
   {
+   "lakeId": "Belton Lake|TX",
+   "name": "Belton Lake",
+   "state": "TX",
+   "lat": 31.11,
+   "lon": -97.47,
+   "operatorName": "USACE Fort Worth District",
+   "group": "USACE",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": "SWF",
+   "sources": [
+    {
+     "provider": "cwms",
+     "status": "DISCOVERY_PENDING",
+     "office": "SWF",
+     "location": null,
+     "locationEvidence": null,
+     "roles": [
+      "discharge",
+      "turbine",
+      "spill",
+      "generation",
+      "tailwater"
+     ],
+     "reason": "CWMS location not yet resolved for this lake (no reviewed Lake binding); office from the directory"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
+  },
+  {
    "lakeId": "Beltzville Lake|PA",
    "name": "Beltzville Lake",
    "state": "PA",
@@ -1173,6 +1212,41 @@
    },
    "coverage": "NO_KNOWN_PUBLIC_RELEASE_DATA",
    "reason": "the operator is not known to publish release data; USGS tailwater discharge probe pending"
+  },
+  {
+   "lakeId": "Boone Lake|TN",
+   "name": "Boone Lake",
+   "state": "TN",
+   "lat": 36.44,
+   "lon": -82.44,
+   "operatorName": "TVA",
+   "group": "TVA",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [
+    {
+     "provider": "tva",
+     "status": "DISCOVERY_PENDING",
+     "roles": [
+      "schedule",
+      "units",
+      "discharge",
+      "tailwater"
+     ],
+     "reason": "TVA LocationID not evidenced in the repository; resolve by exact dam name against TVA /locations (probe_tva_roster)"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (tva) covers this operator; the release series is not yet bound"
   },
   {
    "lakeId": "Bowdish Reservoir|RI",
@@ -2354,6 +2428,41 @@
    "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
   },
   {
+   "lakeId": "Chatuge Lake|NC",
+   "name": "Chatuge Lake",
+   "state": "NC",
+   "lat": 34.99,
+   "lon": -83.79,
+   "operatorName": "TVA",
+   "group": "TVA",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [
+    {
+     "provider": "tva",
+     "status": "DISCOVERY_PENDING",
+     "roles": [
+      "schedule",
+      "units",
+      "discharge",
+      "tailwater"
+     ],
+     "reason": "TVA LocationID not evidenced in the repository; resolve by exact dam name against TVA /locations (probe_tva_roster)"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (tva) covers this operator; the release series is not yet bound"
+  },
+  {
    "lakeId": "Cheat Lake|WV",
    "name": "Cheat Lake",
    "state": "WV",
@@ -2563,6 +2672,39 @@
    },
    "coverage": "PERMISSION_REQUIRED",
    "reason": "the operator publishes release or generation only on its own web pages; permission first (owner rule); USGS tailwater discharge probe pending"
+  },
+  {
+   "lakeId": "Choke Canyon Reservoir|TX",
+   "name": "Choke Canyon Reservoir",
+   "state": "TX",
+   "lat": 28.5,
+   "lon": -98.35,
+   "operatorName": "USBR owned; managed by City of Corpus Christi",
+   "group": "USBR",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [
+    {
+     "provider": "rise",
+     "status": "DISCOVERY_PENDING",
+     "roles": [
+      "discharge"
+     ],
+     "elevationItemId": null,
+     "reason": "RISE release item (Lake/Reservoir Release) not yet bound: run probe_rise_release"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (rise) covers this operator; the release series is not yet bound"
   },
   {
    "lakeId": "Clarks Hill / J.S. Thurmond|GA",
@@ -3057,6 +3199,45 @@
    },
    "coverage": "BOUND",
    "reason": "TVA publishes this dam's unit schedule and hourly release (bound LocationID)"
+  },
+  {
+   "lakeId": "Dannelly Reservoir (Millers Ferry)|AL",
+   "name": "Dannelly Reservoir (Millers Ferry)",
+   "state": "AL",
+   "lat": 32.12,
+   "lon": -87.4,
+   "operatorName": "USACE Mobile District (SAM)",
+   "group": "USACE",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": "SAM",
+   "sources": [
+    {
+     "provider": "cwms",
+     "status": "DISCOVERY_PENDING",
+     "office": "SAM",
+     "location": null,
+     "locationEvidence": null,
+     "roles": [
+      "discharge",
+      "turbine",
+      "spill",
+      "generation",
+      "tailwater"
+     ],
+     "reason": "CWMS location not yet resolved for this lake (no reviewed Lake binding); office from the directory"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
   },
   {
    "lakeId": "Dardanelle|AR",
@@ -4177,6 +4358,41 @@
    "reason": "TVA publishes this dam's unit schedule and hourly release (bound LocationID)"
   },
   {
+   "lakeId": "Fort Patrick Henry Lake|TN",
+   "name": "Fort Patrick Henry Lake",
+   "state": "TN",
+   "lat": 36.5,
+   "lon": -82.51,
+   "operatorName": "TVA",
+   "group": "TVA",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [
+    {
+     "provider": "tva",
+     "status": "DISCOVERY_PENDING",
+     "roles": [
+      "schedule",
+      "units",
+      "discharge",
+      "tailwater"
+     ],
+     "reason": "TVA LocationID not evidenced in the repository; resolve by exact dam name against TVA /locations (probe_tva_roster)"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (tva) covers this operator; the release series is not yet bound"
+  },
+  {
    "lakeId": "Fort Peck Lake|MT",
    "name": "Fort Peck Lake",
    "state": "MT",
@@ -4426,6 +4642,80 @@
    },
    "coverage": "DISCOVERY_PENDING",
    "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
+  },
+  {
+   "lakeId": "Grapevine Lake|TX",
+   "name": "Grapevine Lake",
+   "state": "TX",
+   "lat": 32.97,
+   "lon": -97.06,
+   "operatorName": "USACE Fort Worth District",
+   "group": "USACE",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": "SWF",
+   "sources": [
+    {
+     "provider": "cwms",
+     "status": "DISCOVERY_PENDING",
+     "office": "SWF",
+     "location": null,
+     "locationEvidence": null,
+     "roles": [
+      "discharge",
+      "turbine",
+      "spill",
+      "generation",
+      "tailwater"
+     ],
+     "reason": "CWMS location not yet resolved for this lake (no reviewed Lake binding); office from the directory"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
+  },
+  {
+   "lakeId": "Great Falls Lake|TN",
+   "name": "Great Falls Lake",
+   "state": "TN",
+   "lat": 35.8,
+   "lon": -85.62,
+   "operatorName": "TVA",
+   "group": "TVA",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [
+    {
+     "provider": "tva",
+     "status": "DISCOVERY_PENDING",
+     "roles": [
+      "schedule",
+      "units",
+      "discharge",
+      "tailwater"
+     ],
+     "reason": "TVA LocationID not evidenced in the repository; resolve by exact dam name against TVA /locations (probe_tva_roster)"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (tva) covers this operator; the release series is not yet bound"
   },
   {
    "lakeId": "Great Sacandaga Lake|NY",
@@ -4892,6 +5182,45 @@
    "reason": "an allowed official source (tva) covers this operator; the release series is not yet bound"
   },
   {
+   "lakeId": "Holt Lake|AL",
+   "name": "Holt Lake",
+   "state": "AL",
+   "lat": 33.25,
+   "lon": -87.45,
+   "operatorName": "USACE (dam); Alabama Power (powerhouse)",
+   "group": "USACE",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [
+    {
+     "provider": "cwms",
+     "status": "DISCOVERY_PENDING",
+     "office": null,
+     "location": null,
+     "locationEvidence": null,
+     "roles": [
+      "discharge",
+      "turbine",
+      "spill",
+      "generation",
+      "tailwater"
+     ],
+     "reason": "CWMS location not yet resolved for this lake (no reviewed Lake binding); office from the directory"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
+  },
+  {
    "lakeId": "Holter Lake|MT",
    "name": "Holter Lake",
    "state": "MT",
@@ -4969,6 +5298,45 @@
    },
    "coverage": "DISCOVERY_PENDING",
    "reason": "an allowed official source (rise) covers this operator; the release series is not yet bound"
+  },
+  {
+   "lakeId": "Hulah Lake|OK",
+   "name": "Hulah Lake",
+   "state": "OK",
+   "lat": 36.94,
+   "lon": -96.09,
+   "operatorName": "USACE Tulsa District (SWT)",
+   "group": "USACE",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": "SWT",
+   "sources": [
+    {
+     "provider": "cwms",
+     "status": "DISCOVERY_PENDING",
+     "office": "SWT",
+     "location": null,
+     "locationEvidence": null,
+     "roles": [
+      "discharge",
+      "turbine",
+      "spill",
+      "generation",
+      "tailwater"
+     ],
+     "reason": "CWMS location not yet resolved for this lake (no reviewed Lake binding); office from the directory"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
   },
   {
    "lakeId": "Hungry Horse Reservoir|MT",
@@ -6011,6 +6379,41 @@
    "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
   },
   {
+   "lakeId": "Lake Blue Ridge|GA",
+   "name": "Lake Blue Ridge",
+   "state": "GA",
+   "lat": 34.88,
+   "lon": -84.28,
+   "operatorName": "TVA",
+   "group": "TVA",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [
+    {
+     "provider": "tva",
+     "status": "DISCOVERY_PENDING",
+     "roles": [
+      "schedule",
+      "units",
+      "discharge",
+      "tailwater"
+     ],
+     "reason": "TVA LocationID not evidenced in the repository; resolve by exact dam name against TVA /locations (probe_tva_roster)"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (tva) covers this operator; the release series is not yet bound"
+  },
+  {
    "lakeId": "Lake Buchanan|TX",
    "name": "Lake Buchanan",
    "state": "TX",
@@ -6522,6 +6925,29 @@
    },
    "coverage": "DISCOVERY_PENDING",
    "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
+  },
+  {
+   "lakeId": "Lake Hefner|OK",
+   "name": "Lake Hefner",
+   "state": "OK",
+   "lat": 35.57,
+   "lon": -97.6,
+   "operatorName": "City of Oklahoma City (implied, unverified)",
+   "group": "OTHER_OPERATOR",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "NO_KNOWN_PUBLIC_RELEASE_DATA",
+   "reason": "the operator is not known to publish release data; USGS tailwater discharge probe pending"
   },
   {
    "lakeId": "Lake Hickory|NC",
@@ -7261,6 +7687,29 @@
    "reason": "the operator publishes release or generation only on its own web pages; permission first (owner rule); USGS tailwater discharge probe pending"
   },
   {
+   "lakeId": "Lake Overholser|OK",
+   "name": "Lake Overholser",
+   "state": "OK",
+   "lat": 35.5,
+   "lon": -97.68,
+   "operatorName": "City of Oklahoma City (implied, unverified)",
+   "group": "OTHER_OPERATOR",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "NO_KNOWN_PUBLIC_RELEASE_DATA",
+   "reason": "the operator is not known to publish release data; USGS tailwater discharge probe pending"
+  },
+  {
    "lakeId": "Lake Owyhee|OR",
    "name": "Lake Owyhee",
    "state": "OR",
@@ -7292,6 +7741,29 @@
    },
    "coverage": "DISCOVERY_PENDING",
    "reason": "an allowed official source (rise) covers this operator; the release series is not yet bound"
+  },
+  {
+   "lakeId": "Lake Palestine|TX",
+   "name": "Lake Palestine",
+   "state": "TX",
+   "lat": 32.18,
+   "lon": -95.48,
+   "operatorName": "",
+   "group": "OTHER_OPERATOR",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "NO_KNOWN_PUBLIC_RELEASE_DATA",
+   "reason": "the operator is not known to publish release data; USGS tailwater discharge probe pending"
   },
   {
    "lakeId": "Lake Petenwell|WI",
@@ -7604,6 +8076,45 @@
      "provider": "cwms",
      "status": "DISCOVERY_PENDING",
      "office": "MVS",
+     "location": null,
+     "locationEvidence": null,
+     "roles": [
+      "discharge",
+      "turbine",
+      "spill",
+      "generation",
+      "tailwater"
+     ],
+     "reason": "CWMS location not yet resolved for this lake (no reviewed Lake binding); office from the directory"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
+  },
+  {
+   "lakeId": "Lake Somerville|TX",
+   "name": "Lake Somerville",
+   "state": "TX",
+   "lat": 30.33,
+   "lon": -96.53,
+   "operatorName": "USACE Fort Worth District",
+   "group": "USACE",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": "SWF",
+   "sources": [
+    {
+     "provider": "cwms",
+     "status": "DISCOVERY_PENDING",
+     "office": "SWF",
      "location": null,
      "locationEvidence": null,
      "roles": [
@@ -8040,6 +8551,39 @@
    "reason": "the operator publishes release or generation only on its own web pages; permission first (owner rule); USGS tailwater discharge probe pending"
   },
   {
+   "lakeId": "Lake of the Arbuckles|OK",
+   "name": "Lake of the Arbuckles",
+   "state": "OK",
+   "lat": 34.43,
+   "lon": -97.03,
+   "operatorName": "Arbuckle Master Conservancy District (USBR-built)",
+   "group": "USBR",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [
+    {
+     "provider": "rise",
+     "status": "DISCOVERY_PENDING",
+     "roles": [
+      "discharge"
+     ],
+     "elevationItemId": null,
+     "reason": "RISE release item (Lake/Reservoir Release) not yet bound: run probe_rise_release"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (rise) covers this operator; the release series is not yet bound"
+  },
+  {
    "lakeId": "Lake of the Ozarks|MO",
    "name": "Lake of the Ozarks",
    "state": "MO",
@@ -8152,6 +8696,45 @@
    "reason": "an allowed official source (cwms, tva) covers this operator; the release series is not yet bound"
   },
   {
+   "lakeId": "Lavon Lake|TX",
+   "name": "Lavon Lake",
+   "state": "TX",
+   "lat": 33.04,
+   "lon": -96.47,
+   "operatorName": "USACE Fort Worth District",
+   "group": "USACE",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": "SWF",
+   "sources": [
+    {
+     "provider": "cwms",
+     "status": "DISCOVERY_PENDING",
+     "office": "SWF",
+     "location": null,
+     "locationEvidence": null,
+     "roles": [
+      "discharge",
+      "turbine",
+      "spill",
+      "generation",
+      "tailwater"
+     ],
+     "reason": "CWMS location not yet resolved for this lake (no reviewed Lake binding); office from the directory"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
+  },
+  {
    "lakeId": "Lay|AL",
    "name": "Lay",
    "state": "AL",
@@ -8210,6 +8793,45 @@
      "provider": "cwms",
      "status": "DISCOVERY_PENDING",
      "office": null,
+     "location": null,
+     "locationEvidence": null,
+     "roles": [
+      "discharge",
+      "turbine",
+      "spill",
+      "generation",
+      "tailwater"
+     ],
+     "reason": "CWMS location not yet resolved for this lake (no reviewed Lake binding); office from the directory"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
+  },
+  {
+   "lakeId": "Lewisville Lake|TX",
+   "name": "Lewisville Lake",
+   "state": "TX",
+   "lat": 33.07,
+   "lon": -96.96,
+   "operatorName": "USACE Fort Worth District",
+   "group": "USACE",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": "SWF",
+   "sources": [
+    {
+     "provider": "cwms",
+     "status": "DISCOVERY_PENDING",
+     "office": "SWF",
      "location": null,
      "locationEvidence": null,
      "roles": [
@@ -8571,6 +9193,41 @@
    },
    "coverage": "NO_KNOWN_PUBLIC_RELEASE_DATA",
    "reason": "the operator is not known to publish release data; USGS tailwater discharge probe pending"
+  },
+  {
+   "lakeId": "Melton Hill Lake|TN",
+   "name": "Melton Hill Lake",
+   "state": "TN",
+   "lat": 35.88,
+   "lon": -84.3,
+   "operatorName": "TVA",
+   "group": "TVA",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [
+    {
+     "provider": "tva",
+     "status": "DISCOVERY_PENDING",
+     "roles": [
+      "schedule",
+      "units",
+      "discharge",
+      "tailwater"
+     ],
+     "reason": "TVA LocationID not evidenced in the repository; resolve by exact dam name against TVA /locations (probe_tva_roster)"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (tva) covers this operator; the release series is not yet bound"
   },
   {
    "lakeId": "Melvern Lake|KS",
@@ -9151,6 +9808,41 @@
    "reason": "SWPA schedule bound but its page access check is open; CWMS release series pending discovery"
   },
   {
+   "lakeId": "Normandy Lake|TN",
+   "name": "Normandy Lake",
+   "state": "TN",
+   "lat": 35.47,
+   "lon": -86.24,
+   "operatorName": "TVA",
+   "group": "TVA",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [
+    {
+     "provider": "tva",
+     "status": "DISCOVERY_PENDING",
+     "roles": [
+      "schedule",
+      "units",
+      "discharge",
+      "tailwater"
+     ],
+     "reason": "TVA LocationID not evidenced in the repository; resolve by exact dam name against TVA /locations (probe_tva_roster)"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (tva) covers this operator; the release series is not yet bound"
+  },
+  {
    "lakeId": "Norris Lake|TN",
    "name": "Norris Lake",
    "state": "TN",
@@ -9185,6 +9877,41 @@
    },
    "coverage": "BOUND",
    "reason": "TVA publishes this dam's unit schedule and hourly release (bound LocationID)"
+  },
+  {
+   "lakeId": "Nottely Lake|GA",
+   "name": "Nottely Lake",
+   "state": "GA",
+   "lat": 34.96,
+   "lon": -84.09,
+   "operatorName": "TVA",
+   "group": "TVA",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [
+    {
+     "provider": "tva",
+     "status": "DISCOVERY_PENDING",
+     "roles": [
+      "schedule",
+      "units",
+      "discharge",
+      "tailwater"
+     ],
+     "reason": "TVA LocationID not evidenced in the repository; resolve by exact dam name against TVA /locations (probe_tva_roster)"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (tva) covers this operator; the release series is not yet bound"
   },
   {
    "lakeId": "Nuuanu Reservoir|HI",
@@ -10347,6 +11074,29 @@
    "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
   },
   {
+   "lakeId": "Ray Hubbard Lake|TX",
+   "name": "Ray Hubbard Lake",
+   "state": "TX",
+   "lat": 32.8,
+   "lon": -96.5,
+   "operatorName": "City of Dallas (Dallas Water Utilities)",
+   "group": "UTILITY_OR_POWER_AUTHORITY",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "PERMISSION_REQUIRED",
+   "reason": "the operator publishes release or generation only on its own web pages; permission first (owner rule); USGS tailwater discharge probe pending"
+  },
+  {
    "lakeId": "Raystown Lake|PA",
    "name": "Raystown Lake",
    "state": "PA",
@@ -10469,6 +11219,29 @@
    },
    "coverage": "DISCOVERY_PENDING",
    "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
+  },
+  {
+   "lakeId": "Richland-Chambers Reservoir|TX",
+   "name": "Richland-Chambers Reservoir",
+   "state": "TX",
+   "lat": 31.95,
+   "lon": -96.1,
+   "operatorName": "Tarrant Regional Water District",
+   "group": "OTHER_OPERATOR",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "NO_KNOWN_PUBLIC_RELEASE_DATA",
+   "reason": "the operator is not known to publish release data; USGS tailwater discharge probe pending"
   },
   {
    "lakeId": "Riffe Lake|WA",
@@ -12121,6 +12894,41 @@
    "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
   },
   {
+   "lakeId": "Tellico Lake|TN",
+   "name": "Tellico Lake",
+   "state": "TN",
+   "lat": 35.78,
+   "lon": -84.26,
+   "operatorName": "TVA",
+   "group": "TVA",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [
+    {
+     "provider": "tva",
+     "status": "DISCOVERY_PENDING",
+     "roles": [
+      "schedule",
+      "units",
+      "discharge",
+      "tailwater"
+     ],
+     "reason": "TVA LocationID not evidenced in the repository; resolve by exact dam name against TVA /locations (probe_tva_roster)"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (tva) covers this operator; the release series is not yet bound"
+  },
+  {
    "lakeId": "Tiber Reservoir (Lake Elwell)|MT",
    "name": "Tiber Reservoir (Lake Elwell)",
    "state": "MT",
@@ -12167,6 +12975,29 @@
    },
    "coverage": "DISCOVERY_PENDING",
    "reason": "an allowed official source (cwms, rise) covers this operator; the release series is not yet bound"
+  },
+  {
+   "lakeId": "Tillery Lake|NC",
+   "name": "Tillery Lake",
+   "state": "NC",
+   "lat": 35.21,
+   "lon": -80.07,
+   "operatorName": "Duke Energy (Progress)",
+   "group": "UTILITY_OR_POWER_AUTHORITY",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "PERMISSION_REQUIRED",
+   "reason": "the operator publishes release or generation only on its own web pages; permission first (owner rule); USGS tailwater discharge probe pending"
   },
   {
    "lakeId": "Timothy Lake|OR",
@@ -12781,6 +13612,41 @@
    },
    "coverage": "DISCOVERY_PENDING",
    "reason": "an allowed official source (cwms) covers this operator; the release series is not yet bound"
+  },
+  {
+   "lakeId": "Watauga Lake|TN",
+   "name": "Watauga Lake",
+   "state": "TN",
+   "lat": 36.33,
+   "lon": -82.03,
+   "operatorName": "TVA",
+   "group": "TVA",
+   "dam": {
+    "name": null,
+    "nidId": null,
+    "hydropower": null,
+    "source": null
+   },
+   "cwmsOffice": null,
+   "sources": [
+    {
+     "provider": "tva",
+     "status": "DISCOVERY_PENDING",
+     "roles": [
+      "schedule",
+      "units",
+      "discharge",
+      "tailwater"
+     ],
+     "reason": "TVA LocationID not evidenced in the repository; resolve by exact dam name against TVA /locations (probe_tva_roster)"
+    }
+   ],
+   "usgsTailwater": {
+    "status": "PROBE_PENDING",
+    "note": "downstream USGS discharge (00060) gauge not yet located (NLDI probe)"
+   },
+   "coverage": "DISCOVERY_PENDING",
+   "reason": "an allowed official source (tva) covers this operator; the release series is not yet bound"
   },
   {
    "lakeId": "Watts Bar Lake|TN",

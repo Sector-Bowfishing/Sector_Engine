@@ -11,8 +11,8 @@
   "files": [
     {
       "path": "dams.json",
-      "sha256": "c020196beae79737ff755fcd9e1024518773ca48d1bc145775e009eb02a11a96",
-      "bytes": 363431
+      "sha256": "14024feb0cdf5f9221791bd5b977d9256877f9d1a1afb928dbeac64a8669c6fc",
+      "bytes": 386196
     },
     {
       "path": "source_access.json",
@@ -20,5 +20,5 @@
       "bytes": 3993
     }
   ],
-  "releaseDigest": "sha256:8b5351b2d2414b3c4bbc380f6fe4eef40efd4012ed52198c6fa3786e398636b1"
+  "releaseDigest": "sha256:db8fc69a507bbda2b545495c777177367723223f3f96b6da946f4ea17b8b4f7c"
 }

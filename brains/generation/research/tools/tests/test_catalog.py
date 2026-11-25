@@ -19,8 +19,8 @@ def test_committed_catalog_equals_a_rebuild():
 
 def test_counts_cover_every_directory_lake():
     c = committed()
-    assert c["directoryLakeCount"] == 621 and c["damLakeCount"] + c["noDamLakeCount"] == 621 and c["damLakeCount"] == len(c["dams"]) == 401
-    assert sum(c["counts"]["byCoverage"].values()) == 401 and set(c["counts"]["byCoverage"]) <= set(B.COVERAGE)
+    assert c["directoryLakeCount"] == 648 and c["damLakeCount"] + c["noDamLakeCount"] == 648 and c["damLakeCount"] == len(c["dams"]) == 427
+    assert sum(c["counts"]["byCoverage"].values()) == 427 and set(c["counts"]["byCoverage"]) <= set(B.COVERAGE)
 
 
 def test_every_dam_lake_states_a_reason_and_only_evidenced_sources_are_bound():
