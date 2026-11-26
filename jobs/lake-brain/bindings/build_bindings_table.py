@@ -741,6 +741,103 @@ def build_facts(inp: Inputs, lake: str, row: dict) -> dict:
 
 
 # ---------------------------------------------------------------------------------------------------------------- record
+def drop_tva_live(live: list[dict], lake: str | None = None) -> list[dict]:
+    """TVA's robots.txt disallows automated reads (Sector_Ops #51, 2026-11-23). Remove tva from a lake's LIVE sources whenever the lake has
+    another verified live source; a tva-only lake keeps it until TVA answers the permission request. History is not touched here.
+    The 5 pilots are exempt: their hand-written bindings are the reference pilot_reproduction checks against, and they change only by an
+    edit to the hand-written binding (PR #254 review, 2026-11-24)."""
+    if lake in PILOTS:
+        return live
+    keep = [r for r in live if r["provider"] != "tva"]
+    return keep if keep else live
+
+
+# Series, datum and history fixes from the 2026-11-21 dry-run research (Sector_Ops #51; commit 86331b33), which were edited into
+# bindings.proposed.v1.json by hand. Kept here so a rebuild reproduces them (PR #254 regeneration, 2026-11-24). live: {index: fields}.
+DRYRUN_FIXES_2026_11_21 = {
+    'Arkabutla Lake|MS': {
+        'live': {0: {'series': 'Arkabutla Lake.Elev.Inst.1Hour.0.DCP-rev', 'note': 'USACE CWMS MVK observed pool (was the Guide Curve / rule-curve series) [2026-11-21 dry-run research (Sector_Ops #51)]'}},
+        'notes': ['live series Arkabutla Lake.Elev.Inst.1Hour.0.Guide Curve was the rule curve; now Arkabutla Lake.Elev.Inst.1Hour.0.DCP-rev [2026-11-21 dry-run research (Sector_Ops #51)]'],
+    },
+    'Beltzville Lake|PA': {
+        'live': {1: {'series': 'Beltzville.Elev.Inst.15Minutes.0.Rev-DCP-88', 'note': 'fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T05:30Z age 1.0 h; NAVD88 like the primary (NGVD29 = NAVD88 + 0.66) [2026-11-21 dry-run research (Sector_Ops #51)]'}},
+        'history': [{'kind': 'cwmsDaily', 'office': 'NAP', 'series': 'Beltzville.Elev.Inst.15Minutes.0.Rev-DCP-88'}],
+        'notes': ['history switched to the NAVD88 Rev-DCP-88 series (was NGVD29 Rev-DCP, +0.66 ft) [2026-11-21 dry-run research (Sector_Ops #51)]'],
+    },
+    'Bluestone Lake|WV': {
+        'history': [{'kind': 'cwmsDaily', 'office': 'LRH', 'series': 'Bluestone-Lake.Elev.Inst.15Minutes.0.OBS'}],
+        'notes': ['history was Bluestone-Lake.Elev.Inst.1Day.0.RUL (rule curve); now the observed Bluestone-Lake.Elev.Inst.15Minutes.0.OBS, the same series as live (record from ~2021 for Sutton; depth for the others to confirm) [2026-11-21 dry-run research (Sector_Ops #51)]'],
+    },
+    'Burnsville Lake|WV': {
+        'history': [{'kind': 'cwmsDaily', 'office': 'LRH', 'series': 'Burnsville-Lake.Elev.Inst.15Minutes.0.OBS'}],
+        'notes': ['history was Burnsville-Lake.Elev.Inst.1Day.0.RUL (rule curve); now the observed Burnsville-Lake.Elev.Inst.15Minutes.0.OBS, the same series as live (record from ~2021 for Sutton; depth for the others to confirm) [2026-11-21 dry-run research (Sector_Ops #51)]'],
+    },
+    'Deep Creek Lake|MD': {
+        'live': {1: {'datumOffsetFt': -1.82, 'note': 'fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:00:00Z age 1.4 h; NWPS THYM2 is NAVD88, live 00062 is the 2462 spillway datum: offset -1.82 ft [2026-11-21 dry-run research (Sector_Ops #51)]'}},
+        'history': [{'kind': 'usgsDaily', 'site': '03075871', 'param': '62615', 'stat': 'dv', 'offsetFt': -1.82}],
+        'notes': ['history 62615 (NAVD88) shifted -1.82 ft onto the live 00062 spillway datum [2026-11-21 dry-run research (Sector_Ops #51)]'],
+    },
+    'Don Pedro|CA': {
+        'notes': ['no flood-pool-bottom/full-pool plan beyond Top of Conservation; large irrigation + flood-space drawdown is normal [2026-11-21 dry-run research (Sector_Ops #51)]'],
+    },
+    'El Vado Lake|NM': {
+        'notes': ["[2026-11-21 dry-run research (Sector_Ops #51)] Low level is real: Reclamation's interim maximum operating elevation 6,820.5 ft (news release 5329, Safety of Dams). Not bound as a plan: it is a single upper limit, and a plan zone needs both edges."],
+    },
+    'Enid Lake|MS': {
+        'live': {0: {'series': 'Enid Lake.Elev.Inst.1Hour.0.DCP-rev', 'note': 'USACE CWMS MVK observed pool (was the Guide Curve / rule-curve series) [2026-11-21 dry-run research (Sector_Ops #51)]'}},
+        'notes': ['live series Enid Lake.Elev.Inst.1Hour.0.Guide Curve was the rule curve; now Enid Lake.Elev.Inst.1Hour.0.DCP-rev [2026-11-21 dry-run research (Sector_Ops #51)]'],
+    },
+    'Grenada Lake|MS': {
+        'live': {0: {'series': 'Grenada Lake.Elev.Inst.1Hour.0.DCP-rev', 'note': 'USACE CWMS MVK observed pool (was the Guide Curve / rule-curve series) [2026-11-21 dry-run research (Sector_Ops #51)]'}},
+        'notes': ['live series Grenada Lake.Elev.Inst.1Hour.0.Guide Curve was the rule curve; now Grenada Lake.Elev.Inst.1Hour.0.DCP-rev [2026-11-21 dry-run research (Sector_Ops #51)]'],
+    },
+    'Havasu|AZ': {
+        'live': {1: {'datumOffsetFt': -0.65, 'note': 'fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:30:00Z age 0.9 h; LKHC1 (USGS gage+400) sits ~0.65 ft above USBR values (inferred from end-of-month comparison) [2026-11-21 dry-run research (Sector_Ops #51)]'}},
+        'notes': ['NWPS LKHC1 fallback offset -0.65 ft (inferred) [2026-11-21 dry-run research (Sector_Ops #51)]'],
+    },
+    'Jennings Randolph Lake|MD': {
+        'live': {1: {'series': 'Randolph.Elev.Inst.15Minutes.0.Best-NAB', 'note': 'fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:15Z age 0.2 h; datum aligned to project datum like the primary (dropped ;88, NAVD88 = PCD - 0.85 ft) [2026-11-21 dry-run research (Sector_Ops #51)]'}},
+        'notes': ['cwms fallback switched from the ;88 (NAVD88) variant to project datum, matching the primary and plan [2026-11-21 dry-run research (Sector_Ops #51)]'],
+    },
+    'R.D. Bailey Lake|WV': {
+        'history': [{'kind': 'cwmsDaily', 'office': 'LRH', 'series': 'RDBailey-Lake.Elev.Inst.15Minutes.0.OBS'}],
+        'notes': ['history was RDBailey-Lake.Elev.Inst.1Day.0.RUL (rule curve); now the observed RDBailey-Lake.Elev.Inst.15Minutes.0.OBS, the same series as live (record from ~2021 for Sutton; depth for the others to confirm) [2026-11-21 dry-run research (Sector_Ops #51)]'],
+    },
+    'Sardis Lake|MS': {
+        'live': {0: {'series': 'Sardis Lake.Elev.Inst.1Hour.0.DCP-rev', 'note': 'USACE CWMS MVK observed pool (was the Guide Curve / rule-curve series) [2026-11-21 dry-run research (Sector_Ops #51)]'}},
+        'notes': ['live series Sardis Lake.Elev.Inst.1Hour.0.Guide Curve was the rule curve; now Sardis Lake.Elev.Inst.1Hour.0.DCP-rev [2026-11-21 dry-run research (Sector_Ops #51)]'],
+    },
+    'Senecaville Lake|OH': {
+        'history': [{'kind': 'cwmsDaily', 'office': 'LRH', 'series': 'Senecaville-Lake.Elev.Inst.15Minutes.0.OBS'}],
+        'notes': ['history was Senecaville-Lake.Elev.Inst.1Day.0.RUL (rule curve); now the observed Senecaville-Lake.Elev.Inst.15Minutes.0.OBS, the same series as live (record from ~2021 for Sutton; depth for the others to confirm) [2026-11-21 dry-run research (Sector_Ops #51)]'],
+    },
+    'Smith (Lewis Smith)|AL': {
+        'live': {0: {'series': 'Smith.Elev.Inst.1Hour.0.Raw-APCO', 'note': 'USACE CWMS SAM observed (Alabama Power raw; was GC-APCO guide curve) [2026-11-21 dry-run research (Sector_Ops #51)]'}},
+        'notes': ["live series Smith.Elev.Inst.1Hour.0.GC-APCO was Alabama Power's guide curve; now Smith.Elev.Inst.1Hour.0.Raw-APCO [2026-11-21 dry-run research (Sector_Ops #51)]"],
+    },
+    'Sutton Lake|WV': {
+        'history': [{'kind': 'cwmsDaily', 'office': 'LRH', 'series': 'Sutton-Lake.Elev.Inst.15Minutes.0.OBS'}],
+        'notes': ['history was Sutton-Lake.Elev.Inst.1Day.0.RUL (rule curve); now the observed Sutton-Lake.Elev.Inst.15Minutes.0.OBS, the same series as live (record from ~2021 for Sutton; depth for the others to confirm) [2026-11-21 dry-run research (Sector_Ops #51)]'],
+    },
+    'Tappan Lake|OH': {
+        'history': [{'kind': 'cwmsDaily', 'office': 'LRH', 'series': 'Tappan-Lake.Elev.Inst.15Minutes.0.OBS'}],
+        'notes': ['history was Tappan-Lake.Elev.Inst.1Day.0.RUL (rule curve); now the observed Tappan-Lake.Elev.Inst.15Minutes.0.OBS, the same series as live (record from ~2021 for Sutton; depth for the others to confirm) [2026-11-21 dry-run research (Sector_Ops #51)]'],
+    },
+}
+
+
+def apply_dryrun_fixes(rec: dict) -> None:
+    fix = DRYRUN_FIXES_2026_11_21.get(rec["lakeId"])
+    if not fix:
+        return
+    for i, fields in fix.get("live", {}).items():
+        rec["live"][i].update(fields)
+    rec["series"] = rec["live"][0].get("series")
+    if "history" in fix:
+        rec["history"] = fix["history"]
+    rec["historyNotes"] = list(rec["historyNotes"]) + fix["notes"]
+
+
 def build_record(inp: Inputs, row: dict) -> tuple[dict | None, list[str]]:
     lake = row["lake_id"]
     warnings = []
@@ -749,7 +846,7 @@ def build_record(inp: Inputs, row: dict) -> tuple[dict | None, list[str]]:
     ref = live_ref_for(inp, row, full)
     if ref is None:
         return None, [f"{lake}: no live ref could be built for {row['provider']} {row['station']} {row['series_or_param']}"]
-    live = [ref] + fallback_refs(inp, lake, ref, row)
+    live = drop_tva_live([ref] + fallback_refs(inp, lake, ref, row), lake)
     hist = build_history(inp, row, full, ref)
     tz, tz_rule = (PILOTS[lake], "pilot (hand-written binding keeps its zone)") if lake in PILOTS else timezone_for(d["state"], d["lat"], d["lon"])
     plan = build_plan(inp, lake, row)
@@ -766,11 +863,11 @@ def build_record(inp: Inputs, row: dict) -> tuple[dict | None, list[str]]:
     rec = {
         "lakeId": lake,
         "status": STATUS,
-        "capability": row["capability_class"],
-        "provider": ref["provider"],
+        "capability": live[0]["capability"] if live[0] is not ref else row["capability_class"],
+        "provider": live[0]["provider"],
         "researchProvider": row["provider"],
-        "station": ref["station"],
-        "series": ref.get("series"),
+        "station": live[0]["station"],
+        "series": live[0].get("series"),
         "live": live,
         "history": hist["sources"],
         "historyCompleteYears": hist["completeYears"],
@@ -796,6 +893,7 @@ def build_record(inp: Inputs, row: dict) -> tuple[dict | None, list[str]]:
             "coordinateFlag": inp.geom[lake]["point_flag"],
         },
     }
+    apply_dryrun_fixes(rec)
     if rec["history"] == [] and hist["completeYears"] == 0:
         warnings.append(f"{lake}: no history source (class NONE)")
     return rec, warnings

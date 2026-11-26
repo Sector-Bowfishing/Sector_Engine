@@ -453,8 +453,7 @@
     "caveat": "490.5 ft is the summer value of a seasonal CWMS level (winter 483 ft); the reference stays a single constant like every other lake, so winter readings show the planned drawdown as a negative shift.",
     "liveSourceIds": [
      "a2w:LRN:JPHT1:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.1Hour.0.man-rev",
-     "cwms:LRN:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.15Minutes.0.dcp-rev",
-     "tva:JPHT1"
+     "cwms:LRN:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.15Minutes.0.dcp-rev"
     ],
     "liveBindingContract": "brains/lake/contracts/reviewed-lake-bindings-v1.json (bindings-2026-10-13.1+accepted.187.bd65f378)",
     "lakeBrainPoolFt": 490.0,

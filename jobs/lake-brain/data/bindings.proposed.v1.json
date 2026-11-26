@@ -50,9 +50,9 @@
   "byProvider": {
    "a2w": 75,
    "cwms": 42,
-   "nwps": 21,
+   "nwps": 26,
    "rise": 19,
-   "tva": 11,
+   "tva": 6,
    "usgs": 28
   },
   "history": {
@@ -4208,16 +4208,6 @@
      "lagMin": 120,
      "datumOffsetFt": 0.0,
      "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:30Z age -0.0 h"
-    },
-    {
-     "provider": "tva",
-     "capability": "DIRECT_OPERATOR_POOL",
-     "station": "CEHT1",
-     "series": null,
-     "cadenceMin": 60,
-     "lagMin": 60,
-     "datumOffsetFt": 0.0,
-     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T04:00Z age 3.4 h"
     }
    ],
    "history": [
@@ -6275,16 +6265,6 @@
      "lagMin": 120,
      "datumOffsetFt": 0.0,
      "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T05:45Z age 0.7 h"
-    },
-    {
-     "provider": "tva",
-     "capability": "DIRECT_OPERATOR_POOL",
-     "station": "DLHT1",
-     "series": null,
-     "cadenceMin": 60,
-     "lagMin": 60,
-     "datumOffsetFt": 0.0,
-     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T04:00Z age 3.4 h"
     }
    ],
    "history": [
@@ -6814,22 +6794,12 @@
   {
    "lakeId": "Douglas Lake|TN",
    "status": "MACHINE_VERIFIED",
-   "capability": "DIRECT_OPERATOR_POOL",
-   "provider": "tva",
+   "capability": "DIRECT_LAKE_GAUGE",
+   "provider": "nwps",
    "researchProvider": "tva",
    "station": "DUGT1",
-   "series": null,
+   "series": "HPIRZ",
    "live": [
-    {
-     "provider": "tva",
-     "capability": "DIRECT_OPERATOR_POOL",
-     "station": "DUGT1",
-     "series": null,
-     "cadenceMin": 60,
-     "lagMin": 60,
-     "datumOffsetFt": 0.0,
-     "note": "observed-data-48-hours ReservoirElevation"
-    },
     {
      "provider": "nwps",
      "capability": "DIRECT_LAKE_GAUGE",
@@ -8495,22 +8465,12 @@
   {
    "lakeId": "Fort Loudoun Lake|TN",
    "status": "MACHINE_VERIFIED",
-   "capability": "DIRECT_OPERATOR_POOL",
-   "provider": "tva",
+   "capability": "DIRECT_LAKE_GAUGE",
+   "provider": "nwps",
    "researchProvider": "tva",
    "station": "FLDT1",
-   "series": null,
+   "series": "HPIRZ",
    "live": [
-    {
-     "provider": "tva",
-     "capability": "DIRECT_OPERATOR_POOL",
-     "station": "FLDT1",
-     "series": null,
-     "cadenceMin": 60,
-     "lagMin": 60,
-     "datumOffsetFt": 0.0,
-     "note": "observed-data-48-hours ReservoirElevation"
-    },
     {
      "provider": "nwps",
      "capability": "DIRECT_LAKE_GAUGE",
@@ -18576,22 +18536,12 @@
   {
    "lakeId": "Nickajack Lake|TN",
    "status": "MACHINE_VERIFIED",
-   "capability": "DIRECT_OPERATOR_POOL",
-   "provider": "tva",
+   "capability": "DIRECT_LAKE_GAUGE",
+   "provider": "nwps",
    "researchProvider": "tva",
    "station": "NKJT1",
-   "series": null,
+   "series": "HPIRZ",
    "live": [
-    {
-     "provider": "tva",
-     "capability": "DIRECT_OPERATOR_POOL",
-     "station": "NKJT1",
-     "series": null,
-     "cadenceMin": 60,
-     "lagMin": 60,
-     "datumOffsetFt": 0.0,
-     "note": "observed-data-48-hours ReservoirElevation"
-    },
     {
      "provider": "nwps",
      "capability": "DIRECT_LAKE_GAUGE",
@@ -19078,22 +19028,12 @@
   {
    "lakeId": "Norris Lake|TN",
    "status": "MACHINE_VERIFIED",
-   "capability": "DIRECT_OPERATOR_POOL",
-   "provider": "tva",
+   "capability": "DIRECT_LAKE_GAUGE",
+   "provider": "nwps",
    "researchProvider": "tva",
    "station": "NRST1",
-   "series": null,
+   "series": "HPIRZ",
    "live": [
-    {
-     "provider": "tva",
-     "capability": "DIRECT_OPERATOR_POOL",
-     "station": "NRST1",
-     "series": null,
-     "cadenceMin": 60,
-     "lagMin": 60,
-     "datumOffsetFt": 0.0,
-     "note": "observed-data-48-hours ReservoirElevation"
-    },
     {
      "provider": "nwps",
      "capability": "DIRECT_LAKE_GAUGE",
@@ -19512,16 +19452,6 @@
      "lagMin": 120,
      "datumOffsetFt": 0.0,
      "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T06:15Z age 0.2 h"
-    },
-    {
-     "provider": "tva",
-     "capability": "DIRECT_OPERATOR_POOL",
-     "station": "OHHT1",
-     "series": null,
-     "cadenceMin": 60,
-     "lagMin": 60,
-     "datumOffsetFt": 0.0,
-     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T04:00Z age 3.4 h"
     }
    ],
    "history": [
@@ -20227,16 +20157,6 @@
      "lagMin": 120,
      "datumOffsetFt": 0.0,
      "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T05:45Z age 0.7 h"
-    },
-    {
-     "provider": "tva",
-     "capability": "DIRECT_OPERATOR_POOL",
-     "station": "JPHT1",
-     "series": null,
-     "cadenceMin": 60,
-     "lagMin": 60,
-     "datumOffsetFt": 0.0,
-     "note": "fallback: independently VERIFIED candidate (R1-R8) of the same lake; probe 2026-10-13T04:00Z age 3.4 h"
     }
    ],
    "history": [
@@ -26941,22 +26861,12 @@
   {
    "lakeId": "Watts Bar Lake|TN",
    "status": "MACHINE_VERIFIED",
-   "capability": "DIRECT_OPERATOR_POOL",
-   "provider": "tva",
+   "capability": "DIRECT_LAKE_GAUGE",
+   "provider": "nwps",
    "researchProvider": "tva",
    "station": "WBOT1",
-   "series": null,
+   "series": "HPIRZ",
    "live": [
-    {
-     "provider": "tva",
-     "capability": "DIRECT_OPERATOR_POOL",
-     "station": "WBOT1",
-     "series": null,
-     "cadenceMin": 60,
-     "lagMin": 60,
-     "datumOffsetFt": 0.0,
-     "note": "observed-data-48-hours ReservoirElevation"
-    },
     {
      "provider": "nwps",
      "capability": "DIRECT_LAKE_GAUGE",

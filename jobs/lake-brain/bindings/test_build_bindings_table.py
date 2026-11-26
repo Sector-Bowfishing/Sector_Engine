@@ -28,6 +28,26 @@ B = load("build_bindings_table", os.path.join(HERE, "build_bindings_table.py"))
 G = load("generate_lake_bindings", os.path.join(REPO, "scripts", "generate-lake-bindings.py"))
 
 
+class DropTvaLiveTests(unittest.TestCase):
+    """TVA live sources are dropped where the lake has another live source, and kept where it is the only one."""
+    def test_drops_tva_when_another_live_source_exists(self):
+        live = [{"provider": "tva", "station": "NRST1"}, {"provider": "nwps", "station": "NRST1"}]
+        self.assertEqual([r["provider"] for r in B.drop_tva_live(live)], ["nwps"])
+
+    def test_drops_a_trailing_tva_fallback(self):
+        live = [{"provider": "a2w", "station": "X"}, {"provider": "cwms", "station": "LRN"}, {"provider": "tva", "station": "Y"}]
+        self.assertEqual([r["provider"] for r in B.drop_tva_live(live)], ["a2w", "cwms"])
+
+    def test_keeps_tva_when_it_is_the_only_live_source(self):
+        live = [{"provider": "tva", "station": "WLSA1"}]
+        self.assertEqual(B.drop_tva_live(live), live)
+
+    def test_pilots_keep_their_hand_written_tva_source(self):
+        live = [{"provider": "tva", "station": "GVDA1"}, {"provider": "nwps", "station": "GVHA1"}]
+        self.assertEqual(B.drop_tva_live(live, "Guntersville|AL"), live)
+        self.assertEqual([r["provider"] for r in B.drop_tva_live(live, "Norris Lake|TN")], ["nwps"])
+
+
 class UnitTests(unittest.TestCase):
     def test_time_zones(self):
         self.assertEqual(B.timezone_for("AL", 34.4, -86.3)[0], "America/Chicago")
