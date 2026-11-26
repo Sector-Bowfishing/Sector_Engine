@@ -42,6 +42,8 @@ import math
 import os
 import re
 import sys
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -198,16 +200,40 @@ class _CheckedRedirect(urllib.request.HTTPRedirectHandler):
 _OPENER = urllib.request.build_opener(_CheckedRedirect)
 
 
+RETRY_STATUS = (429, 502, 503, 504)
+MAX_ATTEMPTS = 6
+BACKOFF_BASE_S = 30
+BACKOFF_CAP_S = 300
+_BACKOFF_SLEEP = time.sleep
+
+
+def _retry_wait(err: urllib.error.HTTPError, attempt: int) -> float:
+    """Seconds to wait before the next try: the server's Retry-After when it sends whole seconds, else 30 s doubling to a 5 min cap."""
+    ra = (err.headers.get("Retry-After") if err.headers else None) or ""
+    if ra.strip().isdigit():
+        return float(min(int(ra), 900))
+    return float(min(BACKOFF_CAP_S, BACKOFF_BASE_S * 2 ** attempt))
+
+
 def _get_bytes(url: str, params: dict | None = None) -> bytes:
+    """One allowlisted GET. A rate limit or a transient server error (429/502/503/504) waits and retries the SAME request, so a
+    protocol's requests and parameters never change; any other failure, or the last attempt, raises as before."""
     check_url(url)
     full = url + ("?" + urllib.parse.urlencode(params) if params else "")
-    req = urllib.request.Request(full, headers={"User-Agent": "sector-research-readonly/1.0", "Accept-Encoding": "gzip"})
-    with _OPENER.open(req, timeout=300) as r:
-        check_url(r.geturl())
-        body = r.read()
-        if r.headers.get("Content-Encoding") == "gzip" or body[:2] == b"\x1f\x8b":
-            body = gzip.decompress(body)
-    return body
+    for attempt in range(MAX_ATTEMPTS):
+        req = urllib.request.Request(full, headers={"User-Agent": "sector-research-readonly/1.0", "Accept-Encoding": "gzip"})
+        try:
+            with _OPENER.open(req, timeout=300) as r:
+                check_url(r.geturl())
+                body = r.read()
+                if r.headers.get("Content-Encoding") == "gzip" or body[:2] == b"\x1f\x8b":
+                    body = gzip.decompress(body)
+            return body
+        except urllib.error.HTTPError as e:
+            if e.code not in RETRY_STATUS or attempt == MAX_ATTEMPTS - 1:
+                raise
+            _BACKOFF_SLEEP(_retry_wait(e, attempt))
+    raise AssertionError("unreachable")
 
 
 def _save(out: str, name: str, body: bytes, url: str, params: dict | None, prov: list, note: str = "") -> str:
@@ -340,7 +366,18 @@ def wqp_params(b: list) -> dict:
             "startDateLo": dt.date.fromisoformat(WINDOW_START).strftime("%m-%d-%Y"), "mimeType": "csv", "zip": "no"}
 
 
+WQP_PARTIAL = "wqp.provenance.partial.json"
+
+
 def cmd_fetch_wqp(p: dict, reg: dict, out: str) -> dict:
+    """Station, Activity and Result-depth files per lake. Each file is recorded in a partial provenance file as it lands, so a run
+    stopped by a rate limit resumes after the last good file: a file is reused only when it is on disk with the recorded sha256, url
+    and parameters (nothing is re-fetched or re-interpreted), and the final provenance is the same as an uninterrupted run's."""
+    os.makedirs(out, exist_ok=True)
+    partial_path = os.path.join(out, WQP_PARTIAL)
+    done = {}
+    if os.path.exists(partial_path):
+        done = {i["path"]: i for i in json.load(open(partial_path, encoding="utf-8")).get("items", [])}
     prov = []
     for w in waters(p):
         b = (reg.get(w["lakeId"]) or {}).get("bbox")
@@ -350,13 +387,22 @@ def cmd_fetch_wqp(p: dict, reg: dict, out: str) -> dict:
         for kind, cols, name in (("Station", STATION_COLUMNS, "station"), ("Activity", ACTIVITY_COLUMNS, "activity"),
                                  ("Result", RESULT_DEPTH_COLUMNS, "resultdepth")):
             url = V1.WQP.format(kind=kind)
+            rel = f"wqp/{slug(w['lakeId'])}.{name}.csv"
+            have = done.get(rel)
+            full = os.path.join(out, rel)
+            if (have and have.get("url") == url and have.get("params") == params and os.path.exists(full)
+                    and V1.sha256_file(full) == have.get("sha256")):
+                prov.append(have)
+                continue
             body = _stripped_csv(_get_bytes(url, params), cols)          # only whitelisted columns are ever written
-            _save(out, f"wqp/{slug(w['lakeId'])}.{name}.csv", body, url, params, prov, "whitelisted columns only")
+            _save(out, rel, body, url, params, prov, "whitelisted columns only")
+            V1.write_provenance(out, WQP_PARTIAL, prov)
     V1.write_provenance(out, "wqp.provenance.json", prov)
+    if os.path.exists(partial_path):
+        os.remove(partial_path)
     return {"files": len(prov)}
 
 
-# ----------------------------------------------------------------------------------------------------------- exclusions
 def bound_lakes(path: str = TEMP_SENSORS) -> set:
     return {r["id"] for r in csv.DictReader(open(path, encoding="utf-8"))}
 

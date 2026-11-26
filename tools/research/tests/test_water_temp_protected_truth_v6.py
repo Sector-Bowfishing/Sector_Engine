@@ -633,3 +633,86 @@ def test_cli_verify(capsys):
     assert W.main(["verify"]) == 0
     out = json.loads(capsys.readouterr().out)
     assert out["sha256"] == DIGEST and out["censusCutoff"] == "2026-11-22" and out["resultSteps"] == ["compare", "select"]
+
+
+# ----------------------------------------------------------------------------- rate limits (2026-11-25): retry, then resume
+class _Resp:
+    def __init__(self, body=b"x"):
+        self._b, self.headers = body, {}
+
+    def read(self):
+        return self._b
+
+    def geturl(self):
+        return "https://www.waterqualitydata.us/data/Station/search"
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+
+def _http_error(code, retry_after=None):
+    import email.message
+    import urllib.error
+    h = email.message.Message()
+    if retry_after is not None:
+        h["Retry-After"] = str(retry_after)
+    return urllib.error.HTTPError("https://www.waterqualitydata.us/data/Station/search", code, "limit", h, None)
+
+
+def test_a_rate_limit_waits_and_retries_the_same_request(monkeypatch):
+    calls, waits = [], []
+
+    def fake_open(req, timeout=0):
+        calls.append(req.full_url)
+        if len(calls) < 3:
+            raise _http_error(429, retry_after=7 if len(calls) == 1 else None)
+        return _Resp(b"ok")
+    monkeypatch.setattr(W._OPENER, "open", fake_open)
+    monkeypatch.setattr(W, "_BACKOFF_SLEEP", waits.append)
+    assert W._get_bytes(W.V1.WQP.format(kind="Station"), {"a": "1"}) == b"ok"
+    assert len(set(calls)) == 1 and waits == [7.0, 60.0]           # same URL every time; Retry-After first, then 30 s doubling
+
+
+def test_other_errors_and_the_last_attempt_still_raise(monkeypatch):
+    import urllib.error
+    monkeypatch.setattr(W, "_BACKOFF_SLEEP", lambda s: None)
+    monkeypatch.setattr(W._OPENER, "open", lambda req, timeout=0: (_ for _ in ()).throw(_http_error(404)))
+    with pytest.raises(urllib.error.HTTPError):
+        W._get_bytes(W.V1.WQP.format(kind="Station"))
+    n = []
+    monkeypatch.setattr(W._OPENER, "open", lambda req, timeout=0: (n.append(1), (_ for _ in ()).throw(_http_error(429)))[1])
+    with pytest.raises(urllib.error.HTTPError):
+        W._get_bytes(W.V1.WQP.format(kind="Station"))
+    assert len(n) == W.MAX_ATTEMPTS
+
+
+def test_fetch_wqp_resumes_after_the_last_good_file_and_matches_an_uninterrupted_run(tmp_path, monkeypatch):
+    reg = {l["lakeId"]: {"bbox": [0, 0, 1, 1], "geometry": None} for l in P["universe"]["lakes"][:2]}
+    monkeypatch.setattr(W, "waters", lambda p: [{"lakeId": i} for i in reg])
+    monkeypatch.setattr(W, "_stripped_csv", lambda body, cols: body)
+
+    def run(out, fail_after=None):
+        seen = []
+
+        def fake(url, params=None):
+            if fail_after is not None and len(seen) == fail_after:
+                raise SystemExit("rate limited")
+            seen.append(url)
+            return b"body:" + url.encode()
+        monkeypatch.setattr(W, "_get_bytes", fake)
+        return seen, W.cmd_fetch_wqp(P, reg, str(out))
+
+    full = tmp_path / "full"
+    seen_full, res_full = run(full)
+    cut = tmp_path / "cut"
+    with pytest.raises(SystemExit):
+        run(cut, fail_after=4)
+    assert os.path.exists(cut / W.WQP_PARTIAL) and not os.path.exists(cut / "wqp.provenance.json")
+    seen2, res2 = run(cut)
+    assert len(seen2) == len(seen_full) - 4 and res2 == res_full
+    assert not os.path.exists(cut / W.WQP_PARTIAL)
+    key = lambda d: sorted((i["path"], i["sha256"], i["url"]) for i in json.load(open(d / "wqp.provenance.json"))["items"])
+    assert key(cut) == key(full)
