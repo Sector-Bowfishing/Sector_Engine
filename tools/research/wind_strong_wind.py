@@ -1,30 +1,34 @@
 #!/usr/bin/env python3
-"""Wind strong-wind methods: read-only fetcher and scorer for protocol WSW-2026-11-23-R5 (gap WIND-CNF-001).
+"""Wind strong-wind methods: read-only fetcher and scorer for protocol WSW-2026-11-25-R6 (gap WIND-CNF-001).
 
-The protocol (docs/brains/wind-strong-wind/WSW-2026-11-23-R5.protocol.json) was pre-registered and hashed before any
-data was fetched; its sha256 is pinned below and the runner refuses any other file (the superseded R4..R1 too). It reads
-public NOAA NBM grib2 and IEM ASOS/AWOS observations and writes local files only. It never writes Firebase or a bucket,
+The protocol (docs/brains/wind-strong-wind/WSW-2026-11-25-R6.protocol.json) was pre-registered and hashed before any
+data was fetched; its sha256 is pinned below and the runner refuses any other file (the superseded R5..R1 too). It reads
+public NOAA NBM grib2, IEM station metadata and IEM ASOS/AWOS observations and writes local files only. It never writes Firebase or a bucket,
 never changes a score, an evidence file, a binding or a schedule, and admits nothing: every output is labelled
 INTERNAL_EXPERIMENTAL / NOT_FOR_CUSTOMERS.
 
-Run binding (R5 runBinding): the shared tools/research/protocol_run_ledger.py. One ledger per protocol id at
-<research-path root for wind>/_ledgers/WSW-2026-11-23-R5.jsonl (CORTEX_HOME must be set), anchored on Sector_Ops #51 before
-any step. Result steps fit, rows and score post a 'Run start:' and a 'Run result:' comment: the runner writes each text to
+Run binding (R6 runBinding): the shared tools/research/protocol_run_ledger.py. One ledger per protocol id at
+<research-path root for wind>/_ledgers/WSW-2026-11-25-R6.jsonl (CORTEX_HOME must be set), anchored on Sector_Ops #51 before
+any step. Result steps select, fit, rows and score post a 'Run start:' and a 'Run result:' comment: the runner writes each text to
 a pending file next to the ledger and waits; the Mac mini session posts it once (never reposts) and the runner confirms it.
 
     verify                              protocol sha256 == the pinned registration
     anchor                              open the ledger and write the 'Run anchor:' text to post on #51 (before any step)
     plan    --window cal_h1|pw|h2       (init, lead) pairs and the message estimate; no network
+    select  --window pw --out O         key select:pw (result step): the 8 PW stations from IEM station metadata only
+            --w-now-3-stations CSV      (R6 pwStations), recorded in the ledger before fit and before any pw fetch
     fetch   --window W --month M|smoke  key fetch:<W>:<M>; resumable inside a key; --min-free-gb (default 80);
                                         pw/h2 need --fit-sha (the counted fit's output); h2 refused before 2027-01-01
-    fit     --out O [--corpus-store D]  key fit:cal_h1 (result step)
+    fit     --out O [--corpus-store D]  key fit:cal_h1 (result step); needs the counted select:pw
     rows    --window pw|h2 --fit-sha    key rows:<W> (result step); inputs bound in the ledger first
     score   --window pw|h2 --fit-sha    key score:<W> (result step); inputs re-checked
     confirm-result --step S --window W  retry confirming a posted 'Run result:' comment
     audit                               the ledger summary, checked against #51
 
-Scoring and fitting maths are standard library only (tested offline on synthetic fixtures). fetch/rows/fit import the
-Wind runtime (numpy, eccodes) lazily, so the same decoder, row-scan fix and self-check as the corpus are used.
+Scoring, fitting and the station selection are standard library only (tested offline on synthetic fixtures). fetch/rows/fit
+import the Wind runtime (numpy, eccodes) lazily, so the same decoder, row-scan fix and self-check as the corpus are used.
+PW rows (R6): one station-centred NBM carrier box per PW station, blended bilinearly at the station point; CAL+H1 (fit) and
+H2 stay at the 8 frozen stations of lakes.json.
 """
 from __future__ import annotations
 
@@ -47,10 +51,10 @@ import protocol_run_ledger as PRL  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
-PROTOCOL = os.path.join(REPO, "docs", "brains", "wind-strong-wind", "WSW-2026-11-23-R5.protocol.json")
-REGISTERED_SHA256 = "a3578415c6b9f8d6a678e567234e1775512a3db9ea53ede1451f476128d0b565"
-PROTOCOL_ID = "WSW-2026-11-23-R5"
-RESULT_STEPS = frozenset({"fit", "rows", "score"})
+PROTOCOL = os.path.join(REPO, "docs", "brains", "wind-strong-wind", "WSW-2026-11-25-R6.protocol.json")
+REGISTERED_SHA256 = "cd309fb947076ff87ad924d1e52e107dae2179a4138205ea5c9f782754fd8262"
+PROTOCOL_ID = "WSW-2026-11-25-R6"
+RESULT_STEPS = frozenset({"select", "fit", "rows", "score"})
 FETCH_MONTHS = {"cal_h1": ("2026-05", "2026-06", "2026-07", "2026-08", "2026-09", "2026-10"),
                 "pw": ("smoke", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05"), "h2": ("2026-10", "2026-11", "2026-12")}
 SMOKE_PAIRS = 6
@@ -92,6 +96,21 @@ ALLOWED_HOSTS = {"noaa-nbm-grib2-pds.s3.amazonaws.com", "mesonet.agron.iastate.e
 UA = "SectorWind/1.0 (wind research; github.com/Sector-Bowfishing)"
 FIT_FILE = "wsw-mb-fit.json"
 METHODS = ("B0", "M-A", "M-B")
+# PW stations (R6 pwStations): chosen from IEM station METADATA only, before any value is read.
+IEM_NETWORK = "https://mesonet.agron.iastate.edu/geojson/network/{network}.geojson"
+PW_NETWORKS = ("AL_ASOS", "TN_ASOS", "MS_ASOS", "GA_ASOS")          # candidates
+COORD_NETWORKS = ("OK_ASOS", "MO_ASOS", "AR_ASOS")                 # coordinates of the iem-wind stations TUL, STL, FSM only
+PW_ARCHIVE_BEGIN_MAX = "2024-01-01"
+PW_SALT = "WSW-2026-11-25-R6|"
+PW_COUNT, PW_MAX_PER_STATE, PW_BUFFER_KM = 8, 3, 25.0
+PW_BOX_DEG = 0.15                                                  # carrier half-width (about 12 x 12 NBM cells)
+EARTH_RADIUS_KM = 6371.0088
+IEM_WIND_IDS = ("HSV", "DCU", "MSL", "BNA", "MEM", "TUL", "STL", "FSM")
+W_NOW_3_STATIONS_SHA256 = "a5474abe8e33cdc89b84e58c28b1cd26563e565a44e8aafb7a63236a92de21d3"
+POINTS_JSON = os.path.join(WIND_RUNTIME, "points.json")
+POINTS_JSON_SHA256 = "e24da5030c4fdeb47cad4c9eed319d28df0a80e67074acf46082a44a1483bf65"
+STATIONS_FILE = "pw-stations.json"
+STATIONS_SCHEMA = "sector-wind-wsw-pw-stations-v1"
 
 
 class Refused(SystemExit):
@@ -217,8 +236,8 @@ def guard_free_space(path: str, min_free_gb: float) -> float:
 
 
 def ledger_keys() -> dict:
-    """Every (step, key) the protocol fixes (R5 runBinding.keys)."""
-    return {"fit": ["fit:cal_h1"],
+    """Every (step, key) the protocol fixes (R6 runBinding.keys)."""
+    return {"select": ["select:pw"], "fit": ["fit:cal_h1"],
             "fetch": [f"fetch:{w}:{m}" for w in ("cal_h1", "pw", "h2") for m in FETCH_MONTHS[w]],
             "rows": ["rows:pw", "rows:h2"], "score": ["score:pw", "score:h2"]}
 
@@ -245,7 +264,7 @@ def guard_out(out: str, led) -> str:
 
 
 def check_lakes() -> None:
-    """R4/R5 pin lakes.json and the 8 frozen stations."""
+    """R4..R6 pin lakes.json and the 8 frozen stations (CAL+H1 and H2)."""
     got = sha256_file(LAKES_JSON)
     if got != LAKES_JSON_SHA256:
         raise Refused(f"REFUSED: brains/wind/runtime/lakes.json sha256 {got} differs from the registered {LAKES_JSON_SHA256}")
@@ -254,12 +273,19 @@ def check_lakes() -> None:
         raise Refused(f"REFUSED: lakes.json stations {ids} differ from the registered {STATION_IDS}")
 
 
+def check_points() -> None:
+    """R6 pins points.json (the W1/W1b point stations, an exclusion set for the PW selection)."""
+    got = sha256_file(POINTS_JSON)
+    if got != POINTS_JSON_SHA256:
+        raise Refused(f"REFUSED: brains/wind/runtime/points.json sha256 {got} differs from the registered {POINTS_JSON_SHA256}")
+
+
 def _utc_of(entry) -> dt.datetime:
     return dt.datetime.fromisoformat(entry["utc"].replace("Z", "+00:00"))
 
 
 def guard_clock(led, window: str | None) -> None:
-    """R5 runBinding.clock: no step with a clock earlier than the newest ledger entry; no H2 when the ledger has an H2 entry
+    """R6 runBinding.clock: no step with a clock earlier than the newest ledger entry; no H2 when the ledger has an H2 entry
     dated before the unseal date."""
     es = led.entries()
     now = _utcnow()
@@ -305,12 +331,16 @@ def code_identity() -> dict:
     return out
 
 
-def input_files(window: str, store_root: str) -> dict:
-    """What rows (and score, re-checked) read; fit uses the nbm/ and metar/ entries of its own store."""
+def input_files(window: str, store_root: str, stations_path: str | None = None) -> dict:
+    """What rows (and score, re-checked) read; fit uses the nbm/ and metar/ entries of its own store. PW rows also bind the
+    counted select output (pw-stations.json)."""
     from pathlib import Path
-    return {"nbm": Path(store_root, "nbm"), "metar": Path(store_root, "metar"), "grids": Path(store_root, "grids"),
-            "lakes.json": Path(LAKES_JSON), "runner": Path(os.path.abspath(__file__)), "ledgerModule": Path(PRL.__file__),
-            "windRuntime": Path(WIND_RUNTIME, "sector_wind")}
+    files = {"nbm": Path(store_root, "nbm"), "metar": Path(store_root, "metar"), "grids": Path(store_root, "grids"),
+             "lakes.json": Path(LAKES_JSON), "runner": Path(os.path.abspath(__file__)), "ledgerModule": Path(PRL.__file__),
+             "windRuntime": Path(WIND_RUNTIME, "sector_wind")}
+    if window == "pw":
+        files["stations"] = Path(stations_path or "")
+    return files
 
 
 # ------------------------------------------------------------------------------------------------------------- #51 records
@@ -445,6 +475,188 @@ def budgeted_fetch(budget: Budget, error_cls, opener=None, sleep=time.sleep):
                 sleep(1.5 * (attempt + 1))
         raise error_cls(f"{url}: {last}")
     return fetch
+
+
+# ------------------------------------------------------------------------------------------------------- PW stations (R6)
+def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Great-circle distance (R6 pwStations.distanceRule)."""
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dphi, dlmb = p2 - p1, math.radians(lon2 - lon1)
+    a = math.sin(dphi / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dlmb / 2) ** 2
+    return 2 * EARTH_RADIUS_KM * math.asin(min(1.0, math.sqrt(a)))
+
+
+def rank_key(station_id: str) -> str:
+    """R6 pwStations.selection: sha256('WSW-2026-11-25-R6|' + id), compared as lowercase hex."""
+    return sha256_bytes((PW_SALT + station_id).encode())
+
+
+def parse_network_listing(raw: bytes, network: str) -> dict:
+    """IEM network GeoJSON -> {station id: {id, name, network, state, lat, lon, archiveBegin}}. Metadata only. Fails closed on any
+    feature without an id, a Point geometry or an archive_begin property (R6 pwStations.metadataSource)."""
+    try:
+        doc = json.loads(raw)
+    except ValueError as e:
+        raise Refused(f"REFUSED: {network} listing is not JSON ({e})")
+    feats = doc.get("features") if isinstance(doc, dict) else None
+    if doc.get("type") != "FeatureCollection" or not isinstance(feats, list) or not feats:
+        raise Refused(f"REFUSED: {network} listing is not a non-empty GeoJSON FeatureCollection")
+    out = {}
+    for f in feats:
+        props = f.get("properties") if isinstance(f.get("properties"), dict) else {}
+        sid = f.get("id") or props.get("sid")
+        geom = f.get("geometry") if isinstance(f.get("geometry"), dict) else {}
+        coords = geom.get("coordinates")
+        if not sid or geom.get("type") != "Point" or not isinstance(coords, (list, tuple)) or len(coords) < 2:
+            raise Refused(f"REFUSED: {network} listing has a feature without a station id or a Point geometry; selection not made")
+        if "archive_begin" not in props:
+            raise Refused(f"REFUSED: {network} listing has no archive_begin for {sid}; selection not made")
+        ab = props["archive_begin"]
+        if ab is not None and not (isinstance(ab, str) and len(ab) >= 10):
+            raise Refused(f"REFUSED: {network} archive_begin for {sid} is not a date ({ab!r})")
+        out[str(sid)] = {"id": str(sid), "name": props.get("sname"), "network": network, "state": network.split("_")[0],
+                         "lat": float(coords[1]), "lon": float(coords[0]), "archiveBegin": ab[:10] if ab else None}
+    return out
+
+
+def read_w_now_3(path: str) -> list[dict]:
+    """The W-NOW-3 station list (station, lat, lon columns), refused on any sha256 but the registered one."""
+    import csv
+    got = sha256_file(path)
+    if got != W_NOW_3_STATIONS_SHA256:
+        raise Refused(f"REFUSED: W-NOW-3 station list sha256 {got} is not the registered {W_NOW_3_STATIONS_SHA256}")
+    rows = list(csv.DictReader(open(path, newline="")))
+    if not rows or any(not r.get("station") or r.get("lat") in (None, "") or r.get("lon") in (None, "") for r in rows):
+        raise Refused("REFUSED: W-NOW-3 station list needs station, lat and lon for every row")
+    return [{"id": r["station"], "lat": float(r["lat"]), "lon": float(r["lon"]), "why": "W-NOW-3"} for r in rows]
+
+
+def exclusions(listings: dict, w_now_3: list[dict]) -> list[dict]:
+    """Every excluded station with coordinates (R6 pwStations.excluded / excludedCoordinates). Fails closed when an iem-wind id has
+    no coordinates in lakes.json or the listings."""
+    cfg = json.load(open(LAKES_JSON))
+    out = [{"id": sid, "lat": st["lat"], "lon": st["lon"], "why": "frozen 8"} for sid, st in cfg["stations"].items()]
+    out += w_now_3
+    pts = json.load(open(POINTS_JSON))["points"]
+    out += [{"id": p["station"], "lat": p["lat"], "lon": p["lon"], "why": "W1/W1b point"} for p in pts.values()]
+    for sid in IEM_WIND_IDS:
+        if sid in cfg["stations"]:
+            continue    # HSV, DCU, MSL: already excluded with lakes.json coordinates
+        hit = next((lst[sid] for lst in listings.values() if sid in lst), None)
+        if hit is None:
+            raise Refused(f"REFUSED: iem-wind station {sid} has no coordinates in the fetched listings; selection not made")
+        out.append({"id": sid, "lat": hit["lat"], "lon": hit["lon"], "why": "iem-wind"})
+    return out
+
+
+def select_pw_stations(listings: dict, excluded: list[dict]) -> dict:
+    """R6 pwStations: candidates (the four networks, archive begin <= 2024-01-01), minus excluded ids and the 25 km buffer, ranked by
+    rank_key, the first 8 with at most 3 per state. Deterministic; refuses fewer than 8."""
+    for net in PW_NETWORKS:
+        if net not in listings:
+            raise Refused(f"REFUSED: no listing for {net}")
+    ex_ids = {e["id"] for e in excluded}
+    counts = {"candidatesListed": 0, "filteredByArchiveBegin": 0, "droppedById": 0, "droppedByBuffer": 0}
+    kept, dropped = [], []
+    for net in PW_NETWORKS:
+        for sid, m in sorted(listings[net].items()):
+            counts["candidatesListed"] += 1
+            if not m["archiveBegin"] or m["archiveBegin"] > PW_ARCHIVE_BEGIN_MAX:
+                counts["filteredByArchiveBegin"] += 1
+                continue
+            if sid in ex_ids:
+                counts["droppedById"] += 1
+                dropped.append({"id": sid, "why": "excluded id"})
+                continue
+            near = min(((haversine_km(m["lat"], m["lon"], e["lat"], e["lon"]), e) for e in excluded), key=lambda x: x[0], default=None)
+            if near is not None and near[0] <= PW_BUFFER_KM:
+                counts["droppedByBuffer"] += 1
+                dropped.append({"id": sid, "why": f"{near[0]:.1f} km from {near[1]['id']} ({near[1]['why']})"})
+                continue
+            kept.append(dict(m, rankKey=rank_key(sid)))
+    ranked = sorted(kept, key=lambda m: m["rankKey"])
+    chosen, per_state = [], {}
+    for m in ranked:
+        if per_state.get(m["state"], 0) >= PW_MAX_PER_STATE:
+            continue
+        per_state[m["state"]] = per_state.get(m["state"], 0) + 1
+        chosen.append(dict(m, rank=len(chosen) + 1))
+        if len(chosen) == PW_COUNT:
+            break
+    if len(chosen) < PW_COUNT:
+        raise Refused(f"REFUSED: only {len(chosen)} PW candidates remain after the exclusions (< {PW_COUNT}); selection not made")
+    counts["eligible"] = len(kept)
+    return {"stations": chosen, "perState": per_state, "counts": counts, "dropped": dropped,
+            "eligibleRanking": [m["id"] for m in ranked]}
+
+
+def pw_config(doc: dict) -> dict:
+    """The fetch/rows configuration derived from the counted select output: one carrier box per PW station (R6 pwStations.carrier,
+    .configuration). lakes.json is not used for PW."""
+    lakes, stations = {}, {}
+    for st in doc["stations"]:
+        lake = f"pw-{st['id']}"
+        lakes[lake] = {"name": f"PW station {st['id']} carrier box (not a lake)",
+                       "bbox": [round(st["lon"] - PW_BOX_DEG, 4), round(st["lat"] - PW_BOX_DEG, 4), round(st["lon"] + PW_BOX_DEG, 4), round(st["lat"] + PW_BOX_DEG, 4)],
+                       "role": "R6 PW carrier for point extraction"}
+        stations[st["id"]] = {"lake": lake, "network": f"IEM {st['network']}", "lat": st["lat"], "lon": st["lon"], "sensorHeightM": 10.0}
+    if len(lakes) != PW_COUNT or len(stations) != PW_COUNT:
+        raise Refused(f"REFUSED: the PW station document does not hold {PW_COUNT} stations")
+    return {"version": f"{PROTOCOL_ID} PW stations", "lakes": lakes, "stations": stations}
+
+
+def fetch_listings(budget: "Budget", opener=None) -> dict:
+    """The IEM network listings (metadata only), through the budgeted fetch: {network: raw bytes}."""
+    fetch = budgeted_fetch(budget, Refused, opener)
+    out = {}
+    for net in PW_NETWORKS + COORD_NETWORKS:
+        out[net] = fetch(IEM_NETWORK.format(network=net), timeout=120)
+    budget.save()
+    return out
+
+
+def stations_document(sel: dict, listing_sha: dict, w_now_3_path: str, psha: str, run: int) -> dict:
+    return {"schema": STATIONS_SCHEMA, "protocolId": PROTOCOL_ID, "protocolSha256": psha, "labels": LABELS, "runNumber": run,
+            "selectedAt": f"{_utcnow():%Y-%m-%dT%H:%M:%SZ}",
+            "rule": {"candidates": list(PW_NETWORKS), "archiveBeginOnOrBefore": PW_ARCHIVE_BEGIN_MAX, "bufferKm": PW_BUFFER_KM,
+                     "salt": PW_SALT, "count": PW_COUNT, "maxPerState": PW_MAX_PER_STATE, "carrierBoxDeg": PW_BOX_DEG,
+                     "excluded": ["frozen 8 (lakes.json)", "W-NOW-3 stations", "points.json stations", "iem-wind stations", "25 km buffer"]},
+            "listings": {net: {"url": IEM_NETWORK.format(network=net), "sha256": sha} for net, sha in listing_sha.items()},
+            "exclusionSources": {"lakesJsonSha256": LAKES_JSON_SHA256, "pointsJsonSha256": POINTS_JSON_SHA256,
+                                 "wNow3Stations": {"path": w_now_3_path, "sha256": W_NOW_3_STATIONS_SHA256}, "iemWindIds": list(IEM_WIND_IDS)},
+            "counts": sel["counts"], "perState": sel["perState"], "dropped": sel["dropped"], "eligibleRanking": sel["eligibleRanking"],
+            "stations": sel["stations"], "config": pw_config(sel),
+            "transferCaveat": "PW stations are not the home-lake stations: a PW result measures the methods' transfer to nearby inland "
+                              "stations on NBM v4.2, not the 8 home stations (R6 pwStations.transferCaveat)."}
+
+
+def guard_select(led) -> dict:
+    """fit and every pw step need the counted select:pw (R6 runBinding.selectStep)."""
+    try:
+        return led.require("select", "select:pw")
+    except PRL.LedgerRefusal as e:
+        raise Refused(f"REFUSED: no counted PW station selection in the run ledger ({e}); run `select` first")
+
+
+def guard_pw_stations(led, out: str) -> tuple[dict, dict, str]:
+    """The stations file in --out must be byte-identical to the counted select output. Returns (document, config, path)."""
+    recorded = guard_select(led)["outputs"]["stations"]
+    path = os.path.join(out, "pw", STATIONS_FILE)
+    if not os.path.exists(path):
+        raise Refused(f"REFUSED: {STATIONS_FILE} missing in --out/pw; the counted selection is {recorded}")
+    if sha256_file(path) != recorded:
+        raise Refused(f"REFUSED: {STATIONS_FILE} in --out differs from the counted selection ({recorded}); a different list is refused")
+    doc = json.load(open(path))
+    if doc.get("protocolSha256") != REGISTERED_SHA256 or doc.get("schema") != STATIONS_SCHEMA:
+        raise Refused("REFUSED: the PW station document was made under a different protocol")
+    return doc, pw_config(doc), path
+
+
+def window_cfg(window: str, led=None, out: str | None = None):
+    """PW: the configuration derived from the counted selection; CAL+H1 and H2: None (lakes.json, the frozen 8)."""
+    if window != "pw":
+        return None
+    return guard_pw_stations(led, out)[1]
 
 
 # -------------------------------------------------------------------------------------------------------------- M-B (fit)
@@ -677,7 +889,8 @@ def _cfg(ingest):
 
 
 def do_fetch(window: str, out: str, max_pairs: int | None = None, month: str | None = None, budget: "Budget | None" = None,
-             min_free_gb: float = DEFAULT_MIN_FREE_GB, opener=None) -> dict:
+             min_free_gb: float = DEFAULT_MIN_FREE_GB, opener=None, cfg: dict | None = None) -> dict:
+    """cfg: the PW carrier configuration (R6) for the past window; None = lakes.json (CAL+H1, H2: the frozen 8)."""
     grib, ingest, _, store, _ = _runtime()
     for u in (ingest.NBM_CORE, ingest.NBM_QMD, ingest.IEM):
         check_host(u)
@@ -694,7 +907,7 @@ def do_fetch(window: str, out: str, max_pairs: int | None = None, month: str | N
     old = {s: signal.signal(s, _on_signal) for s in (signal.SIGTERM, signal.SIGINT)}
     done = failed = days = 0
     try:
-        cfg = _cfg(ingest)
+        cfg = cfg or _cfg(ingest)
         st = store.LocalStore(os.path.join(out, window, "store"))
         pairs = month_pairs(window, month)
         pairs = pairs[:max_pairs] if max_pairs else pairs
@@ -726,10 +939,12 @@ def do_fetch(window: str, out: str, max_pairs: int | None = None, month: str | N
             "budget": {"bytes": budget.bytes, "attempts": budget.attempts, "hours": round(budget.seconds() / 3600, 2)}}
 
 
-def build_rows(window: str, store_root: str) -> tuple[list[dict], dict]:
-    """Rows for the window's planned synoptic night pairs from a store in the corpus layout (read only), with accounting."""
+def build_rows(window: str, store_root: str, cfg: dict | None = None) -> tuple[list[dict], dict]:
+    """Rows for the window's planned synoptic night pairs from a store in the corpus layout (read only), with accounting. cfg: the PW
+    carrier configuration (R6) for the past window; None = lakes.json. PW rows whose station weights are not bilinear count their
+    forecast values as missing (weightsNotBilinear)."""
     _, ingest, interp, store, validate = _runtime()
-    cfg = _cfg(ingest)
+    cfg = cfg or _cfg(ingest)
     if not os.path.isdir(store_root):
         raise Refused(f"REFUSED: store folder {store_root} not found")
     st = store.LocalStore(store_root)
@@ -746,7 +961,7 @@ def build_rows(window: str, store_root: str) -> tuple[list[dict], dict]:
            "plannedRowsPerStation": len(pairs), "plannedObsDays": len(days), "missingObsDays": missing_days,
            "plannedCycles": 0, "missingCycles": 0, "incompleteCycles": 0, "rowsBuilt": 0,
            "rowsNotBuilt": 0, "obsMissing": 0, "obsMissingByStation": {s: 0 for s in cfg["stations"]},
-           "b0Missing": 0, "p90Missing": 0, "missingCycleKeys": [], "incompleteCycleKeys": []}
+           "b0Missing": 0, "p90Missing": 0, "weightsNotBilinear": 0, "missingCycleKeys": [], "incompleteCycleKeys": []}
     wts, rows, seen = {}, [], set()
     for t, lead in pairs:
         for lake in cfg["lakes"]:
@@ -777,13 +992,17 @@ def build_rows(window: str, store_root: str) -> tuple[list[dict], dict]:
                 o = obs.get((sid, vt))
                 b0, _ = interp.blend_wind(step["speedMS"], step["dirFromDeg"], w)
                 p90 = interp.blend(step["speedP90"], w) if "speedP90" in step else None
+                if w.method != "bilinear":
+                    acc["weightsNotBilinear"] += 1
+                    if window == "pw":
+                        b0 = p90 = None          # R6 pwStations.carrier: not a point value, counted as missing
                 acc["obsMissing"] += o is None
                 acc["obsMissingByStation"][sid] += o is None
                 acc["b0Missing"] += b0 is None
                 acc["p90Missing"] += p90 is None
                 rows.append({"station": sid, "lake": lake, "init": f"{t:%Y-%m-%dT%H:%M:%SZ}", "lead": lead,
                              "valid": f"{vt:%Y-%m-%dT%H:%M:%SZ}", "nbmVersion": c.get("modelVersion"),
-                             "obs": None if not o else o["speedMS"], "b0": b0, "p90": p90})
+                             "obs": None if not o else o["speedMS"], "b0": b0, "p90": p90, "weights": w.method})
     acc["rowsBuilt"] = len(rows)
     return rows, acc
 
@@ -803,8 +1022,46 @@ def _budget(led, window: str) -> Budget:
     return Budget(os.path.join(str(led.dir), f"{PROTOCOL_ID}.budget-{window}.json"))
 
 
+def _cmd_select(a, proto, psha, led) -> int:
+    """R6 select:pw: the PW stations from IEM metadata only, recorded in the ledger and on #51 before fit and before any pw fetch."""
+    from pathlib import Path
+    key = key_for("select", "pw")
+    if not a.w_now_3_stations:
+        raise Refused("REFUSED: select needs --w-now-3-stations (the W-NOW-3 out/stations.csv on the research SSD, sha256 pinned)")
+    csv_path = os.path.realpath(a.w_now_3_stations)
+    w_now_3 = read_w_now_3(csv_path)
+    check_points()
+    stations_path = os.path.join(a.out, "pw", STATIONS_FILE)
+    files = {"wNow3Stations": Path(csv_path), "points.json": Path(POINTS_JSON), "lakes.json": Path(LAKES_JSON),
+             "runner": Path(os.path.abspath(__file__)), "ledgerModule": Path(PRL.__file__)}
+    led.bind_inputs("select", key, files)
+
+    def compute(run):
+        if os.path.exists(stations_path):
+            raise Refused(f"REFUSED: {STATIONS_FILE} already exists in --out/pw; it is never overwritten")
+        raw = fetch_listings(_budget(led, "pw"))
+        listings, shas = {}, {}
+        for net, b in raw.items():
+            listings[net] = parse_network_listing(b, net)
+            shas[net] = sha256_bytes(b)
+        sel = select_pw_stations(listings, exclusions(listings, w_now_3))
+        doc = stations_document(sel, shas, csv_path, psha, run)
+        for net, b in raw.items():       # the metadata bytes, kept with the selection
+            p = os.path.join(a.out, "pw", "metadata", f"{net}.geojson")
+            os.makedirs(os.path.dirname(p), exist_ok=True)
+            with open(p, "xb") as fh:
+                fh.write(b)
+        _write_once(stations_path, doc)
+        return {"stations": Path(stations_path)}, {"stations": [s["id"] for s in sel["stations"]], "perState": sel["perState"],
+                                                  "counts": sel["counts"], "runNumber": run}
+    entry, run = result_step(led, "select", key, {"window": "pw", "wNow3StationsPath": csv_path}, files, compute)
+    print(json.dumps({"key": key, "run": run, "counted": entry["counted"], "stations": entry["outputs"]["stations"], "result": entry["result"]}, indent=1))
+    return 0
+
+
 def _cmd_fit(a, proto, psha, led) -> int:
     from pathlib import Path
+    guard_select(led)             # R6: the PW stations are fixed before this protocol reads any value
     fit_path = os.path.join(a.out, FIT_FILE)
     src = os.path.realpath(a.corpus_store) if a.corpus_store else os.path.join(a.out, "cal_h1", "store")
     files = {"nbm": Path(src, "nbm"), "metar": Path(src, "metar")}
@@ -832,6 +1089,7 @@ def _cmd_fetch(a, psha, led) -> int:
     if not a.month:
         raise Refused("REFUSED: fetch needs --month (one of the protocol's fixed keys, or 'smoke' for the past window)")
     key = key_for("fetch", a.window, a.month)
+    cfg = window_cfg(a.window, led, a.out)          # pw: the counted selection, before anything else
     if a.window != "cal_h1":
         guard_fit_sha(led, a.out, a.fit_sha, psha)
     if began(led, "rows", f"rows:{a.window}") if a.window != "cal_h1" else began(led, "fit", "fit:cal_h1"):
@@ -842,7 +1100,8 @@ def _cmd_fetch(a, psha, led) -> int:
     free = guard_free_space(a.out, a.min_free_gb)
     led.begin("fetch", key, {"window": a.window, "month": a.month, "maxPairs": SMOKE_PAIRS if smoke else None})
     try:
-        res = do_fetch(a.window, a.out, SMOKE_PAIRS if smoke else None, month, budget=_budget(led, a.window), min_free_gb=a.min_free_gb)
+        res = do_fetch(a.window, a.out, SMOKE_PAIRS if smoke else None, month, budget=_budget(led, a.window), min_free_gb=a.min_free_gb,
+                       cfg=cfg)
     except BaseException as e:
         led.abort_before_result("fetch", key, f"{type(e).__name__}: {e}"[:300])
         raise
@@ -854,18 +1113,19 @@ def _cmd_fetch(a, psha, led) -> int:
 
 def _cmd_rows(a, psha, led) -> int:
     from pathlib import Path
+    cfg = window_cfg(a.window, led, a.out)
     _, fsha = guard_fit_sha(led, a.out, a.fit_sha, psha)
     key = key_for("rows", a.window)
     store_root = os.path.join(a.out, a.window, "store")
     rows_path = os.path.join(a.out, a.window, "rows.jsonl")
     acc_path = os.path.join(a.out, a.window, "accounting.json")
-    files = input_files(a.window, store_root)
+    files = input_files(a.window, store_root, os.path.join(a.out, "pw", STATIONS_FILE))
     led.bind_inputs("rows", key, files)
 
     def compute(run):
         if os.path.exists(rows_path) or os.path.exists(acc_path):
             raise Refused("REFUSED: rows are already recorded in --out; they are never overwritten")
-        rows, acc = build_rows(a.window, store_root)
+        rows, acc = build_rows(a.window, store_root, cfg)
         os.makedirs(os.path.dirname(rows_path), exist_ok=True)
         with open(rows_path, "x") as fh:
             fh.writelines(json.dumps(r, sort_keys=True) + "\n" for r in rows)
@@ -880,6 +1140,7 @@ def _cmd_rows(a, psha, led) -> int:
 
 def _cmd_score(a, proto, psha, led) -> int:
     from pathlib import Path
+    window_cfg(a.window, led, a.out)                 # pw: the stations file must still be the counted selection
     fit, fsha = guard_fit_sha(led, a.out, a.fit_sha, psha)
     rkey, key = key_for("rows", a.window), key_for("score", a.window)
     try:
@@ -887,7 +1148,7 @@ def _cmd_score(a, proto, psha, led) -> int:
     except PRL.LedgerRefusal as e:
         raise Refused(f"REFUSED: no counted rows for this window ({e})")
     store_root = os.path.join(a.out, a.window, "store")
-    ihash = led.check_inputs("rows", rkey, input_files(a.window, store_root))
+    ihash = led.check_inputs("rows", rkey, input_files(a.window, store_root, os.path.join(a.out, "pw", STATIONS_FILE)))
     rows_path = os.path.join(a.out, a.window, "rows.jsonl")
     acc_path = os.path.join(a.out, a.window, "accounting.json")
     for path, name in ((rows_path, "rows"), (acc_path, "accounting")):
@@ -917,19 +1178,21 @@ def _cmd_score(a, proto, psha, led) -> int:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter, allow_abbrev=False)
-    ap.add_argument("cmd", choices=("verify", "anchor", "plan", "fit", "fetch", "rows", "score", "confirm-result", "audit"))
+    ap.add_argument("cmd", choices=("verify", "anchor", "plan", "select", "fit", "fetch", "rows", "score", "confirm-result", "audit"))
     ap.add_argument("--window", choices=("cal_h1", "pw", "h2"))
-    ap.add_argument("--step", choices=("fit", "rows", "score"), help="confirm-result: the result step")
+    ap.add_argument("--step", choices=("select", "fit", "rows", "score"), help="confirm-result: the result step")
     ap.add_argument("--out", help="output folder, inside the Wind research folder on the research SSD")
     ap.add_argument("--corpus-store", help="fit: an existing CAL+H1 corpus store (read in place; may be outside the research root)")
     ap.add_argument("--fit-sha", help="pw/h2: the counted fit's sha256 (ledger), also posted on Sector_Ops #51")
     ap.add_argument("--month", help="fetch: YYYY-MM of the window, or 'smoke' (past window only)")
     ap.add_argument("--min-free-gb", type=float, default=DEFAULT_MIN_FREE_GB, help="fetch: refuse below this free space")
+    ap.add_argument("--w-now-3-stations", help="select: the W-NOW-3 out/stations.csv (research SSD; sha256 pinned in the protocol)")
     a = ap.parse_args(argv)
     try:
         proto, psha = load_protocol()
         if a.cmd == "verify":
             check_lakes()
+            check_points()
             print(f"OK {proto['protocolId']} sha256 {psha}")
             return 0
         if a.cmd == "plan":
@@ -960,6 +1223,11 @@ def main(argv=None) -> int:
             return _cmd_fit(a, proto, psha, led)
         if not a.window:
             raise Refused(f"REFUSED: {a.cmd} needs --window")
+        if a.cmd == "select":
+            if a.window != "pw":
+                raise Refused("REFUSED: select is the past-window station selection (--window pw)")
+            guard_clock(led, "pw")
+            return _cmd_select(a, proto, psha, led)
         guard_h2(a.window, a.cmd)
         guard_clock(led, a.window)
         if a.cmd == "fetch":
