@@ -256,7 +256,8 @@ def test_percy_priest_same_source_while_the_live_binding_is_unchanged():
 @pytest.mark.parametrize("live", [
     ["a2w:LRN:JPHT1:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.1Hour.0.man-rev", "cwms:LRN:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.15Minutes.0.dcp-rev", "nwps:JPHT1:HPIRG"],  # provider changed
     ["a2w:LRN:OLDH1:OLDH1-OLD_HICKORY.Elev-Pool.Inst.1Hour.0.man-rev", "cwms:LRN:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.15Minutes.0.dcp-rev", "tva:JPHT1"],  # location changed
-    ["a2w:LRN:JPHT1:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.1Hour.0.man-rev", "cwms:LRN:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.15Minutes.0.dcp-rev"],  # fallback dropped
+    ["a2w:LRN:JPHT1:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.1Hour.0.man-rev"],  # a recorded source dropped
+    ["a2w:LRN:JPHT1:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.1Hour.0.man-rev", "cwms:LRN:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.15Minutes.0.dcp-rev", "tva:JPHT1"],  # the TVA fallback is back
     ["a2w:LRN:JPHT1X:JPHT1X-OTHER.Elev-Pool.Inst.1Hour.0.man-rev", "cwms:LRN:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.15Minutes.0.dcp-rev", "tva:JPHT1"],  # prefix is not an exact match
 ])
 def test_percy_priest_refused_when_the_live_binding_changes(live):

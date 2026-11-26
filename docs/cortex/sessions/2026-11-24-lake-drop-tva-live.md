@@ -13,3 +13,6 @@ Committed bindings: 15 lakes list a TVA live source (bindings.proposed.v1.json) 
 
 ## Not done
 The committed tables and generated Swift are NOT regenerated: they come from research inputs that are not in this session. A Mac mini regeneration and review are required before any lake changes. Customer-visible; not merged.
+
+## 2026-11-25 update: Percy Priest Depth evidence re-recorded (option a)
+The review of #254 found `brains/depth` failing: Depth's Percy Priest SAME_SOURCE record pinned Lake's live binding including `tva:JPHT1`, so dropping the fallback refused it. Michael approved option (a) in chat on 2026-11-25 ("I approve all your recommendations"). `liveSourceIds` in `datum_verification.json` now lists the two remaining ids (A2W and CWMS, same JPHT1 location); the level, reference and datum evidence is unchanged. The test now refuses a dropped recorded source and a returned TVA fallback. Main merged in; the status digest regenerated. No Lake digest change.
