@@ -157,8 +157,10 @@ def evaluate(policy: dict, *, store, executions: dict, control: dict | None, now
                 res.trips.append(Trip("LEASE_OUTSIDE_POLICY", f"lease for {brain} held by {doc.get('holder')}, expected {want}"))
 
     grants_since: dict[str, int] = {}
+    grants_complete = False                                           # set only when the whole grants listing was read
 
     def grants_check():
+        nonlocal grants_complete
         for k in _keys(store, "exports/runners/grants/", pair_since):
             brain = k.split("/")[3] if len(k.split("/")) > 4 else "?"
             doc = _json(store, k) or {}
@@ -168,6 +170,7 @@ def evaluate(policy: dict, *, store, executions: dict, control: dict | None, now
             if granted >= since and brain not in brains:
                 res.trips.append(Trip("GRANT_OUTSIDE_POLICY", f"grant {k.rsplit('/', 1)[-1]} for {brain}"))
             grants_since[brain] = grants_since.get(brain, 0) + 1          # pairs with artifacts since the boundary (an hour of slack)
+        grants_complete = True
 
     def artifacts_check():
         counts: dict[str, int] = {}
@@ -181,6 +184,8 @@ def evaluate(policy: dict, *, store, executions: dict, control: dict | None, now
             counts[brain] = counts.get(brain, 0) + 1
             if brain not in brains:
                 res.trips.append(Trip("ARTIFACT_OUTSIDE_POLICY", f"artifact {k} for {brain}"))
+        if not grants_complete:                                          # a partial grant count must never be compared: the grants check
+            return                                                       # already tripped CHECK_FAILED (cycle holds, no latch)
         for brain, n in sorted(counts.items()):
             if brain in brains and n > grants_since.get(brain, 0):
                 res.trips.append(Trip("MORE_ARTIFACTS_THAN_GRANTS", f"{brain}: {n} artifacts since {since}Z for {grants_since.get(brain, 0)} granted cycles"))
