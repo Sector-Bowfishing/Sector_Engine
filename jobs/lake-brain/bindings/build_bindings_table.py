@@ -826,6 +826,36 @@ DRYRUN_FIXES_2026_11_21 = {
 }
 
 
+# Rebinds decided from the Mac mini's read-only research (Sector_Ops #51, Batch 2, 2026-11-25) and approved by Michael in chat the same day.
+REBINDS_2026_11_25 = {
+    # CWMS MLAW has read +0.34 ft above USGS 12471000 since 2026-11-13 and is the same unreviewed feed as NWPS MLAW1: the live level is
+    # now the USGS gauge Lake's history already uses, with no CWMS fallback to mis-level the lake.
+    'Moses Lake|WA': {
+        'live': [{'provider': 'usgs', 'capability': 'DIRECT_LAKE_GAUGE', 'station': '12471000', 'series': '62614', 'cadenceMin': 60, 'lagMin': 60,
+                  'datumOffsetFt': 0.0, 'note': 'USGS 12471000 gage height 62614; replaces CWMS MLAW, which has read +0.34 ft above USGS since 2026-11-13 [2026-11-25 rebind (Sector_Ops #51)]'}],
+        'notes': ['live moved from CWMS NWDP MLAW.Elev-Forebay RFC-RAW to USGS 12471000:62614 (CWMS read +0.34 ft above USGS since 2026-11-13; the same gauge as history) [2026-11-25 rebind (Sector_Ops #51)]'],
+    },
+    # The history was the RUL rule curve (30 ft off the observed pool at times); the observed CWMS series exists from 2020-08-12 and equals NWPS FLAV2.
+    'Flannagan Reservoir|VA': {
+        'history': [{'kind': 'cwmsDaily', 'office': 'LRH', 'series': 'JWFlannagan-Lake.Elev.Inst.15Minutes.0.OBS'}],
+        'notes': ['history was JWFlannagan-Lake.Elev.Inst.1Day.0.RUL (rule curve, -30 to +34 ft from observed); now the observed JWFlannagan-Lake.Elev.Inst.15Minutes.0.OBS, the same level as live FLAV2 (record from 2020-08-12) [2026-11-25 rebind (Sector_Ops #51)]'],
+    },
+}
+
+
+def apply_rebinds(rec: dict) -> None:
+    fix = REBINDS_2026_11_25.get(rec["lakeId"])
+    if not fix:
+        return
+    if "live" in fix:
+        rec["live"] = [dict(x) for x in fix["live"]]
+        top = rec["live"][0]
+        rec["capability"], rec["provider"], rec["station"], rec["series"] = top["capability"], top["provider"], top["station"], top["series"]
+    if "history" in fix:
+        rec["history"] = fix["history"]
+    rec["historyNotes"] = list(rec["historyNotes"]) + fix["notes"]
+
+
 def apply_dryrun_fixes(rec: dict) -> None:
     fix = DRYRUN_FIXES_2026_11_21.get(rec["lakeId"])
     if not fix:
@@ -894,6 +924,7 @@ def build_record(inp: Inputs, row: dict) -> tuple[dict | None, list[str]]:
         },
     }
     apply_dryrun_fixes(rec)
+    apply_rebinds(rec)
     if rec["history"] == [] and hist["completeYears"] == 0:
         warnings.append(f"{lake}: no history source (class NONE)")
     return rec, warnings
