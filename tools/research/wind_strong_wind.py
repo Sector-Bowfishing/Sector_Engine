@@ -504,7 +504,9 @@ def parse_network_listing(raw: bytes, network: str) -> dict:
     out = {}
     for f in feats:
         props = f.get("properties") if isinstance(f.get("properties"), dict) else {}
-        sid = f.get("id") or props.get("sid")
+        sid = f.get("id") or props.get("sid")        # the feature id; properties.sid only when the feature id is absent (same identifier)
+        if f.get("id") and props.get("sid") and str(props["sid"]) != str(f["id"]):
+            raise Refused(f"REFUSED: {network} listing feature id {f['id']!r} disagrees with properties.sid {props['sid']!r}; selection not made")
         geom = f.get("geometry") if isinstance(f.get("geometry"), dict) else {}
         coords = geom.get("coordinates")
         if not sid or geom.get("type") != "Point" or not isinstance(coords, (list, tuple)) or len(coords) < 2:
@@ -555,6 +557,12 @@ def select_pw_stations(listings: dict, excluded: list[dict]) -> dict:
     for net in PW_NETWORKS:
         if net not in listings:
             raise Refused(f"REFUSED: no listing for {net}")
+    seen_ids: dict[str, str] = {}
+    for net in PW_NETWORKS:
+        for sid in listings[net]:
+            if sid in seen_ids:
+                raise Refused(f"REFUSED: station {sid} is listed in both {seen_ids[sid]} and {net}; the selection needs one entry per id")
+            seen_ids[sid] = net
     ex_ids = {e["id"] for e in excluded}
     counts = {"candidatesListed": 0, "filteredByArchiveBegin": 0, "droppedById": 0, "droppedByBuffer": 0}
     kept, dropped = [], []
@@ -611,7 +619,7 @@ def fetch_listings(budget: "Budget", opener=None) -> dict:
     out = {}
     for net in PW_NETWORKS + COORD_NETWORKS:
         out[net] = fetch(IEM_NETWORK.format(network=net), timeout=120)
-    budget.save()
+        budget.save()
     return out
 
 
@@ -907,7 +915,7 @@ def do_fetch(window: str, out: str, max_pairs: int | None = None, month: str | N
     old = {s: signal.signal(s, _on_signal) for s in (signal.SIGTERM, signal.SIGINT)}
     done = failed = days = 0
     try:
-        cfg = cfg or _cfg(ingest)
+        cfg = cfg if cfg is not None else _cfg(ingest)
         st = store.LocalStore(os.path.join(out, window, "store"))
         pairs = month_pairs(window, month)
         pairs = pairs[:max_pairs] if max_pairs else pairs
@@ -944,7 +952,7 @@ def build_rows(window: str, store_root: str, cfg: dict | None = None) -> tuple[l
     carrier configuration (R6) for the past window; None = lakes.json. PW rows whose station weights are not bilinear count their
     forecast values as missing (weightsNotBilinear)."""
     _, ingest, interp, store, validate = _runtime()
-    cfg = cfg or _cfg(ingest)
+    cfg = cfg if cfg is not None else _cfg(ingest)
     if not os.path.isdir(store_root):
         raise Refused(f"REFUSED: store folder {store_root} not found")
     st = store.LocalStore(store_root)
@@ -1089,6 +1097,7 @@ def _cmd_fetch(a, psha, led) -> int:
     if not a.month:
         raise Refused("REFUSED: fetch needs --month (one of the protocol's fixed keys, or 'smoke' for the past window)")
     key = key_for("fetch", a.window, a.month)
+    guard_select(led)                               # R6: the PW stations are fixed before this protocol reads any value (every window)
     cfg = window_cfg(a.window, led, a.out)          # pw: the counted selection, before anything else
     if a.window != "cal_h1":
         guard_fit_sha(led, a.out, a.fit_sha, psha)

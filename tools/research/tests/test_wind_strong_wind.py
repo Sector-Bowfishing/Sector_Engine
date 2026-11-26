@@ -327,6 +327,7 @@ def test_a_fetch_abort_allows_a_retry_and_a_completed_month_is_not_refetched(hom
             raise OSError("synthetic I/O error")
         return {"budget": {"bytes": 0}}
     monkeypatch.setattr(W, "do_fetch", fake_fetch)
+    _put_select(home, monkeypatch)
     args = ["fetch", "--window", "cal_h1", "--month", "2026-05", "--out", str(home), "--min-free-gb", "0"]
     with pytest.raises(OSError):
         W.main(args)
@@ -747,12 +748,20 @@ def test_pw_selection_is_metadata_only_deterministic_and_capped_per_state():
                              excluded + [{"id": f"T{i}", "lat": 0, "lon": 0, "why": "t"} for i in range(1, 5)])
     with pytest.raises(W.Refused):                                                                  # a missing network
         W.select_pw_stations({n: v for n, v in listings.items() if n != "GA_ASOS"}, excluded)
+    dup = dict(listings, GA_ASOS=dict(listings["GA_ASOS"], A1=dict(listings["AL_ASOS"]["A1"], network="GA_ASOS", state="GA")))
+    with pytest.raises(W.Refused):                                                                  # one id in two networks
+        W.select_pw_stations(dup, excluded)
 
 
 def test_listing_parser_fails_closed():
     good = _listing_bytes({"AL_ASOS": [_feature("BHM", 33.56, -86.75)]})["AL_ASOS"]
     assert W.parse_network_listing(good, "AL_ASOS")["BHM"]["state"] == "AL"
+    sid_only = json.dumps({"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"sid": "BHM", "archive_begin": "2010-01-01"},
+                                                                       "geometry": {"type": "Point", "coordinates": [-86.75, 33.56]}}]}).encode()
+    assert W.parse_network_listing(sid_only, "AL_ASOS")["BHM"]["id"] == "BHM"                   # properties.sid names the same station
     for bad in (b"not json", json.dumps({"type": "FeatureCollection", "features": []}).encode(),
+                json.dumps({"type": "FeatureCollection", "features": [{"type": "Feature", "id": "BHM", "properties": {"sid": "OTHER", "archive_begin": "2010-01-01"},
+                                                                       "geometry": {"type": "Point", "coordinates": [-86.75, 33.56]}}]}).encode(),
                 json.dumps({"type": "FeatureCollection", "features": [{"type": "Feature", "id": "BHM", "properties": {"archive_begin": "2010-01-01"},
                                                                        "geometry": {"type": "Polygon", "coordinates": [[0, 0]]}}]}).encode(),
                 json.dumps({"type": "FeatureCollection", "features": [{"type": "Feature", "id": "BHM", "properties": {"sname": "x"},
@@ -797,9 +806,14 @@ def test_pw_config_is_one_carrier_box_per_station():
     assert W.window_cfg("cal_h1") is None and W.window_cfg("h2") is None
 
 
-def test_select_is_a_one_shot_result_step_that_fixes_the_list_before_fit_and_fetch(home, monkeypatch):
+def test_select_is_a_one_shot_result_step_that_fixes_the_list_before_fit_and_fetch(home, monkeypatch, capsys):
     out = str(home)
     assert W.main(["fit", "--out", out]) == 3                                                       # no selection yet
+    assert "no counted PW station selection" in capsys.readouterr().err
+    assert W.main(["fetch", "--window", "cal_h1", "--month", "2026-05", "--out", out, "--min-free-gb", "0"]) == 3   # no value before the selection
+    assert "no counted PW station selection" in capsys.readouterr().err
+    assert W.main(["fetch", "--window", "pw", "--month", "smoke", "--out", out, "--min-free-gb", "0"]) == 3
+    assert "no counted PW station selection" in capsys.readouterr().err
     assert W.main(["select", "--window", "h2", "--out", out, "--w-now-3-stations", "x"]) == 3
     path = _put_select(home, monkeypatch)
     issue = CURRENT["issue"]
@@ -824,7 +838,9 @@ def test_select_is_a_one_shot_result_step_that_fixes_the_list_before_fit_and_fet
     path.write_text(json.dumps(dict(doc, stations=doc["stations"][::-1])))                           # a different list
     for args in (["fetch", "--window", "pw", "--month", "smoke", "--out", out, "--fit-sha", fsha, "--min-free-gb", "0"],
                  ["rows", "--window", "pw", "--out", out, "--fit-sha", fsha], ["score", "--window", "pw", "--out", out, "--fit-sha", fsha]):
+        capsys.readouterr()
         assert W.main(args) == 3
+        assert "differs from the counted selection" in capsys.readouterr().err
     assert not any(e["key"].startswith("fetch:pw") or e["key"] == "rows:pw" for e in led.entries() if e["status"] == PRL.STARTED)
     path.write_bytes(original)
     assert W.main(["fetch", "--window", "pw", "--month", "smoke", "--out", out, "--fit-sha", fsha, "--min-free-gb", "1e9"]) == 3   # free-space guard: reached
@@ -870,6 +886,9 @@ def test_pw_rows_blend_at_the_station_point_and_count_non_bilinear_weights(tmp_p
     st.put_json("metar/20250102.json.gz", {"observations": [{"station": "P1", "validTime": "2025-01-02T01:00:00Z", "speedMS": 7.2, "dirFromDeg": 180.0, "gustMS": None},
                                                             {"station": "P2", "validTime": "2025-01-02T01:00:00Z", "speedMS": 7.2, "dirFromDeg": 180.0, "gustMS": None}]})
     rows, acc = W.build_rows("pw", str(tmp_path / "store"), cfg)
+    monkeypatch.setitem(W.WINDOWS, "h2", (init, init))
+    h2_rows, h2_acc = W.build_rows("h2", str(tmp_path / "store"), cfg)                 # not PW: counted, values kept
+    assert all(r["b0"] == pytest.approx(5.0) for r in h2_rows if r["station"] == "P2") and h2_acc["weightsNotBilinear"] == 3 and h2_acc["b0Missing"] == 0
     by = {(r["station"], r["lead"]): r for r in rows}
     assert by[("P1", 1)]["b0"] == pytest.approx(5.0) and by[("P1", 1)]["p90"] == pytest.approx(7.5) and by[("P1", 1)]["weights"] == "bilinear"
     assert by[("P2", 1)]["b0"] is None and by[("P2", 1)]["p90"] is None and by[("P2", 1)]["weights"] == "nearest" and by[("P2", 1)]["obs"] == 7.2

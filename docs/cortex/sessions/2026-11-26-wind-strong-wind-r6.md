@@ -53,3 +53,19 @@ Research closeout on the research SSD: `wind-brain/closeouts/2026-11-26-wsw-r6-r
 
 ## Operating contract §19
 Gap WIND-CNF-001; bowfisher decision: whether a calm or moderate wind forecast can be trusted to keep an exposed shoreline undisturbed tonight; evidence: protocol sha256 above (registered, not run); files and tests as above; score before/after: unchanged (no score, rubric or evidence file touched; the GAPS pointer text only); open gaps WIND-CNF-001 (BLOCKED on the Mini run and H2), WIND-CNF-002, WIND-CNF-003, WIND-EVI-001; field validation: none required (RS-39); not changed: live systems, the wind-hourly job, the bake-off collector, the research workspace data, sealed data.
+
+## Review round 1 (independent review at `bb00cd7b`: CLEAN; CI 7/7 green)
+No critical or high finding. Hardening items applied in the next commit (each stricter than the protocol, none contrary to it; the protocol file is unchanged, so its sha256 stands):
+- Every `fetch` (CAL+H1 included) now needs the counted `select:pw`, so this protocol reads no value at all before the stations are fixed (the protocol's `selectStep` named only fit and the pw steps). Test added.
+- `cfg if cfg is not None else lakes.json` instead of a falsy fallback in `do_fetch` and `build_rows`.
+- A station id listed in two candidate networks refuses the selection explicitly (before, it would have reached `pw_config` with a misleading message). Test added.
+- `parse_network_listing`: `properties.sid` is accepted only when the feature id is absent, and a feature whose id and `sid` disagree is refused. Recorded here as a format tolerance (the same identifier), not a rule change.
+- `fetch_listings` saves the pw budget after each listing.
+- Tests now assert the refusal text ("no counted PW station selection", "differs from the counted selection"), cover `fetch --window pw` without a selection and non-PW rows keeping their values when weights are nearest.
+
+Not changed (recorded):
+- **Decision for Michael (review finding, medium, protocol risk):** the registered rule filters candidates by `archive_begin` only. If an IEM listing includes a closed station (`archive_end` set) among the 8, it has no 2025 observations, `obsMissingByStation` exceeds 15% and the PW window scores INCOMPLETE for every method: fail-closed and counted against the methods, as the rule requires, but the one-shot PW window is spent. The runner implements the registered rule exactly, so this is not fixable in the runner. Options: accept the risk, or register an R7 amendment (candidate needs `archive_end` null or on/after 2025-05-28) before the anchor. The field name is NOT_VERIFIED (no listing was fetched).
+- Registration bookkeeping: the registered R6 also appends one sentence to `runnerChangesNeeded` (where it was registered) and one to `runBinding.keyRule`; `registration.changesFromDraft` names the keyRule change under item 2 but not `runnerChangesNeeded`. Informational text, no executable effect; the protocol is not edited after registration.
+- Unverified (fails closed if wrong): the live IEM GeoJSON field names; the decoder self-check `row_scramble_ratio` on a ~13x13-cell carrier box (a false failure marks cycles incomplete and the PW result INCOMPLETE).
+
+Verification after the fixes: `test_wind_strong_wind.py` 46 passed; `tools/research` 422 passed; `verify` OK. The reviewer ran both suites with sockets patched to fail and a shadow `gh` on PATH: no test reaches the network or GitHub.
