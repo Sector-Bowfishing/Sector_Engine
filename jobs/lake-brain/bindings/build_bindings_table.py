@@ -838,7 +838,8 @@ REBINDS_2026_11_25 = {
     # The history was the RUL rule curve (30 ft off the observed pool at times); the observed CWMS series exists from 2020-08-12 and equals NWPS FLAV2.
     'Flannagan Reservoir|VA': {
         'history': [{'kind': 'cwmsDaily', 'office': 'LRH', 'series': 'JWFlannagan-Lake.Elev.Inst.15Minutes.0.OBS'}],
-        'notes': ['history was JWFlannagan-Lake.Elev.Inst.1Day.0.RUL (rule curve, -30 to +34 ft from observed); now the observed JWFlannagan-Lake.Elev.Inst.15Minutes.0.OBS, the same level as live FLAV2 (record from 2020-08-12) [2026-11-25 rebind (Sector_Ops #51)]'],
+        'stats': {'historyCompleteYears': 5, 'historyClass': 'SUFFICIENT', 'historyFirstYear': 2020},
+        'notes': ['history was JWFlannagan-Lake.Elev.Inst.1Day.0.RUL (rule curve, -30 to +34 ft from observed); now the observed JWFlannagan-Lake.Elev.Inst.15Minutes.0.OBS, the same level as live FLAV2 (record from 2020-08-12, so 5 complete years 2021-2025, first year 2020: counted from the series start, to be confirmed by a Mac mini read) [2026-11-25 rebind (Sector_Ops #51)]'],
     },
 }
 
@@ -853,6 +854,7 @@ def apply_rebinds(rec: dict) -> None:
         rec["capability"], rec["provider"], rec["station"], rec["series"] = top["capability"], top["provider"], top["station"], top["series"]
     if "history" in fix:
         rec["history"] = fix["history"]
+    rec.update(fix.get("stats", {}))
     rec["historyNotes"] = list(rec["historyNotes"]) + fix["notes"]
 
 

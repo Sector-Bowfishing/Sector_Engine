@@ -7952,12 +7952,12 @@
      "series": "JWFlannagan-Lake.Elev.Inst.15Minutes.0.OBS"
     }
    ],
-   "historyCompleteYears": 13,
+   "historyCompleteYears": 5,
    "historyClass": "SUFFICIENT",
-   "historyFirstYear": 2013,
+   "historyFirstYear": 2020,
    "historyBasis": "base",
    "historyNotes": [
-    "history was JWFlannagan-Lake.Elev.Inst.1Day.0.RUL (rule curve, -30 to +34 ft from observed); now the observed JWFlannagan-Lake.Elev.Inst.15Minutes.0.OBS, the same level as live FLAV2 (record from 2020-08-12) [2026-11-25 rebind (Sector_Ops #51)]"
+    "history was JWFlannagan-Lake.Elev.Inst.1Day.0.RUL (rule curve, -30 to +34 ft from observed); now the observed JWFlannagan-Lake.Elev.Inst.15Minutes.0.OBS, the same level as live FLAV2 (record from 2020-08-12, so 5 complete years 2021-2025, first year 2020: counted from the series start, to be confirmed by a Mac mini read) [2026-11-25 rebind (Sector_Ops #51)]"
    ],
    "plan": {
     "matchedProject": "LRH:JWFlannagan | J.W. Flannagan Dam",
