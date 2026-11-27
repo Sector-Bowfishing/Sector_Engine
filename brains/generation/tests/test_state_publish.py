@@ -65,7 +65,7 @@ def test_registry_reports_coverage_and_stays_disabled():
     _, w, _ = run()
     reg = w.tree["brains"]["generation"]
     assert reg["orchestration"]["status"] == "DISABLED" and reg["scoreStatus"] == "NOT_ESTABLISHED"
-    assert reg["fleet"]["damLakeCount"] == 4 and reg["fleet"]["directoryLakeCount"] == 621 and reg["fleet"]["noDamLakeCount"] == 220   # 4 = the test catalog
+    assert reg["fleet"]["damLakeCount"] == 4 and reg["fleet"]["directoryLakeCount"] == 648 and reg["fleet"]["noDamLakeCount"] == 221   # 4 = the test catalog
     assert reg["sourceAccess"]["swpa"]["status"] == "ACCESS_CHECK_REQUIRED" and "swpa" not in reg["sourceIds"]
     assert reg["knowledgeRelease"]["approvalStatus"] == "NOT_RECORDED"
 

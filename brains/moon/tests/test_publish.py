@@ -86,8 +86,8 @@ def test_unchanged_inputs_skip_and_cloud_input_republishes():
 def test_whole_directory_runs_clean():
     w = DryRunWriter()
     rep = publish(S.directory(None), w, dt.date(2026, 11, 22), now=S.NOW)
-    assert rep["ok"] and rep["evaluated"] == 621 and rep["readinessCounts"] == {"CALIBRATION": 621}
-    assert sum(rep["darknessClass"].values()) == 621 and rep["basis"] == {"MOON_ONLY": 621}
+    assert rep["ok"] and rep["evaluated"] == 648 and rep["readinessCounts"] == {"CALIBRATION": 648}
+    assert sum(rep["darknessClass"].values()) == 648 and rep["basis"] == {"MOON_ONLY": 648}
 
 
 def test_registry_says_disabled_and_unscored():

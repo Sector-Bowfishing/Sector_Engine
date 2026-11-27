@@ -243,8 +243,8 @@ def test_binding_review_rules_match_batches_1_and_2():
 # ------------------------------------------------------------------------------------------------------------- targets (real repo files, read only)
 def test_target_table_from_committed_files():
     t = G.load_targets()
-    assert t["directoryCount"] == 621 and t["reviewedCount"] == 294
-    assert sum(1 for l in t["lakes"] if "BINDING" in l["purposes"]) == 621 - 294
+    assert t["directoryCount"] == 648 and t["reviewedCount"] == 294
+    assert sum(1 for l in t["lakes"] if "BINDING" in l["purposes"]) == 648 - 294
     assert all(l["bound"] for l in t["lakes"] if l["reviewed"])  # every reviewed lake has its bound series listed
     assert set(G.handwritten_ids()) == set(G.PILOTS)
 

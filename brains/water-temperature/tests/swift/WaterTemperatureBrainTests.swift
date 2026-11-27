@@ -54,7 +54,7 @@ final class WaterTemperatureBrainTests: XCTestCase {
     }
 
     func testEveryDirectoryLakeHasAUniqueRTDBKey() {
-        XCTAssertEqual(LakeDirectory.all.count, 621)
+        XCTAssertEqual(LakeDirectory.all.count, 648)
         XCTAssertTrue(BrainPlatform.keyCollisions(LakeDirectory.all.map(\.id)).isEmpty)
         for l in LakeDirectory.all {
             XCTAssertNil(BrainPlatform.lakeKey(l.id).rangeOfCharacter(from: CharacterSet(charactersIn: ".$#[]/")), l.id)
@@ -127,7 +127,7 @@ final class WaterTemperatureBrainTests: XCTestCase {
     func testReadinessIsEvidenceClassOnly() {
         let counts = Dictionary(grouping: LakeDirectory.all, by: { WaterTemperatureBrain.evidenceClass(for: $0).rawValue }).mapValues(\.count)
         XCTAssertEqual(counts["sensor"], LakeDirectory.all.filter { $0.tempSensor != nil }.count)
-        XCTAssertEqual(counts["sensor", default: 0] + counts["modeled", default: 0], 621)
+        XCTAssertEqual(counts["sensor", default: 0] + counts["modeled", default: 0], 648)
         // a protected development lake is modeled (served) while its VALIDATION says insufficient truth;
         // readiness is the contract ladder value, never the evidence class
         XCTAssertEqual(WaterTemperatureBrain.evidenceClass(for: gunt), .modeled)
