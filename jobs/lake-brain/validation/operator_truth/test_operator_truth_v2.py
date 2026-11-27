@@ -1,5 +1,6 @@
 """Offline tests of the operator-truth v2 rule and runner, on hand-built fixtures (no network)."""
 import datetime as dt
+import gzip
 import hashlib
 import json
 import os
@@ -84,10 +85,37 @@ def test_fallback_offset_datum_and_a1_block_the_verdict():
     assert r["status"] == "VERDICT" and r["primary"]["key"][0] == "SWD" and r["independentTruth"]
 
 
-def test_frozen_set_is_the_rule_output_and_preregistered():
-    assert R.verify_preregistration() == []
+REGISTERED_INPUTS = os.path.join(HERE, "registered_inputs_v2")
+
+
+def _registered_inputs(tmp_path, monkeypatch):
+    """Point the (pinned, unchanged) builder at the bindings v2 was registered against (commit e241b416).
+
+    They are stored gzipped in registered_inputs_v2/, each checked against the sha256 the frozen sample records, and laid out under a temporary
+    root at their repository paths. Later binding changes (Engine PR #254, owner approval 2026-11-24, Sector_Ops #51 comment 7152879875) do not
+    re-freeze or re-register the sample: this test rebuilds it from the registered inputs, not from the current table."""
     with open(R.SAMPLE_PATH, encoding="utf-8") as fh:
-        assert fh.read() == B.dumps(B.build(B.load_generated(), B.load_accepted(), B.load_reviewed()))
+        inputs = json.load(fh)["inputs"]
+    pairs = [(inputs["generatedBindings"], inputs["generatedSha256"]), (inputs["reviewed"], inputs["reviewedSha256"]),
+             *zip(inputs["accepted"], inputs["acceptedSha256"])]
+    for rel, sha in pairs:
+        with gzip.open(os.path.join(REGISTERED_INPUTS, os.path.basename(rel) + ".gz")) as fh:
+            data = fh.read()
+        assert hashlib.sha256(data).hexdigest() == sha, f"{rel}: not the file the v2 sample was registered against"
+        dest = tmp_path / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(data)
+    monkeypatch.setattr(B, "ROOT", str(tmp_path))
+    monkeypatch.setattr(B, "GENERATED", str(tmp_path / inputs["generatedBindings"]))
+    monkeypatch.setattr(B, "ACCEPTED", [str(tmp_path / p) for p in inputs["accepted"]])
+    monkeypatch.setattr(B, "REVIEWED", str(tmp_path / inputs["reviewed"]))
+
+
+def test_frozen_set_is_the_rule_output_and_preregistered(tmp_path, monkeypatch):
+    assert R.verify_preregistration() == []
+    _registered_inputs(tmp_path, monkeypatch)
+    with open(R.SAMPLE_PATH, encoding="utf-8") as fh:
+        assert fh.read() == B.dumps(B.build(B.load_generated(B.GENERATED), B.load_accepted(B.ACCEPTED), B.load_reviewed(B.REVIEWED)))
 
 
 def _chain(tmp_path, runner_text="print(1)\n"):

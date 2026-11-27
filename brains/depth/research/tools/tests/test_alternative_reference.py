@@ -127,7 +127,7 @@ def test_counts_on_the_committed_release():
             n["short"] += 1
         elif "SERIES_HISTORY_NOT_LIVE_SERIES" in blocked:
             n["notLive"] += 1
-    assert n == {"fullPool": 225, "seriesMedian": 19, "lowWaterDatum": 14, "short": 45, "notLive": 113}
+    assert n == {"fullPool": 225, "seriesMedian": 20, "lowWaterDatum": 14, "short": 45, "notLive": 112}  # Moses Lake WA moved to its history gauge (USGS 12471000), 2026-11-25 rebind
 
 
 # ── end-to-end through build() on a tiny synthetic research snapshot ──────────────────────────────────

@@ -190,6 +190,28 @@ def test_an_unreadable_store_is_never_a_silent_pass_and_never_latches_by_itself(
     assert WD.log_line(res).startswith("[watchdog] UNREADABLE")
 
 
+def test_a_grants_listing_that_times_out_never_trips_the_artifact_comparison():
+    """2026-11-25: a timeout part-way through the grants listing left a partial grant count, which the artifact check compared with the
+    full artifact counts and latched three false trips. A grants check that fails holds the cycle (CHECK_FAILED, no latch) and the
+    artifacts are not compared at all."""
+    s = healthy()
+    put(s, "artifacts/water-clarity/sha256-b/artifact.json", {"lineage": {"generatedAt": "2026-11-06T16:10:00Z"}})   # would trip if compared
+
+    class GrantsTimeout(MemoryObjectStore):
+        def list(self, prefix):
+            if prefix.startswith("exports/runners/grants/"):
+                raise TimeoutError("listing timed out")
+            return super().list(prefix)
+    k, res = kinds(GrantsTimeout(s._objects) if hasattr(s, "_objects") else _copy_into(GrantsTimeout(), s))
+    assert k == ["CHECK_FAILED"] and res.unreadable and not res.tripped
+
+
+def _copy_into(dst, src):
+    for key in src.list(""):
+        dst.put(key, src.get(key))
+    return dst
+
+
 def test_the_latch_keeps_the_first_evidence_and_only_the_owner_clears_it():
     s = MemoryObjectStore()
     assert not WD.is_halted(WD.read_latch(s))

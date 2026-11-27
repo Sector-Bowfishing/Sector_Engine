@@ -15,8 +15,8 @@
     "evaluatedAt": "2026-10-23",
     "session": "docs/cortex/sessions/2026-10-23-research-automation.md",
     "productionBasis": "Production columns are judged from the code at the recorded deployed commit 7dae7051 (orchestrator image sha256:cb2e6922) or marked NOT_VERIFIED; no live image or bucket was inspected. The deployed lake-brain image (brain-jobs:a6622f99) is from feat/lake-consolidated, not main, so Lake production is NOT_VERIFIED.",
-    "sourceDigest": "sha256:8f04176ea3d29b80ab5d8670c4460aa0b80e21c4ac4bb66664ba5251335ad487",
-    "certificationDigest": "sha256:8f04176ea3d29b80ab5d8670c4460aa0b80e21c4ac4bb66664ba5251335ad487",
+    "sourceDigest": "sha256:2f5f47af41c4c51015d2b82aa16895a2e102d47ec95e72e369f634b4ac4ff63f",
+    "certificationDigest": "sha256:2f5f47af41c4c51015d2b82aa16895a2e102d47ec95e72e369f634b4ac4ff63f",
     "certificationCurrent": true,
     "verificationCommit": "3e8a3857"
   },
@@ -946,7 +946,7 @@
         "approvedMemoryRelease": {
           "status": "BLOCKED",
           "label": "CANDIDATE_RELEASE_NOT_APPROVED",
-          "evidence": "moon-knowledge-candidate-2026-11-25.1 verified; approval NOT_RECORDED"
+          "evidence": "moon-knowledge-candidate-2026-11-22.1 verified; approval NOT_RECORDED"
         },
         "operationalReadiness": {
           "status": "BLOCKED",
@@ -990,7 +990,7 @@
         },
         "knowledgeRelease": {
           "state": "CANDIDATE",
-          "releaseId": "moon-knowledge-candidate-2026-11-25.1",
+          "releaseId": "moon-knowledge-candidate-2026-11-22.1",
           "approval": "NOT_RECORDED"
         },
         "customerEligibility": {

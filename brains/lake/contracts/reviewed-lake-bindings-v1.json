@@ -376,8 +376,7 @@
       "lakeId" : "Center Hill Lake|TN",
       "liveSourceIds" : [
         "a2w:LRN:CEHT1:CEHT1-CENTER_HILL.Elev-Pool.Inst.1Hour.0.man-rev",
-        "cwms:LRN:CEHT1-CENTER_HILL.Elev-Pool.Inst.15Minutes.0.dcp-rev",
-        "tva:CEHT1"
+        "cwms:LRN:CEHT1-CENTER_HILL.Elev-Pool.Inst.15Minutes.0.dcp-rev"
       ]
     },
     {
@@ -413,10 +412,9 @@
       ]
     },
     {
-      "capability" : "DIRECT_OPERATOR_POOL",
+      "capability" : "DIRECT_LAKE_GAUGE",
       "lakeId" : "Cherokee Lake|TN",
       "liveSourceIds" : [
-        "tva:CRKT1",
         "nwps:CRKT1:HPIRZ"
       ]
     },
@@ -430,10 +428,9 @@
       ]
     },
     {
-      "capability" : "DIRECT_OPERATOR_POOL",
+      "capability" : "DIRECT_LAKE_GAUGE",
       "lakeId" : "Chickamauga Lake|TN",
       "liveSourceIds" : [
-        "tva:CKDT1",
         "nwps:CKDT1:HPIRZ"
       ]
     },
@@ -547,8 +544,7 @@
       "lakeId" : "Dale Hollow Lake|TN",
       "liveSourceIds" : [
         "a2w:LRN:DLHT1:DLHT1-DALE_HOLLOW.Elev-Pool.Inst.1Hour.0.man-rev",
-        "cwms:LRN:DLHT1-DALE_HOLLOW.Elev-Pool.Inst.15Minutes.0.dcp-rev",
-        "tva:DLHT1"
+        "cwms:LRN:DLHT1-DALE_HOLLOW.Elev-Pool.Inst.15Minutes.0.dcp-rev"
       ]
     },
     {
@@ -605,10 +601,9 @@
       ]
     },
     {
-      "capability" : "DIRECT_OPERATOR_POOL",
+      "capability" : "DIRECT_LAKE_GAUGE",
       "lakeId" : "Douglas Lake|TN",
       "liveSourceIds" : [
-        "tva:DUGT1",
         "nwps:DUGT1:HPIRZ"
       ]
     },
@@ -717,10 +712,9 @@
       ]
     },
     {
-      "capability" : "DIRECT_OPERATOR_POOL",
+      "capability" : "DIRECT_LAKE_GAUGE",
       "lakeId" : "Fort Loudoun Lake|TN",
       "liveSourceIds" : [
-        "tva:FLDT1",
         "nwps:FLDT1:HPIRZ"
       ]
     },
@@ -992,7 +986,6 @@
       "capability" : "DIRECT_OPERATOR_POOL",
       "lakeId" : "Kentucky Lake|KY",
       "liveSourceIds" : [
-        "tva:KYDK2",
         "a2w:LRN:KYDK2:KYDK2-KENTUCKY.Elev-Pool.Inst.1Hour.0.tva-raw",
         "cwms:LRN:KYDK2-KENTUCKY.Elev-Pool.Inst.1Hour.0.tva-raw"
       ]
@@ -1066,7 +1059,6 @@
       "lakeId" : "Lake Barkley|KY",
       "liveSourceIds" : [
         "a2w:LRN:BAHK2:BAHK2-BARKLEY.Elev-Pool.Inst.1Hour.0.man-rev",
-        "tva:BARK2",
         "cwms:LRN:BAHK2-BARKLEY.Elev-Pool.Inst.15Minutes.0.dcp-rev"
       ]
     },
@@ -1633,10 +1625,10 @@
       ]
     },
     {
-      "capability" : "DIRECT_OPERATOR_POOL",
+      "capability" : "DIRECT_LAKE_GAUGE",
       "lakeId" : "Moses Lake|WA",
       "liveSourceIds" : [
-        "cwms:NWDP:MLAW.Elev-Forebay.Inst.0.0.RFC-RAW"
+        "usgs:12471000:62614"
       ]
     },
     {
@@ -1670,10 +1662,9 @@
       ]
     },
     {
-      "capability" : "DIRECT_OPERATOR_POOL",
+      "capability" : "DIRECT_LAKE_GAUGE",
       "lakeId" : "Nickajack Lake|TN",
       "liveSourceIds" : [
-        "tva:NKJT1",
         "nwps:NKJT1:HPIRZ"
       ]
     },
@@ -1696,10 +1687,9 @@
       ]
     },
     {
-      "capability" : "DIRECT_OPERATOR_POOL",
+      "capability" : "DIRECT_LAKE_GAUGE",
       "lakeId" : "Norris Lake|TN",
       "liveSourceIds" : [
-        "tva:NRST1",
         "nwps:NRST1:HPIRZ"
       ]
     },
@@ -1730,8 +1720,7 @@
       "lakeId" : "Old Hickory Lake|TN",
       "liveSourceIds" : [
         "a2w:LRN:OHHT1:OHHT1-OLD_HICKORY.Elev-Pool.Inst.1Hour.0.man-rev",
-        "cwms:LRN:OHHT1-OLD_HICKORY.Elev-Pool.Inst.15Minutes.0.dcp-rev",
-        "tva:OHHT1"
+        "cwms:LRN:OHHT1-OLD_HICKORY.Elev-Pool.Inst.15Minutes.0.dcp-rev"
       ]
     },
     {
@@ -1795,8 +1784,7 @@
       "lakeId" : "Percy Priest Lake|TN",
       "liveSourceIds" : [
         "a2w:LRN:JPHT1:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.1Hour.0.man-rev",
-        "cwms:LRN:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.15Minutes.0.dcp-rev",
-        "tva:JPHT1"
+        "cwms:LRN:JPHT1-J_PERCY_PRIEST.Elev-Pool.Inst.15Minutes.0.dcp-rev"
       ]
     },
     {
@@ -2275,10 +2263,9 @@
       ]
     },
     {
-      "capability" : "DIRECT_OPERATOR_POOL",
+      "capability" : "DIRECT_LAKE_GAUGE",
       "lakeId" : "Watts Bar Lake|TN",
       "liveSourceIds" : [
-        "tva:WBOT1",
         "nwps:WBOT1:HPIRZ"
       ]
     },
