@@ -23,3 +23,6 @@ Approve the release digest; Lake rebuild and Pulse switch are separate requests.
 
 ## 2026-11-26 review fix
 Independent review found Flannagan's history stats still counted the rule curve (13 years from 2013). They now follow the observed series (5 complete years, first year 2020, SUFFICIENT), counted from the series start (2020-08-12); the Mac mini should confirm with a read. Releases are immutable, so the release is cut again as `lake-knowledge-2026-11-26.1` (the 25.1 digest was never approved or merged).
+
+## 2026-11-26 approval
+Michael approved release `lake-knowledge-2026-11-26.1` (digest `sha256:4f2d6154...fa47`) in chat at 20:57 CT. Recorded APPROVED in the release manifest, approval record and brain.json. Merge, Lake rebuild and Pulse switch are not covered.

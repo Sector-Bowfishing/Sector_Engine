@@ -1,11 +1,11 @@
-# Approval record: `lake-knowledge-2026-11-26.1` (PENDING)
+# Approval record: `lake-knowledge-2026-11-26.1` (APPROVED)
 
 | Field | Value |
 |---|---|
 | Release | `lake-knowledge-2026-11-26.1` (Lake Brain reviewed source bindings, `PACKAGED_IN_IMAGE`) |
 | Release digest | `sha256:4f2d6154fa1d46c00a86a296bd9abf6e8fc9c972d3484a398ecfb54ba69dfa47` |
 | Replaces | `lake-knowledge-2026-11-25.1` (never approved or merged; cut again after review) and supersedes `lake-knowledge-2026-11-24.1` (APPROVED 2026-11-25, Sector_Ops #51 comment 7154041302) |
-| Status | **NOT_RECORDED: the rebind is requested by the owner; the release digest awaits Michael's approval** |
+| Status | **APPROVED** by Michael in chat, 2026-11-26 20:57 CT (Claude Code session): "approve", in reply to "Approve the Lake release digest sha256:4f2d6154…fa47 (#259)". Recorded by Claude from the chat; no Sector_Ops comment yet. |
 | Requested scope | INTERNAL, CALIBRATION and CUSTOMER (same as 2026-11-24.1) |
 
 ## What changed
@@ -21,5 +21,5 @@
 ## What it does not allow
 - A LakeBrainJob rebuild, a Pulse binary switch, a deploy, a schedule change, or turning on any customer flag or Engine reader: each is a separate owner decision.
 
-## To approve
-Michael confirms the digest above in chat or in an "Owner approval (Michael, ...)" comment on Sector_Ops #51; then set `approval.status` to `APPROVED` here and in `brains/lake/runtime/knowledge-release.json`.
+## To approve (historical)
+Approved in chat as recorded above; `approval.status` is `APPROVED` here and in `brains/lake/runtime/knowledge-release.json` (the digest does not change).
