@@ -5,7 +5,7 @@
     "id" : "1784084400000-water-temp-000",
     "kind" : "brain.registered",
     "severity" : "info",
-    "title" : "Water Temperature Brain registered (v1.0, 621 lakes)"
+    "title" : "Water Temperature Brain registered (v1.0, 648 lakes)"
   },
   "brains/water-temp" : {
     "activeProductionModel" : {
@@ -19,16 +19,16 @@
       "directoryTempSource" : {
         "buoy" : 33,
         "inSitu" : 283,
-        "limited" : 37,
+        "limited" : 64,
         "satellite" : 268
       },
       "sourceKind" : {
-        "energyBalanceModel" : 620,
+        "energyBalanceModel" : 647,
         "usgsLakeSensor" : 1
       },
       "stateKind" : {
         "measured" : 1,
-        "modeled" : 620
+        "modeled" : 647
       }
     },
     "dependsOn" : [
@@ -58,7 +58,7 @@
     },
     "question" : "What is the water temperature doing?",
     "readinessCounts" : {
-      "CALIBRATION" : 621
+      "CALIBRATION" : 648
     },
     "readinessDefinitions" : {
       "CALIBRATION" : "Published for every lake: production's own number (shown = scored), model validated globally only, Level-4 protected validation not passed, brain unscheduled. Evidence class is in `evidenceClass`."
@@ -85,7 +85,7 @@
       "unavailable" : "UNKNOWN — no fresh measurement and no model value. Never filled in."
     },
     "status" : "BETA",
-    "supportedLakeCount" : 621,
+    "supportedLakeCount" : 648,
     "version" : "1.0",
     "versions" : [
       {
@@ -577,7 +577,7 @@
     },
     "failuresLastRun" : 0,
     "health" : "HEALTHY",
-    "lakeCount" : 621,
+    "lakeCount" : 648,
     "lastFetchAt" : "2026-07-15T03:00:00Z",
     "notes" : "Written by the water-temp brain job. Other brains also use Open-Meteo; a shared source writer should own this record once they integrate.",
     "ownerBrainId" : "water-temp",
