@@ -7949,14 +7949,16 @@
     {
      "kind": "cwmsDaily",
      "office": "LRH",
-     "series": "JWFlannagan-Lake.Elev.Inst.1Day.0.RUL"
+     "series": "JWFlannagan-Lake.Elev.Inst.15Minutes.0.OBS"
     }
    ],
-   "historyCompleteYears": 13,
+   "historyCompleteYears": 5,
    "historyClass": "SUFFICIENT",
-   "historyFirstYear": 2013,
+   "historyFirstYear": 2020,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "history was JWFlannagan-Lake.Elev.Inst.1Day.0.RUL (rule curve, -30 to +34 ft from observed); now the observed JWFlannagan-Lake.Elev.Inst.15Minutes.0.OBS, the same level as live FLAV2 (record from 2020-08-12, so 5 complete years 2021-2025, first year 2020: counted from the series start, to be confirmed by a Mac mini read) [2026-11-25 rebind (Sector_Ops #51)]"
+   ],
    "plan": {
     "matchedProject": "LRH:JWFlannagan | J.W. Flannagan Dam",
     "matchBasis": "nid,name,geo<=5km",
@@ -18140,21 +18142,21 @@
   {
    "lakeId": "Moses Lake|WA",
    "status": "MACHINE_VERIFIED",
-   "capability": "DIRECT_OPERATOR_POOL",
-   "provider": "cwms",
+   "capability": "DIRECT_LAKE_GAUGE",
+   "provider": "usgs",
    "researchProvider": "cwms",
-   "station": "NWDP",
-   "series": "MLAW.Elev-Forebay.Inst.0.0.RFC-RAW",
+   "station": "12471000",
+   "series": "62614",
    "live": [
     {
-     "provider": "cwms",
-     "capability": "DIRECT_OPERATOR_POOL",
-     "station": "NWDP",
-     "series": "MLAW.Elev-Forebay.Inst.0.0.RFC-RAW",
+     "provider": "usgs",
+     "capability": "DIRECT_LAKE_GAUGE",
+     "station": "12471000",
+     "series": "62614",
      "cadenceMin": 60,
-     "lagMin": 120,
+     "lagMin": 60,
      "datumOffsetFt": 0.0,
-     "note": "USACE CWMS NWDP (unit=EN)"
+     "note": "USGS 12471000 gage height 62614; replaces CWMS MLAW, which has read +0.34 ft above USGS since 2026-11-13 [2026-11-25 rebind (Sector_Ops #51)]"
     }
    ],
    "history": [
@@ -18170,7 +18172,9 @@
    "historyClass": "SUFFICIENT",
    "historyFirstYear": 1974,
    "historyBasis": "base",
-   "historyNotes": [],
+   "historyNotes": [
+    "live moved from CWMS NWDP MLAW.Elev-Forebay RFC-RAW to USGS 12471000:62614 (CWMS read +0.34 ft above USGS since 2026-11-13; the same gauge as history) [2026-11-25 rebind (Sector_Ops #51)]"
+   ],
    "plan": null,
    "timeZone": "America/Los_Angeles",
    "timeZoneRule": "state WA",

@@ -1625,10 +1625,10 @@
       ]
     },
     {
-      "capability" : "DIRECT_OPERATOR_POOL",
+      "capability" : "DIRECT_LAKE_GAUGE",
       "lakeId" : "Moses Lake|WA",
       "liveSourceIds" : [
-        "cwms:NWDP:MLAW.Elev-Forebay.Inst.0.0.RFC-RAW"
+        "usgs:12471000:62614"
       ]
     },
     {
