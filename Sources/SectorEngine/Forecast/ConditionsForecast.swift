@@ -372,6 +372,23 @@ final class ConditionsForecastService: ObservableObject {
         return sixAMToday > now ? sixAMToday : (cal.date(byAdding: .day, value: 1, to: sixAMToday) ?? sixAMToday)
     }
 
+    /// Sun times for the night that starts at `windowStart` and ends at `windowEnd`, both local instants in `cal`.
+    /// `Astronomy.sunEvents(on:)` answers for the UTC calendar day of the instant it is given. Asked about 18:00 local in the
+    /// US (already the next UTC day) it returned TOMORROW's sunset, a day late, so every hour tonight read as daylight and the
+    /// curve was 0 all evening. Local noon of each local day always lies in the UTC day that holds that day's sun events, and a
+    /// sunset after UT midnight spills into the next UTC day inside `sunEvents` itself.
+    nonisolated static func tonightSun(windowStart: Date, windowEnd: Date, cal: Calendar,
+                                       lat: Double, lon: Double) -> (sunset: Date?, astronomicalDusk: Date?, sunrise: Date?) {
+        func localNoon(_ d: Date) -> Date {
+            var c = cal.dateComponents([.year, .month, .day], from: d)
+            c.hour = 12
+            return cal.date(from: c) ?? d
+        }
+        let evening = Astronomy.sunEvents(on: localNoon(windowStart), lat: lat, lon: lon)
+        let morning = Astronomy.sunEvents(on: localNoon(windowEnd), lat: lat, lon: lon)
+        return (evening.sunset, evening.astronomicalDusk, morning.sunrise)
+    }
+
     private static func buildTonight(base: ConditionsInput, hourly: [HourSample],
                                      coordinate: CLLocationCoordinate2D,
                                      now: Date, cal: Calendar,
@@ -391,10 +408,10 @@ final class ConditionsForecastService: ObservableObject {
         // morning). Using base.sunrise would give THIS morning's sunrise, which
         // sits before every night hour and would zero out the darkness ramp.
         let lat = coordinate.latitude, lon = coordinate.longitude
-        let sunEventsStart = Astronomy.sunEvents(on: displayStart, lat: lat, lon: lon)
-        let sunset = sunEventsStart.sunset ?? base.sunset
-        let fullDark = sunEventsStart.astronomicalDusk    // true dark; ramp anchor
-        let sunrise = Astronomy.sunEvents(on: displayEnd, lat: lat, lon: lon).sunrise ?? base.sunrise
+        let sun = tonightSun(windowStart: windowStart, windowEnd: windowEnd, cal: cal, lat: lat, lon: lon)
+        let sunset = sun.sunset ?? base.sunset
+        let fullDark = sun.astronomicalDusk    // true dark; ramp anchor
+        let sunrise = sun.sunrise ?? base.sunrise
 
         // The night's real score sets the ceiling/magnitude for the whole curve.
         let nightScore = Double(ConditionsAggregator.evaluate(base, config: config).score)
